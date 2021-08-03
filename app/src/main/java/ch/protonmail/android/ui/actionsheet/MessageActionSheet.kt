@@ -78,10 +78,15 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         Timber.v("MessageActionSheet for location: $messageLocation")
         val binding = FragmentMessageActionSheetBinding.inflate(inflater)
 
+        viewModel.stateFlow
+            .onEach { updateViewState(it, binding) }
+            .launchIn(lifecycleScope)
+
+        viewModel.setupViewState(messageIds, messageLocation, actionsTarget)
+
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, actionsTarget, messageIds.first())
         setupManageSectionBindings(binding, viewModel, actionsTarget, messageIds, messageLocation, mailboxLabelId)
-        setupMoveSectionBindings(binding, viewModel, messageIds, messageLocation, actionsTarget)
         setupMoreSectionBindings(binding, actionsTarget, messageIds)
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
 
@@ -90,6 +95,16 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             .launchIn(lifecycleScope)
 
         return binding.root
+    }
+
+    private fun updateViewState(state: MessageActionSheetState, binding: FragmentMessageActionSheetBinding) {
+        when (state) {
+            is MessageActionSheetState.MoveSectionState -> {
+                setupMoveSectionState(binding, viewModel, state)
+            }
+            MessageActionSheetState.Initial -> {
+            }
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -246,85 +261,59 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupMoveSectionBindings(
+    private fun setupMoveSectionState(
         binding: FragmentMessageActionSheetBinding,
         viewModel: MessageActionSheetViewModel,
-        messageIds: List<String>,
-        messageLocation: Constants.MessageLocationType,
-        actionsTarget: ActionSheetTarget
+        state: MessageActionSheetState.MoveSectionState
     ) {
-        with(binding) {
+        val messageIds = state.mailboxItemIds
+        val currentLocation = state.messageLocation
 
-            textViewDetailsActionsMoveToInbox.apply {
-                isVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
-                    messageLocation in Constants.MessageLocationType.values()
-                        .filter { type ->
-                            type == Constants.MessageLocationType.ARCHIVE ||
-                                type == Constants.MessageLocationType.SPAM
-                        }
-                } else true
-                if (messageLocation == Constants.MessageLocationType.SPAM) {
-                    setText(R.string.not_spam_move_to_inbox)
-                }
-                setOnClickListener {
-                    viewModel.moveToInbox(messageIds, messageLocation)
-                }
+        binding.textViewDetailsActionsMoveToInbox.apply {
+            isVisible = state.isMoveToInboxVisible
+            if (currentLocation == Constants.MessageLocationType.SPAM) {
+                setText(R.string.not_spam_move_to_inbox)
             }
-            textViewDetailsActionsTrash.apply {
-                isVisible = messageLocation in Constants.MessageLocationType.values()
-                    .filter { type ->
-                        type != Constants.MessageLocationType.TRASH
-                    }
-                setOnClickListener {
-                    viewModel.moveToTrash(messageIds, messageLocation)
-                }
+            setOnClickListener {
+                viewModel.moveToInbox(messageIds, currentLocation)
             }
-            textViewDetailsActionsMoveToArchive.apply {
-                isVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
-                    messageLocation in Constants.MessageLocationType.values()
-                        .filter { type ->
-                            type != Constants.MessageLocationType.ARCHIVE &&
-                                type != Constants.MessageLocationType.SPAM
-                        }
-                } else true
-                setOnClickListener {
-                    viewModel.moveToArchive(messageIds, messageLocation)
-                }
+        }
+
+        binding.textViewDetailsActionsTrash.apply {
+            isVisible = state.isMoveToTrashVisible
+            setOnClickListener {
+                viewModel.moveToTrash(messageIds, currentLocation)
             }
-            textViewDetailsActionsMoveToSpam.apply {
-                isVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
-                    messageLocation in Constants.MessageLocationType.values()
-                        .filter { type ->
-                            type != Constants.MessageLocationType.SPAM &&
-                                type != Constants.MessageLocationType.DRAFT &&
-                                type != Constants.MessageLocationType.SENT &&
-                                type != Constants.MessageLocationType.TRASH
-                        }
-                } else true
-                setOnClickListener {
-                    viewModel.moveToSpam(messageIds, messageLocation)
-                }
+        }
+
+        binding.textViewDetailsActionsMoveToArchive.apply {
+            isVisible = state.isMoveToArchiveVisible
+            setOnClickListener {
+                viewModel.moveToArchive(messageIds, currentLocation)
             }
-            textViewDetailsActionsDelete.apply {
-                isVisible = messageLocation in Constants.MessageLocationType.values()
-                    .filter { type ->
-                        type == Constants.MessageLocationType.DRAFT ||
-                            type == Constants.MessageLocationType.SENT ||
-                            type == Constants.MessageLocationType.TRASH ||
-                            type == Constants.MessageLocationType.SPAM
-                    }
-                setOnClickListener {
-                    viewModel.delete(
-                        messageIds,
-                        messageLocation,
-                        actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
-                    )
-                }
+        }
+
+        binding.textViewDetailsActionsMoveToSpam.apply {
+            isVisible = state.isMoveToSpamVisible
+            setOnClickListener {
+                viewModel.moveToSpam(messageIds, currentLocation)
             }
-            textViewDetailsActionsMoveTo.setOnClickListener {
-                viewModel.showLabelsManager(messageIds, messageLocation, LabelsActionSheet.Type.FOLDER)
-                dismiss()
+        }
+
+        binding.textViewDetailsActionsDelete.apply {
+            isVisible = state.isDeleteActionVisible
+            setOnClickListener {
+                viewModel.delete(
+                    messageIds,
+                    currentLocation,
+                    state.actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                )
             }
+        }
+
+        binding.textViewDetailsActionsMoveTo.setOnClickListener {
+            viewModel.showLabelsManager(messageIds, currentLocation, LabelsActionSheet.Type.FOLDER)
+            dismiss()
         }
     }
 

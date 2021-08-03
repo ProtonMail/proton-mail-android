@@ -32,6 +32,7 @@ import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
+import ch.protonmail.android.ui.actionsheet.MessageActionSheetState
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -399,4 +400,236 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             )
         }
     }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToInboxActionVisibleWhenActionTargetIsMessageAndMessageLocationIsTrash() {
+        val messageIds = listOf("messageId7")
+        val currentFolder = Constants.MessageLocationType.TRASH
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = true,
+            isMoveToTrashVisible = false,
+            isMoveToArchiveVisible = true,
+            isMoveToSpamVisible = false,
+            isDeleteActionVisible = true
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToInboxActionNotVisibleWhenActionTargetIsMessageAndMessageLocationIsNotArchiveSpamOrTrash() {
+        val messageIds = listOf("messageId7")
+        val currentFolder = Constants.MessageLocationType.SENT
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = false,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = true,
+            isMoveToSpamVisible = false,
+            isDeleteActionVisible = true
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToInboxActionVisibleWhenActionTargetIsConversation() {
+        val messageIds = listOf("messageId8")
+        val currentFolder = Constants.MessageLocationType.INBOX
+        val actionsTarget = ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = true,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = true,
+            isMoveToSpamVisible = true,
+            isDeleteActionVisible = false
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToTrashActionVisibleWhenMessageLocationIsNotTrash() {
+        val messageIds = listOf("messageId8")
+        val currentFolder = Constants.MessageLocationType.ARCHIVE
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = true,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = false,
+            isMoveToSpamVisible = true,
+            isDeleteActionVisible = false
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToTrashActionNotVisibleWhenMessageLocationIsTrash() {
+        val messageIds = listOf("messageId10")
+        val currentFolder = Constants.MessageLocationType.TRASH
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = true,
+            isMoveToTrashVisible = false,
+            isMoveToArchiveVisible = true,
+            isMoveToSpamVisible = false,
+            isDeleteActionVisible = true
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToArchiveActionVisibleWhenActionTargetIsMessageAndMessageLocationIsNotArchiveOrSpam() {
+        val messageIds = listOf("messageId11")
+        val currentFolder = Constants.MessageLocationType.LABEL
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = false,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = true,
+            isMoveToSpamVisible = true,
+            isDeleteActionVisible = false
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToArchiveActionNotVisibleWhenActionTargetIsMessageAndMessageLocationIsSpam() {
+        val messageIds = listOf("messageId12")
+        val currentFolder = Constants.MessageLocationType.SPAM
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = true,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = false,
+            isMoveToSpamVisible = false,
+            isDeleteActionVisible = true
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToSpamActionVisibleWhenActionTargetIsMessageAndMessageLocationIsNotSpamDraftSentOrTrash() {
+        val messageIds = listOf("messageId13")
+        val currentFolder = Constants.MessageLocationType.INBOX
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = false,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = true,
+            isMoveToSpamVisible = true,
+            isDeleteActionVisible = false
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToSpamActionNotVisibleWhenActionTargetIsMessageAndMessageLocationIsDraft() {
+        val messageIds = listOf("messageId14")
+        val currentFolder = Constants.MessageLocationType.DRAFT
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = false,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = true,
+            isMoveToSpamVisible = false,
+            isDeleteActionVisible = true
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithDeleteActionVisibleWhenMessageLocationIsEitherOfSpamDraftSentOrTrash() {
+        val messageIds = listOf("messageId15")
+        val currentFolder = Constants.MessageLocationType.DRAFT
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = false,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = true,
+            isMoveToSpamVisible = false,
+            isDeleteActionVisible = true
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
+    @Test
+    fun verifySetupViewStateReturnsMoveSectionStateWithDeleteActionNotVisibleWhenMessageLocationIsArchive() {
+        val messageIds = listOf("messageId16")
+        val currentFolder = Constants.MessageLocationType.ARCHIVE
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+
+        val expected = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            currentFolder,
+            actionsTarget = actionsTarget,
+            isMoveToInboxVisible = true,
+            isMoveToTrashVisible = true,
+            isMoveToArchiveVisible = false,
+            isMoveToSpamVisible = true,
+            isDeleteActionVisible = false
+        )
+        assertEquals(expected, viewModel.stateFlow.value)
+    }
+
 }
