@@ -269,7 +269,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         val currentLocation = state.messageLocation
 
         binding.textViewDetailsActionsMoveToInbox.apply {
-            isVisible = state.isMoveToInboxVisible
+            isVisible = state.showMoveToInboxAction
             if (currentLocation == Constants.MessageLocationType.SPAM) {
                 setText(R.string.not_spam_move_to_inbox)
             }
@@ -279,28 +279,28 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         }
 
         binding.textViewDetailsActionsTrash.apply {
-            isVisible = state.isMoveToTrashVisible
+            isVisible = state.showMoveToTrashAction
             setOnClickListener {
                 viewModel.moveToTrash(messageIds, currentLocation)
             }
         }
 
         binding.textViewDetailsActionsMoveToArchive.apply {
-            isVisible = state.isMoveToArchiveVisible
+            isVisible = state.showMoveToArchiveAction
             setOnClickListener {
                 viewModel.moveToArchive(messageIds, currentLocation)
             }
         }
 
         binding.textViewDetailsActionsMoveToSpam.apply {
-            isVisible = state.isMoveToSpamVisible
+            isVisible = state.showMoveToSpamAction
             setOnClickListener {
                 viewModel.moveToSpam(messageIds, currentLocation)
             }
         }
 
         binding.textViewDetailsActionsDelete.apply {
-            isVisible = state.isDeleteActionVisible
+            isVisible = state.showDeleteAction
             setOnClickListener {
                 viewModel.delete(
                     messageIds,

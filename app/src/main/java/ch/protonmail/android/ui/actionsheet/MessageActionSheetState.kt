@@ -29,13 +29,11 @@ sealed class MessageActionSheetState {
         val mailboxItemIds: List<String>,
         val messageLocation: Constants.MessageLocationType,
         val actionsTarget: ActionSheetTarget,
-        val isMoveToInboxVisible: Boolean,
-        val isMoveToTrashVisible: Boolean,
-        val isMoveToArchiveVisible: Boolean,
-        val isMoveToSpamVisible: Boolean,
-        val isDeleteActionVisible: Boolean
-    ) : MessageActionSheetState() {
-
-    }
+        val showMoveToInboxAction: Boolean,
+        val showMoveToTrashAction: Boolean,
+        val showMoveToArchiveAction: Boolean,
+        val showMoveToSpamAction: Boolean,
+        val showDeleteAction: Boolean
+    ) : MessageActionSheetState()
 
 }

@@ -402,7 +402,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToInboxActionVisibleWhenActionTargetIsMessageAndMessageLocationIsTrash() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToInboxActionTrueWhenActionTargetIsMessageAndMessageLocationIsTrash() {
         val messageIds = listOf("messageId7")
         val currentFolder = Constants.MessageLocationType.TRASH
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -413,17 +413,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = true,
-            isMoveToTrashVisible = false,
-            isMoveToArchiveVisible = true,
-            isMoveToSpamVisible = false,
-            isDeleteActionVisible = true
+            showMoveToInboxAction = true,
+            showMoveToTrashAction = false,
+            showMoveToArchiveAction = true,
+            showMoveToSpamAction = false,
+            showDeleteAction = true
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToInboxActionNotVisibleWhenActionTargetIsMessageAndMessageLocationIsNotArchiveSpamOrTrash() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToInboxActionFalseWhenActionTargetIsMessageAndMessageLocationIsNotArchiveSpamOrTrash() {
         val messageIds = listOf("messageId7")
         val currentFolder = Constants.MessageLocationType.SENT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -434,17 +434,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = false,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = true,
-            isMoveToSpamVisible = false,
-            isDeleteActionVisible = true
+            showMoveToInboxAction = false,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = true,
+            showMoveToSpamAction = false,
+            showDeleteAction = true
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToInboxActionVisibleWhenActionTargetIsConversation() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToInboxActionTrueWhenActionTargetIsConversation() {
         val messageIds = listOf("messageId8")
         val currentFolder = Constants.MessageLocationType.INBOX
         val actionsTarget = ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
@@ -455,17 +455,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = true,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = true,
-            isMoveToSpamVisible = true,
-            isDeleteActionVisible = false
+            showMoveToInboxAction = true,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = true,
+            showMoveToSpamAction = true,
+            showDeleteAction = false
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToTrashActionVisibleWhenMessageLocationIsNotTrash() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToTrashActionTrueWhenMessageLocationIsNotTrash() {
         val messageIds = listOf("messageId8")
         val currentFolder = Constants.MessageLocationType.ARCHIVE
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -476,17 +476,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = true,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = false,
-            isMoveToSpamVisible = true,
-            isDeleteActionVisible = false
+            showMoveToInboxAction = true,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = false,
+            showMoveToSpamAction = true,
+            showDeleteAction = false
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToTrashActionNotVisibleWhenMessageLocationIsTrash() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToTrashActionFalseWhenMessageLocationIsTrash() {
         val messageIds = listOf("messageId10")
         val currentFolder = Constants.MessageLocationType.TRASH
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -497,17 +497,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = true,
-            isMoveToTrashVisible = false,
-            isMoveToArchiveVisible = true,
-            isMoveToSpamVisible = false,
-            isDeleteActionVisible = true
+            showMoveToInboxAction = true,
+            showMoveToTrashAction = false,
+            showMoveToArchiveAction = true,
+            showMoveToSpamAction = false,
+            showDeleteAction = true
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToArchiveActionVisibleWhenActionTargetIsMessageAndMessageLocationIsNotArchiveOrSpam() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToArchiveActionTrueWhenActionTargetIsMessageAndMessageLocationIsNotArchiveOrSpam() {
         val messageIds = listOf("messageId11")
         val currentFolder = Constants.MessageLocationType.LABEL
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -518,17 +518,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = false,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = true,
-            isMoveToSpamVisible = true,
-            isDeleteActionVisible = false
+            showMoveToInboxAction = false,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = true,
+            showMoveToSpamAction = true,
+            showDeleteAction = false
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToArchiveActionNotVisibleWhenActionTargetIsMessageAndMessageLocationIsSpam() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToArchiveActionFalseWhenActionTargetIsMessageAndMessageLocationIsSpam() {
         val messageIds = listOf("messageId12")
         val currentFolder = Constants.MessageLocationType.SPAM
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -539,17 +539,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = true,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = false,
-            isMoveToSpamVisible = false,
-            isDeleteActionVisible = true
+            showMoveToInboxAction = true,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = false,
+            showMoveToSpamAction = false,
+            showDeleteAction = true
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToSpamActionVisibleWhenActionTargetIsMessageAndMessageLocationIsNotSpamDraftSentOrTrash() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToSpamActionTrueWhenActionTargetIsMessageAndMessageLocationIsNotSpamDraftSentOrTrash() {
         val messageIds = listOf("messageId13")
         val currentFolder = Constants.MessageLocationType.INBOX
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -560,17 +560,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = false,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = true,
-            isMoveToSpamVisible = true,
-            isDeleteActionVisible = false
+            showMoveToInboxAction = false,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = true,
+            showMoveToSpamAction = true,
+            showDeleteAction = false
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithMoveToSpamActionNotVisibleWhenActionTargetIsMessageAndMessageLocationIsDraft() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToSpamActionFalseWhenActionTargetIsMessageAndMessageLocationIsDraft() {
         val messageIds = listOf("messageId14")
         val currentFolder = Constants.MessageLocationType.DRAFT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -581,17 +581,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = false,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = true,
-            isMoveToSpamVisible = false,
-            isDeleteActionVisible = true
+            showMoveToInboxAction = false,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = true,
+            showMoveToSpamAction = false,
+            showDeleteAction = true
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithDeleteActionVisibleWhenMessageLocationIsEitherOfSpamDraftSentOrTrash() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowDeleteActionTrueWhenMessageLocationIsEitherOfSpamDraftSentOrTrash() {
         val messageIds = listOf("messageId15")
         val currentFolder = Constants.MessageLocationType.DRAFT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -602,17 +602,17 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = false,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = true,
-            isMoveToSpamVisible = false,
-            isDeleteActionVisible = true
+            showMoveToInboxAction = false,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = true,
+            showMoveToSpamAction = false,
+            showDeleteAction = true
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
 
     @Test
-    fun verifySetupViewStateReturnsMoveSectionStateWithDeleteActionNotVisibleWhenMessageLocationIsArchive() {
+    fun verifySetupViewStateReturnsMoveSectionStateWithShowDeleteActionFalseWhenMessageLocationIsArchive() {
         val messageIds = listOf("messageId16")
         val currentFolder = Constants.MessageLocationType.ARCHIVE
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -623,11 +623,11 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageIds,
             currentFolder,
             actionsTarget = actionsTarget,
-            isMoveToInboxVisible = true,
-            isMoveToTrashVisible = true,
-            isMoveToArchiveVisible = false,
-            isMoveToSpamVisible = true,
-            isDeleteActionVisible = false
+            showMoveToInboxAction = true,
+            showMoveToTrashAction = true,
+            showMoveToArchiveAction = false,
+            showMoveToSpamAction = true,
+            showDeleteAction = false
         )
         assertEquals(expected, viewModel.stateFlow.value)
     }
