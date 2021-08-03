@@ -35,8 +35,8 @@ import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
-import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import ch.protonmail.android.mailbox.domain.worker.UpdateConversationsLabelsWorker
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -55,7 +55,7 @@ class LabelsActionSheetViewModel @Inject constructor(
     private val getAllLabels: GetAllLabels,
     private val userManager: UserManager,
     private val updateLabels: UpdateLabels,
-    private val updateConversationsLabels: UpdateConversationsLabels,
+    private val updateConversationsLabels: UpdateConversationsLabelsWorker.Enqueuer,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val conversationModeEnabled: ConversationModeEnabled,
@@ -149,15 +149,12 @@ class LabelsActionSheetViewModel @Inject constructor(
                     .map { it.labelId }
                 Timber.v("Selected labels: $selectedLabels messageId: $ids")
                 if (isActionAppliedToConversation(currentMessageFolder)) {
-                    val result = updateConversationsLabels(
+                    updateConversationsLabels.enqueue(
                         ids,
                         UserId(userManager.requireCurrentUserId().s),
                         selectedLabels,
                         unselectedLabels
                     )
-                    if (result is ConversationsActionResult.Error) {
-                        cancel("Could not complete the action")
-                    }
                 } else {
                     ids.forEach { id ->
                         updateLabels(
