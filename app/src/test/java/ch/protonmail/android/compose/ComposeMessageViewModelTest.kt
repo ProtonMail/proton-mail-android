@@ -25,6 +25,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
+import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
@@ -91,6 +92,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val workManager: WorkManager = mockk(relaxed = true)
 
+    private val htmlToSpanned: HtmlToSpanned = mockk(relaxed = true)
+
     private val viewModel = ComposeMessageViewModel(
         composeMessageRepository = composeMessageRepository,
         userManager = userManager,
@@ -104,6 +107,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         sendMessage = sendMessage,
         verifyConnection = verifyConnection,
         networkConfigurator = networkConfigurator,
+        htmlToSpanned = htmlToSpanned
     )
 
     @BeforeTest
