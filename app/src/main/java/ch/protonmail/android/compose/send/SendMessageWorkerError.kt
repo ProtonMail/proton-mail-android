@@ -26,5 +26,6 @@ enum class SendMessageWorkerError {
     SavedDraftMessageNotFound,
     FailureBuildingApiRequest,
     ErrorPerformingApiRequest,
-    ApiRequestReturnedBadBodyCode
+    ApiRequestReturnedBadBodyCode,
+    MessageAlreadySent
 }

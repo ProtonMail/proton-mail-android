@@ -159,6 +159,36 @@ class AttachmentsViewModelTest : CoroutinesTest {
     }
 
     @Test
+    fun initUpdatesViewStateToRefreshDisplayedAttachmentsWhenDraftCreationHappenedBeforeAttachmentsScreenWasOpened() = runBlockingTest {
+        // This behavior solves the issue with removing attachments detailed in MAILAND-2010/comment-84445
+        // by ensuring that when the attachments screen is opened, no matter what attachments data is passed in,
+        // if the message is already a remote draft then the data displayed to the user gets refreshed to reflect
+        // what's saved in the database (with the main goal of ensuring that each displayed "LocalAttachment"
+        // object has the correct attachmentId
+        val messageId = "remote-draft-message ID"
+        val messageDbId = 2385L
+        val localAttachmentWithoutId = Attachment()
+        val initialMessageAttachments = listOf(localAttachmentWithoutId)
+        val message = Message().apply {
+            this.messageId = messageId
+            this.dbId = messageDbId
+            this.attachments = initialMessageAttachments
+        }
+        val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
+        val updatedMessage = message.apply {
+            this.attachments = updatedMessageAttachments
+        }
+        coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
+        coEvery { messageRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(updatedMessage)
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
+
+        viewModel.init()
+
+        val expectedState = UpdateAttachments(updatedMessageAttachments)
+        coVerify { mockObserver.onChanged(expectedState) }
+    }
+
+    @Test
     fun initDoesNotUpdateViewStateWhenMessageThatWasUpdatedInDbIsNotARemoteMessage() = runBlockingTest {
         val messageId = "91bbb263-2bf2-43dd-a079-233a305e69df"
         val messageDbId = 124L

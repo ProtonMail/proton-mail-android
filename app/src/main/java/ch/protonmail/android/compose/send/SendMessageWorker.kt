@@ -48,6 +48,7 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.DraftCreationFa
 import ch.protonmail.android.compose.send.SendMessageWorkerError.ErrorPerformingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FailureBuildingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPreferencesFailed
+import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageAlreadySent
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
 import ch.protonmail.android.core.Constants
@@ -124,43 +125,52 @@ class SendMessageWorker @AssistedInject constructor(
         val userId = requireNotNull(getInputCurrentUserId())
 
         val result = saveDraft(message, previousSenderAddressId)
-        return if (result is SaveDraftResult.Success) {
-            val messageId = result.draftId
-            Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
-            val savedDraftMessage = messageDetailsRepository.findMessageById(messageId).first()
-                ?: return retryOrFail(SavedDraftMessageNotFound, message)
+        return when (result) {
+            is SaveDraftResult.Success -> {
+                val messageId = result.draftId
+                Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
+                val savedDraftMessage = messageDetailsRepository.findMessageById(messageId).first()
+                    ?: return retryOrFail(SavedDraftMessageNotFound, message)
 
-            Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
-            val sendPreferences = requestSendPreferences(savedDraftMessage, userId) ?: return retryOrFail(
-                FetchSendPreferencesFailed,
-                savedDraftMessage
-            )
+                Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
+                val sendPreferences = requestSendPreferences(savedDraftMessage, userId) ?: return retryOrFail(
+                    FetchSendPreferencesFailed,
+                    savedDraftMessage
+                )
 
-            Timber.d("Send Message Worker building request for messageId $messageId")
-            savedDraftMessage.decrypt(userManager, userId)
-            val requestBody = try {
-                buildSendMessageRequest(savedDraftMessage, sendPreferences, userId)
-            } catch (t: Throwable) {
-                if (t is CancellationException) throw t
-                return retryOrFail(FailureBuildingApiRequest, savedDraftMessage, t)
+                Timber.d("Send Message Worker building request for messageId $messageId")
+                savedDraftMessage.decrypt(userManager, userId)
+                val requestBody = try {
+                    buildSendMessageRequest(savedDraftMessage, sendPreferences, userId)
+                } catch (t: Throwable) {
+                    if (t is CancellationException) throw t
+                    return retryOrFail(FailureBuildingApiRequest, savedDraftMessage, t)
+                }
+
+                return try {
+                    val response = apiManager.sendMessage(messageId, requestBody, UserIdTag(userId))
+                    handleSendMessageResponse(messageId, response, savedDraftMessage)
+                } catch (exception: IOException) {
+                    retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
+                } catch (exception: Exception) {
+                    pendingActionDao.deletePendingSendByMessageId(messageId)
+                    showSendMessageError(message.subject)
+                    throw exception
+                }
             }
 
-            return try {
-                val response = apiManager.sendMessage(messageId, requestBody, UserIdTag(userId))
-                handleSendMessageResponse(messageId, response, savedDraftMessage)
-            } catch (exception: IOException) {
-                retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
-            } catch (exception: Exception) {
-                pendingActionDao.deletePendingSendByMessageId(messageId)
+            is SaveDraftResult.MessageAlreadySent -> {
+                pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
+                saveMessageAsSent(message)
+                failureWithError(MessageAlreadySent)
+            }
+
+            else -> {
+                pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
                 showSendMessageError(message.subject)
-                throw exception
+                failureWithError(DraftCreationFailed)
             }
-        } else {
-            pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
-            showSendMessageError(message.subject)
-            failureWithError(DraftCreationFailed)
         }
-
     }
 
     private suspend fun handleSendMessageResponse(
@@ -170,19 +180,16 @@ class SendMessageWorker @AssistedInject constructor(
     ): Result {
         pendingActionDao.deletePendingSendByMessageId(messageId)
 
-        return when (response.code) {
-            RESPONSE_CODE_OK -> {
-                Timber.i("Send Message API call succeeded for messageId $messageId, Message Sent.")
-                handleMessageSentSuccess(response.sent, savedDraftMessage)
-            }
-            else -> {
-                Timber.e(
-                    DetailedException().apiError(response.code, response.error).messageId(messageId),
-                    "Send Message API call failed for messageId $messageId with error ${response.error}"
-                )
-                showSendMessageError(savedDraftMessage.subject)
-                failureWithError(ApiRequestReturnedBadBodyCode)
-            }
+        return if (response.code == RESPONSE_CODE_OK) {
+            Timber.i("Send Message API call succeeded for messageId $messageId, Message Sent.")
+            handleMessageSentSuccess(response.sent, savedDraftMessage)
+        } else {
+            Timber.e(
+                DetailedException().apiError(response.code, response.error).messageId(messageId),
+                "Send Message API call failed for messageId $messageId with error ${response.error}"
+            )
+            showSendMessageError(savedDraftMessage.subject)
+            failureWithError(ApiRequestReturnedBadBodyCode)
         }
     }
 
@@ -191,18 +198,22 @@ class SendMessageWorker @AssistedInject constructor(
         savedDraftMessage: Message
     ): Result {
         responseMessage.writeTo(savedDraftMessage)
-        savedDraftMessage.location = SENT.messageLocationTypeValue
-        savedDraftMessage.setLabelIDs(
+        saveMessageAsSent(savedDraftMessage)
+        userNotifier.showMessageSent()
+        return Result.success()
+    }
+
+    private suspend fun saveMessageAsSent(message: Message) {
+        message.location = SENT.messageLocationTypeValue
+        message.setLabelIDs(
             listOf(
                 ALL_SENT.messageLocationTypeValue.toString(),
                 ALL_MAIL.messageLocationTypeValue.toString(),
                 SENT.messageLocationTypeValue.toString()
             )
         )
-        Timber.d("Save message: ${savedDraftMessage.messageId}, location: ${savedDraftMessage.location}")
-        messageDetailsRepository.saveMessage(savedDraftMessage)
-        userNotifier.showMessageSent()
-        return Result.success()
+        Timber.d("Save message: ${message.messageId}, location: ${message.location}")
+        messageDetailsRepository.saveMessage(message)
     }
 
     // TODO improve error handling for generic exception MAILAND-2003

@@ -53,6 +53,7 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
+import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -265,6 +266,32 @@ class SendMessageWorkerTest : CoroutinesTest {
         )
         verify { pendingActionDao.deletePendingSendByMessageId("823472") }
         verify { userNotifier.showSendMessageError("error message 9216", "Subject 003") }
+    }
+
+    @Test
+    fun workerFailsWithoutNotifyingUserWhenSaveDraftFailsWithMessageAlreadySentError() = runBlockingTest {
+        val messageDbId = 2835L
+        val messageId = "823473"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 004"
+        }
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+        coEvery { saveDraft(any()) } returns SaveDraftResult.MessageAlreadySent
+        every { parameters.runAttemptCount } returns 0
+
+        val result = worker.doWork()
+
+        verify { pendingActionDao.deletePendingSendByMessageId("823473") }
+        verify { userNotifier wasNot Called }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "MessageAlreadySent")
+            ),
+            result
+        )
     }
 
     @Test
@@ -927,10 +954,13 @@ class SendMessageWorkerTest : CoroutinesTest {
         every { context.getString(R.string.message_drafted) } returns "error message 8234"
         every { parameters.runAttemptCount } returns 1
 
-        worker.doWork()
-
-        verify { pendingActionDao.deletePendingSendByMessageId("82383") }
-        verify { userNotifier.showSendMessageError("error message 8234", "Subject 008") }
+        try {
+            worker.doWork()
+        } catch (exception: CancellationException) {
+            verify { pendingActionDao.deletePendingSendByMessageId("82383") }
+            verify { userNotifier.showSendMessageError("error message 8234", "Subject 008") }
+            throw exception
+        }
     }
 
     private fun givenFullValidInput(

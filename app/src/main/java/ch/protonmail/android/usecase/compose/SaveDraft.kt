@@ -34,6 +34,8 @@ import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
+import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
+import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -111,6 +113,14 @@ class SaveDraft @Inject constructor(
                     return@map uploadAttachments(params, createdDraftId, localDraft)
                 } else {
                     Timber.e("Save Draft to API for messageId $localDraftId FAILED.")
+
+                    val saveDraftError = workInfo?.outputData?.getString(KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM)
+                    saveDraftError?.let { errorName ->
+                        val error = CreateDraftWorkerErrors.valueOf(errorName)
+                        if (error == CreateDraftWorkerErrors.MessageAlreadySent) {
+                            return@map SaveDraftResult.MessageAlreadySent
+                        }
+                    }
                     return@map SaveDraftResult.OnlineDraftCreationFailed
                 }
             }
