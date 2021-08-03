@@ -956,5 +956,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="inbox_pull_down_to_retry">Silakan tarik ke bawah untuk coba ulang</string>
     <string name="edit_draft">Edit draf</string>
     <string name="primary_user_error">Tidak dapat meningkatkan, ada yang salah.</string>
-    <string name="details_show_history">Show history</string>
+    <string name="details_show_history">Tampilkan riwayat</string>
+    <string name="could_not_complete_action">Tidak dapat menyelesaikan tindakan</string>
 </resources>

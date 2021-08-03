@@ -44,11 +44,11 @@
     <string name="composer_from">Från:</string>
     <string name="composer_subject">Ämne:</string>
     <string name="composer_to">Till:</string>
-    <string name="set_msg_password_title">Set password</string>
+    <string name="set_msg_password_title">Ange lösenord</string>
     <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Läs mer</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
-    <string name="set_msg_password_msg_password_hint">4 to 21 characters long</string>
+    <string name="set_msg_password_msg_password_hint">4 till 21 tecken långt</string>
     <string name="set_msg_password_repeat_password_title">Upprepa lösenord</string>
     <string name="set_msg_password_repeat_password_hint">Lösenorden måste matcha</string>
     <string name="set_msg_password_password_hint_title">Lösenordsledtråd</string>
@@ -110,7 +110,7 @@
     <string name="api_offline_title">Protonmail API är offline</string>
     <string name="api_offline">ProtonMail är för närvarande offline. Besök https://protonstatus.com eller https://twitter.com/protonmail för aktuell status.</string>
     <string name="contact_saved">Kontakt sparad</string>
-    <string name="contact_saved_offline">Contact saved, will be synced when connection is available</string>
+    <string name="contact_saved_offline">Kontakt sparad och kommer att synkas när en anslutning finns tillgänglig</string>
     <string name="contact_exist">Kontakten finns redan</string>
     <string name="invalid_email">E-postadressen är inte giltig</string>
     <string name="duplicate_email">E-postadress är en dubblett</string>
@@ -299,8 +299,8 @@
     <string name="no_application_found">Ingen app som kan hantera åtgärden hittades</string>
     <string name="no_application_found_or_link_invalid">Ingen app hittades som kan hantera begäran eller så är länken ogiltig</string>
     <string name="also_archive">Arkivera</string>
-    <string name="label_deleted">Label Deleted</string>
-    <string name="label_deleted_error">Error while deleting label</string>
+    <string name="label_deleted">Etikett Borttagen</string>
+    <string name="label_deleted_error">Fel vid borttagning av etikett</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Svara i tråd</string>
     <string name="no_connectivity_detected">Ingen anslutning upptäcktes…</string>
@@ -409,7 +409,7 @@
     <string name="no_payment_methods">Du har inga sparade betalningsmetoder.</string>
     <string name="edit_payment_methods">Logga in på protonmail.com för att ändra faktureringsuppgifter.</string>
     <string name="message_not_loaded">Meddelande inte öppnat</string>
-    <string name="signature_text">Signature Text</string>
+    <string name="signature_text">Signaturtext</string>
     <string name="available_addresses">Tillgängliga Adresser</string>
     <string name="inactive_addresses">Inaktiva Adresser</string>
     <string name="not_set">Inte Angivet</string>
@@ -705,8 +705,8 @@
         <item quantity="other">Är du säker på att du vill ta bort valda grupper?</item>
     </plurals>
     <plurals name="group_deleted">
-        <item quantity="one">Group Deleted</item>
-        <item quantity="other">Groups Deleted</item>
+        <item quantity="one">Grupp Borttagen</item>
+        <item quantity="other">Grupperna borttagna</item>
     </plurals>
     <plurals name="are_you_sure_delete_contact">
         <item quantity="one">Är du säker på att du vill ta bort den här kontakten?</item>
@@ -861,7 +861,7 @@
         <item quantity="other">Meddelanden arkiverade</item>
     </plurals>
     <!-- endregion -->
-    <string name="local_storage">Lokalt lagringsutrymme gräns</string>
+    <string name="local_storage">Lokal lagringsgräns</string>
     <string name="storage_value">%1$d MB (%2$.2f MB använt)</string>
     <!-- endregion -->
     <string name="app_settings">App Inställningar</string>
@@ -872,7 +872,7 @@
     <string name="notification_settings">Notifieringsinställningar</string>
     <string name="auto_lock">Autolås</string>
     <string name="auto_lock_app">Autolås applikationen</string>
-    <string name="auto_lock_description">Slå på den här funktionen för att automatiskt låsa din\n-app och använd en PIN-kod eller fingeravtryck\nför att låsa upp den.</string>
+    <string name="auto_lock_description">Slå på den här funktionen för att automatiskt låsa din app och använd en PIN-kod eller fingeravtryck för att låsa upp den.</string>
     <string name="change_pin_code">Ändra PIN-kod</string>
     <string name="auto_lock_timer">Autolås timer</string>
     <string name="connections_via_third_parties">Alternative routing</string>
@@ -969,4 +969,5 @@
     <string name="edit_draft">Redigera utkast</string>
     <string name="primary_user_error">Kunde inte uppgradera, något gick fel.</string>
     <string name="details_show_history">Visa historik</string>
+    <string name="could_not_complete_action">Det gick inte att slutföra åtgärden</string>
 </resources>

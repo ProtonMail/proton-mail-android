@@ -973,4 +973,5 @@
     <string name="edit_draft">Editar rascunho</string>
     <string name="primary_user_error">Não foi possível atualizar, algo deu errado.</string>
     <string name="details_show_history">Exibir histórico</string>
+    <string name="could_not_complete_action">Não foi possível completar a ação</string>
 </resources>
