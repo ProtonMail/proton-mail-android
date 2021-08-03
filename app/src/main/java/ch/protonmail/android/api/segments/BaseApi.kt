@@ -27,14 +27,12 @@ import retrofit2.Response
 import java.util.Collections
 import java.util.concurrent.ArrayBlockingQueue
 
-// region constants
 const val REFRESH_PATH = "/auth/refresh"
 const val AUTH_PATH = "auth"
 const val AUTH_INFO_PATH = "auth/info"
 const val ATTACH_PATH = "attach"
 
 const val ONE_MINUTE = 60L
-const val THREE_SECONDS = 3L
 const val TEN_SECONDS = 10L
 const val THIRTY_SECONDS = 30L
 
@@ -60,7 +58,6 @@ const val RESPONSE_CODE_NOT_ALLOWED = 2011
 const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC = 10_001
 const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED = 10_002
 const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED = 10_003
-const val RESPONSE_CODE_ATTACHMENT_DELETE_ID_INVALID = 11_123
 const val RESPONSE_CODE_EMAIL_FAILED_VALIDATION = 12_006
 const val RESPONSE_CODE_NEW_PASSWORD_INCORRECT = 12_022
 const val RESPONSE_CODE_NEW_PASSWORD_MESSED_UP = 12_020
@@ -73,7 +70,7 @@ const val RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED = 13_014
 const val RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED = 13_061
 const val RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST = 15_052
 const val RESPONSE_CODE_RECIPIENT_NOT_FOUND = 33_102
-// endregion
+const val RESPONSE_CODE_MESSAGE_ALREADY_SENT = 15_034
 
 open class BaseApi {
     protected inline fun <reified T : ResponseBody> executeAll(list: List<Call<T>>): List<T?> {

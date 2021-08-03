@@ -23,4 +23,5 @@ sealed class SaveDraftResult {
     data class Success(val draftId: String) : SaveDraftResult()
     object OnlineDraftCreationFailed : SaveDraftResult()
     object UploadDraftAttachmentsFailed : SaveDraftResult()
+    object MessageAlreadySent : SaveDraftResult()
 }

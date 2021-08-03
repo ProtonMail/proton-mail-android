@@ -38,6 +38,7 @@ import android.webkit.WebView.HitTestResult
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
@@ -86,6 +87,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
+import ch.protonmail.android.utils.ProtonCalendarUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.app
@@ -105,6 +107,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
@@ -612,7 +615,7 @@ internal class MessageDetailsActivity :
                 attachmentsListAdapter.setIsPgpEncrypted(viewModel.isPgpEncrypted())
                 attachmentsListAdapter.setDownloaded(eventAttachmentId, isDownloaded)
                 if (isDownloaded) {
-                    viewModel.viewAttachment(this, event.filename, event.attachmentUri)
+                    viewModel.viewAttachment(this, event.filename, event.attachmentUri, event.attachmentId)
                 } else {
                     showToast(R.string.downloading)
                 }
@@ -801,6 +804,9 @@ internal class MessageDetailsActivity :
                     messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 }
                 displayAttachmentInfo(attachments)
+                if (viewModel.shouldShowProtonCalendarButton(packageManager)) {
+                    displayProtonCalendarButton(attachments)
+                }
             } else {
                 messageExpandableAdapter.displayAttachmentsViews(View.GONE)
             }
@@ -817,6 +823,29 @@ internal class MessageDetailsActivity :
         messageExpandableAdapter.attachmentsContainer.attachmentsAdapter = attachmentsListAdapter
         attachmentsVisibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
         messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
+    }
+
+    private fun displayProtonCalendarButton(attachments: List<Attachment>) {
+        val icsAttachment = attachments.firstOrNull {
+            it.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH) == ProtonCalendarUtils.mimeType
+        }
+        val attachmentId = icsAttachment?.attachmentId
+
+        if (icsAttachment != null && attachmentId != null) {
+            findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.apply {
+                visibility = View.VISIBLE
+
+                setOnClickListener {
+                    if (viewModel.handleProtonCalendarButtonClick(attachmentId)) {
+                        // Proton Calendar is installed, show the attachment
+                        OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId).invoke(attachmentId)
+                    }
+                }
+            }
+        } else {
+            findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.visibility = View.GONE
+        }
+
     }
 
     private inner class DecryptedMessageObserver : Observer<Message?> {

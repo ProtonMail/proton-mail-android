@@ -33,6 +33,7 @@ import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
+import ch.protonmail.android.utils.ProtonCalendarUtils
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -53,6 +54,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     private val downloadUtils = DownloadUtils()
+
+    private val protonCalendarUtils = ProtonCalendarUtils(mockk())
 
     @RelaxedMockK
     private lateinit var messageDetailsRepository: MessageDetailsRepository
