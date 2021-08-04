@@ -113,7 +113,7 @@ class MessageRepository @Inject constructor(
     suspend fun getMessage(
         userId: Id,
         messageId: String,
-        shouldFetchMessageDetails: Boolean
+        shouldFetchMessageDetails: Boolean = false
     ): Message? =
         withContext(dispatcherProvider.Io) {
             val user = userManager.getLegacyUser(userId)
