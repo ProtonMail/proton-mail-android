@@ -21,7 +21,6 @@ package ch.protonmail.android.settings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.domain.UpdateViewMode
 import ch.protonmail.android.usecase.delete.ClearUserMessagesData
@@ -45,7 +44,7 @@ class AccountSettingsActivityViewModel @Inject constructor(
     fun changeViewMode(viewMode: ViewMode) {
         viewModelScope.launch {
             accountManager.getPrimaryUserId().first()?.let { userId ->
-                clearUserMessagesData.invoke(Id(userId.id))
+                clearUserMessagesData.invoke(userId)
                 updateViewMode.invoke(
                     userId, viewMode
                 )
