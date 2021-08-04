@@ -60,9 +60,9 @@ import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
-import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.view.LabelChipUiModel
@@ -323,8 +323,11 @@ internal class MessageDetailsViewModel @Inject constructor(
             return null
         }
 
-        val contactEmail = contactsRepository.findContactEmailByEmail(messageWithDetails.senderEmail)
-        messageWithDetails.senderDisplayName = contactEmail?.name.orEmpty()
+        val contact = contactsRepository.findContactEmailByEmail(messageWithDetails.senderEmail)
+        val contactName = contact?.name?.takeIfNotBlank()
+        if (contactName != null && contactName != contact.email) {
+            messageWithDetails.senderDisplayName = contact.name
+        }
         return messageWithDetails.toConversationUiModel()
     }
 
@@ -360,8 +363,11 @@ internal class MessageDetailsViewModel @Inject constructor(
     ): ConversationUiModel? {
         val messages = conversation.messages?.mapNotNull { message ->
             messageRepository.findMessage(userId, message.id)?.let { localMessage ->
-                val contactEmail = contactsRepository.findContactEmailByEmail(localMessage.senderEmail)
-                localMessage.senderDisplayName = contactEmail?.name.orEmpty()
+                val contact = contactsRepository.findContactEmailByEmail(localMessage.senderEmail)
+                val contactName = contact?.name?.takeIfNotBlank()
+                if (contactName != null && contactName != contact.email) {
+                    localMessage.senderDisplayName = contact.name
+                }
                 localMessage
             }
         }

@@ -65,6 +65,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    // region Views
     private val collapsedHeaderGroup: Group
     private val expandedHeaderGroup: Group
     private val expandCollapseChevronImageView: ImageView
@@ -108,12 +109,14 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val forwardedImageView: ImageView
 
     private val messageDetailsIcons: MessageDetailsHeaderIcons
+    // endregion
 
     init {
         val binding = LayoutMessageDetailsHeaderBinding.inflate(
             LayoutInflater.from(context),
             this
         )
+        // region Init views
         collapsedHeaderGroup = binding.collapsedHeaderGroup
         expandedHeaderGroup = binding.expandedHeaderGroup
         expandCollapseChevronImageView = binding.expandCollapseChevronImageView
@@ -155,6 +158,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         forwardedImageView = binding.forwardedImageView
 
         messageDetailsIcons = binding.messageDetailsIcons
+        // endregion
 
         // animated layout changes looks buggy on Android 27, so we enable only on 28 +
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
