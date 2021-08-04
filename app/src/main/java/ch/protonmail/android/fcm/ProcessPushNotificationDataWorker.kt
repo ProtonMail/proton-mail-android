@@ -40,6 +40,7 @@ import ch.protonmail.android.data.local.model.Notification
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.PushNotification
 import ch.protonmail.android.fcm.model.PushNotificationData
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
@@ -70,7 +71,8 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
     private val userManager: UserManager,
     private val databaseProvider: DatabaseProvider,
     private val messageRepository: MessageRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val conversationModeEnabled: ConversationModeEnabled
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
@@ -184,7 +186,7 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
                 user.ringtone,
                 user.isNotificationVisibilityLockScreen,
                 message,
-                messageId,
+                if (conversationModeEnabled(null)) message?.conversationId ?: "" else messageId,
                 notificationBody,
                 sender,
                 isPrimaryUser
