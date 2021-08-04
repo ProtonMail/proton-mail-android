@@ -476,8 +476,10 @@ class MailboxViewModel @Inject constructor(
         // Note for future: Get userId from Message (should contain it).
         val userId = userManager.currentUserId ?: return emptyList()
 
-        val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.findAllLabels(UserId(userId.s)).first()
+        val emails = messages.map { message -> message.senderEmail }.distinct()
+        val contacts = contactsRepository.findContactsByEmail(emails).first()
+        val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { Id(it) }
+        val labels = labelRepository.findLabels(UserId(userId.s), labelIds).first()
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)

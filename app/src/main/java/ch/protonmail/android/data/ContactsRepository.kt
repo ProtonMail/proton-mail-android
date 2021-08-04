@@ -40,4 +40,6 @@ class ContactsRepository @Inject constructor(
 
     fun findAllContactEmails(): Flow<List<ContactEmail>> = contactDao.findAllContactsEmails()
 
+    fun findContactsByEmail(emails: List<String>): Flow<List<ContactEmail>> =
+        contactDao.findContactsByEmail(emails)
 }

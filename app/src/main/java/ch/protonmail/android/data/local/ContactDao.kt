@@ -118,6 +118,9 @@ interface ContactDao {
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
     fun findAllContactsEmails(): Flow<List<ContactEmail>>
 
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL IN (:emails)")
+    fun findContactsByEmail(emails: List<String>): Flow<List<ContactEmail>>
+
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
     fun findAllContactsEmailsAsync(): LiveData<List<ContactEmail>>
 
@@ -384,7 +387,6 @@ interface ContactDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveAllContactGroups(vararg contactLabels: ContactLabel): List<Long>
-
 
     @Query("DELETE FROM $TABLE_CONTACT_LABEL")
     fun clearContactGroupsList()
