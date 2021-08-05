@@ -97,9 +97,7 @@ class GroupRecipientsViewModel @Inject constructor(
             )
     }
 
-    fun getData(): ArrayList<MessageRecipient> {
-        return _recipients
-    }
+    fun getData(): ArrayList<MessageRecipient> = _recipients
 
     fun getTitle(): String = _recipients[0].group
 

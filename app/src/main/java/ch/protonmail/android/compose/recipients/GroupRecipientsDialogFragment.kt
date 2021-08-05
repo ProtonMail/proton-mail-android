@@ -30,11 +30,10 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.R
-import ch.protonmail.android.activities.dialogs.AbstractDialogFragment
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
@@ -53,7 +52,7 @@ private const val ARGUMENT_LOCATION =
 // endregion
 
 @AndroidEntryPoint
-class GroupRecipientsDialogFragment : AbstractDialogFragment() {
+class GroupRecipientsDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var groupRecipientsViewModelFactory: GroupRecipientsViewModelFactory
@@ -68,13 +67,6 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     private lateinit var applyButton: ProtonButton
     private lateinit var cancelButton: ProtonButton
 
-    override fun onBackPressed() {
-        CANCELED = true
-        dismiss()
-    }
-
-    override fun getLayoutResourceId(): Int = R.layout.dialog_fragment_group_recipients
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         groupRecipientsListener = context as IGroupRecipientsListener
@@ -85,24 +77,15 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         groupRecipientsViewModel = ViewModelProviders.of(this, groupRecipientsViewModelFactory)
             .get(GroupRecipientsViewModel::class.java)
 
-        groupRecipientsViewModel.contactGroupResult.observe(
-            this,
-            {
+        groupRecipientsViewModel.contactGroupError.observe(this) { event ->
+            var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
+            if (event != null) {
+                error = event.getContentIfNotHandled()
             }
-        )
-
-        groupRecipientsViewModel.contactGroupError.observe(
-            this,
-            { event ->
-                var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
-                if (event != null) {
-                    error = event.getContentIfNotHandled()
-                }
-                if (error != null) {
-                    context?.showToast(error.getMessage(context!!))
-                }
+            if (error != null) {
+                context?.showToast(error.getMessage(context!!))
             }
-        )
+        }
 
         val args = arguments
         args?.let {
@@ -132,60 +115,9 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        val windowManager = context!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val params = dialog!!.window!!.attributes
-        params.height = 2 * (displayMetrics.heightPixels / 3)
-        dialog!!.window!!.setLayout(params.width, params.height)
-    }
-
-    override fun initUi(rootView: View?) {
-        groupRecipientsAdapter =
-            GroupRecipientsAdapter(groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
-        groupRecipientsViewModel.contactGroupResult.observe(
-            this,
-            Observer {
-                val allMessageRecipients = ArrayList<MessageRecipient>()
-                it?.let {
-                    for (email in it) {
-                        val recipient = MessageRecipient(email.name, email.email)
-                        recipient.isSelected = email.selected
-                        recipient.icon = email.pgpIcon
-                        recipient.iconColor = email.pgpIconColor
-                        recipient.description = email.pgpDescription
-                        recipient.setIsPGP(email.isPGP)
-                        recipient.group = groupRecipientsViewModel.getGroup()
-                        recipient.groupIcon = groupRecipientsViewModel.getGroupIcon()
-                        recipient.groupColor = groupRecipientsViewModel.getGroupColor()
-                        allMessageRecipients.add(recipient)
-                    }
-                    groupRecipientsAdapter.setData(allMessageRecipients)
-                    onMembersSelectChanged()
-                }
-            }
-        )
-
-        groupRecipientsViewModel.contactGroupError.observe(
-            this,
-            Observer { event ->
-                var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
-                if (event != null) {
-                    error = event.getContentIfNotHandled()
-                }
-                if (error != null) {
-                    context?.showToast(error.getMessage(context!!))
-                }
-            }
-        )
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUi(view)
+        initUi()
         with(recipientsRecyclerView) {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = groupRecipientsAdapter
@@ -222,9 +154,53 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         }
     }
 
-    override fun getStyleResource(): Int = R.style.AppTheme_Dialog_Labels
+    override fun onResume() {
+        super.onResume()
 
-    override fun getFragmentKey(): String = "ProtonMail.GroupRecipientsFragment"
+        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val params = dialog!!.window!!.attributes
+        params.height = 2 * (displayMetrics.heightPixels / 3)
+        dialog!!.window!!.setLayout(params.width, params.height)
+    }
+
+    private fun initUi() {
+        groupRecipientsAdapter =
+            GroupRecipientsAdapter(groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
+        groupRecipientsViewModel.contactGroupResult.observe(
+            this,
+            Observer {
+                val allMessageRecipients = ArrayList<MessageRecipient>()
+                it?.let {
+                    for (email in it) {
+                        val recipient = MessageRecipient(email.name, email.email)
+                        recipient.isSelected = email.selected
+                        recipient.icon = email.pgpIcon
+                        recipient.iconColor = email.pgpIconColor
+                        recipient.description = email.pgpDescription
+                        recipient.setIsPGP(email.isPGP)
+                        recipient.group = groupRecipientsViewModel.getGroup()
+                        recipient.groupIcon = groupRecipientsViewModel.getGroupIcon()
+                        recipient.groupColor = groupRecipientsViewModel.getGroupColor()
+                        allMessageRecipients.add(recipient)
+                    }
+                    groupRecipientsAdapter.setData(allMessageRecipients)
+                    onMembersSelectChanged()
+                }
+            }
+        )
+
+        groupRecipientsViewModel.contactGroupError.observe(this) { event ->
+            var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
+            if (event != null) {
+                error = event.getContentIfNotHandled()
+            }
+            if (error != null) {
+                context?.showToast(error.getMessage(context!!))
+            }
+        }
+    }
 
     interface IGroupRecipientsListener {
 
@@ -255,6 +231,7 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     companion object {
 
         private var CANCELED = false
+        const val KEY = "ProtonMail.GroupRecipientsFragment"
 
         fun newInstance(
             recipients: ArrayList<MessageRecipient>,

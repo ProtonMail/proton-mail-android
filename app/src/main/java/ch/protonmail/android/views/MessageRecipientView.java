@@ -399,7 +399,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
                 ArrayList<MessageRecipient> arrayListGroupRecipients = new ArrayList<>(groupRecipients);
                 GroupRecipientsDialogFragment groupRecipientsDialogFragment = GroupRecipientsDialogFragment.Companion.newInstance(arrayListGroupRecipients, location);
                 FragmentTransaction transaction = ((ComposeMessageActivity) getContext()).getSupportFragmentManager().beginTransaction();
-                transaction.add(groupRecipientsDialogFragment, groupRecipientsDialogFragment.getFragmentKey());
+                transaction.add(groupRecipientsDialogFragment, GroupRecipientsDialogFragment.KEY);
                 transaction.commitAllowingStateLoss();
             }
         }
