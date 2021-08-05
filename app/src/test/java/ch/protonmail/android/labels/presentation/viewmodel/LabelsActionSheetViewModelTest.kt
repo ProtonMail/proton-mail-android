@@ -33,8 +33,8 @@ import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
-import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import ch.protonmail.android.mailbox.domain.worker.UpdateConversationsLabelsWorker
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -84,7 +84,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var conversationsRepository: ConversationsRepository
 
     @MockK
-    private lateinit var updateConversationsLabels: UpdateConversationsLabels
+    private lateinit var updateConversationsLabels: UpdateConversationsLabelsWorker.Enqueuer
 
     private lateinit var viewModel: LabelsActionSheetViewModel
 
