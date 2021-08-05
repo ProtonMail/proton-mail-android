@@ -57,6 +57,8 @@ object Constants {
     // This is the version in which the FCM migration happens
     const val FCM_MIGRATION_VERSION = 739
 
+    const val MAX_SQL_ARGUMENTS = 100 // max number of arguments allowed in an sql query
+
     const val MAX_ATTACHMENTS = 100
     const val MAX_ATTACHMENT_FILE_SIZE_IN_BYTES = (25 * 1000 * 1000).toLong() // 25 MB
     const val MAX_ATTACHMENT_STORAGE_IN_MB = 1000

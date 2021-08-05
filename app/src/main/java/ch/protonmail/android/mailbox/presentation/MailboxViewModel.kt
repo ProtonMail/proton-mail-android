@@ -477,9 +477,15 @@ class MailboxViewModel @Inject constructor(
         val userId = userManager.currentUserId ?: return emptyList()
 
         val emails = messages.map { message -> message.senderEmail }.distinct()
-        val contacts = contactsRepository.findContactsByEmail(emails).first()
+        val contacts = emails
+            .chunked(Constants.MAX_SQL_ARGUMENTS)
+            .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first()  }
         val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { Id(it) }
-        val labels = labelRepository.findLabels(UserId(userId.s), labelIds).first()
+        val userIdCore = UserId(userId.s)
+        val labels = labelIds
+            .chunked(Constants.MAX_SQL_ARGUMENTS)
+            .flatMap { labelChunk -> labelRepository.findLabels(userIdCore, labelChunk).first() }
+            .toLabelChipUiModels()
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)
@@ -493,8 +499,7 @@ class MailboxViewModel @Inject constructor(
             )
 
             val labelChipUiModels = labels
-                .filter { it.id in message.allLabelIDs }
-                .toLabelChipUiModels()
+                .filter { it.id.s in message.allLabelIDs }
 
             MailboxUiItem(
                 requireNotNull(message.messageId),
