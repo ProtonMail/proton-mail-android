@@ -19,7 +19,6 @@
 package ch.protonmail.android.utils
 
 import android.content.Context
-import android.graphics.Color
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
@@ -28,7 +27,6 @@ import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithCustomView
@@ -72,11 +70,11 @@ class NetworkSnackBarUtil @Inject constructor() {
                     Snackbar.LENGTH_INDEFINITE
                 ).apply {
                     anchorViewId?.let { setAnchorView(it) }
-                    setActionTextColor(ContextCompat.getColor(context, R.color.white))
+                    setActionTextColor(textColor)
+                    setBackgroundTint(warningColor)
                     view.apply {
-                        setBackgroundColor(ContextCompat.getColor(context, R.color.orange))
                         findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
-                            setTextColor(Color.WHITE)
+                            setTextColor(textColor)
                         }
                     }
                 }
@@ -89,16 +87,16 @@ class NetworkSnackBarUtil @Inject constructor() {
                 ).apply {
                     anchorViewId?.let { setAnchorView(it) }
                     setAction(context.getString(R.string.retry)) { onRetryClick?.invoke() }
-                    setActionTextColor(ContextCompat.getColor(context, R.color.white))
+                    setActionTextColor(textColor)
                     view.apply {
-                        setBackgroundColor(ContextCompat.getColor(context, R.color.red))
+                        setBackgroundColor(errorColor)
                         isClickable = true
                         isFocusable = true
                         setOnClickListener {
                             showNoConnectionTroubleshootDialog(context, user, netConfiguratorCallback)
                         }
                         findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
-                            setTextColor(Color.WHITE)
+                            setTextColor(textColor)
                         }
                     }
                 }
@@ -125,9 +123,9 @@ class NetworkSnackBarUtil @Inject constructor() {
         ).apply {
             view.apply {
                 anchorViewId?.let { setAnchorView(it) }
-                setBackgroundColor(ContextCompat.getColor(context, R.color.blue))
+                setBackgroundColor(infoColor)
                 findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
-                    setTextColor(Color.WHITE)
+                    setTextColor(textColor)
                 }
             }
         }
@@ -180,3 +178,15 @@ class NetworkSnackBarUtil @Inject constructor() {
         }
     }
 }
+
+private val Snackbar.textColor get() =
+    context.getColor(R.color.white)
+
+private val Snackbar.warningColor get() =
+    context.getColor(R.color.warning)
+
+private val Snackbar.errorColor get() =
+    context.getColor(R.color.notification_error)
+
+private val Snackbar.infoColor get() =
+    context.getColor(R.color.blue)

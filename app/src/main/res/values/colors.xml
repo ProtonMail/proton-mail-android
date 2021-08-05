@@ -130,7 +130,7 @@
 	<!--lights-->
 	<color name="light_indicator">#6A6A9C</color>
 
-    <color name="warning">@color/red_orange</color>
+    <color name="warning">@color/orange</color>
 
     <color name="label_buttons">#9497ce</color>
     <!-- labels -->

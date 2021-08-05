@@ -64,8 +64,8 @@ import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.startSplashActivity
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -148,10 +148,11 @@ internal abstract class NavigationActivity : BaseActivity() {
     private var onDrawerClose: () -> Unit = {}
 
     protected open fun onAccountSwitched(switch: AccountStateManager.AccountSwitch) {
-        val message = switch.current?.username?.takeIf { switch.previous != null }?.let {
-            String.format(getString(R.string.signed_in_with), switch.current.username)
+        val currentUsername = switch.current?.username
+        if (switch.previous != null && currentUsername != null) {
+            val message = String.format(getString(R.string.signed_in_with), currentUsername)
+            Snackbar.make(drawerLayout, message, Snackbar.LENGTH_SHORT).show()
         }
-        message?.let { DialogUtils.showSignedInSnack(this@NavigationActivity, drawerLayout, it) }
     }
 
     protected abstract fun onInbox(type: Constants.DrawerOptionType)

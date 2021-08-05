@@ -36,6 +36,9 @@
         <item name="statusBarBackground">@color/status_bar</item>
         <item name="android:navigationBarColor">@color/nav_bar</item>
         <item name="android:statusBarColor">@color/transparent</item>
+
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
+        <item name="snackbarButtonStyle">@style/Widget.App.SnackbarButton</item>
     </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">
@@ -162,6 +165,33 @@
     <style name="Widget.App.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="backgroundTint">@color/background_norm</item>
     </style>
+    <!-- endregion -->
+
+    <!-- region Snackbar -->
+    <style name="Widget.App.Snackbar" parent="Widget.MaterialComponents.Snackbar">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Snackbar</item>
+        <item name="actionTextColorAlpha">1</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Snackbar" parent="">
+        <item name="colorSurface">@color/woodsmoke</item>
+        <item name="colorOnSurface">@color/woodsmoke</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Snackbar.Error" parent="">
+        <item name="colorSurface">?attr/colorError</item>
+        <item name="colorOnSurface">?attr/colorError</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Snackbar.Warning" parent="">
+        <item name="colorSurface">@color/warning</item>
+        <item name="colorOnSurface">@color/warning</item>
+    </style>
+
+    <style name="Widget.App.SnackbarButton" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <!-- endregion -->
 
     <style name="ProtonInput.PIN">
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
@@ -169,12 +199,7 @@
         <item name="android:textSize">@dimen/settings_pin_font_size</item>
         <item name="android:textColor">@color/cornflower_blue</item>
         <item name="android:background">@color/transparent</item>
-
-<!--        android:layout_marginBottom="-24dp"-->
     </style>
-    <!-- V4 -->
-
-    <!-- end region -->
     <!-- endregion -->
 
     <!-- region V3 -->
