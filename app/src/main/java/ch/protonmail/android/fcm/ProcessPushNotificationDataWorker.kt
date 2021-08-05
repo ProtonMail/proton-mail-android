@@ -48,6 +48,7 @@ import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.network.domain.session.SessionId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.deserialize
 import timber.log.Timber
@@ -186,7 +187,8 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
                 user.ringtone,
                 user.isNotificationVisibilityLockScreen,
                 message,
-                if (conversationModeEnabled(null)) message?.conversationId ?: "" else messageId,
+                if (conversationModeEnabled(null, UserId(userId.s))) message?.conversationId ?: ""
+                else messageId,
                 notificationBody,
                 sender,
                 isPrimaryUser

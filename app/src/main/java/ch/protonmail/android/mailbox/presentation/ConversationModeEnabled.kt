@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
@@ -49,12 +50,13 @@ class ConversationModeEnabled @Inject constructor(
 
     /**
      * When location is null, the location is ignored.
+     * When userId is null, use the current primary user id.
      */
-    operator fun invoke(location: MessageLocationType?): Boolean {
+    operator fun invoke(location: MessageLocationType?, userId: UserId? = null): Boolean {
         val isConversationViewMode: Boolean
 
         runBlocking {
-            isConversationViewMode = getMailSettings().viewMode?.enum == ViewMode.ConversationGrouping
+            isConversationViewMode = getMailSettings(userId).viewMode?.enum == ViewMode.ConversationGrouping
         }
 
         return featureFlagsManager.isChangeViewModeFeatureEnabled() &&
@@ -62,8 +64,8 @@ class ConversationModeEnabled @Inject constructor(
             !forceMessagesViewModeLocations.contains(location)
     }
 
-    private suspend fun getMailSettings(): MailSettings = withContext(dispatchers.Io) {
-        val userId = accountManager.getPrimaryUserId().filterNotNull().first()
-        mailSettingsRepository.getMailSettings(userId)
+    private suspend fun getMailSettings(userId: UserId?): MailSettings = withContext(dispatchers.Io) {
+        val primaryUserId = accountManager.getPrimaryUserId().filterNotNull().first()
+        mailSettingsRepository.getMailSettings(userId ?: primaryUserId)
     }
 }
