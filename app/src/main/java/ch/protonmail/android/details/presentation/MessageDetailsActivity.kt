@@ -461,13 +461,18 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private inner class ConversationUiModelObserver : Observer<ConversationUiModel> {
 
         override fun onChanged(conversation: ConversationUiModel) {
-            val lastNonDraftMessage = conversation.messages.last { it.isDraft().not() }
+            try {
+                val lastNonDraftMessage = conversation.messages.last { it.isDraft().not() }
+                setupLastMessageActionsListener(lastNonDraftMessage)
+                Timber.v("New decrypted message ${lastNonDraftMessage.messageId}")
+            } catch (exception: NoSuchElementException) {
+                Timber.d(exception, "Conversation contains only drafts, disabling the bottom action bar")
+                messageDetailsActionsView.isVisible = false
+            }
 
             setupToolbarOffsetListener(conversation.messages.count())
             displayToolbarData(conversation)
-            setupLastMessageActionsListener(lastNonDraftMessage)
 
-            Timber.v("New decrypted message ${lastNonDraftMessage.messageId}")
             viewModel.renderedFromCache = AtomicBoolean(true)
 
             Timber.v("setMessage conversations size: ${conversation.messages.size}")
