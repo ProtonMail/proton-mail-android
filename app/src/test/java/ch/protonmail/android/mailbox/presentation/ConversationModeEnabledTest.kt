@@ -62,6 +62,7 @@ class ConversationModeEnabledTest {
     private lateinit var conversationModeEnabled: ConversationModeEnabled
 
     private val userId = UserId("userId")
+    private val secondaryUserId = UserId("secondaryUserId")
 
     @BeforeTest
     fun setUp() {
@@ -181,6 +182,20 @@ class ConversationModeEnabledTest {
 
         // when
         val actual = conversationModeEnabled(null)
+
+        // then
+        assertEquals(true, actual)
+    }
+
+    @Test
+    fun conversationModeIsEnabledForSecondaryUserWhenSecondaryUserViewModeIsConversationMode() {
+        // given
+        every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
+        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { mailSettingsRepository.getMailSettings(secondaryUserId) } returns mailSettingsWithConversationViewMode()
+
+        // when
+        val actual = conversationModeEnabled(null, secondaryUserId)
 
         // then
         assertEquals(true, actual)

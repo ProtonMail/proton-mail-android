@@ -40,6 +40,7 @@ import ch.protonmail.android.data.local.model.Notification
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.PushNotification
 import ch.protonmail.android.fcm.model.PushNotificationData
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
@@ -47,6 +48,7 @@ import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.network.domain.session.SessionId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.deserialize
 import timber.log.Timber
@@ -70,7 +72,8 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
     private val userManager: UserManager,
     private val databaseProvider: DatabaseProvider,
     private val messageRepository: MessageRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val conversationModeEnabled: ConversationModeEnabled
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
@@ -166,7 +169,7 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
         val notificationsDatabase = databaseProvider.provideNotificationDao(userId)
         val notification = Notification(messageId, sender, notificationBody)
         val notifications = notificationsDatabase.insertNewNotificationAndReturnAll(notification)
-        val message = messageRepository.findMessage(userId, messageId)
+        val message = messageRepository.getMessage(userId, messageId)
 
         if (notifications.size > 1) {
             notificationServer.notifyMultipleUnreadEmail(
@@ -184,7 +187,8 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
                 user.ringtone,
                 user.isNotificationVisibilityLockScreen,
                 message,
-                messageId,
+                if (conversationModeEnabled(null, UserId(userId.s))) message?.conversationId ?: ""
+                else messageId,
                 notificationBody,
                 sender,
                 isPrimaryUser

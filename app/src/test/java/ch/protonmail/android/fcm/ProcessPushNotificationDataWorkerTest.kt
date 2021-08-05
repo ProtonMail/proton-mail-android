@@ -37,6 +37,7 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.PushNotification
 import ch.protonmail.android.fcm.model.PushNotificationData
 import ch.protonmail.android.fcm.model.PushNotificationSender
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
@@ -100,6 +101,8 @@ class ProcessPushNotificationDataWorkerTest {
 
     private val queueNetworkUtil: QueueNetworkUtil = mockk(relaxed = true)
 
+    private val conversationModeEnabled: ConversationModeEnabled = mockk(relaxed = true)
+
     private val processPushNotificationDataWorker: ProcessPushNotificationDataWorker = spyk(
         ProcessPushNotificationDataWorker(
             context,
@@ -110,7 +113,8 @@ class ProcessPushNotificationDataWorkerTest {
             userManager,
             databaseProvider,
             messageRepository,
-            sessionManager
+            sessionManager,
+            conversationModeEnabled
         ),
         recordPrivateCalls = true
     ) {
@@ -396,7 +400,7 @@ class ProcessPushNotificationDataWorkerTest {
                 every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.findMessage(testId, "messageId") } returns mockMessage
+            coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
             every {
                 notificationServer.notifySingleNewEmail(
                     any(),
@@ -460,7 +464,7 @@ class ProcessPushNotificationDataWorkerTest {
                 every { insertNewNotificationAndReturnAll(any()) } returns unreadNotifications
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.findMessage(testId, "messageId") } returns mockMessage
+            coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
             every { notificationServer.notifyMultipleUnreadEmail(any(), any(), any(), any(), any()) } just runs
 
             // when
@@ -494,7 +498,7 @@ class ProcessPushNotificationDataWorkerTest {
                 every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.findMessage(testId, "messageId") } returns mockMessage
+            coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
             every { notificationServer.notifySingleNewEmail(any(), any(), any(), any(), any(), any(), any()) } just runs
 
             val expectedResult = ListenableWorker.Result.success()
