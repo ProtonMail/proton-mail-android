@@ -31,8 +31,10 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.utils.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class GroupRecipientsViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository
 ) : ViewModel() {

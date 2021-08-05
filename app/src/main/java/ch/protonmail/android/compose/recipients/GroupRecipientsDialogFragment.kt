@@ -31,8 +31,8 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.ErrorEnum
@@ -43,7 +43,6 @@ import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import me.proton.core.presentation.ui.view.ProtonButton
 import me.proton.core.presentation.ui.view.ProtonCheckbox
-import javax.inject.Inject
 
 // region constants
 private const val ARGUMENT_RECIPIENTS = "extra_contact_group_recipients"
@@ -54,9 +53,7 @@ private const val ARGUMENT_LOCATION =
 @AndroidEntryPoint
 class GroupRecipientsDialogFragment : DialogFragment() {
 
-    @Inject
-    lateinit var groupRecipientsViewModelFactory: GroupRecipientsViewModelFactory
-    private lateinit var groupRecipientsViewModel: GroupRecipientsViewModel
+    private val groupRecipientsViewModel: GroupRecipientsViewModel by viewModels()
     private lateinit var groupRecipientsAdapter: GroupRecipientsAdapter
     private lateinit var groupRecipientsListener: IGroupRecipientsListener
 
@@ -74,8 +71,6 @@ class GroupRecipientsDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        groupRecipientsViewModel = ViewModelProviders.of(this, groupRecipientsViewModelFactory)
-            .get(GroupRecipientsViewModel::class.java)
 
         groupRecipientsViewModel.contactGroupError.observe(this) { event ->
             var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
