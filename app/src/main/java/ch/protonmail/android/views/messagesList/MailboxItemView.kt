@@ -90,13 +90,13 @@ class MailboxItemView @JvmOverloads constructor(
     }
 
     private fun getSenderText(mailboxUiItem: MailboxUiItem) =
-        if (isDraft(mailboxUiItem)) {
+        if (isDraftOrSentItem(mailboxUiItem)) {
             mailboxUiItem.recipients
         } else {
             mailboxUiItem.senderName
         }
 
-    private fun isDraft(mailboxUiItem: MailboxUiItem): Boolean {
+    private fun isDraftOrSentItem(mailboxUiItem: MailboxUiItem): Boolean {
         val messageLocation = mailboxUiItem.messageData?.location
             ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
         return Constants.MessageLocationType.fromInt(messageLocation) in arrayOf(
@@ -137,10 +137,10 @@ class MailboxItemView @JvmOverloads constructor(
         // Sender text can only be empty in drafts where we show recipients instead of senders
         if (senderText.isEmpty()) {
             sender_text_view.text = context.getString(R.string.empty_recipients)
-            sender_initial_view.bind(HYPHEN, isMultiSelectionMode)
+            sender_initial_view.bind(HYPHEN, mailboxUiItem.isDraft, isMultiSelectionMode)
         } else {
             sender_text_view.text = senderText
-            sender_initial_view.bind(senderText.substring(0, 1), isMultiSelectionMode)
+            sender_initial_view.bind(senderText.substring(0, 1), mailboxUiItem.isDraft, isMultiSelectionMode)
         }
 
         subject_text_view.text = mailboxUiItem.subject
