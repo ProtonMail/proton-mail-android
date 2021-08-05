@@ -444,6 +444,8 @@ class MailboxViewModel @Inject constructor(
                 .filter { it.id in conversationLabelsIds }
                 .toLabelChipUiModels()
 
+            val isDraft = conversationContainsSingleDraftMessage(conversation)
+
             MailboxUiItem(
                 itemId = conversation.id,
                 senderName = conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
@@ -457,9 +459,17 @@ class MailboxViewModel @Inject constructor(
                 messageData = null,
                 isDeleted = false,
                 labels = labelChipUiModels,
-                recipients = conversation.receivers.joinToString { it.name }
+                recipients = conversation.receivers.joinToString { it.name },
+                isDraft = isDraft
             )
         }
+    }
+
+    private fun conversationContainsSingleDraftMessage(
+        conversation: Conversation
+    ) = conversation.messagesCount == 1 && conversation.labels.any {
+        it.id == Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString() ||
+            it.id == Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString()
     }
 
     private fun getDisplayMessageCount(conversation: Conversation) =
@@ -501,7 +511,11 @@ class MailboxViewModel @Inject constructor(
             val labelChipUiModels = labels
                 .filter { it.id.s in message.allLabelIDs }
 
-            MailboxUiItem(
+            val messageLocation = message.locationFromLabel()
+            val isDraft = messageLocation == Constants.MessageLocationType.DRAFT
+                || messageLocation == Constants.MessageLocationType.ALL_DRAFT
+
+            val mailboxUiItem = MailboxUiItem(
                 itemId = requireNotNull(message.messageId),
                 senderName = senderName,
                 subject = requireNotNull(message.subject),
@@ -514,8 +528,10 @@ class MailboxViewModel @Inject constructor(
                 messageData = messageData,
                 isDeleted = message.deleted,
                 labels = labelChipUiModels,
-                recipients = message.toListStringGroupsAware
+                recipients = message.toListStringGroupsAware,
+                isDraft = isDraft
             )
+            mailboxUiItem
         }
     }
 

@@ -34,7 +34,8 @@ data class MailboxUiItem(
     val messageData: MessageData?,
     val isDeleted: Boolean,
     val labels: List<LabelChipUiModel>,
-    val recipients: String
+    val recipients: String,
+    val isDraft: Boolean
 )
 
 data class MessageData(
