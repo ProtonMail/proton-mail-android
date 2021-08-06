@@ -362,29 +362,14 @@ class DialogUtils {
             showUndo: Boolean
         ): Snackbar {
             val undoSnack = Snackbar.make(parent, message, Snackbar.LENGTH_LONG)
-            undoSnack.setColorWhite(context)
             if (showUndo) {
-                undoSnack.setBackgroundTint(context.getColor(R.color.interaction_strong))
-                undoSnack.setActionTextColor(context.getColor(R.color.text_inverted))
                 undoSnack.setAction(context.getString(R.string.undo)) {
-                    run {
-                        okListener.invoke(Unit)
-                    }
+                    okListener(Unit)
                 }
             }
             return undoSnack
         }
 
-        fun showSignedInSnack(context: Context, view: View, message: String) {
-            val snackBar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
-            snackBar.setColorWhite(context)
-            snackBar.show()
-        }
     }
 }
 
-fun Snackbar.setColorWhite(context: Context) {
-    val snackView = view
-    val tv = snackView.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
-    tv.setTextColor(context.getColor(R.color.text_inverted))
-}
