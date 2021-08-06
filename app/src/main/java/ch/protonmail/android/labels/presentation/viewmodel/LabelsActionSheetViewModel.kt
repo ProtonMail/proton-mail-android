@@ -242,11 +242,18 @@ class LabelsActionSheetViewModel @Inject constructor(
     }
 
     private fun isActionAppliedToConversation(location: Constants.MessageLocationType?) =
-        conversationModeEnabled(location) && !isApplyingActionToMessageWithinAConversation()
+        conversationModeEnabled(location) &&
+            !isApplyingActionToMessageWithinAConversation() &&
+            !isApplyingActionToMessageItemInDetailScreen()
 
     private fun isApplyingActionToMessageWithinAConversation(): Boolean {
         val actionsTarget = getActionsTargetInputArg()
         return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+    }
+
+    private fun isApplyingActionToMessageItemInDetailScreen(): Boolean {
+        val actionsTarget = getActionsTargetInputArg()
+        return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
     }
 
     private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(

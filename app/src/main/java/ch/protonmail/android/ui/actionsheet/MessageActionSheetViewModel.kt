@@ -355,12 +355,19 @@ class MessageActionSheetViewModel @Inject constructor(
         } else {
             location
         }
-        return conversationModeEnabled(locationForTypeDetermination) && !isApplyingActionToMessageWithinAConversation()
+        return conversationModeEnabled(locationForTypeDetermination) &&
+            !isApplyingActionToMessageWithinAConversation() &&
+            !isApplyingActionToMessageItemInDetailScreen()
     }
 
     private fun isApplyingActionToMessageWithinAConversation(): Boolean {
         val actionsTarget = getActionsTargetInputArg()
         return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+    }
+
+    private fun isApplyingActionToMessageItemInDetailScreen(): Boolean {
+        val actionsTarget = getActionsTargetInputArg()
+        return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
     }
 
     private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(

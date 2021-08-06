@@ -65,6 +65,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -687,7 +688,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyMarkUnReadOnInConversationMode() = runBlockingTest {
+    fun verifyMarkUnReadOnInConversationModeWhenConversationHasMoreThanOneMessage() = runBlockingTest {
         // given
         val inputMessageLocation = INBOX
         // messageId is defined as a field as it's needed at VM's instantiation time.
@@ -699,8 +700,25 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val userId = Id("userId3")
         every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation("conversationId"))
+        val conversationMessage = mockk<Message> {
+            every { messageId } returns "messageId4"
+            every { conversationId } returns "conversationId"
+            every { subject } returns "subject4"
+            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { isDownloaded } returns true
+            every { senderEmail } returns "sender@protonmail.com"
+            every { numAttachments } returns 1
+            every { time } returns 82374730L
+            every { decrypt(any(), any(), any()) } just Runs
+            every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+        }
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+        coEvery { messageRepository.findMessage(any(), "messageId5") } returns conversationMessage
 
         // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
         viewModel.markUnread()
 
         // then
@@ -719,6 +737,55 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun verifyMarkUnReadOnInConversationModeWhenConversationHasOneMessage() = runBlockingTest {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        every { savedStateHandle.get<String>(EXTRA_MAILBOX_LABEL_ID) } returns null
+        val userId = Id("userId3")
+        every { userManager.requireCurrentUserId() } returns userId
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage("conversationId"))
+        val conversationMessage = mockk<Message> {
+            every { messageId } returns "messageId4"
+            every { conversationId } returns "conversationId"
+            every { subject } returns "subject4"
+            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { isDownloaded } returns true
+            every { senderEmail } returns "sender@protonmail.com"
+            every { numAttachments } returns 1
+            every { time } returns 82374730L
+            every { decrypt(any(), any(), any()) } just Runs
+            every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+        }
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+        coEvery { messageRepository.markUnRead(listOf("messageId4")) } just runs
+
+        // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
+        viewModel.markUnread()
+
+        // then
+        coVerify(exactly = 0) {
+            changeConversationsReadStatus.invoke(
+                listOf(inputConversationId),
+                ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
+                UserId(userId.s),
+                inputMessageLocation,
+                inputMessageLocation.messageLocationTypeValue.toString()
+            )
+        }
+        coVerify(exactly = 1) {
+            messageRepository.markUnRead(listOf("messageId4"))
+        }
+    }
+
+    @Test
     fun verifyMarkUnReadInMessageMode() = runBlockingTest {
         // given
         val inputMessageLocation = INBOX
@@ -731,8 +798,16 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
         coEvery { messageRepository.markUnRead(any()) } just Runs
+        val sender = MessageSender("senderName", "senderEmail")
+        val message = Message(
+            messageId = inputConversationId,
+            isDownloaded = true,
+            sender = sender
+        )
+        coEvery { messageRepository.getMessage(userId, inputConversationId, true) } returns message
 
         // when
+        observeMessageFlow.tryEmit(message)
         viewModel.markUnread()
 
         // then
@@ -781,7 +856,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyMoveToTrashInConversationMode() {
+    fun verifyMoveToTrashInConversationModeWhenConversationHasMoreThanOneMessage() {
         // given
         val inputMessageLocation = INBOX
         // messageId is defined as a field as it's needed at VM's instantiation time.
@@ -794,8 +869,25 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val userId = UserId(userString)
         every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation("conversationId"))
+        val conversationMessage = mockk<Message> {
+            every { messageId } returns "messageId4"
+            every { conversationId } returns "conversationId"
+            every { subject } returns "subject4"
+            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { isDownloaded } returns true
+            every { senderEmail } returns "sender@protonmail.com"
+            every { numAttachments } returns 1
+            every { time } returns 82374730L
+            every { decrypt(any(), any(), any()) } just Runs
+            every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+        }
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+        coEvery { messageRepository.findMessage(any(), "messageId5") } returns conversationMessage
 
         // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
         viewModel.moveLastMessageToTrash()
 
         // then
@@ -807,6 +899,58 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             )
         }
         coVerify(exactly = 0) {
+            moveMessagesToFolder.invoke(
+                any(),
+                any(),
+                any()
+            )
+        }
+    }
+
+    @Test
+    fun verifyMoveToTrashInConversationModeWhenConversationHasOneMessage() {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        val userString = "userId3"
+        val id = Id(userString)
+        val userId = UserId(userString)
+        every { userManager.requireCurrentUserId() } returns id
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage("conversationId"))
+        val conversationMessage = mockk<Message> {
+            every { messageId } returns "messageId4"
+            every { conversationId } returns "conversationId"
+            every { subject } returns "subject4"
+            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { isDownloaded } returns true
+            every { senderEmail } returns "sender@protonmail.com"
+            every { numAttachments } returns 1
+            every { time } returns 82374730L
+            every { decrypt(any(), any(), any()) } just Runs
+            every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+            every { folderLocation } returns "folderLocation"
+        }
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+
+        // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
+        viewModel.moveLastMessageToTrash()
+
+        // then
+        coVerify(exactly = 0) {
+            moveConversationsToFolder(
+                listOf(inputConversationId),
+                userId,
+                Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+            )
+        }
+        coVerify(exactly = 1) {
             moveMessagesToFolder.invoke(
                 any(),
                 any(),
@@ -914,6 +1058,24 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             listOf(
                 buildMessageDomainModel(messageId, conversationId),
                 buildMessageDomainModel(secondMessageId, conversationId)
+            )
+        )
+    }
+
+    private fun buildConversationWithOneMessage(conversationId: String): Conversation {
+        val messageId = "messageId4"
+        return Conversation(
+            conversationId,
+            "Conversation subject",
+            listOf(),
+            listOf(),
+            1,
+            1,
+            1,
+            0,
+            listOf(inboxLabelContext()),
+            listOf(
+                buildMessageDomainModel(messageId, conversationId),
             )
         )
     }

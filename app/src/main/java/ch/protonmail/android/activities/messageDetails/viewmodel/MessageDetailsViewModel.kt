@@ -92,6 +92,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -273,8 +274,8 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
 
     fun markUnread() {
-        if (isConversationEnabled()) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
                 changeConversationsReadStatus(
                     listOf(messageOrConversationId),
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
@@ -282,9 +283,11 @@ internal class MessageDetailsViewModel @Inject constructor(
                     location,
                     mailboxLocationId ?: location.messageLocationTypeValue.toString()
                 )
+            } else {
+                lastMessage()?.let { message ->
+                    messageRepository.markUnRead(listOf(requireNotNull(message.messageId)))
+                }
             }
-        } else {
-            messageRepository.markUnRead(listOf(messageOrConversationId))
         }
     }
 
@@ -332,6 +335,10 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun isConversationEnabled() = conversationModeEnabled(location)
+
+    fun doesConversationHaveMoreThanOneMessage() = runBlocking {
+        conversationUiModel.first().messagesCount!! > 1
+    }
 
     private suspend fun loadConversationDetails(result: DataResult<Conversation>, userId: Id): ConversationUiModel? {
         return when (result) {
@@ -669,7 +676,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun moveLastMessageToTrash() {
         viewModelScope.launch {
-            if (isConversationEnabled()) {
+            if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
                 val primaryUserId = UserId(userManager.requireCurrentUserId().s)
                 moveConversationsToFolder(
                     listOf(messageOrConversationId),
@@ -679,7 +686,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             } else {
                 lastMessage()?.let { message ->
                     moveMessagesToFolder(
-                        listOf(messageOrConversationId),
+                        listOf(requireNotNull(message.messageId)),
                         Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
                         message.folderLocation ?: EMPTY_STRING
                     )
