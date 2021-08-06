@@ -476,8 +476,16 @@ class MailboxViewModel @Inject constructor(
         // Note for future: Get userId from Message (should contain it).
         val userId = userManager.currentUserId ?: return emptyList()
 
-        val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.findAllLabels(UserId(userId.s)).first()
+        val emails = messages.map { message -> message.senderEmail }.distinct()
+        val contacts = emails
+            .chunked(Constants.MAX_SQL_ARGUMENTS)
+            .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first()  }
+        val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { Id(it) }
+        val userIdCore = UserId(userId.s)
+        val labels = labelIds
+            .chunked(Constants.MAX_SQL_ARGUMENTS)
+            .flatMap { labelChunk -> labelRepository.findLabels(userIdCore, labelChunk).first() }
+            .toLabelChipUiModels()
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)
@@ -491,8 +499,7 @@ class MailboxViewModel @Inject constructor(
             )
 
             val labelChipUiModels = labels
-                .filter { it.id in message.allLabelIDs }
-                .toLabelChipUiModels()
+                .filter { it.id.s in message.allLabelIDs }
 
             MailboxUiItem(
                 requireNotNull(message.messageId),

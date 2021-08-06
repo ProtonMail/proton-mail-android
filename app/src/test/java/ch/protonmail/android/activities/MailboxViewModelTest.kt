@@ -200,11 +200,16 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
 
         coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+        coEvery { contactsRepository.findContactsByEmail(any()) } returns flowOf(emptyList())
 
         val allLabels = (0..11).map {
             Label(id = "$it", name = "label $it", color = EMPTY_STRING)
         }
         every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
+        every { labelRepository.findLabels(any(), any()) } answers {
+            val labelIds = arg<List<Id>>(1)
+            flowOf(allLabels.filter { label -> Id(label.id) in labelIds })
+        }
 
         every { userManager.currentUserId } returns currentUserId
     }
@@ -312,7 +317,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 subject = "subject"
             }
         )
-        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
+        coEvery {
+            contactsRepository.findContactsByEmail(match { emails -> emails.contains(senderEmailAddress) })
+        } returns flowOf(
             listOf(ContactEmail("contactId", senderEmailAddress, contactName))
         )
         mockk<MessageUtils> {
@@ -351,7 +358,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             assertEquals(loadingState, expectItem())
             messagesResponseChannel.send(GetMessagesResult.Success(messages))
             assertEquals(expected, expectItem())
-            coVerify { contactsRepository.findAllContactEmails() }
+            coVerify { contactsRepository.findContactsByEmail(listOf(senderEmailAddress)) }
         }
     }
 
@@ -1027,5 +1034,4 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         labels = emptyList(),
         recipients = ""
     )
-
 }
