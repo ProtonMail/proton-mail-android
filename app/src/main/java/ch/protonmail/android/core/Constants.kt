@@ -28,6 +28,7 @@ object Constants {
     // region Urls
     const val API_HOST = "api.protonmail.ch"
     const val BASE_URL = "https://$API_HOST"
+    const val DUMMY_URL_PREFIX = "http://androidlinksfix.protonmail.com"
 
     // Mail domains
     const val MAIL_DOMAIN_CH = "protonmail.ch"
