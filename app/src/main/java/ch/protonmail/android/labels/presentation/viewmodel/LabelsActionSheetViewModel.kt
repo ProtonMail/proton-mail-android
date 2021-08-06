@@ -251,6 +251,6 @@ class LabelsActionSheetViewModel @Inject constructor(
 
     private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(
         LabelsActionSheet.EXTRA_ARG_ACTION_TARGET
-    ) ?: ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+    ) ?: ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
 
 }
