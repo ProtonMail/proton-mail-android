@@ -25,6 +25,7 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.storage.MessageBodyClearingService
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
@@ -38,14 +39,15 @@ class ClearUserMessagesData @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(userId: Id) {
+    suspend operator fun invoke(userId: UserId) {
 
-        val attachmentMetadataDao = runCatching { databaseProvider.provideAttachmentMetadataDao(userId) }.getOrNull()
-        val messageDao = runCatching { databaseProvider.provideMessageDao(userId) }.getOrNull()
+        val legacyUserId = Id(userId.id)
+        val attachmentMetadataDao = runCatching { databaseProvider.provideAttachmentMetadataDao(legacyUserId) }.getOrNull()
+        val messageDao = runCatching { databaseProvider.provideMessageDao(legacyUserId) }.getOrNull()
         //  TODO remove this dependency and use the ConversationRepository.clear()
         //  right now it creates a circular dependency,
         //  so this needs to happen when this use-case is refactored to use only repositories
-        val conversationDao = runCatching { databaseProvider.provideConversationDao(userId) }.getOrNull()
+        val conversationDao = runCatching { databaseProvider.provideConversationDao(legacyUserId) }.getOrNull()
 
         // Ensure that all the queries run on Io thread, as some are still blocking calls
         withContext(dispatchers.Io) {
@@ -60,7 +62,7 @@ class ClearUserMessagesData @Inject constructor(
             }
         }
 
-        startCleaningServices(userId)
+        startCleaningServices(legacyUserId)
     }
 
     private fun startCleaningServices(userId: Id) {
