@@ -188,6 +188,8 @@
     <color name="selectable_color">#e7e5fb</color>
 
     <color name="hyperlink_color">#0000EE</color>
+
+    <color name="spam_score">@color/red_orange</color>
     <!-- endregion -->
 
 </resources>
