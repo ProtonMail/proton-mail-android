@@ -199,7 +199,7 @@ public class SendPreferencesFactory {
         }
         RawProperty encryptFlag = VCardUtil.findProperty(signed, "x-pm-encrypt", group);
         RawProperty signFlag = VCardUtil.findProperty(signed, "x-pm-sign", group);
-        RawProperty mimeProp = VCardUtil.findProperty(signed, "x-pm-mime", group);
+        RawProperty mimeProp = VCardUtil.findProperty(signed, "x-pm-mimetype", group);
 
         List<String> contactKeys = getKeys(signed, group);
         // primaryKey is null when sending cleartext or key pinning is enabled but no pinned key is allowed for sending
