@@ -260,7 +260,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private fun getMessageFlow(userId: UserId): Flow<ConversationUiModel?> =
         messageRepository.observeMessage(userId, messageOrConversationId)
-            .filterNotNull()
             .distinctUntilChanged()
             .map {
                 loadMessageDetails(it)
@@ -311,8 +310,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }.flowOn(dispatchers.Io)
 
-    private suspend fun loadMessageDetails(message: Message): ConversationUiModel? {
-        val messageWithDetails = if (!message.isDownloaded) {
+    private suspend fun loadMessageDetails(message: Message?): ConversationUiModel? {
+
+        val messageWithDetails = if (message == null || !message.isDownloaded) {
             Timber.v("Message is not downloaded, trying to fetch it")
             val userId = userManager.requireCurrentUserId()
             messageRepository.getMessage(userId, messageOrConversationId, true)
