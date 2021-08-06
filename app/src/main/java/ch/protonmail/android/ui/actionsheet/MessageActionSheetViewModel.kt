@@ -74,7 +74,7 @@ class MessageActionSheetViewModel @Inject constructor(
         actionsTarget: ActionSheetTarget
     ) {
         val moveSectionState = computeMoveSectionState(actionsTarget, messageLocation, messageIds)
-        mutableStateFlow.value = moveSectionState
+        mutableStateFlow.value = MessageActionSheetState.Data(moveSectionState)
     }
 
     fun showLabelsManager(

@@ -419,7 +419,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -440,7 +440,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -461,7 +461,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -482,7 +482,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -503,7 +503,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -524,7 +524,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -545,7 +545,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -566,7 +566,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -587,7 +587,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -608,7 +608,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
     @Test
@@ -629,7 +629,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(expected, viewModel.stateFlow.value)
+        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
     }
 
 }

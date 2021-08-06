@@ -25,6 +25,10 @@ import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 sealed class MessageActionSheetState {
     object Initial : MessageActionSheetState()
 
+    data class Data(
+        val moveSectionState: MoveSectionState
+    ) : MessageActionSheetState()
+
     data class MoveSectionState(
         val mailboxItemIds: List<String>,
         val messageLocation: Constants.MessageLocationType,
@@ -34,6 +38,6 @@ sealed class MessageActionSheetState {
         val showMoveToArchiveAction: Boolean,
         val showMoveToSpamAction: Boolean,
         val showDeleteAction: Boolean
-    ) : MessageActionSheetState()
+    )
 
 }

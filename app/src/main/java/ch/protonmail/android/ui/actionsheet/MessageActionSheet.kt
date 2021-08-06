@@ -142,8 +142,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private fun updateViewState(state: MessageActionSheetState, binding: FragmentMessageActionSheetBinding) {
         when (state) {
-            is MessageActionSheetState.MoveSectionState -> {
-                setupMoveSectionState(binding, state)
+            is MessageActionSheetState.Data -> {
+                setupMoveSectionState(binding, state.moveSectionState)
             }
             MessageActionSheetState.Initial -> {
             }
