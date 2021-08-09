@@ -47,11 +47,11 @@ import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
-import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
@@ -445,19 +445,19 @@ class MailboxViewModel @Inject constructor(
                 .toLabelChipUiModels()
 
             MailboxUiItem(
-                conversation.id,
-                conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
-                conversation.subject,
-                lastMessageTimeMs,
-                conversation.attachmentsCount > 0,
-                conversation.labels.any { it.id == STARRED_LABEL_ID },
-                conversation.unreadCount == 0,
-                conversation.expirationTime,
-                getDisplayMessageCount(conversation),
-                null,
-                false,
-                labelChipUiModels,
-                conversation.receivers.joinToString { it.name }
+                itemId = conversation.id,
+                senderName = conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
+                subject = conversation.subject,
+                lastMessageTimeMs = lastMessageTimeMs,
+                hasAttachments = conversation.attachmentsCount > 0,
+                isStarred = conversation.labels.any { it.id == STARRED_LABEL_ID },
+                isRead = conversation.unreadCount == 0,
+                expirationTime = conversation.expirationTime,
+                messagesCount = getDisplayMessageCount(conversation),
+                messageData = null,
+                isDeleted = false,
+                labels = labelChipUiModels,
+                recipients = conversation.receivers.joinToString { it.name }
             )
         }
     }
@@ -502,28 +502,33 @@ class MailboxViewModel @Inject constructor(
                 .filter { it.id.s in message.allLabelIDs }
 
             MailboxUiItem(
-                requireNotNull(message.messageId),
-                senderName,
-                requireNotNull(message.subject),
-                message.timeMs,
-                message.numAttachments > 0,
-                message.isStarred ?: false,
-                message.isRead,
-                message.expirationTime,
-                null,
-                messageData,
-                message.deleted,
-                labelChipUiModels,
-                message.toListStringGroupsAware
+                itemId = requireNotNull(message.messageId),
+                senderName = senderName,
+                subject = requireNotNull(message.subject),
+                lastMessageTimeMs = message.timeMs,
+                hasAttachments = message.numAttachments > 0,
+                isStarred = message.isStarred ?: false,
+                isRead = message.isRead,
+                expirationTime = message.expirationTime,
+                messagesCount = null,
+                messageData = messageData,
+                isDeleted = message.deleted,
+                labels = labelChipUiModels,
+                recipients = message.toListStringGroupsAware
             )
         }
     }
 
-    private fun getSenderDisplayName(message: Message, contacts: List<ContactEmail>) =
-        getCorrespondentDisplayName(
-            Correspondent(message.senderName ?: "", message.senderEmail),
+    private fun getSenderDisplayName(message: Message, contacts: List<ContactEmail>): String {
+        val name = message.senderDisplayName?.takeIfNotBlank()
+            ?: message.senderName?.takeIfNotBlank()
+            ?: message.senderEmail
+
+        return getCorrespondentDisplayName(
+            Correspondent(name, message.senderEmail),
             contacts
         )
+    }
 
     private fun getCorrespondentDisplayName(
         correspondent: Correspondent,
@@ -531,15 +536,9 @@ class MailboxViewModel @Inject constructor(
     ): String {
         val senderNameFromContacts = contacts.find { correspondent.address == it.email }?.name
 
-        if (!senderNameFromContacts.isNullOrEmpty()) {
-            return senderNameFromContacts
-        }
-
-        if (correspondent.name.isNotEmpty()) {
-            return correspondent.name
-        }
-
-        return correspondent.address
+        return senderNameFromContacts?.takeIfNotBlank()?.takeIf { it != correspondent.address }
+            ?: correspondent.name.takeIfNotBlank()
+            ?: correspondent.address
     }
 
     private fun getAllLabelsByIds(labelIds: List<String>) =
