@@ -1,22 +1,26 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- *
+ * 
  * This file is part of ProtonMail.
- *
+ * 
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.views;
+
+import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MAIL_TO;
+import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_BODY;
+import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_TITLE;
 
 import android.app.Activity;
 import android.content.Context;
@@ -48,10 +52,6 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
-
-import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MAIL_TO;
-import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_BODY;
-import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_TITLE;
 
 public class PMWebViewClient extends WebViewClient {
 
@@ -85,7 +85,8 @@ public class PMWebViewClient extends WebViewClient {
     }
 
     @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+    public boolean shouldOverrideUrlLoading(WebView view, String url1) {
+        String url = url1.replaceFirst(Constants.DUMMY_URL_PREFIX, "");
 
         if (url.startsWith("mailto:")) {
             composeMessageWithMailToData(url, view.getContext().getApplicationContext());

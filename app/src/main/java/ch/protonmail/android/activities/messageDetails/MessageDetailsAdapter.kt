@@ -44,6 +44,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleListener
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchListener
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
@@ -62,7 +63,7 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
-import me.proton.core.util.kotlin.EMPTY_STRING
+import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -328,11 +329,11 @@ internal class MessageDetailsAdapter(
 
         private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String) {
             webView.loadDataWithBaseURL(
-                null,
-                htmlContent ?: EMPTY_STRING,
+                Constants.DUMMY_URL_PREFIX,
+                htmlContent,
                 "text/html",
-                Charsets.UTF_8.name(),
-                EMPTY_STRING
+                HTTP.UTF_8,
+                ""
             )
         }
 
