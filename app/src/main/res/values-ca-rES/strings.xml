@@ -830,7 +830,7 @@
     <string name="settings_background_sync">Sincronitzar en segon pla</string>
     <string name="settings_auto_show_images">Mostrar les imatges remotes automàticament</string>
     <string name="settings_auto_show_embedded_images">Mostrar automàticament les imatges incrustades</string>
-    <string name="settings_prevent_taking_screenshots">Prevenciò de captures de pantalla</string>
+    <string name="settings_prevent_taking_screenshots">Evitar captures de pantalla</string>
     <string name="hyperlink_confirmation">Sol·licitar enllaç de confirmació</string>
     <string name="labels_and_folders">Etiquetes &amp; Carpetes </string>
     <string name="folders">Carpetes</string>

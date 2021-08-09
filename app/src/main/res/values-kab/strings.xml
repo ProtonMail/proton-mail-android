@@ -969,9 +969,9 @@
     <string name="inbox_this_folder_is_empty">Akaram-agi d ilem</string>
     <string name="inbox_nothing_to_see_here">Ulac acu ara twaliḍ dagi</string>
     <string name="inbox_could_not_retrieve_messages">Ur izmir ara ad d-yawi iznan-ik</string>
-    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
+    <string name="inbox_pull_down_to_retry">Ttxil ẓuɣer d akessar akken ad talseḍ aɛraḍ</string>
     <string name="edit_draft">Ẓreg arewway</string>
     <string name="primary_user_error">Ulamek aleqqem n uswir, tella-d tuccḍa.</string>
     <string name="details_show_history">Sken amazray</string>
-    <string name="could_not_complete_action">Could not complete the action</string>
+    <string name="could_not_complete_action">D awezd awezɣi ad temmed tigawt</string>
 </resources>
