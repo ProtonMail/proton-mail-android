@@ -539,12 +539,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun setupLastMessageActionsListener(message: Message) {
-        val actionSheetTarget = if (viewModel.isConversationEnabled()) {
+        val actionSheetTarget = if (viewModel.isConversationEnabled() && viewModel.doesConversationHaveMoreThanOneMessage()) {
             ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
         } else {
             ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
         }
-        val id = if (viewModel.isConversationEnabled()) {
+        val id = if (viewModel.isConversationEnabled() && viewModel.doesConversationHaveMoreThanOneMessage()) {
             messageOrConversationId
         } else {
             message.messageId ?: messageOrConversationId

@@ -256,7 +256,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
-        } returns ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
         coEvery { changeConversationsStarredStatus.invoke(listOf(conversationId), userId, unstarAction) } returns ConversationsActionResult.Success
 
         // when
@@ -283,7 +283,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
-        } returns ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
         coEvery {
             changeConversationsReadStatus.invoke(
                 listOf(conversationId),
