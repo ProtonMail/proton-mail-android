@@ -31,24 +31,21 @@ import androidx.appcompat.app.ActionBar;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.domain.entity.user.User;
-import ch.protonmail.android.jobs.ReportBugsJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
-import ch.protonmail.android.utils.notifier.UserNotifier;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
+import ch.protonmail.android.worker.ReportBugsWorker;
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class ReportBugsActivity extends BaseActivity {
-    @BindView(R.id.bug_description_title)
-    EditText mBugDescriptionTitle;
-
-    @BindView(R.id.bug_description)
-    EditText mBugDescription;
-
     @Inject
-    protected UserNotifier userNotifier;
+    public ReportBugsWorker.Enqueuer reportBugsWorker;
+
+    private EditText mBugDescriptionTitle;
+    private EditText mBugDescription;
 
     @Override
     protected int getLayoutId() {
@@ -63,6 +60,8 @@ public class ReportBugsActivity extends BaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.report_bugs);
         }
+        mBugDescriptionTitle = findViewById(R.id.bug_description_title);
+        mBugDescription = findViewById(R.id.bug_description);
 
         mBugDescription.addTextChangedListener(new TextWatcher() {
             @Override
@@ -125,7 +124,7 @@ public class ReportBugsActivity extends BaseActivity {
                 User user = mUserManager.requireCurrentUser();
                 String username = user.getName().getS();
                 String email = user.getAddresses().getPrimary().getEmail().getS();
-                mJobManager.addJobInBackground(new ReportBugsJob(OSName, OSVersion, client, appVersionName, title, description, username, email, userNotifier));
+                reportBugsWorker.enqueue(OSName, OSVersion, client, appVersionName, title, description, username, email);
                 TextExtensions.showToast(this, R.string.sending_report, Toast.LENGTH_SHORT);
                 saveLastInteraction();
                 finish();
