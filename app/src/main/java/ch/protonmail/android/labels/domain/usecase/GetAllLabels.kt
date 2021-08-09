@@ -21,7 +21,7 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.labels.presentation.mapper.LabelsMapper
+import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 class GetAllLabels @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val labelsMapper: LabelsMapper
+    private val labelsMapper: LabelActionItemUiModelMapper
 ) {
 
     suspend operator fun invoke(

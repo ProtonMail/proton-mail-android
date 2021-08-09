@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.labels.presentation.mapper
 
-import android.graphics.Color
+import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
@@ -28,27 +28,32 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import timber.log.Timber
 import javax.inject.Inject
 
-class LabelsMapper @Inject constructor() {
+/**
+ * A Mapper of [LabelActonItemUiModel]
+ *
+ * @property useFolderColor whether the user enabled the settings for use Colors for Folders.
+ *  TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`
+ */
+class LabelActionItemUiModelMapper @Inject constructor(
+    context: Context
+) {
+    private val useFolderColor: Boolean = true
+
+    private val defaultIconColor = context.getColor(R.color.icon_norm)
 
     fun mapLabelToUi(
         label: Label,
         currentLabelsSelection: List<String>,
         labelsSheetType: LabelsActionSheet.Type
     ): LabelActonItemUiModel {
-        val iconRes = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
-            R.drawable.circle_labels_selection
-        } else {
-            R.drawable.ic_folder
+
+        val iconRes = when (labelsSheetType) {
+            LabelsActionSheet.Type.LABEL -> R.drawable.circle_labels_selection
+            LabelsActionSheet.Type.FOLDER ->
+                if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
         }
 
-        // TODO if (labelsSheetType == LabelsActionSheet.Type.FOLDER && setting from the net MailSettings.EnableFolderColor != true)
-        //  Color.BLACK else label.color
-        val colorInt = try {
-            label.color.toColorInt()
-        } catch (exc: IllegalArgumentException) {
-            Timber.e(exc, "Unknown label color: ${label.color}")
-            Color.GRAY
-        }
+        val colorInt = if (useFolderColor) label.color.toColorIntOrDefault() else defaultIconColor
 
         val isChecked = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
             currentLabelsSelection.contains(label.id)
@@ -65,5 +70,12 @@ class LabelsMapper @Inject constructor() {
             isChecked = isChecked,
             labelType = labelsSheetType.typeInt
         )
+    }
+
+    private fun String.toColorIntOrDefault(): Int =try {
+        toColorInt()
+    } catch (exc: IllegalArgumentException) {
+        Timber.e(exc, "Unknown label color: $this")
+        defaultIconColor
     }
 }

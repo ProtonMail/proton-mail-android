@@ -19,12 +19,14 @@
 
 package ch.protonmail.android.labels.presentation.mapper
 
+import android.content.Context
 import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlin.test.AfterTest
@@ -32,11 +34,15 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class LabelsMapperTest {
+class LabelActionItemUiModelMapperTest {
 
-    private val mapper = LabelsMapper()
-
+    private val defaultColorInt = 890
     private val testColorInt = 123
+
+    private val context: Context = mockk {
+        every { getColor(any()) } returns defaultColorInt
+    }
+    private val mapper = LabelActionItemUiModelMapper(context)
 
     @BeforeTest
     fun setUp() {
@@ -88,7 +94,7 @@ class LabelsMapperTest {
         val sheetType = LabelsActionSheet.Type.FOLDER
         val expected = LabelActonItemUiModel(
             labelId1,
-            R.drawable.ic_folder,
+            R.drawable.ic_folder_filled,
             labelName1,
             null,
             testColorInt,

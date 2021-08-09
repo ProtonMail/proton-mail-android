@@ -35,8 +35,6 @@ import javax.inject.Inject
  *
  * @property useFolderColor whether the user enabled the settings for use Colors for Folders.
  *  TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`
- *
- * @author Davide Farella
  */
 internal class DrawerLabelUiModelMapper @Inject constructor(
     private val context: Context
