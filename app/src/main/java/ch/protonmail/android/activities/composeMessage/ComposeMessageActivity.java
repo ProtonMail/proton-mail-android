@@ -18,6 +18,12 @@
  */
 package ch.protonmail.android.activities.composeMessage;
 
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -167,12 +173,6 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
-
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
 @AndroidEntryPoint
 public class ComposeMessageActivity
@@ -673,7 +673,7 @@ public class ComposeMessageActivity
     @NonNull
     private Function0<Unit> onConnectivityCheckRetry() {
         return () -> {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, binding.composerBottomAppBar.getId()).show();
             composeMessageViewModel.checkConnectivityDelayed();
             return null;
         };
@@ -688,7 +688,7 @@ public class ComposeMessageActivity
                         mUserManager.requireCurrentLegacyUser(),
                         this,
                         null,
-                        null,
+                        binding.composerBottomAppBar.getId(),
                         connectivity == Constants.ConnectionState.NO_INTERNET
                 ).show();
             } else {
@@ -1864,6 +1864,7 @@ public class ComposeMessageActivity
                     if (!composeMessageViewModel.isPaidUser() && MessageUtils.INSTANCE.isPmMeAddress(email)) {
                         fromAddressSpinner.setSelection(mSelectedAddressPosition);
                         Snackbar snack = Snackbar.make(binding.rootLayout, String.format(getString(R.string.error_can_not_send_from_this_address), email), Snackbar.LENGTH_LONG);
+                        snack.setAnchorView(binding.composerBottomAppBar);
                         View snackView = snack.getView();
                         TextView tv = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
                         tv.setTextColor(Color.WHITE);

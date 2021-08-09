@@ -140,8 +140,6 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
-import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
-import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -322,6 +320,7 @@ internal class MailboxActivity :
                 getString(R.string.customize_swipe_actions),
                 Snackbar.LENGTH_INDEFINITE
             ).apply {
+                anchorView = mailboxActionsView
                 view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
                     ?.setTextColor(getColor(R.color.text_inverted))
                 setAction(getString(R.string.settings)) {
@@ -683,7 +682,7 @@ internal class MailboxActivity :
 
     private fun onConnectivityCheckRetry() {
         mConnectivitySnackLayout?.let {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(it).show()
+            networkSnackBarUtil.getCheckingConnectionSnackBar(it, mailboxActionsView.id).show()
         }
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
@@ -949,7 +948,8 @@ internal class MailboxActivity :
                     user = userManager.requireCurrentLegacyUser(),
                     netConfiguratorCallback = this@MailboxActivity,
                     onRetryClick = ::onConnectivityCheckRetry,
-                    isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
+                    isOffline = connectivity == Constants.ConnectionState.NO_INTERNET,
+                    anchorViewId = mailboxActionsView.id
                 ).show()
             }
         }
@@ -1113,7 +1113,7 @@ internal class MailboxActivity :
                     resources.getQuantityString(R.plurals.action_move_to_trash, messageIds.size),
                     { },
                     false
-                )
+                ).apply { anchorView = mailboxActionsView }
                 undoSnack!!.show()
                 mailboxViewModel.moveToFolder(
                     messageIds,
@@ -1466,7 +1466,7 @@ internal class MailboxActivity :
                                 findViewById(R.id.drawer_layout),
                                 getString(R.string.new_message_arrived),
                                 Snackbar.LENGTH_LONG
-                            )
+                            ).apply { anchorView = mailboxActionsView }
                         val view = newMessageSnack.view
                         val tv =
                             view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
@@ -1563,7 +1563,7 @@ internal class MailboxActivity :
                     mailboxAdapter.notifyDataSetChanged()
                 },
                 true
-            )
+            ).apply { anchorView = mailboxActionsView }
             if (!(swipeAction == SwipeAction.TRASH && currentMailboxLocation == MessageLocationType.DRAFT)) {
                 undoSnack!!.show()
             }
