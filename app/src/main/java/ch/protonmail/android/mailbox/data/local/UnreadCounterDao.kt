@@ -19,5 +19,35 @@
 
 package ch.protonmail.android.mailbox.data.local
 
-class UnreadCounterDao {
+import androidx.room.Dao
+import androidx.room.Query
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.COLUMN_TYPE
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.COLUMN_USER_ID
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.TABLE_NAME
+import kotlinx.coroutines.flow.Flow
+import me.proton.core.data.room.db.BaseDao
+import me.proton.core.domain.entity.UserId
+
+@Dao
+internal abstract class UnreadCounterDao : BaseDao<UnreadCounterDatabaseModel>() {
+
+    fun observeMessagesUnreadCounters(userId: UserId): Flow<List<UnreadCounterDatabaseModel>> =
+        observeUnreadCounters(userId, UnreadCounterDatabaseModel.Type.MESSAGES)
+
+    fun observeConversationsUnreadCounters(userId: UserId): Flow<List<UnreadCounterDatabaseModel>> =
+        observeUnreadCounters(userId, UnreadCounterDatabaseModel.Type.CONVERSATIONS)
+
+    @Query(
+        """
+            SELECT * FROM $TABLE_NAME
+            WHERE 
+              $COLUMN_USER_ID = :userId AND
+              $COLUMN_TYPE = :type
+        """
+    )
+    abstract fun observeUnreadCounters(
+        userId: UserId,
+        type: UnreadCounterDatabaseModel.Type
+    ): Flow<List<UnreadCounterDatabaseModel>>
 }

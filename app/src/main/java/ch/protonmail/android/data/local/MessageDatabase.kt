@@ -23,33 +23,44 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.AttachmentTypesConverter
+import ch.protonmail.android.data.local.model.CommonTypeConverters
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
 
 @Database(
     entities = [
         Attachment::class,
+        ConversationDatabaseModel::class,
         Message::class,
         Label::class,
-        ConversationDatabaseModel::class
+        UnreadCounterDatabaseModel::class
     ],
     version = 10
 )
 @TypeConverters(
     value = [
-        MessagesTypesConverter::class,
+        CommonTypeConverters::class,
+
         AttachmentTypesConverter::class,
+        MessagesTypesConverter::class,
         ConversationTypesConverter::class
     ]
 )
-abstract class MessageDatabase : RoomDatabase() {
+internal abstract class MessageDatabase : RoomDatabase() {
 
-    abstract fun getDao(): MessageDao
+    @Deprecated("Use getMessageDao", ReplaceWith("getMessageDao()"))
+    fun getDao(): MessageDao =
+        getMessageDao()
+
+    abstract fun getMessageDao(): MessageDao
     abstract fun getConversationDao(): ConversationDao
+    abstract fun getUnreadCounterDao(): UnreadCounterDao
 
     companion object Factory : DatabaseFactory<MessageDatabase>(
         MessageDatabase::class,

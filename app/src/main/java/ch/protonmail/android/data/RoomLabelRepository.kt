@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
-class RoomLabelRepository @Inject constructor(
+internal class RoomLabelRepository @Inject constructor(
     private val context: Context,
     private val messageDatabaseFactory: MessageDatabase.Factory,
     private val messageDao: MessageDao
