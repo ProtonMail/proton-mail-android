@@ -24,20 +24,25 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import ch.protonmail.android.R
-import ch.protonmail.android.activities.dialogs.AbstractDialogFragment
+import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.databinding.DialogFragmentGroupRecipientsBinding
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_fragment_group_recipients.*
-import javax.inject.Inject
+import me.proton.core.presentation.ui.view.ProtonButton
+import me.proton.core.presentation.ui.view.ProtonCheckbox
 
 // region constants
 private const val ARGUMENT_RECIPIENTS = "extra_contact_group_recipients"
@@ -46,20 +51,18 @@ private const val ARGUMENT_LOCATION =
 // endregion
 
 @AndroidEntryPoint
-class GroupRecipientsDialogFragment : AbstractDialogFragment() {
+class GroupRecipientsDialogFragment : DialogFragment() {
 
-    @Inject
-    lateinit var groupRecipientsViewModelFactory: GroupRecipientsViewModelFactory
-    private lateinit var groupRecipientsViewModel: GroupRecipientsViewModel
+    private val groupRecipientsViewModel: GroupRecipientsViewModel by viewModels()
     private lateinit var groupRecipientsAdapter: GroupRecipientsAdapter
     private lateinit var groupRecipientsListener: IGroupRecipientsListener
 
-    override fun onBackPressed() {
-        CANCELED = true
-        dismiss()
-    }
-
-    override fun getLayoutResourceId(): Int = R.layout.dialog_fragment_group_recipients
+    private lateinit var groupIconImageView: ImageView
+    private lateinit var groupNameTextView: TextView
+    private lateinit var selectAllCheckbox: ProtonCheckbox
+    private lateinit var recipientsRecyclerView: RecyclerView
+    private lateinit var applyButton: ProtonButton
+    private lateinit var cancelButton: ProtonButton
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -68,27 +71,16 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        groupRecipientsViewModel = ViewModelProviders.of(this, groupRecipientsViewModelFactory)
-            .get(GroupRecipientsViewModel::class.java)
 
-        groupRecipientsViewModel.contactGroupResult.observe(
-            this,
-            {
+        groupRecipientsViewModel.contactGroupError.observe(this) { event ->
+            var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
+            if (event != null) {
+                error = event.getContentIfNotHandled()
             }
-        )
-
-        groupRecipientsViewModel.contactGroupError.observe(
-            this,
-            { event ->
-                var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
-                if (event != null) {
-                    error = event.getContentIfNotHandled()
-                }
-                if (error != null) {
-                    context?.showToast(error.getMessage(context!!))
-                }
+            if (error != null) {
+                context?.showToast(error.getMessage(context!!))
             }
-        )
+        }
 
         val args = arguments
         args?.let {
@@ -99,10 +91,68 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = DialogFragmentGroupRecipientsBinding.inflate(inflater)
+
+        with(binding) {
+            groupIconImageView = dialogGroupRecipientsGroupIconImageView
+            groupNameTextView = dialogGroupRecipientsGroupNameTextView
+            selectAllCheckbox = dialogGroupRecipientsSelectAllCheckbox
+            recipientsRecyclerView = dialogGroupRecipientsRecyclerView
+            applyButton = dialogGroupRecipientsApplyButton
+            cancelButton = dialogGroupRecipientsCancelButton
+        }
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initUi()
+        with(recipientsRecyclerView) {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            adapter = groupRecipientsAdapter
+        }
+        groupNameTextView.text = groupRecipientsViewModel.getTitle()
+        groupIconImageView.colorFilter = PorterDuffColorFilter(
+            groupRecipientsViewModel.getGroupColor(),
+            PorterDuff.Mode.SRC_IN
+        )
+
+        selectAllCheckbox.setOnClickListener {
+            val allMessageRecipients = ArrayList<MessageRecipient>()
+            if (selectAllCheckbox.isChecked) {
+                for (email in groupRecipientsAdapter.getData()) {
+                    email.isSelected = true
+                    allMessageRecipients.add(email)
+                }
+            } else {
+                for (email in groupRecipientsAdapter.getData()) {
+                    email.isSelected = false
+                    allMessageRecipients.add(email)
+                }
+            }
+            groupRecipientsAdapter.setData(allMessageRecipients)
+        }
+
+        applyButton.setOnClickListener {
+            CANCELED = false
+            dismiss()
+        }
+        cancelButton.setOnClickListener {
+            CANCELED = true
+            dismiss()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
 
-        val windowManager = context!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val params = dialog!!.window!!.attributes
@@ -110,9 +160,9 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         dialog!!.window!!.setLayout(params.width, params.height)
     }
 
-    override fun initUi(rootView: View?) {
+    private fun initUi() {
         groupRecipientsAdapter =
-            GroupRecipientsAdapter(context!!, groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
+            GroupRecipientsAdapter(groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
         groupRecipientsViewModel.contactGroupResult.observe(
             this,
             Observer {
@@ -136,61 +186,16 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
             }
         )
 
-        groupRecipientsViewModel.contactGroupError.observe(
-            this,
-            Observer { event ->
-                var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
-                if (event != null) {
-                    error = event.getContentIfNotHandled()
-                }
-                if (error != null) {
-                    context?.showToast(error.getMessage(context!!))
-                }
+        groupRecipientsViewModel.contactGroupError.observe(this) { event ->
+            var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
+            if (event != null) {
+                error = event.getContentIfNotHandled()
             }
-        )
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        with(recipientsRecyclerView) {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-            adapter = groupRecipientsAdapter
-        }
-        title.text = groupRecipientsViewModel.getTitle()
-        groupIcon.colorFilter = PorterDuffColorFilter(
-            groupRecipientsViewModel.getGroupColor(),
-            PorterDuff.Mode.SRC_IN
-        )
-
-        check.setOnClickListener {
-            val allMessageRecipients = ArrayList<MessageRecipient>()
-            if (check.isChecked) {
-                for (email in groupRecipientsAdapter.getData()) {
-                    email.isSelected = true
-                    allMessageRecipients.add(email)
-                }
-            } else {
-                for (email in groupRecipientsAdapter.getData()) {
-                    email.isSelected = false
-                    allMessageRecipients.add(email)
-                }
+            if (error != null) {
+                context?.showToast(error.getMessage(context!!))
             }
-            groupRecipientsAdapter.setData(allMessageRecipients)
-        }
-
-        done.setOnClickListener {
-            CANCELED = false
-            dismiss()
-        }
-        cancel.setOnClickListener {
-            CANCELED = true
-            dismiss()
         }
     }
-
-    override fun getStyleResource(): Int = R.style.AppTheme_Dialog_Labels
-
-    override fun getFragmentKey(): String = "ProtonMail.GroupRecipientsFragment"
 
     interface IGroupRecipientsListener {
 
@@ -215,12 +220,13 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     }
 
     private fun onMembersSelectChanged() {
-        check.isChecked = groupRecipientsAdapter.itemCount == groupRecipientsAdapter.getSelected().size
+        selectAllCheckbox.isChecked = groupRecipientsAdapter.itemCount == groupRecipientsAdapter.getSelected().size
     }
 
     companion object {
 
         private var CANCELED = false
+        const val KEY = "ProtonMail.GroupRecipientsFragment"
 
         fun newInstance(
             recipients: ArrayList<MessageRecipient>,

@@ -26,7 +26,6 @@ import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.services.MessagesService
-import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
@@ -67,11 +66,6 @@ internal class ViewModelModule {
     fun provideContactGroupEditCreateViewModelFactory(
         contactGroupEditCreateViewModelFactory: ContactGroupEditCreateViewModelFactory
     ): ViewModelProvider.NewInstanceFactory = contactGroupEditCreateViewModelFactory
-
-    @Provides
-    fun provideGroupRecipientsViewModelFactory(
-        groupRecipientsViewModelFactory: GroupRecipientsViewModelFactory
-    ): ViewModelProvider.NewInstanceFactory = groupRecipientsViewModelFactory
 
     @Provides
     fun provideNotificationSettingsViewModelFactory(

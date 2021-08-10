@@ -1,109 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:id="@+id/header_container"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/dialog_expiration_unsupported_title_text_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/switch_background"
-        android:paddingBottom="@dimen/activity_vertical_margin_large"
-        android:paddingTop="@dimen/activity_vertical_margin_large">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_gravity="center"
+        android:padding="@dimen/padding_l"
+        android:textAppearance="@style/ProtonTextView.Body1"
+        android:text="@string/expiration_error_title"
+        android:textColor="@color/text_norm"/>
 
-        <ch.protonmail.android.views.CustomFontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/expiration_error_title"
-            android:textColor="@color/white"
-            android:textSize="@dimen/h2"
-            app:fontName="Roboto-Regular.ttf" />
-
-    </FrameLayout>
-
-    <RelativeLayout
-        android:id="@+id/buttons_container"
-        android:layout_width="match_parent"
+    <me.proton.core.presentation.ui.view.ProtonButton
+        android:id="@+id/dialog_expiration_unsupported_send_anyway_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin_large"
-        android:background="@color/fog_gray"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin">
+        android:layout_margin="@dimen/padding_m"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/send_anyway" />
 
-        <Button
-            android:id="@+id/cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="42dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:maxLines="1"
-            android:text="@string/cancel"
-            android:textAllCaps="true"
-            android:textSize="@dimen/h3" />
-
-        <Button
-            android:id="@+id/ok"
-            android:layout_width="wrap_content"
-            android:layout_height="42dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:maxLines="1"
-            android:paddingEnd="@dimen/fields_default_space_small"
-            android:paddingStart="@dimen/fields_default_space_small"
-            android:text="@string/send_anyway"
-            android:textSize="@dimen/h3"/>
-
-    </RelativeLayout>
+    <me.proton.core.presentation.ui.view.ProtonButton
+        android:id="@+id/dialog_expiration_unsupported_cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_m"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/dialog_expiration_unsupported_send_anyway_button"
+        style="@style/ProtonButton.Borderless.Text"
+        android:textColor="?attr/colorError"
+        android:text="@string/cancel" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/buttons_container"
-        android:layout_below="@id/header_container">
+        app:layout_constraintTop_toBottomOf="@id/dialog_expiration_unsupported_title_text_view"
+        app:layout_constraintBottom_toTopOf="@id/dialog_expiration_unsupported_send_anyway_button"
+        app:layout_constraintVertical_bias="0">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_l"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/recipients_missing_password_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/activity_vertical_margin_large"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin_large">
+                android:layout_marginBottom="@dimen/padding_l"
+                android:orientation="horizontal">
 
                 <ch.protonmail.android.views.CustomFontTextView
                     style="@style/SettingsHeadingText"
@@ -132,11 +102,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="@dimen/activity_vertical_margin_large"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
                 android:visibility="gone" />
 
             <include layout="@layout/horizontal_divider" />
@@ -145,13 +110,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:id="@+id/recipients_disable_pgp_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/activity_vertical_margin_large"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin_large">
+                android:orientation="horizontal">
 
                 <ch.protonmail.android.views.CustomFontTextView
                     style="@style/SettingsHeadingText"
@@ -199,24 +158,25 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:paddingStart="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin_large">
 
-                <ch.protonmail.android.views.CustomFontTextView
+                <TextView
                     style="@style/SettingsHeadingText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:textAppearance="@style/Proton.Text.Caption"
                     android:text="@string/expiration_error_proceed"
-                    android:textColor="@color/fog_gray"
-                    android:textSize="@dimen/h3"
+                    android:textColor="@color/text_hint"
                     app:fontName="Roboto-Regular.ttf" />
 
-                <ch.protonmail.android.views.CustomFontTextView
+                <TextView
                     android:id="@+id/learn_more_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginBottom="@dimen/padding_l"
                     android:linksClickable="true"
                     android:text="@string/expiration_error_learn_more" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-</RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
