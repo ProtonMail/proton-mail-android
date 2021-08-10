@@ -22,7 +22,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <item
         android:id="@+id/share"
-        android:icon="@drawable/share_icon"
+        android:icon="@drawable/ic_share"
         android:title="@string/share"
         app:showAsAction="ifRoom" />
 
