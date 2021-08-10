@@ -18,6 +18,14 @@
  */
 package ch.protonmail.android.core;
 
+import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
+import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
+import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -98,14 +106,6 @@ import io.sentry.android.AndroidSentryClientFactory;
 import me.proton.core.accountmanager.domain.AccountManager;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
-
-import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
-import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
-import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
 
 @HiltAndroidApp
 public class ProtonMailApplication extends Application implements androidx.work.Configuration.Provider {
@@ -200,7 +200,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
             Timber.plant(new SentryTree());
         }
 
-        // Initialize TrustKit for TLS Certificate Pinning
         TrustKit.initializeWithNetworkSecurityConfiguration(this);
 
         ViewStateStoreConfig.INSTANCE

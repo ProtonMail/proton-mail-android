@@ -42,6 +42,7 @@ import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.bl.HtmlProcessor
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
+import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
@@ -113,7 +114,8 @@ class ComposeMessageViewModel @Inject constructor(
     private val stringResourceResolver: StringResourceResolver,
     private val sendMessage: SendMessage,
     verifyConnection: VerifyConnection,
-    networkConfigurator: NetworkConfigurator
+    networkConfigurator: NetworkConfigurator,
+    private val htmlToSpanned: HtmlToSpanned
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
@@ -1037,7 +1039,7 @@ class ComposeMessageViewModel @Inject constructor(
             composerBody?.let {
                 signatureBuilder.insert(0, composerBody)
             }
-            messageBodySetup.composeBody = UiUtil.fromHtml(signatureBuilder.toString())
+            messageBodySetup.composeBody = htmlToSpanned(signatureBuilder.toString())
         }
         if (!TextUtils.isEmpty(messageBody)) {
             messageBodySetup.webViewVisibility = true
@@ -1080,7 +1082,7 @@ class ComposeMessageViewModel @Inject constructor(
             originalMessageBuilder.append(", ")
             originalMessageBuilder.append(sender)
         }
-        setQuotedHeader(UiUtil.fromHtml(originalMessageBuilder.toString()))
+        setQuotedHeader(htmlToSpanned(originalMessageBuilder.toString()))
     }
 
     fun onAndroidContactsLoaded() {
@@ -1170,14 +1172,14 @@ class ComposeMessageViewModel @Inject constructor(
 
         if (signatureContainsHtml) {
             val fromHtmlSignature = UiUtil.createLinksSending(
-                UiUtil.fromHtml(_messageDataResult.signature).toString().replace("\n", NEW_LINE)
+                htmlToSpanned(_messageDataResult.signature).toString().replace("\n", NEW_LINE)
             )
             if (!TextUtils.isEmpty(fromHtmlSignature)) {
                 content = content.replace(fromHtmlSignature, _messageDataResult.signature)
             }
         }
 
-        val fromHtmlMobileFooter = UiUtil.fromHtml(_messageDataResult.mobileFooter)
+        val fromHtmlMobileFooter = htmlToSpanned(_messageDataResult.mobileFooter)
         if (fromHtmlMobileFooter.isNotEmpty()) {
             content = content.replace(fromHtmlMobileFooter.toString(), _messageDataResult.mobileFooter)
         }
@@ -1206,14 +1208,14 @@ class ComposeMessageViewModel @Inject constructor(
 
         if (signatureContainsHtml) {
             val fromHtmlSignature = UiUtil.createLinksSending(
-                (UiUtil.fromHtml(_messageDataResult.signature).toString()).replace("\n", NEW_LINE)
+                (htmlToSpanned(_messageDataResult.signature).toString()).replace("\n", NEW_LINE)
             )
             if (!TextUtils.isEmpty(fromHtmlSignature)) {
                 content = content.replace(fromHtmlSignature, _messageDataResult.signature)
             }
         }
 
-        val fromHtmlMobileFooter = UiUtil.fromHtml(_messageDataResult.mobileFooter)
+        val fromHtmlMobileFooter = htmlToSpanned(_messageDataResult.mobileFooter)
         if (!TextUtils.isEmpty(fromHtmlMobileFooter)) {
             content = content.replace(fromHtmlMobileFooter.toString(), _messageDataResult.mobileFooter)
         }
