@@ -27,6 +27,7 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import ch.protonmail.android.R
 import ch.protonmail.android.databinding.LayoutSenderInitialBinding
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.Locale
@@ -56,6 +57,7 @@ class SenderInitialView @JvmOverloads constructor(
 
     fun bind(
         senderText: String,
+        showDraftIcon: Boolean,
         isMultiSelectionMode: Boolean = false,
         @ColorInt customBackgroundColor: Int? = null
     ) {
@@ -68,6 +70,13 @@ class SenderInitialView @JvmOverloads constructor(
 
         customBackgroundColor?.let {
             senderInitialTextView.setBackgroundColor(it)
+        }
+
+        if (showDraftIcon) {
+            senderInitialTextView.text = EMPTY_STRING
+            senderInitialTextView.background = context.getDrawable(R.drawable.ic_pencil)
+        } else {
+            senderInitialTextView.background = context.getDrawable(R.drawable.background_sender_initial)
         }
     }
 }

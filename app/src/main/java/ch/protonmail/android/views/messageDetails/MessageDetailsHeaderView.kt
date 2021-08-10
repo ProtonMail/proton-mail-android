@@ -70,8 +70,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val expandedHeaderGroup: Group
     private val expandCollapseChevronImageView: ImageView
 
-    private val draftInitialView: ImageView
-
     private val senderInitialView: SenderInitialView
     private val senderNameTextView: TextView
     private val senderEmailTextView: TextView
@@ -121,7 +119,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         expandedHeaderGroup = binding.expandedHeaderGroup
         expandCollapseChevronImageView = binding.expandCollapseChevronImageView
 
-        draftInitialView = binding.draftInitialView
         senderInitialView = binding.senderInitialView
         senderNameTextView = binding.senderNameTextView
         senderEmailTextView = binding.senderEmailTextView
@@ -188,11 +185,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     ) {
         val senderText = getSenderText(message)
         val initials = if (senderText.isEmpty()) HYPHEN else senderText.substring(0, 1)
-        senderInitialView.bind(initials)
-
-        senderInitialView.visibility = if (message.isDraft()) View.INVISIBLE else View.VISIBLE
-        draftInitialView.isVisible = message.isDraft()
-
+        senderInitialView.bind(initials, message.isDraft())
 
         senderNameTextView.text = senderText
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)

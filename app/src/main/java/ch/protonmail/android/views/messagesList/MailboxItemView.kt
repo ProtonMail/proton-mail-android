@@ -90,13 +90,13 @@ class MailboxItemView @JvmOverloads constructor(
     }
 
     private fun getSenderText(mailboxUiItem: MailboxUiItem) =
-        if (isDraft(mailboxUiItem)) {
+        if (isDraftOrSentItem(mailboxUiItem)) {
             mailboxUiItem.recipients
         } else {
             mailboxUiItem.senderName
         }
 
-    private fun isDraft(mailboxUiItem: MailboxUiItem): Boolean {
+    private fun isDraftOrSentItem(mailboxUiItem: MailboxUiItem): Boolean {
         val messageLocation = mailboxUiItem.messageData?.location
             ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
         return Constants.MessageLocationType.fromInt(messageLocation) in arrayOf(
@@ -133,14 +133,15 @@ class MailboxItemView @JvmOverloads constructor(
         setTextViewStyles(readStatus)
         setIconsTint(readStatus)
 
+        val showBigDraftIcon = mailboxUiItem.isDraft && !isDraftsLocation(mailboxLocation)
         val senderText = getSenderText(mailboxUiItem)
         // Sender text can only be empty in drafts where we show recipients instead of senders
         if (senderText.isEmpty()) {
             sender_text_view.text = context.getString(R.string.empty_recipients)
-            sender_initial_view.bind(HYPHEN, isMultiSelectionMode)
+            sender_initial_view.bind(HYPHEN, showBigDraftIcon, isMultiSelectionMode)
         } else {
             sender_text_view.text = senderText
-            sender_initial_view.bind(senderText.substring(0, 1), isMultiSelectionMode)
+            sender_initial_view.bind(senderText.substring(0, 1), showBigDraftIcon, isMultiSelectionMode)
         }
 
         subject_text_view.text = mailboxUiItem.subject
@@ -158,10 +159,7 @@ class MailboxItemView @JvmOverloads constructor(
         replyAllImageView.isVisible = mailboxUiItem.messageData?.isRepliedAll == true
         forward_image_view.isVisible = mailboxUiItem.messageData?.isForwarded == true
 
-        draft_image_view.isVisible = mailboxLocation in arrayOf(
-            Constants.MessageLocationType.DRAFT,
-            Constants.MessageLocationType.ALL_DRAFT
-        )
+        draft_image_view.isVisible = isDraftsLocation(mailboxLocation)
 
         // TODO: Currently there's a bug with showing the location on certain messages.
         //  Revisit the logic with MAILAND-1422
@@ -194,5 +192,12 @@ class MailboxItemView @JvmOverloads constructor(
 
         labelsLayout.setLabels(mailboxUiItem.labels)
     }
+
+    private fun isDraftsLocation(
+        mailboxLocation: Constants.MessageLocationType
+    ) = mailboxLocation in arrayOf(
+        Constants.MessageLocationType.DRAFT,
+        Constants.MessageLocationType.ALL_DRAFT
+    )
 
 }

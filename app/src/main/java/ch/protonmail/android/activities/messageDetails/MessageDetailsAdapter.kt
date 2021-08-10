@@ -74,6 +74,8 @@ import java.util.ArrayList
 private const val MESSAGE_CONTENT_FIXED_SIZE_DP = 200F
 private const val EXPAND_MESSAGE_ANIMATION_DELAY_MS = 200L
 
+private const val ITEM_NOT_FOUND_INDEX = -1
+
 internal class MessageDetailsAdapter(
     private val context: Context,
     private var messages: List<Message>,
@@ -437,6 +439,10 @@ internal class MessageDetailsAdapter(
         val lastNonDraftHeaderIndex = visibleItems?.indexOfLast {
             !it.message.isDraft() && it.itemType == TYPE_HEADER
         } ?: return
+
+        if (lastNonDraftHeaderIndex == ITEM_NOT_FOUND_INDEX) {
+            return
+        }
 
         if (!isExpanded(lastNonDraftHeaderIndex)) {
             toggleExpandedItems(lastNonDraftHeaderIndex, true)

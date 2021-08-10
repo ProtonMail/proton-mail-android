@@ -19,10 +19,6 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.mailbox.domain.model.Correspondent
-import ch.protonmail.android.mailbox.domain.model.LabelContext
-import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
-
 data class Conversation(
     val id: String,
     val subject: String,
