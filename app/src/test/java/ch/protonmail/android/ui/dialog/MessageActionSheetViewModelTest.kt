@@ -508,6 +508,27 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun verifyDeleteEmitsDismissActionSheetWithDismissBackingActivityTrueWhenTargetIsConversationInConversationDetails() {
+        // given
+        val conversationIds = listOf("conversationId")
+        val currentFolder = Constants.MessageLocationType.SPAM
+        every { conversationModeEnabled(any()) } returns true
+        every {
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+
+        // when
+        viewModel.delete(
+            conversationIds,
+            currentFolder,
+            true
+        )
+
+        // then
+        assertEquals(MessageActionSheetAction.DismissActionSheet(true), viewModel.actionsFlow.value)
+    }
+
+    @Test
     fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToInboxActionTrueWhenActionTargetIsMessageAndMessageLocationIsTrash() {
         val messageIds = listOf("messageId7")
         val currentFolder = Constants.MessageLocationType.TRASH
