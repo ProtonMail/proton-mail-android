@@ -46,9 +46,9 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
-import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
@@ -74,6 +74,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
@@ -104,7 +106,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { getConversation(any(), any()) } returns observeConversationFlow
     }
 
-    private val observeMessageFlow = MutableSharedFlow<Message>(replay = 1, onBufferOverflow = BufferOverflow.SUSPEND)
+    private val observeMessageFlow = MutableSharedFlow<Message?>(replay = 1, onBufferOverflow = BufferOverflow.SUSPEND)
     private val messageRepository: MessageRepository = mockk {
         every { observeMessage(any(), any()) } returns observeMessageFlow
     }
@@ -187,6 +189,35 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             verifyConnection,
             networkConfigurator,
         )
+    }
+
+    @Test
+    fun loadMailboxItemGetsMessageFromServerWithMessageIdAndUserIdWhenWeDontHaveTheMessageInDb() = runBlockingTest {
+
+        // given
+        every { userManager.requireCurrentUserId() } returns testId1
+        val sender = MessageSender("senderName", "senderEmail")
+        val messageOrConversationId = INPUT_ITEM_DETAIL_ID
+        val downLoadedMessage = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = true,
+            sender = sender
+        )
+        coEvery { messageRepository.getMessage(testId1, messageOrConversationId, true) } returns downLoadedMessage
+        val expected = ConversationUiModel(
+            false,
+            null,
+            emptyList(),
+            listOf(downLoadedMessage),
+            null
+        )
+
+        // when
+        observeMessageFlow.tryEmit(null)
+        val actualItem = viewModel.conversationUiModel.take(1).toList()[0]
+
+        // then
+        assertEquals(expected, actualItem)
     }
 
     @Test
