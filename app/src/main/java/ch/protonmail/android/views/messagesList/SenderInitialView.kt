@@ -57,7 +57,7 @@ class SenderInitialView @JvmOverloads constructor(
 
     fun bind(
         senderText: String,
-        isDraftItem: Boolean,
+        showDraftIcon: Boolean,
         isMultiSelectionMode: Boolean = false,
         @ColorInt customBackgroundColor: Int? = null
     ) {
@@ -72,7 +72,7 @@ class SenderInitialView @JvmOverloads constructor(
             senderInitialTextView.setBackgroundColor(it)
         }
 
-        if (isDraftItem) {
+        if (showDraftIcon) {
             senderInitialTextView.text = EMPTY_STRING
             senderInitialTextView.background = context.getDrawable(R.drawable.ic_pencil)
         } else {
