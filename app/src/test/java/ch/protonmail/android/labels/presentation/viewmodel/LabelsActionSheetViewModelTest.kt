@@ -188,6 +188,25 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun verifyThatAfterDoneIsClickedErrorUpdatingLabelsIsEmittedWhenAConversationActionReturnsErrorResult() {
+        // given
+        val shallMoveToArchive = true
+        every { updateConversationsLabels.enqueue(any(), any(), any(), any()) } returns mockk()
+        coEvery {
+            moveConversationsToFolder.invoke(
+                any(), any(),
+                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+            )
+        } returns ConversationsActionResult.Error
+
+        // when
+        viewModel.onDoneClicked(shallMoveToArchive)
+
+        // then
+        assertEquals(ManageLabelActionResult.ErrorUpdatingLabels, viewModel.actionsResult.value)
+    }
+
+    @Test
     fun verifyThatAfterOnLabelIsClickedForLabelType() = runBlockingTest {
 
         // given
@@ -240,6 +259,23 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             coVerify { moveConversationsToFolder(any(), any(), any()) }
             coVerify { moveMessagesToFolder wasNot Called }
             assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(true), viewModel.actionsResult.value)
+        }
+
+    @Test
+    fun verifyThatWhenLabelIsClickedForFolderTypeWithConversationModeEnabledAndMoveConversationsToFolderReturnsErrorResultErrorMovingToFolderIsEmitted() =
+        runBlockingTest {
+            // given
+            coEvery { userManager.currentUserId } returns Id("userId")
+            coEvery { conversationModeEnabled(any()) } returns true
+            coEvery {
+                moveConversationsToFolder.invoke(any(), any(), any())
+            } returns ConversationsActionResult.Error
+
+            // when
+            viewModel.onLabelClicked(model2folder, 0)
+
+            // then
+            assertEquals(ManageLabelActionResult.ErrorMovingToFolder, viewModel.actionsResult.value)
         }
 
     @Test
