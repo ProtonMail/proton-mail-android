@@ -28,6 +28,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -146,6 +147,8 @@ internal abstract class NavigationActivity : BaseActivity() {
      * TODO: Optimize loading and remove this delay
      */
     private var onDrawerClose: () -> Unit = {}
+
+    private var labelsWithUnreadCounterLiveData: MediatorLiveData<MutableList<LabelWithUnreadCounter>>? = null
 
     protected open fun onAccountSwitched(switch: AccountStateManager.AccountSwitch) {
         val currentUsername = switch.current?.username
@@ -346,7 +349,10 @@ internal abstract class NavigationActivity : BaseActivity() {
             }
         })
 
-        navigationViewModel.labelsWithUnreadCounterLiveData().observe(this, CreateLabelsMenuObserver())
+        labelsWithUnreadCounterLiveData?.removeObservers(this)
+        labelsWithUnreadCounterLiveData = navigationViewModel.labelsWithUnreadCounterLiveData()
+        labelsWithUnreadCounterLiveData?.observe(this, CreateLabelsMenuObserver())
+
         navigationViewModel.locationsUnreadLiveData().observe(this, LocationsMenuObserver())
     }
 
