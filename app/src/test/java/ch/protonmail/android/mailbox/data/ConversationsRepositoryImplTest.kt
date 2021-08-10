@@ -44,6 +44,7 @@ import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRem
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.domain.model.Conversation
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
@@ -583,9 +584,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.updateNumUnreadMessages(0, any()) } just runs
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
             coEvery { messageDao.saveMessage(any()) } returns 123
+            val expectedResult = ConversationsActionResult.Success
 
             // when
-            conversationsRepository.markRead(conversationIds, userId)
+            val result = conversationsRepository.markRead(conversationIds, userId)
 
             // then
             coVerify {
@@ -595,6 +597,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify(exactly = 4) {
                 messageDao.saveMessage(message)
             }
+            assertEquals(expectedResult, result)
         }
     }
 
@@ -621,9 +624,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.updateNumUnreadMessages(unreadMessages + 1, any()) } just runs
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message2)
             coEvery { messageDao.saveMessage(any()) } returns 123
+            val expectedResult = ConversationsActionResult.Success
 
             // when
-            conversationsRepository.markUnread(conversationIds, UserId("id"), mailboxLocation, locationId)
+            val result = conversationsRepository.markUnread(conversationIds, UserId("id"), mailboxLocation, locationId)
 
             // then
             coVerify {
@@ -633,6 +637,27 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify(exactly = 2) {
                 messageDao.saveMessage(message)
             }
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyErrorResultIsReturnedIfConversationIsNullWhenMarkUnreadIsCalled() {
+        runBlockingTest {
+            // given
+            val conversation1 = "conversation1"
+            val conversation2 = "conversation2"
+            val conversationIds = listOf(conversation1, conversation2)
+            val mailboxLocation = Constants.MessageLocationType.ARCHIVE
+            val locationId = Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+            coEvery { conversationDao.findConversation(any(), any()) } returns null
+            val expectedResult = ConversationsActionResult.Error
+
+            // when
+            val result = conversationsRepository.markUnread(conversationIds, UserId("id"), mailboxLocation, locationId)
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 
@@ -665,9 +690,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
             coEvery { messageDao.updateStarred(testMessageId, true) } just runs
+            val expectedResult = ConversationsActionResult.Success
 
             // when
-            conversationsRepository.star(conversationIds, UserId(userId))
+            val result = conversationsRepository.star(conversationIds, UserId(userId))
 
             // then
             coVerify(exactly = 2) {
@@ -676,6 +702,34 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify(exactly = 4) {
                 messageDao.updateStarred(any(), true)
             }
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyErrorResultIsReturnedIfConversationIsNullWhenStarIsCalled() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = "userId"
+            val testMessageId = "messageId"
+            val message = Message(
+                messageId = testMessageId,
+                time = 123
+            )
+            coEvery { conversationDao.findConversation(any(), any()) } returns null
+            coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.updateStarred(testMessageId, true) } just runs
+            val expectedResult = ConversationsActionResult.Error
+
+            // when
+            val result = conversationsRepository.star(conversationIds, UserId(userId))
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 
@@ -706,9 +760,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
             coEvery { messageDao.updateStarred(testMessageId, false) } just runs
+            val expectedResult = ConversationsActionResult.Success
 
             // when
-            conversationsRepository.unstar(conversationIds, UserId(userId))
+            val result = conversationsRepository.unstar(conversationIds, UserId(userId))
 
             // then
             coVerify(exactly = 2) {
@@ -717,6 +772,26 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify(exactly = 4) {
                 messageDao.updateStarred(testMessageId, false)
             }
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyErrorResultIsReturnedIfConversationIsNullWhenUnstarIsCalled() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = "userId"
+            coEvery { conversationDao.findConversation(any(), any()) } returns null
+            val expectedResult = ConversationsActionResult.Error
+
+            // when
+            val result = conversationsRepository.unstar(conversationIds, UserId(userId))
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 
@@ -755,9 +830,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     every { numAttachments } returns 1
                 }
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
+            val expectedResult = ConversationsActionResult.Success
 
             // when
-            conversationsRepository.moveToFolder(conversationIds, userId, folderId)
+            val result = conversationsRepository.moveToFolder(conversationIds, userId, folderId)
 
             // then
             coVerify(exactly = 2) {
@@ -769,6 +845,38 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify(exactly = 2) {
                 conversationDao.updateLabels(any(), conversationId2)
             }
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyErrorResultIsReturnedIfConversationIsNullWhenMoveToFolderIsCalled() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = UserId("userId")
+            val folderId = "folderId"
+            val inboxId = "0"
+            val allMailId = "5"
+            val message = Message(
+                time = 123,
+                allLabelIDs = listOf(inboxId, allMailId),
+            )
+            val label: Label = mockk {
+                every { exclusive } returns false
+            }
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.findLabelById(any()) } returns label
+            coEvery { conversationDao.findConversation(any(), any()) } returns null
+            val expectedResult = ConversationsActionResult.Error
+
+            // when
+            val result = conversationsRepository.moveToFolder(conversationIds, userId, folderId)
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 
@@ -847,9 +955,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 }
 
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
+            val expectedResult = ConversationsActionResult.Success
 
             // when
-            conversationsRepository.label(conversationIds, userId, labelId)
+            val result = conversationsRepository.label(conversationIds, userId, labelId)
 
             // then
             coVerify(exactly = 4) {
@@ -861,6 +970,34 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify {
                 conversationDao.updateLabels(any(), conversationId2)
             }
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyErrorResultIsReturnedIfConversationIsNullWhenLabelIsCalled() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = UserId("userId")
+            val labelId = "labelId"
+            val message = mockk<Message> {
+                every { time } returns 123
+                every { addLabels(any()) } just runs
+            }
+            val listOfMessages = listOf(message, message)
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
+            coEvery { messageDao.saveMessage(message) } returns 123
+            coEvery { conversationDao.findConversation(any(), userId.id) } returns null
+            val expectedResult = ConversationsActionResult.Error
+
+            // when
+            val result = conversationsRepository.label(conversationIds, userId, labelId)
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 
@@ -890,9 +1027,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 }
 
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
+            val expectedResult = ConversationsActionResult.Success
 
             // when
-            conversationsRepository.unlabel(conversationIds, userId, labelId)
+            val result = conversationsRepository.unlabel(conversationIds, userId, labelId)
 
             // then
             coVerify(exactly = 4) {
@@ -904,6 +1042,33 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify {
                 conversationDao.updateLabels(any(), conversationId2)
             }
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyErrorResultIsReturnedIfConversationIsNullWhenUnlabelIsCalled() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = UserId("userId")
+            val labelId = "labelId"
+            val message = mockk<Message> {
+                every { removeLabels(any()) } just runs
+            }
+            val listOfMessages = listOf(message, message)
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
+            coEvery { messageDao.saveMessage(message) } returns 123
+            coEvery { conversationDao.findConversation(any(), userId.id) } returns null
+            val expectedResult = ConversationsActionResult.Error
+
+            // when
+            val result = conversationsRepository.unlabel(conversationIds, userId, labelId)
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 
