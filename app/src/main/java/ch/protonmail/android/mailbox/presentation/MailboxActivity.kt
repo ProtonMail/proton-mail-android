@@ -768,7 +768,9 @@ internal class MailboxActivity :
     override fun onResume() {
         super.onResume()
 
+        mailboxViewModel.refreshMessages()
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
+
         registerFcmReceiver()
         checkDelinquency()
         mailboxViewModel.checkConnectivity()
