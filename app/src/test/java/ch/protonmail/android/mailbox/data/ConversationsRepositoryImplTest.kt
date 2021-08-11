@@ -427,7 +427,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 isForwarded = false,
                 allLabelIDs = listOf("1", "2")
             )
-            coEvery { messageDao.findAllMessagesInfoFromConversation(conversationId) } returns listOf(message)
+            coEvery { messageDao.observeAllMessagesInfoFromConversation(conversationId) } returns flowOf(
+                listOf(message)
+            )
             coEvery { messageDao.findAttachmentsByMessageId(any()) } returns flowOf(emptyList())
             coEvery { conversationDao.observeConversation(conversationId, userId) } returns flowOf(
                 conversationDbModel
@@ -477,6 +479,191 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     @Test
+    fun verifyConversationIsEmittedWithUpdatedDataWhenOneOfItsMessagesChangesInTheLocalDB() {
+        runBlocking {
+            // given
+            val conversationId = "conversationId234824"
+            val userId = "userId82384e3"
+            val conversationDbModel = ConversationDatabaseModel(
+                conversationId,
+                0L,
+                userId,
+                "subject",
+                listOf(
+                    MessageSender("sender-name", "email@proton.com")
+                ),
+                listOf(
+                    MessageRecipient("receiver-name", "email-receiver@proton.com")
+                ),
+                1,
+                0,
+                0,
+                0,
+                1,
+                emptyList()
+            )
+            val message = Message(
+                messageId = "messageId9238483",
+                conversationId = conversationId,
+                subject = "subject1231",
+                Unread = false,
+                sender = MessageSender("senderName", "sender@protonmail.ch"),
+                toList = listOf(),
+                time = 82374723L,
+                numAttachments = 1,
+                expirationTime = 0L,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                allLabelIDs = listOf("1", "2")
+            )
+            val starredMessage = message.copy().apply {
+                isStarred = true
+                addLabels(listOf("10"))
+            }
+            coEvery { messageDao.observeAllMessagesInfoFromConversation(conversationId) } returns flowOf(
+                listOf(message), listOf(starredMessage)
+            )
+            coEvery { messageDao.findAttachmentsByMessageId(any()) } returns flowOf(emptyList())
+            coEvery { conversationDao.observeConversation(conversationId, userId) } returns flowOf(
+                conversationDbModel
+            )
+
+            // when
+            val result = conversationsRepository.getConversation(conversationId, UserId(userId)).take(2).toList()
+
+            // then
+            val expectedMessage = MessageDomainModel(
+                "messageId9238483",
+                conversationId,
+                "subject1231",
+                false,
+                Correspondent("senderName", "sender@protonmail.ch"),
+                listOf(),
+                82374723L,
+                1,
+                0L,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                ccReceivers = emptyList(),
+                bccReceivers = emptyList(),
+                labelsIds = listOf("1", "2", "10")
+            )
+            val expectedConversation = Conversation(
+                conversationId,
+                "subject",
+                listOf(
+                    Correspondent("sender-name", "email@proton.com")
+                ),
+                listOf(
+                    Correspondent("receiver-name", "email-receiver@proton.com")
+                ),
+                1,
+                0,
+                0,
+                0,
+                emptyList(),
+                listOf(
+                    expectedMessage
+                )
+            )
+            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[1])
+        }
+    }
+
+    @Test
+    fun verifyConversationIsNotEmittedAgainIfItsValueDidntChange() {
+        runBlocking {
+            // given
+            val conversationId = "conversationId234825"
+            val userId = "userId82384e3"
+            val conversationDbModel = ConversationDatabaseModel(
+                conversationId,
+                0L,
+                userId,
+                "subject",
+                listOf(
+                    MessageSender("sender-name", "email@proton.com")
+                ),
+                listOf(
+                    MessageRecipient("receiver-name", "email-receiver@proton.com")
+                ),
+                1,
+                0,
+                0,
+                0,
+                1,
+                emptyList()
+            )
+            val message = Message(
+                messageId = "messageId9238484",
+                conversationId = conversationId,
+                subject = "subject1232",
+                Unread = false,
+                sender = MessageSender("senderName", "sender@protonmail.ch"),
+                toList = listOf(),
+                time = 82374723L,
+                numAttachments = 1,
+                expirationTime = 0L,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                allLabelIDs = listOf("1", "2")
+            )
+            coEvery { messageDao.observeAllMessagesInfoFromConversation(conversationId) } returns flowOf(
+                listOf(message), listOf(message)
+            )
+            coEvery { messageDao.findAttachmentsByMessageId(any()) } returns flowOf(emptyList())
+            coEvery { conversationDao.observeConversation(conversationId, userId) } returns flowOf(
+                conversationDbModel
+            )
+
+            // when
+            val result = conversationsRepository.getConversation(conversationId, UserId(userId)).take(2).toList()
+
+            // then
+            val expectedMessage = MessageDomainModel(
+                "messageId9238484",
+                conversationId,
+                "subject1232",
+                false,
+                Correspondent("senderName", "sender@protonmail.ch"),
+                listOf(),
+                82374723L,
+                1,
+                0L,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                ccReceivers = emptyList(),
+                bccReceivers = emptyList(),
+                labelsIds = listOf("1", "2")
+            )
+            val expectedConversation = Conversation(
+                conversationId,
+                "subject",
+                listOf(
+                    Correspondent("sender-name", "email@proton.com")
+                ),
+                listOf(
+                    Correspondent("receiver-name", "email-receiver@proton.com")
+                ),
+                1,
+                0,
+                0,
+                0,
+                emptyList(),
+                listOf(
+                    expectedMessage
+                )
+            )
+            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[0])
+            assertEquals(DataResult.Processing(ResponseSource.Remote), result[1])
+        }
+    }
+
+    @Test
     fun verifyConversationIsFetchedFromRemoteDataSourceAndStoredLocallyWhenNotAvailableInDb() {
         runBlocking {
             // given
@@ -509,7 +696,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val dbFlow =
                 MutableSharedFlow<ConversationDatabaseModel?>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
             coEvery { api.fetchConversation(conversationId, UserId(userId)) } returns conversationResponse
-            coEvery { messageDao.findAllMessagesInfoFromConversation(conversationId) } returns emptyList()
+            coEvery { messageDao.observeAllMessagesInfoFromConversation(conversationId) } returns flowOf(emptyList())
             coEvery { conversationDao.observeConversation(conversationId, userId) } returns dbFlow
             every { messageFactory.createMessage(apiMessage) } returns expectedMessage
             val expectedConversationDbModel = ConversationDatabaseModel(
