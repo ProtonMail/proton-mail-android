@@ -92,7 +92,7 @@ class QueueNetworkUtil @Inject constructor(
             // emission buffer below
             val currentTime = System.currentTimeMillis()
             val emissionTimeDelta = currentTime - lastEmissionTime
-            Timber.v("updateRealConnectivity isServerAccessible: $serverAccessible timeDelta: $emissionTimeDelta")
+            Timber.v("updateRealConnectivity isServerAccessible: $serverAccessible timeDelta: $emissionTimeDelta $connectionState")
             val mayEmit = emissionTimeDelta > DISCONNECTION_EMISSION_WINDOW_MS
             if (mayEmit) {
                 lastEmissionTime = currentTime

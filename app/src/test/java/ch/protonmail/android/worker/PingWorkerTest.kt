@@ -20,22 +20,24 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.work.ListenableWorker.Result
+import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.justRun
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.network.domain.ApiResult
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import java.io.IOException
 import kotlin.test.BeforeTest
@@ -65,11 +67,13 @@ class PingWorkerTest {
     }
 
     @Test
-    fun verifySuccessIsReturnedWhenPingRespondedWithSuccess() {
+    fun verifySuccessIsReturnedWhenPingRespondedWithOk() {
         runBlockingTest {
             // given
-            val expected = Result.success()
-            val pingResponse = ApiResult.Success(Unit)
+            val expected = ListenableWorker.Result.success()
+            val pingResponse = mockk<ResponseBody> {
+                every { code } returns Constants.RESPONSE_CODE_OK
+            }
             coEvery { api.ping() } returns pingResponse
 
             // when
@@ -77,25 +81,45 @@ class PingWorkerTest {
 
             // then
             verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
-            assertEquals(expected, operationResult)
+            assertEquals(operationResult, expected)
         }
     }
 
     @Test
-    fun verifySuccessIsReturnedWhenPingRespondedWithNoInternetError() {
+    fun verifySuccessIsReturnedWhenPingRespondedWithApiOfflineResponse() {
         runBlockingTest {
             // given
-            val pingResponse = ApiResult.Error.NoInternet
-            val expected = Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${pingResponse.cause}")
-            )
+            val expected = ListenableWorker.Result.success()
+            val pingResponse = mockk<ResponseBody> {
+                every { code } returns Constants.RESPONSE_CODE_API_OFFLINE
+            }
             coEvery { api.ping() } returns pingResponse
 
             // when
             val operationResult = worker.doWork()
 
             // then
-            assertEquals(expected, operationResult)
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
+            assertEquals(operationResult, expected)
+        }
+    }
+
+    @Test
+    fun verifyFailureIsReturnedWhenPingRespondedWithUnrecognizedApiResponse() {
+        runBlockingTest {
+            // given
+            val unknownResponseCode = 12313
+            val expected = ListenableWorker.Result.failure()
+            val pingResponse = mockk<ResponseBody> {
+                every { code } returns unknownResponseCode
+            }
+            coEvery { api.ping() } returns pingResponse
+
+            // when
+            val operationResult = worker.doWork()
+
+            // then
+            assertEquals(operationResult, expected)
         }
     }
 
@@ -105,13 +129,12 @@ class PingWorkerTest {
             // given
             val exceptionMessage = "NetworkError!"
             val ioException = IOException(exceptionMessage)
-            val pingResponse = ApiResult.Error.Connection(false, ioException)
-            val expected = Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${pingResponse.cause}")
+            val expected = ListenableWorker.Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $exceptionMessage")
             )
             mockkStatic(AppUtil::class)
             justRun { AppUtil.postEventOnUi(any()) }
-            coEvery { api.ping() } returns pingResponse
+            coEvery { api.ping() } throws ioException
 
             // when
             val operationResult = worker.doWork()
@@ -119,24 +142,6 @@ class PingWorkerTest {
             // then
             verify { queueNetworkUtil.setConnectivityHasFailed(ioException) }
             assertEquals(operationResult, expected)
-        }
-    }
-
-    @Test
-    fun verifySuccessIsReturnedWhenNetworkConnectionFailsWithProtonErrorCodeApiOffline() {
-        runBlockingTest {
-            // given
-            val protonData = ApiResult.Error.ProtonData(RESPONSE_CODE_API_OFFLINE, "Api offline")
-            val pingResponse = ApiResult.Error.Http(400, "error", protonData)
-            val expected = Result.success()
-            coEvery { api.ping() } returns pingResponse
-
-            // when
-            val operationResult = worker.doWork()
-
-            // then
-            verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
-            assertEquals(expected, operationResult)
         }
     }
 }

@@ -19,17 +19,15 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.models.doh.Proxies
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.di.BaseUrl
-import ch.protonmail.android.utils.Logger
-import kotlinx.coroutines.runBlocking
-import me.proton.core.network.data.protonApi.BaseRetrofitApi
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface INetworkSwitcher {
     fun reconfigureProxy(proxies: Proxies?)
-    fun tryRequest(callFun: suspend (BaseRetrofitApi) -> Unit)
+    suspend fun tryRequest()
 }
 
 @Singleton
@@ -38,7 +36,8 @@ class NetworkSwitcher @Inject constructor(
     private val apiProvider: ProtonMailApiProvider,
     private val protonOkHttpProvider: OkHttpProvider,
     @BaseUrl private val baseUrl: String,
-    networkConfigurator: NetworkConfigurator
+    networkConfigurator: NetworkConfigurator,
+    private val eventManager: EventManager
 ) : INetworkSwitcher {
 
     init {
@@ -51,16 +50,13 @@ class NetworkSwitcher @Inject constructor(
      */
     override fun reconfigureProxy(proxies: Proxies?) { // TODO: DoH this can be done without null
         val proxyItem = proxies?.getCurrentActiveProxy()?.baseUrl ?: baseUrl
-        Logger.doLog("NetworkSwitcher", "proxyItem url is: $proxyItem")
+        Timber.v("proxyItem url is: $proxyItem")
         val newApi: ProtonMailApi = apiProvider.rebuild(protonOkHttpProvider, proxyItem)
         api.reset(newApi)
-        ProtonMailApplication.getApplication().eventManager.reconfigure(newApi.securedServices.event)
+        eventManager.reconfigure(newApi.securedServices.event)
     }
 
-    override fun tryRequest(callFun: suspend (BaseRetrofitApi) -> Unit) {
-        runBlocking {
-            // this is a bit awkward, but it is fine for now
-            callFun.invoke(api.api.connectivityApi as BaseRetrofitApi)
-        }
+    override suspend fun tryRequest() {
+        api.ping()
     }
 }

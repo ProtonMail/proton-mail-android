@@ -71,7 +71,6 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
@@ -80,6 +79,7 @@ import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -139,7 +139,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 
-    override suspend fun ping(): ApiResult<Unit> = api.ping()
+    override suspend fun ping(): ResponseBody = api.ping()
 
     override suspend fun fetchContacts(
         page: Int,

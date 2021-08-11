@@ -36,7 +36,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import me.proton.core.network.domain.ApiResult
+import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -57,28 +57,35 @@ class PingWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result =
-        when (val pingResult = api.ping()) {
-            is ApiResult.Success -> processSuccess()
-            is ApiResult.Error.Http -> {
-                if (pingResult.proton?.code == Constants.RESPONSE_CODE_API_OFFLINE)
-                    processSuccess()
-                else
-                    Result.failure()
-            }
-            is ApiResult.Error -> {
-                Timber.i(pingResult.cause, "Ping failure")
-                queueNetworkUtil.setConnectivityHasFailed(pingResult.cause ?: Exception(pingResult::class.java.name))
-                Result.failure(
-                    workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${pingResult.cause}")
-                )
-            }
+        withContext(dispatchers.Io) {
+            runCatching {
+                isBackendStillReachable()
+            }.fold(
+                onSuccess = { isAccessible ->
+                    Timber.v("Ping isAccessible: $isAccessible")
+                    if (isAccessible) {
+                        queueNetworkUtil.setCurrentlyHasConnectivity()
+                        Result.success()
+                    } else {
+                        Result.failure()
+                    }
+                },
+                onFailure = { throwable ->
+                    Timber.v("Ping isAccessible: failed")
+                    queueNetworkUtil.setConnectivityHasFailed(throwable)
+                    Result.failure(
+                        workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${throwable.message}")
+                    )
+                }
+            )
         }
 
-    private fun processSuccess(): Result {
-        Timber.v("Ping is reachable")
-        queueNetworkUtil.setCurrentlyHasConnectivity()
-        return Result.success()
-    }
+    private suspend fun isBackendStillReachable(): Boolean =
+        when (api.ping().code) {
+            Constants.RESPONSE_CODE_OK,
+            Constants.RESPONSE_CODE_API_OFFLINE -> true
+            else -> false
+        }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         private val uniqueWorkerName = "PingWorker"
