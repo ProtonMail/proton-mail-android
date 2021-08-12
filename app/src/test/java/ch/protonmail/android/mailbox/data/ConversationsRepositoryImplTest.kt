@@ -568,7 +568,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     expectedMessage
                 )
             )
-            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[1])
+            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[0])
         }
     }
 
@@ -724,16 +724,15 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
 
             // when
-            conversationsRepository.getConversation(conversationId, UserId(userId))
-                .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
-                    dbFlow.emit(null)
+            conversationsRepository.getConversation(conversationId, UserId(userId)).test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
+                dbFlow.emit(null)
 
-                    // then
-                    assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
-                    assertEquals(ResponseSource.Local, (expectItem() as DataResult.Success).source)
-                    coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
-                    coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
-                }
+                // then
+                assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
+                assertEquals(ResponseSource.Remote, (expectItem() as DataResult.Success).source)
+                coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
+                coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
+            }
 
         }
     }
