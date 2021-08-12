@@ -721,7 +721,7 @@
         在您的空間耗盡之前，考慮釋放一些空間或購買更多的儲存空間。</string>
     <!-- endregion -->
     <string name="need_permissions_title">權限</string>
-    <string name="need_storage_permissions_text">為了加入附件，您需要允許
+    <string name="need_storage_permissions_add_attachment_text">為了加入附件，您需要允許
         存取儲存空間。</string>
     <string name="push_notifications_alert_title">推送通知提醒</string>
     <string name="push_notifications_alert_subtitle">如果沒有更新過 Google Play 服務，ProtonMail 的推送通知將無法正常運作。</string>

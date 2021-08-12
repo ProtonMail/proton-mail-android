@@ -737,7 +737,7 @@ compre más
         Considere liberar algo de espacio o compre más antes de quedarse sin espacio.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permisos</string>
-    <string name="need_storage_permissions_text">Para añadir archivos adjuntos necesita permitir
+    <string name="need_storage_permissions_add_attachment_text">Para añadir archivos adjuntos necesita permitir
         el acceso al almacenamiento.</string>
     <string name="push_notifications_alert_title">Alerta de notificaciones push</string>
     <string name="push_notifications_alert_subtitle">Las notificaciones push para ProtonMail no funcionan sin los servicios de Google Play actualizados.</string>

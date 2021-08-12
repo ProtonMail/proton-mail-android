@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
@@ -32,12 +33,12 @@ public class PermissionHelper {
     private static final int REQUEST_CODE_READ_CONTACTS = 1001;
     private static final int REQUEST_CODE_ACCESS_STORAGE = 1011;
 
-    private PermissionCallback mPermissionCallback;
-    private Constants.PermissionType _permissionType;
+    private final PermissionCallback mPermissionCallback;
+    private final Constants.PermissionType _permissionType;
     private String mManifestPermission;
     private String mPermissionRequestedPref;
     private int mRequestCode;
-    private Activity mActivity;
+    private final Activity mActivity;
 
     private PermissionHelper(Constants.PermissionType type, Activity activity, PermissionCallback callback) {
         _permissionType = type;
@@ -54,7 +55,7 @@ public class PermissionHelper {
         this.mPermissionCallback = callback;
     }
 
-    public static PermissionHelper newInstance(Constants.PermissionType type, Activity activity, PermissionCallback callback, boolean useSnack) {
+    public static PermissionHelper newInstance(Constants.PermissionType type, Activity activity, PermissionCallback callback) {
         return new PermissionHelper(type, activity, callback);
     }
 
@@ -91,7 +92,7 @@ public class PermissionHelper {
         ActivityCompat.requestPermissions(mActivity, new String[]{mManifestPermission}, mRequestCode);
     }
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
         if (requestCode == mRequestCode) {
             boolean hasSth = grantResults.length > 0;
             if (hasSth) {
@@ -104,12 +105,6 @@ public class PermissionHelper {
                     if (this.mPermissionCallback != null) {
                         this.mPermissionCallback.onPermissionDenied(_permissionType);
                     }
-                    boolean should = ActivityCompat.shouldShowRequestPermissionRationale(mActivity, mManifestPermission);
-
-                    // not needed as per product decision
-//                    if (!should) {
-//                        promptSettings();
-//                    }
                 }
             }
         }

@@ -59,14 +59,14 @@ public abstract class BaseContactsActivity extends BaseConnectivityActivity impl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        contactsPermissionHelper = PermissionHelper.newInstance(Constants.PermissionType.CONTACTS, this, this, true);
-        storagePermissionHelper = PermissionHelper.newInstance(Constants.PermissionType.STORAGE, this, this, false);
+        contactsPermissionHelper = PermissionHelper.newInstance(Constants.PermissionType.CONTACTS, this, this);
+        storagePermissionHelper = PermissionHelper.newInstance(Constants.PermissionType.STORAGE, this, this);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        contactsPermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        storagePermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        contactsPermissionHelper.onRequestPermissionsResult(requestCode, grantResults);
+        storagePermissionHelper.onRequestPermissionsResult(requestCode, grantResults);
     }
 
 

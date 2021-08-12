@@ -89,8 +89,7 @@ class ContactsActivity :
         PermissionHelper.newInstance(
             Constants.PermissionType.CONTACTS,
             this,
-            ContactsPermissionHelperCallbacks(),
-            true
+            ContactsPermissionHelperCallbacks()
         )
     }
 
@@ -165,7 +164,7 @@ class ContactsActivity :
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        contactsPermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        contactsPermissionHelper.onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun onResume() {

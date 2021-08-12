@@ -736,7 +736,7 @@
         Considereu alliberar o adquirir més espai abans que us en quedeu sense.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permisos</string>
-    <string name="need_storage_permissions_text">Per tal d\'afegir els fitxers adjunts necessiteu permetre
+    <string name="need_storage_permissions_add_attachment_text">Per tal d\'afegir els fitxers adjunts necessiteu permetre
         l\'accés a l\'emmagatzemament.</string>
     <string name="push_notifications_alert_title">Alerta de notificacions push</string>
     <string name="push_notifications_alert_subtitle">Les notificacions push per ProtonMail no funcionen sense els serveis de Google Play.</string>

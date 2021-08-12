@@ -736,7 +736,7 @@
         Pensez à libérer de l’espace ou à acheter plus de stockage avant de manquer de capacité.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Autorisations</string>
-    <string name="need_storage_permissions_text">Pour ajouter des pièces jointes, vous devez autoriser
+    <string name="need_storage_permissions_add_attachment_text">Pour ajouter des pièces jointes, vous devez autoriser
         l\'accès au stockage.</string>
     <string name="push_notifications_alert_title">Alerte de notifications push</string>
     <string name="push_notifications_alert_subtitle">Les notifications push pour ProtonMail ne fonctionnent pas sans la mise à jour des services Google Play.</string>

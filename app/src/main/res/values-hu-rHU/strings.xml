@@ -737,7 +737,7 @@ Svájci székhellyel</string>
         Fontolja meg, hogy helyet szabadít fel vagy további tárhelyet vásárol, mielőtt kifutna a szabad helyből.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Engedélyek</string>
-    <string name="need_storage_permissions_text">Melléklet hozzáadáshoz engedélyeznie kell 
+    <string name="need_storage_permissions_add_attachment_text">Melléklet hozzáadáshoz engedélyeznie kell
         a tárhely elérését.</string>
     <string name="push_notifications_alert_title">Push értesítés riasztás</string>
     <string name="push_notifications_alert_subtitle">A ProtonMail push értesítések nem működnek a legújabb Google Play szolgáltatások nélkül.</string>

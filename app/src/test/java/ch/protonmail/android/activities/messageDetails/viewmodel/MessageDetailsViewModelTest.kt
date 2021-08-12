@@ -1073,6 +1073,16 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
     }
 
+    @Test
+    fun whenStoragePermissionDeniedShouldEmitNewDialogTriggerEvent() {
+        val dialogTriggerObserver = viewModel.showPermissionMissingDialog.testObserver()
+
+        viewModel.storagePermissionDenied()
+
+        val numberOfReceivedEvents = dialogTriggerObserver.observedValues.size
+        assertEquals(expected = 1, actual = numberOfReceivedEvents)
+    }
+
     private fun buildConversation(conversationId: String): Conversation {
         val messageId = "messageId4"
         val secondMessageId = "messageId5"

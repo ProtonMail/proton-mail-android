@@ -716,7 +716,7 @@
     <string name="storage_limit_approaching_text">您已使用了 90% 的存储空间。请考虑清理一些空间或购买更大存储量，以防空间耗尽。</string>
     <!-- endregion -->
     <string name="need_permissions_title">权限</string>
-    <string name="need_storage_permissions_text">若要添加附件，您需要允许程序读取设备存储。</string>
+    <string name="need_storage_permissions_add_attachment_text">若要添加附件，您需要允许程序读取设备存储。</string>
     <string name="push_notifications_alert_title">推送通知提示</string>
     <string name="push_notifications_alert_subtitle">没有新版 Google Play 服务支持，ProtonMail 无法推送通知。</string>
     <string name="app_locked">程序已锁定</string>

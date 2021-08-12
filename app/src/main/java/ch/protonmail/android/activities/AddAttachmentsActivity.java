@@ -143,7 +143,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         openCamera = false;
         openGallery = false;
         DialogUtils.Companion.showInfoDialog(AddAttachmentsActivity.this, getString(R.string.need_permissions_title),
-                getString(R.string.need_storage_permissions_text), unit -> unit);
+                getString(R.string.need_storage_permissions_add_attachment_text), unit -> unit);
     }
 
     @Override

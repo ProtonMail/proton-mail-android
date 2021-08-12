@@ -735,7 +735,7 @@
         Considere libertar um pouco de espaço ou adquira mais armazenamento antes de atingir o limite.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permissões</string>
-    <string name="need_storage_permissions_text">Para adicionar anexos tem de permitir
+    <string name="need_storage_permissions_add_attachment_text">Para adicionar anexos tem de permitir
         acesso ao armazenamento.</string>
     <string name="push_notifications_alert_title">Alerta de notificações forçadas</string>
     <string name="push_notifications_alert_subtitle">As notificações forçadas do ProtonMail não funcionam sem serviços actualizados do Google Play.</string>

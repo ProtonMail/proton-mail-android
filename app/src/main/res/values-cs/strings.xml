@@ -762,7 +762,7 @@
         Zvažte uvolnění nějakého místa nebo přikoupení vetší kapacity schránky.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Oprávnění</string>
-    <string name="need_storage_permissions_text">Pro přidávání příloh musíte povolit přístup
+    <string name="need_storage_permissions_add_attachment_text">Pro přidávání příloh musíte povolit přístup
         k úložišti.</string>
     <string name="push_notifications_alert_title">Oznámení Push notifikací</string>
     <string name="push_notifications_alert_subtitle">Push notifikace pro ProtonMail nefungují bez aktuální verze služeb Google Play.</string>

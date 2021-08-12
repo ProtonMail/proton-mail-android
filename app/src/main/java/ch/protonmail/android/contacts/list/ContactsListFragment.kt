@@ -234,6 +234,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             )
             listener.doStartActivityForResult(intent, REQUEST_CODE_CONVERT_CONTACT)
         }
+
+        observePermissionMissingDialogTrigger()
     }
 
     private fun resetSelections() {
@@ -433,6 +435,17 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun getSelectedItems() = contactsAdapter.currentList.filter { it.isSelected }
+
+    private fun observePermissionMissingDialogTrigger() {
+        viewModel.showPermissionMissingDialog.observe(viewLifecycleOwner) {
+            DialogUtils.showInfoDialog(
+                context = requireContext(),
+                title = requireContext().getString(R.string.need_permissions_title),
+                message = requireContext().getString(R.string.need_contacts_permissions_text),
+                okListener = { }
+            )
+        }
+    }
 
     companion object {
 
