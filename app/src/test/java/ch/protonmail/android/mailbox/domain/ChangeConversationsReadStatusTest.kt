@@ -28,6 +28,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Test the behavior of [ChangeConversationsReadStatus]
@@ -53,7 +54,9 @@ class ChangeConversationsReadStatusTest {
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
             val userId = UserId("id")
-            coEvery { conversationsRepository.markRead(conversationIds, userId) } returns ConversationsActionResult.Success
+            coEvery {
+                conversationsRepository.markRead(conversationIds, userId)
+            } returns ConversationsActionResult.Success
 
             // when
             changeConversationsReadStatus(
@@ -78,7 +81,9 @@ class ChangeConversationsReadStatusTest {
             val conversation1 = "conversation1"
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
-            coEvery { conversationsRepository.markUnread(conversationIds, any(), any(), any()) } returns ConversationsActionResult.Success
+            coEvery {
+                conversationsRepository.markUnread(conversationIds, any(), any(), any())
+            } returns ConversationsActionResult.Success
 
             // when
             changeConversationsReadStatus(
@@ -93,6 +98,59 @@ class ChangeConversationsReadStatusTest {
             coVerify {
                 conversationsRepository.markUnread(conversationIds, any(), any(), any())
             }
+        }
+    }
+
+    @Test
+    fun verifyUseCaseReturnsSuccessResultWhenRepositoryReturnsSuccessResult() {
+        runBlockingTest {
+            // given
+            val conversation1 = "conversation1"
+            val conversation2 = "conversation2"
+            val conversationIds = listOf(conversation1, conversation2)
+            val userId = UserId("id")
+            val expectedResult = ConversationsActionResult.Success
+            coEvery {
+                conversationsRepository.markRead(conversationIds, userId)
+            } returns ConversationsActionResult.Success
+
+            // when
+            val result = changeConversationsReadStatus(
+                conversationIds,
+                ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
+                userId,
+                Constants.MessageLocationType.ARCHIVE,
+                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+            )
+
+            // then
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyUseCaseReturnsErrorResultWhenRepositoryReturnsErrorResult() {
+        runBlockingTest {
+            // given
+            val conversation1 = "conversation1"
+            val conversation2 = "conversation2"
+            val conversationIds = listOf(conversation1, conversation2)
+            val expectedResult = ConversationsActionResult.Error
+            coEvery {
+                conversationsRepository.markUnread(conversationIds, any(), any(), any())
+            } returns ConversationsActionResult.Error
+
+            // when
+            val result = changeConversationsReadStatus(
+                conversationIds,
+                ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
+                UserId("id"),
+                Constants.MessageLocationType.ARCHIVE,
+                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+            )
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 }

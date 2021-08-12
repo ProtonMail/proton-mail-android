@@ -22,12 +22,11 @@ package ch.protonmail.android.mailbox.domain
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Tests the behaviour of [MoveConversationsToFolder]
@@ -47,7 +46,9 @@ class MoveConversationsToFolderTest {
             val conversationIds = listOf("conversationId1", "conversationId2")
             val userId = UserId("userId")
             val folderId = "folderId"
-            coEvery { conversationsRepository.moveToFolder(conversationIds, userId, folderId) } returns ConversationsActionResult.Success
+            coEvery {
+                conversationsRepository.moveToFolder(conversationIds, userId, folderId)
+            } returns ConversationsActionResult.Success
 
             // when
             moveConversationsToFolder(conversationIds, userId, folderId)
@@ -56,6 +57,26 @@ class MoveConversationsToFolderTest {
             coVerify {
                 conversationsRepository.moveToFolder(conversationIds, userId, folderId)
             }
+        }
+    }
+
+    @Test
+    fun verifyUseCaseReturnsErrorResultWhenRepositoryReturnsErrorResult() {
+        runBlockingTest {
+            // given
+            val conversationIds = listOf("conversationId1", "conversationId2")
+            val userId = UserId("userId")
+            val folderId = "folderId"
+            val expectedResult = ConversationsActionResult.Error
+            coEvery {
+                conversationsRepository.moveToFolder(conversationIds, userId, folderId)
+            } returns ConversationsActionResult.Error
+
+            // when
+            val result = moveConversationsToFolder(conversationIds, userId, folderId)
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 }

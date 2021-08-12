@@ -246,6 +246,21 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun verifyMoveToInboxEmitsCouldNotCompleteActionErrorIfMoveConversationsToFolderReturnsErrorResultWhenInConversationMode() {
+        // given
+        val conversationId = "conversationId"
+        val expectedResult = MessageActionSheetAction.CouldNotCompleteActionError
+        every { conversationModeEnabled(any()) } returns true
+        coEvery { moveConversationsToFolder.invoke(any(), any(), any()) } returns ConversationsActionResult.Error
+
+        // when
+        viewModel.moveToInbox(listOf(conversationId), Constants.MessageLocationType.SPAM)
+
+        // then
+        assertEquals(expectedResult, viewModel.actionsFlow.value)
+    }
+
+    @Test
     fun verifyUnStarMessageCallsChangeConversationStarredStatusWhenConversationModeIsEnabledAndAConversationIsBeingUnStarred() {
         // given
         val conversationId = "conversationId01"
@@ -269,6 +284,28 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         assertEquals(expected, viewModel.actionsFlow.value)
         coVerify { changeConversationsStarredStatus.invoke(listOf(conversationId), userId, unstarAction) }
         verify { messageRepository wasNot Called }
+    }
+
+    @Test
+    fun verifyUnstarMessageEmitsResultWithIsSuccessfulFlagFalseIfChangeConversationStarredStatusReturnsErrorResultInConversationMode() {
+        // given
+        val conversationId = "conversationId"
+        val expectedResult = MessageActionSheetAction.ChangeStarredStatus(starredStatus = false, isSuccessful = false)
+        val userId = UserId("userId")
+        val unstarAction = ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
+        every { conversationModeEnabled(any()) } returns true
+        coEvery {
+            changeConversationsStarredStatus.invoke(listOf(conversationId), userId, unstarAction)
+        } returns ConversationsActionResult.Error
+
+        // when
+        viewModel.unStarMessage(
+            listOf(conversationId),
+            Constants.MessageLocationType.LABEL_FOLDER
+        )
+
+        // then
+        assertEquals(expectedResult, viewModel.actionsFlow.value)
     }
 
     @Test
@@ -308,6 +345,36 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun verifyMarkReadEmitsCouldNotCompleteActionErrorIfChangeConversationsReadStatusReturnsErrorResultWhenInConversationMode() {
+        // given
+        val conversationId = "conversationId"
+        val expectedResult = MessageActionSheetAction.CouldNotCompleteActionError
+        val userId = UserId("userId02")
+        val markReadAction = ChangeConversationsReadStatus.Action.ACTION_MARK_READ
+        val location = Constants.MessageLocationType.ALL_MAIL
+        every { conversationModeEnabled(any()) } returns true
+        coEvery {
+            changeConversationsReadStatus.invoke(
+                listOf(conversationId),
+                markReadAction,
+                userId,
+                location,
+                location.messageLocationTypeValue.toString()
+            )
+        } returns ConversationsActionResult.Error
+
+        // when
+        viewModel.markRead(
+            listOf(conversationId),
+            location,
+            location.messageLocationTypeValue.toString()
+        )
+
+        // then
+        assertEquals(expectedResult, viewModel.actionsFlow.value)
+    }
+
+    @Test
     fun verifyStarMessageCallsMessageRepositoryToStarMessageWhenConversationIsEnabledAndActionIsBeingAppliedToASpecificMessageInAConversation() {
         // given
         val messageId = "messageId3"
@@ -334,6 +401,24 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun verifyStarMessageEmitsResultWithIsSuccessfulFlagFalseIfChangeConversationStarredStatusReturnsErrorResultInConversationMode() {
+        // given
+        val conversationId = "conversationId"
+        val expectedResult = MessageActionSheetAction.ChangeStarredStatus(true, isSuccessful = false)
+        every { conversationModeEnabled(any()) } returns true
+        coEvery { changeConversationsStarredStatus(any(), any(), any()) } returns ConversationsActionResult.Error
+
+        // when
+        viewModel.starMessage(
+            listOf(conversationId),
+            Constants.MessageLocationType.INBOX
+        )
+
+        // then
+        assertEquals(expectedResult, viewModel.actionsFlow.value)
+    }
+
+    @Test
     fun verifyMarkUnreadCallsMessageRepositoryToMarkUnreadWhenConversationIsEnabledAndActionIsBeingAppliedToASpecificMessageInAConversation() {
         // given
         val messageId = "messageId4"
@@ -355,6 +440,27 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         assertEquals(expected, viewModel.actionsFlow.value)
         verify { messageRepository.markUnRead(listOf(messageId)) }
         verify { accountManager wasNot Called }
+    }
+
+    @Test
+    fun verifyMarkUnreadEmitsCouldNotCompleteActionErrorIfChangeConversationsReadStatusReturnsErrorResultWhenInConversationMode() {
+        // given
+        val conversationId = "conversationId"
+        val expectedResult = MessageActionSheetAction.CouldNotCompleteActionError
+        every { conversationModeEnabled(any()) } returns true
+        coEvery {
+            changeConversationsReadStatus.invoke(any(), any(), any(), any(), any())
+        } returns ConversationsActionResult.Error
+
+        // when
+        viewModel.markUnread(
+            listOf(conversationId),
+            Constants.MessageLocationType.INBOX,
+            Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+        )
+
+        // then
+        assertEquals(expectedResult, viewModel.actionsFlow.value)
     }
 
     @Test
@@ -399,6 +505,27 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
                 currentFolder.messageLocationTypeValue.toString()
             )
         }
+    }
+
+    @Test
+    fun verifyDeleteEmitsDismissActionSheetWithDismissBackingActivityTrueWhenTargetIsConversationInConversationDetails() {
+        // given
+        val conversationIds = listOf("conversationId")
+        val currentFolder = Constants.MessageLocationType.SPAM
+        every { conversationModeEnabled(any()) } returns true
+        every {
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+
+        // when
+        viewModel.delete(
+            conversationIds,
+            currentFolder,
+            true
+        )
+
+        // then
+        assertEquals(MessageActionSheetAction.DismissActionSheet(true), viewModel.actionsFlow.value)
     }
 
     @Test

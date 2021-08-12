@@ -27,6 +27,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Tests the behaviour of [ChangeConversationsStarredStatus]
@@ -85,6 +86,48 @@ class ChangeConversationsStarredStatusTest {
             coVerify {
                 conversationsRepository.unstar(conversationIds, userId)
             }
+        }
+    }
+
+    @Test
+    fun verifyUseCaseReturnsSuccessResultWhenRepositoryReturnsSuccessResult() {
+        runBlockingTest {
+            // given
+            val conversationIds = listOf("conversation1", "conversation2")
+            val userId = UserId("id")
+            val expectedResult = ConversationsActionResult.Success
+            coEvery { conversationsRepository.star(any(), any()) } returns ConversationsActionResult.Success
+
+            // when
+            val result = changeConversationsStarredStatus(
+                conversationIds,
+                userId,
+                ChangeConversationsStarredStatus.Action.ACTION_STAR
+            )
+
+            // then
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyUseCaseReturnsErrorResultWhenRepositoryReturnsErrorResult() {
+        runBlockingTest {
+            // given
+            val conversationIds = listOf("conversation1", "conversation2")
+            val userId = UserId("id")
+            val expectedResult = ConversationsActionResult.Error
+            coEvery { conversationsRepository.unstar(any(), any()) } returns ConversationsActionResult.Error
+
+            // when
+            val result = changeConversationsStarredStatus(
+                conversationIds,
+                userId,
+                ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
+            )
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 }

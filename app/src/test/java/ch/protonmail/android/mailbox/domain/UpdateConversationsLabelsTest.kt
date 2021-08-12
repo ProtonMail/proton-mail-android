@@ -26,6 +26,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Tests the behaviour of [UpdateConversationsLabels]
@@ -65,6 +66,33 @@ class UpdateConversationsLabelsTest {
             coVerify {
                 conversationsRepository.unlabel(conversationIds, userId, label3)
             }
+        }
+    }
+
+    @Test
+    fun verifyUseCaseReturnsErrorResultWhenAtLeastOneRepositoryCallReturnsErrorResult() {
+        runBlockingTest {
+            // given
+            val conversationIds = listOf("conversationId1", "conversationId2")
+            val userId = UserId("userId")
+            val label1 = "label1"
+            val label2 = "label2"
+            val label3 = "label3"
+            val selectedLabels = listOf(label1, label2)
+            val unselectedLabels = listOf(label3)
+            val expectedResult = ConversationsActionResult.Error
+            coEvery {
+                conversationsRepository.label(conversationIds, userId, any())
+            } returns ConversationsActionResult.Success
+            coEvery {
+                conversationsRepository.unlabel(conversationIds, userId, any())
+            } returns ConversationsActionResult.Error
+
+            // when
+            val result = updateConversationsLabels.invoke(conversationIds, userId, selectedLabels, unselectedLabels)
+
+            // then
+            assertEquals(expectedResult, result)
         }
     }
 }
