@@ -41,28 +41,40 @@ public class EventResponse extends ResponseBody {
 
     @SerializedName(Fields.Events.EVENT_ID)
     private String eventID;
+
     @SerializedName(Fields.Events.MORE)
     private int more;
+
     @SerializedName(Fields.Events.REFRESH)
     private int refresh;
+
     @SerializedName(Fields.Events.MESSAGES)
     private List<MessageEventBody> messages;
+
     @SerializedName(Fields.Events.CONVERSATIONS)
     private List<ConversationsEventResponse> conversations;
+
     @SerializedName(Fields.Events.CONTACTS)
     private List<ContactEventBody> contacts;
+
     @SerializedName(Fields.Events.CONTACT_EMAILS)
     private List<ContactEmailEventBody> contactEmails;
+
     @SerializedName(Fields.Events.LABELS)
     private List<LabelsEventBody> labels;
+
     @SerializedName(Fields.Events.USER)
     private User user;
+
     @SerializedName(Fields.Events.MAIL_SETTINGS)
     private MailSettings mailSettings;
+
     @SerializedName(Fields.Events.MESSAGE_COUNTS)
     private List<CountsApiModel> messageCounts;
+
     @SerializedName(Fields.Events.USED_SPACE)
     private long usedSpace;
+
     @SerializedName(Fields.Events.ADDRESSES)
     private List<AddressEventBody> addresses;
 
