@@ -72,6 +72,9 @@ public class EventResponse extends ResponseBody {
     @SerializedName(Fields.Events.MESSAGE_COUNTS)
     private List<CountsApiModel> messageCounts;
 
+    @SerializedName(Fields.Events.CONVERSATION_COUNTS)
+    private List<CountsApiModel> conversationCounts;
+
     @SerializedName(Fields.Events.USED_SPACE)
     private long usedSpace;
 
@@ -93,6 +96,10 @@ public class EventResponse extends ResponseBody {
 
     public List<CountsApiModel> getMessageCounts() {
         return messageCounts;
+    }
+
+    public List<CountsApiModel> getConversationCounts() {
+        return conversationCounts;
     }
 
     public List<LabelsEventBody> getLabelUpdates() { return labels; }

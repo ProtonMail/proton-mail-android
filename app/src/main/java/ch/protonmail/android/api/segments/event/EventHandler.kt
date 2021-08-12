@@ -228,7 +228,8 @@ internal class EventHandler @AssistedInject constructor(
 
         val mailSettings = response.mailSettingsUpdates
         val labels = response.labelUpdates
-        val counts = response.messageCounts
+        val messageCounts = response.messageCounts
+        val conversationCounts = response.conversationCounts
         val addresses = response.addresses
 
         if (labels != null) {
@@ -261,8 +262,11 @@ internal class EventHandler @AssistedInject constructor(
             // Core is the source of truth. Workaround: Force refresh Core.
             fetchUserAddressesWorkerEnqueuer(userId)
         }
-        if (counts != null) {
-            writeUnreadUpdates(counts)
+        if (messageCounts != null) {
+            writeUnreadCountersUpdates(messageCounts, Type.MESSAGES)
+        }
+        if (conversationCounts != null) {
+            writeUnreadCountersUpdates(conversationCounts, Type.CONVERSATIONS)
         }
     }
 
@@ -623,9 +627,9 @@ internal class EventHandler @AssistedInject constructor(
         }
     }
 
-    private fun writeUnreadUpdates(messageCounts: List<CountsApiModel>) {
+    private fun writeUnreadCountersUpdates(messageCounts: List<CountsApiModel>, type: Type) {
         val databaseModels = messageCounts
-            .map(apiToDatabaseUnreadCounterMapper) { toDatabaseModel(it, userId, Type.MESSAGES) }
+            .map { apiToDatabaseUnreadCounterMapper.toDatabaseModel(it, userId, type) }
         runBlocking {
             unreadCounterDao.insertOrUpdate(databaseModels)
         }

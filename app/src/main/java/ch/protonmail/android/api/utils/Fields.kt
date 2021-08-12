@@ -330,6 +330,7 @@ object Fields {
         const val CONTACT_EMAIL = "ContactEmail"
         const val LABEL = "Label"
         const val MESSAGE_COUNTS = "MessageCounts"
+        const val CONVERSATION_COUNTS = "ConversationCounts"
         const val ADDRESSES = "Addresses"
         const val ADDRESS = "Address"
     }
