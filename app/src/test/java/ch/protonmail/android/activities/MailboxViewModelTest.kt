@@ -1022,8 +1022,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     messageData = null,
                     isDeleted = false,
                     labels = listOf(
-                        LabelChipUiModel(Id("1"), Name("label 1"), null),
-                        LabelChipUiModel(Id("8"), Name("label 8"), null)
+                        LabelChipUiModel(UserId("1"), Name("label 1"), null),
+                        LabelChipUiModel(UserId("8"), Name("label 8"), null)
                     ),
                     recipients = "",
                     true
@@ -1079,8 +1079,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     messageData = null,
                     isDeleted = false,
                     labels = listOf(
-                        LabelChipUiModel(Id("1"), Name("label 1"), null),
-                        LabelChipUiModel(Id("8"), Name("label 8"), null)
+                        LabelChipUiModel(UserId("1"), Name("label 1"), null),
+                        LabelChipUiModel(UserId("8"), Name("label 8"), null)
                     ),
                     recipients = "",
                     false
@@ -1137,8 +1137,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         ),
                         isDeleted = false,
                         labels = listOf(
-                            LabelChipUiModel(Id("1"), Name("label 1"), null),
-                            LabelChipUiModel(Id("8"), Name("label 8"), null)
+                            LabelChipUiModel(UserId("1"), Name("label 1"), null),
+                            LabelChipUiModel(UserId("8"), Name("label 8"), null)
                         ),
                         recipients = "",
                         isDraft = true

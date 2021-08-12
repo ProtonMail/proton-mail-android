@@ -776,7 +776,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         every { savedStateHandle.get<String>(EXTRA_MAILBOX_LABEL_ID) } returns null
-        val userId = Id("userId3")
+        val userId = UserId("userId3")
         every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage("conversationId"))
@@ -805,7 +805,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             changeConversationsReadStatus.invoke(
                 listOf(inputConversationId),
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                UserId(userId.s),
+                UserId(userId.id),
                 inputMessageLocation,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
@@ -947,7 +947,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         val userString = "userId3"
-        val id = Id(userString)
+        val id = UserId(userString)
         val userId = UserId(userString)
         every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
