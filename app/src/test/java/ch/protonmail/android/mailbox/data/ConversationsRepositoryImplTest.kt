@@ -1241,7 +1241,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
             // then
             assertEquals(expected, expectItem())
-            expectComplete()
         }
     }
 
