@@ -631,13 +631,7 @@ internal class MailboxActivity :
     ) {
 
         Timber.v("loadMailboxItems last: $oldestItemTimestamp")
-        mailboxViewModel.loadMailboxItems(
-            mailboxLabelId,
-            includeLabels,
-            syncUUID,
-            refreshMessages,
-            oldestItemTimestamp
-        )
+        mailboxViewModel.loadMailboxItems()
     }
 
     private fun setElevationOnToolbarAndStatusView(shouldIncreaseElevation: Boolean) {

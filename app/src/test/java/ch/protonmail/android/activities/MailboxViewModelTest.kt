@@ -190,7 +190,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             labelRepository,
             verifyConnection,
             networkConfigurator,
-            messageServiceScheduler,
             conversationModeEnabled,
             observeConversationsByLocation,
             changeConversationsReadStatus,
@@ -588,13 +587,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(location) } returns false
 
         viewModel.setNewMailboxLocation(location)
-        viewModel.loadMailboxItems(
-            labelId,
-            includeLabels,
-            uuid,
-            refreshMessages,
-            timestamp
-        )
+        viewModel.loadMailboxItems()
 
         verifySequence { messageServiceScheduler.fetchMessagesOlderThanTime(location, userId, timestamp) }
         verify(exactly = 0) { jobManager.addJobInBackground(any()) }
@@ -614,13 +607,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(location) } returns false
 
         viewModel.setNewMailboxLocation(location)
-        viewModel.loadMailboxItems(
-            labelId,
-            includeLabels,
-            uuid,
-            refreshMessages,
-            oldestMessageTimestamp
-        )
+        viewModel.loadMailboxItems()
 
         verifySequence {
             messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(
@@ -649,13 +636,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         // when
         viewModel.setNewMailboxLocation(location)
         advanceUntilIdle()
-        viewModel.loadMailboxItems(
-            labelId,
-            false,
-            uuid,
-            false,
-            oldestMessageTimestamp
-        )
+        viewModel.loadMailboxItems()
 
         // then
         verify { conversationsFlow.loadMore() }

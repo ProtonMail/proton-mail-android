@@ -25,12 +25,9 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
-import ch.protonmail.android.core.Constants.MessageLocationType.LABEL
-import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
@@ -42,7 +39,6 @@ import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.jobs.ApplyLabelJob
-import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
@@ -78,7 +74,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -88,7 +83,6 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
-import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.collections.set
@@ -110,12 +104,11 @@ class MailboxViewModel @Inject constructor(
     private val labelRepository: LabelRepository,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
-    private val messageServiceScheduler: MessagesService.Scheduler,
     private val conversationModeEnabled: ConversationModeEnabled,
+    private val observeMessagesByLocation: ObserveMessagesByLocation,
     private val observeConversationsByLocation: ObserveConversationsByLocation,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
-    private val observeMessagesByLocation: ObserveMessagesByLocation,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val deleteConversations: DeleteConversations,
@@ -178,30 +171,14 @@ class MailboxViewModel @Inject constructor(
                 val labelId = parameters.second
                 val userId = parameters.third
 
-                if (conversationModeEnabled(location)) {
+                mailboxStateFlow = if (conversationModeEnabled(location)) {
                     Timber.v("Getting conversations for $location, label: $labelId, user: $userId")
-                    mailboxStateFlow = conversationsAsMailboxItems(location, labelId, userId)
-                    mailboxStateFlow
+                    conversationsAsMailboxItems(location, labelId, userId)
                 } else {
-                    Timber.v("Getting messages for $location label: $labelId user: $userId")
-                    observeMessagesByLocation(location, labelId, userId)
-                        .map { result ->
-                            when (result) {
-                                is GetMessagesResult.Success -> {
-                                    MailboxState.Data(
-                                        messagesToMailboxItems(result.messages),
-                                        false
-                                    )
-                                }
-                                is GetMessagesResult.Error -> {
-                                    MailboxState.Error(
-                                        "GetMessagesResult Error",
-                                        result.throwable
-                                    )
-                                }
-                            }
-                        }
+                    Timber.v("Getting messages for $location, label: $labelId, user: $userId")
+                    messagesAsMailboxItems(location, labelId, userId)
                 }
+                mailboxStateFlow
             }
             .catch {
                 emit(
@@ -317,91 +294,21 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun loadMailboxItems(
-        labelId: String?,
-        includeLabels: Boolean,
-        uuid: String,
-        refreshMessages: Boolean,
-        oldestItemTimestamp: Long
-    ) {
-
+    fun loadMailboxItems() {
         val location = mailboxLocation.value
         Timber.v("loadMailboxItems location: $location")
-        if (conversationModeEnabled(location)) {
-            mailboxStateFlow.loadMore()
-        }
-
-        fetchMessages(
-            oldestItemTimestamp,
-            location,
-            labelId,
-            includeLabels,
-            uuid,
-            refreshMessages
-        )
+        loadMore()
     }
 
     /**
      * Request to fetch more items from API
      */
     fun loadMore() {
-        if (conversationModeEnabled(mailboxLocation.value)) {
-            mailboxStateFlow.loadMore()
-        } else {
-            unsupported
-        }
+        mailboxStateFlow.loadMore()
     }
 
     fun messagesToMailboxItemsBlocking(messages: List<Message>) = runBlocking {
         return@runBlocking messagesToMailboxItems(messages)
-    }
-
-    private fun fetchMessages(
-        oldestMessageTimestamp: Long?,
-        location: Constants.MessageLocationType,
-        labelId: String?,
-        includeLabels: Boolean,
-        uuid: String,
-        refreshMessages: Boolean
-    ) {
-        // UserId is needed. We currently don't support merged inbox.
-        val userId = userManager.currentUserId ?: return
-        Timber.v("fetchMessages userId: $userId")
-
-        // When oldestMessageTimestamp is valid the request is about paginated messages (page > 1)
-
-        if (refreshMessages) {
-            messageDetailsRepository.reloadDependenciesForUser(userId)
-        }
-
-        if (oldestMessageTimestamp != null) {
-            val isCustomLocation = location == LABEL || location == LABEL_FOLDER
-
-            if (isCustomLocation) {
-                messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(
-                    location,
-                    userId,
-                    oldestMessageTimestamp,
-                    labelId ?: ""
-                )
-            } else {
-                messageServiceScheduler.fetchMessagesOlderThanTime(
-                    location,
-                    userId,
-                    oldestMessageTimestamp
-                )
-            }
-        } else {
-            jobManager.addJobInBackground(
-                FetchByLocationJob(
-                    location,
-                    labelId,
-                    includeLabels,
-                    uuid,
-                    refreshMessages
-                )
-            )
-        }
     }
 
     private fun conversationsAsMailboxItems(
@@ -409,29 +316,41 @@ class MailboxViewModel @Inject constructor(
         labelId: String?,
         userId: UserId
     ): LoadMoreFlow<MailboxState> {
-        val locationId = if (!labelId.isNullOrEmpty()) {
-            labelId
-        } else {
-            location.messageLocationTypeValue.toString()
-        }
+        val locationId = labelId?.takeIfNotBlank() ?: location.messageLocationTypeValue.toString()
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
         return observeConversationsByLocation(
             userId,
             locationId
         ).loadMoreMap { result ->
             when (result) {
-                is GetConversationsResult.Success -> {
-                    MailboxState.Data(
-                        conversationsToMailboxItems(result.conversations, locationId)
-                    )
-                }
-                is GetConversationsResult.NoConversationsFound -> {
+                is GetConversationsResult.Success ->
+                    MailboxState.Data(conversationsToMailboxItems(result.conversations, locationId))
+                is GetConversationsResult.NoConversationsFound ->
                     MailboxState.Data(noMoreItems = true)
-                }
-                is GetConversationsResult.Error -> {
-                    Timber.e(result.throwable, "Failed getting conversations")
+                is GetConversationsResult.Error ->
                     MailboxState.Error(error = "Failed getting conversations", throwable = result.throwable)
-                }
+            }
+        }
+    }
+
+    private fun messagesAsMailboxItems(
+        location: Constants.MessageLocationType,
+        labelId: String?,
+        userId: Id
+    ): LoadMoreFlow<MailboxState> {
+        Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
+        return observeMessagesByLocation(
+            location,
+            labelId,
+            userId
+        ).loadMoreMap { result ->
+            when (result) {
+                is GetMessagesResult.Success ->
+                    MailboxState.Data(messagesToMailboxItems(result.messages))
+                is GetMessagesResult.NoMessagesFound ->
+                    MailboxState.Data(noMoreItems = true)
+                is GetMessagesResult.Error ->
+                    MailboxState.Error("GetMessagesResult Error", result.throwable)
             }
         }
     }
