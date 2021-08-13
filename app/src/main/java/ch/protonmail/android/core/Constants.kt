@@ -38,16 +38,10 @@ object Constants {
 
     const val EMAIL_DELIMITER = ","
 
-    const val BEGIN_PGP = "-----BEGIN PGP MESSAGE-----"
-    const val END_PGP = "-----END PGP MESSAGE-----"
-
     const val DIR_EMB_ATTACHMENT_DOWNLOADS = "/ProtonMail/emb_att/"
     const val DIR_MESSAGE_BODY_DOWNLOADS = "/ProtonMail/messages/"
 
     const val FONTS_FOLDER = "fonts/"
-
-    const val HIGH_SECURITY_BITS = 2048
-    const val EXTREME_SECURITY_BITS = 4096
 
     const val STORAGE_LIMIT_WARNING_PERCENTAGE: Long = 90
 
@@ -64,7 +58,6 @@ object Constants {
     const val MAX_ATTACHMENT_FILE_SIZE_IN_BYTES = (25 * 1000 * 1000).toLong() // 25 MB
     const val MAX_ATTACHMENT_STORAGE_IN_MB = 1000
     const val DEFAULT_ATTACHMENT_STORAGE_IN_MB = 600
-    const val MAX_USERNAME_LENGTH = 40
     const val MAX_INCORRECT_PIN_ATTEMPTS = 10
     const val MAX_INTENT_STRING_SIZE = 200_000
     const val MIN_LOCAL_STORAGE_CLEARING_SIZE = 0.4
@@ -72,9 +65,7 @@ object Constants {
     // Indicates the first time when all clients should be signing all messages.
     const val PM_SIGNATURES_START = Integer.MAX_VALUE.toLong()
 
-    const val TOKEN_TYPE = "Bearer"
     const val TOKEN_SCOPE_FULL = "full"
-    const val TOKEN_SCOPE_SELF = "self"
 
     // MIME types
     const val MIME_TYPE_HTML = "text/html"
@@ -82,17 +73,10 @@ object Constants {
     const val MIME_TYPE_UNKNOWN_FILE = "application/octet-stream"
     const val MIME_TYPE_MULTIPART_MIXED = "multipart/mixed"
 
-    // Password types
-    const val PASSWORD_TYPE_LOGIN = 0
-    const val PASSWORD_TYPE_MAILBOX = 1
-
     // Label types
     const val LABEL_TYPE_MESSAGE = 1
     const val LABEL_TYPE_CONTACT_GROUPS = 2
     const val LABEL_TYPE_MESSAGE_FOLDERS = 3 // from labels API v4
-
-    // Address types
-    const val ADDRESS_TYPE_PRIMARY = 1
 
     // Response codes
     const val RESPONSE_CODE_OK = 1000
@@ -102,11 +86,8 @@ object Constants {
     // JobIntentService IDs
     const val JOB_INTENT_SERVICE_ID_EVENT_UPDATER = 870
     const val JOB_INTENT_SERVICE_ID_MESSAGES = 872
-    const val JOB_INTENT_SERVICE_ID_LOGOUT = 873
     const val JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING = 874
     const val JOB_INTENT_SERVICE_ID_MESSAGE_BODY_CLEARING = 875
-    const val JOB_INTENT_SERVICE_ID_LOGIN = 876
-    const val JOB_INTENT_SERVICE_ID_REGISTRATION = 877
 
     // Job related constants
     const val JOB_RETRY_LIMIT_DEFAULT = 10
@@ -116,7 +97,6 @@ object Constants {
     const val JOB_GROUP_BUGS = "bugs"
     const val JOB_GROUP_MISC = "misc"
     const val JOB_GROUP_PAYMENT = "payment"
-    const val JOB_GROUP_SENDING = "sending"
     const val ERROR = "error"
 
     const val BYTE_TO_MEGABYTE_RATIO = 1_000_000
@@ -125,8 +105,6 @@ object Constants {
         const val PREF_APP_VERSION = "appVersion"
         const val PREF_PREVIOUS_APP_VERSION = "previousAppVersion"
 
-        const val PREF_VERIFY_CODE = "verifyCode"
-        const val PREF_CONTACTS_LOADING = "contactsLoading"
         const val PREF_PM_ADDRESS_CHANGED = "pmAddressChanged"
         const val PREF_HYPERLINK_CONFIRM = "confirmHyperlinks"
 
@@ -152,13 +130,10 @@ object Constants {
         const val PREF_MAX_UPLOAD_FILE_SIZE = "ui_max_upload_file_size"
         const val PREF_MOBILE_FOOTER = "ui_mobile_signature"
         const val PREF_NOTIFICATION = "notification"
-        const val PREF_NOTIFICATION_EMAIL = "ui_notification_email"
         const val PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN = "notification_lock_screen_int"
-        const val PREF_NUM_MESSAGE_PER_PAGE = "ui_num_message_per_page"
         const val PREF_PREVENT_TAKING_SCREENSHOTS = "prevent_taking_screenshots"
         const val PREF_RINGTONE = "ringtone"
         const val PREF_ROLE = "role"
-        const val PREF_SIGNATURE = "ui_signature"
         const val PREF_SUBSCRIBED = "subscribed"
         const val PREF_TIME_AND_DATE_CHANGED = "time_and_date_changed"
         const val PREF_USE_FINGERPRINT = "use_fingerprint_for_lock"
@@ -183,15 +158,8 @@ object Constants {
         const val PREF_SWIPE_GESTURES_DIALOG_SHOWN = "swipe_gestures_dialog_shown"
     }
 
-    object LogTags {
-        const val SENDING_FAILED_TAG = "SENDINGFAILEDv3"
-        const val SENDING_FAILED_REASON_TAG = "SENDINGFAILEDREASON"
-        const val SENDING_FAILED_DEVICE_TAG = "SENDINGFAILEDDEVICE"
-        const val SENDING_FAILED_SAME_USER_TAG = "SENDINGFAILEDSAMEUSER"
-    }
-
     object PrefsType {
-        const val BACKUP = "backup"
+
         const val DEFAULT = "default"
         const val BACKUP_PREFS_NAME = "backup_prefs"
     }
@@ -224,6 +192,9 @@ object Constants {
         )
         override fun toString() = super.toString()
 
+        fun asLabelId(): String =
+            messageLocationTypeValue.toString()
+
         companion object {
 
             fun fromInt(messageLocationTypeValue: Int): MessageLocationType {
@@ -250,8 +221,6 @@ object Constants {
         REPORT_BUGS(101),
         SIGN_OUT(111),
         LOCK(112),
-        UPSELLING(113),
-        ACCOUNT_MANAGER(115)
     }
 
     enum class MessageActionType(val messageActionTypeValue: Int) {
@@ -268,13 +237,6 @@ object Constants {
                 } ?: REPLY
             }
         }
-    }
-
-    enum class AccountType {
-        FREE,
-        PLUS,
-        VISIONARY,
-        BUSINESS
     }
 
     enum class PlanType(val planTypeValue: String) {
@@ -299,48 +261,9 @@ object Constants {
         EUR
     }
 
-    enum class PaymentCycleType(val paymentCycleTypeValue: Int) {
-        MONTHLY(1),
-        YEARLY(12)
-    }
-
-    enum class BillingType {
-        CREATE,
-        UPGRADE,
-        DONATE
-    }
-
-    enum class TokenType(val tokenTypeValue: String) {
-        SMS("sms"),
-        EMAIL("email"),
-        PAYMENT("payment"),
-        CAPTCHA("captcha");
-
-        companion object {
-            fun fromString(tokenTypeValue: String): TokenType {
-                return values().find {
-                    tokenTypeValue == it.tokenTypeValue
-                } ?: SMS
-            }
-        }
-    }
-
     enum class PermissionType {
         CONTACTS,
         STORAGE
-    }
-
-    enum class PasswordMode(val passwordModeValue: Int) {
-        SINGLE(1),
-        DUAL(2);
-
-        companion object {
-            fun fromInt(passwordModeValue: Int): PasswordMode {
-                return values().find {
-                    passwordModeValue == it.passwordModeValue
-                } ?: SINGLE
-            }
-        }
     }
 
     enum class VCardOtherInfoType {
