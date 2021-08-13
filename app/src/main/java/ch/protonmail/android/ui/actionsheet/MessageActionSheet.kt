@@ -111,7 +111,9 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                             Timber.v("State changed to $newState")
                             if (newState == STATE_EXPANDED) {
                                 setCloseIconVisibility(true)
-                                dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                                if (bottomSheet.isExpandedToFullscreen()) {
+                                    dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                                }
                             } else {
                                 setCloseIconVisibility(false)
                                 dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
@@ -429,6 +431,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             Toast.LENGTH_SHORT
         ).show()
     }
+
+    private fun View.isExpandedToFullscreen(): Boolean = this.top == 0
 
     companion object {
 
