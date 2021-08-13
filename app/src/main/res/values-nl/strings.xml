@@ -736,7 +736,7 @@
         Overweeg om wat ruimte vrij te maken of schaf extra opslagruimte aan voordat u ruimte tekortkomt.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Rechten</string>
-    <string name="need_storage_permissions_text">Om bijlagen toe te voegen moet u
+    <string name="need_storage_permissions_add_attachment_text">Om bijlagen toe te voegen moet u
         toegang tot opslag toestaan.</string>
     <string name="push_notifications_alert_title">Pushmelding</string>
     <string name="push_notifications_alert_subtitle">Pushmeldingen voor ProtonMail werken niet zonder bijgewerkte Google Play-diensten.</string>

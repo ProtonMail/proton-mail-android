@@ -749,7 +749,7 @@
         Razmislite o oslobađanju prostora ili kupnji više prostora za pohranu prije nego što vam ponestane kapaciteta.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Dozvole</string>
-    <string name="need_storage_permissions_text">Da biste dodali privitke, trebate dopustiti
+    <string name="need_storage_permissions_add_attachment_text">Da biste dodali privitke, trebate dopustiti
         pristup pohrani.</string>
     <string name="push_notifications_alert_title">Upozorenja Push obavijesti</string>
     <string name="push_notifications_alert_subtitle">Push obavijesti za ProtonMail ne rade bez ažuriranih Google Play usluga.</string>

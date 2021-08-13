@@ -167,6 +167,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val _messageRenderedWithImages: MutableLiveData<Message> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
+    private val _showPermissionMissingDialog: MutableLiveData<Unit> = MutableLiveData()
     private val _conversationUiFLow = MutableSharedFlow<ConversationUiModel>(replay = 1)
 
     val conversationUiModel: SharedFlow<ConversationUiModel>
@@ -214,6 +215,9 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     val messageDetailsError: LiveData<Event<String>>
         get() = _messageDetailsError
+
+    val showPermissionMissingDialog: LiveData<Unit>
+        get() = _showPermissionMissingDialog
 
     val prepareEditMessageIntent: LiveData<Event<IntentExtrasData>>
         get() = _prepareEditMessageIntentResult
@@ -723,4 +727,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
+    fun storagePermissionDenied() {
+        _showPermissionMissingDialog.value = Unit
+    }
 }

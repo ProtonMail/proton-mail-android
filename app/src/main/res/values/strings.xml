@@ -799,8 +799,11 @@
     <!-- endregion -->
 
     <string name="need_permissions_title">Permissions</string>
-    <string name="need_storage_permissions_text">In order to add attachments you need to allow
+    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
         access to storage.</string>
+    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
+        access to storage.</string>
+    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Push notifications alert</string>
     <string name="push_notifications_alert_subtitle">Push notifications for ProtonMail do not work without updated Google Play services.</string>
     <string name="app_locked">App locked</string>

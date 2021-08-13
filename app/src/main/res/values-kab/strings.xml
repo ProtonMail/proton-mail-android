@@ -736,7 +736,7 @@
         Xemmem ad tserrḥeḍ i kra n tallunt neɣ ad txellṣeḍ ugar n uḥraz send ad txaṣeḍ akettur.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Isurag</string>
-    <string name="need_storage_permissions_text">Akken ad ternuḍ ifuyla yeddan, ilaq ad tessirgeḍ
+    <string name="need_storage_permissions_add_attachment_text">Akken ad ternuḍ ifuyla yeddan, ilaq ad tessirgeḍ
         akeccum ar tkatut n uḥraz.</string>
     <string name="push_notifications_alert_title">Ilɣa Push</string>
     <string name="push_notifications_alert_subtitle">Ilɣa Push i ProtonMail ur teddun ara wer alqem n imeẓla Google Play.</string>

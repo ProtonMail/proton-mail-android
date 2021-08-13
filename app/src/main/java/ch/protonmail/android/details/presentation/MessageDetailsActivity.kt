@@ -66,6 +66,7 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
@@ -192,6 +193,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         viewModel.messageDetailsError.observe(this, MessageDetailsErrorObserver())
         listenForConnectivityEvent()
         observeEditMessageEvents()
+        observePermissionMissingDialogTrigger()
     }
 
     private fun initAdapters() {
@@ -295,6 +297,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             }
         }
         return true
+    }
+
+    override fun onPermissionDenied(type: Constants.PermissionType) {
+        super.onPermissionDenied(type)
+        viewModel.storagePermissionDenied()
     }
 
     fun showReportPhishingDialog(messageId: String) {
@@ -775,6 +782,17 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 startActivityForResult(intent, 0)
             }
         )
+    }
+
+    private fun observePermissionMissingDialogTrigger() {
+        viewModel.showPermissionMissingDialog.observe(this) {
+            DialogUtils.showInfoDialog(
+                context = this,
+                title = getString(R.string.need_permissions_title),
+                message = getString(R.string.need_storage_permissions_download_attachment_text),
+                okListener = { }
+            )
+        }
     }
 
     private fun getCurrentSubject() = expandedToolbarTitleTextView.text ?: getString(R.string.empty_subject)

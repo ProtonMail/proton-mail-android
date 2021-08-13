@@ -732,7 +732,7 @@
     <string name="storage_limit_approaching_text">Du har uppnåt 90 % av ditt lagringsutrymme. Du bör överväga att frigöra plats eller köpa mer lagringsutrymme innan den tar slut.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Behörigheter</string>
-    <string name="need_storage_permissions_text">För att lägga till bilagor måste du tillåta
+    <string name="need_storage_permissions_add_attachment_text">För att lägga till bilagor måste du tillåta
         åtkomst till lagring.</string>
     <string name="push_notifications_alert_title">Push-notifieringar</string>
     <string name="push_notifications_alert_subtitle">Push-meddelanden för ProtonMail fungerar inte utan uppdaterade Google Play-tjänster.</string>

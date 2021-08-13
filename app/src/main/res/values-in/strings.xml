@@ -726,7 +726,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         Silakan pertimbangkan untuk membebaskan ruang atau membayar penyimpanan lebih sebelum kapasitas penyimpanan Anda habis.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Izin</string>
-    <string name="need_storage_permissions_text">Untuk menambahkan lampiran Anda harus mengizinkan
+    <string name="need_storage_permissions_add_attachment_text">Untuk menambahkan lampiran Anda harus mengizinkan
         akses menuju penyimpanan.</string>
     <string name="push_notifications_alert_title">Notifikasi Pemberitahuan Push</string>
     <string name="push_notifications_alert_subtitle">Pemberitahuan Push untuk ProtonMail tidak dapat berfungsi tanpa memperbarui layanan Google Play.</string>

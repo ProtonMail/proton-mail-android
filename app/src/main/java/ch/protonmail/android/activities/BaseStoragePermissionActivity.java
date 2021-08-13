@@ -40,7 +40,7 @@ public abstract class BaseStoragePermissionActivity extends BaseConnectivityActi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        storagePermissionHelper = PermissionHelper.newInstance(Constants.PermissionType.STORAGE, this, this, false);
+        storagePermissionHelper = PermissionHelper.newInstance(Constants.PermissionType.STORAGE, this, this);
         mHasStoragePermission = null;
         checkPin = true;
     }
@@ -56,7 +56,7 @@ public abstract class BaseStoragePermissionActivity extends BaseConnectivityActi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        storagePermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        storagePermissionHelper.onRequestPermissionsResult(requestCode, grantResults);
     }
 
     @Override

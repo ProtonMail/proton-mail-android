@@ -729,7 +729,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="storage_limit_approaching_text">Sie haben 90% Ihrer Speicherplatzgröße erreicht. Erwägen Sie, etwas Platz freizugeben oder mehr Speicherplatz zu kaufen, bevor Ihnen der Speicherplatz ausgeht.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Berechtigungen</string>
-    <string name="need_storage_permissions_text">Um Anhänge hinzufügen zu können, müssen Sie den Zugriff auf den Datenträger erlauben.</string>
+    <string name="need_storage_permissions_add_attachment_text">Um Anhänge hinzufügen zu können, müssen Sie den Zugriff auf den Datenträger erlauben.</string>
     <string name="push_notifications_alert_title">Push-Benachrichtigungen</string>
     <string name="push_notifications_alert_subtitle">Push-Benachrichtigungen für ProtonMail funktionieren nicht ohne aktualisierte Google Play-Dienste.</string>
     <string name="app_locked">App gesperrt</string>

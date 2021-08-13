@@ -32,6 +32,7 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
 import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.utils.Event
 import ch.protonmail.android.worker.DeleteContactWorker
 import ch.protonmail.libs.core.utils.ViewModelFactory
 import kotlinx.coroutines.flow.catch
@@ -53,6 +54,9 @@ class ContactsListViewModel(
 
     private val progressMax = MutableLiveData<Int?>()
     private val progress = MutableLiveData<Int?>()
+    private val showPermissionMissingDialogMutableLiveData = MutableLiveData<Event<Unit>>()
+    val showPermissionMissingDialog: LiveData<Event<Unit>>
+        get() = showPermissionMissingDialogMutableLiveData
 
     private val searchPhraseLiveData = MutableLiveData<String?>()
     override val androidContacts = androidContactsRepository.androidContacts
@@ -102,6 +106,9 @@ class ContactsListViewModel(
     override fun setHasContactsPermission(hasPermission: Boolean) {
         this.hasPermission = hasPermission
         androidContactsRepository.setContactsPermission(hasPermission)
+        if (!hasPermission) {
+            showPermissionMissingDialogMutableLiveData.value = Event(Unit)
+        }
     }
 
     override fun setSearchPhrase(searchPhrase: String?) {

@@ -760,7 +760,7 @@
         Rozważ zwolnienie części miejsca lub zakup dodatkowej przestrzeni dyskowej, zanim skończy Ci się miejsce.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Uprawnienia</string>
-    <string name="need_storage_permissions_text">Aby dodać załączniki, musisz zezwolić
+    <string name="need_storage_permissions_add_attachment_text">Aby dodać załączniki, musisz zezwolić
         na dostęp do pamięci wewnętrznej.</string>
     <string name="push_notifications_alert_title">Alert o powiadomieniach</string>
     <string name="push_notifications_alert_subtitle">Powiadomienia poczty ProtonMail nie działają bez zaktualizowanych usług Google Play.</string>

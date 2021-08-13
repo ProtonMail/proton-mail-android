@@ -732,7 +732,7 @@
         Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depolama alanı satın almayı düşünün.</string>
     <!-- endregion -->
     <string name="need_permissions_title">İzinler</string>
-    <string name="need_storage_permissions_text">Ekleri eklemek için depolamaya erişime izin vermeniz gerekir.</string>
+    <string name="need_storage_permissions_add_attachment_text">Ekleri eklemek için depolamaya erişime izin vermeniz gerekir.</string>
     <string name="push_notifications_alert_title">Anlık bildirim uyarıları</string>
     <string name="push_notifications_alert_subtitle">ProtonMail anlık bildirimleri, güncellenmiş Google Play hizmetleri olmadan çalışmaz.</string>
     <string name="app_locked">Uygulama kilitlendi</string>
