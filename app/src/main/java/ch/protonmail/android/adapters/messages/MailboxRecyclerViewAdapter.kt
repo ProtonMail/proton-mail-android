@@ -51,15 +51,16 @@ class MailboxRecyclerViewAdapter(
 
     var includeFooter: Boolean = false
         set(value) {
-            if (field == value) {
-                return
-            }
-            field = value
-            if (value) {
-                notifyItemInserted(mailboxItems.size)
-            } else {
-                notifyItemRemoved(mailboxItems.size)
-            }
+            // TODO: footer will be re-implemented in next MR
+            // if (field == value) {
+            //     return
+            // }
+            // field = value
+            // if (value) {
+            //     notifyItemInserted(mailboxItems.size)
+            // } else {
+            //     notifyItemRemoved(mailboxItems.size)
+            // }
         }
 
     val checkedMailboxItems get() =
