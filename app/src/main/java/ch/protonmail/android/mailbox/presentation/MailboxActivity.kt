@@ -577,7 +577,9 @@ internal class MailboxActivity :
                 include_mailbox_no_messages.isVisible = state.items.isEmpty()
                 mailboxRecyclerView.isVisible != state.items.isEmpty()
 
-                mailboxAdapter.submitList(state.items)
+                mailboxAdapter.submitList(state.items) {
+                    if (state.shouldResetPosition) mailboxRecyclerView.scrollToPosition(0)
+                }
             }
             is MailboxState.Error -> {
                 setRefreshing(false)
@@ -869,7 +871,6 @@ internal class MailboxActivity :
 
     private fun setRefreshing(shouldRefresh: Boolean) {
         Timber.v("setRefreshing shouldRefresh: $shouldRefresh")
-        if (shouldRefresh) mailboxAdapter.submitList(null)
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
 

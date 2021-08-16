@@ -318,13 +318,20 @@ class MailboxViewModel @Inject constructor(
     ): LoadMoreFlow<MailboxState> {
         val locationId = labelId?.takeIfNotBlank() ?: location.messageLocationTypeValue.toString()
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
+        var hasLocationOrUserChanged = true
         return observeConversationsByLocation(
             userId,
             locationId
         ).loadMoreMap { result ->
             when (result) {
-                is GetConversationsResult.Success ->
-                    MailboxState.Data(conversationsToMailboxItems(result.conversations, locationId))
+                is GetConversationsResult.Success -> {
+                    MailboxState.Data(
+                        conversationsToMailboxItems(result.conversations, locationId),
+                        shouldResetPosition = hasLocationOrUserChanged
+                    ).also {
+                        hasLocationOrUserChanged = false
+                    }
+                }
                 is GetConversationsResult.NoConversationsFound ->
                     MailboxState.NoMoreItems
                 is GetConversationsResult.Error ->
@@ -341,14 +348,21 @@ class MailboxViewModel @Inject constructor(
         userId: Id
     ): LoadMoreFlow<MailboxState> {
         Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
+        var hasLocationOrUserChanged = true
         return observeMessagesByLocation(
             location,
             labelId,
             userId
         ).loadMoreMap { result ->
             when (result) {
-                is GetMessagesResult.Success ->
-                    MailboxState.Data(messagesToMailboxItems(result.messages))
+                is GetMessagesResult.Success -> {
+                    MailboxState.Data(
+                        messagesToMailboxItems(result.messages),
+                        shouldResetPosition = hasLocationOrUserChanged
+                    ).also {
+                        hasLocationOrUserChanged = false
+                    }
+                }
                 is GetMessagesResult.NoMessagesFound ->
                     MailboxState.NoMoreItems
                 is GetMessagesResult.Error ->

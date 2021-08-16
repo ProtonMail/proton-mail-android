@@ -36,5 +36,12 @@ sealed class MailboxState {
         val throwable: Throwable?
     ) : MailboxState()
 
-    data class Data(val items: List<MailboxUiItem>) : MailboxState()
+    /**
+     * @property shouldResetPosition if `true` the list should be scrolled to its top, for example if the location has
+     *  changed
+     */
+    data class Data(
+        val items: List<MailboxUiItem>,
+        val shouldResetPosition: Boolean = false
+    ) : MailboxState()
 }
