@@ -20,9 +20,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_days">Dny</string>
+    <string name="x_days">Days</string>
     <string name="x_folders">Složky</string>
-    <string name="x_hours">Hodiny</string>
+    <string name="x_hours">Hours</string>
     <string name="x_labels">Štítky</string>
     <string name="x_more">Více</string>
     <string name="x_search">Hledat</string>
@@ -596,7 +596,7 @@
     <string name="recheck_delinquency">Zkontrolovat znovu</string>
     <string name="close_app">Zavřít aplikaci</string>
     <string name="empty_subject">(Bez předmětu)</string>
-    <string name="empty_recipients">(příjemci žádní)</string>
+    <string name="empty_recipients">(Žádní příjemci)</string>
     <string name="contacts_unknown">Neznámé</string>
     <string name="learn_more"><u>Dozvědět se více</u></string>
     <string name="info">Informace</string>
@@ -764,6 +764,9 @@
     <string name="need_permissions_title">Oprávnění</string>
     <string name="need_storage_permissions_add_attachment_text">Pro přidávání příloh musíte povolit přístup
         k úložišti.</string>
+    <string name="need_storage_permissions_download_attachment_text">Pro možnost stahování příloh musíte povolit přístup
+        k úložišti.</string>
+    <string name="need_contacts_permissions_text">Pro možnost importu kontaktů musíte povolit přístut ke kontaktům.</string>
     <string name="push_notifications_alert_title">Oznámení Push notifikací</string>
     <string name="push_notifications_alert_subtitle">Push notifikace pro ProtonMail nefungují bez aktuální verze služeb Google Play.</string>
     <string name="app_locked">Aplikace uzamčena</string>
@@ -796,7 +799,7 @@
     <string name="display_name">Zobrazované jméno</string>
     <string name="edit_display_name">Upravit zobrazované jméno</string>
     <string name="signature">Podpis</string>
-    <string name="mobile_footer">Zápatí mobilního mailu</string>
+    <string name="mobile_footer">Mobile footer</string>
     <string name="edit_mobile_footer">Povolit mobilní zápatí</string>
     <string name="default_mobile_footer">Odesláno z aplikace ProtonMail</string>
     <string name="mobile_footer_is_premium">Změna Mobilního zápatí je povolena pouze pro platící uživatele</string>
@@ -906,13 +909,13 @@
     <!-- region App Settings -->
     <string name="push_notifications">Oznámení</string>
     <string name="extended_notifications">Rozšířená oznámení</string>
-    <string name="extended_notifications_description">Zapněte funkci pro rozpoznání odesílatele emailů v push oznámeních.</string>
+    <string name="extended_notifications_description">Turn this feature on to see the sender of the emails in the push notifications.</string>
     <string name="notification_settings">Nastavení notifikací</string>
     <string name="auto_lock">Automatické uzamčení</string>
-    <string name="auto_lock_app">Automatické zavírání aplikace</string>
+    <string name="auto_lock_app">Auto-lock app</string>
     <string name="auto_lock_description">Zapněte tuto funkci automatického zamknutí aplikace a použijte kód PIN nebo čtečku prstu pro odemčení.</string>
     <string name="change_pin_code">Změnit PIN kód</string>
-    <string name="auto_lock_timer">Automatické uzamčení časovače</string>
+    <string name="auto_lock_timer">Auto-lock timer</string>
     <string name="connections_via_third_parties">Alternativní směrování</string>
     <string name="allow_secure_connections_via_third_parties">Povolit alternativní směrování</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">V případě, že jsou stránky Proton blokovány, toto nastavení umožňuje aplikaci vyzkoušet alternativní síťové směrování na Proton, což může být užitečné pro obejití bran firewall nebo problémům se sítí. Pro větší spolehlivost doporučujeme ponechat toto nastavení zapnuté.</string>
@@ -924,7 +927,7 @@
     <string name="turn_combined_contacts_on">Zapněte tuto funkci pro automatické vyplňování e-mailových adres pomocí kontaktů ze všech vašich přihlášených účtů.</string>
     <string name="local_cache_management">Místní mezipaměť</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
-    <string name="empty_data">Prázdná Data</string>
+    <string name="empty_data">Empty Data</string>
     <!-- endregion -->
     <string name="enabled">Povoleno</string>
     <string name="disabled">Zakázáno</string>
@@ -945,7 +948,7 @@
     <string name="shortcut_compose_new_message">Napsat novou zprávu</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Běžné problémové spojení a řešení</string>
+    <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
@@ -1009,7 +1012,7 @@
     <string name="inbox_could_not_retrieve_messages">Nepodařilo se načíst Vaše zprávy</string>
     <string name="inbox_pull_down_to_retry">Pro nový pokus potáhněte dolů</string>
     <string name="edit_draft">Upravit koncept</string>
-    <string name="primary_user_error">Nebylo možné provést předplatné, něco se pokazilo.</string>
+    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
     <string name="details_show_history">Zobrazit historii</string>
-    <string name="could_not_complete_action">Nebylo možné dokončit akci</string>
+    <string name="could_not_complete_action">Could not complete the action</string>
 </resources>

@@ -738,6 +738,9 @@
     <string name="need_permissions_title">Permessi</string>
     <string name="need_storage_permissions_add_attachment_text">Per aggiungere allegati devi consentire
         l\'accesso all\'archiviazione.</string>
+    <string name="need_storage_permissions_download_attachment_text">Per scaricare allegati devi consentire
+        l\'accesso all\'archiviazione.</string>
+    <string name="need_contacts_permissions_text">Per importare i contatti è necessario consentire l\'accesso ai contatti.</string>
     <string name="push_notifications_alert_title">Avviso notifiche push</string>
     <string name="push_notifications_alert_subtitle">Le notifiche push per ProtonMail non funzionano senza aggiornamenti di Google Play services.</string>
     <string name="app_locked">App bloccata</string>

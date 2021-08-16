@@ -763,8 +763,9 @@
         Спробуйте звільнити трохи місця або придбати більше обсягу, перш ніж воно повністю заповниться.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Дозволи</string>
-    <string name="need_storage_permissions_text">Щоб додати вкладення, вам необхідно дозволити
-        доступ до сховища.</string>
+    <string name="need_storage_permissions_add_attachment_text">Для того, щоб додати вкладення вам потрібно надати доступ до сховища.</string>
+    <string name="need_storage_permissions_download_attachment_text">Для того, що завантажити вкладення вам потрібно надати доступ до сховища.</string>
+    <string name="need_contacts_permissions_text">Для того, щоб імпортувати контакти, вам потрібно надати дозвіл до контактів.</string>
     <string name="push_notifications_alert_title">Push-сповіщення</string>
     <string name="push_notifications_alert_subtitle">Push-сповіщення ProtonMail не працюють без оновлених сервісів Google Play.</string>
     <string name="app_locked">Програму заблоковано</string>

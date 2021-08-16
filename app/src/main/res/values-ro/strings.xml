@@ -750,6 +750,9 @@
     <string name="need_permissions_title">Permisiuni</string>
     <string name="need_storage_permissions_add_attachment_text">Pentru a adăuga atașamente trebuie să permiteți
         accesul la spațiul de stocare al telefonului.</string>
+    <string name="need_storage_permissions_download_attachment_text">Pentru a descărca atașamente, trebuie să permiteți
+        accesul la spațiul de stocare al telefonului.</string>
+    <string name="need_contacts_permissions_text">Pentru a importa contacte, trebuie să permiteți accesul la contacte.</string>
     <string name="push_notifications_alert_title">Notificări instante</string>
     <string name="push_notifications_alert_subtitle">Notificările instante pentru ProtonMail nu funcționează fără ultima actualizare a serviciilor Google Play.</string>
     <string name="app_locked">Aplicație blocată</string>

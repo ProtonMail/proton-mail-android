@@ -717,7 +717,11 @@
     <string name="storage_limit_approaching_text">ストレージ容量の90%に達しました。容量を空けるか、ストレージの追加購入を検討してください。</string>
     <!-- endregion -->
     <string name="need_permissions_title">アクセス許可</string>
-    <string name="need_storage_permissions_add_attachment_text">添付ファイルを追加するためには、ストレージへのアクセスを許可する必要があります。</string>
+    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
+        access to storage.</string>
+    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
+        access to storage.</string>
+    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">プッシュ通知警告</string>
     <string name="push_notifications_alert_subtitle">ProtonMailのプッシュ通知は、Google Playサービスを更新しないと機能しません。</string>
     <string name="app_locked">アプリはロックされています。</string>

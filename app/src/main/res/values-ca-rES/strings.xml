@@ -736,8 +736,11 @@
         Considereu alliberar o adquirir més espai abans que us en quedeu sense.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permisos</string>
-    <string name="need_storage_permissions_add_attachment_text">Per tal d\'afegir els fitxers adjunts necessiteu permetre
-        l\'accés a l\'emmagatzemament.</string>
+    <string name="need_storage_permissions_add_attachment_text">Per a poder afegir adjunts heu de permetre
+        l\'accés a l\'emmagatzematge.</string>
+    <string name="need_storage_permissions_download_attachment_text">Per a poder descarregar adjunts heu de permetre 
+        l\'accés a l\'emmagatzematge.</string>
+    <string name="need_contacts_permissions_text">Per a poder importar contactes heu de permetre l\'accés als contactes.</string>
     <string name="push_notifications_alert_title">Alerta de notificacions push</string>
     <string name="push_notifications_alert_subtitle">Les notificacions push per ProtonMail no funcionen sense els serveis de Google Play.</string>
     <string name="app_locked">L\'aplicació està bloquejada</string>

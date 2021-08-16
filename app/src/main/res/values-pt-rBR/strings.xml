@@ -736,8 +736,11 @@
         Considere liberar algum espaço ou comprar mais armazenamento antes de ficar sem capacidade.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permissões</string>
-    <string name="need_storage_permissions_add_attachment_text">Para adicionar anexos, você precisa permitir o
-         acesso ao armazenamento.</string>
+    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
+        access to storage.</string>
+    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
+        access to storage.</string>
+    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Alerta de notificações push</string>
     <string name="push_notifications_alert_subtitle">As notificações via Push do ProtonMail não funcionam sem o Google Play Services atualizado.</string>
     <string name="app_locked">Aplicativo bloqueado</string>

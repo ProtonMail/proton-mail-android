@@ -738,6 +738,9 @@
     <string name="need_permissions_title">Autorisations</string>
     <string name="need_storage_permissions_add_attachment_text">Pour ajouter des pièces jointes, vous devez autoriser
         l\'accès au stockage.</string>
+    <string name="need_storage_permissions_download_attachment_text">Pour télécharger des pièces jointes, vous devez autoriser
+        l\'accès au stockage.</string>
+    <string name="need_contacts_permissions_text">Pour importer des contacts, vous devez autoriser l\'accès aux contacts.</string>
     <string name="push_notifications_alert_title">Alerte de notifications push</string>
     <string name="push_notifications_alert_subtitle">Les notifications push pour ProtonMail ne fonctionnent pas sans la mise à jour des services Google Play.</string>
     <string name="app_locked">Application verrouillée</string>
