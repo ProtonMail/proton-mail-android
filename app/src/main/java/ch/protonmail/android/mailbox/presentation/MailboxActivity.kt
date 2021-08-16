@@ -868,7 +868,8 @@ internal class MailboxActivity :
     }
 
     private fun setRefreshing(shouldRefresh: Boolean) {
-        Timber.v("setRefreshing shouldRefresh:$shouldRefresh")
+        Timber.v("setRefreshing shouldRefresh: $shouldRefresh")
+        if (shouldRefresh) mailboxAdapter.submitList(null)
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
 
