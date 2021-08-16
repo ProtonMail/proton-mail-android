@@ -18,15 +18,12 @@
 
 package ch.protonmail.android.di
 
-import android.content.Context
+import ch.protonmail.android.data.AppDatabase
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.account.data.db.AccountDatabase
-import me.proton.core.accountmanager.data.db.AccountManagerDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.key.data.db.KeySaltDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
@@ -34,41 +31,31 @@ import me.proton.core.mailsettings.data.db.MailSettingsDatabase
 import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.db.UserDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppDatabaseModule {
-    @Provides
-    @Singleton
-    fun provideAccountManagerDatabase(@ApplicationContext context: Context): AccountManagerDatabase =
-        AccountManagerDatabase.buildDatabase(context)
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class AppDatabaseBindsModule {
+abstract class CoreDatabaseBindsModule {
 
     @Binds
-    abstract fun provideAccountDatabase(db: AccountManagerDatabase): AccountDatabase
+    abstract fun provideAccountDatabase(db: AppDatabase): AccountDatabase
 
     @Binds
-    abstract fun provideUserDatabase(db: AccountManagerDatabase): UserDatabase
+    abstract fun provideUserDatabase(db: AppDatabase): UserDatabase
 
     @Binds
-    abstract fun provideAddressDatabase(db: AccountManagerDatabase): AddressDatabase
+    abstract fun provideAddressDatabase(db: AppDatabase): AddressDatabase
 
     @Binds
-    abstract fun provideKeySaltDatabase(db: AccountManagerDatabase): KeySaltDatabase
+    abstract fun provideKeySaltDatabase(db: AppDatabase): KeySaltDatabase
 
     @Binds
-    abstract fun providePublicAddressDatabase(db: AccountManagerDatabase): PublicAddressDatabase
+    abstract fun providePublicAddressDatabase(db: AppDatabase): PublicAddressDatabase
 
     @Binds
-    abstract fun provideHumanVerificationDatabase(db: AccountManagerDatabase): HumanVerificationDatabase
+    abstract fun provideHumanVerificationDatabase(db: AppDatabase): HumanVerificationDatabase
 
     @Binds
-    abstract fun provideMailSettingsDatabase(db: AccountManagerDatabase): MailSettingsDatabase
+    abstract fun provideMailSettingsDatabase(db: AppDatabase): MailSettingsDatabase
 
     @Binds
     abstract fun provideUserSettingsDatabase(db: AccountManagerDatabase): UserSettingsDatabase
