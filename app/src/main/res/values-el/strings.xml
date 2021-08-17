@@ -736,8 +736,11 @@
         Εξετάστε το ενδεχόμενο να ελευθερώσετε χώρο ή να αγοράσετε περισσότερο αποθηκευτικό χώρο πριν εξαντληθεί ο εναπομείναντας χώρος.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Δικαιώματα</string>
-    <string name="need_storage_permissions_add_attachment_text">Για να προσθέσετε συνημμένα θα πρέπει να επιτρέψετε
-        πρόσβαση στην αποθήκευση.</string>
+    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
+        access to storage.</string>
+    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
+        access to storage.</string>
+    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Ειδοποιήσεις Push</string>
     <string name="push_notifications_alert_subtitle">Οι ειδοποιήσεις Push για το ProtonMail δεν λειτουργούν χωρίς ενημερωμένες υπηρεσίες του Google Play.</string>
     <string name="app_locked">Η εφαρμογή είναι κλειδωμένη</string>

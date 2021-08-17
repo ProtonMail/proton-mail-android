@@ -736,8 +736,11 @@
         Overweeg om wat ruimte vrij te maken of schaf extra opslagruimte aan voordat u ruimte tekortkomt.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Rechten</string>
-    <string name="need_storage_permissions_add_attachment_text">Om bijlagen toe te voegen moet u
-        toegang tot opslag toestaan.</string>
+    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
+        access to storage.</string>
+    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
+        access to storage.</string>
+    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Pushmelding</string>
     <string name="push_notifications_alert_subtitle">Pushmeldingen voor ProtonMail werken niet zonder bijgewerkte Google Play-diensten.</string>
     <string name="app_locked">App vergrendeld</string>

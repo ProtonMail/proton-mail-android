@@ -736,8 +736,11 @@
         Overvej at frigive eller tilkøbe yderligere lagerplads, inden den er opbrugt.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Tilladelser</string>
-    <string name="need_storage_permissions_add_attachment_text">For at tilføje vedhæftninger, skal du tillade
-        lagerpladsadgang.</string>
+    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
+        access to storage.</string>
+    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
+        access to storage.</string>
+    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Push-notifikationsadvarsel</string>
     <string name="push_notifications_alert_subtitle">Push-notifikationer i ProtonMail fungerer ikke uden opdaterede Google Play-tjenester.</string>
     <string name="app_locked">App er låst</string>

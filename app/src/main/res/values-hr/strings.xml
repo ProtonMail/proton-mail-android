@@ -71,7 +71,7 @@
     <string name="settings_create_pin_code_title">Postavite PIN kôd</string>
     <string name="settings_confirm_pin_code_title">Ponovite PIN kôd</string>
     <string name="settings_pins_dont_match">PIN kôdovi se moraju podudarati!</string>
-    <string name="settings_enter_pin_code_title">Unesite PIN kȏd</string>
+    <string name="settings_enter_pin_code_title">Unesite PIN kôd</string>
     <string name="settings_swipe_settings_info">Postavite radnje povlačenja prstom za pristup najčešće korištenim radnjama.</string>
     <string name="settings_swipe_left_to_right">S lijeva na desno</string>
     <string name="settings_swipe_right_to_left">S desna na lijevo</string>
@@ -749,8 +749,11 @@
         Razmislite o oslobađanju prostora ili kupnji više prostora za pohranu prije nego što vam ponestane kapaciteta.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Dozvole</string>
-    <string name="need_storage_permissions_add_attachment_text">Da biste dodali privitke, trebate dopustiti
-        pristup pohrani.</string>
+    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
+        access to storage.</string>
+    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
+        access to storage.</string>
+    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Upozorenja Push obavijesti</string>
     <string name="push_notifications_alert_subtitle">Push obavijesti za ProtonMail ne rade bez ažuriranih Google Play usluga.</string>
     <string name="app_locked">Aplikacija je zaključana</string>
@@ -799,10 +802,10 @@
         <item>8 sati</item>
         <item>12 sati</item>
         <item>Prilagođeno</item>
-        <item>Planirano</item>
+        <item>Zakazano</item>
     </string-array>
     <string name="notifications_snoozed">Obavijesti su utišane</string>
-    <string name="notifications_snooze_scheduled">Planirano</string>
+    <string name="notifications_snooze_scheduled">Zakazano</string>
     <string name="notifications_snooze_scheduled_settings">Postavke zakazane odgode</string>
     <string name="notifications_snooze_current_status">Status</string>
     <string name="snooze_start_time">Vrijeme početka:</string>
@@ -834,8 +837,8 @@
     <string name="quick_only_enabled">Brza odgoda je aktivna</string>
     <string name="scheduled_only_enabled">Zakazana odgoda je aktivna</string>
     <string name="quick_and_scheduled_disabled">Brza odgoda i Zakazana odgoda su onemogućene</string>
-    <string name="scheduled_snooze_on">Planirano (Uključeno)</string>
-    <string name="scheduled_snooze_off">Planirano (Isključeno)</string>
+    <string name="scheduled_snooze_on">Zakazano (Uključeno)</string>
+    <string name="scheduled_snooze_off">Zakazano (Isključeno)</string>
     <!-- endregion -->
     <string name="mailbox">Poštanski sandučić</string>
     <string name="privacy">Privatnost</string>
@@ -989,8 +992,8 @@
     <string name="inbox_nothing_to_see_here">Ovdje se nema što vidjeti</string>
     <string name="inbox_could_not_retrieve_messages">Neuspješno dohvaćanje vaših poruka</string>
     <string name="inbox_pull_down_to_retry">Povucite prema dolje za ponovni pokušaj</string>
-    <string name="edit_draft">Edit draft</string>
+    <string name="edit_draft">Uredi skicu</string>
     <string name="primary_user_error">Could not upgrade, something went wrong.</string>
-    <string name="details_show_history">Show history</string>
-    <string name="could_not_complete_action">Could not complete the action</string>
+    <string name="details_show_history">Prikaži povijest</string>
+    <string name="could_not_complete_action">Dovršavanje radnje nije uspjelo</string>
 </resources>

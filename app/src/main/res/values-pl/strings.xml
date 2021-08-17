@@ -762,6 +762,9 @@
     <string name="need_permissions_title">Uprawnienia</string>
     <string name="need_storage_permissions_add_attachment_text">Aby dodać załączniki, musisz zezwolić
         na dostęp do pamięci wewnętrznej.</string>
+    <string name="need_storage_permissions_download_attachment_text">Aby pobrać załączniki, musisz zezwolić
+        na dostęp do pamięci wewnętrznej.</string>
+    <string name="need_contacts_permissions_text">Aby zaimportować kontakty, musisz zezwolić na dostęp do kontaktów.</string>
     <string name="push_notifications_alert_title">Alert o powiadomieniach</string>
     <string name="push_notifications_alert_subtitle">Powiadomienia poczty ProtonMail nie działają bez zaktualizowanych usług Google Play.</string>
     <string name="app_locked">Aplikacja jest zablokowana</string>

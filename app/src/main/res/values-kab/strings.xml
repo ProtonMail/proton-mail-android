@@ -72,7 +72,7 @@
     <string name="settings_confirm_pin_code_title">Ales tangalt PIN</string>
     <string name="settings_pins_dont_match">Tingalin PIN ilaq ad ilint kifkif!</string>
     <string name="settings_enter_pin_code_title">Sekcem tangalt n PIN</string>
-    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_settings_info">Sbadu isillifen n uzuɣer akken ad tkecmeḍ ɣer tigawin i yettwaseqdacen s waṭas.</string>
     <string name="settings_swipe_left_to_right">Seg uzelmaḍ s ayeffus</string>
     <string name="settings_swipe_right_to_left">Seg uyeffus s azelmaḍ</string>
     <!-- region Dialogs -->
@@ -368,8 +368,8 @@
     <string name="attachment_download_failed">%s ur yessaweḍ ara ad d-isider akken iwata</string>
     <string name="ringtone">Aṭenṭen</string>
     <string name="ringtone_selected">Aṭenṭen:</string>
-    <string name="ringtone_invalid">Ringtone selection returned an invalid value</string>
-    <string name="ringtone_no_default">Impossible to load a default Ringtone</string>
+    <string name="ringtone_invalid">Afran n tsersart yerra-d azal arameɣtu</string>
+    <string name="ringtone_no_default">D awezɣi usali n tsersart tamezwert</string>
     <string name="select_tone">Fren aṭenṭen</string>
     <string name="copy_link">Nɣel aseɣwen</string>
     <string name="share_link">Bḍu aseɣwen</string>
@@ -738,13 +738,16 @@
     <string name="need_permissions_title">Isurag</string>
     <string name="need_storage_permissions_add_attachment_text">Akken ad ternuḍ ifuyla yeddan, ilaq ad tessirgeḍ
         akeccum ar tkatut n uḥraz.</string>
+    <string name="need_storage_permissions_download_attachment_text">Akken ad tsadreḍ ifuyla yeddan, ilaq ad tessirgeḍ
+        akeccum ar tkatut n uḥraz.</string>
+    <string name="need_contacts_permissions_text">Akken ad tketreḍ inermisen tesriḍ ad teǧǧeḍ inermisen ad d-kecmen.</string>
     <string name="push_notifications_alert_title">Ilɣa Push</string>
     <string name="push_notifications_alert_subtitle">Ilɣa Push i ProtonMail ur teddun ara wer alqem n imeẓla Google Play.</string>
     <string name="app_locked">Asnas yesekkeṛ</string>
     <string name="use_pin_instead">Seqdec PIN deg umḍiq</string>
     <!-- strings used for biometric enrollment -->
-    <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
-    <string name="log_in_using_biometric_credential">Unlock using your biometric credentials</string>
+    <string name="no_biometric_data_enrolled">Ulac isefka ibyumitren i yettwaskelsen</string>
+    <string name="log_in_using_biometric_credential">Kkes asekkeṛ s useqdec n yisallen-ik·im n tmagit ibyumitren</string>
     <string name="unlock_using_biometrics">Serreḥ s usemres n tebyumitrikt</string>
     <string name="biometric_error_hw_not_available">Arrum n tebyumitrikt ulac-it.</string>
     <!-- end strings used for biometric enrollment -->
@@ -826,7 +829,7 @@
     <string name="mailbox">Tanaka n yimayl</string>
     <string name="privacy">Tabaḍnit</string>
     <string name="auto_download_messages_title">Sider iznan s wudem awurman</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, messaged bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or log out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Mi ara yermed uɣewwar-a, tifekkiwin n yiznan ad ttwasadren s wudem awurman yal mi ara tenremseḍ alɣu amaynut s yimayl (aya ad yawi ugar n yisefka). Ma ur yermid ara uɣewwar-a, tifekkiwin n yiznan ad ttwasadren kan mi ara teldiḍ imayl. (Tamawt: s yal aɣewwar, ma tsefḍeḍ tuffirt neɣ teffɣeḍ, ur tzemmreḍ ara ad teɣreḍ tifekkiwin n yimaylen ma ur teqqineḍ ara)</string>
     <string name="settings_background_sync">Amtawi deg ugilal</string>
     <string name="settings_auto_show_images">Sken-d tugna s wudem awurman</string>
     <string name="settings_auto_show_embedded_images">Sken-d tugna tusliγt s wudem awurman</string>
@@ -912,13 +915,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Uguren n tuqqna yezgan akked tifrat</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Ulac tuqqna internet&lt;/i&gt;- Ttxil ḍmen dakken tuqqna-k·m internet tetteddu. 
+         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ugur deg yimefki n umeẓlu internet (ISP) &lt;/i&gt;- Ëreḍ ad teqqneḍ ɣer Proton seg uẓeṭṭa yemgaraden (neɣ seqdec &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; neɣ &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;). 
+         &lt;br/&gt;&lt;br/&gt;&lt;i&gt; Asewḥel anabaḍan&lt;/i&gt;- Izmer d tamur-ik·im i yeswaḥlen anekcum ɣer Proton. Ɛreḍ &lt;a href=\"https://protonvpn.com/\"&gt;ProtoVPN&lt;/a&gt; (neɣ ameẓlu-nniḍen n VPN) neɣ &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;akken ad tkecmeḍ ɣer Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Amyadef n umgal ivirusen&lt;/i&gt; - Sens neɣ kkes aseɣẓan-ik·im amgal ivirusen i kra n wakud.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Amyadef n upṛuksi/aɣrab n tmes&lt;/i&gt; - Sens akk ipṛuksiyen neɣ iɣraben n tmes, neɣ nermes anedbal-ik·im n uẓeṭṭa.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton ur itteddu ara&lt;/i&gt; - Wali &lt;a href=\"http://protonstatus.com/\"&gt;Addad n Proton&lt;/a&gt; i waddad n unagraw-nneɣ.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Mazal ur d-tufiḍ ara tifrat&lt;/i&gt;- Nermes-aɣ-d srid s ubrid n &lt;a href=\"https://protonmail.com/support-form\"&gt;tferkit n tallelt&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;imayl&lt;/a&gt; (support@protonmail.com), neɣ &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

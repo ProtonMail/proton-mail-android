@@ -735,7 +735,11 @@
         Íhugaðu að losa eitthvað pláss eða að kaupa meiri geymslurýmd áður en hún klárast.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Aðgangsheimildir</string>
-    <string name="need_storage_permissions_add_attachment_text">Til að geta bætt við viðhengjum þarftu að leyfa aðgang að gagnageymslu.</string>
+    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
+        access to storage.</string>
+    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
+        access to storage.</string>
+    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Viðvörun vegna ýti-tilkynninga</string>
     <string name="push_notifications_alert_subtitle">Ýti-tilkynningar virka ekki nema með uppfærðum séreignahugbúnaði Google Play þjónustu.</string>
     <string name="app_locked">Forrit læst</string>
