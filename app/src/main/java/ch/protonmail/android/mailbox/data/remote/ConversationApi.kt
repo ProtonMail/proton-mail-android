@@ -41,8 +41,8 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
         )
 
     override suspend fun fetchConversation(
-        conversationId: String,
-        userId: UserId
+        userId: UserId,
+        conversationId: String
     ) = service.fetchConversation(conversationId, userIdTag = UserIdTag(userId))
 
     override suspend fun markConversationsRead(

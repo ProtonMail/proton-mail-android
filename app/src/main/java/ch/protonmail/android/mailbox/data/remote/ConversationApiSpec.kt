@@ -33,8 +33,8 @@ interface ConversationApiSpec {
     ): ConversationsResponse
 
     suspend fun fetchConversation(
-        conversationId: String,
-        userId: UserId
+        userId: UserId,
+        conversationId: String
     ): ConversationResponse
 
     suspend fun markConversationsRead(

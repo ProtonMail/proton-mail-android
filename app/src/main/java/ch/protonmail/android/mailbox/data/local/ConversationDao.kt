@@ -48,7 +48,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
         WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
         """
     )
-    abstract fun observeConversation(conversationId: String, userId: String): Flow<ConversationDatabaseModel?>
+    abstract fun observeConversation(userId: String, conversationId: String): Flow<ConversationDatabaseModel?>
 
     @Query(
         """
@@ -56,7 +56,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
         WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
         """
     )
-    abstract suspend fun findConversation(conversationId: String, userId: String): ConversationDatabaseModel?
+    abstract suspend fun findConversation(userId: String, conversationId: String): ConversationDatabaseModel?
 
     @Query(
         """
@@ -65,7 +65,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
             AND $COLUMN_USER_ID = :userId
             """
     )
-    abstract suspend fun deleteConversation(conversationId: String, userId: String)
+    abstract suspend fun deleteConversation(userId: String, conversationId: String)
 
     @Query(
         """
@@ -74,7 +74,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
             AND $COLUMN_USER_ID = :userId
             """
     )
-    abstract suspend fun deleteConversations(vararg conversationIds: String, userId: String)
+    abstract suspend fun deleteConversations(userId: String, vararg conversationIds: String)
 
     @Query("DELETE FROM $TABLE_CONVERSATIONS")
     abstract fun clear()
@@ -86,7 +86,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
             WHERE $COLUMN_ID = :conversationId
             """
     )
-    abstract suspend fun updateNumUnreadMessages(numUnreadMessages: Int, conversationId: String)
+    abstract suspend fun updateNumUnreadMessages(conversationId: String, numUnreadMessages: Int)
 
     @Query(
         """
@@ -96,7 +96,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
         """
     )
     abstract suspend fun updateLabels(
-        labels: List<LabelContextDatabaseModel>,
-        conversationId: String
+        conversationId: String,
+        labels: List<LabelContextDatabaseModel>
     )
 }

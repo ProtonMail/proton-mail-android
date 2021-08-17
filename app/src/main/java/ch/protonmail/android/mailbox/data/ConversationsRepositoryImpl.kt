@@ -89,24 +89,24 @@ class ConversationsRepositoryImpl @Inject constructor(
 ) : ConversationsRepository {
 
     @FlowPreview
-    private val store = StoreBuilder.from(
-        fetcher = Fetcher.of { key: ConversationStoreKey ->
-            api.fetchConversation(key.conversationId, key.userId)
+    private val oneConversationStore = StoreBuilder.from(
+        fetcher = Fetcher.of { key: OneConversationStoreKey ->
+            api.fetchConversation(key.userId, key.conversationId)
         },
         sourceOfTruth = SourceOfTruth.Companion.of(
-            reader = { key -> observeConversationFromDatabase(key.conversationId, key.userId) },
-            writer = { key: ConversationStoreKey, output: ConversationResponse ->
+            reader = { key -> observeConversationFromDatabase(key.userId, key.conversationId) },
+            writer = { key: OneConversationStoreKey, output: ConversationResponse ->
                 val messages = output.messages.map(messageFactory::createMessage)
                 messageDao.saveMessages(messages)
                 Timber.v("Stored new messages size: ${messages.size}")
-                val conversation = output.conversation.toLocal(userId = key.userId.id)
+                val conversation = output.conversation.toLocal(userId = key.userId)
                 conversationDao.insertOrUpdate(conversation)
                 Timber.v("Stored new conversation id: ${conversation.id}")
             },
             delete = { key ->
                 conversationDao.deleteConversations(
-                    *listOf(key.conversationId).toTypedArray(),
-                    userId = key.userId.id
+                    userId = key.userId.id,
+                    key.conversationId,
                 )
             }
         )
@@ -121,7 +121,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             .loadMoreEmitInitialNull()
 
         val saveConversations: suspend (Success<ConversationsResponse>) -> Unit = { result ->
-            saveConversations(result.value.conversationResponse.toListLocal(params.userId.id), params.userId)
+            saveConversations(result.value.conversationResponse.toListLocal(params.userId), params.userId)
         }
 
         return loadMoreCombineTransform(fromDatabaseFlow, fromApiFlow) { fromDatabase, fromApi ->
@@ -143,16 +143,16 @@ class ConversationsRepositoryImpl @Inject constructor(
 
     @FlowPreview
     override fun getConversation(
-        conversationId: String,
-        userId: UserId
+        userId: UserId,
+        conversationId: String
     ): Flow<DataResult<Conversation>> =
-        store.stream(StoreRequest.cached(ConversationStoreKey(conversationId, userId), true))
+        oneConversationStore.stream(StoreRequest.cached(OneConversationStoreKey(userId, conversationId), true))
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
 
     override suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel? =
-        conversationDao.findConversation(conversationId, userId.id)
+        conversationDao.findConversation(userId.id, conversationId)
 
 
     override suspend fun saveConversations(
@@ -163,7 +163,7 @@ class ConversationsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteConversations(conversationIds: List<String>, userId: UserId) {
-        conversationDao.deleteConversations(*conversationIds.toTypedArray(), userId = userId.id)
+        conversationDao.deleteConversations(userId = userId.id, *conversationIds.toTypedArray())
     }
 
     override suspend fun clearConversations() = conversationDao.clear()
@@ -175,7 +175,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         markConversationsReadWorker.enqueue(conversationIds, userId)
 
         conversationIds.forEach { conversationId ->
-            conversationDao.updateNumUnreadMessages(0, conversationId)
+            conversationDao.updateNumUnreadMessages(conversationId, 0)
             // All the messages from the conversation are marked as read
             getAllMessagesFromAConversation(conversationId).forEach { message ->
                 yield()
@@ -195,12 +195,12 @@ class ConversationsRepositoryImpl @Inject constructor(
         markConversationsUnreadWorker.enqueue(conversationIds, locationId, userId)
 
         conversationIds.forEach forEachConversation@{ conversationId ->
-            val conversation = conversationDao.findConversation(conversationId, userId.id)
+            val conversation = conversationDao.findConversation(userId.id, conversationId)
             if (conversation == null) {
                 Timber.e("Conversation with id $conversationId could not be found in DB")
                 return ConversationsActionResult.Error
             }
-            conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
+            conversationDao.updateNumUnreadMessages(conversationId, conversation.numUnread + 1)
 
             // Only the latest unread message from the current location is marked as unread
             getAllMessagesFromAConversation(conversationId).forEach { message ->
@@ -289,7 +289,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             // save all updated messages from a conversation in one go
             messageDao.saveMessages(messagesToUpdate)
 
-            val conversation = conversationDao.findConversation(conversationId, userId.id)
+            val conversation = conversationDao.findConversation(userId.id, conversationId)
             if (conversation == null) {
                 Timber.e("Conversation with id $conversationId could not be found in DB")
                 return ConversationsActionResult.Error
@@ -338,12 +338,12 @@ class ConversationsRepositoryImpl @Inject constructor(
             // If all the messages of the conversation are in the current folder, then delete the conversation
             // Else remove the current location from the conversation's labels list
             if (messagesFromConversation.size == messagesToDelete.size) {
-                conversationDao.deleteConversation(conversationId, userId.id)
+                conversationDao.deleteConversation(userId.id, conversationId)
             } else {
-                val conversation = conversationDao.findConversation(conversationId, userId.id)
+                val conversation = conversationDao.findConversation(userId.id, conversationId)
                 if (conversation != null) {
                     val newLabels = conversation.labels.filter { it.id != currentFolderId }
-                    conversationDao.updateLabels(newLabels, conversationId)
+                    conversationDao.updateLabels(conversationId, newLabels)
                 }
             }
         }
@@ -451,7 +451,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         labelIds: Collection<String>,
         lastMessageTime: Long
     ): ConversationsActionResult {
-        val conversation = conversationDao.findConversation(conversationId, userId.id)
+        val conversation = conversationDao.findConversation(userId.id, conversationId)
         if (conversation == null) {
             Timber.e("Conversation with id $conversationId could not be found in DB")
             return ConversationsActionResult.Error
@@ -472,7 +472,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         labels.removeIf { it.id in labelIds }
         labels.addAll(newLabels)
         Timber.v("Update labels: $labels conversation: $conversationId")
-        conversationDao.updateLabels(labels, conversationId)
+        conversationDao.updateLabels(conversationId, labels)
         return ConversationsActionResult.Success
     }
 
@@ -481,14 +481,14 @@ class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         labelIds: Collection<String>
     ): ConversationsActionResult {
-        val conversation = conversationDao.findConversation(conversationId, userId.id)
+        val conversation = conversationDao.findConversation(userId.id, conversationId)
         if (conversation == null) {
             Timber.e("Conversation with id $conversationId could not be found in DB")
             return ConversationsActionResult.Error
         }
         val labels = conversation.labels.toMutableList()
         labels.removeIf { it.id in labelIds }
-        conversationDao.updateLabels(labels, conversationId)
+        conversationDao.updateLabels(conversationId, labels)
         return ConversationsActionResult.Success
     }
 
@@ -523,7 +523,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             emit(Error.Remote(throwable.message, throwable))
         }
 
-    private fun observeConversationFromDatabase(conversationId: String, userId: UserId): Flow<Conversation?> =
+    private fun observeConversationFromDatabase(userId: UserId, conversationId: String): Flow<Conversation?> =
         conversationDao.observeConversation(conversationId, userId.id).combine(
             messageDao.observeAllMessagesInfoFromConversation(conversationId)
         ) { conversation, messages ->
@@ -532,5 +532,5 @@ class ConversationsRepositoryImpl @Inject constructor(
             .debounce(CONVERSATION_FLOW_DEBOUNCE_TIME)
             .distinctUntilChanged()
 
-    private data class ConversationStoreKey(val conversationId: String, val userId: UserId)
+    private data class OneConversationStoreKey(val userId: UserId, val conversationId: String)
 }

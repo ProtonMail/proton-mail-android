@@ -241,7 +241,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
 
     private fun getConversationFlow(userId: UserId): Flow<ConversationUiModel?> =
-        conversationRepository.getConversation(messageOrConversationId, userId)
+        conversationRepository.getConversation(userId, messageOrConversationId)
             .distinctUntilChanged()
             .map {
                 loadConversationDetails(it, userId)
@@ -288,7 +288,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 changeConversationsReadStatus(
                     listOf(messageOrConversationId),
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                    UserId(userManager.requireCurrentUserId().id),
+                    userManager.requireCurrentUserId(),
                     location,
                     mailboxLocationId ?: location.messageLocationTypeValue.toString()
                 )
@@ -321,7 +321,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             } else {
                 emit(MessageBodyState.Error.DecryptionError(fetchedMessage))
             }
-
         }
     }.flowOn(dispatchers.Io)
 
@@ -694,7 +693,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     fun moveLastMessageToTrash() {
         viewModelScope.launch {
             if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
-                val primaryUserId = UserId(userManager.requireCurrentUserId().id)
+                val primaryUserId = userManager.requireCurrentUserId()
                 moveConversationsToFolder(
                     listOf(messageOrConversationId),
                     primaryUserId,
@@ -716,7 +715,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     fun delete() {
         viewModelScope.launch {
             if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
-                val primaryUserId = UserId(userManager.requireCurrentUserId().id)
+                val primaryUserId = userManager.requireCurrentUserId()
                 deleteConversations(
                     listOf(messageOrConversationId),
                     primaryUserId,
@@ -743,7 +742,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 } else {
                     ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
                 }
-                val primaryUserId = UserId(userManager.requireCurrentUserId().id)
+                val primaryUserId = userManager.requireCurrentUserId()
                 changeConversationsStarredStatus(
                     ids,
                     primaryUserId,

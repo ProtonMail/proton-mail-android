@@ -365,9 +365,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         api.fetchConversations(params)
 
     override suspend fun fetchConversation(
-        conversationId: String,
-        userId: UserId
-    ): ConversationResponse = api.fetchConversation(conversationId, userId)
+        userId: UserId,
+        conversationId: String
+    ): ConversationResponse = api.fetchConversation(userId, conversationId)
 
     override suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,

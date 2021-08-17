@@ -30,12 +30,13 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
+import me.proton.core.domain.entity.UserId
 
 
-internal fun ConversationApiModel.toLocal(userId: String) = ConversationDatabaseModel(
+internal fun ConversationApiModel.toLocal(userId: UserId) = ConversationDatabaseModel(
     id = id,
     order = order,
-    userId = userId,
+    userId = userId.id,
     subject = subject,
     senders = senders.toMessageSender(),
     recipients = recipients.toMessageRecipient(),
@@ -139,7 +140,7 @@ internal fun List<LabelContextApiModel>.toLabelContextDatabaseModel() =
 /**
  * Converts a response conversations list to a list of local conversation model
  */
-internal fun List<ConversationApiModel>.toListLocal(userId: String) =
+internal fun List<ConversationApiModel>.toListLocal(userId: UserId) =
     map { conversation -> conversation.toLocal(userId) }
 
 /**
