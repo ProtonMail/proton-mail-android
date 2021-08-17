@@ -618,8 +618,6 @@
 
     <string name="signature_error">Verification error</string>
     <string name="signature_error_desc">Verification of this content\'s signature failed</string>
-    <string name="decryption_error">Decryption error</string>
-    <string name="decryption_error_desc">Decryption of this content failed</string>
     <string name="address">Address: </string>
     <string name="address_street">Street</string>
     <string name="address_city">City</string>
@@ -1079,4 +1077,6 @@
     <string name="details_show_history">Show history</string>
 
     <string name="could_not_complete_action">Could not complete the action</string>
+
+    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
 </resources>
