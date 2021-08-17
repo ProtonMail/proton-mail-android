@@ -133,7 +133,7 @@
         android:visibility="visible"
         tools:text="@string/spam_score_101" />
 
-    <ch.protonmail.android.details.presentation.view.MessageDetailsDecryptionErrorBannerView
+    <ch.protonmail.android.details.presentation.view.DecryptionErrorBanner
         android:id="@+id/decryptionErrorView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

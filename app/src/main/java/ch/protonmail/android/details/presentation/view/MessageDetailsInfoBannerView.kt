@@ -29,7 +29,7 @@ import ch.protonmail.android.databinding.LayoutMessageDetailsDecryptionErrorInfo
 /**
  * A view for info banner in message details
  */
-class MessageDetailsDecryptionErrorBannerView @JvmOverloads constructor(
+class DecryptionErrorBanner @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
