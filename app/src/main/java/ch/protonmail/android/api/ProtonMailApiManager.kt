@@ -74,8 +74,9 @@ import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -361,13 +362,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateAutoShowImages(autoShowImages: Int): ResponseBody? = api.updateAutoShowImages(autoShowImages)
 
-    override suspend fun fetchConversations(params: GetConversationsParameters): ConversationsResponse =
+    override suspend fun fetchConversations(params: GetAllConversationsParameters): ConversationsResponse =
         api.fetchConversations(params)
 
-    override suspend fun fetchConversation(
-        userId: UserId,
-        conversationId: String
-    ): ConversationResponse = api.fetchConversation(userId, conversationId)
+    override suspend fun fetchConversation(params: GetOneConversationParameters): ConversationResponse =
+        api.fetchConversation(params)
 
     override suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,

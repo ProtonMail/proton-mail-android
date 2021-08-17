@@ -22,11 +22,11 @@ import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.segments.BaseApi
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 
 class ConversationApi(private val service: ConversationService) : BaseApi(), ConversationApiSpec {
 
-    override suspend fun fetchConversations(params: GetConversationsParameters) =
+    override suspend fun fetchConversations(params: GetAllConversationsParameters) =
         service.fetchConversations(
             userIdTag = UserIdTag(params.userId),
             page = params.page,

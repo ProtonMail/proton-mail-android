@@ -45,7 +45,7 @@ import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemo
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.Correspondent
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import io.mockk.MockKAnnotations
@@ -1139,7 +1139,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     private fun buildGetConversationsParameters(
         oldestConversationTimestamp: Long? = 1_616_496_670,
         pageSize: Int? = 50
-    ) = GetConversationsParameters(
+    ) = GetAllConversationsParameters(
         labelId = Constants.MessageLocationType.INBOX.asLabelId(),
         userId = testUserId,
         end = oldestConversationTimestamp,

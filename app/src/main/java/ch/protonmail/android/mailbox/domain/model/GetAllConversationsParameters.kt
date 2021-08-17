@@ -28,7 +28,7 @@ import me.proton.core.domain.entity.UserId
  * Representation of Rest Query Parameters for 'mail/v4/conversations' endpoint
  * Documentation at '*\/Slim-API/mail/#operation/get_mail-v4-conversations'
  */
-data class GetConversationsParameters(
+data class GetAllConversationsParameters(
     val userId: UserId,
     val page: Int? = null,
     val pageSize: Int = 50,
@@ -53,15 +53,15 @@ data class GetConversationsParameters(
 }
 
 /**
- * @return a [GetConversationsParameters] created from [DataResult] if [DataResult.Success] and the list is not empty,
- *  otherwise [currentParameters]
+ * @return a [GetAllConversationsParameters] created from [DataResult] if [DataResult.Success] and the list is not
+ *  empty, otherwise [currentParameters]
  *
  * Note: since we're using [ConversationApiModel.time] for fetch progressively, we assume that the conversations are
  *  already ordered by time, so we pick directly the last in the list, without adding unneeded computation
  */
 fun DataResult<ConversationsResponse>.createBookmarkParametersOr(
-    currentParameters: GetConversationsParameters
-): GetConversationsParameters {
+    currentParameters: GetAllConversationsParameters
+): GetAllConversationsParameters {
     return if (this is DataResult.Success && value.conversationResponse.isNotEmpty()) {
         val lastConversation = value.conversationResponse.last()
         currentParameters.copy(

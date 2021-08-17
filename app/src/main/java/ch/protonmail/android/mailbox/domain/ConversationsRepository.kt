@@ -24,7 +24,7 @@ import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
@@ -40,7 +40,7 @@ interface ConversationsRepository {
      * @return [LoadMoreFlow] of [DataResult] or [List] of [Conversation]
      * @throws Exception when the repository fails getting conversations for any unhandled reasons
      */
-    fun getConversations(params: GetConversationsParameters): LoadMoreFlow<DataResult<List<Conversation>>>
+    fun getConversations(params: GetAllConversationsParameters): LoadMoreFlow<DataResult<List<Conversation>>>
 
     /**
      * @param conversationId the encrypted id of the conversation to get
@@ -81,7 +81,7 @@ interface ConversationsRepository {
      */
     suspend fun deleteConversations(conversationIds: List<String>, userId: UserId)
 
-    fun loadMore(params: GetConversationsParameters)
+    fun loadMore(params: GetAllConversationsParameters)
 
     suspend fun markRead(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 
