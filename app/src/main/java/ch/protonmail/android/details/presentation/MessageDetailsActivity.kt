@@ -233,6 +233,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     parsedBody,
                     messageId,
                     showLoadEmbeddedImagesButton,
+                    showDecryptionError,
                     loadedMessage.attachments
                 )
             }.launchIn(lifecycleScope)
