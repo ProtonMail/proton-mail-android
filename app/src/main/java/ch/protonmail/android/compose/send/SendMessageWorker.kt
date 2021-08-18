@@ -91,7 +91,7 @@ internal const val KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED = "keySend
 internal const val KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM = "keySendMessageErrorResult"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
-private const val SEND_MESSAGE_MAX_RETRIES = 3
+private const val SEND_MESSAGE_MAX_RETRIES = 2
 private const val SEND_MESSAGE_WORK_NAME_PREFIX = "sendMessageUniqueWorkName"
 private const val NO_SUBJECT = EMPTY_STRING
 
@@ -354,7 +354,7 @@ class SendMessageWorker @AssistedInject constructor(
                         KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED to securityOptions.serialize()
                     )
                 )
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.LINEAR, TEN_SECONDS, TimeUnit.SECONDS)
                 .build()
 
             workManager.enqueueUniqueWork(
