@@ -587,7 +587,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         val actionsUiModel = BottomActionsView.UiModel(
             if (message.toList.size + message.ccList.size > 1) R.drawable.ic_reply_all else R.drawable.ic_reply,
             R.drawable.ic_envelope_dot,
-            R.drawable.ic_trash,
+            if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_trash_empty else R.drawable.ic_trash,
             R.drawable.ic_label
         )
         messageDetailsActionsView.bind(actionsUiModel)
@@ -595,7 +595,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             showLabelsManager()
         }
         messageDetailsActionsView.setOnThirdActionClickListener {
-            viewModel.moveLastMessageToTrash()
+            if (viewModel.shouldShowDeleteActionInBottomActionBar()) {
+                viewModel.delete()
+            } else viewModel.moveLastMessageToTrash()
             onBackPressed()
         }
         messageDetailsActionsView.setOnSecondActionClickListener {

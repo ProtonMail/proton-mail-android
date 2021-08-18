@@ -48,6 +48,7 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
@@ -58,6 +59,7 @@ import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
 import io.mockk.Runs
@@ -85,6 +87,7 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.UUID
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -140,6 +143,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { this@mockk.invoke(any()) } returns false
     }
 
+    private val deleteConversations: DeleteConversations = mockk()
+
+    private val deleteMessage: DeleteMessage = mockk()
+
     private val savedStateHandle = mockk<SavedStateHandle> {
         every { get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns INPUT_ITEM_DETAIL_ID
         every { get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns INBOX.messageLocationTypeValue
@@ -184,6 +191,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             conversationRepository,
             changeConversationsReadStatus,
             changeConversationsStarredStatus,
+            deleteMessage,
+            deleteConversations,
             savedStateHandle,
             messageRendererFactory,
             verifyConnection,
@@ -997,6 +1006,149 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun verifyDeleteInMessagesModeCallsDeleteMessageUseCase() {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        every { userManager.requireCurrentUserId() } returns testId1
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns false
+        val message = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            folderLocation = inputMessageLocation.name
+        )
+        val downLoadedMessage = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = true,
+            folderLocation = inputMessageLocation.name
+        )
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
+
+        // when
+        observeMessageFlow.tryEmit(message)
+        viewModel.delete()
+
+        // then
+        coVerify(exactly = 1) {
+            deleteMessage.invoke(
+                listOf(inputConversationId),
+                inputMessageLocation.messageLocationTypeValue.toString()
+            )
+        }
+        coVerify(exactly = 0) {
+            deleteConversations(
+                listOf(inputConversationId),
+                any(),
+                inputMessageLocation.messageLocationTypeValue.toString()
+            )
+        }
+    }
+
+    @Test
+    fun verifyDeleteInConversationModeWhenConversationHasMoreThanOneMessageCallsDeleteConversationsUseCase() {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        val userString = "userId3"
+        val userId = UserId(userString)
+        every { userManager.requireCurrentUserId() } returns userId
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation("conversationId"))
+        val conversationMessage = mockk<Message> {
+            every { messageId } returns "messageId4"
+            every { conversationId } returns "conversationId"
+            every { subject } returns "subject4"
+            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { isDownloaded } returns true
+            every { senderEmail } returns "sender@protonmail.com"
+            every { numAttachments } returns 1
+            every { time } returns 82374730L
+            every { decrypt(any(), any(), any()) } just Runs
+            every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+        }
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+        coEvery { messageRepository.findMessage(any(), "messageId5") } returns conversationMessage
+
+        // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
+        viewModel.delete()
+
+        // then
+        coVerify(exactly = 1) {
+            deleteConversations(
+                listOf(inputConversationId),
+                userId,
+                inputMessageLocation.messageLocationTypeValue.toString()
+            )
+        }
+        coVerify(exactly = 0) {
+            deleteMessage.invoke(
+                listOf(inputConversationId),
+                inputMessageLocation.messageLocationTypeValue.toString()
+            )
+        }
+    }
+
+    @Test
+    fun verifyDeleteInConversationModeWhenConversationHasOneMessageCallsDeleteMessageUseCase() {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        val userString = "userId3"
+        val userId = UserId(userString)
+        every { userManager.requireCurrentUserId() } returns userId
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage("conversationId"))
+        val conversationMessage = mockk<Message> {
+            every { messageId } returns "messageId4"
+            every { conversationId } returns "conversationId"
+            every { subject } returns "subject4"
+            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { isDownloaded } returns true
+            every { senderEmail } returns "sender@protonmail.com"
+            every { numAttachments } returns 1
+            every { time } returns 82374730L
+            every { decrypt(any(), any(), any()) } just Runs
+            every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+            every { folderLocation } returns "folderLocation"
+        }
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+
+        // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
+        viewModel.delete()
+
+        // then
+        coVerify(exactly = 0) {
+            deleteConversations(
+                listOf(inputConversationId),
+                userId,
+                inputMessageLocation.messageLocationTypeValue.toString()
+            )
+        }
+        coVerify(exactly = 1) {
+            deleteMessage.invoke(
+                listOf("messageId4"),
+                inputMessageLocation.messageLocationTypeValue.toString()
+            )
+        }
+
+    }
+
+    @Test
     fun verifyStarMessagesInConversationModeIsWorking() {
         // given
         val inputMessageLocation = INBOX
@@ -1086,6 +1238,71 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         val numberOfReceivedEvents = dialogTriggerObserver.observedValues.size
         assertEquals(expected = 1, actual = numberOfReceivedEvents)
+    }
+
+    @Test
+    @Ignore("The value that the savedStateHandle returns for location cannot be overwritten here")
+    fun verifyDeleteActionShouldBeShownWhenConversationModeIsOnAndConversationHasMoreThanOneMessageAndLocationIsTrash() {
+        val location = Constants.MessageLocationType.TRASH
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns location.messageLocationTypeValue
+        every { conversationModeEnabled(location) } returns true
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation("conversationId"))
+        val conversationMessage = mockk<Message> {
+            every { messageId } returns "messageId4"
+            every { conversationId } returns "conversationId"
+            every { subject } returns "subject4"
+            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { isDownloaded } returns true
+            every { senderEmail } returns "sender@protonmail.com"
+            every { numAttachments } returns 1
+            every { time } returns 82374730L
+            every { decrypt(any(), any(), any()) } just Runs
+            every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+        }
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+        coEvery { messageRepository.findMessage(any(), "messageId5") } returns conversationMessage
+
+        val expectedResult = true
+
+        // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
+        val result = viewModel.shouldShowDeleteActionInBottomActionBar()
+
+        // then
+        assertEquals(expectedResult, result)
+    }
+
+    @Test
+    @Ignore("The value that the savedStateHandle returns for location cannot be overwritten here")
+    fun verifyDeleteActionShouldBeShownWhenConversationModeIsOnAndConversationHasOneMessageAndLocationIsSent() {
+        val location = Constants.MessageLocationType.SENT
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns location.messageLocationTypeValue
+        every { conversationModeEnabled(location) } returns true
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage("conversationId"))
+        val conversationMessage = mockk<Message> {
+            every { messageId } returns "messageId4"
+            every { conversationId } returns "conversationId"
+            every { subject } returns "subject4"
+            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { isDownloaded } returns true
+            every { senderEmail } returns "sender@protonmail.com"
+            every { numAttachments } returns 1
+            every { time } returns 82374730L
+            every { decrypt(any(), any(), any()) } just Runs
+            every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+        }
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+
+        val expectedResult = true
+
+        // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
+        val result = viewModel.shouldShowDeleteActionInBottomActionBar()
+
+        // then
+        assertEquals(expectedResult, result)
     }
 
     private fun buildConversation(conversationId: String): Conversation {
