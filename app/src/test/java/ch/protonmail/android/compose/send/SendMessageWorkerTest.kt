@@ -221,11 +221,32 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun workerTriesFindingTheMessageByMessageIdWhenMessageIsNotFoundByDatabaseId() = runBlockingTest {
+        val messageDbId = 23712L
+        val messageId = "8322224-1341"
+        val message = Message(messageId = messageId)
+        val createdDraftId = "createdDraftId"
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(null)
+        coEvery { messageDetailsRepository.findMessageById(messageId) } returns flowOf(message)
+        coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns flowOf(null)
+        coEvery { saveDraft.invoke(any()) } returns SaveDraftResult.Success(createdDraftId)
+
+        worker.doWork()
+
+        verify { userNotifier wasNot Called }
+        val paramsSlot = slot<SaveDraft.SaveDraftParameters>()
+        coVerify { saveDraft.invoke(capture(paramsSlot)) }
+        assertEquals(message, paramsSlot.captured.message)
+    }
+
+    @Test
     fun workerNotifiesUserAndFailsWhenMessageIsNotFoundInTheDatabase() = runBlockingTest {
         val messageDbId = 2373L
         val messageId = "8322223"
         givenFullValidInput(messageDbId, messageId)
         coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(null)
+        coEvery { messageDetailsRepository.findMessageById(messageId) } returns flowOf(null)
         every { context.getString(R.string.message_drafted) } returns "error message 9214"
 
         val result = worker.doWork()
@@ -989,3 +1010,4 @@ class SendMessageWorkerTest : CoroutinesTest {
         }
     }
 }
+
