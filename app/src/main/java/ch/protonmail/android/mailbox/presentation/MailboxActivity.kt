@@ -358,7 +358,7 @@ internal class MailboxActivity :
 
             mailboxActionsView.setAction(
                 BottomActionsView.ActionPosition.ACTION_SECOND,
-                currentMailboxLocation != MessageLocationType.DRAFT,
+                true,
                 if (MessageUtils.areAllUnRead(
                         selectedMessages
                     )
