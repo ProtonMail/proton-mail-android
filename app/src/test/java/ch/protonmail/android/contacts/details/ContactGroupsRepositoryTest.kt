@@ -21,7 +21,7 @@ package ch.protonmail.android.contacts.details
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -53,10 +53,10 @@ class ContactGroupsRepositoryTest {
 
     private val dispatcherProvider = TestDispatcherProvider
 
-    private val label1 = ContactLabel("a", "aa")
-    private val label2 = ContactLabel("b", "bb")
-    private val label3 = ContactLabel("c", "cc")
-    private val label4 = ContactLabel("d", "dd")
+    private val label1 = ContactLabelEntity("a", "aa")
+    private val label2 = ContactLabelEntity("b", "bb")
+    private val label3 = ContactLabelEntity("c", "cc")
+    private val label4 = ContactLabelEntity("d", "dd")
 
     @BeforeTest
     fun setUp() {
@@ -116,7 +116,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun saveContactGroupStoresGivenContactGroupInDatabase() {
-        val contactGroup = ContactLabel("Id", "name", "color")
+        val contactGroup = ContactLabelEntity("Id", "name", "color")
 
         contactGroupsRepository.saveContactGroup(contactGroup)
 

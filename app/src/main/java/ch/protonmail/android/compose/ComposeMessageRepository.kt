@@ -28,7 +28,7 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import me.proton.core.domain.entity.UserId
@@ -87,7 +87,7 @@ class ComposeMessageRepository @Inject constructor(
         listOfDaos
     }
 
-    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Observable<List<ContactLabel>> {
+    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Observable<List<ContactLabelEntity>> {
         var tempContactDao: ContactDao = contactDao
         if (combinedContacts) {
             tempContactDao = contactDaos[userId]!!
@@ -105,7 +105,7 @@ class ComposeMessageRepository @Inject constructor(
             .toObservable()
     }
 
-    fun getContactGroupFromDB(groupName: String): Single<ContactLabel> {
+    fun getContactGroupFromDB(groupName: String): Single<ContactLabelEntity> {
         return contactDao.findContactGroupByNameAsync(groupName)
     }
 

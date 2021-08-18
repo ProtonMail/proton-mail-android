@@ -47,7 +47,7 @@ import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchList
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.domain.model.SignatureVerification
@@ -94,7 +94,7 @@ internal class MessageDetailsAdapter(
     private val onMoreMessageActionsClicked: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
-    private var exclusiveLabelsPerMessage: HashMap<String, List<Label>> = hashMapOf()
+    private var exclusiveLabelsPerMessage: HashMap<String, List<LabelEntity>> = hashMapOf()
     private var nonExclusiveLabelsPerMessage: HashMap<String, List<LabelChipUiModel>> = hashMapOf()
 
     private val messageLoadingSpinnerTopMargin by lazy {

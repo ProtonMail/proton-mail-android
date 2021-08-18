@@ -24,20 +24,29 @@ import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
+import ch.protonmail.android.api.models.messages.receive.Label
+import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import io.mockk.Called
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.verify
+import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import kotlin.test.BeforeTest
@@ -57,10 +66,31 @@ class CreateContactGroupWorkerTest {
     @RelaxedMockK
     private lateinit var repository: ContactGroupsRepository
 
-    @RelaxedMockK
-    private lateinit var createContactGroupApiResponse: LabelResponse
+    @MockK
+    private lateinit var labelsMapper: LabelsMapper
+
+    @MockK
+    private lateinit var accountManager: AccountManager
+
+    private val labelResponse = mockk<LabelResponse> {
+        every { label } returns Label(
+            id = "labelID",
+            name = "name",
+            color = "color",
+            path = "",
+            type = 0,
+            notify = 0,
+            order = 0,
+            expanded = null,
+            sticky = null,
+            display = null,
+            exclusive = null
+        )
+    }
 
     private var dispatcherProvider = TestDispatcherProvider
+
+    private val testUserId = UserId("TestUser")
 
     @InjectMockKs
     private lateinit var worker: CreateContactGroupWorker
@@ -68,16 +98,34 @@ class CreateContactGroupWorkerTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { apiManager.createLabel(any()) } returns createContactGroupApiResponse
-        every { apiManager.updateLabel(any(), any()) } returns createContactGroupApiResponse
-        every { createContactGroupApiResponse.contactGroup } returns ContactLabel("labelID", "name", "color")
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
+//        coEvery { apiManager.createLabel(testUserId, any()) } returns createContactGroupApiResponse
+//        coEvery { apiManager.updateLabel(testUserId, any(), any()) } returns createContactGroupApiResponse
+        //every { createContactGroupApiResponse.label } returns ContactLabelEntity("labelID", "name", "color")
+        val labelEntity = ContactLabelEntity(
+            ID = "labelID",
+            name = "name",
+            color = "color",
+            order = 0,
+            display = 0,
+            exclusive = false,
+            type = 0
+        )
+        every { labelsMapper.mapLabelToContactLabelEntity(any()) } returns labelEntity
     }
 
     @Test
     fun `worker succeeds when create contact group is performed without passing ID parameter`() {
         runBlockingTest {
-            every { parameters.inputData.getBoolean(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE, false) } returns false
+            every {
+                parameters.inputData.getBoolean(
+                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE, false
+                )
+            } returns false
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID) } returns null
+            val createContactGroupApiResponse = ApiResult.Success(labelResponse)
+            coEvery { apiManager.createLabel(testUserId, any()) } returns createContactGroupApiResponse
+            coEvery { apiManager.updateLabel(testUserId, any(), any()) } returns createContactGroupApiResponse
 
             val result = worker.doWork()
 
@@ -108,10 +156,10 @@ class CreateContactGroupWorkerTest {
     }
 
     @Test
-    fun `worker saves contact group in repository when creation succeeds`() {
+    fun workerSavesContactGroupInRepositoryWhenCreationSucceeds() {
         runBlockingTest {
-            every { createContactGroupApiResponse.hasError() } returns false
-            every { apiManager.createLabel(any()) } returns createContactGroupApiResponse
+            val createContactGroupApiResponse = ApiResult.Success(labelResponse)
+            coEvery { apiManager.createLabel(testUserId, any()) } returns createContactGroupApiResponse
 
             val result = worker.doWork()
 
@@ -123,13 +171,20 @@ class CreateContactGroupWorkerTest {
     @Test
     fun `worker invokes create contact group API when it's a create contact group request`() {
         runBlockingTest {
-            every { parameters.inputData.getBoolean(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE, false) } returns false
+            every {
+                parameters.inputData.getBoolean(
+                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE, false
+                )
+            } returns false
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR) } returns "labelColor"
+            val createContactGroupApiResponse = ApiResult.Success(labelResponse)
+            coEvery { apiManager.createLabel(testUserId, any()) } returns createContactGroupApiResponse
+            coEvery { apiManager.updateLabel(testUserId, any(), any()) } returns createContactGroupApiResponse
 
             val result = worker.doWork()
 
-            verify { apiManager.createLabel(buildLabelBody()) }
+            coVerify { apiManager.createLabel(testUserId, buildLabelBody()) }
             assertEquals(ListenableWorker.Result.success(), result)
         }
     }
@@ -141,10 +196,13 @@ class CreateContactGroupWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR) } returns "labelColor"
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID) } returns "labelID"
+            val createContactGroupApiResponse = ApiResult.Success(labelResponse)
+            coEvery { apiManager.createLabel(testUserId, any()) } returns createContactGroupApiResponse
+            coEvery { apiManager.updateLabel(testUserId, any(), any()) } returns createContactGroupApiResponse
 
             val result = worker.doWork()
 
-            verify { apiManager.updateLabel("labelID", buildLabelBody()) }
+            coVerify { apiManager.updateLabel(testUserId, "labelID", buildLabelBody()) }
             assertEquals(ListenableWorker.Result.success(), result)
         }
     }
@@ -166,7 +224,7 @@ class CreateContactGroupWorkerTest {
 
             assertEquals(expectedException, result!!.message)
             assertTrue(result is IllegalArgumentException)
-            verify { apiManager.updateLabel("labelID", buildLabelBody()) wasNot Called }
+            coVerify { apiManager.updateLabel(testUserId, "labelID", buildLabelBody()) wasNot Called }
         }
     }
 
@@ -174,8 +232,10 @@ class CreateContactGroupWorkerTest {
     fun `worker fails returning error when API returns any errors`() {
         runBlockingTest {
             val error = "Test API Error"
-            every { createContactGroupApiResponse.hasError() } returns true
-            every { createContactGroupApiResponse.error } returns error
+            val protonErrorData = ApiResult.Error.ProtonData(123, error)
+            val createContactGroupErrorApiResponse = ApiResult.Error.Http(123, error, protonErrorData)
+            coEvery { apiManager.createLabel(any(), any()) } returns createContactGroupErrorApiResponse
+            coEvery { apiManager.updateLabel(any(), any(), any()) } returns createContactGroupErrorApiResponse
 
             val result = worker.doWork()
 
@@ -189,10 +249,27 @@ class CreateContactGroupWorkerTest {
     @Test
     fun `worker fails returning error when API returns contactGroup with empty ID`() {
         runBlockingTest {
-            val error = "Test API Error"
-            every { createContactGroupApiResponse.hasError() } returns false
-            every { createContactGroupApiResponse.contactGroup.ID } returns ""
-            every { createContactGroupApiResponse.error } returns error
+            val error = "Error, Label id is empty"
+            val createContactGroupApiResponse = ApiResult.Success(
+                LabelResponse(
+                    Label(
+                        id = "",
+                        name = "name",
+                        color = "color",
+                        path = "",
+                        type = 0,
+                        notify = 0,
+                        order = 0,
+                        expanded = null,
+                        sticky = null,
+                        display = null,
+                        exclusive = null
+                    )
+                )
+            )
+
+            coEvery { apiManager.createLabel(any(), any()) } returns createContactGroupApiResponse
+            coEvery { apiManager.updateLabel(any(), any(), any()) } returns createContactGroupApiResponse
 
             val result = worker.doWork()
 
@@ -204,13 +281,15 @@ class CreateContactGroupWorkerTest {
         }
     }
 
-    private fun buildLabelBody(): LabelBody =
-        LabelBody(
-            "labelName",
-            "labelColor",
-            0,
-            0,
-            Constants.LABEL_TYPE_CONTACT_GROUPS
+    private fun buildLabelBody(): LabelRequestBody =
+        LabelRequestBody(
+            name = "labelName",
+            color = "labelColor",
+            display = 0,
+            exclusive = 0,
+            type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+            parentId = EMPTY_STRING,
+            notify = 0
         )
 
 }

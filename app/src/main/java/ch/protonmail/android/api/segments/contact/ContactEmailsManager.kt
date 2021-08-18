@@ -21,31 +21,30 @@ package ch.protonmail.android.api.segments.contact
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
+import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import me.proton.core.domain.entity.UserId
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.runBlocking
+import ch.protonmail.android.data.local.model.ContactLabelEntity
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import me.proton.core.accountmanager.domain.AccountManager
 import timber.log.Timber
 import javax.inject.Inject
 
 class ContactEmailsManager @Inject constructor(
     private var api: ProtonMailApiManager,
-    private val contactDao: ContactDao
+    private val databaseProvider: DatabaseProvider,
+    private val accountManager: AccountManager,
+    private val labelsMapper: LabelsMapper
 ) {
 
-    @AssistedInject
-    constructor(
-        api: ProtonMailApiManager,
-        databaseProvider: DatabaseProvider,
-        @Assisted userId: UserId
-    ) : this(api, databaseProvider.provideContactDao(userId))
-
     suspend fun refresh(pageSize: Int = Constants.CONTACTS_PAGE_SIZE) {
-        val contactLabelList = api.fetchContactGroupsList()
+        val userId = accountManager.getPrimaryUserId().filterNotNull().first()
+        val contactGroupsResponse: ContactGroupsResponse? =
+            api.fetchContactGroups(userId).valueOrNull
 
         var currentPage = 0
         var hasMorePages = true
@@ -60,10 +59,12 @@ class ContactEmailsManager @Inject constructor(
         if (allResults.isNotEmpty()) {
             val allContactEmails = allResults.flatMap { it.contactEmails }
             val allJoins = getJoins(allContactEmails)
+            val contactLabels = mapToContactLabelsEntity(contactGroupsResponse?.labels)
             Timber.v(
-                "Refresh emails: ${allContactEmails.size}, labels: ${contactLabelList.size}, allJoins: ${allJoins.size}"
+                "Refresh emails: ${allContactEmails.size}, labels: ${contactLabels.size}, allJoins: ${allJoins.size}"
             )
-            contactDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, allJoins)
+            val contactsDao = databaseProvider.provideContactDao(userId)
+            contactsDao.insertNewContactsAndLabels(allContactEmails, contactLabels, allJoins)
         } else {
             Timber.v("contactEmails result list is empty")
         }
@@ -82,16 +83,10 @@ class ContactEmailsManager @Inject constructor(
         return allJoins
     }
 
-    @Deprecated(
-        message = "Please use suspended version wherever possible",
-        replaceWith = ReplaceWith("refresh()")
-    )
-    fun refreshBlocking() = runBlocking {
-        refresh()
+    private fun mapToContactLabelsEntity(labels: List<Label>?): List<ContactLabelEntity> {
+        return labels?.map { label ->
+            labelsMapper.mapLabelToContactLabelEntity(label)
+        } ?: emptyList()
     }
 
-    @AssistedInject.Factory
-    interface AssistedFactory {
-        fun create(userId: UserId): ContactEmailsManager
-    }
 }

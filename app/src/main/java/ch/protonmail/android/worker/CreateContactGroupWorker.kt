@@ -29,14 +29,16 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
+import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.withContext
-import me.proton.core.util.kotlin.DispatcherProvider
+import kotlinx.coroutines.flow.first
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.network.domain.ApiResult
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME = "keyCreateContactGroupInputDataName"
@@ -53,32 +55,31 @@ class CreateContactGroupWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
     private val repository: ContactGroupsRepository,
-    private val dispatcherProvider: DispatcherProvider
+    private val labelsMapper: LabelsMapper,
+    private val accountManager: AccountManager
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         val groupName = getContactGroupNameParam() ?: return Result.failure()
         val color = getContactGroupColorParam() ?: return Result.failure()
 
-        val response = withContext(dispatcherProvider.Io) {
-            createContactGroup(groupName, color)
+        return when (val response = createContactGroup(groupName, color)) {
+            is ApiResult.Success -> {
+                val labelResponse = response.value
+                if (labelResponse.label.id.isEmpty()) {
+                    return failureResultWithError("Error, Label id is empty")
+                }
+                val contactLabel = labelsMapper.mapLabelToContactLabelEntity(labelResponse.label)
+                repository.saveContactGroup(contactLabel)
+                return Result.success()
+            }
+            is ApiResult.Error.Http -> {
+                return failureResultWithError(response.proton?.error ?: "unknown error")
+            }
+            else -> {
+                Result.failure()
+            }
         }
-
-        if (response.hasError()) {
-            return failureResultWithError(response.error)
-        }
-
-        if (hasInvalidApiResponse(response)) {
-            return failureResultWithError(response.error)
-        }
-
-        // TODO: mapper here
-//                val contactGroup by lazy {
-//                    val contactLabelFactory = ContactLabelFactory()
-//                    contactLabelFactory.createDBObjectFromServerObject(serverLabel)
-//                }
-        repository.saveContactGroup(response.contactGroup)
-        return Result.success()
     }
 
     private fun failureResultWithError(error: String): Result {
@@ -86,35 +87,31 @@ class CreateContactGroupWorker @AssistedInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun createContactGroup(name: String, color: String): LabelResponse {
+    private suspend fun createContactGroup(name: String, color: String): ApiResult<LabelResponse> {
         val labelBody = buildLabelBody(name, color)
+        val userId = requireNotNull(accountManager.getPrimaryUserId().first())
 
         if (isUpdateParam()) {
             val validContactGroupId = getContactGroupIdParam() ?: throw missingContactGroupIdError()
-            return apiManager.updateLabel(validContactGroupId, labelBody)
+            return apiManager.updateLabel(userId, validContactGroupId, labelBody)
         }
 
-        return apiManager.createLabel(labelBody)
+        return apiManager.createLabel(userId, labelBody)
     }
 
     private fun buildLabelBody(name: String, color: String) =
-        LabelBody(
-            name,
-            color,
-            getDisplayParam(),
-            getExclusiveParam(),
-            Constants.LABEL_TYPE_CONTACT_GROUPS
+        LabelRequestBody(
+            name = name,
+            color = color,
+            type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+            parentId = "",
+            notify = 0,
+            exclusive = getExclusiveParam(),
+            display = getDisplayParam()
         )
 
     private fun missingContactGroupIdError() =
         IllegalArgumentException("Missing required ID parameter to create contact group")
-
-    // TODO: mapper here
-//                val contactGroup by lazy {
-//                    val contactLabelFactory = ContactLabelFactory()
-//                    contactLabelFactory.createDBObjectFromServerObject(serverLabel)
-//                }
-    private fun hasInvalidApiResponse(labelResponse: LabelResponse) = labelResponse.contactGroup.ID.isEmpty()
 
     private fun getContactGroupIdParam() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID)
 
@@ -129,6 +126,7 @@ class CreateContactGroupWorker @AssistedInject constructor(
     private fun isUpdateParam() = inputData.getBoolean(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE, false)
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
+
         fun enqueue(
             name: String,
             color: String,

@@ -24,15 +24,16 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.core.Constants
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -49,16 +50,23 @@ class DeleteLabelWorkerTest {
     @MockK
     private lateinit var api: ProtonMailApiManager
 
+    @MockK
+    private lateinit var accountManager: AccountManager
+
     private lateinit var worker: DeleteLabelWorker
+
+    private val testUserId = UserId("testUser")
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
         worker = DeleteLabelWorker(
             context,
             parameters,
             api,
-            TestDispatcherProvider
+            TestDispatcherProvider,
+            accountManager
         )
     }
 
@@ -83,13 +91,11 @@ class DeleteLabelWorkerTest {
         runBlockingTest {
             // given
             val labelId = "id1"
-            val deleteResponse = mockk<ResponseBody> {
-                every { code } returns Constants.RESPONSE_CODE_OK
-            }
+            val deleteResponse = ApiResult.Success(Unit)
             val expected = ListenableWorker.Result.success()
 
             every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_IDS to arrayOf(labelId))
-            coEvery { api.deleteLabel(any()) } returns deleteResponse
+            coEvery { api.deleteLabel(testUserId, any()) } returns deleteResponse
 
             // when
             val result = worker.doWork()
@@ -105,15 +111,15 @@ class DeleteLabelWorkerTest {
             // given
             val labelId = "id1"
             val errorCode = 12123
-            val deleteResponse = mockk<ResponseBody> {
-                every { code } returns errorCode
-            }
+            val error = "Test API Error"
+            val protonErrorData = ApiResult.Error.ProtonData(errorCode, error)
+            val deleteResponse = ApiResult.Error.Http(errorCode, error, protonErrorData)
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $errorCode")
             )
 
             every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_IDS to arrayOf(labelId))
-            coEvery { api.deleteLabel(any()) } returns deleteResponse
+            coEvery { api.deleteLabel(testUserId, any()) } returns deleteResponse
 
             // when
             val result = worker.doWork()

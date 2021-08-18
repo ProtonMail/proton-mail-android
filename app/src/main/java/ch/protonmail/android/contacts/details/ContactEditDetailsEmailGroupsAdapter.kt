@@ -26,20 +26,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.contacts_groups_dropdown_item.view.*
 
 class ContactEditDetailsEmailGroupsAdapter(
     val context: Context,
-    var items: List<ContactLabel>
+    var items: List<ContactLabelEntity>
 ) : RecyclerView.Adapter<ContactEditDetailsEmailGroupsAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         (holder).bind(context, items[position])
     }
 
-    fun setData(items: List<ContactLabel>) {
+    fun setData(items: List<ContactLabelEntity>) {
         this.items = items
         notifyDataSetChanged()
     }
@@ -62,7 +62,7 @@ class ContactEditDetailsEmailGroupsAdapter(
 
         fun bind(
             context: Context,
-            contactLabel: ContactLabel
+            contactLabel: ContactLabelEntity
         ) {
             this.setIsRecyclable(false)
 

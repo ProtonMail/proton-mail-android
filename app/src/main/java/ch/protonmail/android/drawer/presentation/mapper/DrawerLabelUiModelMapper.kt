@@ -22,7 +22,7 @@ import android.content.Context
 import android.graphics.Color
 import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.R
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
 import ch.protonmail.android.mapper.UiModelMapper
 import ch.protonmail.android.utils.UiUtil
@@ -38,11 +38,11 @@ import javax.inject.Inject
  */
 internal class DrawerLabelUiModelMapper @Inject constructor(
     private val context: Context
-) : UiModelMapper<Label, DrawerLabelUiModel> {
+) : UiModelMapper<LabelEntity, DrawerLabelUiModel> {
 
     private val useFolderColor: Boolean = true
 
-    override fun Label.toUiModel(): DrawerLabelUiModel {
+    override fun LabelEntity.toUiModel(): DrawerLabelUiModel {
 
         val type =
             if (exclusive) DrawerLabelUiModel.Type.FOLDERS

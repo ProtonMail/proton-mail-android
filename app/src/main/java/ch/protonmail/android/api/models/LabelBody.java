@@ -18,16 +18,8 @@
  */
 package ch.protonmail.android.api.models;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
 
-import java.lang.reflect.Type;
 import java.util.Objects;
 
 import ch.protonmail.android.api.utils.Fields;
@@ -109,38 +101,6 @@ public class LabelBody {
     @Override
     public int hashCode() {
         return Objects.hash(name, color, display, exclusive, type, notify);
-    }
-
-    public static class LabelBodySerializer implements JsonSerializer<LabelBody> {
-
-        @Override
-        public JsonElement serialize(LabelBody src, Type typeOfSrc, JsonSerializationContext context) {
-            final JsonObject json = new JsonObject();
-            json.addProperty(Fields.Label.NAME, src.getName());
-            json.addProperty(Fields.Label.COLOR, src.getColor());
-            json.addProperty(Fields.Label.DISPLAY, src.getDisplay());
-            json.addProperty(Fields.Label.TYPE, src.getType());
-            json.addProperty(Fields.Label.EXCLUSIVE, src.getExclusive());
-            json.addProperty(Fields.Label.NOTIFY, src.getNotify());
-            return json;
-        }
-    }
-
-    public static class LabelBodyDeserializer implements JsonDeserializer<LabelBody> {
-
-        @Override
-        public LabelBody deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject jsonObject = (JsonObject) json;
-            String name = jsonObject.get(Fields.Label.NAME).getAsString();
-            String color = jsonObject.get(Fields.Label.COLOR).getAsString();
-            int display = jsonObject.get(Fields.Label.DISPLAY).getAsInt();
-            int type = jsonObject.get(Fields.Label.TYPE).getAsInt();
-            int exclusive = jsonObject.get(Fields.Label.EXCLUSIVE).getAsInt();
-            int notify = jsonObject.get(Fields.Label.NOTIFY).getAsInt();
-
-            LabelBody labelBody = new LabelBody(name, color, display, exclusive, type);
-            return labelBody;
-        }
     }
 
 }

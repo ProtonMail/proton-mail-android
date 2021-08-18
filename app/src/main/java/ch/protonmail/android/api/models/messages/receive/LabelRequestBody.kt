@@ -30,15 +30,11 @@ data class LabelRequestBody(
     @SerialName(Fields.Label.COLOR)
     val color: String,
     @SerialName(Fields.Label.TYPE)
-    val type: Int,
+    val type: Int, // only '1', '2', or '3
     @SerialName(Fields.Label.PARENT_ID)
     val parentId: String?,
     @SerialName(Fields.Label.NOTIFY)
     val notify: Int?,
-    @SerialName(Fields.Label.EXPANDED) // v4
-    val expanded: Int?,
-    @SerialName(Fields.Label.STICKY) // v4
-    val sticky: Int?,
     @SerialName(Fields.Label.EXCLUSIVE) // v3 only
     val exclusive: Int?,
     @SerialName(Fields.Label.DISPLAY) // v3 - deprecated in v4

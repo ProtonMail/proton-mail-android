@@ -37,29 +37,29 @@ const val TABLE_CONTACT_LABEL = "ContactLabel"
     tableName = TABLE_CONTACT_LABEL,
     indices = [Index(COLUMN_LABEL_ID, unique = true)]
 )
-data class ContactLabel @JvmOverloads constructor(
+data class ContactLabelEntity @JvmOverloads constructor(
 
     @ColumnInfo(name = COLUMN_LABEL_ID)
     @PrimaryKey
-    var ID: String = "",
+    val ID: String = "",
 
     @ColumnInfo(name = COLUMN_LABEL_NAME)
-    var name: String = "",
+    val name: String = "",
 
     @ColumnInfo(name = COLUMN_LABEL_COLOR)
-    var color: String = "",
+    val color: String = "",
 
     @ColumnInfo(name = COLUMN_LABEL_DISPLAY)
-    var display: Int = 0,
+    val display: Int = 0,
 
     @ColumnInfo(name = COLUMN_LABEL_ORDER)
-    var order: Int = 0,
+    val order: Int = 0,
 
     @ColumnInfo(name = COLUMN_LABEL_EXCLUSIVE)
-    var exclusive: Boolean = false,
+    val exclusive: Boolean = false,
 
     @ColumnInfo(name = COLUMN_LABEL_TYPE)
-    var type: Int = 1
+    val type: Int = 1
 
 ) : Parcelable, Serializable {
 
@@ -96,12 +96,12 @@ data class ContactLabel @JvmOverloads constructor(
 
     override fun describeContents(): Int = 0
 
-    companion object CREATOR : Parcelable.Creator<ContactLabel> {
+    companion object CREATOR : Parcelable.Creator<ContactLabelEntity> {
 
-        override fun createFromParcel(parcel: Parcel): ContactLabel =
-            ContactLabel(parcel)
+        override fun createFromParcel(parcel: Parcel): ContactLabelEntity =
+            ContactLabelEntity(parcel)
 
-        override fun newArray(size: Int): Array<ContactLabel?> =
+        override fun newArray(size: Int): Array<ContactLabelEntity?> =
             arrayOfNulls(size)
     }
 }

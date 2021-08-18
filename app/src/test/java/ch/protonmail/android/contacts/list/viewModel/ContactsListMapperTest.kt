@@ -25,7 +25,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -193,7 +193,7 @@ class ContactsListMapperTest {
         // given
         val testId = "ID1"
         val testName = "name1"
-        val label1 = ContactLabel(testId, testName, "green", 1, 0, false, 2)
+        val label1 = ContactLabelEntity(testId, testName, "green", 1, 0, false, 2)
         val expected = ContactGroupListItem(
             contactId = testId,
             name = testName,
@@ -216,8 +216,8 @@ class ContactsListMapperTest {
         val testId2 = "ID2"
         val testName = "name1"
         val testName2 = "name2"
-        val label1 = ContactLabel(testId, testName, "green", 1, 0, false, 2)
-        val label2 = ContactLabel(testId2, testName2, "yellow", 1, 0, false, 2)
+        val label1 = ContactLabelEntity(testId, testName, "green", 1, 0, false, 2)
+        val label2 = ContactLabelEntity(testId2, testName2, "yellow", 1, 0, false, 2)
         val listItem1 = ContactGroupListItem(
             contactId = testId,
             name = testName,

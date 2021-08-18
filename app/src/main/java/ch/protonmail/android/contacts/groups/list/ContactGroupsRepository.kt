@@ -22,7 +22,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -36,9 +36,9 @@ class ContactGroupsRepository @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactDao.fetchJoins()
+    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactDao.observeJoins()
 
-    fun observeContactGroups(filter: String): Flow<List<ContactLabel>> =
+    fun observeContactGroups(filter: String): Flow<List<ContactLabelEntity>> =
         contactDao.findContactGroups("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
             .map { labels ->
                 labels.map { label -> label.contactEmailsCount = contactDao.countContactEmailsByLabelId(label.ID) }
@@ -49,15 +49,8 @@ class ContactGroupsRepository @Inject constructor(
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
         contactDao.findAllContactsEmailsByContactGroup(id).first()
 
-    fun saveContactGroup(contactLabel: ContactLabel) {
+    fun saveContactGroup(contactLabel: ContactLabelEntity) {
         contactDao.saveContactGroupLabel(contactLabel)
-    }
-
-    suspend fun getContactGroupsFromApi(): List<ContactLabel> {
-        return api.fetchContactGroupsList().also { labels ->
-            contactDao.clearContactGroupsLabelsTable()
-            contactDao.saveContactGroupsList(labels)
-        }
     }
 
     private companion object {

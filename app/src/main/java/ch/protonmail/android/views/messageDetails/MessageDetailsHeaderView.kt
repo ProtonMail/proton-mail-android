@@ -39,7 +39,7 @@ import ch.protonmail.android.activities.messageDetails.details.RecipientContextM
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
@@ -180,7 +180,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     fun bind(
         message: Message,
         messageEncryptionUiModel: MessageEncryptionUiModel,
-        exclusiveLabels: List<Label>,
+        exclusiveLabels: List<LabelEntity>,
         nonExclusiveLabels: List<LabelChipUiModel>,
         onHeaderCollapsed: () -> Unit
     ) {
@@ -353,7 +353,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
     private fun getTextForMessageLocation(
         messageLocation: Constants.MessageLocationType,
-        labelsList: List<Label>
+        labelsList: List<LabelEntity>
     ) = when (messageLocation) {
         Constants.MessageLocationType.INBOX -> context.getString(R.string.inbox)
         Constants.MessageLocationType.SENT -> context.getString(R.string.sent)

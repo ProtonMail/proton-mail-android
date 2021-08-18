@@ -18,10 +18,10 @@
  */
 package ch.protonmail.android.contacts.details
 
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 
 data class ContactEmailsGroups(
-    val groups: List<ContactLabel>,
+    val groups: List<ContactLabelEntity>,
     val emailId: String?,
     val rowID: Int
 )

@@ -20,7 +20,6 @@ package ch.protonmail.android.api
 
 import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
-import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.segments.ATTACH_PATH
 import ch.protonmail.android.api.segments.ONE_MINUTE
@@ -63,6 +62,7 @@ class ProtonRetrofitBuilder @Inject constructor(
     private val userNotifier: UserNotifier,
     private val sessionManager: SessionManager,
 ) {
+
     private val cache = HashMap<RetrofitType, Retrofit>()
     private lateinit var endpointUri: String
 
@@ -155,6 +155,7 @@ sealed class ProtonRetrofit(
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
 ) {
+
     private val defaultInterceptor =
         ProtonMailRequestInterceptor.getInstance(userManager, jobManager, networkUtil, userNotifier, sessionManager)
 
@@ -174,8 +175,6 @@ sealed class ProtonRetrofit(
         .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
         .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientSerializer())
         .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientDeserializer())
-        .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodySerializer())
-        .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodyDeserializer())
         .registerTypeAdapter(AttachmentHeaders::class.java, AttachmentHeaders.AttachmentHeadersDeserializer())
         .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
         .create()
@@ -214,6 +213,7 @@ class ProtonRetrofitPublic(
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
 ) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -242,6 +242,7 @@ class ProtonRetrofitPing(
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
 ) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -270,6 +271,7 @@ class ProtonRetrofitExtended(
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
 ) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -298,6 +300,7 @@ class ProtonRetrofitAttachments(
     userNotifier: UserNotifier,
     sessionManager: SessionManager
 ) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -326,6 +329,7 @@ class ProtonRetrofitSecure(
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
 ) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
+
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor

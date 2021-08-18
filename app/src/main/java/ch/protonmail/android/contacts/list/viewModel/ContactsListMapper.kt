@@ -25,7 +25,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.utils.UiUtil
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.Locale
@@ -113,7 +113,7 @@ class ContactsListMapper @Inject constructor() {
         return mergedContacts
     }
 
-    fun mapLabelToContactGroup(label: ContactLabel): ContactGroupListItem =
+    fun mapLabelToContactGroup(label: ContactLabelEntity): ContactGroupListItem =
         ContactGroupListItem(
             contactId = label.ID,
             name = label.name,
@@ -121,7 +121,7 @@ class ContactsListMapper @Inject constructor() {
             color = Color.parseColor(UiUtil.normalizeColor(label.color)),
         )
 
-    fun mapLabelsToContactGroups(contactLabels: List<ContactLabel>): List<ContactGroupListItem> =
+    fun mapLabelsToContactGroups(contactLabels: List<ContactLabelEntity>): List<ContactGroupListItem> =
         contactLabels.map { label ->
             mapLabelToContactGroup(label)
         }

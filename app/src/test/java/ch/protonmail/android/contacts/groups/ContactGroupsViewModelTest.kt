@@ -26,7 +26,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
@@ -66,9 +66,9 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var contactGroupsViewModel: ContactGroupsViewModel
 
-    private val label1 = ContactLabel("a", "aa")
-    private val label2 = ContactLabel("b", "bb")
-    private val label3 = ContactLabel("c", "cc")
+    private val label1 = ContactLabelEntity("a", "aa")
+    private val label2 = ContactLabelEntity("b", "bb")
+    private val label3 = ContactLabelEntity("c", "cc")
 
     private val testColorInt = 871
 

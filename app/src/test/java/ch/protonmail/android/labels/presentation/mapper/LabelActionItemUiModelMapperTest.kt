@@ -22,7 +22,7 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import android.graphics.Color
 import ch.protonmail.android.R
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import io.mockk.every
@@ -62,7 +62,15 @@ class LabelActionItemUiModelMapperTest {
         val labelId1 = "asdasdad"
         val labelName1 = "name1"
         val labelColor1 = "olive"
-        val label = Label(labelId1, labelName1, labelColor1)
+        val label = LabelEntity(
+            labelId1,
+            labelName1,
+            labelColor1,
+            display = 0,
+            order = 0,
+            exclusive = false,
+            type = 0
+        )
         val currentLabelsIds = listOf(labelId1)
         val sheetType = LabelsActionSheet.Type.LABEL
         val expected = LabelActonItemUiModel(
@@ -89,7 +97,15 @@ class LabelActionItemUiModelMapperTest {
         val labelId1 = "asdasdad"
         val labelName1 = "name1"
         val labelColor1 = "olive"
-        val label = Label(labelId1, labelName1, labelColor1)
+        val label = LabelEntity(
+            labelId1,
+            labelName1,
+            labelColor1,
+            display = 0,
+            order = 0,
+            exclusive = false,
+            type = 0
+        )
         val currentLabelsIds = listOf(labelId1)
         val sheetType = LabelsActionSheet.Type.FOLDER
         val expected = LabelActonItemUiModel(

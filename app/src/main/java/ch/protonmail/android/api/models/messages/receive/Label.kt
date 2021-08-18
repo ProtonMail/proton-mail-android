@@ -34,17 +34,18 @@ data class Label(
     @SerialName(Fields.Label.COLOR)
     val color: String,
     @SerialName(Fields.Label.TYPE)
-    val type: Int,
+    val type: Int?,
     @SerialName(Fields.Label.NOTIFY)
     val notify: Int,
     @SerialName(Fields.Label.ORDER)
-    val order: Int,
+    val order: Int?,
     @SerialName(Fields.Label.EXPANDED) // v4
-    val expanded: Int,
+    val expanded: Int? = null,
     @SerialName(Fields.Label.STICKY) // v4
-    val sticky: Int,
+    val sticky: Int? = null,
     @SerialName(Fields.Label.DISPLAY) // v3
-    val display: Int,
+    val display: Int?,
     @SerialName(Fields.Label.EXCLUSIVE) // v3
-    val exclusive: Int
+    val exclusive: Int?
+
 )

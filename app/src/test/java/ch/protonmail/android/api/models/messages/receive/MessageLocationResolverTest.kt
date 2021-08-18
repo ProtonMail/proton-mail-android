@@ -21,7 +21,7 @@ package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
@@ -124,7 +124,7 @@ class MessageLocationResolverTest {
                 "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
-            val testLabel = mockk<Label> {
+            val testLabel = mockk<LabelEntity> {
                 every { exclusive } returns true
             }
             every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
@@ -144,7 +144,7 @@ class MessageLocationResolverTest {
                 "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
             )
             val expected = Constants.MessageLocationType.LABEL
-            val testLabel = mockk<Label> {
+            val testLabel = mockk<LabelEntity> {
                 every { exclusive } returns false
             }
             every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
@@ -165,7 +165,7 @@ class MessageLocationResolverTest {
                 "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
-            val testLabel = mockk<Label> {
+            val testLabel = mockk<LabelEntity> {
                 every { exclusive } returns true
             }
             every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
@@ -188,7 +188,7 @@ class MessageLocationResolverTest {
                 "hk3g-efDXUe5pZKWzIkPPYKueFyAu9UCYRlD2ej-auBnu8gSC2g6hC0OVSkZm_3zdKkZdvLZBtRwydhjvUi-Wg=="
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
-            val testLabel = mockk<Label> {
+            val testLabel = mockk<LabelEntity> {
                 every { exclusive } returns true
             }
             every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
@@ -231,10 +231,10 @@ class MessageLocationResolverTest {
                 exclusiveLabelId
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
-            val exclusiveLabel = mockk<Label> {
+            val exclusiveLabel = mockk<LabelEntity> {
                 every { exclusive } returns true
             }
-            val nonExclusiveLabel = mockk<Label> {
+            val nonExclusiveLabel = mockk<LabelEntity> {
                 every { exclusive } returns false
             }
             every { messageDao.findLabelByIdBlocking(exclusiveLabelId) } returns exclusiveLabel

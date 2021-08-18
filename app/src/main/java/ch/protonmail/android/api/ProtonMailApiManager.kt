@@ -213,14 +213,21 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchLabels(userId: UserId): ApiResult<LabelsResponse> = api.fetchLabels(userId)
 
-    override suspend fun fetchContactGroups(): ApiResult<ContactGroupsResponse> = api.fetchContactGroups()
+    override suspend fun fetchContactGroups(userId: UserId): ApiResult<ContactGroupsResponse> =
+        api.fetchContactGroups(userId)
 
-    override suspend fun createLabel(label: LabelRequestBody): ApiResult<LabelResponse> = api.createLabel(label)
+    override suspend fun createLabel(userId: UserId, label: LabelRequestBody): ApiResult<LabelResponse> =
+        api.createLabel(userId, label)
 
-    override suspend fun updateLabel(labelId: String, label: LabelRequestBody): ApiResult<LabelResponse> =
-        api.updateLabel(labelId, label)
+    override suspend fun updateLabel(
+        userId: UserId,
+        labelId: String,
+        label: LabelRequestBody
+    ): ApiResult<LabelResponse> =
+        api.updateLabel(userId, labelId, label)
 
-    override suspend fun deleteLabel(labelId: String): ApiResult<Unit> = api.deleteLabel(labelId)
+    override suspend fun deleteLabel(userId: UserId, labelId: String): ApiResult<Unit> =
+        api.deleteLabel(userId, labelId)
 
     override suspend fun fetchMessagesCounts(userId: UserId): CountsResponse =
         api.fetchMessagesCounts(userId)

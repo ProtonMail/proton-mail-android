@@ -24,7 +24,7 @@ import androidx.core.app.JobIntentService
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.messages.receive.LabelFactory
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
@@ -73,7 +73,7 @@ class MessagesService : JobIntentService() {
     internal lateinit var mNetworkResults: NetworkResults
 
     @Inject
-    lateinit var contactEmailsManagerFactory: ContactEmailsManager.AssistedFactory
+    lateinit var contactEmailsManager: ContactEmailsManager
 
     @Inject
     lateinit var messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory
@@ -170,7 +170,9 @@ class MessagesService : JobIntentService() {
         }
 
         try {
-            contactEmailsManagerFactory.create(userId).refreshBlocking()
+            runBlocking {
+                contactEmailsManager.refresh()
+            }
         } catch (e: Exception) {
             Timber.w(e, "handleFetchContactGroups has failed")
         }
@@ -183,8 +185,8 @@ class MessagesService : JobIntentService() {
 
             runBlocking {
                 val serverLabels = mApi.fetchLabels(currentUserId).valueOrThrow.labels
-                val labelFactory = LabelFactory()
-                val labelList = serverLabels.map(labelFactory::createDBObjectFromServerLabelObject)
+                val labelFactory = LabelsMapper()
+                val labelList = serverLabels.map(labelFactory::mapLabelToLabelEntity)
                 db.saveAllLabels(labelList)
             }
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))

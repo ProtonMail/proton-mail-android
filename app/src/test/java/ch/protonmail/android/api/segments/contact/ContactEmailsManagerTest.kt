@@ -21,18 +21,26 @@ package ch.protonmail.android.api.segments.contact
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
+import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
+import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
@@ -46,12 +54,25 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
     private lateinit var api: ProtonMailApiManager
 
     @MockK
+    private lateinit var dbProvider: DatabaseProvider
+
+    @MockK
+    private lateinit var accountManager: AccountManager
+
+    @MockK
     private lateinit var contactDao: ContactDao
+
+    @MockK
+    private lateinit var labelsMapper: LabelsMapper
+
+    val testUserId = UserId("TestUser")
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        manager = ContactEmailsManager(api, contactDao)
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
+        every { dbProvider.provideContactDao(any()) } returns contactDao
+        manager = ContactEmailsManager(api, dbProvider, accountManager, labelsMapper)
     }
 
     @Test
@@ -59,7 +80,24 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         // given
         val pageSize = Constants.CONTACTS_PAGE_SIZE
         val labelId1 = "labelId1"
-        val contactLabel = ContactLabel(labelId1)
+        val labelName1 = "labelName1"
+        val labelColor = "labelColor11"
+        val label = Label(
+            id = labelId1,
+            name = labelName1,
+            path = "",
+            color = labelColor,
+            type = 0,
+            notify = 0,
+            order = 0,
+            expanded = null,
+            sticky = null,
+            display = null,
+            exclusive = 0
+        )
+        val labelList = listOf(label)
+        val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
+        val contactLabel = ContactLabelEntity(ID = labelId1, name = labelName1, color = labelColor, display = 0, order = 0, exclusive = false, type = 0)
         val contactLabelList = listOf(contactLabel)
         val contactEmailId = "emailId1"
         val labelIds = listOf(labelId1)
@@ -67,13 +105,14 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val newContactEmails = listOf(contactEmail)
         val join1 = ContactEmailContactLabelJoin(contactEmailId, labelId1)
         val newJoins = listOf(join1)
-        coEvery { api.fetchContactGroupsList() } returns contactLabelList
+        coEvery { api.fetchContactGroups(testUserId) } returns apiResult
         val emailsResponse = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails
             every { total } returns 0
         }
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
-        coEvery { contactDao.insertNewContactsAndLabels(newContactEmails, contactLabelList, newJoins) } returns Unit
+        coEvery { contactDao.insertNewContactsAndLabels(newContactEmails, any(), newJoins) } returns Unit
+        every { labelsMapper.mapLabelToContactLabelEntity(any()) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
@@ -87,8 +126,25 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         // given
         val pageSize = 2
         val labelId1 = "labelId1"
-        val contactLabel = ContactLabel(labelId1)
+        val labelName1 = "labelName1"
+        val labelColor = "labelColor11"
+        val label = Label(
+            id = labelId1,
+            name = labelName1,
+            path = "",
+            color = labelColor,
+            type = 0,
+            notify = 0,
+            order = 0,
+            expanded = null,
+            sticky = null,
+            display = null,
+            exclusive = 0
+        )
+        val labelList = listOf(label)
+        val contactLabel = ContactLabelEntity(ID = labelId1, name = labelName1, color = labelColor, display = 0, order = 0, exclusive = false, type = 0)
         val contactLabelList = listOf(contactLabel)
+        val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
         val contactEmailId1 = "emailId1"
         val contactEmailId2 = "emailId2"
         val contactEmailId3 = "emailId3"
@@ -110,7 +166,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val join5 = ContactEmailContactLabelJoin(contactEmailId5, labelId1)
         val allContactEmails = listOf(contactEmail1, contactEmail2, contactEmail3, contactEmail4, contactEmail5)
         val newJoins = listOf(join1, join2, join3, join4, join5)
-        coEvery { api.fetchContactGroupsList() } returns contactLabelList
+        coEvery { api.fetchContactGroups(any()) } returns apiResult
         val emailsResponse1 = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails1
             every { total } returns allContactEmails.size
@@ -126,7 +182,8 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(0, pageSize) } returns emailsResponse1
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
-        coEvery { contactDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, newJoins) } returns Unit
+        coEvery { contactDao.insertNewContactsAndLabels(allContactEmails, any(), newJoins) } returns Unit
+        every { labelsMapper.mapLabelToContactLabelEntity(any()) } returns contactLabel
 
         // when
         manager.refresh(pageSize)

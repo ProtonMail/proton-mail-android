@@ -32,7 +32,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
@@ -259,14 +259,14 @@ class MessageDetailsRepository @Inject constructor(
 
     fun getAllLabelsLiveData() = messagesDao.getAllLabelsLiveData()
 
-    suspend fun getAllLabels(): List<Label> = messagesDao.getAllLabels().first()
+    suspend fun getAllLabels(): List<LabelEntity> = messagesDao.getAllLabels().first()
 
-    fun findAllLabelsWithIds(labelIds: List<String>): List<Label> = messagesDao.findLabelsByIdBlocking(labelIds)
+    fun findAllLabelsWithIds(labelIds: List<String>): List<LabelEntity> = messagesDao.findLabelsByIdBlocking(labelIds)
 
     suspend fun findAllLabelsWithIds(
         message: Message,
         checkedLabelIds: List<String>,
-        labels: List<Label>
+        labels: List<LabelEntity>
     ) {
         val labelsToRemove = ArrayList<String>()
         val jobList = ArrayList<Job>()

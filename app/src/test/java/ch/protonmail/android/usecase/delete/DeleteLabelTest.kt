@@ -25,7 +25,7 @@ import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.worker.DeleteLabelWorker
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -68,7 +68,7 @@ class DeleteLabelTest {
         runBlockingTest {
             // given
             val labelId = "Id1"
-            val contactLabel = mockk<ContactLabel>()
+            val contactLabel = mockk<ContactLabelEntity>()
             val finishState = WorkInfo.State.SUCCEEDED
             val outputData = workDataOf("a" to "b")
             val workInfo = WorkInfo(
@@ -103,7 +103,7 @@ class DeleteLabelTest {
         runBlockingTest {
             // given
             val labelId = "Id1"
-            val contactLabel = mockk<ContactLabel>()
+            val contactLabel = mockk<ContactLabelEntity>()
             val finishState = WorkInfo.State.FAILED
             val outputData = workDataOf()
             val workInfo = WorkInfo(
@@ -138,7 +138,7 @@ class DeleteLabelTest {
         runBlockingTest {
             // given
             val labelId = "Id1"
-            val contactLabel = mockk<ContactLabel>()
+            val contactLabel = mockk<ContactLabelEntity>()
             val finishState = WorkInfo.State.ENQUEUED
             val outputData = workDataOf("a" to "b")
             val workInfo = WorkInfo(

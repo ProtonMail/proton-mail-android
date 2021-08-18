@@ -24,7 +24,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -44,9 +44,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
     //region tests
     @Test
     fun testFindLabelById() = coroutinesTest {
-        val label1 = ContactLabel("a", "aa")
-        val label2 = ContactLabel("b", "bb")
-        val label3 = ContactLabel("c", "cc")
+        val label1 = ContactLabelEntity("a", "aa")
+        val label2 = ContactLabelEntity("b", "bb")
+        val label3 = ContactLabelEntity("c", "cc")
         database.saveContactGroupLabel(label1)
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
@@ -57,8 +57,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testUpdateFullLabel() = coroutinesTest {
-        val label1 = ContactLabel("a", "aa", "aaa")
-        val label2 = ContactLabel("a", "ab")
+        val label1 = ContactLabelEntity("a", "aa", "aaa")
+        val label2 = ContactLabelEntity("a", "ab")
         database.saveContactGroupLabel(label1)
         database.updateFullContactGroup(label2)
 
@@ -68,9 +68,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testUpdateFullLabelNotUpdatingOtherRows() {
-        val label1 = ContactLabel("a", "aa", "aaa")
-        val label2 = ContactLabel("b", "bb", "bbb")
-        val label3 = ContactLabel("a", "ab")
+        val label1 = ContactLabelEntity("a", "aa", "aaa")
+        val label2 = ContactLabelEntity("b", "bb", "bbb")
+        val label3 = ContactLabelEntity("a", "ab")
         database.saveAllContactGroups(label1, label2)
         database.updateFullContactGroup(label3)
 
@@ -82,8 +82,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testUpdateLabelPartially() {
-        val label1 = ContactLabel("a", "aa", "aaa")
-        val label2 = ContactLabel("a", "ab", "aaa", 0, 1)
+        val label1 = ContactLabelEntity("a", "aa", "aaa")
+        val label2 = ContactLabelEntity("a", "ab", "aaa", 0, 1)
         database.saveContactGroupLabel(label1)
         database.updatePartially(label2)
 
@@ -95,10 +95,10 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testInsertAllLabels() {
-        val label1 = ContactLabel("a", "aa", "aaa")
-        val label2 = ContactLabel("b", "ab", "aaa", 0, 1)
-        val label3 = ContactLabel("c", "ac", "aaa")
-        val label4 = ContactLabel("d", "ad", "aaa", 0, 1)
+        val label1 = ContactLabelEntity("a", "aa", "aaa")
+        val label2 = ContactLabelEntity("b", "ab", "aaa", 0, 1)
+        val label3 = ContactLabelEntity("c", "ac", "aaa")
+        val label4 = ContactLabelEntity("d", "ad", "aaa", 0, 1)
         database.saveAllContactGroups(label1, label2, label3, label4)
         val size = database.findContactGroupsLiveData().testValue?.size
         Assert.assertEquals(size, 4)
@@ -106,9 +106,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testLabelSameKeyShouldSaveOnlyLast() {
-        val label1 = ContactLabel("a", "aa", "aaa")
-        val label2 = ContactLabel("a", "ab", "aab", 0, 1)
-        val label3 = ContactLabel("a", "ac", "aac")
+        val label1 = ContactLabelEntity("a", "aa", "aaa")
+        val label2 = ContactLabelEntity("a", "ab", "aab", 0, 1)
+        val label3 = ContactLabelEntity("a", "ac", "aac")
         database.saveContactGroupLabel(label1)
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
@@ -119,9 +119,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testClearLabelsTable() {
-        val label1 = ContactLabel("a", "aa", "aaa")
-        val label2 = ContactLabel("b", "ab", "aab", 0, 1)
-        val label3 = ContactLabel("c", "ac", "aac")
+        val label1 = ContactLabelEntity("a", "aa", "aaa")
+        val label2 = ContactLabelEntity("b", "ab", "aab", 0, 1)
+        val label3 = ContactLabelEntity("c", "ac", "aac")
         database.saveAllContactGroups(label1, label2, label3)
         val sizeAfterInsert = database.findContactGroupsLiveData().testValue?.size
         Assert.assertEquals(sizeAfterInsert, 3)
@@ -132,12 +132,12 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testFindAllLabelsByIds() {
-        val label1 = ContactLabel("a", "aa", "aaa")
-        val label2 = ContactLabel("b", "ab", "aab", 0, 1)
-        val label3 = ContactLabel("c", "ac", "aac")
-        val label4 = ContactLabel("d", "ad", "aaa")
-        val label5 = ContactLabel("e", "ae", "aab", 0, 1)
-        val label6 = ContactLabel("f", "af", "aac")
+        val label1 = ContactLabelEntity("a", "aa", "aaa")
+        val label2 = ContactLabelEntity("b", "ab", "aab", 0, 1)
+        val label3 = ContactLabelEntity("c", "ac", "aac")
+        val label4 = ContactLabelEntity("d", "ad", "aaa")
+        val label5 = ContactLabelEntity("e", "ae", "aab", 0, 1)
+        val label6 = ContactLabelEntity("f", "af", "aac")
         database.saveAllContactGroups(label1, label2, label3, label4, label5, label6)
         val requiredIds = Arrays.asList("b", "d", "f")
         val returnedLabels = database.getAllContactGroupsByIds(requiredIds).testValue
@@ -153,10 +153,10 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testRelationship() {
-        val label1 = ContactLabel("la", "aa", "aaa")
-        val label2 = ContactLabel("lb", "ab", "aab", 0, 1)
-        val label3 = ContactLabel("lc", "ac", "aac")
-        val label4 = ContactLabel("ld", "ad", "aad")
+        val label1 = ContactLabelEntity("la", "aa", "aaa")
+        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1)
+        val label3 = ContactLabelEntity("lc", "ac", "aac")
+        val label4 = ContactLabelEntity("ld", "ad", "aad")
 
         val email1 = ContactEmail("e1", "1@1.1", "a", labelIds = listOf("la", "lc"))
         val email2 = ContactEmail("e2", "2@2.2", "b", labelIds = listOf("la", "lc"))
@@ -201,8 +201,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testReturnedCorrectContactEmailsForContactGroup() {
-        val label1 = ContactLabel("la", "aa", "aaa")
-        val label2 = ContactLabel("lb", "ab", "aab", 0, 1)
+        val label1 = ContactLabelEntity("la", "aa", "aaa")
+        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1)
 
         val email1 = ContactEmail("e1", "1@1.1", labelIds = listOf("la", "lb"), name = "ce1")
         val email2 = ContactEmail("e2", "2@2.2", labelIds = listOf("la"), name = "ce2")
@@ -239,8 +239,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun filterCorrectContactEmailsForContactGroup() {
-        val label1 = ContactLabel("la", "aa", "aaa")
-        val label2 = ContactLabel("lb", "ab", "aab", 0, 1)
+        val label1 = ContactLabelEntity("la", "aa", "aaa")
+        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1)
 
         val email1 = ContactEmail("e1", "1@1.1", labelIds = listOf("la", "lb"), name = "ce1")
         val email2 = ContactEmail("e2", "2@2.2", labelIds = listOf("la"), name = "ce2")
@@ -281,8 +281,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testReturnedCorrectContactGroupsForContactEmail() {
-        val label1 = ContactLabel("la", "aa", "aaa")
-        val label2 = ContactLabel("lb", "ab", "aab", 0, 1)
+        val label1 = ContactLabelEntity("la", "aa", "aaa")
+        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1)
 
         val email1 = ContactEmail("e1", "1@1.1", labelIds = listOf("la", "lb"), name = "ce1")
         val email2 = ContactEmail("e2", "2@2.2", labelIds = listOf("la"), name = "ce2")

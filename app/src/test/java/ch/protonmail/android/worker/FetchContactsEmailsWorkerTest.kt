@@ -26,7 +26,6 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.UserManager
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
@@ -45,10 +44,7 @@ class FetchContactsEmailsWorkerTest {
     private val worker = FetchContactsEmailsWorker(
         context,
         parameters,
-        userManager,
-        contactEmailsManagerFactory = mockk {
-            every { create(any()) } returns contactEmailsManager
-        }
+        contactEmailsManager
     )
 
     @Test

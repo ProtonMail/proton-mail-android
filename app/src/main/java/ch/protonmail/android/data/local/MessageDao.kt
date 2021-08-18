@@ -43,7 +43,7 @@ import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_EMAIL
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_NAME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SUBJECT
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_TIME
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TABLE_ATTACHMENTS
 import ch.protonmail.android.data.local.model.TABLE_LABELS
@@ -386,39 +386,39 @@ abstract class MessageDao : BaseDao<Message>() {
 
     @Query("SELECT * FROM $TABLE_LABELS")
     @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
-    abstract fun getAllLabelsLiveData(): LiveData<List<Label>>
+    abstract fun getAllLabelsLiveData(): LiveData<List<LabelEntity>>
 
     @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
-    abstract fun getAllLabels(): Flow<List<Label>>
+    abstract fun getAllLabels(): Flow<List<LabelEntity>>
 
     // Folders
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 1 ORDER BY `LabelOrder`")
-    abstract fun getAllLabelsExclusivePaged(): DataSource.Factory<Int, Label>
+    abstract fun getAllLabelsExclusivePaged(): DataSource.Factory<Int, LabelEntity>
 
     // Labels
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 0 ORDER BY `LabelOrder`")
-    abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, Label>
+    abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, LabelEntity>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY LabelOrder")
-    abstract fun findLabelsById(labelIds: List<String>): Flow<List<Label>>
+    abstract fun findLabelsById(labelIds: List<String>): Flow<List<LabelEntity>>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
+    abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<LabelEntity>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract fun findLabelByIdBlocking(labelId: String): Label?
+    abstract fun findLabelByIdBlocking(labelId: String): LabelEntity?
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract suspend fun findLabelById(labelId: String): Label?
+    abstract suspend fun findLabelById(labelId: String): LabelEntity?
 
     @Query("DELETE FROM $TABLE_LABELS")
     abstract fun clearLabelsCache()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveLabel(label: Label): Long
+    abstract fun saveLabel(label: LabelEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAllLabels(labels: List<Label>): List<Long>
+    abstract fun saveAllLabels(labels: List<LabelEntity>): List<Long>
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
     abstract fun deleteLabelById(labelId: String)

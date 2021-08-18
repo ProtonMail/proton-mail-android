@@ -27,7 +27,7 @@ import android.text.TextUtils
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.CreateContact
-import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
@@ -275,6 +275,8 @@ class ConvertLocalContactsJob(
 
         var someGroupsAlreadyExist = false
 
+        val currentUser = getUserManager().requireCurrentUserId()
+
         localGroups.forEach {
             runBlocking {
                 val requestBody = LabelRequestBody(
@@ -284,35 +286,28 @@ class ConvertLocalContactsJob(
                     parentId = null,
                     notify = false.toInt(),
                     null,
-                    null,
-                    null,
-                    null,
+                    null
                 )
-                val response = getApi().createLabel(requestBody)
+                val response = getApi().createLabel(currentUser, requestBody)
 
                 if (response is ApiResult.Error.Http &&
                     response.proton?.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST) {
                     someGroupsAlreadyExist = true
                 } else {
-                    // TODO: mapper here
-    //                val contactGroup by lazy {
-    //                    val contactLabelFactory = ContactLabelFactory()
-    //                    contactLabelFactory.createDBObjectFromServerObject(serverLabel)
-    //                }
                     val serverLabel = response.valueOrThrow.label
                     result[it.value] = serverLabel.id
                     val dao = ContactDatabase
                         .getInstance(applicationContext, userId ?: getUserManager().requireCurrentUserId())
                         .getDao()
-                    val contactLabelFactory = ContactLabelFactory()
-                    dao.saveContactGroupLabel(contactLabelFactory.createDBObjectFromServerLabelObject(serverLabel))
+                    val contactLabelFactory = LabelsMapper()
+                    dao.saveContactGroupLabel(contactLabelFactory.mapLabelToContactLabelEntity(serverLabel))
                 }
             }
         }
 
         if (someGroupsAlreadyExist) { // at least one local group already exist on server, we fetch all of them to get IDs
             runBlocking {
-                val serverGroups = getApi().fetchContactGroups().valueOrThrow.labels
+                val serverGroups = getApi().fetchContactGroups(currentUser).valueOrThrow.labels
                 localGroups.filterNot { result.containsKey(it.value) }.forEach { localGroupEntry ->
                     serverGroups.find { it.name == localGroupEntry.value }?.run {
                         result[localGroupEntry.value] = this.id

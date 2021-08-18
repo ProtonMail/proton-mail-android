@@ -31,8 +31,9 @@ import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
@@ -66,10 +67,11 @@ import javax.inject.Inject
 open class ContactDetailsViewModelOld @Inject constructor(
     dispatchers: DispatcherProvider,
     private val downloadFile: DownloadFile,
-    private val contactDetailsRepository: ContactDetailsRepository
+    private val contactDetailsRepository: ContactDetailsRepository,
+    private val userManager: UserManager
 ) : BaseViewModel(dispatchers) {
 
-    protected lateinit var allContactGroups: List<ContactLabel>
+    protected lateinit var allContactGroups: List<ContactLabelEntity>
     protected lateinit var allContactEmails: List<ContactEmail>
 
     private var _setupCompleteValue: Boolean = false
@@ -78,9 +80,9 @@ open class ContactDetailsViewModelOld @Inject constructor(
 
     private var _emailGroupsResult: MutableLiveData<ContactEmailsGroups> = MutableLiveData()
     private val _emailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
-    private val _mapEmailGroups: HashMap<String, List<ContactLabel>> = HashMap()
+    private val _mapEmailGroups: HashMap<String, List<ContactLabelEntity>> = HashMap()
 
-    private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabel>> = MutableLiveData()
+    private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabelEntity>> = MutableLiveData()
     private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
 
     val setupComplete: LiveData<Event<Boolean>>
@@ -155,8 +157,9 @@ open class ContactDetailsViewModelOld @Inject constructor(
     }
 
     fun fetchContactGroupsAndContactEmails(contactId: String) {
+        val userId = userManager.requireCurrentUserId()
         Observable.zip(
-            contactDetailsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
+            contactDetailsRepository.getContactGroups(userId).subscribeOn(ThreadSchedulers.io())
                 .doOnError {
                     if (allContactGroups.isEmpty()) {
                         _setupError.postValue(
@@ -178,7 +181,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         )
                     }
                 },
-            contactDetailsRepository.getContactEmailsBlocking(contactId).subscribeOn(ThreadSchedulers.io())
+            contactDetailsRepository.getContactEmails(contactId).subscribeOn(ThreadSchedulers.io())
                 .doOnError {
                     if (allContactEmails.isEmpty()) {
                         _setupError.postValue(
@@ -200,8 +203,8 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         )
                     }
                 },
-            { groups: List<ContactLabel>,
-                emails: List<ContactEmail> ->
+            { groups: List<ContactLabelEntity>,
+              emails: List<ContactEmail> ->
                 allContactGroups = groups
                 allContactEmails = emails
             }

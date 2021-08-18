@@ -25,11 +25,10 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
 import ch.protonmail.android.api.models.enumerations.MessageFlag
-import ch.protonmail.android.api.models.messages.receive.LabelFactory
+import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
-import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
@@ -40,8 +39,8 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
@@ -582,24 +581,24 @@ internal class EventHandler @AssistedInject constructor(
             when (ActionType.fromInt(event.type)) {
                 ActionType.CREATE -> {
                     val labelType = item.type!!
-                    val id = item.ID
+                    val id = item.id
                     val name = item.name
                     val color = item.color
                     val display = item.display!!
                     val order = item.order!!
                     val exclusive = item.exclusive!!
                     if (labelType == Constants.LABEL_TYPE_MESSAGE) {
-                        val label = Label(id!!, name!!, color!!, display, order, exclusive == 1)
+                        val label = LabelEntity(id, name, color, display, order, exclusive == 1, type =  Constants.LABEL_TYPE_MESSAGE)
                         messageDao.saveLabel(label)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
-                        val label = ContactLabel(id!!, name!!, color!!, display, order, exclusive == 1)
+                        val label = ContactLabelEntity(id, name, color, display, order, exclusive == 1)
                         contactDao.saveContactGroupLabel(label)
                     }
                 }
 
                 ActionType.UPDATE -> {
                     val labelType = item.type!!
-                    val labelId = item.ID
+                    val labelId = item.id
                     if (labelType == Constants.LABEL_TYPE_MESSAGE) {
                         val label = messageDao.findLabelByIdBlocking(labelId!!)
                         writeMessageLabel(label, item, messageDao)
@@ -629,25 +628,25 @@ internal class EventHandler @AssistedInject constructor(
     }
 
     private fun writeMessageLabel(
-        currentLabel: Label?,
-        updatedLabel: ServerLabel,
+        currentLabel: LabelEntity?,
+        updatedLabel: Label,
         messageDao: MessageDao
     ) {
         if (currentLabel != null) {
-            val labelFactory = LabelFactory()
-            val labelToSave = labelFactory.createDBObjectFromServerObject(updatedLabel)
+            val labelFactory = LabelsMapper()
+            val labelToSave = labelFactory.mapLabelToLabelEntity(updatedLabel)
             messageDao.saveLabel(labelToSave)
         }
     }
 
     private fun writeContactGroup(
-        currentGroup: ContactLabel?,
-        updatedGroup: ServerLabel,
+        currentGroup: ContactLabelEntity?,
+        updatedGroup: Label,
         contactDao: ContactDao
     ) {
         if (currentGroup != null) {
-            val contactLabelFactory = ContactLabelFactory()
-            val labelToSave = contactLabelFactory.createDBObjectFromServerObject(updatedGroup)
+            val contactLabelFactory = LabelsMapper()
+            val labelToSave = contactLabelFactory.mapLabelToContactLabelEntity(updatedGroup)
             val joins = contactDao.fetchJoinsBlocking(labelToSave.ID)
             contactDao.saveContactGroupLabel(labelToSave)
             contactDao.saveContactEmailContactLabelBlocking(joins)

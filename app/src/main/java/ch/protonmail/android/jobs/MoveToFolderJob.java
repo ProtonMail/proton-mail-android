@@ -32,7 +32,7 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.data.local.model.Label;
+import ch.protonmail.android.data.local.model.LabelEntity;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import timber.log.Timber;
@@ -107,7 +107,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         ArrayList<String> labelsToRemove = new ArrayList<>();
 
         for (String labelId : oldLabels) {
-            Label label = messageDao.findLabelByIdBlocking(labelId);
+            LabelEntity label = messageDao.findLabelByIdBlocking(labelId);
             // find folders
             if (label != null && label.getExclusive() && !label.getId().equals(mLabelId)) {
                 labelsToRemove.add(labelId);

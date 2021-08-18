@@ -32,7 +32,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.entity.LabelId
@@ -594,7 +594,7 @@ internal class MailboxViewModel @Inject constructor(
         message: Message,
         checkedLabelIds: MutableList<String>,
         unchangedLabels: List<String>,
-        currentContactLabels: List<Label>?
+        currentContactLabels: List<LabelEntity>?
     ): ApplyRemoveLabels? {
         val labelsToRemove = ArrayList<String>()
 
@@ -642,7 +642,7 @@ internal class MailboxViewModel @Inject constructor(
         }
     }
 
-    private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
+    private fun List<LabelEntity>.toLabelChipUiModels(): List<LabelChipUiModel> =
         filterNot { it.exclusive }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }

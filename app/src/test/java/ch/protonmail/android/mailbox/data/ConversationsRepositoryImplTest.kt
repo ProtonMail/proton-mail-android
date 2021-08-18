@@ -27,7 +27,7 @@ import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
@@ -926,7 +926,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 LabelContextDatabaseModel(starredId, 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel(inboxId, 0, 2, 123, 123, 0)
             )
-            val label: Label = mockk {
+            val label: LabelEntity = mockk {
                 every { exclusive } returns false
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
@@ -971,7 +971,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 time = 123,
                 allLabelIDs = listOf(inboxId, allMailId),
             )
-            val label: Label = mockk {
+            val label: LabelEntity = mockk {
                 every { exclusive } returns false
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)

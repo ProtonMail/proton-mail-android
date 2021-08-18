@@ -25,7 +25,7 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsConverter
 
@@ -33,7 +33,7 @@ import ch.protonmail.android.data.local.model.FullContactDetailsConverter
     entities = [
         ContactData::class,
         ContactEmail::class,
-        ContactLabel::class,
+        ContactLabelEntity::class,
         FullContactDetails::class,
         ContactEmailContactLabelJoin::class
     ],

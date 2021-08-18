@@ -22,7 +22,7 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -39,7 +39,7 @@ class MailboxRecyclerViewAdapter(
 
     private var mailboxLocation = Constants.MessageLocationType.INVALID
 
-    private var labels = mapOf<String, Label>()
+    private var labels = mapOf<String, LabelEntity>()
     private var mailboxItems = listOf<MailboxUiItem>()
     private val selectedMailboxItemsIds: MutableSet<String> = mutableSetOf()
 
@@ -178,7 +178,7 @@ class MailboxRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    fun setLabels(labels: List<Label>) {
+    fun setLabels(labels: List<LabelEntity>) {
         this.labels = labels.map { it.id to it }.toMap()
         notifyDataSetChanged()
     }

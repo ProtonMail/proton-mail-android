@@ -21,7 +21,7 @@ package ch.protonmail.android.drawer.presentation.mapper
 
 import android.graphics.Color
 import ch.protonmail.android.R
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.AQUA_BASE_V3_COLOR
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.SAGE_BASE_V3_COLOR
 import io.mockk.every
@@ -74,7 +74,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun worksCorrectlyWithCorrectColor() {
         // given
-        val input = mockk<Label>(relaxed = true) {
+        val input = mockk<LabelEntity>(relaxed = true) {
             every { color } returns "#123"
         }
 
@@ -88,7 +88,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun defaultColorIsSetIfColorIsEmpty() {
         // given
-        val input = mockk<Label>(relaxed = true) {
+        val input = mockk<LabelEntity>(relaxed = true) {
             every { color } returns EMPTY_STRING
         }
 
@@ -102,7 +102,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun defaultColorIsSetIfColorCantBeParsed() {
         // given
-        val input = mockk<Label>(relaxed = true) {
+        val input = mockk<LabelEntity>(relaxed = true) {
             every { color } returns "incorrect"
         }
 
@@ -116,7 +116,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun aquaBaseColorIsReplacedCorrectly() {
         // given
-        val input = mockk<Label>(relaxed = true) {
+        val input = mockk<LabelEntity>(relaxed = true) {
             every { color } returns AQUA_BASE_V3_COLOR
         }
 
@@ -130,7 +130,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun sageBaseColorIsReplacedCorrectly() {
         // given
-        val input = mockk<Label>(relaxed = true) {
+        val input = mockk<LabelEntity>(relaxed = true) {
             every { color } returns SAGE_BASE_V3_COLOR
         }
 

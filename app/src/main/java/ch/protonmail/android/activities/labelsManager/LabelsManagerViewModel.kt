@@ -32,7 +32,7 @@ import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
@@ -103,7 +103,7 @@ internal class LabelsManagerViewModel @Inject constructor(
         }
     ).lock
 
-    /** A reference to a [LabelEditor] for edit a [Label] */
+    /** A reference to a [LabelEditor] for edit a [LabelEntity] */
     private var labelEditor: LabelEditor? = null
 
     /** [ColorInt] that hold the color for a new Label */
@@ -179,9 +179,10 @@ internal class LabelsManagerViewModel @Inject constructor(
             labelName,
             color,
             display,
-            exclusive,
+            null,
             update,
-            labelId
+            labelId,
+            exclusive
         )
     }
 }

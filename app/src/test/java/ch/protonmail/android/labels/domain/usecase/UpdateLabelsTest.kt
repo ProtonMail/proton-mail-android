@@ -20,7 +20,7 @@
 package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
@@ -61,7 +61,7 @@ class UpdateLabelsTest {
             every { messageId } returns testMessageId
             every { labelIDsNotIncludingLocations } returns listOf(testLabelId1)
         }
-        val label = mockk<Label> {
+        val label = mockk<LabelEntity> {
             every { id } returns testLabelId1
         }
         coEvery { newRepository.findMessageById(testMessageId) } returns message

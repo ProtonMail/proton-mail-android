@@ -20,7 +20,7 @@ package ch.protonmail.android.mapper
 
 import android.graphics.Color
 import ch.protonmail.android.R
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
 import timber.log.Timber
@@ -31,10 +31,10 @@ import timber.log.Timber
  *
  * @author Davide Farella
  */
-internal class LabelUiModelMapper : UiModelMapper<Label, LabelUiModel> {
+internal class LabelUiModelMapper : UiModelMapper<LabelEntity, LabelUiModel> {
 
-    /** @return [LabelUiModel] from receiver [Label] Entity */
-    override fun Label.toUiModel(): LabelUiModel {
+    /** @return [LabelUiModel] from receiver [LabelEntity] Entity */
+    override fun LabelEntity.toUiModel(): LabelUiModel {
 
         val type = if (exclusive) {
             LabelUiModel.Type.FOLDERS

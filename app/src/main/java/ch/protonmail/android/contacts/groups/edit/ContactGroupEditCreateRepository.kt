@@ -20,21 +20,23 @@ package ch.protonmail.android.contacts.groups.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.models.factories.IConverterFactory
-import ch.protonmail.android.api.models.messages.receive.ServerLabel
+import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.toInt
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -43,23 +45,30 @@ class ContactGroupEditCreateRepository @Inject constructor(
     val workManager: WorkManager,
     val apiManager: ProtonMailApiManager,
     private val contactDao: ContactDao,
-    private val contactLabelFactory: IConverterFactory<ServerLabel, ContactLabel>,
+    private val labelsMapper: LabelsMapper,
     private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer
 ) {
 
-    fun editContactGroup(contactLabel: ContactLabel): Completable {
-        val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
-        return apiManager.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
-            .doOnComplete {
-                val joins = contactDao.fetchJoinsBlocking(contactLabel.ID)
-                contactDao.saveContactGroupLabel(contactLabel)
-                contactDao.saveContactEmailContactLabelBlocking(joins)
+    suspend fun editContactGroup(contactLabel: ContactLabelEntity, userId: UserId): ApiResult<LabelResponse> {
+        val labelBody = labelsMapper.mapContactLabelToRequestLabel(contactLabel)
+        val updateLabelResult = apiManager.updateLabel(userId, contactLabel.ID, labelBody)
+        when (updateLabelResult) {
+            is ApiResult.Success -> {
+                val label = updateLabelResult.value.label
+                val joins = contactDao.fetchJoins(contactLabel.ID)
+                contactDao.saveContactGroupLabel(
+                    labelsMapper.mapLabelToContactLabelEntity(label)
+                )
+                contactDao.saveContactEmailContactLabel(joins)
             }
-            .doOnError { throwable ->
-                if (throwable is IOException) {
-                    enqueueCreateContactGroupWorker(contactLabel, true)
-                }
+            is ApiResult.Error.Http -> {
+                enqueueCreateContactGroupWorker(contactLabel, true)
             }
+            else -> {
+                Timber.w("updateLabel failure $updateLabelResult")
+            }
+        }
+        return updateLabelResult
     }
 
     fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
@@ -120,18 +129,28 @@ class ContactGroupEditCreateRepository @Inject constructor(
             }
     }
 
-    fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
-        val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
-        return apiManager.createLabelCompletable(labelBody.labelBody)
-            .doOnSuccess { label -> contactDao.saveContactGroupLabel(label) }
-            .doOnError { throwable ->
-                if (throwable is IOException) {
-                    enqueueCreateContactGroupWorker(contactLabel, false)
-                }
+    suspend fun createContactGroup(contactLabel: ContactLabelEntity, userId: UserId): ApiResult<LabelResponse> {
+        val labelRequestBody = labelsMapper.mapContactLabelToRequestLabel(contactLabel)
+        val createLabelResult = apiManager.createLabel(userId, labelRequestBody)
+        when (createLabelResult) {
+            is ApiResult.Success -> {
+                val label = createLabelResult.value.label
+                contactDao.saveContactGroupLabel(
+                    labelsMapper.mapLabelToContactLabelEntity(label)
+                )
             }
+            is ApiResult.Error.Http -> {
+                enqueueCreateContactGroupWorker(contactLabel, false)
+            }
+            else -> {
+                Timber.w("createContactGroup failure $createLabelResult")
+            }
+        }
+
+        return createLabelResult
     }
 
-    private fun enqueueCreateContactGroupWorker(contactLabel: ContactLabel, isUpdate: Boolean) {
+    private fun enqueueCreateContactGroupWorker(contactLabel: ContactLabelEntity, isUpdate: Boolean) {
         createContactGroupWorker.enqueue(
             contactLabel.name,
             contactLabel.color,

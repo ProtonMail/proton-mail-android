@@ -24,6 +24,7 @@ import androidx.annotation.ColorInt
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.rx.RxEventBus
 import ch.protonmail.android.api.rx.ThreadSchedulers
@@ -31,19 +32,25 @@ import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.Event
-import ch.protonmail.android.utils.extensions.toPMResponseBody
-import io.reactivex.Completable
-import retrofit2.HttpException
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.accountmanager.domain.getPrimaryAccount
+import me.proton.core.network.domain.ApiResult
+import me.proton.core.user.domain.UserManager
+import me.proton.core.user.domain.extension.hasSubscription
+import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
 class ContactGroupEditCreateViewModel @Inject constructor(
     private val userManager: UserManager,
+    private val accountManager: AccountManager,
     private val contactGroupEditCreateRepository: ContactGroupEditCreateRepository
 ) : ViewModel() {
 
@@ -125,8 +132,11 @@ class ContactGroupEditCreateViewModel @Inject constructor(
     }
 
     fun save(name: String) {
-        val paidUser = userManager.requireCurrentLegacyUser().isPaidUser
-        if (!paidUser) {
+        val isPaidUser = runBlocking {
+            val userId = requireNotNull(accountManager.getPrimaryAccount().first()?.userId)
+            userManager.getUser(userId).hasSubscription()
+        }
+        if (!isPaidUser) {
             _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.UNAUTHORIZED)))
             return
         }
@@ -153,7 +163,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     private fun editContactGroup(name: String, toBeAdded: List<String>, toBeDeleted: List<String>) {
-        val contactLabel = ContactLabel(
+        val contactLabel = ContactLabelEntity(
             ID = contactGroupItem!!.contactId,
             name = name,
             color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.getDefault()),
@@ -161,38 +171,30 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             exclusive = true,
             type = Constants.LABEL_TYPE_CONTACT_GROUPS
         )
-        contactGroupEditCreateRepository.editContactGroup(contactLabel)
-            .doOnError {
-                if (it is HttpException) {
-                    val responseBody = it.toPMResponseBody()
-                    _contactGroupUpdateResult.postValue(Event(PostResult(responseBody?.error, Status.FAILED)))
+        viewModelScope.launch {
+            val userId = requireNotNull(accountManager.getPrimaryUserId().first())
+            when (val editContactResult =
+                contactGroupEditCreateRepository.editContactGroup(contactLabel, userId)) {
+                is ApiResult.Success -> {
+                    contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel.ID, name, toBeAdded)
+                    contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel.ID, name, toBeDeleted)
+                    _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
+                }
+                is ApiResult.Error.Http -> {
+                    _contactGroupUpdateResult.postValue(
+                        Event(PostResult(editContactResult.proton?.error, Status.FAILED))
+                    )
+                }
+                else -> {
+                    Timber.w("editContactGroup failure $editContactResult")
                 }
             }
-            .concatWith(
-                contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel!!.ID, name, toBeAdded)
-            )
-            .concatWith(
-                contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel!!.ID, name, toBeDeleted)
-            )
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe(
-                {
-                    _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
-                },
-                {
-                    var message = it.message
-                    if (it is HttpException) {
-                        message = it.toPMResponseBody()?.error
-                    }
-                    _contactGroupUpdateResult.postValue(Event(PostResult(message, Status.FAILED)))
-                }
-            )
+        }
     }
 
     @SuppressLint("CheckResult")
     private fun createContactGroup(name: String, membersList: List<String>) {
-        val contactLabel = ContactLabel(
+        val contactLabel = ContactLabelEntity(
             name = name,
             color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),
             display = 1,
@@ -203,35 +205,30 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.VALIDATION_FAILED)))
             return
         }
-        contactGroupEditCreateRepository.createContactGroup(contactLabel)
-            .onErrorReturn {
-                if (it is HttpException) {
-                    val responseBody = it.toPMResponseBody()
-                    _contactGroupUpdateResult.postValue(Event(PostResult(responseBody?.error, Status.FAILED)))
-                }
-                contactLabel
-            }
-            .flatMapCompletable {
-                Completable.complete()
-                    .andThen(contactGroupEditCreateRepository.setMembersForContactGroup(it.ID, name, membersList))
-            }
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe(
-                {
+        viewModelScope.launch {
+            val userId = requireNotNull(accountManager.getPrimaryUserId().first())
+            val createGroupResponse = contactGroupEditCreateRepository.createContactGroup(contactLabel, userId)
+
+            when (createGroupResponse) {
+                is ApiResult.Success -> {
+                    contactGroupEditCreateRepository.setMembersForContactGroup(
+                        createGroupResponse.value.label.id, name, membersList
+                    )
                     _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
-                },
-                {
-                    var message = it.message
-                    if (it is HttpException) {
-                        message = it.toPMResponseBody()?.error
-                    }
-                    _contactGroupUpdateResult.postValue(Event(PostResult(message, Status.FAILED)))
                 }
-            )
+                is ApiResult.Error.Http -> {
+                    _contactGroupUpdateResult.postValue(
+                        Event(PostResult(createGroupResponse.proton?.error, Status.FAILED))
+                    )
+                }
+                else -> {
+                    Timber.w("createGroup failure $createGroupResponse")
+                }
+            }
+        }
     }
 
-    private fun validate(contactLabel: ContactLabel): Boolean {
+    private fun validate(contactLabel: ContactLabelEntity): Boolean {
         if (TextUtils.isEmpty(contactLabel.name)) {
             return false
         }

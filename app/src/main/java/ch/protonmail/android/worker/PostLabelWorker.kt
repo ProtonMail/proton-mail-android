@@ -29,11 +29,16 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
+import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.LabelRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.first
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.network.domain.ApiResult
 
 internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
@@ -41,6 +46,7 @@ internal const val KEY_INPUT_DATA_IS_UPDATE = "keyInputDataIsUpdate"
 internal const val KEY_INPUT_DATA_LABEL_COLOR = "keyInputDataLabelColor"
 internal const val KEY_INPUT_DATA_LABEL_DISPLAY = "keyInputDataLabelIsDisplay"
 internal const val KEY_INPUT_DATA_LABEL_EXCLUSIVE = "keyInputDataLabelExclusive"
+internal const val KEY_INPUT_DATA_LABEL_TYPE = "keyInputDataLabelType"
 internal const val KEY_POST_LABEL_WORKER_RESULT_ERROR = "keyResultDataPostLabelWorkerError"
 
 @HiltWorker
@@ -48,7 +54,9 @@ class PostLabelWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted val workerParams: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val labelsMapper: LabelsMapper,
+    private val accountManager: AccountManager
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -56,24 +64,25 @@ class PostLabelWorker @AssistedInject constructor(
         val color = getLabelColorParam() ?: return Result.failure()
         val display = getDisplayParam()
         val exclusive = getExclusiveParam()
+        val type = getTypeParam()
 
-        val labelResponse = createOrUpdateLabel(labelName, color, display, exclusive)
-
-        if (labelResponse.hasError()) {
-            return failureResultWithError(labelResponse.error)
+        return when (val response = createOrUpdateLabel(labelName, color, display, exclusive, type)) {
+            is ApiResult.Success -> {
+                val labelResponse = response.value
+                if (labelResponse.label.id.isEmpty()) {
+                    return failureResultWithError("Error, Label id is empty")
+                }
+                val contactLabelEntity = labelsMapper.mapLabelToLabelEntity(labelResponse.label)
+                labelRepository.saveLabel(contactLabelEntity)
+                return Result.success()
+            }
+            is ApiResult.Error.Http -> {
+                return failureResultWithError(response.proton?.error ?: "unknown error")
+            }
+            else -> {
+                Result.failure()
+            }
         }
-
-        if (hasInvalidLabelApiResponse(labelResponse)) {
-            return failureResultWithError(labelResponse.error)
-        }
-
-        // TODO: mapper here
-        // val label by lazy {
-        //        val labelFactory = LabelFactory()
-        //        labelFactory.createDBObjectFromServerObject(serverLabel)
-        //    }
-        labelRepository.saveLabel(labelResponse.label)
-        return Result.success()
     }
 
     private fun failureResultWithError(error: String): Result {
@@ -81,31 +90,38 @@ class PostLabelWorker @AssistedInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun createOrUpdateLabel(
+    private suspend fun createOrUpdateLabel(
         labelName: String,
         color: String,
         display: Int,
-        exclusive: Int
-    ): LabelResponse {
+        exclusive: Int,
+        type: Int
+    ): ApiResult<LabelResponse> {
+        val requestBody = LabelRequestBody(
+            name = labelName,
+            color = color,
+            type = type,
+            parentId = null,
+            notify = 0,
+            exclusive = exclusive,
+            display = display
+        )
+
+        val userId = requireNotNull(accountManager.getPrimaryUserId().first())
         return if (isUpdateParam()) {
             val validLabelId = getLabelIdParam()
                 ?: throw IllegalArgumentException("Missing required LabelID parameter")
-            apiManager.updateLabel(validLabelId, LabelBody(labelName, color, display, exclusive))
+            apiManager.updateLabel(userId, validLabelId, requestBody)
         } else {
-            apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
+            apiManager.createLabel(userId, requestBody)
         }
     }
-
-    // TODO: mapper here
-    // val label by lazy {
-    //        val labelFactory = LabelFactory()
-    //        labelFactory.createDBObjectFromServerObject(serverLabel)
-    //    }
-    private fun hasInvalidLabelApiResponse(labelResponse: LabelResponse) = labelResponse.label.id.isEmpty()
 
     private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 
     private fun getExclusiveParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_EXCLUSIVE, 0)
+
+    private fun getTypeParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, Constants.LABEL_TYPE_MESSAGE)
 
     private fun getDisplayParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_DISPLAY, 0)
 
@@ -121,9 +137,10 @@ class PostLabelWorker @AssistedInject constructor(
             labelName: String,
             color: String,
             display: Int? = 0,
-            exclusive: Int? = 0,
+            type: Int? = Constants.LABEL_TYPE_MESSAGE, // default label type
             update: Boolean? = false,
-            labelId: String? = null
+            labelId: String? = null,
+            exclusive: Int? = 0
         ): LiveData<WorkInfo> {
 
             val postLabelWorkerRequest = OneTimeWorkRequestBuilder<PostLabelWorker>()
@@ -133,6 +150,7 @@ class PostLabelWorker @AssistedInject constructor(
                         KEY_INPUT_DATA_LABEL_NAME to labelName,
                         KEY_INPUT_DATA_LABEL_COLOR to color,
                         KEY_INPUT_DATA_LABEL_EXCLUSIVE to exclusive,
+                        KEY_INPUT_DATA_LABEL_TYPE to type,
                         KEY_INPUT_DATA_IS_UPDATE to update,
                         KEY_INPUT_DATA_LABEL_DISPLAY to display
                     )

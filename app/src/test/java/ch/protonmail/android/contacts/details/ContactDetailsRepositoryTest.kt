@@ -22,6 +22,7 @@ package ch.protonmail.android.contacts.details
 import androidx.work.WorkManager
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
@@ -52,6 +53,8 @@ class ContactDetailsRepositoryTest {
 
     private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
 
+    private val labelsMapper: LabelsMapper = mockk()
+
     private val contactDao: ContactDao = mockk {
         every { deleteContactData(any()) } just Runs
         every { deleteAllContactsEmails(any()) } just Runs
@@ -60,7 +63,7 @@ class ContactDetailsRepositoryTest {
     }
 
     private val repository = ContactDetailsRepository(
-        workManager, jobManager, apiManager, contactDao, TestDispatcherProvider
+        workManager, jobManager, apiManager, contactDao, TestDispatcherProvider, labelsMapper
     )
 
     @Test
@@ -105,11 +108,11 @@ class ContactDetailsRepositoryTest {
                 ContactEmail("ID3", "martin@proton.com", "Martin"),
                 ContactEmail("ID4", "kent@proton.com", "kent")
             )
-            every { contactDao.findContactEmailsByContactIdBlocking(contactId) } returns localContactEmails
+            coEvery { contactDao.findContactEmailsByContactId(contactId) } returns localContactEmails
 
             repository.updateAllContactEmails(contactId, serverEmails)
 
-            verify { contactDao.findContactEmailsByContactIdBlocking(contactId) }
+            coVerify { contactDao.findContactEmailsByContactId(contactId) }
             verify { contactDao.deleteAllContactsEmails(localContactEmails) }
             coVerify { contactDao.saveAllContactsEmails(serverEmails) }
         }

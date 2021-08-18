@@ -34,9 +34,9 @@ import timber.log.Timber
 class FetchByLocationJob(
     val location: MessageLocationType,
     val labelId: String?,
-    val includeLabels: Boolean,
+    private val includeLabels: Boolean,
     val uuid: String?,
-    val refreshMessages: Boolean
+    private val refreshMessages: Boolean
 ) : ProtonMailBaseJob(Params(Priority.MEDIUM).groupBy(Constants.JOB_GROUP_MESSAGE)) {
 
     override fun onRun() {

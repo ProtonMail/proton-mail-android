@@ -24,13 +24,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.details.ContactDetailsViewModelOld
-import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.create.CreateContact
@@ -86,9 +85,8 @@ class EditContactDetailsViewModel @Inject constructor(
     private val verifyConnection: VerifyConnection,
     private val createContact: CreateContact,
     private val fileHelper: FileHelper,
-    workManager: WorkManager,
-    fetchContactDetails: FetchContactDetails
-) : ContactDetailsViewModelOld(dispatchers, downloadFile, editContactDetailsRepository) {
+    val userManager: UserManager
+) : ContactDetailsViewModelOld(dispatchers, downloadFile, editContactDetailsRepository, userManager) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -131,7 +129,7 @@ class EditContactDetailsViewModel @Inject constructor(
     private var _vCardCustomProperties: List<RawProperty>? = null
     private lateinit var _vCardSigned: VCard
     private lateinit var _vCardEncrypted: VCard
-    private lateinit var _mapEmailGroupsIds: Map<ContactEmail, List<ContactLabel>>
+    private lateinit var _mapEmailGroupsIds: Map<ContactEmail, List<ContactLabelEntity>>
 
     // endregion
     // region default options
@@ -365,9 +363,9 @@ class EditContactDetailsViewModel @Inject constructor(
 
     private suspend fun getContactGroupsForEmailsList(
         contactEmails: List<ContactEmail>,
-        contactGroups: List<ContactLabel>
-    ): Map<ContactEmail, List<ContactLabel>> = withContext(dispatchers.Comp) {
-        val contactsMap = mutableMapOf<ContactEmail, List<ContactLabel>>()
+        contactGroups: List<ContactLabelEntity>
+    ): Map<ContactEmail, List<ContactLabelEntity>> = withContext(dispatchers.Comp) {
+        val contactsMap = mutableMapOf<ContactEmail, List<ContactLabelEntity>>()
         contactEmails.map { contactEmail ->
             val groupsForThisEmail = contactGroups.filter { group ->
                 contactEmail.labelIds?.contains(group.ID) ?: false

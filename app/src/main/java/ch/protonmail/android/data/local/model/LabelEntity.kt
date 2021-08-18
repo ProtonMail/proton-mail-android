@@ -20,7 +20,6 @@ package ch.protonmail.android.data.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
@@ -37,7 +36,7 @@ const val COLUMN_LABEL_TYPE = "Type"
     tableName = TABLE_LABELS,
     indices = [Index(COLUMN_LABEL_ID, unique = true)]
 )
-data class Label constructor(
+data class LabelEntity constructor(
 
     @PrimaryKey
     @ColumnInfo(name = COLUMN_LABEL_ID)
@@ -61,17 +60,4 @@ data class Label constructor(
     @ColumnInfo(name = COLUMN_LABEL_TYPE)
     val type: Int
 
-) {
-
-    @Ignore
-    @JvmOverloads
-    constructor(
-        id: String,
-        name: String,
-        color: String,
-        display: Int = 0,
-        order: Int = 0,
-        exclusive: Boolean = false
-    ) : this(id, name, color, display, order, exclusive, 1)
-}
-
+)

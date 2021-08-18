@@ -126,7 +126,7 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
-import ch.protonmail.android.data.local.model.ContactLabel;
+import ch.protonmail.android.data.local.model.ContactLabelEntity;
 import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.MessageSender;
@@ -1608,7 +1608,7 @@ public class ComposeMessageActivity
         for (Map.Entry<String, List<MessageRecipient>> entry : groupedRecipients.entrySet()) {
             List<MessageRecipient> groupRecipients = entry.getValue();
             String groupName = entry.getKey();
-            ContactLabel group = composeMessageViewModel.getContactGroupByName(groupName);
+            ContactLabelEntity group = composeMessageViewModel.getContactGroupByName(groupName);
             if (group != null) {
                 String name = String.format(getString(R.string.composer_group_count_of), groupName, group.getContactEmailsCount(), group.getContactEmailsCount());
                 if (groupRecipients.size() != group.getContactEmailsCount()) {

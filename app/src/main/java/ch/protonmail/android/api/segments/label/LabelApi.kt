@@ -33,23 +33,23 @@ class LabelApi(private val apiProvider: ApiProvider) : LabelApiSpec {
             fetchLabels()
         }
 
-    override suspend fun fetchContactGroups(): ApiResult<ContactGroupsResponse> =
-        apiProvider.get<LabelService>().invoke {
+    override suspend fun fetchContactGroups(userId: UserId): ApiResult<ContactGroupsResponse> =
+        apiProvider.get<LabelService>(userId).invoke {
             fetchContactGroups()
         }
 
-    override suspend fun createLabel(label: LabelRequestBody): ApiResult<LabelResponse> =
-        apiProvider.get<LabelService>().invoke {
+    override suspend fun createLabel(userId: UserId, label: LabelRequestBody): ApiResult<LabelResponse> =
+        apiProvider.get<LabelService>(userId).invoke {
             createLabel(label)
         }
 
-    override suspend fun updateLabel(labelId: String, label: LabelRequestBody): ApiResult<LabelResponse> =
-        apiProvider.get<LabelService>().invoke {
-            updateLabel(labelId, label)
-        }
+    override suspend fun updateLabel(userId: UserId, labelId: String, label: LabelRequestBody):
+        ApiResult<LabelResponse> = apiProvider.get<LabelService>(userId).invoke {
+        updateLabel(labelId, label)
+    }
 
-    override suspend fun deleteLabel(labelId: String): ApiResult<Unit> =
-        apiProvider.get<LabelService>().invoke {
+    override suspend fun deleteLabel(userId: UserId, labelId: String): ApiResult<Unit> =
+        apiProvider.get<LabelService>(userId).invoke {
             deleteLabel(labelId)
         }
 

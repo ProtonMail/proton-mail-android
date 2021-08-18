@@ -31,11 +31,12 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.core.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -56,7 +57,8 @@ class DeleteLabelWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val accountManager: AccountManager
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -72,16 +74,19 @@ class DeleteLabelWorker @AssistedInject constructor(
 
         return withContext(dispatchers.Io) {
             var result = Result.success()
+            val userId = requireNotNull(accountManager.getPrimaryUserId().first())
 
             labelIds.forEach { labelId ->
-                val responseBody: ResponseBody = api.deleteLabel(labelId)
-                Timber.v("Deleting label $labelId response ${responseBody.code}")
-                if (responseBody.code != Constants.RESPONSE_CODE_OK) {
+                val apiResponse = api.deleteLabel(userId, labelId)
+                Timber.v("Deleting label $labelId response $apiResponse")
+                if (apiResponse is ApiResult.Error.Http) {
                     result = Result.failure(
                         workDataOf(
-                            KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${responseBody.code}"
+                            KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${apiResponse.proton?.code}"
                         )
                     )
+                } else if (apiResponse is ApiResult.Error) {
+                    result = Result.failure()
                 }
             }
             result

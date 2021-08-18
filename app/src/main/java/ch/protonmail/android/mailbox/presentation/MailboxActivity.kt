@@ -89,7 +89,7 @@ import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.di.DefaultSharedPreferences
@@ -1354,14 +1354,14 @@ internal class MailboxActivity :
         private val isFolder: Boolean,
         private val newLocation: Int,
         private val labelName: String?
-    ) : AsyncTask<Unit, Unit, Label?>() {
+    ) : AsyncTask<Unit, Unit, LabelEntity?>() {
 
-        override fun doInBackground(vararg params: Unit): Label? {
+        override fun doInBackground(vararg params: Unit): LabelEntity? {
             val labels = messageDetailsRepository.findAllLabelsWithIds(listOf(labelId))
             return if (labels.isEmpty()) null else labels[0]
         }
 
-        override fun onPostExecute(label: Label?) {
+        override fun onPostExecute(label: LabelEntity?) {
             val mailboxActivity = mailboxActivity.get() ?: return
             mailboxActivity.setElevationOnToolbarAndStatusView(false)
             if (mailboxActivity.actionMode != null) {

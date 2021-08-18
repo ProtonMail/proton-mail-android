@@ -22,7 +22,7 @@ package ch.protonmail.android.labels.domain.usecase
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
@@ -61,11 +61,11 @@ class GetAllLabelsTest {
         val testColorInt = 123
         val currentLabelsSelection = listOf(testLabelId1, testLabelId2)
         val sheetType = LabelsActionSheet.Type.LABEL
-        val label1 = mockk<Label> {
+        val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
             every { exclusive } returns false // false for normal label/not a folder (api v3)
         }
-        val label2 = mockk<Label> {
+        val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
             every { exclusive } returns false // false for normal label/not a folder (api v3)
         }
@@ -110,11 +110,11 @@ class GetAllLabelsTest {
         val testColorInt = 123
         val currentLabelsSelection = listOf(testLabelId1, testLabelId2)
         val sheetType = LabelsActionSheet.Type.FOLDER
-        val label1 = mockk<Label> {
+        val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
             every { exclusive } returns true // true for a folder/not a normal label (api v3)
         }
-        val label2 = mockk<Label> {
+        val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
             every { exclusive } returns true  // true for a folder/not a normal label (api v3)
         }
@@ -161,11 +161,11 @@ class GetAllLabelsTest {
         val testColorInt = 123
         val currentLabelsSelection = listOf(testLabelId1, testLabelId2)
         val sheetType = LabelsActionSheet.Type.FOLDER
-        val label1 = mockk<Label> {
+        val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
             every { exclusive } returns true // true for a folder/not a normal label (api v3)
         }
-        val label2 = mockk<Label> {
+        val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
             every { exclusive } returns true  // true for a folder/not a normal label (api v3)
         }

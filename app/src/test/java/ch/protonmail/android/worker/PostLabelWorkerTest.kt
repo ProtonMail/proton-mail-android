@@ -24,17 +24,22 @@ import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
+import ch.protonmail.android.api.models.messages.receive.Label
+import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.data.LabelRepository
-import ch.protonmail.android.data.local.model.Label
 import io.mockk.Called
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.verify
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import kotlin.test.BeforeTest
@@ -57,20 +62,41 @@ class PostLabelWorkerTest {
     @RelaxedMockK
     private lateinit var labelApiResponse: LabelResponse
 
+    @RelaxedMockK
+    private lateinit var accountManager: AccountManager
+
     private lateinit var worker: PostLabelWorker
+
+    private val labelMapper = LabelsMapper()
+
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { apiManager.createLabel(any()) } returns labelApiResponse
-        every { apiManager.updateLabel(any(), any()) } returns labelApiResponse
-        every { labelApiResponse.label } returns Label("labelID", "name", "color")
+        every { accountManager.getPrimaryUserId() } returns flowOf(UserId("TestUserId"))
+        coEvery { apiManager.createLabel(any(), any()) } returns ApiResult.Success(labelApiResponse)
+        coEvery { apiManager.updateLabel(any(), any(), any()) } returns ApiResult.Success(labelApiResponse)
+        every { labelApiResponse.label } returns Label(
+            id = "labelID",
+            name = "name",
+            color = "color",
+            path = "",
+            type = 0,
+            notify = 0,
+            order = 0,
+            expanded = null,
+            sticky = null,
+            display = null,
+            exclusive = null
+        )
 
         worker = PostLabelWorker(
             context,
             parameters,
             apiManager,
-            repository
+            repository,
+            labelMapper,
+            accountManager
         )
     }
 
@@ -111,8 +137,7 @@ class PostLabelWorkerTest {
     @Test
     fun `worker saves label in repository when creation succeeds`() {
         runBlockingTest {
-            every { labelApiResponse.hasError() } returns false
-            every { apiManager.createLabel(any()) } returns labelApiResponse
+            coEvery { apiManager.createLabel(any(), any()) } returns ApiResult.Success(labelApiResponse)
 
             val result = worker.doWork()
 
@@ -127,11 +152,10 @@ class PostLabelWorkerTest {
             every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
-            val labelBody = LabelBody("labelName", "labelColor", 0, 0)
 
             val result = worker.doWork()
 
-            verify { apiManager.createLabel(labelBody) }
+            coVerify { apiManager.createLabel(any(), buildLabelBody()) }
             assertEquals(ListenableWorker.Result.success(), result)
         }
     }
@@ -143,11 +167,10 @@ class PostLabelWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns "labelID"
-            val labelBody = LabelBody("labelName", "labelColor", 0, 0)
 
             val result = worker.doWork()
 
-            verify { apiManager.updateLabel("labelID", labelBody) }
+            coVerify { apiManager.updateLabel(any(), "labelID", buildLabelBody()) }
             assertEquals(ListenableWorker.Result.success(), result)
         }
     }
@@ -159,7 +182,6 @@ class PostLabelWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns null
-            val labelBody = LabelBody("labelName", "labelColor", 0, 0)
 
             val result = kotlin.runCatching {
                 worker.doWork()
@@ -170,7 +192,7 @@ class PostLabelWorkerTest {
 
             assertEquals(expectedException, result!!.message)
             assertTrue(result is IllegalArgumentException)
-            verify { apiManager.updateLabel("labelID", labelBody) wasNot Called }
+            coVerify { apiManager.updateLabel(any(), "labelID", buildLabelBody()) wasNot Called }
         }
     }
 
@@ -178,8 +200,10 @@ class PostLabelWorkerTest {
     fun `worker fails returning error when api returns any errors`() {
         runBlockingTest {
             val error = "Test API Error"
-            every { labelApiResponse.hasError() } returns true
-            every { labelApiResponse.error } returns error
+            val protonErrorData = ApiResult.Error.ProtonData(123, error)
+            val createContactGroupErrorApiResponse = ApiResult.Error.Http(123, error, protonErrorData)
+            coEvery { apiManager.createLabel(any(), any()) } returns createContactGroupErrorApiResponse
+            coEvery { apiManager.updateLabel(any(), any(), any()) } returns createContactGroupErrorApiResponse
 
             val result = worker.doWork()
 
@@ -193,11 +217,27 @@ class PostLabelWorkerTest {
     @Test
     fun `worker fails returning error when api returns label with empty ID`() {
         runBlockingTest {
-            val error = "Test API Error"
-            every { labelApiResponse.hasError() } returns false
-            every { labelApiResponse.label.id } returns ""
-            every { labelApiResponse.error } returns error
+            val error = "Error, Label id is empty"
+            val createContactGroupApiResponse = ApiResult.Success(
+                LabelResponse(
+                    Label(
+                        id = "",
+                        name = "name",
+                        color = "color",
+                        path = "",
+                        type = 0,
+                        notify = 0,
+                        order = 0,
+                        expanded = null,
+                        sticky = null,
+                        display = null,
+                        exclusive = null
+                    )
+                )
+            )
 
+            coEvery { apiManager.createLabel(any(), any()) } returns createContactGroupApiResponse
+            coEvery { apiManager.updateLabel(any(), any(), any()) } returns createContactGroupApiResponse
             val result = worker.doWork()
 
             val expectedFailure = ListenableWorker.Result.failure(
@@ -207,4 +247,15 @@ class PostLabelWorkerTest {
             coVerify(exactly = 0) { repository.saveLabel(any()) }
         }
     }
+
+    private fun buildLabelBody() =
+        LabelRequestBody(
+            name = "labelName",
+            color = "labelColor",
+            type = 0, // Constants.LABEL_TYPE_CONTACT_GROUPS
+            parentId = null,
+            notify = 0, // Constants.LABEL_TYPE_CONTACT_GROUPS,
+            exclusive = 0,
+            display = 0
+        )
 }
