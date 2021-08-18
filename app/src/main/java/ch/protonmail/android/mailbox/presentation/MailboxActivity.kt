@@ -1084,7 +1084,9 @@ internal class MailboxActivity :
         val actionsUiModel = BottomActionsView.UiModel(
             if (currentMailboxLocation in arrayOf(
                     MessageLocationType.TRASH,
-                    MessageLocationType.DRAFT
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.SPAM,
+                    MessageLocationType.SENT
                 )
             ) R.drawable.ic_trash_empty else R.drawable.ic_trash,
             R.drawable.ic_envelope_dot,
@@ -1094,7 +1096,13 @@ internal class MailboxActivity :
         mailboxActionsView.bind(actionsUiModel)
         mailboxActionsView.setOnFirstActionClickListener {
             val messageIds = getSelectedMessageIds()
-            if (currentMailboxLocation in arrayOf(MessageLocationType.TRASH, MessageLocationType.DRAFT)) {
+            if (currentMailboxLocation in arrayOf(
+                    MessageLocationType.TRASH,
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.SPAM,
+                    MessageLocationType.SENT
+                )
+            ) {
                 showDeleteConfirmationDialog(
                     this,
                     getString(R.string.delete_messages),
