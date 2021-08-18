@@ -33,6 +33,7 @@ import me.proton.core.key.domain.repository.KeySaltRepository
 import me.proton.core.key.domain.repository.PrivateKeyRepository
 import me.proton.core.key.domain.repository.PublicAddressRepository
 import me.proton.core.network.data.ApiProvider
+import me.proton.core.user.data.DefaultDomainHost
 import me.proton.core.user.data.UserAddressKeySecretProvider
 import me.proton.core.user.data.UserAddressManagerImpl
 import me.proton.core.user.data.UserManagerImpl
@@ -41,14 +42,16 @@ import me.proton.core.user.data.db.UserDatabase
 import me.proton.core.user.data.repository.DomainRepositoryImpl
 import me.proton.core.user.data.repository.UserAddressRepositoryImpl
 import me.proton.core.user.data.repository.UserRepositoryImpl
-import me.proton.core.user.data.repository.UserSettingRepositoryImpl
 import me.proton.core.user.domain.UserAddressManager
 import me.proton.core.user.domain.UserManager
+import me.proton.core.user.domain.entity.Domain
 import me.proton.core.user.domain.repository.DomainRepository
 import me.proton.core.user.domain.repository.PassphraseRepository
 import me.proton.core.user.domain.repository.UserAddressRepository
 import me.proton.core.user.domain.repository.UserRepository
-import me.proton.core.user.domain.repository.UserSettingRepository
+import me.proton.core.usersettings.data.db.UserSettingsDatabase
+import me.proton.core.usersettings.data.repository.UserSettingsRepositoryImpl
+import me.proton.core.usersettings.domain.repository.UserSettingsRepository
 import javax.inject.Singleton
 
 @Module
@@ -84,15 +87,17 @@ object UserManagerModule {
 
     @Provides
     @Singleton
-    fun provideUserSettingRepository(
+    fun provideUserSettingsRepository(
+        db: UserSettingsDatabase,
         provider: ApiProvider
-    ): UserSettingRepository = UserSettingRepositoryImpl(provider)
+    ): UserSettingsRepository = UserSettingsRepositoryImpl(db, provider)
 
     @Provides
     @Singleton
     fun provideDomainRepository(
+        @DefaultDomainHost defaultDomain: Domain,
         provider: ApiProvider
-    ): DomainRepository = DomainRepositoryImpl(provider)
+    ): DomainRepository = DomainRepositoryImpl(defaultDomain, provider)
 
     @Provides
     @Singleton

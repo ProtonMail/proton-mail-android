@@ -48,6 +48,7 @@ val DependencyHandler.`Proton-plan` get() =                         proton("plan
 val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-presentation version`
 val DependencyHandler.`Proton-user` get() =                         proton("user") version `Proton-user version`
 val DependencyHandler.`Proton-user-domain` get() =                  proton("user-domain") version `Proton-user version`
+val DependencyHandler.`Proton-user-settings` get() =                proton("user-settings") version `Proton-user-settings version`
 
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)
