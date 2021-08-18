@@ -70,8 +70,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="?selectableItemBackgroundBorderless"
-        app:tint="@color/icon_inverted"
-        android:visibility="gone" />
+        android:src="@drawable/ic_label"
+        app:tint="@color/icon_inverted" />
 
     <ImageButton
         android:id="@+id/moreActionImageButton"
