@@ -28,7 +28,6 @@ import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -48,6 +47,7 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.view.MessageDetailsHeaderIcons
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
+import ch.protonmail.android.ui.view.SingleLineCollapsedLabelGroupView
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
@@ -87,6 +87,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val labelsImageView: ImageView
     private val labelsCollapsedGroupView: SingleLineLabelChipGroupView
     private val labelsExpandedGroupView: MultiLineLabelChipGroupView
+    private val collapsedLabelsView: SingleLineCollapsedLabelGroupView
 
     private val timeDateTextView: TextView
     private val timeDateExtendedTextView: TextView
@@ -135,6 +136,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         labelsImageView = binding.labelsImageView
         labelsCollapsedGroupView = binding.labelsCollapsedGroupView
         labelsExpandedGroupView = binding.labelsExpandedGroupView
+        collapsedLabelsView = binding.collapsedLabelsView
 
         timeDateTextView = binding.timeDateTextView
         timeDateExtendedTextView = binding.timeDateExtendedTextView
@@ -196,6 +198,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         collapsedHeaderGroup.addView(labelsCollapsedGroupView)
         expandedHeaderGroup.addView(labelsExpandedGroupView)
         expandedHeaderGroup.addView(labelsImageView)
+        collapsedLabelsView.setLabels(nonExclusiveLabels)
 
         val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
         lockIconTextView.text = context.getText(senderLockIcon.icon)
@@ -241,8 +244,8 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             }
             isExpanded = isExpanded.not()
         }
-        expandedHeaderGroup.visibility = View.GONE
-        collapsedHeaderGroup.visibility = View.VISIBLE
+        expandedHeaderGroup.isVisible = false
+        collapsedHeaderGroup.isVisible = true
 
         repliedImageView.isVisible = message.isReplied == true && message.isRepliedAll == false
         repliedAllImageView.isVisible = message.isRepliedAll ?: false
@@ -267,10 +270,18 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         collapsedHeaderGroup.isVisible = true
     }
 
+    fun showCollapsedLabelsView() {
+        collapsedLabelsView.isVisible = true
+    }
+
+    fun hideCollapsedLabelsView() {
+        collapsedLabelsView.isVisible = false
+    }
+
     fun collapseHeader() {
-        expandedHeaderGroup.visibility = GONE
-        collapsedHeaderGroup.visibility = VISIBLE
-        locationImageView.visibility = VISIBLE
+        expandedHeaderGroup.isVisible = false
+        collapsedHeaderGroup.isVisible = true
+        locationImageView.isVisible = true
         expandCollapseChevronImageView.setImageDrawable(
             ContextCompat.getDrawable(context, R.drawable.ic_chevron_down)
         )
@@ -289,9 +300,9 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     }
 
     private fun expandHeader() {
-        collapsedHeaderGroup.visibility = GONE
-        expandedHeaderGroup.visibility = VISIBLE
-        locationImageView.visibility = GONE
+        collapsedHeaderGroup.isVisible = false
+        expandedHeaderGroup.isVisible = true
+        locationImageView.isVisible = false
         expandCollapseChevronImageView.setImageDrawable(
             ContextCompat.getDrawable(context, R.drawable.ic_chevron_up)
         )
@@ -391,24 +402,24 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             expandedHeaderGroup.addView(toRecipientsExpandedView)
         }
         if (toRecipients.isEmpty()) {
-            toExpandedTextView.visibility = View.GONE
-            toRecipientsExpandedView.visibility = View.GONE
+            toExpandedTextView.isVisible = false
+            toRecipientsExpandedView.isVisible = false
         } else {
             toRecipientsExpandedView.bind(toRecipients)
             expandedHeaderGroup.addView(toExpandedTextView)
             expandedHeaderGroup.addView(toRecipientsExpandedView)
         }
         if (ccRecipients.isEmpty()) {
-            ccExpandedTextView.visibility = View.GONE
-            ccRecipientsExpandedView.visibility = View.GONE
+            ccExpandedTextView.isVisible = false
+            ccRecipientsExpandedView.isVisible = false
         } else {
             ccRecipientsExpandedView.bind(ccRecipients)
             expandedHeaderGroup.addView(ccExpandedTextView)
             expandedHeaderGroup.addView(ccRecipientsExpandedView)
         }
         if (bccRecipients.isEmpty()) {
-            bccExpandedTextView.visibility = View.GONE
-            bccRecipientsExpandedView.visibility = View.GONE
+            bccExpandedTextView.isVisible = false
+            bccRecipientsExpandedView.isVisible = false
         } else {
             bccRecipientsExpandedView.bind(bccRecipients)
             expandedHeaderGroup.addView(bccExpandedTextView)

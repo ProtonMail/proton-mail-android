@@ -57,6 +57,12 @@ open class ViewTest<V : View>(
     fun onTestView(): ViewInteraction =
         onView(withId(TEST_VIEW_ID))
 
+    fun runOnActivityThread(block: () -> Unit) {
+        activityScenarioRule.scenario.onActivity {
+            block()
+        }
+    }
+
     private companion object {
         const val TEST_VIEW_ID = 7_435_838
     }

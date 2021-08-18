@@ -32,10 +32,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <ImageView
             android:layout_width="@dimen/attachment_list_spacing"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:contentDescription="@null"
             android:scaleType="center"
-            android:src="@drawable/attached_main" />
+            android:src="@drawable/ic_paper_clip" />
 
         <ch.protonmail.android.views.CustomFontTextView
             android:id="@+id/embedded_image_attachment"

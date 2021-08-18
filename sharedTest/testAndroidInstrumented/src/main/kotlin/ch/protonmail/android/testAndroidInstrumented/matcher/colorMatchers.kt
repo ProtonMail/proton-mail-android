@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.testAndroidInstrumented
+package ch.protonmail.android.testAndroidInstrumented.matcher
 
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable

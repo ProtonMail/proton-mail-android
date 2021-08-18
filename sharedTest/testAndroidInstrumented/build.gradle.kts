@@ -44,6 +44,7 @@ dependencies {
         `lifecycle-runtime`,
         `lifecycle-liveData`,
         `lifecycle-viewModel`,
+        `android-ktx`,
 
         // TestRail
          `json-simple`

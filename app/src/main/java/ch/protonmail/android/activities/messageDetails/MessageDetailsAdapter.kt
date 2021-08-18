@@ -210,8 +210,10 @@ internal class MessageDetailsAdapter(
             if (isMessageBodyExpanded()) {
                 messageDetailsHeaderView.allowExpandingHeaderView()
                 messageDetailsHeaderView.showRecipientsCollapsedView()
+                messageDetailsHeaderView.hideCollapsedLabelsView()
             } else {
                 messageDetailsHeaderView.hideRecipientsCollapsedView()
+                messageDetailsHeaderView.showCollapsedLabelsView()
             }
 
             if (message.isRead) {
