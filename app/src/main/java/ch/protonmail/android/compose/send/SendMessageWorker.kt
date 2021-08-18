@@ -68,10 +68,12 @@ import ch.protonmail.android.utils.notifier.UserNotifier
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
+import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
@@ -148,8 +150,10 @@ class SendMessageWorker @AssistedInject constructor(
                 }
 
                 return try {
-                    val response = apiManager.sendMessage(messageId, requestBody, UserIdTag(userId))
-                    handleSendMessageResponse(messageId, response, savedDraftMessage)
+                    withContext(NonCancellable) {
+                        val response = apiManager.sendMessage(messageId, requestBody, UserIdTag(userId))
+                        handleSendMessageResponse(messageId, response, savedDraftMessage)
+                    }
                 } catch (exception: IOException) {
                     retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
                 } catch (exception: Exception) {

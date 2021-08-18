@@ -180,8 +180,8 @@ class SendMessageWorkerTest : CoroutinesTest {
             assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
             assertEquals(securityOptions, actualMessageSecurityOptions?.deserialize(MessageSecurityOptions.serializer()))
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
-            assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
-            assertEquals(20_000, workSpec.backoffDelayDuration)
+            assertEquals(BackoffPolicy.LINEAR, workSpec.backoffPolicy)
+            assertEquals(10_000, workSpec.backoffDelayDuration)
             verify { workManager.getWorkInfoByIdLiveData(any()) }
         }
     }
@@ -684,7 +684,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
         every { packageFactory.generatePackages(any(), any(), any(), any()) } throws exception
-        every { parameters.runAttemptCount } returns 2
+        every { parameters.runAttemptCount } returns 1
         mockkStatic(Timber::class)
 
         val result = worker.doWork()

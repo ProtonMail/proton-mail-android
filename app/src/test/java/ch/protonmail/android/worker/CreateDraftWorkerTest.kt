@@ -185,8 +185,8 @@ class CreateDraftWorkerTest : CoroutinesTest {
             assertEquals(messageActionType.messageActionTypeValue, actualMessageActionType)
             assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
-            assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
-            assertEquals(20000, workSpec.backoffDelayDuration)
+            assertEquals(BackoffPolicy.LINEAR, workSpec.backoffPolicy)
+            assertEquals(10000, workSpec.backoffDelayDuration)
             verify { workManager.getWorkInfoByIdLiveData(any()) }
         }
     }
@@ -1019,7 +1019,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { this@mockk.message.subject } returns "Subject001"
             }
             coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
-            every { parameters.runAttemptCount } returns 2
+            every { parameters.runAttemptCount } returns 0
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
                 coEvery { this@mockk.attachments } returns listOf(attachment)

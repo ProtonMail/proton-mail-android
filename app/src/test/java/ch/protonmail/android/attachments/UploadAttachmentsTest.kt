@@ -142,8 +142,8 @@ class UploadAttachmentsTest : CoroutinesTest {
             assertEquals(true, actualIsMessageSending)
             assertArrayEquals(attachmentIds.toTypedArray(), actualAttachmentIds)
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
-            assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
-            assertEquals(20000, workSpec.backoffDelayDuration)
+            assertEquals(BackoffPolicy.LINEAR, workSpec.backoffPolicy)
+            assertEquals(10000, workSpec.backoffDelayDuration)
             verify { workManager.getWorkInfoByIdLiveData(any()) }
         }
     }
@@ -264,7 +264,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             coEvery { attachmentsRepository.upload(attachment2, crypto) } answers {
                 AttachmentsRepository.Result.Failure("Failed to upload attachment2")
             }
-            every { parameters.runAttemptCount } returns 2
+            every { parameters.runAttemptCount } returns 0
 
             val result = uploadAttachments.doWork()
 
@@ -329,7 +329,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
                 AttachmentsRepository.Result.Failure("Failed to upload public key")
             }
-            every { parameters.runAttemptCount } returns 2
+            every { parameters.runAttemptCount } returns 0
 
             val result = uploadAttachments.doWork()
 
