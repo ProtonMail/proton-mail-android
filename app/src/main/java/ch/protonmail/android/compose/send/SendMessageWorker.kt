@@ -69,7 +69,9 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
@@ -148,8 +150,10 @@ class SendMessageWorker @WorkerInject constructor(
                 }
 
                 return try {
-                    val response = apiManager.sendMessage(messageId, requestBody, RetrofitTag(username))
-                    handleSendMessageResponse(messageId, response, savedDraftMessage)
+                    withContext(NonCancellable) {
+                        val response = apiManager.sendMessage(messageId, requestBody, RetrofitTag(username))
+                        handleSendMessageResponse(messageId, response, savedDraftMessage)
+                    }
                 } catch (exception: IOException) {
                     retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
                 } catch (exception: Exception) {
