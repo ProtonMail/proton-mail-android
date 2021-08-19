@@ -17,22 +17,20 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.data
+package ch.protonmail.android.ui.model
 
-import ch.protonmail.android.data.local.model.Label
+import androidx.annotation.ColorInt
 import ch.protonmail.android.domain.entity.LabelId
-import kotlinx.coroutines.flow.Flow
-import me.proton.core.domain.entity.UserId
+import ch.protonmail.android.domain.entity.Name
 
-interface LabelRepository {
-
-    fun findLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<Label>>
-
-    fun findAllLabels(userId: UserId): Flow<List<Label>>
-
-    suspend fun saveLabel(userId: UserId, label: Label)
-
-    @Deprecated("Save with userId", ReplaceWith("saveLabel(userId, label)"))
-    suspend fun saveLabel(label: Label)
-
-}
+/**
+ * Ui Model for [LabelChipView]
+ * @property color is the [ColorInt] that will be applied as background.
+ *  if `null` a default background will be used, for ensure readability of the text
+ */
+data class LabelChipUiModel(
+    val id: LabelId,
+    val name: Name,
+    @ColorInt
+    val color: Int?
+)

@@ -37,6 +37,7 @@ import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
@@ -57,7 +58,7 @@ import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.settings.domain.GetMailSettings
-import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.Event
@@ -441,7 +442,7 @@ class MailboxViewModel @Inject constructor(
             val conversationLabelsIds = conversation.labels.map { it.id }
             val labelChipUiModels = labels
                 .filter { it.id in conversationLabelsIds }
-                .toLabelChipUiModels(userId)
+                .toLabelChipUiModels()
 
             val isDraft = conversationContainsSingleDraftMessage(conversation)
 
@@ -489,12 +490,12 @@ class MailboxViewModel @Inject constructor(
         val contacts = emails
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first() }
-        val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { UserId(it) }
-        val userIdCore = userId
+        val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { LabelId(it) }
+
         val labels = labelIds
             .chunked(Constants.MAX_SQL_ARGUMENTS)
-            .flatMap { labelChunk -> labelRepository.findLabels(userIdCore, labelChunk).first() }
-            .toLabelChipUiModels(userId)
+            .flatMap { labelChunk -> labelRepository.findLabels(userId, labelChunk).first() }
+            .toLabelChipUiModels()
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)
@@ -511,8 +512,8 @@ class MailboxViewModel @Inject constructor(
                 .filter { it.id.id in message.allLabelIDs }
 
             val messageLocation = message.locationFromLabel()
-            val isDraft = messageLocation == Constants.MessageLocationType.DRAFT
-                || messageLocation == Constants.MessageLocationType.ALL_DRAFT
+            val isDraft = messageLocation == Constants.MessageLocationType.DRAFT ||
+                messageLocation == Constants.MessageLocationType.ALL_DRAFT
 
             val mailboxUiItem = MailboxUiItem(
                 itemId = requireNotNull(message.messageId),
@@ -619,12 +620,12 @@ class MailboxViewModel @Inject constructor(
         jobManager.addJobInBackground(FetchMessageCountsJob(null))
     }
 
-    private fun List<Label>.toLabelChipUiModels(userId: UserId): List<LabelChipUiModel> =
+    private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
         filterNot { it.exclusive }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 
-            LabelChipUiModel(userId, Name(label.name), labelColor)
+            LabelChipUiModel(LabelId(label.id), Name(label.name), labelColor)
         }
 
     fun markRead(

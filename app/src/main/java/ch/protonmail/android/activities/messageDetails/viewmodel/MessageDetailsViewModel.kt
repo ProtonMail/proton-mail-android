@@ -52,6 +52,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
@@ -64,7 +65,7 @@ import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
@@ -178,7 +179,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 val labelsHashMap = hashMapOf<String, List<Label>>()
                 val userId = UserId(userManager.requireCurrentUserId().id)
                 conversation.messages.forEach { message ->
-                    val allLabelIds = message.allLabelIDs.map { labelId -> UserId(labelId) }
+                    val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
                     labelsHashMap[requireNotNull(message.messageId)] =
                         labelRepository.findLabels(userId, allLabelIds).first()
                             .filter { label ->
@@ -194,7 +195,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 val labelsHashMap = hashMapOf<String, List<LabelChipUiModel>>()
                 val userId = UserId(userManager.requireCurrentUserId().id)
                 conversation.messages.forEach { message ->
-                    val allLabelIds = message.allLabelIDs.map { labelId -> UserId(labelId) }
+                    val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
                     labelsHashMap[requireNotNull(message.messageId)] =
                         labelRepository.findLabels(userId, allLabelIds).first()
                             .filter { label ->
@@ -203,7 +204,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                             .map { label ->
                                 val labelColor = label.color.takeIfNotBlank()
                                     ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-                                LabelChipUiModel(UserId(label.id), Name(label.name), labelColor)
+                                LabelChipUiModel(LabelId(label.id), Name(label.name), labelColor)
                             }
                 }
                 return@flatMapLatest flowOf(labelsHashMap)

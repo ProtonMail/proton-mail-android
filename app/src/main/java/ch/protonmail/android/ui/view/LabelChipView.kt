@@ -27,10 +27,9 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.withStyledAttributes
-import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.R
-import me.proton.core.domain.entity.UserId
-import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.LabelId
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.extensions.fromAttributesOrPreviewOrNull
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.RoundedCornerTreatment
@@ -47,7 +46,7 @@ class LabelChipView @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.textViewStyle
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
-    var labelId: UserId? = null
+    var labelId: LabelId? = null
 
     @get:ColorInt
     private val defaultBackgroundTint: Int get() =
@@ -107,29 +106,3 @@ class LabelChipView @JvmOverloads constructor(
     }
 }
 
-/**
- * Ui Model for [LabelChipView]
- * @property color is the [ColorInt] that will be applied as background.
- *  if `null` a default background will be used, for ensure readability of the text
- */
-data class LabelChipUiModel(
-    val id: UserId,
-    val name: Name,
-    @ColorInt
-    val color: Int?
-) {
-
-    companion object {
-
-        val DiffCallback = object : DiffUtil.ItemCallback<LabelChipUiModel>() {
-
-            override fun areItemsTheSame(oldItem: LabelChipUiModel, newItem: LabelChipUiModel) =
-                oldItem.id == newItem.id
-
-            override fun areContentsTheSame(oldItem: LabelChipUiModel, newItem: LabelChipUiModel) =
-                oldItem == newItem
-
-        }
-    }
-
-}

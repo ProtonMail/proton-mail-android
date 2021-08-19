@@ -32,6 +32,7 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.testAndroidInstrumented.assertion.isGone
 import ch.protonmail.android.testAndroidInstrumented.assertion.isVisible
 import ch.protonmail.android.testAndroidInstrumented.withBackgroundColor
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.util.ViewTest
 import me.proton.core.domain.entity.UserId
 import org.junit.runner.RunWith

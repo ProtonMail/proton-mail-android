@@ -41,6 +41,7 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_LOCATION_ID
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -54,7 +55,7 @@ import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
-import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
@@ -302,10 +303,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val labelId2 = "labelId2"
             val label2 = Label(labelId2, "label2", "-65281", 0, 0, false)
             every {
-                labelRepository.findLabels(testUserId2, listOf(UserId("folderId1"), UserId("labelId1"), UserId("labelId2")))
+                labelRepository.findLabels(testUserId2, listOf(LabelId("folderId1"), LabelId("labelId1"), LabelId("labelId2")))
             } returns flowOf(listOf(folder1, label1, label2))
             every {
-                labelRepository.findLabels(testUserId2, listOf(UserId("folderId2"), UserId("labelId1")))
+                labelRepository.findLabels(testUserId2, listOf(LabelId("folderId2"), LabelId("labelId1")))
             } returns flowOf(listOf(folder2, label1))
             val messageId1 = "messageId1"
             val messageId2 = "messageId2"
@@ -371,15 +372,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val folder2 = Label(folderId2, "folder2", "color", 0, 0, true)
             val labelId1 = "labelId1"
             val label1 = Label(labelId1, "label1", "", 0, 0, false)
-            val labelChipUIModel1 = LabelChipUiModel(UserId(labelId1), Name("label1"), null)
+            val labelChipUIModel1 = LabelChipUiModel(LabelId(labelId1), Name("label1"), null)
             val labelId2 = "labelId2"
             val label2 = Label(labelId2, "label2", "", 0, 0, false)
-            val labelChipUIModel2 = LabelChipUiModel(UserId(labelId2), Name("label2"), null)
+            val labelChipUIModel2 = LabelChipUiModel(LabelId(labelId2), Name("label2"), null)
             every {
-                labelRepository.findLabels(testUserId2, listOf(UserId("folderId1"), UserId("labelId1"), UserId("labelId2")))
+                labelRepository.findLabels(testUserId2, listOf(LabelId("folderId1"), LabelId("labelId1"), LabelId("labelId2")))
             } returns flowOf(listOf(folder1, label1, label2))
             every {
-                labelRepository.findLabels(testUserId2, listOf(UserId("folderId2"), UserId("labelId1")))
+                labelRepository.findLabels(testUserId2, listOf(LabelId("folderId2"), LabelId("labelId1")))
             } returns flowOf(listOf(folder2, label1))
             val messageId1 = "messageId1"
             val messageId2 = "messageId2"
