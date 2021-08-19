@@ -30,6 +30,7 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.mapSuccess
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.util.kotlin.invoke
+import timber.log.Timber
 
 /**
  * [ProtonStore] works in a similar manner as [com.dropbox.android.external.store4.Store] but provide us a more
@@ -102,6 +103,7 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
         freshAsApiModel(key).toDomainModelsDataResult()
 
     private suspend fun freshAsApiModel(key: Key): DataResult<ApiModel> {
+        Timber.i("Fetching for: $key")
         @Suppress("TooGenericExceptionCaught")
         val apiResult = try {
             val apiModels = fetcher(key)

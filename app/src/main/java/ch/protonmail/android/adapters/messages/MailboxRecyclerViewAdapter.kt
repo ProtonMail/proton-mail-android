@@ -211,13 +211,15 @@ class MailboxRecyclerViewAdapter(
         mailboxLocation = locationType
     }
 
-    fun getOldestMailboxItemTimestamp(): Long {
-        val lastItemTimeMs = if (mailboxItems.isNotEmpty()) {
-            mailboxItems.minOf { it.lastMessageTimeMs }
-        } else {
-            System.currentTimeMillis()
-        }
-        return lastItemTimeMs / 1000
-    }
+    /**
+     * @return `true` if any items withing the given positions' range has an [MailboxUiItem.itemId] that matches one
+     *  from [mailboxItemsIds]
+     */
+    fun isAnyMailboxItemWithinPositions(
+        mailboxItemsIds: List<String>,
+        startPosition: Int,
+        endPosition: Int
+    ) = mailboxItems.subList(startPosition, endPosition + 1)
+        .any { it.itemId in mailboxItemsIds }
 
 }

@@ -367,6 +367,7 @@ class MailboxViewModel @Inject constructor(
                 }
                 is GetMessagesResult.ApiRefresh -> {
                     if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
+                    else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
                     MailboxState.ApiRefresh(
                         lastFetchedMessagesIds = result.lastFetchedMessages.mapNotNull { it.messageId }
