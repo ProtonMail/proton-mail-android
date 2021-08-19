@@ -17,26 +17,20 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.api.models.messages.receive
+package ch.protonmail.android.contacts.details.presentation.model
 
-import ch.protonmail.android.api.utils.Fields
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState
 
-@Serializable
-data class LabelRequestBody(
-    @SerialName(Fields.Label.NAME)
+data class ContactLabelUiModel(
+    val id: String,
     val name: String,
-    @SerialName(Fields.Label.COLOR)
     val color: String,
-    @SerialName(Fields.Label.TYPE)
-    val type: Int, // only '1', '2', or '3
-    @SerialName(Fields.Label.PARENT_ID)
-    val parentId: String?,
-    @SerialName(Fields.Label.NOTIFY)
-    val notify: Int?,
-    @SerialName(Fields.Label.EXPANDED) // v4
-    val expanded: Int?,
-    @SerialName(Fields.Label.STICKY) // v4
-    val sticky: Int?
+    val type: Int,
+    val path: String,
+    val parentId: String,
+    val expanded: Int,
+    val sticky: Int,
+    val contactEmailsCount: Int,
+    val contactDataCount: Int = 0,
+    val isSelected: ContactEmailGroupSelectionState = ContactEmailGroupSelectionState.DEFAULT
 )

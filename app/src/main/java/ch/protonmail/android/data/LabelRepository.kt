@@ -26,9 +26,13 @@ import me.proton.core.domain.entity.UserId
 
 interface LabelRepository {
 
-    fun findLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>>
+    fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>>
 
-    fun findAllLabels(userId: UserId): Flow<List<LabelEntity>>
+    suspend fun findLabels(userId: UserId, labelsIds: List<LabelId>): List<LabelEntity>
+
+    fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>>
+
+    suspend fun findAllLabels(userId: UserId): List<LabelEntity>
 
     suspend fun saveLabel(userId: UserId, label: LabelEntity)
 

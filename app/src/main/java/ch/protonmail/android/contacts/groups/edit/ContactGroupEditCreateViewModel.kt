@@ -164,20 +164,21 @@ class ContactGroupEditCreateViewModel @Inject constructor(
     @SuppressLint("CheckResult")
     private fun editContactGroup(name: String, toBeAdded: List<String>, toBeDeleted: List<String>) {
         val contactLabel = ContactLabelEntity(
-            ID = contactGroupItem!!.contactId,
+            id = contactGroupItem!!.contactId,
             name = name,
             color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.getDefault()),
             display = 0,
             exclusive = true,
-            type = Constants.LABEL_TYPE_CONTACT_GROUPS
+            type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+            path = ""
         )
         viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryUserId().first())
             when (val editContactResult =
                 contactGroupEditCreateRepository.editContactGroup(contactLabel, userId)) {
                 is ApiResult.Success -> {
-                    contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel.ID, name, toBeAdded)
-                    contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel.ID, name, toBeDeleted)
+                    contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel.id, name, toBeAdded)
+                    contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel.id, name, toBeDeleted)
                     _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
                 }
                 is ApiResult.Error.Http -> {
@@ -199,7 +200,8 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),
             display = 1,
             exclusive = false,
-            type = Constants.LABEL_TYPE_CONTACT_GROUPS
+            type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+            path = ""
         )
         if (!validate(contactLabel)) {
             _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.VALIDATION_FAILED)))

@@ -38,6 +38,11 @@ class LabelApi(private val apiProvider: ApiProvider) : LabelApiSpec {
             fetchContactGroups()
         }
 
+    override suspend fun fetchFolders(userId: UserId): ApiResult<ContactGroupsResponse> =
+        apiProvider.get<LabelService>(userId).invoke {
+            fetchFolders()
+        }
+
     override suspend fun createLabel(userId: UserId, label: LabelRequestBody): ApiResult<LabelResponse> =
         apiProvider.get<LabelService>(userId).invoke {
             createLabel(label)

@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
 import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.LabelRepository
 import io.mockk.Called
 import io.mockk.MockKAnnotations
@@ -81,13 +82,11 @@ class PostLabelWorkerTest {
             name = "name",
             color = "color",
             path = "",
-            type = 0,
+            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
             notify = 0,
             order = 0,
             expanded = null,
             sticky = null,
-            display = null,
-            exclusive = null
         )
 
         worker = PostLabelWorker(
@@ -152,6 +151,7 @@ class PostLabelWorkerTest {
             every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
+            every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns Constants.LABEL_TYPE_CONTACT_GROUPS
 
             val result = worker.doWork()
 
@@ -167,6 +167,7 @@ class PostLabelWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns "labelID"
+            every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns Constants.LABEL_TYPE_CONTACT_GROUPS
 
             val result = worker.doWork()
 
@@ -225,13 +226,11 @@ class PostLabelWorkerTest {
                         name = "name",
                         color = "color",
                         path = "",
-                        type = 0,
+                        type = Constants.LABEL_TYPE_MESSAGE_LABEL,
                         notify = 0,
                         order = 0,
                         expanded = null,
-                        sticky = null,
-                        display = null,
-                        exclusive = null
+                        sticky = null
                     )
                 )
             )
@@ -252,10 +251,10 @@ class PostLabelWorkerTest {
         LabelRequestBody(
             name = "labelName",
             color = "labelColor",
-            type = 0, // Constants.LABEL_TYPE_CONTACT_GROUPS
+            type = Constants.LABEL_TYPE_CONTACT_GROUPS, // Constants.LABEL_TYPE_CONTACT_GROUPS
             parentId = null,
             notify = 0, // Constants.LABEL_TYPE_CONTACT_GROUPS,
-            exclusive = 0,
-            display = 0
+            expanded = 0,
+            sticky = 0
         )
 }

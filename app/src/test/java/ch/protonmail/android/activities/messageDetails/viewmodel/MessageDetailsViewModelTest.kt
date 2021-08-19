@@ -591,7 +591,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             inputMessageLocation.messageLocationTypeValue
         every { savedStateHandle.get<String>(EXTRA_MAILBOX_LABEL_ID) } returns null
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
+        val conversationResult =
+            DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
         coEvery { messageRepository.findMessage(any(), MESSAGE_ID_ONE) } returns conversationMessage
         coEvery { messageRepository.markUnRead(listOf(MESSAGE_ID_ONE)) } just runs
@@ -729,7 +730,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
+        val conversationResult =
+            DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
         coEvery { messageRepository.findMessage(any(), MESSAGE_ID_ONE) } returns conversationMessage
 

@@ -23,6 +23,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
@@ -47,7 +48,6 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.toInt
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
@@ -87,6 +87,9 @@ open class ContactDetailsRepository @Inject constructor(
         }
     }
 
+    fun getContactEmailsCount(contactGroupId: String) =
+        contactDao.countContactEmailsByLabelIdBlocking(contactGroupId)
+
     private suspend fun getContactGroupsFromApi(userId: UserId): List<ContactLabelEntity> {
         val contactGroupsResponse = api.fetchContactGroups(userId).valueOrNull?.labels
 
@@ -103,8 +106,18 @@ open class ContactDetailsRepository @Inject constructor(
     private suspend fun getContactGroupsFromDb(): List<ContactLabelEntity> {
         return contactDao.findContactGroups()
             .flatMapConcat { list ->
-                list.map { label ->
-                    label.contactEmailsCount = contactDao.countContactEmailsByLabelId(label.ID)
+                list.map { entity ->
+                    ContactLabelUiModel(
+                        id = entity.id,
+                        name = entity.name,
+                        color = entity.color,
+                        type = entity.type,
+                        path = entity.path,
+                        parentId = entity.parentId,
+                        expanded = entity.expanded,
+                        sticky = entity.sticky,
+                        contactEmailsCount = getContactEmailsCount(entity.id)
+                    )
                 }
                 list.asFlow()
             }.toList()
@@ -112,10 +125,10 @@ open class ContactDetailsRepository @Inject constructor(
 
     suspend fun editContactGroup(contactLabel: ContactLabelEntity, userId: UserId): ApiResult<LabelResponse> {
         val labelBody = labelsMapper.mapContactLabelToRequestLabel(contactLabel)
-        val updateLabelResult = api.updateLabel(userId, contactLabel.ID, labelBody)
+        val updateLabelResult = api.updateLabel(userId, contactLabel.id, labelBody)
         when (updateLabelResult) {
             is ApiResult.Success -> {
-                val joins = contactDao.fetchJoins(contactLabel.ID)
+                val joins = contactDao.fetchJoins(contactLabel.id)
                 contactDao.saveContactGroupLabel(contactLabel)
                 contactDao.saveContactEmailContactLabel(joins)
             }
@@ -126,8 +139,7 @@ open class ContactDetailsRepository @Inject constructor(
                     contactLabel.display,
                     contactLabel.type,
                     false,
-                    contactLabel.ID,
-                    contactLabel.exclusive.toInt()
+                    contactLabel.id
                 )
             }
             else -> {

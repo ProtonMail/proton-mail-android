@@ -20,11 +20,9 @@ package ch.protonmail.android.api.models.contacts.receive
 
 import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.data.local.model.LabelEntity
-import me.proton.core.util.kotlin.toBooleanOrFalse
-import me.proton.core.util.kotlin.toInt
+import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
 class LabelsMapper @Inject constructor() {
@@ -34,43 +32,50 @@ class LabelsMapper @Inject constructor() {
             id = serverLabel.id,
             name = serverLabel.name,
             color = serverLabel.color,
-            display = serverLabel.display ?: 0,
             order = serverLabel.order ?: 0,
-            exclusive = serverLabel.exclusive?.toBooleanOrFalse() ?: false,
-            type = serverLabel.type ?: 0
+            type = serverLabel.type,
+            path = serverLabel.path,
+            parentId = serverLabel.parentId ?: EMPTY_STRING,
+            expanded = serverLabel.expanded ?: 0,
+            sticky = serverLabel.sticky ?: 0,
         )
 
     fun mapLabelEntityToServerLabel(dbObject: ContactLabelEntity): Label {
-        val id = dbObject.ID
+        val id = dbObject.id
         val name = dbObject.name
         val color = dbObject.color
-        val display = dbObject.display
         val order = dbObject.order
-        val exclusive = dbObject.exclusive.toInt()
-        val type = Constants.LABEL_TYPE_CONTACT_GROUPS
+        val type = dbObject.type
+        val path = dbObject.path
+        val parentId = dbObject.parentId
+        val expanded = dbObject.expanded
+        val sticky = dbObject.sticky
+        val notify = dbObject.notify
         return Label(
             id = id,
             name = name,
-            path = "",
+            path = path,
             color = color,
-            display = display,
             order = order,
-            exclusive = exclusive,
             type = type,
-            notify = 0,
-            expanded = null,
-            sticky = null
+            notify = notify,
+            parentId = parentId,
+            expanded = expanded,
+            sticky = sticky,
         )
     }
 
     fun mapLabelToContactLabelEntity(label: Label) = ContactLabelEntity(
-        ID = label.id,
+        id = label.id,
         name = label.name,
         color = label.color,
-        display = label.display ?: 0,
         order = label.order ?: 0,
-        exclusive = label.exclusive?.toBooleanOrFalse() ?: false,
-        type = label.type ?: 0
+        type = label.type,
+        path = label.path,
+        parentId = label.parentId ?: EMPTY_STRING,
+        expanded = label.expanded ?: 0,
+        sticky = label.sticky ?: 0,
+        notify = label.notify
     )
 
     fun mapContactLabelToRequestLabel(contactLabel: ContactLabelEntity): LabelRequestBody {
@@ -78,10 +83,10 @@ class LabelsMapper @Inject constructor() {
             name = contactLabel.name,
             color = contactLabel.color,
             type = contactLabel.type,
-            parentId = null,
+            parentId = contactLabel.parentId,
             notify = 0,
-            exclusive = contactLabel.exclusive.toInt(),
-            display = contactLabel.display
+            expanded = contactLabel.expanded,
+            sticky = contactLabel.sticky
         )
     }
 }

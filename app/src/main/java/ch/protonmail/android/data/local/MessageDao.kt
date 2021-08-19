@@ -389,7 +389,10 @@ abstract class MessageDao : BaseDao<Message>() {
     abstract fun getAllLabelsLiveData(): LiveData<List<LabelEntity>>
 
     @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
-    abstract fun getAllLabels(): Flow<List<LabelEntity>>
+    abstract fun observeAllLabels(): Flow<List<LabelEntity>>
+
+    @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
+    abstract suspend fun findAllLabels(): List<LabelEntity>
 
     // Folders
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 1 ORDER BY `LabelOrder`")
@@ -400,7 +403,10 @@ abstract class MessageDao : BaseDao<Message>() {
     abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, LabelEntity>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY LabelOrder")
-    abstract fun findLabelsById(labelIds: List<String>): Flow<List<LabelEntity>>
+    abstract fun observeLabelsById(labelIds: List<String>): Flow<List<LabelEntity>>
+
+    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
+    abstract suspend fun findLabelsById(labelIds: List<String>): List<LabelEntity>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
     abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<LabelEntity>

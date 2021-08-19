@@ -66,6 +66,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 
 internal class EventHandler @AssistedInject constructor(
@@ -584,14 +585,36 @@ internal class EventHandler @AssistedInject constructor(
                     val id = item.id
                     val name = item.name
                     val color = item.color
-                    val display = item.display!!
                     val order = item.order!!
-                    val exclusive = item.exclusive!!
-                    if (labelType == Constants.LABEL_TYPE_MESSAGE) {
-                        val label = LabelEntity(id, name, color, display, order, exclusive == 1, type =  Constants.LABEL_TYPE_MESSAGE)
+                    val path = item.path
+                    val parentId = item.parentId
+                    val expanded = item.expanded!!
+                    val sticky = item.sticky!!
+                    if (labelType == Constants.LABEL_TYPE_MESSAGE_LABEL) {
+                        val label = LabelEntity(
+                            id = id,
+                            name = name,
+                            color = color,
+                            order = order,
+                            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+                            path = path,
+                            parentId = parentId ?: EMPTY_STRING,
+                            expanded = expanded,
+                            sticky = sticky
+                        )
                         messageDao.saveLabel(label)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
-                        val label = ContactLabelEntity(id, name, color, display, order, exclusive == 1)
+                        val label = ContactLabelEntity(
+                            id = id,
+                            name = name,
+                            color = color,
+                            order = order,
+                            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+                            path = path,
+                            parentId = parentId ?: EMPTY_STRING,
+                            expanded = expanded,
+                            sticky = sticky
+                        )
                         contactDao.saveContactGroupLabel(label)
                     }
                 }
@@ -599,7 +622,7 @@ internal class EventHandler @AssistedInject constructor(
                 ActionType.UPDATE -> {
                     val labelType = item.type!!
                     val labelId = item.id
-                    if (labelType == Constants.LABEL_TYPE_MESSAGE) {
+                    if (labelType == Constants.LABEL_TYPE_MESSAGE_LABEL) {
                         val label = messageDao.findLabelByIdBlocking(labelId!!)
                         writeMessageLabel(label, item, messageDao)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
@@ -647,7 +670,7 @@ internal class EventHandler @AssistedInject constructor(
         if (currentGroup != null) {
             val contactLabelFactory = LabelsMapper()
             val labelToSave = contactLabelFactory.mapLabelToContactLabelEntity(updatedGroup)
-            val joins = contactDao.fetchJoinsBlocking(labelToSave.ID)
+            val joins = contactDao.fetchJoinsBlocking(labelToSave.id)
             contactDao.saveContactGroupLabel(labelToSave)
             contactDao.saveContactEmailContactLabelBlocking(joins)
         }

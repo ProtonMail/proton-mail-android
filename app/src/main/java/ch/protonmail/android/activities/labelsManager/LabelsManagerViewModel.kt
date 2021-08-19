@@ -143,7 +143,7 @@ internal class LabelsManagerViewModel @Inject constructor(
     fun saveLabel(): LiveData<WorkInfo> {
         labelEditor?.let {
             return with(it.buildParams()) {
-                createOrUpdateLabel(labelName, color, display, exclusive, update, labelId)
+                createOrUpdateLabel(labelName, color, expanded, isFolder, update, labelId)
             }
         }
 
@@ -170,19 +170,18 @@ internal class LabelsManagerViewModel @Inject constructor(
     private fun createOrUpdateLabel(
         labelName: String,
         color: String,
-        display: Int,
-        exclusive: Int,
+        expanded: Int,
+        isFolder: Int,
         update: Boolean,
         labelId: String?
     ): LiveData<WorkInfo> {
         return PostLabelWorker.Enqueuer(workManager).enqueue(
             labelName,
             color,
-            display,
+            expanded,
             null,
             update,
-            labelId,
-            exclusive
+            labelId
         )
     }
 }
@@ -202,8 +201,8 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
         return SaveParams(
             labelName = name.toString(),
             color = color.toColorHex(),
-            display = initialLabel.display,
-            exclusive = initialLabel.type.toExclusive(),
+            expanded = initialLabel.expanded,
+            isFolder = initialLabel.type.toExclusive(),
             update = true,
             labelId = initialLabel.labelId
         )
@@ -213,8 +212,8 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
     data class SaveParams(
         val labelName: String,
         val color: String,
-        val display: Int,
-        val exclusive: Int,
+        val expanded: Int,
+        val isFolder: Int,
         val update: Boolean,
         val labelId: String
     )
@@ -224,6 +223,7 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
 private fun Int.toColorHex() = String.format("#%06X", 0xFFFFFF and this)
 
 /** @return [Boolean] exclusive from a [LabelUiModel.Type] */
+@Deprecated("Exclusive field was used in Labels apiv3, which is no longer in use")
 private fun LabelUiModel.Type.toExclusive() = if (this == LabelUiModel.Type.FOLDERS) 1 else 0
 
 // region Selected Labels extensions

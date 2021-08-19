@@ -121,6 +121,7 @@ import ch.protonmail.android.compose.presentation.ui.MessageRecipientArrayAdapte
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.contacts.PostResult;
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
@@ -1608,7 +1609,7 @@ public class ComposeMessageActivity
         for (Map.Entry<String, List<MessageRecipient>> entry : groupedRecipients.entrySet()) {
             List<MessageRecipient> groupRecipients = entry.getValue();
             String groupName = entry.getKey();
-            ContactLabelEntity group = composeMessageViewModel.getContactGroupByName(groupName);
+            ContactLabelUiModel group = composeMessageViewModel.getContactGroupByName(groupName);
             if (group != null) {
                 String name = String.format(getString(R.string.composer_group_count_of), groupName, group.getContactEmailsCount(), group.getContactEmailsCount());
                 if (groupRecipients.size() != group.getContactEmailsCount()) {

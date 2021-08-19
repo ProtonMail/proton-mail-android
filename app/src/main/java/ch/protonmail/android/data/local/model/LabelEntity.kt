@@ -31,6 +31,11 @@ const val COLUMN_LABEL_DISPLAY = "Display"
 const val COLUMN_LABEL_ORDER = "LabelOrder"
 const val COLUMN_LABEL_EXCLUSIVE = "Exclusive"
 const val COLUMN_LABEL_TYPE = "Type"
+const val COLUMN_LABEL_PATH = "Path"
+const val COLUMN_LABEL_NOTIFY = "Notify"
+const val COLUMN_LABEL_PARENT_ID = "ParentID"
+const val COLUMN_LABEL_EXPANDED = "Expanded"
+const val COLUMN_LABEL_STICKY = "Sticky"
 
 @Entity(
     tableName = TABLE_LABELS,
@@ -48,16 +53,34 @@ data class LabelEntity constructor(
     @ColumnInfo(name = COLUMN_LABEL_COLOR, index = true)
     val color: String,
 
-    @ColumnInfo(name = COLUMN_LABEL_DISPLAY)
-    val display: Int,
-
     @ColumnInfo(name = COLUMN_LABEL_ORDER)
     val order: Int,
 
-    @ColumnInfo(name = COLUMN_LABEL_EXCLUSIVE)
-    val exclusive: Boolean,
-
     @ColumnInfo(name = COLUMN_LABEL_TYPE)
-    val type: Int
+    val type: Int,
+
+    @ColumnInfo(name = COLUMN_LABEL_PATH)
+    val path: String,
+
+    @ColumnInfo(name = COLUMN_LABEL_PARENT_ID)
+    val parentId: String,
+
+    @ColumnInfo(name = COLUMN_LABEL_EXPANDED)
+    val expanded: Int, // v4
+
+    @ColumnInfo(name = COLUMN_LABEL_STICKY)
+    val sticky: Int, // v4
+
+    @ColumnInfo(name = COLUMN_LABEL_NOTIFY)
+    val notify: Int = 0,
+
+    // TODO: Remove these two in the new DB
+    @Deprecated("This value has been removed in the v4 of Labels API, please do not use")
+    @ColumnInfo(name = COLUMN_LABEL_EXCLUSIVE)
+    val exclusive: Boolean = false,
+
+    @Deprecated("This value has been removed in the v4 of Labels API, please do not use")
+    @ColumnInfo(name = COLUMN_LABEL_DISPLAY)
+    val display: Int = -1
 
 )

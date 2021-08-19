@@ -18,21 +18,17 @@
  */
 package ch.protonmail.android.data.local.model
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState
-import me.proton.core.util.kotlin.EMPTY_STRING
-import java.io.Serializable
+import ch.protonmail.android.core.Constants
 
 // region constants
 const val TABLE_CONTACT_LABEL = "ContactLabel"
 // endregion
 
+// TODO: Investigate if it can be replaced with [LabelEntity] and removed
 @Entity(
     tableName = TABLE_CONTACT_LABEL,
     indices = [Index(COLUMN_LABEL_ID, unique = true)]
@@ -41,7 +37,7 @@ data class ContactLabelEntity @JvmOverloads constructor(
 
     @ColumnInfo(name = COLUMN_LABEL_ID)
     @PrimaryKey
-    val ID: String = "",
+    val id: String = "",
 
     @ColumnInfo(name = COLUMN_LABEL_NAME)
     val name: String = "",
@@ -49,59 +45,33 @@ data class ContactLabelEntity @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_LABEL_COLOR)
     val color: String = "",
 
-    @ColumnInfo(name = COLUMN_LABEL_DISPLAY)
-    val display: Int = 0,
-
     @ColumnInfo(name = COLUMN_LABEL_ORDER)
     val order: Int = 0,
 
-    @ColumnInfo(name = COLUMN_LABEL_EXCLUSIVE)
-    val exclusive: Boolean = false,
-
     @ColumnInfo(name = COLUMN_LABEL_TYPE)
-    val type: Int = 1
+    val type: Int = Constants.LABEL_TYPE_MESSAGE_LABEL,
 
-) : Parcelable, Serializable {
+    @ColumnInfo(name = COLUMN_LABEL_PATH)
+    val path: String = "",
 
-    var contactEmailsCount: Int = 0
-    var contactDataCount: Int = 0
+    @ColumnInfo(name = COLUMN_LABEL_NOTIFY)
+    val notify: Int = 0,
 
-    @Ignore
-    var isSelected: ContactEmailGroupSelectionState = ContactEmailGroupSelectionState.DEFAULT
+    @ColumnInfo(name = COLUMN_LABEL_PARENT_ID)
+    val parentId: String = "",
 
-    constructor(parcel: Parcel) : this(
-        parcel.readString() ?: EMPTY_STRING,
-        parcel.readString() ?: EMPTY_STRING,
-        parcel.readString() ?: EMPTY_STRING,
-        parcel.readInt(),
-        parcel.readInt(),
-        parcel.readByte() != 0.toByte(),
-        parcel.readInt()
-    ) {
-        contactEmailsCount = parcel.readInt()
-        contactDataCount = parcel.readInt()
-    }
+    @ColumnInfo(name = COLUMN_LABEL_EXPANDED)
+    val expanded: Int = 0, // v4
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(ID)
-        parcel.writeString(name)
-        parcel.writeString(color)
-        parcel.writeInt(display)
-        parcel.writeInt(order)
-        parcel.writeByte(if (exclusive) 1 else 0)
-        parcel.writeInt(type)
-        parcel.writeInt(contactEmailsCount)
-        parcel.writeInt(contactDataCount)
-    }
+    @ColumnInfo(name = COLUMN_LABEL_STICKY)
+    val sticky: Int = 0, // v4
 
-    override fun describeContents(): Int = 0
+    // TODO: Remove these two in the new DB
+    @Deprecated("This value has been removed in the v4 of Labels API, please do not use")
+    @ColumnInfo(name = COLUMN_LABEL_DISPLAY)
+    val display: Int = 0,
 
-    companion object CREATOR : Parcelable.Creator<ContactLabelEntity> {
-
-        override fun createFromParcel(parcel: Parcel): ContactLabelEntity =
-            ContactLabelEntity(parcel)
-
-        override fun newArray(size: Int): Array<ContactLabelEntity?> =
-            arrayOfNulls(size)
-    }
-}
+    @Deprecated("This value has been removed in the v4 of Labels API, please do not use")
+    @ColumnInfo(name = COLUMN_LABEL_EXCLUSIVE)
+    val exclusive: Boolean = false
+)

@@ -74,7 +74,7 @@ object Constants {
     const val MIME_TYPE_MULTIPART_MIXED = "multipart/mixed"
 
     // Label types
-    const val LABEL_TYPE_MESSAGE = 1
+    const val LABEL_TYPE_MESSAGE_LABEL = 1
     const val LABEL_TYPE_CONTACT_GROUPS = 2
     const val LABEL_TYPE_MESSAGE_FOLDERS = 3 // from labels API v4
 

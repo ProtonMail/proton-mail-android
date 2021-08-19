@@ -32,7 +32,7 @@ data class LabelUiModel(
     @DrawableRes val image: Int,
     @ColorInt val color: Int,
     val isChecked: Boolean,
-    val display: Int,
+    val expanded: Int,
     val type: Type
 ) {
 

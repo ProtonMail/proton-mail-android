@@ -25,6 +25,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
+import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.Single
@@ -47,6 +48,7 @@ class ContactGroupDetailsRepositoryTest {
     //region rules
     @get:Rule
     val rule = InstantTaskExecutorRule()
+
     @get:Rule
     val rule2 = TestSchedulerRule()
     //endregion
@@ -63,7 +65,7 @@ class ContactGroupDetailsRepositoryTest {
 
     @Test
     fun testCorrectContactGroupReturnedById() {
-        val label1 = ContactLabelEntity("a", "aa")
+        val label1 = ContactLabelEntity("a", "aa", "color", 0, 1, EMPTY_STRING, 0, "parent", 0)
         every { database.findContactGroupByIdAsync("") } returns Single.just(label1)
 
         val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("").test()
@@ -73,7 +75,7 @@ class ContactGroupDetailsRepositoryTest {
 
     @Test
     fun testReturnNullWrongContactId() {
-        val label1 = ContactLabelEntity("a", "aa")
+        val label1 = ContactLabelEntity("a", "aa", "color", 0, 1, EMPTY_STRING, 0, "parent", 0)
         every { database.findContactGroupByIdAsync("a") } returns Single.just(label1)
         every { database.findContactGroupByIdAsync(any()) } returns Single.error(
             EmptyResultSetException("no such element")

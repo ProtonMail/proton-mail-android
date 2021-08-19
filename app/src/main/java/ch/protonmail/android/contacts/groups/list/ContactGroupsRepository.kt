@@ -19,6 +19,7 @@
 package ch.protonmail.android.contacts.groups.list
 
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
@@ -38,11 +39,22 @@ class ContactGroupsRepository @Inject constructor(
 
     fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactDao.observeJoins()
 
-    fun observeContactGroups(filter: String): Flow<List<ContactLabelEntity>> =
+    fun observeContactGroups(filter: String): Flow<List<ContactLabelUiModel>> =
         contactDao.findContactGroups("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
             .map { labels ->
-                labels.map { label -> label.contactEmailsCount = contactDao.countContactEmailsByLabelId(label.ID) }
-                labels
+                labels.map { entity ->
+                    ContactLabelUiModel(
+                        id = entity.id,
+                        name = entity.name,
+                        color = entity.color,
+                        type = entity.type,
+                        path = entity.path,
+                        parentId = entity.parentId,
+                        expanded = entity.expanded,
+                        sticky = entity.sticky,
+                        contactEmailsCount = contactDao.countContactEmailsByLabelIdBlocking(entity.id)
+                    )
+                }
             }
             .flowOn(dispatchers.Io)
 

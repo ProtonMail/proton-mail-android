@@ -18,6 +18,10 @@
  */
 package ch.protonmail.android.jobs;
 
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_EMAIL_EXIST;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_INVALID_EMAIL;
+
 import android.database.sqlite.SQLiteBlobTooBigException;
 
 import androidx.annotation.NonNull;
@@ -34,6 +38,7 @@ import ch.protonmail.android.api.models.ContactEncryptedData;
 import ch.protonmail.android.api.models.CreateContactV2BodyItem;
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody;
 import ch.protonmail.android.api.rx.ThreadSchedulers;
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel;
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.crypto.CipherText;
@@ -44,7 +49,6 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactData;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin;
-import ch.protonmail.android.data.local.model.ContactLabelEntity;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
 import ch.protonmail.android.events.ContactEvent;
@@ -54,10 +58,6 @@ import ezvcard.VCard;
 import ezvcard.property.Email;
 import timber.log.Timber;
 
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_EMAIL_EXIST;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_INVALID_EMAIL;
-
 public class UpdateContactJob extends ProtonMailEndlessJob {
 
     private final String mContactId;
@@ -65,7 +65,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
     private final List<ContactEmail> mContactEmails;
     private final String mEncryptedData;
     private final String mSignedData;
-    private final Map<ContactEmail, List<ContactLabelEntity>> mMapEmailGroupsIds;
+    private final Map<ContactEmail, List<ContactLabelUiModel>> mMapEmailGroupsIds;
 
     private transient ContactDao mContactDao;
 
@@ -75,7 +75,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             @NonNull List<ContactEmail> contactEmails,
             String encryptedData,
             String signedData,
-            Map<ContactEmail, List<ContactLabelEntity>> mapEmailGroupsIds
+            Map<ContactEmail, List<ContactLabelUiModel>> mapEmailGroupsIds
     ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT));
         mContactId = contactId;
@@ -158,11 +158,11 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             mContactDao.clearByEmailBlocking(emailToClear);
         }
         mContactDao.saveAllContactsEmailsBlocking(contactEmails);
-        Map<ContactLabelEntity, List<String>> mapContactGroupContactEmails = new HashMap<>();
+        Map<ContactLabelUiModel, List<String>> mapContactGroupContactEmails = new HashMap<>();
         if (updateJoins) {
             for (ContactEmail email : contactEmails) {
-                List<ContactLabelEntity> labels = findContactLabelsByEmail(email);
-                for (ContactLabelEntity label : labels) {
+                List<ContactLabelUiModel> labels = findContactLabelsByEmail(email);
+                for (ContactLabelUiModel label : labels) {
                     List<String> labelEmails = mapContactGroupContactEmails.get(label);
                     if (labelEmails == null) {
                         labelEmails = new ArrayList<>();
@@ -202,8 +202,8 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             contact.setEmails(contactEmails);
             mContactDao.insertFullContactDetailsBlocking(contact);
             if (updateJoins) {
-                for (Map.Entry<ContactLabelEntity, List<String>> entry : mapContactGroupContactEmails.entrySet()) {
-                    updateJoins(entry.getKey().getID(), entry.getKey().getName(), entry.getValue());
+                for (Map.Entry<ContactLabelUiModel, List<String>> entry : mapContactGroupContactEmails.entrySet()) {
+                    updateJoins(entry.getKey().getId(), entry.getKey().getName(), entry.getValue());
                 }
             } else {
                 AppUtil.postEventOnUi(new ContactEvent(ContactEvent.SAVED, true));
@@ -235,8 +235,8 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         }
     }
 
-    private List<ContactLabelEntity> findContactLabelsByEmail(ContactEmail contactEmail) {
-        for (Map.Entry<ContactEmail, List<ContactLabelEntity>> entry : mMapEmailGroupsIds.entrySet()) {
+    private List<ContactLabelUiModel> findContactLabelsByEmail(ContactEmail contactEmail) {
+        for (Map.Entry<ContactEmail, List<ContactLabelUiModel>> entry : mMapEmailGroupsIds.entrySet()) {
             if (entry.getKey().getEmail().equals(contactEmail.getEmail())) {
                 return entry.getValue();
             }

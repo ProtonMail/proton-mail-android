@@ -22,6 +22,7 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import android.graphics.Color
 import ch.protonmail.android.R
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
@@ -69,7 +70,11 @@ class LabelActionItemUiModelMapperTest {
             display = 0,
             order = 0,
             exclusive = false,
-            type = 0
+            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            path = "a/b",
+            parentId = "parentId",
+            expanded = 0,
+            sticky = 0
         )
         val currentLabelsIds = listOf(labelId1)
         val sheetType = LabelsActionSheet.Type.LABEL
@@ -104,7 +109,11 @@ class LabelActionItemUiModelMapperTest {
             display = 0,
             order = 0,
             exclusive = false,
-            type = 0
+            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            path = "a/b",
+            parentId = "parentId",
+            expanded = 0,
+            sticky = 0
         )
         val currentLabelsIds = listOf(labelId1)
         val sheetType = LabelsActionSheet.Type.FOLDER

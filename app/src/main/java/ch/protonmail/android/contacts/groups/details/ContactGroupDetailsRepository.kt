@@ -49,4 +49,7 @@ class ContactGroupDetailsRepository @Inject constructor(
 
     fun filterContactGroupEmails(id: String, filter: String): Flow<List<ContactEmail>> =
         contactDao.filterContactsEmailsByContactGroup(id, "%$filter%")
+
+    suspend fun getContactEmailsCount(contactGroupId: String) =
+        contactDao.countContactEmailsByLabelId(contactGroupId)
 }

@@ -23,6 +23,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.SendPreference
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
@@ -31,7 +32,6 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
@@ -66,14 +67,6 @@ class ComposeMessageRepository @Inject constructor(
 
     val lazyManager = resettableManager()
 
-    /**
-     * Reloads all statically required dependencies when currently active user changes.
-     */
-    fun reloadDependenciesForUser(userId: UserId) {
-        messageDetailsRepository.reloadDependenciesForUser(userId)
-        messageDao = databaseProvider.provideMessageDao(userId)
-    }
-
     private val contactDao by resettableLazy(lazyManager) {
         databaseProvider.provideContactDao(userManager.requireCurrentUserId())
     }
@@ -87,35 +80,46 @@ class ComposeMessageRepository @Inject constructor(
         listOfDaos
     }
 
-    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Observable<List<ContactLabelEntity>> {
+    /**
+     * Reloads all statically required dependencies when currently active user changes.
+     */
+    fun reloadDependenciesForUser(userId: UserId) {
+        messageDetailsRepository.reloadDependenciesForUser(userId)
+        messageDao = databaseProvider.provideMessageDao(userId)
+    }
+
+    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Observable<List<ContactLabelUiModel>> {
         var tempContactDao: ContactDao = contactDao
         if (combinedContacts) {
             tempContactDao = contactDaos[userId]!!
         }
         return tempContactDao.findContactGroupsObservable()
-            .flatMap { list ->
-                Observable.fromIterable(list)
-                    .map {
-                        it.contactEmailsCount = tempContactDao.countContactEmailsByLabelIdBlocking(it.ID)
-                        it
-                    }
-                    .toList()
-                    .toFlowable()
+            .map { list ->
+                list.map { entity ->
+                    ContactLabelUiModel(
+                        id = entity.id,
+                        name = entity.name,
+                        color = entity.color,
+                        type = entity.type,
+                        path = entity.path,
+                        parentId = entity.parentId,
+                        expanded = entity.expanded,
+                        sticky = entity.sticky,
+                        contactEmailsCount = tempContactDao.countContactEmailsByLabelIdBlocking(entity.id)
+                    )
+                }
             }
             .toObservable()
     }
 
-    fun getContactGroupFromDB(groupName: String): Single<ContactLabelEntity> {
-        return contactDao.findContactGroupByNameAsync(groupName)
-    }
+    fun getContactGroupFromDB(groupName: String): Single<ContactLabelEntity> =
+        contactDao.findContactGroupByNameAsync(groupName)
 
-    fun getContactGroupEmails(groupId: String): Observable<List<ContactEmail>> {
-        return contactDao.findAllContactsEmailsByContactGroupAsyncObservable(groupId).toObservable()
-    }
+    fun getContactGroupEmails(groupId: String): Observable<List<ContactEmail>> =
+        contactDao.findAllContactsEmailsByContactGroupAsyncObservable(groupId).toObservable()
 
-    fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> {
-        return contactDao.findAllContactsEmailsByContactGroupBlocking(groupId)
-    }
+    fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> =
+        contactDao.findAllContactsEmailsByContactGroupBlocking(groupId)
 
     suspend fun getAttachments(message: Message, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {

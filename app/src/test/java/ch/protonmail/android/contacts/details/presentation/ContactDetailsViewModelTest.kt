@@ -31,6 +31,7 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsRe
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.utils.FileHelper
 import io.mockk.coEvery
@@ -113,7 +114,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { fetchContactDetails(contactId) } returns flowOf(fetchContactResult)
         val groupId1 = "ID1"
         val groupName1 = "name1"
-        val contactLabel = ContactLabelEntity(groupId1, groupName1, "color", 1, 0, false, 2)
+        val contactLabel = ContactLabelEntity(groupId1, groupName1, "color", 1,  Constants.LABEL_TYPE_MESSAGE_LABEL, "a/b", 0, "parentId")
         val fetchContactGroupResult = FetchContactGroupsResult(
             listOf(contactLabel)
         )
@@ -158,7 +159,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
         val groupId1 = "ID1"
         val groupName1 = "name1"
-        val contactLabel = ContactLabelEntity(groupId1, groupName1, "color", 1, 0, false, 2)
+        val contactLabel = ContactLabelEntity(groupId1, groupName1, "color", 1, Constants.LABEL_TYPE_MESSAGE_LABEL, "a/b", 0, "parentId")
         val fetchContactGroupResult = FetchContactGroupsResult(
             listOf(contactLabel)
         )

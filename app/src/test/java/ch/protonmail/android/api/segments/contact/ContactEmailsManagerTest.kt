@@ -87,17 +87,15 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             name = labelName1,
             path = "",
             color = labelColor,
-            type = 0,
+            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
             notify = 0,
             order = 0,
             expanded = null,
-            sticky = null,
-            display = null,
-            exclusive = 0
+            sticky = null
         )
         val labelList = listOf(label)
         val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
-        val contactLabel = ContactLabelEntity(ID = labelId1, name = labelName1, color = labelColor, display = 0, order = 0, exclusive = false, type = 0)
+        val contactLabel = ContactLabelEntity(id = labelId1, name = labelName1, color = labelColor, display = 0, order = 0, exclusive = false, type = Constants.LABEL_TYPE_MESSAGE_LABEL)
         val contactLabelList = listOf(contactLabel)
         val contactEmailId = "emailId1"
         val labelIds = listOf(labelId1)
@@ -133,16 +131,14 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             name = labelName1,
             path = "",
             color = labelColor,
-            type = 0,
+            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
             notify = 0,
             order = 0,
             expanded = null,
-            sticky = null,
-            display = null,
-            exclusive = 0
+            sticky = null
         )
         val labelList = listOf(label)
-        val contactLabel = ContactLabelEntity(ID = labelId1, name = labelName1, color = labelColor, display = 0, order = 0, exclusive = false, type = 0)
+        val contactLabel = ContactLabelEntity(id = labelId1, name = labelName1, color = labelColor, display = 0, order = 0, exclusive = false, type = Constants.LABEL_TYPE_MESSAGE_LABEL)
         val contactLabelList = listOf(contactLabel)
         val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
         val contactEmailId1 = "emailId1"

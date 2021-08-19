@@ -39,23 +39,27 @@ private const val PATH_LABEL_ID = "label_id"
 
 interface LabelService : BaseRetrofitApi {
 
-    @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_MESSAGE)
+    @GET("v4/labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_MESSAGE_LABEL)
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun fetchLabels(): LabelsResponse
 
     // this is coded here and not passed as a param because there is no point when it is a constant always
-    @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_CONTACT_GROUPS)
+    @GET("v4/labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_CONTACT_GROUPS)
     suspend fun fetchContactGroups(): ContactGroupsResponse
 
-    @POST("labels")
+    @GET("v4/labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_MESSAGE_FOLDERS)
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun fetchFolders(): LabelsResponse
+
+    @POST("v4/labels")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun createLabel(@Body label: LabelRequestBody): LabelResponse
 
-    @PUT("labels/{$PATH_LABEL_ID}")
+    @PUT("v4/labels/{$PATH_LABEL_ID}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun updateLabel(@Path(PATH_LABEL_ID) labelId: String, @Body label: LabelRequestBody): LabelResponse
 
-    @DELETE("labels/{$PATH_LABEL_ID}")
+    @DELETE("v4/labels/{$PATH_LABEL_ID}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun deleteLabel(@Path(PATH_LABEL_ID) labelId: String)
 }

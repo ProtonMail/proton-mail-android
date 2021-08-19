@@ -27,25 +27,38 @@ import kotlinx.serialization.Serializable
 data class Label(
     @SerialName(Fields.Label.ID)
     val id: String,
+
+    //required, cannot be same as an existing label of this Type. Max length is 100 characters
     @SerialName(Fields.Label.NAME)
     val name: String,
+
     @SerialName(Fields.Label.PATH)
     val path: String,
+
+    // required, must match default colors
     @SerialName(Fields.Label.COLOR)
     val color: String,
+
+    // required, 1 => Message Labels (default), 2 => Contact Groups, 3 => Message Folders
     @SerialName(Fields.Label.TYPE)
-    val type: Int?,
+    val type: Int,
+
+    // optional, 0 => no desktop/email notifications, 1 => notifications, folders only, default is 1 for folders
     @SerialName(Fields.Label.NOTIFY)
     val notify: Int,
+
     @SerialName(Fields.Label.ORDER)
     val order: Int?,
-    @SerialName(Fields.Label.EXPANDED) // v4
-    val expanded: Int? = null,
-    @SerialName(Fields.Label.STICKY) // v4
-    val sticky: Int? = null,
-    @SerialName(Fields.Label.DISPLAY) // v3
-    val display: Int?,
-    @SerialName(Fields.Label.EXCLUSIVE) // v3
-    val exclusive: Int?
 
+    // optional, encrypted label id of parent folder, default is root level
+    @SerialName(Fields.Label.PARENT_ID)
+    val parentId: String? = null,
+
+    // v4 optional, 0 => collapse and hide sub-folders, 1 => expanded and show sub-folders
+    @SerialName(Fields.Label.EXPANDED)
+    val expanded: Int?,
+
+    // v4 optional, 0 => not sticky, 1 => stick to the page in the sidebar
+    @SerialName(Fields.Label.STICKY)
+    val sticky: Int?,
 )

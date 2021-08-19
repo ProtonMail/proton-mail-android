@@ -118,13 +118,19 @@ class ContactGroupDetailsViewModel @Inject constructor(
     }
 
     private suspend fun updateContactGroup() {
-        runCatching { contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.contactId) }
+        runCatching {
+            val contactGroupDetails = contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.contactId)
+            val contactEmailsCount = contactGroupDetailsRepository.getContactEmailsCount(_contactLabel.contactId)
+            contactGroupDetails to contactEmailsCount
+        }
             .fold(
-                onSuccess = { contactLabel ->
+                onSuccess = { contactPair ->
+                    val contactLabel = contactPair.first
+                    val contactEmailsCount = contactPair.second
                     Timber.v("ContactLabel: $contactLabel retrieved")
                     contactLabel?.let { label ->
-                        _contactLabel = contactsMapper.mapLabelToContactGroup(label)
-                        _setupUIData.value = contactsMapper.mapLabelToContactGroup(label)
+                        _contactLabel = contactsMapper.mapLabelEntityToContactGroup(label, contactEmailsCount)
+                        _setupUIData.value = contactsMapper.mapLabelEntityToContactGroup(label, contactEmailsCount)
                     }
                 },
                 onFailure = { throwable ->

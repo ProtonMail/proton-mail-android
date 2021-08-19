@@ -20,13 +20,14 @@ package ch.protonmail.android.contacts.groups
 
 import android.graphics.Color
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
@@ -66,9 +67,13 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var contactGroupsViewModel: ContactGroupsViewModel
 
-    private val label1 = ContactLabelEntity("a", "aa")
-    private val label2 = ContactLabelEntity("b", "bb")
-    private val label3 = ContactLabelEntity("c", "cc")
+    private val testPath = "test/path1234"
+    private val label1 =
+        ContactLabelUiModel("a", "aa", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
+    private val label2 =
+        ContactLabelUiModel("b", "bb", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
+    private val label3 =
+        ContactLabelUiModel("c", "cc", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
 
     private val testColorInt = 871
 
@@ -91,19 +96,19 @@ class ContactGroupsViewModelTest : CoroutinesTest {
         val resultLiveData = contactGroupsViewModel.contactGroupsResult.testObserver()
         val contactLabels = listOf(label1, label2, label3)
         val listItem1 = ContactGroupListItem(
-            label1.ID,
+            label1.id,
             label1.name,
             0,
             color = testColorInt,
         )
         val listItem2 = ContactGroupListItem(
-            label2.ID,
+            label2.id,
             label2.name,
             0,
             color = testColorInt,
         )
         val listItem3 = ContactGroupListItem(
-            label3.ID,
+            label3.id,
             label3.name,
             0,
             color = testColorInt,

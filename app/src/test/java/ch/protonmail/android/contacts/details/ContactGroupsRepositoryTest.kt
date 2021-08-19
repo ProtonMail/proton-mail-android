@@ -19,7 +19,9 @@
 package ch.protonmail.android.contacts.details
 
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
@@ -53,10 +55,28 @@ class ContactGroupsRepositoryTest {
 
     private val dispatcherProvider = TestDispatcherProvider
 
-    private val label1 = ContactLabelEntity("a", "aa")
-    private val label2 = ContactLabelEntity("b", "bb")
-    private val label3 = ContactLabelEntity("c", "cc")
-    private val label4 = ContactLabelEntity("d", "dd")
+    private val label1 = ContactLabelEntity(
+        id = "a",
+        name = "aa",
+        color = "testColor",
+        type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+        path = "a/b",
+        parentId = "parentId",
+        expanded = 0,
+        sticky = 0
+    )
+
+    private val label1UiModel = ContactLabelUiModel(
+        id = "a",
+        name = "aa",
+        color = "testColor",
+        type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+        path = "a/b",
+        parentId = "parentId",
+        expanded = 0,
+        sticky = 0,
+        contactEmailsCount = 0
+    )
 
     @BeforeTest
     fun setUp() {
@@ -76,7 +96,7 @@ class ContactGroupsRepositoryTest {
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, result)
+            assertEquals(listOf(label1UiModel), result)
         }
     }
 
@@ -93,7 +113,7 @@ class ContactGroupsRepositoryTest {
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, result)
+            assertEquals(listOf(label1UiModel), result)
         }
     }
 
@@ -110,13 +130,22 @@ class ContactGroupsRepositoryTest {
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, result)
+            assertEquals(listOf(label1UiModel), result)
         }
     }
 
     @Test
     fun saveContactGroupStoresGivenContactGroupInDatabase() {
-        val contactGroup = ContactLabelEntity("Id", "name", "color")
+        val contactGroup = ContactLabelEntity(
+            id = "Id",
+            name = "name",
+            color = "color",
+            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            path = "a/b",
+            parentId = "parentId",
+            expanded = 0,
+            sticky = 0
+        )
 
         contactGroupsRepository.saveContactGroup(contactGroup)
 

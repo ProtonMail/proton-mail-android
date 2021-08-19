@@ -51,7 +51,7 @@ internal class LabelUiModelMapper : UiModelMapper<LabelEntity, LabelUiModel> {
             image = image,
             color = normalizeColor(color),
             isChecked = false,
-            display = display,
+            expanded = display,
             type = type
         )
     }

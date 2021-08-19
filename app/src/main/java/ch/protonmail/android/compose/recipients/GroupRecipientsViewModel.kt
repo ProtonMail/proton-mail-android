@@ -72,7 +72,7 @@ class GroupRecipientsViewModel @Inject constructor(
             .observeOn(ThreadSchedulers.main())
             .flatMapObservable {
                 _groupDetails = it
-                composeMessageRepository.getContactGroupEmails(it.ID)
+                composeMessageRepository.getContactGroupEmails(it.id)
             }
             .subscribe(
                 { it ->

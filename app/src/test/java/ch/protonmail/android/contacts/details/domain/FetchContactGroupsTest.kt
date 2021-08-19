@@ -21,6 +21,7 @@ package ch.protonmail.android.contacts.details.domain
 
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabelEntity
 import io.mockk.coEvery
@@ -57,8 +58,8 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val contactEmail1 = ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds)
         val contactEmail2 = ContactEmail(contactEmailId2, "test2@abc.com", "name1", labelIds = labelIds)
         val list1 = listOf(contactEmail1, contactEmail2)
-        val contactLabel1 = ContactLabelEntity(labelId1, "name1", "color1", 1, 0, false, 2)
-        val contactLabel2 = ContactLabelEntity(labelId2, "name2", "color2", 1, 0, false, 2)
+        val contactLabel1 = ContactLabelEntity(labelId1, "name1", "color1", 1, Constants.LABEL_TYPE_MESSAGE_LABEL, "a/b", 0, "parentId")
+        val contactLabel2 = ContactLabelEntity(labelId2, "name2", "color2", 1, Constants.LABEL_TYPE_MESSAGE_LABEL, "a/b", 0, "parentId")
         every { repository.observeContactEmails(contactId) } returns flowOf(list1)
         coEvery { repository.getContactGroupsLabelForId(contactEmailId1) } returns listOf(contactLabel1)
         coEvery { repository.getContactGroupsLabelForId(contactEmailId2) } returns listOf(contactLabel2)
@@ -90,9 +91,9 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val contactEmail3 = ContactEmail(contactEmailId3, "test3@abc.com", "name3", labelIds = labelIds)
         val list1 = listOf(contactEmail1, contactEmail2)
         val list2 = listOf(contactEmail3)
-        val contactLabel1 = ContactLabelEntity(labelId1, "name1", "color1", 1, 0, false, 0)
-        val contactLabel2 = ContactLabelEntity(labelId2, "name2", "color2", 1, 0, false, 1)
-        val contactLabel3 = ContactLabelEntity(labelId3, "name3", "color3", 1, 0, false, 2)
+        val contactLabel1 = ContactLabelEntity(labelId1, "name1", "color1", 1, Constants.LABEL_TYPE_MESSAGE_LABEL, "a/b", 0,"parentId")
+        val contactLabel2 = ContactLabelEntity(labelId2, "name2", "color2", 1, Constants.LABEL_TYPE_MESSAGE_LABEL, "a/b", 0, "parentId")
+        val contactLabel3 = ContactLabelEntity(labelId3, "name3", "color3", 1, Constants.LABEL_TYPE_MESSAGE_LABEL, "a/b", 0, "parentId")
         every { repository.observeContactEmails(contactId) } returns flow {
             emit(list1)
             emit(list2)

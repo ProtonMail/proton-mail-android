@@ -77,14 +77,13 @@ class CreateContactGroupWorkerTest {
             id = "labelID",
             name = "name",
             color = "color",
-            path = "",
-            type = 0,
             notify = 0,
             order = 0,
-            expanded = null,
-            sticky = null,
-            display = null,
-            exclusive = null
+            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            path = "a/b",
+            parentId = "parentId",
+            expanded = 0,
+            sticky = 0
         )
     }
 
@@ -103,13 +102,17 @@ class CreateContactGroupWorkerTest {
 //        coEvery { apiManager.updateLabel(testUserId, any(), any()) } returns createContactGroupApiResponse
         //every { createContactGroupApiResponse.label } returns ContactLabelEntity("labelID", "name", "color")
         val labelEntity = ContactLabelEntity(
-            ID = "labelID",
+            id = "labelID",
             name = "name",
             color = "color",
             order = 0,
             display = 0,
             exclusive = false,
-            type = 0
+            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            path = "a/b",
+            parentId = "parentId",
+            expanded = 0,
+            sticky = 0
         )
         every { labelsMapper.mapLabelToContactLabelEntity(any()) } returns labelEntity
     }
@@ -257,13 +260,11 @@ class CreateContactGroupWorkerTest {
                         name = "name",
                         color = "color",
                         path = "",
-                        type = 0,
+                        type = Constants.LABEL_TYPE_MESSAGE_LABEL,
                         notify = 0,
                         order = 0,
                         expanded = null,
-                        sticky = null,
-                        display = null,
-                        exclusive = null
+                        sticky = null
                     )
                 )
             )
@@ -285,11 +286,11 @@ class CreateContactGroupWorkerTest {
         LabelRequestBody(
             name = "labelName",
             color = "labelColor",
-            display = 0,
-            exclusive = 0,
             type = Constants.LABEL_TYPE_CONTACT_GROUPS,
             parentId = EMPTY_STRING,
-            notify = 0
+            notify = 0,
+            expanded = 0,
+            sticky = 0
         )
 
 }

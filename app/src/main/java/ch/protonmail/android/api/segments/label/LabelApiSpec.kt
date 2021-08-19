@@ -31,6 +31,8 @@ interface LabelApiSpec {
 
     suspend fun fetchContactGroups(userId: UserId): ApiResult<ContactGroupsResponse>
 
+    suspend fun fetchFolders(userId: UserId): ApiResult<ContactGroupsResponse>
+
     suspend fun createLabel(userId: UserId, label: LabelRequestBody): ApiResult<LabelResponse>
 
     suspend fun updateLabel(userId: UserId, labelId: String, label: LabelRequestBody): ApiResult<LabelResponse>

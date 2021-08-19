@@ -44,8 +44,7 @@ internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
 internal const val KEY_INPUT_DATA_IS_UPDATE = "keyInputDataIsUpdate"
 internal const val KEY_INPUT_DATA_LABEL_COLOR = "keyInputDataLabelColor"
-internal const val KEY_INPUT_DATA_LABEL_DISPLAY = "keyInputDataLabelIsDisplay"
-internal const val KEY_INPUT_DATA_LABEL_EXCLUSIVE = "keyInputDataLabelExclusive"
+internal const val KEY_INPUT_DATA_LABEL_EXPANDED = "keyInputDataLabelExpanded"
 internal const val KEY_INPUT_DATA_LABEL_TYPE = "keyInputDataLabelType"
 internal const val KEY_POST_LABEL_WORKER_RESULT_ERROR = "keyResultDataPostLabelWorkerError"
 
@@ -62,11 +61,10 @@ class PostLabelWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val labelName = getLabelNameParam() ?: return Result.failure()
         val color = getLabelColorParam() ?: return Result.failure()
-        val display = getDisplayParam()
-        val exclusive = getExclusiveParam()
+        val expanded = getExpandedParam()
         val type = getTypeParam()
 
-        return when (val response = createOrUpdateLabel(labelName, color, display, exclusive, type)) {
+        return when (val response = createOrUpdateLabel(labelName, color, expanded, type)) {
             is ApiResult.Success -> {
                 val labelResponse = response.value
                 if (labelResponse.label.id.isEmpty()) {
@@ -93,8 +91,7 @@ class PostLabelWorker @AssistedInject constructor(
     private suspend fun createOrUpdateLabel(
         labelName: String,
         color: String,
-        display: Int,
-        exclusive: Int,
+        expanded: Int,
         type: Int
     ): ApiResult<LabelResponse> {
         val requestBody = LabelRequestBody(
@@ -103,8 +100,8 @@ class PostLabelWorker @AssistedInject constructor(
             type = type,
             parentId = null,
             notify = 0,
-            exclusive = exclusive,
-            display = display
+            expanded = expanded,
+            sticky = 0
         )
 
         val userId = requireNotNull(accountManager.getPrimaryUserId().first())
@@ -119,11 +116,9 @@ class PostLabelWorker @AssistedInject constructor(
 
     private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 
-    private fun getExclusiveParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_EXCLUSIVE, 0)
+    private fun getTypeParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, Constants.LABEL_TYPE_MESSAGE_LABEL)
 
-    private fun getTypeParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, Constants.LABEL_TYPE_MESSAGE)
-
-    private fun getDisplayParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_DISPLAY, 0)
+    private fun getExpandedParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_EXPANDED, 0)
 
     private fun getLabelColorParam() = inputData.getString(KEY_INPUT_DATA_LABEL_COLOR)
 
@@ -136,11 +131,10 @@ class PostLabelWorker @AssistedInject constructor(
         fun enqueue(
             labelName: String,
             color: String,
-            display: Int? = 0,
-            type: Int? = Constants.LABEL_TYPE_MESSAGE, // default label type
+            expanded: Int? = 0,
+            type: Int? = Constants.LABEL_TYPE_MESSAGE_LABEL, // default label type
             update: Boolean? = false,
-            labelId: String? = null,
-            exclusive: Int? = 0
+            labelId: String? = null
         ): LiveData<WorkInfo> {
 
             val postLabelWorkerRequest = OneTimeWorkRequestBuilder<PostLabelWorker>()
@@ -149,10 +143,9 @@ class PostLabelWorker @AssistedInject constructor(
                         KEY_INPUT_DATA_LABEL_ID to labelId,
                         KEY_INPUT_DATA_LABEL_NAME to labelName,
                         KEY_INPUT_DATA_LABEL_COLOR to color,
-                        KEY_INPUT_DATA_LABEL_EXCLUSIVE to exclusive,
                         KEY_INPUT_DATA_LABEL_TYPE to type,
                         KEY_INPUT_DATA_IS_UPDATE to update,
-                        KEY_INPUT_DATA_LABEL_DISPLAY to display
+                        KEY_INPUT_DATA_LABEL_EXPANDED to expanded
                     )
                 ).build()
 

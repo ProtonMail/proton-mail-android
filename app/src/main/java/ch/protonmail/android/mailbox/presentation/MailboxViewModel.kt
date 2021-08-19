@@ -458,7 +458,7 @@ internal class MailboxViewModel @Inject constructor(
         val userId = userManager.currentUserId ?: return emptyList()
 
         val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.findAllLabels(userId).first()
+        val labels = labelRepository.findAllLabels(userId)
 
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {
@@ -520,7 +520,7 @@ internal class MailboxViewModel @Inject constructor(
 
         val labels = labelIds
             .chunked(Constants.MAX_SQL_ARGUMENTS)
-            .flatMap { labelChunk -> labelRepository.findLabels(userId, labelChunk).first() }
+            .flatMap { labelChunk -> labelRepository.findLabels(userId, labelChunk) }
             .toLabelChipUiModels()
 
         return messages.map { message ->

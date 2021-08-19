@@ -31,6 +31,7 @@ import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabelEntity
@@ -71,7 +72,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
     private val userManager: UserManager
 ) : BaseViewModel(dispatchers) {
 
-    protected lateinit var allContactGroups: List<ContactLabelEntity>
+    protected lateinit var allContactGroups: List<ContactLabelUiModel>
     protected lateinit var allContactEmails: List<ContactEmail>
 
     private var _setupCompleteValue: Boolean = false
@@ -82,7 +83,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
     private val _emailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
     private val _mapEmailGroups: HashMap<String, List<ContactLabelEntity>> = HashMap()
 
-    private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabelEntity>> = MutableLiveData()
+    private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabelUiModel>> = MutableLiveData()
     private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
 
     val setupComplete: LiveData<Event<Boolean>>
@@ -101,12 +102,14 @@ open class ContactDetailsViewModelOld @Inject constructor(
                 list2?.let { _ ->
                     list1.forEach { contactLabel ->
                         val selectedState =
-                            list2.find { selected -> selected.ID == contactLabel.ID } != null
-                        contactLabel.isSelected = if (selectedState) {
-                            SELECTED
-                        } else {
-                            ContactEmailGroupSelectionState.DEFAULT
-                        }
+                            list2.find { selected -> selected.id == contactLabel.id } != null
+                        contactLabel.copy(
+                            isSelected = if (selectedState) {
+                                SELECTED
+                            } else {
+                                ContactEmailGroupSelectionState.DEFAULT
+                            }
+                        )
                     }
                 }
                 Observable.just(list1)
@@ -204,8 +207,20 @@ open class ContactDetailsViewModelOld @Inject constructor(
                     }
                 },
             { groups: List<ContactLabelEntity>,
-              emails: List<ContactEmail> ->
-                allContactGroups = groups
+                emails: List<ContactEmail> ->
+                allContactGroups = groups.map { entity ->
+                    ContactLabelUiModel(
+                        id = entity.id,
+                        name = entity.name,
+                        color = entity.color,
+                        type = entity.type,
+                        path = entity.path,
+                        parentId = entity.parentId,
+                        expanded = entity.expanded,
+                        sticky = entity.sticky,
+                        contactEmailsCount = contactDetailsRepository.getContactEmailsCount(entity.id)
+                    )
+                }
                 allContactEmails = emails
             }
         ).observeOn(ThreadSchedulers.main())

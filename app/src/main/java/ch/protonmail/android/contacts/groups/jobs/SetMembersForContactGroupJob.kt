@@ -40,7 +40,7 @@ class SetMembersForContactGroupJob(
         var id = contactGroupId
         if (TextUtils.isEmpty(id)) {
             val contactLabel = contactsDatabase.findContactGroupByName(contactGroupName)
-            id = contactLabel?.ID ?: ""
+            id = contactLabel?.id ?: ""
         }
         val labelContactsBody = LabelContactsBody(id, membersList)
         getApi().labelContacts(labelContactsBody)

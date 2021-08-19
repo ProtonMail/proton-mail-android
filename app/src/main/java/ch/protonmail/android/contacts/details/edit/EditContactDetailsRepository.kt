@@ -22,6 +22,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabelEntity
@@ -50,7 +51,7 @@ class EditContactDetailsRepository @Inject constructor(
         emails: List<ContactEmail>,
         vCardEncrypted: VCard,
         vCardSigned: VCard,
-        mapEmailGroupsIds: Map<ContactEmail, List<ContactLabelEntity>>
+        mapEmailGroupsIds: Map<ContactEmail, List<ContactLabelUiModel>>
     ) {
         jobManager.addJobInBackground(
             UpdateContactJob(

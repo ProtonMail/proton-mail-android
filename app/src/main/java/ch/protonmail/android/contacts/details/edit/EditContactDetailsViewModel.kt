@@ -26,6 +26,7 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.details.ContactDetailsViewModelOld
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -129,7 +130,7 @@ class EditContactDetailsViewModel @Inject constructor(
     private var _vCardCustomProperties: List<RawProperty>? = null
     private lateinit var _vCardSigned: VCard
     private lateinit var _vCardEncrypted: VCard
-    private lateinit var _mapEmailGroupsIds: Map<ContactEmail, List<ContactLabelEntity>>
+    private lateinit var _mapEmailGroupsIds: Map<ContactEmail, List<ContactLabelUiModel>>
 
     // endregion
     // region default options
@@ -363,12 +364,12 @@ class EditContactDetailsViewModel @Inject constructor(
 
     private suspend fun getContactGroupsForEmailsList(
         contactEmails: List<ContactEmail>,
-        contactGroups: List<ContactLabelEntity>
-    ): Map<ContactEmail, List<ContactLabelEntity>> = withContext(dispatchers.Comp) {
-        val contactsMap = mutableMapOf<ContactEmail, List<ContactLabelEntity>>()
+        contactGroups: List<ContactLabelUiModel>
+    ): Map<ContactEmail, List<ContactLabelUiModel>> = withContext(dispatchers.Comp) {
+        val contactsMap = mutableMapOf<ContactEmail, List<ContactLabelUiModel>>()
         contactEmails.map { contactEmail ->
             val groupsForThisEmail = contactGroups.filter { group ->
-                contactEmail.labelIds?.contains(group.ID) ?: false
+                contactEmail.labelIds?.contains(group.id) ?: false
             }
             contactsMap[contactEmail] = groupsForThisEmail
         }

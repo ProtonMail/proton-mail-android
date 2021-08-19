@@ -46,13 +46,12 @@ import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.feature.account.allLoggedInBlocking
@@ -88,6 +87,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -160,9 +160,9 @@ class ComposeMessageViewModel @Inject constructor(
     var _actionId = Constants.MessageActionType.NONE
     private var _parentId: String? = null
     private val _draftId = AtomicReference<String>()
-    private lateinit var _data: List<ContactLabelEntity>
+    private lateinit var _data: List<ContactLabelUiModel>
     private lateinit var _senderAddresses: List<String>
-    private val _groupsRecipientsMap = HashMap<ContactLabelEntity, List<MessageRecipient>>()
+    private val _groupsRecipientsMap = HashMap<ContactLabelUiModel, List<MessageRecipient>>()
     private var _oldSenderAddressId: String = ""
     private lateinit var htmlProcessor: HtmlProcessor
     private var _dbId: Long? = null
@@ -332,7 +332,7 @@ class ComposeMessageViewModel @Inject constructor(
         val disposable = composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
             .flatMap {
                 for (group in it) {
-                    val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
+                    val emails = composeMessageRepository.getContactGroupEmailsSync(group.id)
                     val recipients = ArrayList<MessageRecipient>()
                     for (email in emails) {
                         val recipient = MessageRecipient(email.name, email.email)
@@ -373,10 +373,10 @@ class ComposeMessageViewModel @Inject constructor(
         compositeDisposable.add(disposable)
     }
 
-    fun getContactGroupRecipients(group: ContactLabelEntity): List<MessageRecipient> =
+    fun getContactGroupRecipients(group: ContactLabelUiModel): List<MessageRecipient> =
         _groupsRecipientsMap[group] ?: ArrayList()
 
-    fun getContactGroupByName(groupName: String): ContactLabelEntity? {
+    fun getContactGroupByName(groupName: String): ContactLabelUiModel? {
         return _data.find {
             it.name == groupName
         }

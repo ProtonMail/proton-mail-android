@@ -21,7 +21,6 @@ package ch.protonmail.android.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
@@ -37,7 +36,7 @@ import ch.protonmail.android.data.local.model.FullContactDetailsConverter
         FullContactDetails::class,
         ContactEmailContactLabelJoin::class
     ],
-    version = BuildConfig.ROOM_DB_VERSION
+    version = 2
 )
 @TypeConverters(value = [FullContactDetailsConverter::class])
 abstract class ContactDatabase : RoomDatabase() {

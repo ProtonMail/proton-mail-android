@@ -48,7 +48,7 @@ public class LabelBody {
         this.color = color;
         this.display = display;
         this.exclusive = exclusive;
-        this.type = Constants.LABEL_TYPE_MESSAGE; // by default it is message label
+        this.type = Constants.LABEL_TYPE_MESSAGE_LABEL; // by default it is message label
         this.notify = 0;
     }
 

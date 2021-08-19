@@ -28,12 +28,14 @@ import ch.protonmail.android.data.local.model.ContactLabelEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.util.kotlin.EMPTY_STRING
 import org.junit.Assert
 import org.junit.Rule
 import java.util.Arrays
 import kotlin.test.Test
 
 class ContactGroupsDatabaseTest : CoroutinesTest {
+
     private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
     private val databaseFactory = ContactDatabase.buildInMemoryDatabase(context)
     private val database = databaseFactory.getDao()
@@ -44,9 +46,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
     //region tests
     @Test
     fun testFindLabelById() = coroutinesTest {
-        val label1 = ContactLabelEntity("a", "aa")
-        val label2 = ContactLabelEntity("b", "bb")
-        val label3 = ContactLabelEntity("c", "cc")
+        val label1 = ContactLabelEntity("a", "aa", "acolor", 0, 1, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("b", "bb", "acolor", 0, 1, EMPTY_STRING, 0, "parent", 0)
+        val label3 = ContactLabelEntity("c", "cc", "acolor", 0, 1, EMPTY_STRING, 0, "parent", 0)
         database.saveContactGroupLabel(label1)
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
@@ -57,8 +59,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testUpdateFullLabel() = coroutinesTest {
-        val label1 = ContactLabelEntity("a", "aa", "aaa")
-        val label2 = ContactLabelEntity("a", "ab")
+        val label1 = ContactLabelEntity("a", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("a", "ab", "", 0, 0, EMPTY_STRING,0, "parent", 0)
         database.saveContactGroupLabel(label1)
         database.updateFullContactGroup(label2)
 
@@ -68,9 +70,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testUpdateFullLabelNotUpdatingOtherRows() {
-        val label1 = ContactLabelEntity("a", "aa", "aaa")
-        val label2 = ContactLabelEntity("b", "bb", "bbb")
-        val label3 = ContactLabelEntity("a", "ab")
+        val label1 = ContactLabelEntity("a", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("b", "bb", "bbb", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label3 = ContactLabelEntity("a", "ab", "", 0, 0, EMPTY_STRING, 0, "parent", 0)
         database.saveAllContactGroups(label1, label2)
         database.updateFullContactGroup(label3)
 
@@ -82,8 +84,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testUpdateLabelPartially() {
-        val label1 = ContactLabelEntity("a", "aa", "aaa")
-        val label2 = ContactLabelEntity("a", "ab", "aaa", 0, 1)
+        val label1 = ContactLabelEntity("a", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("a", "ab", "aaa", 0, 1, EMPTY_STRING, 0, "parent", 0)
         database.saveContactGroupLabel(label1)
         database.updatePartially(label2)
 
@@ -95,10 +97,10 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testInsertAllLabels() {
-        val label1 = ContactLabelEntity("a", "aa", "aaa")
-        val label2 = ContactLabelEntity("b", "ab", "aaa", 0, 1)
-        val label3 = ContactLabelEntity("c", "ac", "aaa")
-        val label4 = ContactLabelEntity("d", "ad", "aaa", 0, 1)
+        val label1 = ContactLabelEntity("a", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("b", "ab", "aaa", 0, 1, EMPTY_STRING, 0, "parent", 0)
+        val label3 = ContactLabelEntity("c", "ac", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label4 = ContactLabelEntity("d", "ad", "aaa", 0, 1, EMPTY_STRING, 0, "parent", 0)
         database.saveAllContactGroups(label1, label2, label3, label4)
         val size = database.findContactGroupsLiveData().testValue?.size
         Assert.assertEquals(size, 4)
@@ -106,9 +108,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testLabelSameKeyShouldSaveOnlyLast() {
-        val label1 = ContactLabelEntity("a", "aa", "aaa")
-        val label2 = ContactLabelEntity("a", "ab", "aab", 0, 1)
-        val label3 = ContactLabelEntity("a", "ac", "aac")
+        val label1 = ContactLabelEntity("a", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("a", "ab", "aab", 0, 1, EMPTY_STRING, 0, "parent", 0)
+        val label3 = ContactLabelEntity("a", "ac", "aac", 0, 0, EMPTY_STRING, 0, "parent", 0)
         database.saveContactGroupLabel(label1)
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
@@ -119,9 +121,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testClearLabelsTable() {
-        val label1 = ContactLabelEntity("a", "aa", "aaa")
-        val label2 = ContactLabelEntity("b", "ab", "aab", 0, 1)
-        val label3 = ContactLabelEntity("c", "ac", "aac")
+        val label1 = ContactLabelEntity("a", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("b", "ab", "aab", 0, 1, EMPTY_STRING, 0, "parent", 0)
+        val label3 = ContactLabelEntity("c", "ac", "aac", 0, 0, EMPTY_STRING, 0, "parent", 0)
         database.saveAllContactGroups(label1, label2, label3)
         val sizeAfterInsert = database.findContactGroupsLiveData().testValue?.size
         Assert.assertEquals(sizeAfterInsert, 3)
@@ -132,12 +134,12 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testFindAllLabelsByIds() {
-        val label1 = ContactLabelEntity("a", "aa", "aaa")
-        val label2 = ContactLabelEntity("b", "ab", "aab", 0, 1)
-        val label3 = ContactLabelEntity("c", "ac", "aac")
-        val label4 = ContactLabelEntity("d", "ad", "aaa")
-        val label5 = ContactLabelEntity("e", "ae", "aab", 0, 1)
-        val label6 = ContactLabelEntity("f", "af", "aac")
+        val label1 = ContactLabelEntity("a", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("b", "ab", "aab", 0, 1, EMPTY_STRING, 0, "parent", 0)
+        val label3 = ContactLabelEntity("c", "ac", "aac", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label4 = ContactLabelEntity("d", "ad", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label5 = ContactLabelEntity("e", "ae", "aab", 0, 1, EMPTY_STRING, 0, "parent", 0)
+        val label6 = ContactLabelEntity("f", "af", "aac", 0, 0, EMPTY_STRING, 0, "parent", 0)
         database.saveAllContactGroups(label1, label2, label3, label4, label5, label6)
         val requiredIds = Arrays.asList("b", "d", "f")
         val returnedLabels = database.getAllContactGroupsByIds(requiredIds).testValue
@@ -153,10 +155,10 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testRelationship() {
-        val label1 = ContactLabelEntity("la", "aa", "aaa")
-        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1)
-        val label3 = ContactLabelEntity("lc", "ac", "aac")
-        val label4 = ContactLabelEntity("ld", "ad", "aad")
+        val label1 = ContactLabelEntity("la", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1, EMPTY_STRING, 0, "parent", 0)
+        val label3 = ContactLabelEntity("lc", "ac", "aac", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label4 = ContactLabelEntity("ld", "ad", "aad", 0, 0, EMPTY_STRING, 0, "parent", 0)
 
         val email1 = ContactEmail("e1", "1@1.1", "a", labelIds = listOf("la", "lc"))
         val email2 = ContactEmail("e2", "2@2.2", "b", labelIds = listOf("la", "lc"))
@@ -201,8 +203,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testReturnedCorrectContactEmailsForContactGroup() {
-        val label1 = ContactLabelEntity("la", "aa", "aaa")
-        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1)
+        val label1 = ContactLabelEntity("la", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1, EMPTY_STRING, 0, "parent", 0)
 
         val email1 = ContactEmail("e1", "1@1.1", labelIds = listOf("la", "lb"), name = "ce1")
         val email2 = ContactEmail("e2", "2@2.2", labelIds = listOf("la"), name = "ce2")
@@ -239,8 +241,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun filterCorrectContactEmailsForContactGroup() {
-        val label1 = ContactLabelEntity("la", "aa", "aaa")
-        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1)
+        val label1 = ContactLabelEntity("la", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1, EMPTY_STRING, 0, "parent", 0)
 
         val email1 = ContactEmail("e1", "1@1.1", labelIds = listOf("la", "lb"), name = "ce1")
         val email2 = ContactEmail("e2", "2@2.2", labelIds = listOf("la"), name = "ce2")
@@ -281,8 +283,8 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     @Test
     fun testReturnedCorrectContactGroupsForContactEmail() {
-        val label1 = ContactLabelEntity("la", "aa", "aaa")
-        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1)
+        val label1 = ContactLabelEntity("la", "aa", "aaa", 0, 0, EMPTY_STRING, 0, "parent", 0)
+        val label2 = ContactLabelEntity("lb", "ab", "aab", 0, 1, EMPTY_STRING, 0, "parent", 0)
 
         val email1 = ContactEmail("e1", "1@1.1", labelIds = listOf("la", "lb"), name = "ce1")
         val email2 = ContactEmail("e2", "2@2.2", labelIds = listOf("la"), name = "ce2")

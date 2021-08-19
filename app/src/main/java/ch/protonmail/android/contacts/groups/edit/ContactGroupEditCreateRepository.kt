@@ -35,7 +35,6 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
-import me.proton.core.util.kotlin.toInt
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
@@ -51,11 +50,11 @@ class ContactGroupEditCreateRepository @Inject constructor(
 
     suspend fun editContactGroup(contactLabel: ContactLabelEntity, userId: UserId): ApiResult<LabelResponse> {
         val labelBody = labelsMapper.mapContactLabelToRequestLabel(contactLabel)
-        val updateLabelResult = apiManager.updateLabel(userId, contactLabel.ID, labelBody)
+        val updateLabelResult = apiManager.updateLabel(userId, contactLabel.id, labelBody)
         when (updateLabelResult) {
             is ApiResult.Success -> {
                 val label = updateLabelResult.value.label
-                val joins = contactDao.fetchJoins(contactLabel.ID)
+                val joins = contactDao.fetchJoins(contactLabel.id)
                 contactDao.saveContactGroupLabel(
                     labelsMapper.mapLabelToContactLabelEntity(label)
                 )
@@ -154,10 +153,10 @@ class ContactGroupEditCreateRepository @Inject constructor(
         createContactGroupWorker.enqueue(
             contactLabel.name,
             contactLabel.color,
-            contactLabel.display,
-            contactLabel.exclusive.toInt(),
+            contactLabel.expanded,
+            contactLabel.sticky,
             isUpdate,
-            contactLabel.ID
+            contactLabel.id
         )
     }
 }

@@ -85,7 +85,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
         assertEquals(0, adapter.itemCount)
 
         // Add single label
-        val label = LabelEntity("1", EMPTY_STRING, EMPTY_STRING)
+        val label = LabelEntity("1", EMPTY_STRING, EMPTY_STRING, 0, 0, EMPTY_STRING, EMPTY_STRING, 0, 0)
         messageDao.saveLabel(label)
         runBlocking { delay(50) } // Wait for async delivery
         assertEquals(1, adapter.itemCount)

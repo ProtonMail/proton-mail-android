@@ -21,11 +21,12 @@ package ch.protonmail.android.contacts.list.viewModel
 
 import android.graphics.Color
 import ch.protonmail.android.R
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.listView.ContactItem
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabelEntity
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -193,11 +194,15 @@ class ContactsListMapperTest {
         // given
         val testId = "ID1"
         val testName = "name1"
-        val label1 = ContactLabelEntity(testId, testName, "green", 1, 0, false, 2)
+        val testPath = "test/path123"
+        val label1 =
+            ContactLabelUiModel(
+                testId, testName, "green", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath, "parentId", 0, 0, 1
+            )
         val expected = ContactGroupListItem(
             contactId = testId,
             name = testName,
-            contactEmailsCount = 0,
+            contactEmailsCount = 1,
             color = testColorInt,
         )
 
@@ -216,8 +221,12 @@ class ContactsListMapperTest {
         val testId2 = "ID2"
         val testName = "name1"
         val testName2 = "name2"
-        val label1 = ContactLabelEntity(testId, testName, "green", 1, 0, false, 2)
-        val label2 = ContactLabelEntity(testId2, testName2, "yellow", 1, 0, false, 2)
+        val testPath = "test/path123"
+        val label1 =
+            ContactLabelUiModel(testId, testName, "green", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath, "", 0, 2, 0)
+        val label2 = ContactLabelUiModel(
+            testId2, testName2, "yellow", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath, "0", 0, 2, 0
+        )
         val listItem1 = ContactGroupListItem(
             contactId = testId,
             name = testName,

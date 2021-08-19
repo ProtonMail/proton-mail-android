@@ -45,8 +45,8 @@ internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME = "keyCreateContactG
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID = "keyCreateContactGroupInputDataId"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE = "keyCreateContactGroupInputDataIsUpdate"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR = "keyCreateContactGroupInputDataColor"
-internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY = "keyCreateContactGroupInputDataIsDisplay"
-internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE = "keyCreateContactGroupInputDataExclusive"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_STICKY = "keyCreateContactGroupInputDataIsSticky"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXPANDED = "keyCreateContactGroupInputDataExpanded"
 internal const val KEY_RESULT_DATA_CREATE_CONTACT_GROUP_ERROR = "keyCreateContactGroupResultWorkerError"
 
 @HiltWorker
@@ -106,8 +106,8 @@ class CreateContactGroupWorker @AssistedInject constructor(
             type = Constants.LABEL_TYPE_CONTACT_GROUPS,
             parentId = "",
             notify = 0,
-            exclusive = getExclusiveParam(),
-            display = getDisplayParam()
+            expanded = getExpandedParam(),
+            sticky = getStickyParam()
         )
 
     private fun missingContactGroupIdError() =
@@ -115,9 +115,9 @@ class CreateContactGroupWorker @AssistedInject constructor(
 
     private fun getContactGroupIdParam() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID)
 
-    private fun getExclusiveParam() = inputData.getInt(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE, 0)
+    private fun getExpandedParam() = inputData.getInt(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXPANDED, 0)
 
-    private fun getDisplayParam() = inputData.getInt(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY, 0)
+    private fun getStickyParam() = inputData.getInt(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_STICKY, 0)
 
     private fun getContactGroupColorParam() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR)
 
@@ -130,8 +130,8 @@ class CreateContactGroupWorker @AssistedInject constructor(
         fun enqueue(
             name: String,
             color: String,
-            display: Int? = 0,
-            exclusive: Int? = 0,
+            expanded: Int? = 0,
+            sticky: Int? = 0,
             update: Boolean? = false,
             id: String? = null
         ): LiveData<WorkInfo> {
@@ -142,9 +142,9 @@ class CreateContactGroupWorker @AssistedInject constructor(
                         KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID to id,
                         KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME to name,
                         KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR to color,
-                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE to exclusive,
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXPANDED to expanded,
                         KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE to update,
-                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY to display
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_STICKY to sticky
                     )
                 ).build()
 
