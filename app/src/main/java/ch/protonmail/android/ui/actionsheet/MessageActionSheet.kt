@@ -216,7 +216,10 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
 
             textViewDetailsActionsUnstar.apply {
-                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN || isStarred
+                isVisible = actionsTarget in arrayOf(
+                    ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
+                    ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                ) || isStarred
                 setOnClickListener {
                     viewModel.unStarMessage(
                         messageIds,
@@ -227,7 +230,10 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             }
 
             textViewDetailsActionsStar.apply {
-                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN || !isStarred
+                isVisible = actionsTarget in arrayOf(
+                    ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
+                    ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                ) || !isStarred
                 setOnClickListener {
                     viewModel.starMessage(
                         messageIds,
