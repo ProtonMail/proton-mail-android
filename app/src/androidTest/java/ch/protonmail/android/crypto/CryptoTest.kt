@@ -21,10 +21,8 @@ package ch.protonmail.android.crypto
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
 import ch.protonmail.android.api.models.Keys
-import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
 import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
@@ -40,7 +38,8 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.map
-import me.proton.core.util.kotlin.invoke
+import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -691,7 +690,7 @@ internal class CryptoTest {
 
     private val oneKeyUserMock: ch.protonmail.android.domain.entity.user.User = mockk {
             every { addresses } returns mockk {
-                every { findBy(UserId(oneAddressKeyAddressId)) } answers { addresses[1] }
+                every { findBy(AddressId(oneAddressKeyAddressId)) } answers { addresses[1] }
                 every { addresses } returns mapOf(
                     1 to mockk {
                         every { keys } returns mockk {
@@ -709,7 +708,7 @@ internal class CryptoTest {
 
     private val manyAddressKeysUserMock: ch.protonmail.android.domain.entity.user.User = mockk {
             every { addresses } returns mockk {
-                every { findBy(UserId(manyAddressKeysAddressId)) } answers { addresses[1] }
+                every { findBy(AddressId(manyAddressKeysAddressId)) } answers { addresses[1] }
                 every { addresses } returns mapOf(
                     1 to mockk {
                         every { keys } returns mockk {
@@ -786,7 +785,7 @@ internal class CryptoTest {
 
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, UserId(oneAddressKeyAddressId))
+        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, AddressId(oneAddressKeyAddressId))
         val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
 
         assertEquals(expected, result)
@@ -852,7 +851,7 @@ internal class CryptoTest {
             "The ProtonMail Team\r\n"
 
         val addressCrypto =
-            Crypto.forAddress(userManagerMock, manyAddressKeysUserId, UserId(manyAddressKeysAddressId))
+            Crypto.forAddress(userManagerMock, manyAddressKeysUserId, AddressId(manyAddressKeysAddressId))
         val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
 
         assertEquals(expected, result)
@@ -897,7 +896,7 @@ internal class CryptoTest {
 
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, UserId(oneAddressKeyAddressId))
+        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, AddressId(oneAddressKeyAddressId))
         val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
 
         lateinit var resultBody: String
@@ -1622,7 +1621,7 @@ internal class CryptoTest {
             }
         )
 
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, UserId(oneAddressKeyAddressId))
+        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, AddressId(oneAddressKeyAddressId))
         val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
 
         lateinit var resultBody: String

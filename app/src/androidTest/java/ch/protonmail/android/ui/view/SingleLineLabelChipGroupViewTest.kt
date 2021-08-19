@@ -25,13 +25,13 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.testAndroidInstrumented.assertion.isGone
 import ch.protonmail.android.testAndroidInstrumented.assertion.isVisible
 import ch.protonmail.android.testAndroidInstrumented.withBackgroundColor
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.util.ViewTest
-import me.proton.core.domain.entity.UserId
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeDiagnosingMatcher
@@ -45,9 +45,9 @@ import kotlin.test.Test
 class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(::SingleLineLabelChipGroupView) {
 
     private val testLabelsList = listOf(
-        LabelChipUiModel(UserId("a"), Name("first"), Color.RED),
-        LabelChipUiModel(UserId("b"), Name("second"), Color.GREEN),
-        LabelChipUiModel(UserId("c"), Name("third"), Color.BLUE),
+        LabelChipUiModel(LabelId("a"), Name("first"), Color.RED),
+        LabelChipUiModel(LabelId("b"), Name("second"), Color.GREEN),
+        LabelChipUiModel(LabelId("c"), Name("third"), Color.BLUE),
     )
 
     @Test
@@ -89,7 +89,7 @@ class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(
             .check(matches(withBackgroundColor(expectedLabelColor)))
     }
 
-    private fun withLabelId(labelId: UserId): Matcher<View> {
+    private fun withLabelId(labelId: LabelId): Matcher<View> {
         return object : TypeSafeDiagnosingMatcher<View>() {
 
             override fun matchesSafely(item: View, mismatchDescription: Description) =
