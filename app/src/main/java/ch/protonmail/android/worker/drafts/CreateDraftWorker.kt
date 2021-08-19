@@ -66,8 +66,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import me.proton.core.domain.entity.UserId
 import kotlinx.coroutines.flow.firstOrNull
+import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.takeIfNotBlank
 import retrofit2.HttpException
 import timber.log.Timber
@@ -291,7 +292,7 @@ class CreateDraftWorker @AssistedInject constructor(
 
     private fun reEncryptAttachment(senderAddress: Address, attachment: Attachment): String? {
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
-        val addressCrypto = addressCryptoFactory.create(getInputUserId(), UserId(previousSenderAddressId))
+        val addressCrypto = addressCryptoFactory.create(getInputUserId(), AddressId(previousSenderAddressId))
         val primaryKey = senderAddress.keys
         val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
 
@@ -329,7 +330,7 @@ class CreateDraftWorker @AssistedInject constructor(
 
     private suspend fun getSenderAddress(senderAddressId: String): Address? {
         val user = userManager.getUser(getInputUserId())
-        return user.findAddressById(UserId(senderAddressId))
+        return user.findAddressById(AddressId(senderAddressId))
     }
 
     private fun buildMessageSender(message: Message, senderAddress: Address): MessageSender {

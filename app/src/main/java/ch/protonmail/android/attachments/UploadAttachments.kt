@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -81,7 +82,7 @@ class UploadAttachments @AssistedInject constructor(
 
         messageDetailsRepository.findMessageById(messageId).first()?.let { message ->
             val addressId = requireNotNull(message.addressID)
-            val addressCrypto = addressCryptoFactory.create(userId, UserId(addressId))
+            val addressCrypto = addressCryptoFactory.create(userId, AddressId(addressId))
 
             return@withContext when (val result = upload(newAttachments, message, addressCrypto, isMessageSending)) {
                 is Result.Success -> ListenableWorker.Result.success()

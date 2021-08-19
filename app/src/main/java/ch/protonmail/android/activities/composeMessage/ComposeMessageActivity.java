@@ -173,6 +173,7 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import me.proton.core.accountmanager.domain.AccountManager;
 import me.proton.core.domain.entity.UserId;
+import me.proton.core.user.domain.entity.AddressId;
 import timber.log.Timber;
 
 @AndroidEntryPoint
@@ -1460,7 +1461,7 @@ public class ComposeMessageActivity
         } else {
             binding.composerProgressLayout.setVisibility(View.GONE);
         }
-        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), new UserId(loadedMessage.getAddressID()));
+        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), new AddressId(loadedMessage.getAddressID()));
         if (updateAttachments) {
             composeMessageViewModel.createLocalAttachments(loadedMessage);
         }

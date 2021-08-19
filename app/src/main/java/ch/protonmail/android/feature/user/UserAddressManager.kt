@@ -27,11 +27,11 @@ import me.proton.core.user.domain.entity.AddressId
 @Deprecated("Replaced by Core UserAddressManager", ReplaceWith("Core UserAddressManager"))
 fun UserAddressManager.updateAddressBlocking(
     userId: UserId,
-    addressId: UserId,
+    addressId: AddressId,
     displayName: String? = null,
     signature: String? = null
 ) = runBlocking {
-    updateAddress(userId, AddressId(addressId.id), displayName, signature)
+    updateAddress(userId, addressId, displayName, signature)
 }
 
 @Deprecated("Replaced by Core UserAddressManager", ReplaceWith("Core UserAddressManager"))

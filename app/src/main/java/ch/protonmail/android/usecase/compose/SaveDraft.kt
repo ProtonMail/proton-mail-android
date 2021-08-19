@@ -31,7 +31,6 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.di.CurrentUserId
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
@@ -43,6 +42,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -68,7 +69,7 @@ class SaveDraft @Inject constructor(
         val addressId = requireNotNull(message.addressID)
 
         if (params.trigger != SaveDraftTrigger.SendingMessage) {
-            val addressCrypto = addressCryptoFactory.create(userId, UserId(addressId))
+            val addressCrypto = addressCryptoFactory.create(userId, AddressId(addressId))
             val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
             if (message.decryptedBody == null) {
                 Timber.w("Save Draft for messageId $messageId - Decrypted Body was null, proceeding...")

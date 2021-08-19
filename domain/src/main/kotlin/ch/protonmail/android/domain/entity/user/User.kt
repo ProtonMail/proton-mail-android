@@ -19,13 +19,14 @@
 package ch.protonmail.android.domain.entity.user
 
 import ch.protonmail.android.domain.entity.Bytes
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.Validable
 import ch.protonmail.android.domain.entity.Validated
 import ch.protonmail.android.domain.entity.Validator
 import ch.protonmail.android.domain.entity.requireValid
+import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 
 /**
  * Representation of a server user.
@@ -73,17 +74,16 @@ data class User( // TODO: consider naming UserInfo or similar
     require(keys.hasKeys || !addresses.hasAddresses) { "Has addresses but no keys" }
 
     // Plans
-    require(plans.count { it is Plan.Mail } <= 1 &&
-        plans.count { it is Plan.Vpn } <= 1) {
+    require(
+        plans.count { it is Plan.Mail } <= 1 &&
+            plans.count { it is Plan.Vpn } <= 1
+    ) {
         "Has 2 or more plans of the same type"
     }
 }) {
+
     init {
         requireValid()
-    }
-
-    fun findAddressById(addressId: UserId): Address? {
-        return addresses.addresses.values.find { it.id == addressId }
     }
 
     val isLegacy
@@ -93,6 +93,9 @@ data class User( // TODO: consider naming UserInfo or similar
 
     fun isPaidMailUser() =
         Plan.Mail.Paid in plans
+
+    fun findAddressById(addressId: AddressId): Address? =
+        addresses.addresses.values.find { it.id == addressId }
 }
 
 sealed class Delinquent(val i: UInt, val mailRoutesAccessible: Boolean = true) {

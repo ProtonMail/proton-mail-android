@@ -38,6 +38,7 @@ import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
+import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.security.GeneralSecurityException
@@ -95,7 +96,7 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
         requireNotNull(message)
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = Crypto.forAddress(userManager, userId, UserId(addressId))
+        val addressCrypto = Crypto.forAddress(userManager, userId, AddressId(addressId))
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)

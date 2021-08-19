@@ -25,13 +25,14 @@ import ch.protonmail.android.feature.user.updateAddressBlocking
 import ch.protonmail.android.feature.user.updateOrderBlocking
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
+import me.proton.core.user.domain.entity.AddressId
 
 class UpdateSettingsJob(
     private val newDisplayName: String? = null,
     private val newSignature: String? = null,
     private val addressIds: List<String>? = null,
     private val backPressed: Boolean = false,
-    private val addressId: UserId? = null
+    private val addressId: AddressId? = null
 ) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork()) {
 
     @Throws(Throwable::class)

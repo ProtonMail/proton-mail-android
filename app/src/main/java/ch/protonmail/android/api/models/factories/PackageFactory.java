@@ -55,6 +55,7 @@ import ch.protonmail.android.utils.crypto.EOToken;
 import kotlin.text.Charsets;
 import me.proton.core.auth.domain.entity.Modulus;
 import me.proton.core.auth.domain.repository.AuthRepository;
+import me.proton.core.user.domain.entity.AddressId;
 
 public class PackageFactory {
 
@@ -85,7 +86,7 @@ public class PackageFactory {
             @NonNull UserId userId
     ) throws Exception {
         final Map<MIMEType, MessageSendPackage> packageMap = new HashMap<>();
-        crypto = addressCryptoFactory.create(userId, new UserId(message.getAddressID()));
+        crypto = addressCryptoFactory.create(userId, new AddressId(message.getAddressID()));
 
         Set<String> recipients = getMessageRecipients(message);
         for (SendPreference sendPref : preferences) {

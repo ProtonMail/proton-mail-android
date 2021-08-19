@@ -41,6 +41,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButto
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
 import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import ch.protonmail.android.api.models.User as LegacyUser
 
 @AndroidEntryPoint
@@ -57,7 +58,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
     private var hasChanges = false
     var newDisplayName = ""
     var newSignature: String? = null
-    var newAddressId: UserId? = null
+    var newAddressId: AddressId? = null
     var newMobileFooter: String? = null
 
     var displayNameOrSignatureChanged = {

@@ -28,7 +28,6 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.EmailAddress
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.crypto.BinaryDecryptionResult
@@ -43,7 +42,9 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.user.domain.entity.AddressId
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import java.net.SocketTimeoutException
@@ -288,7 +289,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     fun uploadPublicKeyCallsUploadAttachmentApiWithPublicKeyAttachment() {
         runBlockingTest {
             val userId = UserId("id")
-            val addressId = UserId("addressId")
+            val addressId = AddressId("addressId")
             val message = Message(messageId = "messageId", addressID = addressId.id)
             val privateKey = mockk<PgpField.PrivateKey>()
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()

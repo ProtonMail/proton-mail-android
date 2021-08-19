@@ -19,7 +19,6 @@
 package ch.protonmail.android.crypto
 
 import ch.protonmail.android.core.UserManager
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.UserKey
@@ -27,6 +26,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.util.Arrays
 

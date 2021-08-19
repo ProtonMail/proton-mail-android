@@ -30,6 +30,7 @@ dependencies {
         // Core
         `Proton-kotlin-util`,
         `Proton-domain`,
+        `Proton-user-domain`,
 
         // Kotlin
         `kotlin-jdk8`,

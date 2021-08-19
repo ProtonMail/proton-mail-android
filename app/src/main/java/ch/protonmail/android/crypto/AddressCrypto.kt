@@ -37,6 +37,7 @@ import com.proton.gopenpgp.crypto.SessionKey
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import timber.log.Timber
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
@@ -44,12 +45,12 @@ class AddressCrypto @AssistedInject constructor(
     val userManager: UserManager,
     openPgp: OpenPGP,
     @Assisted userId: UserId,
-    @Assisted private val addressId: UserId
+    @Assisted private val addressId: AddressId
 ) : Crypto<AddressKey>(userManager, openPgp, userId) {
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(userId: UserId, addressId: UserId): AddressCrypto
+        fun create(userId: UserId, addressId: AddressId): AddressCrypto
     }
 
     private val address
