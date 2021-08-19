@@ -60,6 +60,7 @@ import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -327,8 +328,16 @@ class MessageRepository @Inject constructor(
     private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {
         val dao = databaseProvider.provideMessageDao(params.userId)
 
+        // We threat Sent as a Label, since when we send a message to ourself it should be in both Sent and Inbox, but
+        //  it can have only one location, which is Inbox
+        fun sentAsLabelId() =
+            MessageLocationType.SENT.asLabelId()
+
         fun starredAsLabelId() =
             MessageLocationType.STARRED.asLabelId()
+
+        fun allMailAsLabelId() =
+            MessageLocationType.ALL_MAIL.asLabelId()
 
         fun locationTypesAlLabelId() =
             MessageLocationType.values().map { it.asLabelId() }
@@ -337,8 +346,10 @@ class MessageRepository @Inject constructor(
             dao.searchMessages(params.keyword)
         } else {
             when (params.labelId) {
-                null -> dao.observeAllMessages()
+                sentAsLabelId() -> dao.observeMessagesByLabelId(params.labelId)
+                allMailAsLabelId() -> dao.observeAllMessages()
                 starredAsLabelId() -> dao.observeStarredMessages()
+                null -> unsupported
                 in locationTypesAlLabelId() -> dao.observeMessagesByLocation(params.labelId.toInt())
                 else -> dao.observeMessagesByLabelId(params.labelId)
             }

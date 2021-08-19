@@ -70,10 +70,7 @@ fun <B, T> Flow<T>.asLoadMoreFlow(
     var bookmark = initialBookmark
     val trigger = MutableSharedFlow<Unit>(replay = 1)
 
-    val fixedFlow = this.let {
-        if (loadAtStart) it.emitInitialNull()
-        else it
-    }
+    val fixedFlow = this
     val fixedTrigger = trigger.emitInitialNull()
 
     var lastFromFlow: T? = null
@@ -91,7 +88,7 @@ fun <B, T> Flow<T>.asLoadMoreFlow(
             bookmark = onLoadMore(bookmark)
             shouldLoadOnNonTriggerEvent = false
         }
-    }.filterNot { it == null } as Flow<T>
+    }
 
     return LoadMoreFlow(underlying, trigger)
 }

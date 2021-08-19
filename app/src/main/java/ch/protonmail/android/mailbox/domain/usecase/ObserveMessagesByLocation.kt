@@ -20,16 +20,21 @@
 package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreMap
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.repository.NO_MORE_MESSAGES_ERROR_CODE
+import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Processing
 import me.proton.core.domain.arch.DataResult.Success
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -41,49 +46,51 @@ class ObserveMessagesByLocation @Inject constructor(
 ) {
 
     operator fun invoke(
+        userId: UserId,
         mailboxLocation: Constants.MessageLocationType,
-        labelId: String?,
-        userId: UserId
+        labelId: String?
     ): LoadMoreFlow<GetMessagesResult> =
-        when (mailboxLocation) {
-            Constants.MessageLocationType.LABEL,
-            Constants.MessageLocationType.LABEL_FOLDER ->
-                messageRepository.observeMessagesByLabelId(userId, requireNotNull(labelId))
-            Constants.MessageLocationType.STARRED,
-            Constants.MessageLocationType.DRAFT,
-            Constants.MessageLocationType.ARCHIVE,
-            Constants.MessageLocationType.INBOX,
-            Constants.MessageLocationType.SEARCH,
-            Constants.MessageLocationType.SPAM,
-            Constants.MessageLocationType.TRASH,
-            Constants.MessageLocationType.ALL_MAIL ->
-                messageRepository.observeMessagesByLocation(
-                    userId,
-                    mailboxLocation
-                )
-            // Since a message can be self-sent which from BE makes the message have INBOX and SENT both as a location
-            //  we decided that for now it's best we treat SENT as label
-            Constants.MessageLocationType.SENT ->
-                messageRepository.observeMessagesByLabelId(userId, mailboxLocation.asLabelId())
-            Constants.MessageLocationType.INVALID -> throw IllegalArgumentException("Invalid location.")
-            else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")
-        }
-            .loadMoreMap { result ->
-                when (result) {
-                    is Success -> GetMessagesResult.Success(result.value)
-                    is Error.Remote -> {
-                        Timber.e(result.cause, "Messages couldn't be fetched")
-                        if (result.protonCode == NO_MORE_MESSAGES_ERROR_CODE) {
-                            GetMessagesResult.NoMessagesFound
-                        } else {
-                            GetMessagesResult.Error(result.cause)
-                        }
-                    }
-                    is Error -> GetMessagesResult.Error(result.cause)
-                    is Processing -> GetMessagesResult.Loading
-                }
-            }
+        messageRepository.observeMessages(buildGetParams(userId, mailboxLocation, labelId))
+            .mapToResult()
             .loadMoreCatch {
                 emit(GetMessagesResult.Error(it))
             }
+
+    private fun buildGetParams(
+        userId: UserId,
+        mailboxLocation: Constants.MessageLocationType,
+        labelId: String?
+    ) = GetAllMessagesParameters(
+        userId = userId,
+        labelId = labelId?.takeIfNotBlank() ?: mailboxLocation.asLabelId()
+    )
+
+    private fun LoadMoreFlow<DataResult<List<Message>>>.mapToResult(): LoadMoreFlow<GetMessagesResult> {
+
+        fun Success<List<Message>>.successToResult(): GetMessagesResult =
+            when (source) {
+                ResponseSource.Local ->
+                    GetMessagesResult.Success(value)
+                ResponseSource.Remote ->
+                    GetMessagesResult.ApiRefresh(value)
+            }
+
+        fun Error.Remote.remoteErrorToResult(): GetMessagesResult {
+            Timber.e(cause, "Messages couldn't be fetched")
+            return if (protonCode == NO_MORE_MESSAGES_ERROR_CODE) {
+                GetMessagesResult.NoMessagesFound
+            } else {
+                GetMessagesResult.Error(cause)
+            }
+        }
+
+        return loadMoreMap { result ->
+            when (result) {
+                is Success -> result.successToResult()
+                is Error.Remote -> result.remoteErrorToResult()
+                is Error -> GetMessagesResult.Error(result.cause)
+                is Processing -> GetMessagesResult.Loading
+            }
+        }
+    }
 }

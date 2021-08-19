@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -49,8 +50,7 @@ class ObserveMessagesByLocationTest {
         loadMoreFlowOf(DataResult.Success(ResponseSource.Local, allMessages))
 
     private val mailboxRepository: MessageRepository = mockk {
-        every { observeMessagesByLocation(userId, any()) } returns allMessagesLoadMoreFlow
-        every { observeMessagesByLabelId(userId, any()) } returns allMessagesLoadMoreFlow
+        every { observeMessages(any()) } returns allMessagesLoadMoreFlow
     }
     private val useCase = ObserveMessagesByLocation(mailboxRepository)
 
@@ -62,7 +62,7 @@ class ObserveMessagesByLocationTest {
         val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        useCase(mailboxLocation, labelId, userId).test {
+        useCase(userId, mailboxLocation, labelId).test {
 
             // then
             assertEquals(expected, expectItem())
@@ -78,7 +78,7 @@ class ObserveMessagesByLocationTest {
         val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        useCase(mailboxLocation, labelId, userId).test {
+        useCase(userId, mailboxLocation, labelId).test {
 
             // then
             assertEquals(expected, expectItem())
@@ -94,7 +94,7 @@ class ObserveMessagesByLocationTest {
         val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        useCase(mailboxLocation, labelId, userId).test {
+        useCase(userId, mailboxLocation, labelId).test {
 
             // then
             assertEquals(expected, expectItem())
@@ -110,7 +110,7 @@ class ObserveMessagesByLocationTest {
         val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        useCase(mailboxLocation, labelId, userId).test {
+        useCase(userId, mailboxLocation, labelId).test {
 
             // then
             assertEquals(expected, expectItem())
@@ -136,7 +136,7 @@ class ObserveMessagesByLocationTest {
         val expectedExceptionType = IllegalStateException::class
 
         // when
-        useCase(mailboxLocation, labelId, userId).test {
+        useCase(userId, mailboxLocation, labelId).test {
             // then
             messagesResponseChannel.close(testException)
             val actualError = expectItem() as GetMessagesResult.Error

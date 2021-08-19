@@ -348,25 +348,37 @@ class MailboxViewModel @Inject constructor(
         userId: UserId
     ): LoadMoreFlow<MailboxState> {
         Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
-        var hasLocationOrUserChanged = true
+        var isFirstData = true
+        var hasReceivedFirstApiRefresh: Boolean? = null
         return observeMessagesByLocation(
-            location,
-            labelId,
-            userId
+            userId = UserId(userId.s),
+            mailboxLocation = location,
+            labelId = labelId
         ).loadMoreMap { result ->
             when (result) {
                 is GetMessagesResult.Success -> {
+                    val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
+                    isFirstData = false
+
                     MailboxState.Data(
-                        messagesToMailboxItems(result.messages),
-                        shouldResetPosition = hasLocationOrUserChanged
-                    ).also {
-                        hasLocationOrUserChanged = false
-                    }
+                        items = messagesToMailboxItems(result.messages),
+                        shouldResetPosition = shouldResetPosition
+                    )
+                }
+                is GetMessagesResult.ApiRefresh -> {
+                    if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
+
+                    MailboxState.ApiRefresh(
+                        lastFetchedMessagesIds = result.lastFetchedMessages.mapNotNull { it.messageId }
+                    )
+                }
+                is GetMessagesResult.Error -> {
+                    hasReceivedFirstApiRefresh = false
+
+                    MailboxState.Error("GetMessagesResult Error", result.throwable)
                 }
                 is GetMessagesResult.NoMessagesFound ->
                     MailboxState.NoMoreItems
-                is GetMessagesResult.Error ->
-                    MailboxState.Error("GetMessagesResult Error", result.throwable)
                 is GetMessagesResult.Loading ->
                     MailboxState.Loading
             }
