@@ -530,7 +530,7 @@ class NotificationServer @Inject constructor(
         val channelId = createAccountChannel()
 
         // Create content Intent to open Drafts
-        val contentIntent = context.getMailboxActivityIntent(UserId(userId.id), Constants.MessageLocationType.DRAFT)
+        val contentIntent = context.getMailboxActivityIntent(userId, Constants.MessageLocationType.DRAFT)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MailboxActivity::class.java)

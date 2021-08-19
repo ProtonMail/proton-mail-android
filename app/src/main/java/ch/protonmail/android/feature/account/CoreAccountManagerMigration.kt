@@ -122,7 +122,7 @@ class CoreAccountManagerMigration @Inject constructor(
                     runCatching {
                         // Migrate User/Addresses/Keys to Core.
                         val userId = migration.account.userId
-                        val user = User.load(UserId(userId.id), context, userManager, keyStoreCrypto).orThrow()
+                        val user = User.load(userId, context, userManager, keyStoreCrypto).orThrow()
                         val addresses = user.addresses
                         userManager.addUser(
                             user = user.toCoreUser(encryptedPassphrase),

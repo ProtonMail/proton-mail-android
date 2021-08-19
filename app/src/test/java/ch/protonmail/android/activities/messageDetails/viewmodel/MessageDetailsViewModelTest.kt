@@ -756,7 +756,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             changeConversationsReadStatus.invoke(
                 listOf(inputConversationId),
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                UserId(userId.id),
+                userId,
                 inputMessageLocation,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
@@ -805,7 +805,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             changeConversationsReadStatus.invoke(
                 listOf(inputConversationId),
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                UserId(userId.id),
+                userId,
                 inputMessageLocation,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )

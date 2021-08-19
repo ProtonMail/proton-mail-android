@@ -40,14 +40,14 @@ import me.proton.core.util.kotlin.toInt
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 @Throws(ApiException::class)
 fun UserManager.getUserBlocking(userId: UserId): User = runBlocking {
-    getUser(UserId(userId.id))
+    getUser(userId)
 }
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 @Throws(ApiException::class)
 fun UserManager.getAddressesBlocking(userId: UserId): List<UserAddress> = runBlocking {
     // Refresh only if we have no address.
-    getAddresses(UserId(userId.id), refresh = getAddresses(UserId(userId.id)).isEmpty())
+    getAddresses(userId, refresh = getAddresses(userId).isEmpty())
 }
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))

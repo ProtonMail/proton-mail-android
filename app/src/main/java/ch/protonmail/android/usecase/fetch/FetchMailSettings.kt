@@ -47,8 +47,8 @@ class FetchMailSettings @Inject constructor(
     ) = withContext(dispatchers.Io) {
 
         Timber.v("FetchMailSettings started")
-        val mailSettingsResponse = protonMailApiManager.fetchMailSettings(UserId(userId.id))
-        mailSettingsResponse.mailSettings.save(SecureSharedPreferences.getPrefsForUser(context, UserId(userId.id)))
+        val mailSettingsResponse = protonMailApiManager.fetchMailSettings(userId)
+        mailSettingsResponse.mailSettings.save(SecureSharedPreferences.getPrefsForUser(context, userId))
 
         mailSettingsRepository.getMailSettingsFlow(userId, true).launchIn(lifecycleOwner.lifecycleScope)
     }

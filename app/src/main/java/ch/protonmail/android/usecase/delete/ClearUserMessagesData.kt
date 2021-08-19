@@ -40,7 +40,7 @@ class ClearUserMessagesData @Inject constructor(
 
     suspend operator fun invoke(userId: UserId) {
 
-        val legacyUserId = UserId(userId.id)
+        val legacyUserId = userId
         val attachmentMetadataDao = runCatching { databaseProvider.provideAttachmentMetadataDao(legacyUserId) }.getOrNull()
         val messageDao = runCatching { databaseProvider.provideMessageDao(legacyUserId) }.getOrNull()
         //  TODO remove this dependency and use the ConversationRepository.clear()

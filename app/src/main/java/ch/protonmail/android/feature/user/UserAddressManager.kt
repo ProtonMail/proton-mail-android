@@ -31,7 +31,7 @@ fun UserAddressManager.updateAddressBlocking(
     displayName: String? = null,
     signature: String? = null
 ) = runBlocking {
-    updateAddress(UserId(userId.id), AddressId(addressId.id), displayName, signature)
+    updateAddress(userId, AddressId(addressId.id), displayName, signature)
 }
 
 @Deprecated("Replaced by Core UserAddressManager", ReplaceWith("Core UserAddressManager"))
@@ -39,5 +39,5 @@ fun UserAddressManager.updateOrderBlocking(
     userId: UserId,
     addressIds: List<UserId>
 ) = runBlocking {
-    updateOrder(UserId(userId.id), addressIds.map { AddressId(it.id) })
+    updateOrder(userId, addressIds.map { AddressId(it.id) })
 }

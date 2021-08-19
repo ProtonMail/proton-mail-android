@@ -65,7 +65,7 @@ class MessageRepository @Inject constructor(
 ) {
 
     fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {
-        val messageDao = databaseProvider.provideMessageDao(UserId(userId.id))
+        val messageDao = databaseProvider.provideMessageDao(userId)
         return messageDao.findMessageById(messageId).onEach { message ->
             Timber.d("findMessage id: ${message?.messageId}, ${message?.isRead}, ${message?.isDownloaded}")
             message?.messageBody?.let {

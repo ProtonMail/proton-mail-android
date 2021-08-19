@@ -269,10 +269,10 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
 
     private fun getConversationFlow(userId: UserId): Flow<ConversationUiModel?> =
-        conversationRepository.getConversation(messageOrConversationId, UserId(userId.id))
+        conversationRepository.getConversation(messageOrConversationId, userId)
             .distinctUntilChanged()
             .map {
-                loadConversationDetails(it, UserId(userId.id))
+                loadConversationDetails(it, userId)
             }
 
     fun markUnread() {

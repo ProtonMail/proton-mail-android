@@ -48,5 +48,5 @@ class RoomLabelRepository @Inject constructor(
     }
 
     private fun getDao(userId: UserId): MessageDao =
-        messageDatabaseFactory.getInstance(context, UserId(userId.id)).getDao()
+        messageDatabaseFactory.getInstance(context, userId).getDao()
 }

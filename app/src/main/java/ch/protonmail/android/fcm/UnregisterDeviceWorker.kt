@@ -86,7 +86,7 @@ class UnregisterDeviceWorker @AssistedInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val userPrefs = SecureSharedPreferences.getPrefsForUser(context, UserId(userId.id))
+            val userPrefs = SecureSharedPreferences.getPrefsForUser(context, userId)
             val fcmTokenManager = fcmTokenManagerFactory.create(userPrefs)
             val token = fcmTokenManager.getTokenBlocking()?.value
 

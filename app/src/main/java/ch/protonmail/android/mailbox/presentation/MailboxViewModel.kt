@@ -431,7 +431,7 @@ class MailboxViewModel @Inject constructor(
         val userId = userManager.currentUserId ?: return emptyList()
 
         val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.findAllLabels(UserId(userId.id)).first()
+        val labels = labelRepository.findAllLabels(userId).first()
 
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {
@@ -441,7 +441,7 @@ class MailboxViewModel @Inject constructor(
             val conversationLabelsIds = conversation.labels.map { it.id }
             val labelChipUiModels = labels
                 .filter { it.id in conversationLabelsIds }
-                .toLabelChipUiModels()
+                .toLabelChipUiModels(userId)
 
             val isDraft = conversationContainsSingleDraftMessage(conversation)
 
@@ -488,13 +488,13 @@ class MailboxViewModel @Inject constructor(
         val emails = messages.map { message -> message.senderEmail }.distinct()
         val contacts = emails
             .chunked(Constants.MAX_SQL_ARGUMENTS)
-            .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first()  }
+            .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first() }
         val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { UserId(it) }
-        val userIdCore = UserId(userId.id)
+        val userIdCore = userId
         val labels = labelIds
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { labelChunk -> labelRepository.findLabels(userIdCore, labelChunk).first() }
-            .toLabelChipUiModels()
+            .toLabelChipUiModels(userId)
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)
@@ -619,12 +619,12 @@ class MailboxViewModel @Inject constructor(
         jobManager.addJobInBackground(FetchMessageCountsJob(null))
     }
 
-    private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
+    private fun List<Label>.toLabelChipUiModels(userId: UserId): List<LabelChipUiModel> =
         filterNot { it.exclusive }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 
-            LabelChipUiModel(UserId(label.id), Name(label.name), labelColor)
+            LabelChipUiModel(userId, Name(label.name), labelColor)
         }
 
     fun markRead(
