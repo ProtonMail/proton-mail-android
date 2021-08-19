@@ -854,7 +854,7 @@
 
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooze</string>
-    <string name="notifications_snooze">Notifications Snooze</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 minutes</item>
         <item>1 hour</item>
@@ -912,7 +912,7 @@
     <string name="settings_prevent_taking_screenshots">Prevent taking Screenshots</string>
     <string name="hyperlink_confirmation">Request link confirmation</string>
 
-    <string name="labels_and_folders">Labels &amp; Folders </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Folders</string>
     <string name="labels">Labels</string>
     <string name="labels_manager">Labels manager</string>
@@ -954,7 +954,7 @@
 
     <string name="app_settings">App Settings</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push Notifications</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Extended Notifications</string>
     <string name="extended_notifications_description">Turn this feature on to see the sender of the emails in the push notifications.</string>
     <string name="notification_settings">Notification Settings</string>
@@ -970,16 +970,16 @@
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
 
-    <string name="app_language">App Language</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Select App Language</string>
     <string name="auto_detect">Auto-detect</string>
 
-    <string name="combined_contacts">Combined Contacts</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
 
-    <string name="local_cache_management">Local Cache</string>
-    <string name="cache_cleared">Local Cache is Refreshed</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
 
     <string name="enabled">Enabled</string>
