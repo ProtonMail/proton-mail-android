@@ -47,8 +47,8 @@ class HandleChangeToConversations @Inject constructor(
                 ActionType.CREATE,
                 ActionType.UPDATE,
                 ActionType.UPDATE_FLAGS -> {
-                    val conversation = response.conversation.toLocal(userId = userId.id)
-                    conversationRepository.saveConversations(listOf(conversation), userId)
+                    val conversation = response.conversation.toLocal(userId = userId)
+                    conversationRepository.saveConversations(userId, listOf(conversation))
                 }
                 ActionType.DELETE -> {
                     conversationRepository.deleteConversations(listOf(response.id), userId)

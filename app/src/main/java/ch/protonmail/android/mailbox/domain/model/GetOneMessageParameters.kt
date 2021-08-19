@@ -19,12 +19,14 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 
-sealed class GetMessagesResult {
-    data class Success(val messages: List<Message>) : GetMessagesResult()
-    data class ApiResponse(val lastMessageTime: Long) : GetMessagesResult()
-    data class Error(val throwable: Throwable? = null) : GetMessagesResult()
-    object Loading : GetMessagesResult()
-    object NoMessagesFound : GetMessagesResult()
-}
+/**
+ * Representation of Rest Query Parameters for 'mail/v4/messages/{end_id}' endpoint
+ * Documentation at '*\/Slim-API/mail/#operation/get_mail-v4-messages-{end_id}'
+ */
+data class GetOneMessageParameters(
+    val userId: UserId,
+    val messageId: Id,
+)

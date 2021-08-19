@@ -159,7 +159,7 @@ class MessageDetailsRepository @Inject constructor(
     fun getAllMessages(): LiveData<List<Message>> = messagesDao.getAllMessages()
 
     fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message> =
-        messagesDao.searchMessages(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+        messagesDao.searchMessagesBlocking(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
 
     suspend fun findAttachmentsByMessageId(messageId: String): List<Attachment> =
         messagesDao.findAttachmentsByMessageId(messageId).first()

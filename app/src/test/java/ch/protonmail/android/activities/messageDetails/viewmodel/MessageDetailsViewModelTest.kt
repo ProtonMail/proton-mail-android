@@ -433,7 +433,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         viewModel.conversationUiModel.test {
             userIdFlow.emit(testUserId2)
             // Then
-            coVerify { conversationRepository.getConversation(testId2, INPUT_ITEM_DETAIL_ID) }
+            coVerify { conversationRepository.getConversation(UserId(testId2.s), INPUT_ITEM_DETAIL_ID) }
             observeConversationFlow.emit(testConversationResult)
             coVerify { contactsRepository.findContactEmailByEmail(any()) }
             val actualItem = expectItem()

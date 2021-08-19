@@ -36,24 +36,24 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
 
     @Query(
         """
-        SELECT * FROM $TABLE_CONVERSATIONS 
-        WHERE $COLUMN_USER_ID = :userId
+            SELECT * FROM $TABLE_CONVERSATIONS 
+            WHERE $COLUMN_USER_ID = :userId
         """
     )
     abstract fun observeConversations(userId: String): Flow<List<ConversationDatabaseModel>>
 
     @Query(
         """
-        SELECT * FROM $TABLE_CONVERSATIONS
-        WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
+            SELECT * FROM $TABLE_CONVERSATIONS
+            WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
         """
     )
     abstract fun observeConversation(userId: String, conversationId: String): Flow<ConversationDatabaseModel?>
 
     @Query(
         """
-        SELECT * FROM $TABLE_CONVERSATIONS
-        WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
+            SELECT * FROM $TABLE_CONVERSATIONS
+            WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
         """
     )
     abstract suspend fun findConversation(userId: String, conversationId: String): ConversationDatabaseModel?
@@ -61,9 +61,17 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
     @Query(
         """
             DELETE FROM $TABLE_CONVERSATIONS
+            WHERE $COLUMN_USER_ID = :userId
+        """
+    )
+    abstract suspend fun deleteAllConversations(userId: String)
+
+    @Query(
+        """
+            DELETE FROM $TABLE_CONVERSATIONS
             WHERE $COLUMN_ID = :conversationId 
             AND $COLUMN_USER_ID = :userId
-            """
+        """
     )
     abstract suspend fun deleteConversation(userId: String, conversationId: String)
 
@@ -72,7 +80,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
             DELETE FROM $TABLE_CONVERSATIONS
             WHERE $COLUMN_ID IN (:conversationIds)  
             AND $COLUMN_USER_ID = :userId
-            """
+        """
     )
     abstract suspend fun deleteConversations(userId: String, vararg conversationIds: String)
 
@@ -84,7 +92,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
             UPDATE $TABLE_CONVERSATIONS
             SET $COLUMN_NUM_UNREAD = :numUnreadMessages
             WHERE $COLUMN_ID = :conversationId
-            """
+        """
     )
     abstract suspend fun updateNumUnreadMessages(conversationId: String, numUnreadMessages: Int)
 

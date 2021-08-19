@@ -17,14 +17,16 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain.model
+package ch.protonmail.android.mailbox.data.mapper
 
+import ch.protonmail.android.api.models.messages.receive.MessagesResponse
+import ch.protonmail.android.data.ProtonStoreMapper
 import ch.protonmail.android.data.local.model.Message
+import javax.inject.Inject
 
-sealed class GetMessagesResult {
-    data class Success(val messages: List<Message>) : GetMessagesResult()
-    data class ApiResponse(val lastMessageTime: Long) : GetMessagesResult()
-    data class Error(val throwable: Throwable? = null) : GetMessagesResult()
-    object Loading : GetMessagesResult()
-    object NoMessagesFound : GetMessagesResult()
+class MessagesResponseToMessagesMapper @Inject constructor() :
+    ProtonStoreMapper<MessagesResponse, List<Message>> {
+
+    override fun MessagesResponse.toOut(): List<Message> =
+        messages
 }

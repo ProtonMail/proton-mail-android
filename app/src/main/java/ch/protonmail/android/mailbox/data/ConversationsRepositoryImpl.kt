@@ -90,23 +90,43 @@ class ConversationsRepositoryImpl @Inject constructor(
 ) : ConversationsRepository {
 
     @FlowPreview
-    private val oneConversationStore = StoreBuilder.from(
-        fetcher = Fetcher.of(api::fetchConversation),
-        sourceOfTruth = SourceOfTruth.Companion.of(
-            reader = ::observeConversationFromDatabase,
-            writer = { params: GetOneConversationParameters, output: ConversationResponse ->
-                val messages = output.messages.map(messageFactory::createMessage)
-                messageDao.saveMessages(messages)
-                Timber.v("Stored new messages size: ${messages.size}")
-                val conversation = output.conversation.toLocal(userId = params.userId)
-                conversationDao.insertOrUpdate(conversation)
-                Timber.v("Stored new conversation id: ${conversation.id}")
-            },
-            delete = { params ->
-                conversationDao.deleteConversation(params.userId.id, params.conversationId,)
-            }
-        )
-    ).build()
+    private val oneConversationStore by lazy {
+        StoreBuilder.from(
+            fetcher = Fetcher.of(api::fetchConversation),
+            sourceOfTruth = SourceOfTruth.Companion.of(
+                reader = ::observeConversationFromDatabase,
+                writer = { params: GetOneConversationParameters, output: ConversationResponse ->
+                    val messages = output.messages.map(messageFactory::createMessage)
+                    messageDao.saveMessages(messages)
+                    Timber.v("Stored new messages size: ${messages.size}")
+                    val conversation = output.conversation.toLocal(userId = params.userId)
+                    conversationDao.insertOrUpdate(conversation)
+                    Timber.v("Stored new conversation id: ${conversation.id}")
+                },
+                delete = { params ->
+                    conversationDao.deleteConversation(params.userId.id, params.conversationId,)
+                }
+            )
+        ).build()
+    }
+
+    @FlowPreview
+    private val allConversationsStore by lazy {
+        StoreBuilder.from(
+            fetcher = Fetcher.of(api::fetchConversations),
+            sourceOfTruth = SourceOfTruth.Companion.of(
+                reader = ::observeConversationsFromDatabase,
+                writer = { params: GetAllConversationsParameters, output: ConversationsResponse ->
+                    val conversations = output.conversationResponse.toListLocal(userId = params.userId)
+                    conversationDao.insertOrUpdate(*conversations.toTypedArray())
+                    Timber.v("Stored new conversations size: ${conversations.size}")
+                },
+                delete = { params ->
+                    conversationDao.deleteAllConversations(params.userId.id,)
+                }
+            )
+        ).build()
+    }
 
     override fun getConversations(params: GetAllConversationsParameters): LoadMoreFlow<DataResult<List<Conversation>>> {
         val fromDatabaseFlow = observeConversationsFromDatabase(params)
@@ -117,7 +137,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             .loadMoreEmitInitialNull()
 
         val saveConversations: suspend (Success<ConversationsResponse>) -> Unit = { result ->
-            saveConversations(result.value.conversationResponse.toListLocal(params.userId), params.userId)
+            saveConversations(params.userId, result.value.conversationResponse.toListLocal(params.userId))
         }
 
         return loadMoreCombineTransform(fromDatabaseFlow, fromApiFlow) { fromDatabase, fromApi ->
@@ -152,8 +172,8 @@ class ConversationsRepositoryImpl @Inject constructor(
 
 
     override suspend fun saveConversations(
-        conversations: List<ConversationDatabaseModel>,
-        userId: UserId
+        userId: UserId,
+        conversations: List<ConversationDatabaseModel>
     ) {
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
     }

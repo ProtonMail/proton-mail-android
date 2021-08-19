@@ -34,6 +34,14 @@ interface ProtonStoreMapper<in In, out Out> : Mapper<In, Out> {
     fun In.toOut(): Out
 }
 
+/**
+ * A [ProtonStoreMapper] that has the same type as In and Out
+ */
+fun <T> NoProtonStoreMapper() = object : ProtonStoreMapper<T, T> {
+
+    override fun T.toOut() = this
+}
+
 fun <T : Any, V : Any> Flow<DataResult<List<T>>>.map(mapper: ProtonStoreMapper<T, V>): Flow<DataResult<List<V>>> =
     map { result ->
         result.mapSuccess { success ->

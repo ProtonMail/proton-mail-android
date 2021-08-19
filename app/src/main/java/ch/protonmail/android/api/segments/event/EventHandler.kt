@@ -52,7 +52,6 @@ import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.mailbox.domain.HandleChangeToConversations
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.usecase.fetch.FetchMailSettings
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
@@ -376,8 +375,8 @@ class EventHandler @AssistedInject constructor(
             if (toList != null) {
                 message.toList = toList
             }
-            if (newMessage.Time > 0) {
-                message.time = newMessage.Time
+            if (newMessage.time > 0) {
+                message.time = newMessage.time
             }
             if (newMessage.Size > 0) {
                 message.totalSize = newMessage.Size

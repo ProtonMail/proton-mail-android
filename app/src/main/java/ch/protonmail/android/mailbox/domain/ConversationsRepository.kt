@@ -69,7 +69,7 @@ interface ConversationsRepository {
      *
      * @throws exception when the repository fails to insert conversations for any unhandled reasons into local storage
      */
-    suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: UserId)
+    suspend fun saveConversations(userId: UserId, conversations: List<ConversationDatabaseModel>)
 
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage

@@ -25,6 +25,8 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.NoProtonStoreMapper
+import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
@@ -41,7 +43,8 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
-import ch.protonmail.android.mailbox.domain.model.GetMessagesParameters
+import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
@@ -71,11 +74,27 @@ class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val databaseProvider: DatabaseProvider,
     private val protonMailApiManager: ProtonMailApiManager,
+    messagesResponseToMessagesMapper: MessagesResponseToMessagesMapper,
     private val messageBodyFileManager: MessageBodyFileManager,
     private val userManager: UserManager,
     private val jobManager: JobManager,
     private val connectivityManager: NetworkConnectivityManager
 ) {
+
+    private val allMessagesStore by lazy {
+        ProtonStore(
+            fetcher = protonMailApiManager::getMessages,
+            reader = ::observeAllMessagesFromDatabase,
+            writer = { params, messages -> saveMessages(params.userId, messages) },
+            createBookmarkKey = { currentKey, data -> data.createBookmarkParametersOr(currentKey) },
+            apiToDomainMapper = messagesResponseToMessagesMapper,
+            databaseToDomainMapper = NoProtonStoreMapper(),
+            apiToDatabaseMapper = messagesResponseToMessagesMapper
+        )
+    }
+
+    fun observeMessages(params: GetAllMessagesParameters, refreshAtStart: Boolean = true) =
+        allMessagesStore.loadMoreFlow(params, refreshAtStart)
 
     fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {
         val messageDao = databaseProvider.provideMessageDao(userId)
@@ -168,22 +187,6 @@ class MessageRepository @Inject constructor(
             }.getOrNull()
         }
 
-    private suspend fun saveMessage(userId: UserId, message: Message): Message =
-        withContext(dispatcherProvider.Io) {
-            message.apply {
-                messageBody = messageBody?.let {
-                    return@let if (it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
-                        messageBodyFileManager.saveMessageBodyToFile(this)
-                    } else {
-                        it
-                    }
-                }
-            }
-            val messageDao = databaseProvider.provideMessageDao(userId)
-            messageDao.saveMessage(message)
-            return@withContext message
-        }
-
     fun moveToTrash(messageIds: List<String>, currentFolderLabelId: String) {
         jobManager.addJobInBackground(
             PostTrashJobV2(
@@ -239,12 +242,13 @@ class MessageRepository @Inject constructor(
     fun observeMessagesByLocation(
         userId: UserId,
         location: MessageLocationType
-    ): LoadMoreFlow<DataResult<List<Message>>> {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        val fromDatabaseFlow = observeMessagesByLocationFromDatabase(location, messagesDao)
-        val locationId = location.messageLocationTypeValue.toString()
-        return observeMessagesByLocationOrLabelId(userId, locationId, fromDatabaseFlow)
-    }
+    ): LoadMoreFlow<DataResult<List<Message>>> = allMessagesStore.loadMoreFlow(
+        GetAllMessagesParameters(
+            userId = userId,
+            labelId = location.asLabelId()
+        ),
+        refreshAtStart = true
+    )
 
     fun observeMessagesByLabelId(
         userId: UserId,
@@ -263,7 +267,7 @@ class MessageRepository @Inject constructor(
         val fromDatabaseFlow = databaseFlow
             .map { Success(ResponseSource.Local, it) }
 
-        val parameters = GetMessagesParameters(userId, labelId = locationId)
+        val parameters = GetAllMessagesParameters(userId, labelId = locationId)
         val fromApiFlow = getMessageByLocationIdFromApi(parameters)
             // Emit a null at start, in order emit data from Database, without waiting for first emission from Api
             .loadMoreEmitInitialNull()
@@ -271,7 +275,7 @@ class MessageRepository @Inject constructor(
         var lastSaved: Success<List<Message>>? = null
         val saveMessages: suspend (Success<List<Message>>) -> Unit = { result ->
             val areDifferentMessages = result.value.map { it.messageId } != lastSaved?.value?.map { it.messageId }
-            if (areDifferentMessages) persistMessages(result.value, userId)
+            if (areDifferentMessages) saveMessages(userId, result.value)
             lastSaved = result
         }
 
@@ -297,7 +301,7 @@ class MessageRepository @Inject constructor(
         else -> messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
     }
 
-    private fun getMessageByLocationIdFromApi(initialParams: GetMessagesParameters) =
+    private fun getMessageByLocationIdFromApi(initialParams: GetAllMessagesParameters) =
         loadMoreFlow(
             initialBookmark = initialParams,
             createNextBookmark = { dataResult, currentParameters ->
@@ -320,18 +324,54 @@ class MessageRepository @Inject constructor(
             emit(Error.Remote(throwable.message, throwable))
         }
 
-    private suspend fun persistMessages(
-        messages: List<Message>,
-        userId: UserId,
-        messageLocationTypeValue: Int? = null
-    ) = withContext(dispatcherProvider.Io) {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        messages.forEach { message ->
-            if (messageLocationTypeValue != null && messageLocationTypeValue > 0) {
-                message.location = messageLocationTypeValue
+    private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {
+        val dao = databaseProvider.provideMessageDao(params.userId)
+
+        fun starredAsLabelId() =
+            MessageLocationType.STARRED.asLabelId()
+
+        fun locationTypesAlLabelId() =
+            MessageLocationType.values().map { it.asLabelId() }
+
+        return if (params.keyword != null) {
+            dao.searchMessages(params.keyword)
+        } else {
+            when (params.labelId) {
+                null -> dao.observeAllMessages()
+                starredAsLabelId() -> dao.observeStarredMessages()
+                in locationTypesAlLabelId() -> dao.observeMessagesByLocation(params.labelId.toInt())
+                else -> dao.observeMessagesByLabelId(params.labelId)
             }
-            message.setFolderLocation(messagesDao)
         }
-        messagesDao.saveMessages(messages)
+    }
+
+    private suspend fun saveMessages(userId: UserId, messages: List<Message>) {
+        withContext(dispatcherProvider.Io) {
+            val messagesDao = databaseProvider.provideMessageDao(userId)
+            messages.forEach { message ->
+                message.saveBodyToFileIfNeeded()
+                message.setFolderLocation(messagesDao)
+            }
+            messagesDao.saveMessages(messages)
+        }
+    }
+
+    private suspend fun saveMessage(userId: UserId, message: Message): Message {
+        message.saveBodyToFileIfNeeded()
+        val messageDao = databaseProvider.provideMessageDao(userId)
+        messageDao.saveMessage(message)
+        return message
+    }
+
+    private suspend fun Message.saveBodyToFileIfNeeded() {
+        withContext(dispatcherProvider.Io) {
+            messageBody = messageBody?.let {
+                return@let if (it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
+                    messageBodyFileManager.saveMessageBodyToFile(this@saveBodyToFileIfNeeded)
+                } else {
+                    it
+                }
+            }
+        }
     }
 }

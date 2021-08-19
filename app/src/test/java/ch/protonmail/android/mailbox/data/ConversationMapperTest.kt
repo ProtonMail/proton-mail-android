@@ -21,7 +21,6 @@ package ch.protonmail.android.mailbox.data
 
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.MessageSender
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
@@ -30,11 +29,11 @@ import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import me.proton.core.domain.entity.UserId
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class ConversationMapperTest {
-
 
     private val testUserId = UserId("id")
     private val conversationsRemote = listOf(
@@ -152,7 +151,7 @@ class ConversationMapperTest {
         val expected = emptyList<ConversationDatabaseModel>()
 
         // when
-        val result = conversation.toListLocal(testUserId.id)
+        val result = conversation.toListLocal(testUserId)
 
         // then
         assertEquals(expected, result)
@@ -175,7 +174,7 @@ class ConversationMapperTest {
     fun verifyThatConversationApiModelIsMappedProperly() {
 
         // when
-        val result = conversationsRemote[0].toLocal(testUserId.id)
+        val result = conversationsRemote[0].toLocal(testUserId)
 
         val expected = conversationsEntity[0]
 
@@ -201,7 +200,7 @@ class ConversationMapperTest {
     fun verifyThatConversationApiModelListIsMappedProperly() {
 
         // when
-        val result = conversationsRemote.toListLocal(testUserId.id)
+        val result = conversationsRemote.toListLocal(testUserId)
 
         val expected = conversationsEntity
 

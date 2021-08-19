@@ -45,7 +45,7 @@ class ProtonStoreTest : CoroutinesTest {
     private val store = ProtonStore(
         fetcher = api::getItems,
         reader = { database.findAll() },
-        writer = database::save,
+        writer = { _, items -> database.save(items) },
         createBookmarkKey = { _, data -> data.items.maxOfOrNull { it.position } },
         apiToDomainMapper = fromApiMapper,
         databaseToDomainMapper = noMapper,

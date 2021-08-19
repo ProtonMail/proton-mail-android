@@ -32,7 +32,7 @@ import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.mailbox.domain.model.GetMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import io.reactivex.Observable
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
@@ -44,7 +44,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
         ParseUtils.parse(service.fetchMessagesCount(userIdTag).execute())
 
-    override suspend fun getMessages(params: GetMessagesParameters): MessagesResponse =
+    override suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse =
         service.getMessages(
             userIdTag = UserIdTag(params.userId),
             page = params.page,
@@ -70,7 +70,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         endId: String?,
         keyword: String?
     ): MessagesResponse {
-        val params = GetMessagesParameters(
+        val params = GetAllMessagesParameters(
             userId = userId,
             page = page,
             labelId = labelId,

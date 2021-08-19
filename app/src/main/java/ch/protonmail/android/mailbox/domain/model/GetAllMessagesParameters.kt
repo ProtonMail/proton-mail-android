@@ -19,15 +19,16 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
+import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.data.local.model.Message
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 
 /**
- * Representation of Rest Query Parameters for 'mail/v4/conversations' endpoint
+ * Representation of Rest Query Parameters for 'mail/v4/messages' endpoint
  * Documentation at '*\/Slim-API/mail/#operation/get_mail-v4-messages'
  */
-data class GetMessagesParameters(
+data class GetAllMessagesParameters(
     val userId: UserId,
     val page: Int? = null,
     val pageSize: Int = 50,
@@ -52,15 +53,37 @@ data class GetMessagesParameters(
 }
 
 /**
- * @return a [GetMessagesParameters] created from [DataResult] if [DataResult.Success] and the list is not empty,
+ * @return a [GetAllMessagesParameters] created from [MessagesResponse] if [MessagesResponse.serverMessages] list is
+ *  not empty, otherwise [currentParameters]
+ *
+ * Note: since we're using [Message.time] for fetch progressively, we assume that the messages are already ordered by
+ *  time, so we pick directly the last in the list, without adding unneeded computation
+ */
+fun MessagesResponse.createBookmarkParametersOr(
+    currentParameters: GetAllMessagesParameters
+): GetAllMessagesParameters {
+    val messages = serverMessages ?: emptyList()
+    return if (messages.isNotEmpty()) {
+        val lastMessage = messages.last()
+        currentParameters.copy(
+            end = lastMessage.time,
+            endId = checkNotNull(lastMessage.id) { "Can't create params: messageId is null" }
+        )
+    } else {
+        currentParameters
+    }
+}
+
+/**
+ * @return a [GetAllMessagesParameters] created from [DataResult] if [DataResult.Success] and the list is not empty,
  *  otherwise [currentParameters]
  *
  * Note: since we're using [Message.time] for fetch progressively, we assume that the messages are already ordered by
  *  time, so we pick directly the last in the list, without adding unneeded computation
  */
 fun DataResult<List<Message>>.createBookmarkParametersOr(
-    currentParameters: GetMessagesParameters
-): GetMessagesParameters {
+    currentParameters: GetAllMessagesParameters
+): GetAllMessagesParameters {
     return if (this is DataResult.Success && value.isNotEmpty()) {
         val lastMessage = value.last()
         currentParameters.copy(

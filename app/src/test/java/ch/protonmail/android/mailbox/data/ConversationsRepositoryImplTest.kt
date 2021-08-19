@@ -59,6 +59,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -82,6 +83,7 @@ import kotlin.time.toDuration
 
 private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723_478
 
+@OptIn(FlowPreview::class)
 class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     private val testUserId = UserId("id")
@@ -232,7 +234,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val parameters = buildGetConversationsParameters()
 
-            val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId)
+            val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(UserId(testUserId))
             coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
@@ -253,7 +255,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
-            val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId)
+            val expectedConversations = conversationsRemote.conversationResponse.toListLocal(UserId(testUserId))
 
             // when
             conversationsRepository.getConversations(parameters).test {
@@ -338,7 +340,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     fun verifyGetConversationsEmitNoMoreConversationsErrorWhenRemoteReturnsEmptyList() = runBlocking {
         // given
         val parameters = buildGetConversationsParameters()
-        val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId)
+        val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(UserId(testUserId))
         val emptyConversationsResponse = ConversationsResponse(0, emptyList())
         coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
@@ -599,7 +601,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 labels = emptyList(),
                 time = 357
             )
-            val apiMessage = ServerMessage(ID = "messageId23842737", conversationId)
+            val apiMessage = ServerMessage(id = "messageId23842737", conversationId)
             val conversationResponse = ConversationResponse(
                 0,
                 conversationApiModel,
@@ -608,8 +610,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedMessage = Message(messageId = "messageId23842737", conversationId)
             val dbFlow =
                 MutableSharedFlow<ConversationDatabaseModel?>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-            coEvery { api.fetchConversation(GetOneConversationParameters(userId, conversationId)) } returns
-                conversationResponse
+            val params = GetOneConversationParameters(userId, conversationId)
+            coEvery { api.fetchConversation(params) } returns conversationResponse
             coEvery { messageDao.findAllMessagesInfoFromConversation(conversationId) } returns emptyList()
             coEvery { conversationDao.observeConversation(userId.id, conversationId) } returns dbFlow
             every { messageFactory.createMessage(apiMessage) } returns expectedMessage

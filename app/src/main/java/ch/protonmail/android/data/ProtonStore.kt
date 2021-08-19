@@ -55,7 +55,7 @@ import me.proton.core.util.kotlin.invoke
 class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : Any>(
     private val fetcher: suspend (Key) -> ApiModel,
     private val reader: (Key) -> Flow<List<DatabaseModel>>,
-    private val writer: suspend (List<DatabaseModel>) -> Unit,
+    private val writer: suspend (Key, List<DatabaseModel>) -> Unit,
     private val createBookmarkKey: (currentKey: Key, data: ApiModel) -> Key? = { currentKey, _ -> currentKey },
     private val apiToDomainMapper: ProtonStoreMapper<ApiModel, List<DomainModel>>,
     private val databaseToDomainMapper: ProtonStoreMapper<DatabaseModel, DomainModel>,
@@ -112,7 +112,7 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
 
         return apiResult.onSuccess {
             val databaseModel = apiToDatabaseMapper { it.toOut() }
-            writer(databaseModel)
+            writer(key, databaseModel)
         }
     }
 

@@ -75,7 +75,7 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBod
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
-import ch.protonmail.android.mailbox.domain.model.GetMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -236,7 +236,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
         api.fetchMessagesCount(userIdTag)
 
-    override suspend fun getMessages(params: GetMessagesParameters): MessagesResponse =
+    override suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse =
         api.getMessages(params)
 
     @Deprecated("Use with GetMessagesParameters", ReplaceWith("getMessages(params)"))
