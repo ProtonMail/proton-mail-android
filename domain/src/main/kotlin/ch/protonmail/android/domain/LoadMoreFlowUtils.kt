@@ -50,10 +50,51 @@ fun <A, B> Flow<A>.withLoadMore(
 }
 
 /**
- * Convert the receiver [Flow] to a [LoadMoreFlow]
+ * Convert the receiver [Flow] to a [LoadMoreFlow] without any action executed when [LoadMoreFlow.loadMore] is called
  */
 fun <T> Flow<T>.asLoadMoreFlow(): LoadMoreFlow<T> =
     withLoadMore(loadMoreFlowOf<T>()) {}
+
+/**
+ * Convert the receiver [Flow] to a [LoadMoreFlow]
+ *
+ * @param loadAtStart if `true`, executes [onLoadMore] at start, without calling [LoadMoreFlow.loadMore]
+ * @param onLoadMore is executed when [LoadMoreFlow.loadMore] is called.
+ *  it must return the next bookmark [B]
+ */
+fun <B, T> Flow<T>.asLoadMoreFlow(
+    initialBookmark: B,
+    loadAtStart: Boolean = false,
+    onLoadMore: suspend FlowCollector<T>.(previousBookmark: B) -> B,
+): LoadMoreFlow<T> {
+    var bookmark = initialBookmark
+    val trigger = MutableSharedFlow<Unit>(replay = 1)
+
+    val fixedFlow = this.let {
+        if (loadAtStart) it.emitInitialNull()
+        else it
+    }
+    val fixedTrigger = trigger.emitInitialNull()
+
+    var lastFromFlow: T? = null
+    var shouldLoadOnNonTriggerEvent = loadAtStart
+    val underlying = combineTransform(fixedFlow, fixedTrigger) { fromFlow, _ ->
+        val isTriggerEvent = fromFlow === lastFromFlow
+        if (isTriggerEvent) {
+            bookmark = onLoadMore(bookmark)
+        } else {
+            lastFromFlow = fromFlow
+            emit(fromFlow)
+        }
+
+        if (shouldLoadOnNonTriggerEvent) {
+            bookmark = onLoadMore(bookmark)
+            shouldLoadOnNonTriggerEvent = false
+        }
+    }.filterNot { it == null } as Flow<T>
+
+    return LoadMoreFlow(underlying, trigger)
+}
 
 /**
  * Same as [Flow.catch], but returns a [LoadMoreFlow] instead

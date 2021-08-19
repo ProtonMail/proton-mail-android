@@ -196,6 +196,52 @@ class LoadMoreFlowTest : CoroutinesTest {
         }
     }
 
+    // region LoadMoreFlowUtils
+
+    @Test
+    fun asLoadMoreFlowEmitsOnlyFromTheOriginalFlow() = coroutinesTest {
+        // given
+        fakeDatabase.save(item1)
+        val flow = fakeDatabase.findAll().asLoadMoreFlow(
+            initialBookmark = 0,
+        ) { bookmark ->
+            val apiResult = fakePagedApi.getItems(bookmark)
+            fakeDatabase.save(apiResult)
+            apiResult.maxOfOrNull { it.position } ?: bookmark
+        }
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(1), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.take(2), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.take(4), expectItem())
+        }
+    }
+
+    @Test
+    fun asLoadMoreFlowLoadOnStartIfRequested() = coroutinesTest {
+        // given
+        fakeDatabase.save(item1)
+        val flow = fakeDatabase.findAll().asLoadMoreFlow(
+            initialBookmark = 0,
+        ) { bookmark ->
+            val apiResult = fakePagedApi.getItems(bookmark)
+            fakeDatabase.save(apiResult)
+            apiResult.maxOfOrNull { it.position } ?: bookmark
+        }
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(2), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.take(4), expectItem())
+        }
+    }
+
+    // endregion
+
     private data class Item(val position: Int, val content: String)
 
     private class FakePagedApi {
