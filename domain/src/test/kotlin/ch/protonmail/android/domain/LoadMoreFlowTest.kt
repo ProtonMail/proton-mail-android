@@ -226,6 +226,7 @@ class LoadMoreFlowTest : CoroutinesTest {
         fakeDatabase.save(item1)
         val flow = fakeDatabase.findAll().asLoadMoreFlow(
             initialBookmark = 0,
+            loadAtStart = true
         ) { bookmark ->
             val apiResult = fakePagedApi.getItems(bookmark)
             fakeDatabase.save(apiResult)
@@ -234,6 +235,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
+            assertEquals(allItems.take(1), expectItem())
             assertEquals(allItems.take(2), expectItem())
             flow.loadMore()
             assertEquals(allItems.take(4), expectItem())

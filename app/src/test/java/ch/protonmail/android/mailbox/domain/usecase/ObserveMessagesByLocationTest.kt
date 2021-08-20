@@ -25,7 +25,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.asLoadMoreFlow
 import ch.protonmail.android.domain.loadMoreFlowOf
-import me.proton.core.domain.entity.UserId
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.coEvery
@@ -124,12 +124,12 @@ class ObserveMessagesByLocationTest {
         val mailboxLocation = Constants.MessageLocationType.INBOX
         val labelId = ""
         val messagesResponseChannel = Channel<DataResult<List<Message>>>()
-        coEvery {
-            mailboxRepository.observeMessagesByLocation(
-                userId,
-                mailboxLocation
-            )
-        } returns messagesResponseChannel.receiveAsFlow().asLoadMoreFlow()
+        val params = GetAllMessagesParameters(
+            userId,
+            labelId = mailboxLocation.asLabelId()
+        )
+        coEvery { mailboxRepository.observeMessages(params) } returns
+            messagesResponseChannel.receiveAsFlow().asLoadMoreFlow()
 
         val testExceptionMessage = "An exception!"
         val testException = IllegalStateException(testExceptionMessage)
@@ -137,6 +137,7 @@ class ObserveMessagesByLocationTest {
 
         // when
         useCase(userId, mailboxLocation, labelId).test {
+
             // then
             messagesResponseChannel.close(testException)
             val actualError = expectItem() as GetMessagesResult.Error
