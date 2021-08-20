@@ -25,7 +25,6 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
@@ -92,14 +91,14 @@ class ConversationsRepositoryImpl @Inject constructor(
                 val messages = output.messages.map(messageFactory::createMessage)
                 messageDao.saveMessages(messages)
                 Timber.v("Stored new messages size: ${messages.size}")
-                val conversation = output.conversation.toLocal(userId = key.userId.s)
+                val conversation = output.conversation.toLocal(userId = key.userId.id)
                 conversationDao.insertOrUpdate(conversation)
                 Timber.v("Stored new conversation id: ${conversation.id}")
             },
             delete = { key ->
                 conversationDao.deleteConversations(
                     *listOf(key.conversationId).toTypedArray(),
-                    userId = key.userId.s
+                    userId = key.userId.id
                 )
             }
         )
@@ -114,7 +113,7 @@ class ConversationsRepositoryImpl @Inject constructor(
                 api.fetchConversations(parameters)
             }.fold(
                 onSuccess = {
-                    val conversations = it.conversationResponse.toListLocal(parameters.userId.s)
+                    val conversations = it.conversationResponse.toListLocal(parameters.userId.id)
                     saveConversations(conversations, parameters.userId)
                     if (it.conversationResponse.isEmpty()) {
                         emit(Error.Remote("No conversations", null, NO_MORE_CONVERSATIONS_ERROR_CODE))
@@ -144,25 +143,25 @@ class ConversationsRepositoryImpl @Inject constructor(
     @FlowPreview
     override fun getConversation(
         conversationId: String,
-        userId: Id
+        userId: UserId
     ): Flow<DataResult<Conversation>> =
         store.stream(StoreRequest.cached(ConversationStoreKey(conversationId, userId), true))
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
 
-    override suspend fun findConversation(conversationId: String, userId: Id): ConversationDatabaseModel? =
-        conversationDao.findConversation(conversationId, userId.s)
+    override suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel? =
+        conversationDao.findConversation(conversationId, userId.id)
 
 
     override suspend fun saveConversations(
         conversations: List<ConversationDatabaseModel>,
-        userId: Id
+        userId: UserId
     ) =
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
 
-    override suspend fun deleteConversations(conversationIds: List<String>, userId: Id) {
-        conversationDao.deleteConversations(*conversationIds.toTypedArray(), userId = userId.s)
+    override suspend fun deleteConversations(conversationIds: List<String>, userId: UserId) {
+        conversationDao.deleteConversations(*conversationIds.toTypedArray(), userId = userId.id)
     }
 
     override suspend fun clearConversations() = conversationDao.clear()
@@ -492,7 +491,7 @@ class ConversationsRepositoryImpl @Inject constructor(
     }
 
     private fun observeConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
-        conversationDao.observeConversations(params.userId.s).map { list ->
+        conversationDao.observeConversations(params.userId.id).map { list ->
             Timber.d("Conversations update size: ${list.size}, params: $params")
             list.sortedWith(
                 compareByDescending<ConversationDatabaseModel> { conversation ->
@@ -501,8 +500,8 @@ class ConversationsRepositoryImpl @Inject constructor(
             ).toDomainModelList()
         }
 
-    private fun observeConversationLocal(conversationId: String, userId: Id): Flow<Conversation?> =
-        conversationDao.observeConversation(conversationId, userId.s)
+    private fun observeConversationLocal(conversationId: String, userId: UserId): Flow<Conversation?> =
+        conversationDao.observeConversation(conversationId, userId.id)
             .map { conversation ->
                 if (conversation != null) {
                     val messages = getAllMessagesFromAConversation(conversation.id)
@@ -517,5 +516,5 @@ class ConversationsRepositoryImpl @Inject constructor(
                 }
             }
 
-    private data class ConversationStoreKey(val conversationId: String, val userId: Id)
+    private data class ConversationStoreKey(val conversationId: String, val userId: UserId)
 }

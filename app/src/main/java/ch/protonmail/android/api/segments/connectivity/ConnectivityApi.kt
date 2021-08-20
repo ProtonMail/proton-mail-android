@@ -23,5 +23,5 @@ import ch.protonmail.android.api.segments.BaseApi
 
 class ConnectivityApi(val pingService: PingService) : BaseApi(), ConnectivityApiSpec {
 
-    override suspend fun pingAsync(): ResponseBody = pingService.ping().body()!!
+    override suspend fun ping(): ResponseBody = pingService.ping().body()!!
 }

@@ -32,7 +32,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DEVICE_ENVIRONMENT_ANDROID
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
@@ -63,7 +63,7 @@ class RegisterDeviceWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val userId = inputData.getString(KEY_PM_REGISTRATION_WORKER_USER_ID)?.takeIfNotBlank()
-            ?.let(::Id)
+            ?.let(::UserId)
             ?: return Result.failure(workDataOf(KEY_PM_REGISTRATION_WORKER_ERROR to "User id not provided"))
 
         val userPrefs = SecureSharedPreferences.getPrefsForUser(applicationContext, userId)
@@ -108,7 +108,7 @@ class RegisterDeviceWorker @AssistedInject constructor(
                 if (fcmTokenManager.isTokenSentBlocking().not()) {
                     val request = OneTimeWorkRequestBuilder<RegisterDeviceWorker>()
                         .setConstraints(constraints)
-                        .setInputData(workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s))
+                        .setInputData(workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.id))
                         .build()
 
                     workManager.enqueue(request)

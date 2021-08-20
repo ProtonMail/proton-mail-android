@@ -31,7 +31,7 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
@@ -69,7 +69,7 @@ class ComposeMessageRepository @Inject constructor(
     /**
      * Reloads all statically required dependencies when currently active user changes.
      */
-    fun reloadDependenciesForUser(userId: Id) {
+    fun reloadDependenciesForUser(userId: UserId) {
         messageDetailsRepository.reloadDependenciesForUser(userId)
         messageDao = databaseProvider.provideMessageDao(userId)
     }
@@ -78,16 +78,16 @@ class ComposeMessageRepository @Inject constructor(
         databaseProvider.provideContactDao(userManager.requireCurrentUserId())
     }
 
-    private val contactDaos: HashMap<Id, ContactDao> by resettableLazy(lazyManager) {
+    private val contactDaos: HashMap<UserId, ContactDao> by resettableLazy(lazyManager) {
         val userIds = accountManager.allLoggedInBlocking()
-        val listOfDaos: HashMap<Id, ContactDao> = HashMap()
+        val listOfDaos: HashMap<UserId, ContactDao> = HashMap()
         for (userId in userIds) {
             listOfDaos[userId] = databaseProvider.provideContactDao(userId)
         }
         listOfDaos
     }
 
-    fun getContactGroupsFromDB(userId: Id, combinedContacts: Boolean): Observable<List<ContactLabel>> {
+    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Observable<List<ContactLabel>> {
         var tempContactDao: ContactDao = contactDao
         if (combinedContacts) {
             tempContactDao = contactDaos[userId]!!
@@ -187,7 +187,7 @@ class ComposeMessageRepository @Inject constructor(
             .build()
     }
 
-    fun findAllMessageRecipients(userId: Id) = contactDaos[userId]!!.findAllMessageRecipients()
+    fun findAllMessageRecipients(userId: UserId) = contactDaos[userId]!!.findAllMessageRecipients()
 
     fun markMessageRead(messageId: String) {
         GlobalScope.launch(Dispatchers.IO) {

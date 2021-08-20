@@ -27,7 +27,6 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.notifier.UserNotifier
 import io.mockk.every
@@ -36,6 +35,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import me.proton.core.accountmanager.domain.SessionManager
+import me.proton.core.domain.entity.UserId
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.junit.After
@@ -45,7 +45,7 @@ import kotlin.test.assertEquals
 
 class BaseRequestInterceptorTest {
 
-    private val testUserId = Id("Test user")
+    private val testUserId = UserId("Test user")
 
     private val chainMock = mockk<Interceptor.Chain> {
         every { request() } returns mockk()
@@ -53,7 +53,7 @@ class BaseRequestInterceptorTest {
     }
 
     private val userMock = mockk<User> {
-        every { id } returns testUserId.s
+        every { id } returns testUserId.id
         every { allowSecureConnectionsViaThirdParties } returns true
         every { usingDefaultApi } returns true
     }

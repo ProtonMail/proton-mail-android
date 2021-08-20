@@ -26,16 +26,16 @@ import ch.protonmail.android.api.models.requests.ShowImages
 import ch.protonmail.android.api.models.requests.Signature
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import java.io.IOException
 
 class MailSettingsApi(private val service: MailSettingsService) : BaseApi(), MailSettingsApiSpec {
 
-    override suspend fun fetchMailSettings(userId: Id): MailSettingsResponse =
+    override suspend fun fetchMailSettings(userId: UserId): MailSettingsResponse =
         service.fetchMailSettings(UserIdTag(userId))
 
     @Throws(IOException::class)
-    override fun fetchMailSettingsBlocking(userId: Id): MailSettingsResponse =
+    override fun fetchMailSettingsBlocking(userId: UserId): MailSettingsResponse =
         ParseUtils.parse(service.fetchMailSettingsCall(UserIdTag(userId)).execute())
 
     @Throws(IOException::class)

@@ -28,7 +28,6 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.crypto.BinaryDecryptionResult
@@ -43,7 +42,9 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.user.domain.entity.AddressId
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import java.net.SocketTimeoutException
@@ -287,9 +288,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     @Test
     fun uploadPublicKeyCallsUploadAttachmentApiWithPublicKeyAttachment() {
         runBlockingTest {
-            val userId = Id("id")
-            val addressId = Id("addressId")
-            val message = Message(messageId = "messageId", addressID = addressId.s)
+            val userId = UserId("id")
+            val addressId = AddressId("addressId")
+            val message = Message(messageId = "messageId", addressID = addressId.id)
             val privateKey = mockk<PgpField.PrivateKey>()
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
             val address = mockk<Address> {
@@ -298,7 +299,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             }
             every { userManager.currentUserId } returns userId
             every { userManager.requireCurrentUserId() } returns userId
-            coEvery { userManager.getLegacyUser(userId).getAddressById(addressId.s).toNewAddress() } returns address
+            coEvery { userManager.getLegacyUser(userId).getAddressById(addressId.id).toNewAddress() } returns address
             coEvery { userManager.getUser(userId).findAddressById(addressId) } returns address
             every { crypto.buildArmoredPublicKey(any()) } returns "PublicKeyString"
             every { crypto.getFingerprint("PublicKeyString") } returns "PublicKeyStringFingerprint"

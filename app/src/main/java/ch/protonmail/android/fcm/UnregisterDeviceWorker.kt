@@ -30,7 +30,6 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.UnregisterDeviceRequestBody
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -87,7 +86,7 @@ class UnregisterDeviceWorker @AssistedInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val userPrefs = SecureSharedPreferences.getPrefsForUser(context, Id(userId.id))
+            val userPrefs = SecureSharedPreferences.getPrefsForUser(context, userId)
             val fcmTokenManager = fcmTokenManagerFactory.create(userPrefs)
             val token = fcmTokenManager.getTokenBlocking()?.value
 

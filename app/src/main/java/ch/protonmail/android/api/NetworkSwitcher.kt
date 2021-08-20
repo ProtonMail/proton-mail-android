@@ -19,19 +19,15 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.models.doh.Proxies
-import ch.protonmail.android.api.segments.connectivity.ConnectivityApi
-import ch.protonmail.android.api.segments.connectivity.PingService
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.di.BaseUrl
-import ch.protonmail.android.utils.Logger
-import kotlinx.coroutines.runBlocking
-import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface INetworkSwitcher {
     fun reconfigureProxy(proxies: Proxies?)
-    fun <T> tryRequest(callFun: suspend (PingService) -> Response<T>)
+    suspend fun tryRequest()
 }
 
 @Singleton
@@ -40,7 +36,8 @@ class NetworkSwitcher @Inject constructor(
     private val apiProvider: ProtonMailApiProvider,
     private val protonOkHttpProvider: OkHttpProvider,
     @BaseUrl private val baseUrl: String,
-    networkConfigurator: NetworkConfigurator
+    networkConfigurator: NetworkConfigurator,
+    private val eventManager: EventManager
 ) : INetworkSwitcher {
 
     init {
@@ -53,16 +50,13 @@ class NetworkSwitcher @Inject constructor(
      */
     override fun reconfigureProxy(proxies: Proxies?) { // TODO: DoH this can be done without null
         val proxyItem = proxies?.getCurrentActiveProxy()?.baseUrl ?: baseUrl
-        Logger.doLog("NetworkSwitcher", "proxyItem url is: $proxyItem")
+        Timber.v("proxyItem url is: $proxyItem")
         val newApi: ProtonMailApi = apiProvider.rebuild(protonOkHttpProvider, proxyItem)
         api.reset(newApi)
-        ProtonMailApplication.getApplication().eventManager.reconfigure(newApi.securedServices.event)
+        eventManager.reconfigure(newApi.securedServices.event)
     }
 
-    override fun <T> tryRequest(callFun: suspend (PingService) -> Response<T>) {
-        runBlocking {
-            // this is a bit awkward, but it is fine for now
-            callFun.invoke((api.api.connectivityApi as ConnectivityApi).pingService)
-        }
+    override suspend fun tryRequest() {
+        api.ping()
     }
 }

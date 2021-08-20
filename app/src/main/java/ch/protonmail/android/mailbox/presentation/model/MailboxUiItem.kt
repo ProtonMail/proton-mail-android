@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.mailbox.presentation.model
 
-import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.model.LabelChipUiModel
 
 data class MailboxUiItem(
     val itemId: String,

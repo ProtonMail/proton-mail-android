@@ -37,7 +37,7 @@ import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
@@ -83,7 +83,7 @@ class MessageDetailsRepository @Inject constructor(
         jobManager: JobManager,
         databaseProvider: DatabaseProvider,
         attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
-        @Assisted userId: Id
+        @Assisted userId: UserId
     ) : this(
         applicationContext = context,
         jobManager = jobManager,
@@ -93,7 +93,7 @@ class MessageDetailsRepository @Inject constructor(
         attachmentsWorker = attachmentsWorker
     )
 
-    fun reloadDependenciesForUser(userId: Id) {
+    fun reloadDependenciesForUser(userId: UserId) {
         pendingActionDao = databaseProvider.providePendingActionDao(userId)
         messagesDao = databaseProvider.provideMessageDao(userId)
     }
@@ -377,7 +377,7 @@ class MessageDetailsRepository @Inject constructor(
             .build()
     }
 
-    fun startDownloadEmbeddedImages(messageId: String, userId: Id) {
+    fun startDownloadEmbeddedImages(messageId: String, userId: UserId) {
         attachmentsWorker.enqueue(messageId, userId, "")
     }
 
@@ -402,6 +402,6 @@ class MessageDetailsRepository @Inject constructor(
     @AssistedInject.Factory
     interface AssistedFactory {
 
-        fun create(userId: Id): MessageDetailsRepository
+        fun create(userId: UserId): MessageDetailsRepository
     }
 }

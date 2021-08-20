@@ -49,7 +49,6 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
@@ -75,8 +74,10 @@ import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.assertTrue
+import me.proton.core.user.domain.entity.AddressId
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
@@ -90,7 +91,7 @@ import kotlin.test.assertNull
 
 class CreateDraftWorkerTest : CoroutinesTest {
 
-    private val testUserId = Id("id")
+    private val testUserId = UserId("id")
     private val testMessagePayload = MessagePayload(
         sender = ServerMessageSender(address = "some@pm.me"),
         body = "some message body"
@@ -99,7 +100,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     private val userNotifier: UserNotifier = mockk(relaxed = true)
 
     private val parameters: WorkerParameters = mockk(relaxed = true) {
-        every { inputData.getString(KEY_INPUT_SAVE_DRAFT_USER_ID) } returns testUserId.s
+        every { inputData.getString(KEY_INPUT_SAVE_DRAFT_USER_ID) } returns testUserId.id
     }
 
     private val messageFactory: MessageFactory = mockk(relaxed = true)
@@ -263,7 +264,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
             val apiDraftMessage = DraftBody(message = testMessagePayload)
             val address = Address(
-                Id(addressId),
+                AddressId(addressId),
                 null,
                 EmailAddress("sender@email.it"),
                 Name("senderName"),
@@ -280,7 +281,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { userManager.currentUserId } returns testUserId
             coEvery { userManager.getUser(testUserId) } returns mockk {
-                every { findAddressById(Id(addressId)) } returns address
+                every { findAddressById(AddressId(addressId)) } returns address
             }
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
@@ -377,9 +378,9 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageById(parentId) } returns flowOf(parentMessage)
             every { userManager.currentUserId } returns testUserId
             coEvery { userManager.getUser(testUserId) } returns mockk {
-                every { findAddressById(Id("addressId835")) } returns senderAddress
+                every { findAddressById(AddressId("addressId835")) } returns senderAddress
             }
-            every { addressCryptoFactory.create(testUserId, Id(previousSenderAddressId)) } returns addressCrypto
+            every { addressCryptoFactory.create(testUserId, AddressId(previousSenderAddressId)) } returns addressCrypto
             every { addressCrypto.buildArmoredPublicKey(privateKey) } returns senderPublicKey
             every { base64.decode(attachment.keyPackets!!) } returns decodedPacketsBytes
             every { base64.encode(encryptedKeyPackets) } returns "encrypted encoded packets"
@@ -435,7 +436,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { messageDetailsRepository.findMessageById(parentId) } returns flowOf(parentMessage)
-            every { userManager.currentUserId } returns Id("another")
+            every { userManager.currentUserId } returns UserId("another")
 
             // When
             worker.doWork()
@@ -684,7 +685,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             every { userManager.currentUserId } returns testUserId
             every { userManager.requireCurrentUserId() } returns testUserId
-            every { addressCryptoFactory.create(testUserId, Id(previousSenderAddressId)) } returns
+            every { addressCryptoFactory.create(testUserId, AddressId(previousSenderAddressId)) } returns
                 mockk(relaxed = true) {
                     every { decryptKeyPacket(any()) } throws Exception("Decryption failed")
                 }
@@ -741,7 +742,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { base64.decode("MessageAtta3KeyPacketsBase64") } returns
                 "MessageAtta3KeyPackets".toByteArray()
 
-            every { addressCryptoFactory.create(testUserId, Id(previousSenderAddressId)) } returns
+            every { addressCryptoFactory.create(testUserId, AddressId(previousSenderAddressId)) } returns
                 mockk(relaxed = true) {
                     every { decryptKeyPacket("MessageAtta1KeyPackets".toByteArray()) } returns
                         "decryptedKeyPackets1".toByteArray()

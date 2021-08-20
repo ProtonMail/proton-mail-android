@@ -20,7 +20,7 @@
 package ch.protonmail.android.mailbox.data.remote
 
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
@@ -34,31 +34,31 @@ interface ConversationApiSpec {
 
     suspend fun fetchConversation(
         conversationId: String,
-        userId: Id
+        userId: UserId
     ): ConversationResponse
 
     suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses
 
     suspend fun markConversationsUnread(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses
 
     suspend fun labelConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses
 
     suspend fun unlabelConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses
 
     suspend fun deleteConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses
 }

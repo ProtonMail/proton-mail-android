@@ -19,11 +19,11 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 
 data class GetConversationsParameters(
     val locationId: String,
-    val userId: Id,
+    val userId: UserId,
     // Field used for pagination to require only conversations older then this timestamp
     val oldestConversationTimestamp: Long?,
     val pageSize: Int = 50

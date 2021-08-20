@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.domain.entity.user
 
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.Validable
 import ch.protonmail.android.domain.entity.Validated
@@ -31,7 +31,7 @@ import ch.protonmail.android.domain.entity.requireValid
  */
 @Validated
 data class UserKey(
-    val id: Id,
+    val id: UserId,
     val version: UInt,
     val privateKey: PgpField.PrivateKey,
     val token: PgpField.Message?

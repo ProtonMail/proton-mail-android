@@ -137,9 +137,7 @@ class NetworkConfigurator @Inject constructor(
             if (user.usingDefaultApi) {
                 val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                     val result = try {
-                        networkSwitcher.tryRequest { service ->
-                            service.ping()
-                        }
+                        networkSwitcher.tryRequest()
                     } catch (e: Exception) {
                         Timber.i(e, "Exception while pinging API before using alternative routing")
                         null
@@ -160,9 +158,7 @@ class NetworkConfigurator @Inject constructor(
                 networkSwitcher.reconfigureProxy(proxies)
                 val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                     val result = try {
-                        networkSwitcher.tryRequest { service ->
-                            service.ping()
-                        }
+                        networkSwitcher.tryRequest()
                     } catch (e: Exception) {
                         Timber.i(e, "Exception while pinging alternative routing URL")
                         null

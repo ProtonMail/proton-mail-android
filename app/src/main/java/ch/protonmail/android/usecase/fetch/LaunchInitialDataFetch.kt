@@ -22,7 +22,7 @@ package ch.protonmail.android.usecase.fetch
 import android.content.Context
 import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import ch.protonmail.android.worker.FetchMailSettingsWorker
@@ -42,7 +42,7 @@ class LaunchInitialDataFetch @Inject constructor(
 ) {
 
     operator fun invoke(
-        userId: Id,
+        userId: UserId,
         shouldRefreshDetails: Boolean = true,
         shouldRefreshContacts: Boolean = true
     ) {

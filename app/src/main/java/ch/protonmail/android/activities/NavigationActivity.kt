@@ -47,7 +47,6 @@ import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.drawer.presentation.mapper.LabelWithUnreadCounterToDrawerLabelItemUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.Type
@@ -213,7 +212,9 @@ internal abstract class NavigationActivity : BaseActivity() {
             .onEach {
                 val primaryUserId = accountStateManager.getPrimaryUserId().value
 
-                fun dismiss() { closeDrawerAndDialog() }
+                fun dismiss() {
+                    closeDrawerAndDialog()
+                }
 
                 fun dismissIfPrimary(userId: UserId) {
                     if (primaryUserId == userId) dismiss()
@@ -356,7 +357,7 @@ internal abstract class NavigationActivity : BaseActivity() {
         navigationViewModel.locationsUnreadLiveData().observe(this, LocationsMenuObserver())
     }
 
-    private suspend fun areNotificationsSnoozed(userId: Id): Boolean {
+    private suspend fun areNotificationsSnoozed(userId: UserId): Boolean {
         val userPreferences = SecureSharedPreferences.getPrefsForUser(this, userId)
         with(SnoozeSettings.load(userPreferences)) {
             val shouldShowNotification = !shouldSuppressNotification(Calendar.getInstance())
@@ -403,7 +404,7 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         fun onSignOutSelected() {
 
-            fun onLogoutConfirmed(currentUserId: Id) {
+            fun onLogoutConfirmed(currentUserId: UserId) {
                 accountStateManager.signOut(currentUserId)
             }
 

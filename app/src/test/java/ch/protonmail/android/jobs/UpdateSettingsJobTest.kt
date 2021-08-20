@@ -24,7 +24,6 @@ import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.JobEntryPoint
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import dagger.hilt.EntryPoints
 import io.mockk.MockKAnnotations
@@ -34,6 +33,7 @@ import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -68,7 +68,7 @@ class UpdateSettingsJobTest {
         every { jobEntryPoint.apiManager() } returns mockApiManager
         every { jobEntryPoint.userManager() } returns mockUserManager
 
-        every { mockUserManager.requireCurrentUserId() } returns Id("id")
+        every { mockUserManager.requireCurrentUserId() } returns UserId("id")
         every { mockUserManager.getCurrentUserMailSettingsBlocking() } returns mailSettings
     }
 

@@ -20,7 +20,6 @@
 package ch.protonmail.android.fcm
 
 import android.content.SharedPreferences
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import io.mockk.coEvery
@@ -42,22 +41,22 @@ import kotlin.test.assertTrue
 class MultiUserFcmTokenManagerTest : CoroutinesTest {
 
     private val user1 = DataSet(
-        Id("1"),
+        UserId("1"),
         userFcmTokenManager = mockk(relaxUnitFun = true),
         sharedPreferences = newMockSharedPreferences
     )
     private val user2 = DataSet(
-        Id("2"),
+        UserId("2"),
         userFcmTokenManager = mockk(relaxUnitFun = true),
         sharedPreferences = newMockSharedPreferences
     )
     private val user3 = DataSet(
-        Id("3"),
+        UserId("3"),
         userFcmTokenManager = mockk(relaxUnitFun = true),
         sharedPreferences = newMockSharedPreferences
     )
     private val user4 = DataSet(
-        Id("4"),
+        UserId("4"),
         userFcmTokenManager = mockk(relaxUnitFun = true),
         sharedPreferences = newMockSharedPreferences
     )
@@ -66,7 +65,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
 
     private val accounts = allLoggedInUsers.map { user ->
         mockk<Account> {
-            every { userId } returns UserId(user.userId.s)
+            every { userId } returns UserId(user.userId.id)
             every { state } returns AccountState.Ready
         }
     }
@@ -78,7 +77,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
 
     private val preferencesFactory: SecureSharedPreferences.Factory = mockk {
         every { userPreferences(any()) } answers {
-            val userIdParam = firstArg<Id>()
+            val userIdParam = firstArg<UserId>()
             allLoggedInUsers.first { it.userId == userIdParam }.sharedPreferences
         }
     }
@@ -182,7 +181,7 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
 
 
     data class DataSet(
-        val userId: Id,
+        val userId: UserId,
         val sharedPreferences: SharedPreferences,
         val userFcmTokenManager: FcmTokenManager
     )

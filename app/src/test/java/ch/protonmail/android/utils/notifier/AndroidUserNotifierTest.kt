@@ -22,7 +22,7 @@ package ch.protonmail.android.utils.notifier
 import android.content.Context
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.extensions.showToast
@@ -41,7 +41,7 @@ import kotlin.test.Test
 
 class AndroidUserNotifierTest : CoroutinesTest {
 
-    private val testUserId = Id("id")
+    private val testUserId = UserId("id")
     private val testUserName = Name("name")
 
     private val notificationServer: NotificationServer = mockk(relaxed = true)

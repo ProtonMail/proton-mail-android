@@ -19,11 +19,11 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.event.data.remote.model.ConversationsEventResponse
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.mailbox.data.toLocal
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,7 +38,7 @@ class HandleChangeToConversations @Inject constructor(
      * @param conversations list oof conversation that we need to handle a change for
      */
     suspend operator fun invoke(
-        userId: Id,
+        userId: UserId,
         conversations: List<ConversationsEventResponse>
     ) = withContext(dispatchers.Io) {
         conversations.forEach { response ->
@@ -47,7 +47,7 @@ class HandleChangeToConversations @Inject constructor(
                 ActionType.CREATE,
                 ActionType.UPDATE,
                 ActionType.UPDATE_FLAGS -> {
-                    val conversation = response.conversation.toLocal(userId = userId.s)
+                    val conversation = response.conversation.toLocal(userId = userId.id)
                     conversationRepository.saveConversations(listOf(conversation), userId)
                 }
                 ActionType.DELETE -> {

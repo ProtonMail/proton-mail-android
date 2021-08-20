@@ -18,12 +18,12 @@
  */
 package ch.protonmail.android.domain.entity.user
 
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.Validable
 import ch.protonmail.android.domain.entity.Validated
 import ch.protonmail.android.domain.entity.Validator
 import ch.protonmail.android.domain.entity.requireValid
+import me.proton.core.domain.entity.UserId
 
 // It is possible for an address to not have any key
 
@@ -34,7 +34,7 @@ import ch.protonmail.android.domain.entity.requireValid
 @Validated // TODO more fine grained validation regarding activation, token and signature. Must be evaluated when the
 //             business logic will receive some refactor there
 data class AddressKey(
-    val id: Id,
+    val id: UserId,
     val version: UInt,
     /**
      * Represented on BE as 'Flags' 2
@@ -95,8 +95,8 @@ data class AddressKeys(
     val primaryKey: AddressKey?,
     val keys: Collection<AddressKey>
 ) : Validable by Validator<AddressKeys>({
-        require(primaryKey == null && keys.isEmpty() || primaryKey in keys)
-    }) {
+    require(primaryKey == null && keys.isEmpty() || primaryKey in keys)
+}) {
     init { requireValid() }
 
     val hasKeys get() = keys.isNotEmpty()

@@ -1102,7 +1102,7 @@ internal class MailboxActivity :
                 ) {
                     mailboxViewModel.deleteAction(
                         messageIds,
-                        UserId(userManager.requireCurrentUserId().s),
+                        UserId(userManager.requireCurrentUserId().id),
                         currentMailboxLocation
                     )
                 }
@@ -1117,7 +1117,7 @@ internal class MailboxActivity :
                 undoSnack!!.show()
                 mailboxViewModel.moveToFolder(
                     messageIds,
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     currentMailboxLocation,
                     MessageLocationType.TRASH.messageLocationTypeValue.toString()
                 )
@@ -1129,14 +1129,14 @@ internal class MailboxActivity :
             if (MessageUtils.areAllUnRead(selectedMessages)) {
                 mailboxViewModel.markRead(
                     messageIds,
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     currentMailboxLocation,
                     mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
                 )
             } else {
                 mailboxViewModel.markUnRead(
                     messageIds,
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     currentMailboxLocation,
                     mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
                 )

@@ -25,13 +25,14 @@ import assert4k.fails
 import assert4k.that
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.ValidationException
 import ch.protonmail.android.domain.entity.user.Plan.Mail
 import ch.protonmail.android.domain.entity.user.Plan.Vpn
+import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import kotlin.test.Test
 
 /**
@@ -106,7 +107,7 @@ internal class UserTest {
         role: Role = Role.NO_ORGANIZATION,
         plans: Collection<Plan> = emptyList()
     ) = User(
-        Id("id"),
+        UserId("id"),
         Name("davide"),
         addresses,
         keys,
@@ -124,8 +125,8 @@ internal class UserTest {
         mapOf(
             1 to
                 Address(
-                    Id("address"),
-                    Id("domainId"),
+                    AddressId("address"),
+                    "domainId",
                     EmailAddress("dav@protonmail.ch"),
                     null,
                     null,
@@ -139,7 +140,7 @@ internal class UserTest {
     )
 
     private val dummyKey = UserKey(
-        Id("key"),
+        UserId("key"),
         4.toUInt(),
         PgpField.PrivateKey(NotBlankString("key")),
         PgpField.Message(NotBlankString("token"))

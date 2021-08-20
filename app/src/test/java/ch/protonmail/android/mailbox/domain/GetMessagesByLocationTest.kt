@@ -22,7 +22,7 @@ package ch.protonmail.android.mailbox.domain
 import app.cash.turbine.test
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.coEvery
@@ -42,7 +42,7 @@ class GetMessagesByLocationTest {
 
     private val useCase = GetMessagesByLocation(mailboxRepository)
 
-    private val userId = Id("user")
+    private val userId = UserId("user")
 
     @Test
     fun verifyThatInboxDataModelIsReturnedNormally() = runBlockingTest {

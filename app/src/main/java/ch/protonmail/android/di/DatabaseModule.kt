@@ -31,7 +31,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import dagger.Module
 import dagger.Provides
@@ -45,13 +45,13 @@ object DatabaseModule {
     @Provides
     fun provideAttachmentMetadataDao(
         context: Context,
-        @CurrentUserId userId: Id
+        @CurrentUserId userId: UserId
     ): AttachmentMetadataDao = AttachmentMetadataDatabase.getInstance(context, userId).getDao()
 
     @Provides
     fun provideContactDatabase(
         context: Context,
-        @CurrentUserId userId: Id
+        @CurrentUserId userId: UserId
     ): ContactDatabase = ContactDatabase.getInstance(context, userId)
 
     @Provides
@@ -61,7 +61,7 @@ object DatabaseModule {
     @Provides
     fun provideCounterDatabase(
         context: Context,
-        @CurrentUserId userId: Id
+        @CurrentUserId userId: UserId
     ): CounterDatabase = CounterDatabase.getInstance(context, userId)
 
     @Provides
@@ -75,13 +75,13 @@ object DatabaseModule {
     @Provides
     fun provideMessageDatabase(
         context: Context,
-        @CurrentUserId userId: Id
+        @CurrentUserId userId: UserId
     ): MessageDao = MessageDatabase.getInstance(context, userId).getDao()
 
     @Provides
     fun provideConversationDatabase(
         context: Context,
-        @CurrentUserId userId: Id
+        @CurrentUserId userId: UserId
     ): ConversationDao = MessageDatabase.getInstance(context, userId).getConversationDao()
 
 

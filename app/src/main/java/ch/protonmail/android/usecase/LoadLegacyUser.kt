@@ -21,7 +21,7 @@ package ch.protonmail.android.usecase
 
 import android.content.Context
 import arrow.core.Either
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import kotlinx.coroutines.withContext
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.user.domain.UserManager
@@ -35,7 +35,7 @@ class LoadLegacyUser @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(userId: Id): Either<LoadUser.Error, LegacyUser> =
+    suspend operator fun invoke(userId: UserId): Either<LoadUser.Error, LegacyUser> =
         withContext(dispatchers.Io) {
             loadLegacyUserDelegate(userId)
         }
@@ -49,7 +49,7 @@ class LoadLegacyUserDelegate @Inject constructor(
     private val keyStoreCrypto: KeyStoreCrypto
 ) {
 
-    operator fun invoke(userId: Id): Either<LoadUser.Error, LegacyUser> =
+    operator fun invoke(userId: UserId): Either<LoadUser.Error, LegacyUser> =
         @Suppress("DEPRECATION")
         LegacyUser.load(userId, context, userManager, keyStoreCrypto)
 }

@@ -30,7 +30,6 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
@@ -83,7 +82,7 @@ private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
 
 class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
-    private val testUserId = Id("id")
+    private val testUserId = UserId("id")
 
     private val conversationsRemote = ConversationsResponse(
         total = 5,
@@ -215,7 +214,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 oldestConversationTimestamp = 1616496670,
                 pageSize = 2
             )
-            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(listOf())
+            coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(listOf())
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
             // when
@@ -238,8 +237,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 pageSize = 5,
             )
 
-            val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
-            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(conversationsEntity)
+            val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.id)
+            coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
             // when
@@ -260,7 +259,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 pageSize = 5
             )
 
-            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(emptyList())
+            coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(emptyList())
             coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
@@ -271,7 +270,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val actualLocalItems = result[0] as DataResult.Success
             assertEquals(ResponseSource.Local, actualLocalItems.source)
 
-            val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
+            val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.id)
             coVerify { api.fetchConversations(parameters) }
             coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
         }
@@ -285,7 +284,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             oldestConversationTimestamp = 823848238
         )
 
-        coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(emptyList())
+        coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(emptyList())
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
         coEvery { api.fetchConversations(any()) } throws IOException("Test - Bad Request")
 
@@ -316,7 +315,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         val recipients = listOf(
             MessageRecipient("recipient", "recipient@pm.ch")
         )
-        coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(
+        coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(
             listOf(
                 ConversationDatabaseModel(
                     "conversationId234423",
@@ -371,9 +370,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             userId = testUserId,
             oldestConversationTimestamp = 823848238
         )
-        val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
+        val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.id)
         val emptyConversationsResponse = ConversationsResponse(0, emptyList())
-        coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(conversationsEntity)
+        coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
         coEvery { api.fetchConversations(any()) } returns emptyConversationsResponse
 
@@ -435,7 +434,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
 
             // when
-            val result = conversationsRepository.getConversation(conversationId, Id(userId)).take(1).toList()
+            val result = conversationsRepository.getConversation(conversationId, UserId(userId)).take(1).toList()
 
             // then
             val expectedMessage = MessageDomainModel(
@@ -509,7 +508,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedMessage = Message(messageId = "messageId23842737", conversationId)
             val dbFlow =
                 MutableSharedFlow<ConversationDatabaseModel?>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-            coEvery { api.fetchConversation(conversationId, Id(userId)) } returns conversationResponse
+            coEvery { api.fetchConversation(conversationId, UserId(userId)) } returns conversationResponse
             coEvery { messageDao.findAllMessagesInfoFromConversation(conversationId) } returns emptyList()
             coEvery { conversationDao.observeConversation(conversationId, userId) } returns dbFlow
             every { messageFactory.createMessage(apiMessage) } returns expectedMessage
@@ -538,15 +537,16 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
 
             // when
-            conversationsRepository.getConversation(conversationId, Id(userId)).test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
-                dbFlow.emit(null)
+            conversationsRepository.getConversation(conversationId, UserId(userId))
+                .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
+                    dbFlow.emit(null)
 
-                // then
-                assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
-                assertEquals(ResponseSource.Local, (expectItem() as DataResult.Success).source)
-                coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
-                coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
-            }
+                    // then
+                    assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
+                    assertEquals(ResponseSource.Local, (expectItem() as DataResult.Success).source)
+                    coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
+                    coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
+                }
 
         }
     }
@@ -560,7 +560,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 userId = testUserId,
                 oldestConversationTimestamp = null
             )
-            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(emptyList())
+            coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(emptyList())
             coEvery { api.fetchConversations(parameters) } throws CancellationException("Cancelled")
 
             // when

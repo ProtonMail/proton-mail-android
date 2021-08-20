@@ -20,16 +20,13 @@ package ch.protonmail.android.api.segments.report
 
 import ch.protonmail.android.api.models.BugsBody
 import ch.protonmail.android.api.models.PostPhishingReportBody
-import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.api.utils.ParseUtils
-import ch.protonmail.android.core.Constants
-import java.io.IOException
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.data.ApiProvider
+import me.proton.core.network.domain.ApiResult
 
-class ReportApi(private val service: ReportService) : BaseApi(), ReportApiSpec {
+class ReportApi(private val apiProvider: ApiProvider) : ReportApiSpec {
 
-    @Throws(IOException::class)
-    override fun reportBug(
+    override suspend fun reportBug(
         osName: String,
         appVersion: String,
         client: String,
@@ -38,25 +35,24 @@ class ReportApi(private val service: ReportService) : BaseApi(), ReportApiSpec {
         description: String,
         username: String,
         email: String
-    ): ResponseBody {
-        return ParseUtils.parse(
-            service.bugs(BugsBody(osName, appVersion, client, clientVersion, title, description, username, email))
-                .execute()
-        )
-    }
+    ): ApiResult<Unit> =
+        apiProvider.get<ReportService>().invoke {
+            postBugs(BugsBody(osName, appVersion, client, clientVersion, title, description, username, email))
+        }
 
-    @Throws(IOException::class)
-    override fun postPhishingReport(messageId: String, messageBody: String, mimeType: String): ResponseBody? {
-        // Accept only 'text/plain' / 'text/html'
-        val correctedMimeType =
-            if (Constants.MIME_TYPE_PLAIN_TEXT == mimeType) Constants.MIME_TYPE_PLAIN_TEXT else Constants.MIME_TYPE_HTML
-        return ParseUtils.parse(
-            service.postPhishingReport(
+    override suspend fun postPhishingReport(
+        messageId: String,
+        messageBody: String,
+        mimeType: String,
+        userId: UserId
+    ): ApiResult<Unit> =
+        apiProvider.get<ReportService>(userId).invoke {
+            postPhishingReport(
                 PostPhishingReportBody(
-                    messageId, messageBody,
-                    correctedMimeType
+                    messageId,
+                    messageBody,
+                    mimeType
                 )
-            ).execute()
-        )
-    }
+            )
+        }
 }

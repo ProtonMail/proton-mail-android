@@ -26,9 +26,9 @@ import assert4k.that
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.PREF_USERNAME
-import ch.protonmail.android.domain.entity.Id
 import io.mockk.every
 import io.mockk.mockk
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.android.sharedpreferences.isEmpty
@@ -45,21 +45,21 @@ class SecureSharedPreferencesTest {
      */
     class UsernameToIdMigrationTest : CoroutinesTest {
 
-        private val user1 = "username1" to Id("id1")
-        private val user2 = "username2" to Id("id2")
+        private val user1 = "username1" to UserId("id1")
+        private val user2 = "username2" to UserId("id2")
 
         private val user1Prefs = newMockSharedPreferences.apply {
-            this[PREF_USER_ID] = user1.second.s
+            this[PREF_USER_ID] = user1.second.id
             this[PREF_USER_NAME] = user1.first
         }
         private val user2Prefs = newMockSharedPreferences.apply {
-            this[PREF_USER_ID] = user2.second.s
+            this[PREF_USER_ID] = user2.second.id
             this[PREF_USER_NAME] = user2.first
         }
 
         private val preferencesFactory: SecureSharedPreferences.Factory = mockk {
             val appPreferences = newMockSharedPreferences
-            val usersPreferences = mutableMapOf<Id, SharedPreferences>()
+            val usersPreferences = mutableMapOf<UserId, SharedPreferences>()
 
             every { appPreferences() } returns appPreferences
             every { userPreferences(any()) } answers {
@@ -87,12 +87,12 @@ class SecureSharedPreferencesTest {
             migration(listOf(user1, user2).map { it.first })
 
             assert that preferencesFactory.userPreferences(user1.second).all equals mapOf(
-                PREF_USER_ID to user1.second.s,
+                PREF_USER_ID to user1.second.id,
                 PREF_USERNAME to user1.first,
                 PREF_USER_NAME to user1.first
             )
             assert that preferencesFactory.userPreferences(user2.second).all equals mapOf(
-                PREF_USER_ID to user2.second.s,
+                PREF_USER_ID to user2.second.id,
                 PREF_USERNAME to user2.first,
                 PREF_USER_NAME to user2.first
             )

@@ -28,7 +28,6 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.Addresses
@@ -42,6 +41,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.map
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import ch.protonmail.android.api.models.address.Address as OldAddress
@@ -66,10 +66,10 @@ class AddressKeyActivationWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = withContext(dispatchers.Io) {
 
         val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID) ?: return@withContext Result.failure()
-        val userId = Id(userIdString)
+        val userId = UserId(userIdString)
         val mailboxPassword = userManager.getUserPassphrase(userId)
 
-        Timber.v("AddressKeyActivationWorker started with user: ${userId.s}")
+        Timber.v("AddressKeyActivationWorker started with user: ${userId.id}")
 
         val user = userManager.getUser(userId)
         val primaryKeys = user.addresses.addresses.values.map { it.keys.primaryKey }
@@ -140,7 +140,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
 
             try {
                 val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID)!!
-                val userId = Id(userIdString)
+                val userId = UserId(userIdString)
                 val user = userManager.getUser(userId)
                 if (user.isLegacy) {
                     Timber.v("Activate key for legacy user")
@@ -151,7 +151,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
                             null,
                             null
                         ),
-                        addressKey.id.s
+                        addressKey.id.id
                     )
                 } else {
                     Timber.v("Activate key for non-legacy user")
@@ -163,7 +163,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
                         generatedTokenAndSignature.token,
                         generatedTokenAndSignature.signature
                     )
-                    api.activateKey(keyActivationBody, addressKey.id.s)
+                    api.activateKey(keyActivationBody, addressKey.id.id)
                 }
                 ActivationResult.Success
             } catch (exception: Exception) {
@@ -197,7 +197,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
         }
 
         throw IllegalStateException(
-            "Failed obtaining activation for key ${addressKey.id.s}, " +
+            "Failed obtaining activation for key ${addressKey.id.id}, " +
                 "primary = $isPrimary, " +
                 "has signature = ${addressKey.signature != null}, " +
                 "has token = ${addressKey.token != null}"
@@ -207,11 +207,11 @@ class AddressKeyActivationWorker @AssistedInject constructor(
     sealed class ActivationResult {
         object Success : ActivationResult()
         sealed class Error : ActivationResult() {
-            abstract val id: Id
+            abstract val id: UserId
 
-            class Network(override val id: Id) : Error()
-            class MissingToken(override val id: Id) : Error()
-            class Generic(override val id: Id) : Error()
+            class Network(override val id: UserId) : Error()
+            class MissingToken(override val id: UserId) : Error()
+            class Generic(override val id: UserId) : Error()
         }
     }
 
@@ -228,27 +228,27 @@ class AddressKeyActivationWorker @AssistedInject constructor(
                 "ch.protonmail.android.mapper.bridge.AddressBridgeMapper"
             )
         )
-        fun activateAddressKeysIfNeeded(context: Context, addresses: List<OldAddress>, userId: Id) {
+        fun activateAddressKeysIfNeeded(context: Context, addresses: List<OldAddress>, userId: UserId) {
             val mapper = AddressBridgeMapper.buildDefault()
             runIfNeeded(WorkManager.getInstance(context), addresses.map(mapper) { it.toNewModel() }, userId)
         }
 
         @Suppress("unused") // When using new User, it will be nicer to user 'user.addresses'
-        fun runIfNeeded(workManager: WorkManager, addresses: Addresses, userId: Id) {
+        fun runIfNeeded(workManager: WorkManager, addresses: Addresses, userId: UserId) {
             runIfNeeded(workManager, addresses.addresses.values, userId)
         }
 
         private fun runIfNeeded(
             workManager: WorkManager,
             addresses: Collection<Address>,
-            userId: Id
+            userId: UserId
         ) {
             val isActivationNeeded = addresses.any { address ->
                 address.keys.keys.any { it.activation != null }
             }
 
             if (isActivationNeeded) {
-                val data = workDataOf(KEY_INPUT_DATA_USER_ID to userId.s)
+                val data = workDataOf(KEY_INPUT_DATA_USER_ID to userId.id)
                 val work = OneTimeWorkRequestBuilder<AddressKeyActivationWorker>()
                     .setInputData(data)
                     .build()

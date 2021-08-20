@@ -31,7 +31,7 @@ import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -45,32 +45,32 @@ class DatabaseProvider @Inject constructor(
 ) {
 
     // Attachment metadata
-    fun provideAttachmentMetadataDao(userId: Id): AttachmentMetadataDao =
+    fun provideAttachmentMetadataDao(userId: UserId): AttachmentMetadataDao =
         AttachmentMetadataDatabase.getInstance(context, userId).getDao()
 
     // Contact
-    fun provideContactDao(userId: Id): ContactDao =
+    fun provideContactDao(userId: UserId): ContactDao =
         ContactDatabase.getInstance(context, userId).getDao()
 
     // Counter
-    fun provideCounterDao(userId: Id): CounterDao =
+    fun provideCounterDao(userId: UserId): CounterDao =
         CounterDatabase.getInstance(context, userId).getDao()
 
     // Message
-    fun provideMessageDao(userId: Id): MessageDao =
+    fun provideMessageDao(userId: UserId): MessageDao =
         MessageDatabase.getInstance(context, userId).getDao()
 
     // TODO remove once the usage in ClearUserData use-case is removed
     // Conversation
-    fun provideConversationDao(userId: Id): ConversationDao =
+    fun provideConversationDao(userId: UserId): ConversationDao =
         MessageDatabase.getInstance(context, userId).getConversationDao()
 
     // Notification
-    fun provideNotificationDao(userId: Id): NotificationDao =
+    fun provideNotificationDao(userId: UserId): NotificationDao =
         NotificationDatabase.getInstance(context, userId).getDao()
 
     // Pending action
-    fun providePendingActionDao(userId: Id): PendingActionDao =
+    fun providePendingActionDao(userId: UserId): PendingActionDao =
         PendingActionDatabase.getInstance(context, userId).getDao()
 
 }

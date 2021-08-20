@@ -48,7 +48,7 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.ContactLabel
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.BuildInfo
@@ -114,12 +114,12 @@ object ApplicationModule {
     fun currentUserCrypto(
         userManager: UserManager,
         openPgp: OpenPGP,
-        @CurrentUserId userId: Id
+        @CurrentUserId userId: UserId
     ): UserCrypto = UserCrypto(userManager, openPgp, userId)
 
     @Provides
     @CurrentUserId
-    fun currentUserId(userManager: UserManager): Id =
+    fun currentUserId(userManager: UserManager): UserId =
         userManager.requireCurrentUserId()
 
     @Provides

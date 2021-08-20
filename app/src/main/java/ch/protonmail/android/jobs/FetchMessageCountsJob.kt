@@ -23,7 +23,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.model.UnreadLabelCounter
 import ch.protonmail.android.data.local.model.UnreadLocationCounter
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
@@ -34,7 +34,7 @@ import timber.log.Timber
 private const val FETCH_COUNTS_ID = "instanceIdCounts"
 
 class FetchMessageCountsJob(
-    userId: Id?
+    userId: UserId?
 ) : ProtonMailBaseJob(
     Params(Priority.MEDIUM).singleInstanceBy(FETCH_COUNTS_ID).groupBy(Constants.JOB_GROUP_MISC),
     userId

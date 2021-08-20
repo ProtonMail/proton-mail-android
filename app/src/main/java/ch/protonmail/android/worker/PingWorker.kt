@@ -81,7 +81,7 @@ class PingWorker @AssistedInject constructor(
         }
 
     private suspend fun isBackendStillReachable(): Boolean =
-        when (api.pingAsync().code) {
+        when (api.ping().code) {
             Constants.RESPONSE_CODE_OK,
             Constants.RESPONSE_CODE_API_OFFLINE -> true
             else -> false

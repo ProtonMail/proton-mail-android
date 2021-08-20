@@ -21,7 +21,6 @@ package ch.protonmail.android.usecase.delete
 
 import android.content.Context
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.storage.MessageBodyClearingService
 import kotlinx.coroutines.withContext
@@ -41,7 +40,7 @@ class ClearUserMessagesData @Inject constructor(
 
     suspend operator fun invoke(userId: UserId) {
 
-        val legacyUserId = Id(userId.id)
+        val legacyUserId = userId
         val attachmentMetadataDao = runCatching { databaseProvider.provideAttachmentMetadataDao(legacyUserId) }.getOrNull()
         val messageDao = runCatching { databaseProvider.provideMessageDao(legacyUserId) }.getOrNull()
         //  TODO remove this dependency and use the ConversationRepository.clear()
@@ -65,7 +64,7 @@ class ClearUserMessagesData @Inject constructor(
         startCleaningServices(legacyUserId)
     }
 
-    private fun startCleaningServices(userId: Id) {
+    private fun startCleaningServices(userId: UserId) {
         AttachmentClearingService.startClearUpImmediatelyService(context, userId)
         MessageBodyClearingService.startClearUpService()
     }

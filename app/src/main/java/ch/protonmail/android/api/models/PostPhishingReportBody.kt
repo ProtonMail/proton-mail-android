@@ -18,7 +18,8 @@
  */
 package ch.protonmail.android.api.models
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 // region constants
 private const val FIELD_MESSAGE_ID = "MessageID"
@@ -26,11 +27,12 @@ private const val FIELD_BODY = "Body"
 private const val FIELD_MIME_TYPE = "MIMEType"
 // endregion
 
-class PostPhishingReportBody(
-    @SerializedName(FIELD_MESSAGE_ID)
-    var messageId: String,
-    @SerializedName(FIELD_BODY)
-    var body: String,
-    @SerializedName(FIELD_MIME_TYPE)
-    var mimeType: String
+@Serializable
+data class PostPhishingReportBody(
+    @SerialName(FIELD_MESSAGE_ID)
+    val messageId: String,
+    @SerialName(FIELD_BODY)
+    val body: String,
+    @SerialName(FIELD_MIME_TYPE)
+    val mimeType: String
 )

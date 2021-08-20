@@ -30,7 +30,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -56,7 +56,7 @@ class FetchContactsDataWorkerTest {
     private val api: ProtonMailApiManager = mockk()
 
     private val userManager: UserManager = mockk {
-        every { currentUserId } returns Id("id")
+        every { currentUserId } returns UserId("id")
     }
 
     private lateinit var worker: FetchContactsDataWorker

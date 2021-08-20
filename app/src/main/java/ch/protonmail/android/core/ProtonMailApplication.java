@@ -78,7 +78,7 @@ import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.di.DefaultSharedPreferences;
-import ch.protonmail.android.domain.entity.Id;
+import me.proton.core.domain.entity.UserId;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -385,7 +385,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 // and if every single previous version should be force logged out
                 // or any specific previous version should be logged out
 
-                Id currentUserId = userManager.getCurrentUserId();
+                UserId currentUserId = userManager.getCurrentUserId();
                 if (currentUserId != null) {
                     SharedPreferences secureSharedPreferences =
                             secureSharedPreferencesFactory.userPreferences(currentUserId);
@@ -406,15 +406,15 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     }
                 }
 
-                Set<Id> loggedInUsers = AccountManagerKt.allLoggedInBlocking(accountManager);
-                Map<Id, SharedPreferences> allLoggedInUserPreferences = new HashMap();
-                for (Id user : loggedInUsers) {
+                Set<UserId> loggedInUsers = AccountManagerKt.allLoggedInBlocking(accountManager);
+                Map<UserId, SharedPreferences> allLoggedInUserPreferences = new HashMap();
+                for (UserId user : loggedInUsers) {
                     allLoggedInUserPreferences.put(
                             user,
                             secureSharedPreferencesFactory.userPreferences(user)
                     );
                 }
-                for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                for (Map.Entry<UserId, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
                     SharedPreferences userPrefs = entry.getValue();
                     if (userPrefs.contains(PREF_LATEST_EVENT)) {
                         userPrefs.edit().remove(PREF_LATEST_EVENT).apply();
@@ -424,13 +424,13 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking();
                 }
                 if (defaultSharedPreferences.contains(PREF_SENT_TOKEN_TO_SERVER)) {
-                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                    for (Map.Entry<UserId, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
                         SharedPreferences userPrefs = entry.getValue();
                         userPrefs.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
                                 defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();
                         defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
                     }
-                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                    for (Map.Entry<UserId, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
                         SharedPreferences userPrefs = entry.getValue();
                         userPrefs.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
                                 defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();

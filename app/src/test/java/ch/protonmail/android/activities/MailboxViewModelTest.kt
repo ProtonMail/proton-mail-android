@@ -40,7 +40,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.di.JobEntryPoint
-import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -61,7 +61,7 @@ import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.settings.domain.GetMailSettings
-import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.MessageUtils
@@ -85,6 +85,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -160,12 +161,12 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val messagesResponseChannel = Channel<GetMessagesResult>()
     private val conversationsResponseFlow = Channel<GetConversationsResult>()
 
-    private val currentUserId = Id("8237462347237428")
+    private val currentUserId = UserId("8237462347237428")
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        val userId = Id("testUserId1")
+        val userId = UserId("testUserId1")
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(INBOX) } returns false // INBOX type to use with messages
         every { conversationModeEnabled(ARCHIVE) } returns true // ARCHIVE type to use with conversations
@@ -211,8 +212,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         }
         every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
         every { labelRepository.findLabels(any(), any()) } answers {
-            val labelIds = arg<List<Id>>(1)
-            flowOf(allLabels.filter { label -> Id(label.id) in labelIds })
+            val labelIds = arg<List<LabelId>>(1)
+            flowOf(allLabels.filter { label -> LabelId(label.id) in labelIds })
         }
 
         every { userManager.currentUserId } returns currentUserId
@@ -503,7 +504,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         }
         every { conversationModeEnabled(any()) } returns false
 
-        // Then
         val expected = MailboxState.Data(
             listOf(
                 MailboxUiItem(
@@ -525,8 +525,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     ),
                     isDeleted = false,
                     labels = listOf(
-                        LabelChipUiModel(Id("1"), Name("label 1"), null),
-                        LabelChipUiModel(Id("2"), Name("label 2"), null)
+                        LabelChipUiModel(LabelId("1"), Name("label 1"), null),
+                        LabelChipUiModel(LabelId("2"), Name("label 2"), null)
                     ),
                     recipients = toContactsAndGroupsString(
                         recipients
@@ -579,7 +579,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         val refreshMessages = true
         // Represents pagination. Only messages older than the given timestamp will be returned
         val timestamp = 123L
-        val userId = Id("userId")
+        val userId = UserId("userId")
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns false
 
@@ -605,7 +605,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         val refreshMessages = false
         // Represents pagination. Only messages older than the given timestamp will be returned
         val oldestMessageTimestamp = 1323L
-        val userId = Id("userId1")
+        val userId = UserId("userId1")
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns false
 
@@ -633,7 +633,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         val uuid = "9238h82388sdfa8sdf8asd3234"
         // Represents pagination. Only messages older than the given timestamp will be returned
         val oldestMessageTimestamp = 1323L
-        val userId = Id("userId1")
+        val userId = UserId("userId1")
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns true
 
@@ -800,7 +800,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
-                    labels = listOf(LabelChipUiModel(Id("10"), Name("label 10"), null)),
+                    labels = listOf(LabelChipUiModel(LabelId("10"), Name("label 10"), null)),
                     recipients = "",
                     isDraft = false
                 )
@@ -908,8 +908,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     messageData = null,
                     isDeleted = false,
                     labels = listOf(
-                        LabelChipUiModel(Id("0"), Name("label 0"), null),
-                        LabelChipUiModel(Id("6"), Name("label 6"), null)
+                        LabelChipUiModel(LabelId("0"), Name("label 0"), null),
+                        LabelChipUiModel(LabelId("6"), Name("label 6"), null)
                     ),
                     recipients = "",
                     isDraft = false
@@ -967,7 +967,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
-                    labels = listOf(LabelChipUiModel(Id("6"), Name("label 6"), null)),
+                    labels = listOf(LabelChipUiModel(LabelId("6"), Name("label 6"), null)),
                     recipients = "",
                     isDraft = false
                 )
@@ -1022,8 +1022,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     messageData = null,
                     isDeleted = false,
                     labels = listOf(
-                        LabelChipUiModel(Id("1"), Name("label 1"), null),
-                        LabelChipUiModel(Id("8"), Name("label 8"), null)
+                        LabelChipUiModel(LabelId("1"), Name("label 1"), null),
+                        LabelChipUiModel(LabelId("8"), Name("label 8"), null)
                     ),
                     recipients = "",
                     true
@@ -1079,8 +1079,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     messageData = null,
                     isDeleted = false,
                     labels = listOf(
-                        LabelChipUiModel(Id("1"), Name("label 1"), null),
-                        LabelChipUiModel(Id("8"), Name("label 8"), null)
+                        LabelChipUiModel(LabelId("1"), Name("label 1"), null),
+                        LabelChipUiModel(LabelId("8"), Name("label 8"), null)
                     ),
                     recipients = "",
                     false
@@ -1137,8 +1137,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         ),
                         isDeleted = false,
                         labels = listOf(
-                            LabelChipUiModel(Id("1"), Name("label 1"), null),
-                            LabelChipUiModel(Id("8"), Name("label 8"), null)
+                            LabelChipUiModel(LabelId("1"), Name("label 1"), null),
+                            LabelChipUiModel(LabelId("8"), Name("label 8"), null)
                         ),
                         recipients = "",
                         isDraft = true

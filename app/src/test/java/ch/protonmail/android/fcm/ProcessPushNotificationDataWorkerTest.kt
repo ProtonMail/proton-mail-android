@@ -33,7 +33,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.Notification
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.PushNotification
 import ch.protonmail.android.fcm.model.PushNotificationData
 import ch.protonmail.android.fcm.model.PushNotificationSender
@@ -72,7 +71,7 @@ import kotlin.test.assertEquals
 
 class ProcessPushNotificationDataWorkerTest {
 
-    private val testId = Id("id")
+    private val testId = UserId("id")
     private val testUserId = UserId("id")
 
     private val context: Context = mockk(relaxed = true)
@@ -361,7 +360,7 @@ class ProcessPushNotificationDataWorkerTest {
 
             justRun {
                 val arguments = listOf(
-                    any<Id>(), // userId
+                    any<UserId>(), // userId
                     any<User>(), // user
                     any<String>(), // messageId
                     any<String>(), // notificationBody

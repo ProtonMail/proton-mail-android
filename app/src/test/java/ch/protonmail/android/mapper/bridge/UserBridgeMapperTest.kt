@@ -38,7 +38,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.domain.entity.user.Delinquent
 import ch.protonmail.android.domain.entity.user.Plan
@@ -49,6 +48,7 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.invoke
 import org.junit.Ignore
 import kotlin.test.Test
@@ -91,22 +91,26 @@ internal class UserBridgeMapperTest {
 
         // THEN
         assert that newUser * {
-            +id.s equals "id"
+            +id.id equals "id"
             +name.s equals "name"
-            +(plans * {
-                +size.fix() equals 1
-                it contains Plan.Vpn.Paid
-            })
+            +(
+                plans * {
+                    +size.fix() equals 1
+                    it contains Plan.Vpn.Paid
+                }
+                )
             +private equals true
             +role equals Role.ORGANIZATION_ADMIN
             +currency.s equals "eur"
             +credits.fix() equals 10
             +delinquent equals Delinquent.InvoiceDelinquent
             +totalUploadLimit.l equals 12_345.toULong()
-            +(dedicatedSpace * {
-                +used.l.fix() equals 15_000.toULong()
-                +total.l.fix() equals 30_000.toULong()
-            })
+            +(
+                dedicatedSpace * {
+                    +used.l.fix() equals 15_000.toULong()
+                    +total.l.fix() equals 30_000.toULong()
+                }
+                )
             + isLegacy equals true
         }
     }
@@ -122,7 +126,7 @@ internal class UserBridgeMapperTest {
                 every { resources } returns mockk(relaxed = true)
                 every { getSharedPreferences(any(), any()) } returns mockk(relaxed = true)
             }
-            every { SecureSharedPreferences.getPrefsForUser(any(), Id("id")) } returns mockk {
+            every { SecureSharedPreferences.getPrefsForUser(any(), UserId("id")) } returns mockk {
 
                 // Defaults
                 every { getBoolean(any(), any()) } returns false
@@ -149,29 +153,33 @@ internal class UserBridgeMapperTest {
             every { SystemClock.elapsedRealtime() } returns 0
 
             // GIVEN
-            val oldUser = LegacyUser.load(Id("id"), mockk(), mockk(), mockk()).orThrow()
+            val oldUser = LegacyUser.load(UserId("id"), mockk(), mockk(), mockk()).orThrow()
 
             // WHEN
             val legacyUser = mapper { oldUser.toNewModel() }
 
             // THEN
             assert that legacyUser * {
-                +id.s equals "id"
+                +id.id equals "id"
                 +name.s equals "username"
-                +(plans * {
-                    +size.fix() equals 1
-                    it contains Plan.Vpn.Paid
-                })
+                +(
+                    plans * {
+                        +size.fix() equals 1
+                        it contains Plan.Vpn.Paid
+                    }
+                    )
                 +private equals true
                 +role equals Role.ORGANIZATION_ADMIN
                 +currency.s equals "eur"
                 +credits.fix() equals 10
                 +delinquent equals Delinquent.InvoiceDelinquent
                 +totalUploadLimit.l equals 12_345.toULong()
-                +(dedicatedSpace * {
-                    +used.l.fix() equals 15_000.toULong()
-                    +total.l.fix() equals 30_000.toULong()
-                })
+                +(
+                    dedicatedSpace * {
+                        +used.l.fix() equals 15_000.toULong()
+                        +total.l.fix() equals 30_000.toULong()
+                    }
+                    )
                 +isLegacy equals true
             }
         }

@@ -47,6 +47,7 @@ import ch.protonmail.android.api.segments.settings.mail.MailSettingsApi
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.mailbox.data.remote.ConversationApi
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
+import me.proton.core.network.data.ApiProvider
 import javax.inject.Inject
 
 /**
@@ -83,8 +84,11 @@ class ProtonMailApi private constructor(
 
     // region hack to insert parameters in the constructor instead of init, otherwise delegation doesn't work
     @Inject
-    constructor(protonRetrofitBuilder: ProtonRetrofitBuilder) :
-        this(createConstructionParams(protonRetrofitBuilder))
+    constructor(
+        protonRetrofitBuilder: ProtonRetrofitBuilder,
+        apiProvider: ApiProvider
+    ) :
+        this(createConstructionParams(protonRetrofitBuilder, apiProvider))
 
     constructor(params: Array<Any>) : this(
         // region params
@@ -111,14 +115,20 @@ class ProtonMailApi private constructor(
          * Retrofit builders should now depend on a dynamic base url and also we should not recreate
          * them on every API call.
          */
-        private fun createConstructionParams(protonRetrofitBuilder: ProtonRetrofitBuilder): Array<Any> {
+        private fun createConstructionParams(
+            protonRetrofitBuilder: ProtonRetrofitBuilder,
+            apiProvider: ApiProvider
+        ): Array<Any> {
 
             // region config
             val services = SecuredServices(protonRetrofitBuilder.provideRetrofit(RetrofitType.SECURE))
-            val paymentPubService = protonRetrofitBuilder.provideRetrofit(RetrofitType.PUBLIC).create(PaymentPubService::class.java)
+            val paymentPubService =
+                protonRetrofitBuilder.provideRetrofit(RetrofitType.PUBLIC).create(PaymentPubService::class.java)
             val servicePing = protonRetrofitBuilder.provideRetrofit(RetrofitType.PING).create(PingService::class.java)
-            val mUploadService = protonRetrofitBuilder.provideRetrofit(RetrofitType.EXTENDED_TIMEOUT).create(AttachmentUploadService::class.java)
-            val mAttachmentsService = protonRetrofitBuilder.provideRetrofit(RetrofitType.ATTACHMENTS).create(AttachmentDownloadService::class.java)
+            val mUploadService = protonRetrofitBuilder.provideRetrofit(RetrofitType.EXTENDED_TIMEOUT)
+                .create(AttachmentUploadService::class.java)
+            val mAttachmentsService = protonRetrofitBuilder.provideRetrofit(RetrofitType.ATTACHMENTS)
+                .create(AttachmentDownloadService::class.java)
 
             val attachmentApi = AttachmentApi(services.attachment, mAttachmentsService, mUploadService)
             val connectivityApi = ConnectivityApi(servicePing)
@@ -130,7 +140,7 @@ class ProtonMailApi private constructor(
             val labelApi = LabelApi(services.label)
             val organizationApi = OrganizationApi(services.organization)
             val paymentApi = PaymentApi(services.payment, paymentPubService)
-            val reportApi = ReportApi(services.report)
+            val reportApi = ReportApi(apiProvider)
             val mailSettingsApi = MailSettingsApi(services.mailSettings)
             // endregion
             return arrayOf(

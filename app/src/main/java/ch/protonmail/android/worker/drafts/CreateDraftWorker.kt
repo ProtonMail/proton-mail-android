@@ -56,7 +56,6 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.utils.MessageUtils
@@ -68,6 +67,8 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.takeIfNotBlank
 import retrofit2.HttpException
 import timber.log.Timber
@@ -114,7 +115,7 @@ class CreateDraftWorker @AssistedInject constructor(
         val messageId = message.messageId
             ?: return failureWithError(CreateDraftWorkerErrors.MessageHasNullId)
 
-        val draftBody = buildDraftBody(senderAddress, Id(messageId), message, parentId)
+        val draftBody = buildDraftBody(senderAddress, UserId(messageId), message, parentId)
             .mapLeft { return failureWithError(it) }
             .orThrow()
 
@@ -163,7 +164,7 @@ class CreateDraftWorker @AssistedInject constructor(
 
     private suspend fun buildDraftBody(
         senderAddress: Address,
-        messageId: Id,
+        messageId: UserId,
         message: Message,
         parentId: String?
     ): Either<CreateDraftWorkerErrors, DraftBody> {
@@ -184,7 +185,7 @@ class CreateDraftWorker @AssistedInject constructor(
             initialDraftBody
         }
 
-        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId.s)
+        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId.id)
         val messageAttachmentsKeyPackets = buildMessageAttachmentsKeyPacketsMap(attachments, senderAddress)
 
         val messageBody = message.messageBody
@@ -291,7 +292,7 @@ class CreateDraftWorker @AssistedInject constructor(
 
     private fun reEncryptAttachment(senderAddress: Address, attachment: Attachment): String? {
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
-        val addressCrypto = addressCryptoFactory.create(getInputUserId(), Id(previousSenderAddressId))
+        val addressCrypto = addressCryptoFactory.create(getInputUserId(), AddressId(previousSenderAddressId))
         val primaryKey = senderAddress.keys
         val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
 
@@ -329,7 +330,7 @@ class CreateDraftWorker @AssistedInject constructor(
 
     private suspend fun getSenderAddress(senderAddressId: String): Address? {
         val user = userManager.getUser(getInputUserId())
-        return user.findAddressById(Id(senderAddressId))
+        return user.findAddressById(AddressId(senderAddressId))
     }
 
     private fun buildMessageSender(message: Message, senderAddress: Address): MessageSender {
@@ -344,11 +345,11 @@ class CreateDraftWorker @AssistedInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun getInputUserId(): Id {
+    private fun getInputUserId(): UserId {
         val idString = requireNotNull(inputData.getString(KEY_INPUT_SAVE_DRAFT_USER_ID)?.takeIfNotBlank()) {
             "User id is required"
         }
-        return Id(idString)
+        return UserId(idString)
     }
 
     private fun getInputActionType(): Constants.MessageActionType =
@@ -366,7 +367,7 @@ class CreateDraftWorker @AssistedInject constructor(
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
         fun enqueue(
-            userId: Id,
+            userId: UserId,
             message: Message,
             parentId: String?,
             actionType: Constants.MessageActionType,
@@ -379,7 +380,7 @@ class CreateDraftWorker @AssistedInject constructor(
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
-                        KEY_INPUT_SAVE_DRAFT_USER_ID to userId.s,
+                        KEY_INPUT_SAVE_DRAFT_USER_ID to userId.id,
                         KEY_INPUT_SAVE_DRAFT_MSG_DB_ID to message.dbId,
                         KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID to message.messageId,
                         KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID to parentId,

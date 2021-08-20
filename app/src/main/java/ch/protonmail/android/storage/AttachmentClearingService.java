@@ -44,7 +44,7 @@ import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.data.local.model.AttachmentMetadata;
 import ch.protonmail.android.data.local.model.Message;
-import ch.protonmail.android.domain.entity.Id;
+import me.proton.core.domain.entity.UserId;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
@@ -69,9 +69,9 @@ public class AttachmentClearingService extends ProtonJobIntentService {
         super();
     }
 
-    public static void startClearUpImmediatelyService(Context context, Id userId) {
+    public static void startClearUpImmediatelyService(Context context, UserId userId) {
         final Intent intent = new Intent(context, AttachmentClearingService.class)
-                .putExtra(EXTRA_USER_ID, userId.getS())
+                .putExtra(EXTRA_USER_ID, userId.getId())
                 .setAction(ACTION_CLEAR_CACHE_IMMEDIATELY);
         enqueueWork(context, AttachmentClearingService.class, Constants.JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING, intent);
     }
@@ -85,10 +85,10 @@ public class AttachmentClearingService extends ProtonJobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        Id userId;
+        UserId userId;
         String userIdParam = intent.getStringExtra(EXTRA_USER_ID);
         if (userIdParam != null)
-            userId = new Id(userIdParam);
+            userId = new UserId(userIdParam);
         else
             userId = userManager.getCurrentUserId();
         if (userId == null) {

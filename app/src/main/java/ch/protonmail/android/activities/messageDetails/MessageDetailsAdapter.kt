@@ -53,7 +53,7 @@ import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
-import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER

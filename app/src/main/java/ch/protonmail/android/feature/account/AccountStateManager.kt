@@ -27,7 +27,6 @@ import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.di.AppProcessLifecycleOwner
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.fcm.UnregisterDeviceWorker
 import ch.protonmail.android.feature.user.waitPrimaryKeyPassphraseAvailable
@@ -245,22 +244,6 @@ class AccountStateManager @Inject constructor(
 
     // endregion
 
-    // region Deprecated
-
-    @Deprecated(
-        message = "Use UserId version of the function",
-        replaceWith = ReplaceWith("switch(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
-    )
-    fun switch(userId: Id) = switch(UserId(userId.s))
-
-    @Deprecated(
-        message = "Use UserId version of the function",
-        replaceWith = ReplaceWith("signOut(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
-    )
-    fun signOut(userId: Id) = signOut(UserId(userId.s))
-
-    // endregion
-
     // region Legacy User Management & Cleaning.
 
     private suspend fun onAccountNeeded() = withContext(NonCancellable + dispatchers.Io) {
@@ -272,7 +255,7 @@ class AccountStateManager @Inject constructor(
 
     private suspend fun onAccountReady(account: Account) = withContext(NonCancellable + dispatchers.Io) {
         // Only initialize user once.
-        val userId = Id(account.userId.id)
+        val userId = UserId(account.userId.id)
         val prefs = oldUserManager.preferencesFor(userId)
         val initialized = prefs.getBoolean(Constants.Prefs.PREF_USER_INITIALIZED, false)
         if (!initialized) {
@@ -300,7 +283,7 @@ class AccountStateManager @Inject constructor(
 
     private suspend fun onAccountDisabled(account: Account) = withContext(NonCancellable + dispatchers.Io) {
         // Only clear user once.
-        val userId = Id(account.userId.id)
+        val userId = UserId(account.userId.id)
         val prefs = oldUserManager.preferencesFor(userId)
         val initialized = prefs.getBoolean(Constants.Prefs.PREF_USER_INITIALIZED, false)
         if (initialized) {
@@ -309,7 +292,7 @@ class AccountStateManager @Inject constructor(
             // Clear Data/State.
             clearUserData.invoke(userId)
             eventManager.clearState(userId)
-            oldUserManager.preferencesFor(Id(account.userId.id)).clearAll(
+            oldUserManager.preferencesFor(UserId(account.userId.id)).clearAll(
                 /*excludedKeys*/ PREF_PIN, Constants.Prefs.PREF_USER_NAME
             )
         }

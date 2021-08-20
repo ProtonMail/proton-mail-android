@@ -28,11 +28,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import ch.protonmail.android.R
-import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.testAndroidInstrumented.assertion.isGone
 import ch.protonmail.android.testAndroidInstrumented.assertion.isVisible
 import ch.protonmail.android.testAndroidInstrumented.withBackgroundColor
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.util.ViewTest
 import org.junit.runner.RunWith
 import kotlin.test.Test
@@ -44,13 +45,13 @@ import kotlin.test.Test
 class MultiLineLabelChipGroupViewTest : ViewTest<MultiLineLabelChipGroupView>(::MultiLineLabelChipGroupView) {
 
     private val testLabelsList = listOf(
-        LabelChipUiModel(Id("a"), Name("long name for first label"), Color.RED),
-        LabelChipUiModel(Id("b"), Name("second label"), Color.GREEN),
-        LabelChipUiModel(Id("c"), Name("third"), Color.BLUE),
-        LabelChipUiModel(Id("d"), Name("long name for forth label"), Color.CYAN),
-        LabelChipUiModel(Id("e"), Name("fifth label"), Color.MAGENTA),
-        LabelChipUiModel(Id("f"), Name("sixth"), Color.GRAY),
-        LabelChipUiModel(Id("g"), Name("long name for seventh label"), Color.BLACK),
+        LabelChipUiModel(LabelId("a"), Name("long name for first label"), Color.RED),
+        LabelChipUiModel(LabelId("b"), Name("second label"), Color.GREEN),
+        LabelChipUiModel(LabelId("c"), Name("third"), Color.BLUE),
+        LabelChipUiModel(LabelId("d"), Name("long name for forth label"), Color.CYAN),
+        LabelChipUiModel(LabelId("e"), Name("fifth label"), Color.MAGENTA),
+        LabelChipUiModel(LabelId("f"), Name("sixth"), Color.GRAY),
+        LabelChipUiModel(LabelId("g"), Name("long name for seventh label"), Color.BLACK),
     )
 
     @Test

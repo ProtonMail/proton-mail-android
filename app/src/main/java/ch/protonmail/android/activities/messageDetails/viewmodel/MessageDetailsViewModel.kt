@@ -52,10 +52,11 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
-import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -65,7 +66,7 @@ import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
@@ -76,6 +77,7 @@ import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
+import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -177,9 +179,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         conversationUiModel
             .flatMapLatest { conversation ->
                 val labelsHashMap = hashMapOf<String, List<Label>>()
-                val userId = UserId(userManager.requireCurrentUserId().s)
+                val userId = UserId(userManager.requireCurrentUserId().id)
                 conversation.messages.forEach { message ->
-                    val allLabelIds = message.allLabelIDs.map { labelId -> Id(labelId) }
+                    val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
                     labelsHashMap[requireNotNull(message.messageId)] =
                         labelRepository.findLabels(userId, allLabelIds).first()
                             .filter { label ->
@@ -193,9 +195,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         conversationUiModel
             .flatMapLatest { conversation ->
                 val labelsHashMap = hashMapOf<String, List<LabelChipUiModel>>()
-                val userId = UserId(userManager.requireCurrentUserId().s)
+                val userId = UserId(userManager.requireCurrentUserId().id)
                 conversation.messages.forEach { message ->
-                    val allLabelIds = message.allLabelIDs.map { labelId -> Id(labelId) }
+                    val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
                     labelsHashMap[requireNotNull(message.messageId)] =
                         labelRepository.findLabels(userId, allLabelIds).first()
                             .filter { label ->
@@ -204,7 +206,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                             .map { label ->
                                 val labelColor = label.color.takeIfNotBlank()
                                     ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-                                LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
+                                LabelChipUiModel(LabelId(label.id), Name(label.name), labelColor)
                             }
                 }
                 return@flatMapLatest flowOf(labelsHashMap)
@@ -270,10 +272,10 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
 
     private fun getConversationFlow(userId: UserId): Flow<ConversationUiModel?> =
-        conversationRepository.getConversation(messageOrConversationId, Id(userId.id))
+        conversationRepository.getConversation(messageOrConversationId, userId)
             .distinctUntilChanged()
             .map {
-                loadConversationDetails(it, Id(userId.id))
+                loadConversationDetails(it, userId)
             }
 
     fun markUnread() {
@@ -282,7 +284,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 changeConversationsReadStatus(
                     listOf(messageOrConversationId),
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     location,
                     mailboxLocationId ?: location.messageLocationTypeValue.toString()
                 )
@@ -344,7 +346,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         conversationUiModel.first().messagesCount!! > 1
     }
 
-    private suspend fun loadConversationDetails(result: DataResult<Conversation>, userId: Id): ConversationUiModel? {
+    private suspend fun loadConversationDetails(
+        result: DataResult<Conversation>, userId: UserId
+    ): ConversationUiModel? {
         return when (result) {
             is DataResult.Success -> {
                 Timber.v("loadConversationDetails Success")
@@ -370,7 +374,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private suspend fun onConversationLoaded(
         conversation: Conversation,
-        userId: Id
+        userId: UserId
     ): ConversationUiModel? {
         val messages = conversation.messages?.mapNotNull { message ->
             messageRepository.findMessage(userId, message.id)?.let { localMessage ->
@@ -681,7 +685,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     fun moveLastMessageToTrash() {
         viewModelScope.launch {
             if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
-                val primaryUserId = UserId(userManager.requireCurrentUserId().s)
+                val primaryUserId = UserId(userManager.requireCurrentUserId().id)
                 moveConversationsToFolder(
                     listOf(messageOrConversationId),
                     primaryUserId,
@@ -710,7 +714,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 } else {
                     ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
                 }
-                val primaryUserId = UserId(userManager.requireCurrentUserId().s)
+                val primaryUserId = UserId(userManager.requireCurrentUserId().id)
                 changeConversationsStarredStatus(
                     ids,
                     primaryUserId,
@@ -725,6 +729,16 @@ internal class MessageDetailsViewModel @Inject constructor(
                 messageRepository.unStarMessages(ids)
             }
         }
+    }
+
+    fun sendPhishingReport(message: Message, jobManager: JobManager) {
+        jobManager.addJobInBackground(
+            ReportPhishingJob(
+                requireNotNull(message.messageId),
+                requireNotNull(message.decryptedBody),
+                requireNotNull(message.mimeType)
+            )
+        )
     }
 
     fun storagePermissionDenied() {

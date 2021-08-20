@@ -27,7 +27,6 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.di.AppCoroutineScope
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.feature.account.primaryId
 import ch.protonmail.android.feature.account.primaryLegacyUser
@@ -94,12 +93,12 @@ class UserManager @Inject constructor(
 ) {
     private val app: ProtonMailApplication = context.app
 
-    private val cachedLegacyUsers = mutableMapOf<Id, User>()
-    private val cachedUsers = mutableMapOf<Id, NewUser>()
+    private val cachedLegacyUsers = mutableMapOf<UserId, User>()
+    private val cachedUsers = mutableMapOf<UserId, NewUser>()
 
     private var refreshPrimary = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    private var primaryId: StateFlow<Id?>
+    private var primaryId: StateFlow<UserId?>
     private var primaryLegacyUser: StateFlow<User?>
     private var primaryUser: StateFlow<NewUser?>
     var primaryUserId: StateFlow<UserId?>
@@ -118,7 +117,7 @@ class UserManager @Inject constructor(
 
     // region Current User/NewUser.
 
-    val currentUserId: Id?
+    val currentUserId: UserId?
         get() = primaryId.value
 
     val currentLegacyUser: User?
@@ -138,42 +137,42 @@ class UserManager @Inject constructor(
         refreshPrimary.tryEmit(Unit)
     }
 
-    fun requireCurrentUserId(): Id = checkNotNull(currentUserId)
+    fun requireCurrentUserId(): UserId = checkNotNull(currentUserId)
 
     fun requireCurrentLegacyUser(): User = checkNotNull(currentLegacyUser)
 
     fun requireCurrentUser(): NewUser = checkNotNull(currentUser)
 
-    suspend fun getPreviousCurrentUserId(): Id? = coreAccountManager.getPreviousPrimaryUserId()?.let { Id(it.id) }
+    suspend fun getPreviousCurrentUserId(): UserId? = coreAccountManager.getPreviousPrimaryUserId()?.let { UserId(it.id) }
 
     // endregion
 
     // region User/NewUser by Id
 
-    suspend fun getLegacyUser(userId: Id): User = cachedLegacyUsers.getOrPut(userId) {
+    suspend fun getLegacyUser(userId: UserId): User = cachedLegacyUsers.getOrPut(userId) {
         withContext(dispatchers.Io) {
             loadLegacyUser(userId).orThrow()
         }
     }
 
-    suspend fun getUser(userId: Id): NewUser = cachedUsers.getOrPut(userId) {
+    suspend fun getUser(userId: UserId): NewUser = cachedUsers.getOrPut(userId) {
         withContext(dispatchers.Io) {
             loadUser(userId).orThrow()
         }
     }
 
-    fun getLegacyUserBlocking(userId: Id) = runBlocking {
+    fun getLegacyUserBlocking(userId: UserId) = runBlocking {
         getLegacyUser(userId)
     }
 
-    fun getUserBlocking(userId: Id): NewUser = runBlocking {
+    fun getUserBlocking(userId: UserId): NewUser = runBlocking {
         getUser(userId)
     }
 
-    suspend fun getUserPassphrase(userId: Id): ByteArray =
+    suspend fun getUserPassphrase(userId: UserId): ByteArray =
         getLegacyUser(userId).passphrase
 
-    fun getUserPassphraseBlocking(userId: Id): ByteArray =
+    fun getUserPassphraseBlocking(userId: UserId): ByteArray =
         getLegacyUserBlocking(userId).passphrase
 
     fun getCurrentUserPassphrase(): ByteArray? =
@@ -192,12 +191,12 @@ class UserManager @Inject constructor(
     fun requireCurrentUserMailSettingsBlocking(): MailSettings =
         requireNotNull(getCurrentUserMailSettingsBlocking())
 
-    suspend fun getMailSettings(userId: Id): MailSettings = withContext(dispatchers.Io) {
+    suspend fun getMailSettings(userId: UserId): MailSettings = withContext(dispatchers.Io) {
         MailSettings.load(preferencesFor(userId))
     }
 
     @Deprecated("Use suspend function", ReplaceWith("getMailSettings(userId)"))
-    fun getMailSettingsBlocking(userId: Id): MailSettings =
+    fun getMailSettingsBlocking(userId: UserId): MailSettings =
         runBlocking { getMailSettings(userId) }
 
     val snoozeSettings: SnoozeSettings?
@@ -400,7 +399,7 @@ class UserManager @Inject constructor(
         return maxLabelsAllowed
     }
 
-    fun preferencesFor(userId: Id) =
+    fun preferencesFor(userId: UserId) =
         secureSharedPreferencesFactory.userPreferences(userId)
 
     class UsernameToIdMigration @Inject constructor(
@@ -408,7 +407,7 @@ class UserManager @Inject constructor(
         private val dispatchers: DispatcherProvider
     ) {
 
-        suspend operator fun invoke(allUsernamesToIds: Map<String, Id>) {
+        suspend operator fun invoke(allUsernamesToIds: Map<String, UserId>) {
             withContext(dispatchers.Io) {
                 val currentUsername = prefs.get<String?>(PREF_USERNAME)?.takeIfNotBlank()
                 if (currentUsername == null) {
@@ -420,7 +419,7 @@ class UserManager @Inject constructor(
                 prefs -= PREF_USERNAME
 
                 allUsernamesToIds[currentUsername]?.let { currentUserId ->
-                    prefs[PREF_CURRENT_USER_ID] = currentUserId.s
+                    prefs[PREF_CURRENT_USER_ID] = currentUserId.id
                 }
             }
         }

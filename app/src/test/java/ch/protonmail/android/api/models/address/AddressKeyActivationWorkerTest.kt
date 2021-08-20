@@ -25,7 +25,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
@@ -51,7 +51,7 @@ import kotlin.test.assertEquals
 
 class AddressKeyActivationWorkerTest {
 
-    private val testUserId = Id("id")
+    private val testUserId = UserId("id")
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -82,7 +82,7 @@ class AddressKeyActivationWorkerTest {
             api,
             TestDispatcherProvider
         )
-        every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_USER_ID to testUserId.s)
+        every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_USER_ID to testUserId.id)
         every { context.app.organization } returns null
     }
 
@@ -114,16 +114,16 @@ class AddressKeyActivationWorkerTest {
         // given
         val expectedResult = ListenableWorker.Result.success()
         val primaryKey1 = mockk<AddressKey>(relaxed = true) {
-            every { id } returns Id("primaryKey1")
+            every { id } returns UserId("primaryKey1")
         }
         val addressKey1 = mockk<AddressKey>(relaxed = true) {
-            every { id } returns Id("addressKey1")
+            every { id } returns UserId("addressKey1")
         }
         val userPrimaryKey1 = mockk<UserKey>(relaxed = true) {
-            every { id } returns Id("userPrimaryKey1")
+            every { id } returns UserId("userPrimaryKey1")
         }
         val userKey1 = mockk<UserKey>(relaxed = true) {
-            every { id } returns Id("userKey1")
+            every { id } returns UserId("userKey1")
         }
         val testAddressKeys = AddressKeys(primaryKey1, listOf(primaryKey1, addressKey1))
         val testUserKeys = UserKeys(userPrimaryKey1, listOf(userPrimaryKey1, userKey1))

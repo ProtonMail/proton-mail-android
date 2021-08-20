@@ -26,7 +26,7 @@ import assert4k.equals
 import assert4k.that
 import assert4k.times
 import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.user.domain.entity.AddressId
 import kotlin.test.Test
 
 /**
@@ -71,8 +71,8 @@ internal class AddressTest {
     }
 
     private fun Address(id: String) = Address(
-        Id(id),
-        Id("domain_id"),
+        AddressId(id),
+        "domain_id",
         EmailAddress("$id@mail.com"),
         null,
         null,

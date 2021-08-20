@@ -151,7 +151,7 @@ class LabelsActionSheetViewModel @Inject constructor(
                 if (isActionAppliedToConversation(currentMessageFolder)) {
                     updateConversationsLabels.enqueue(
                         ids,
-                        UserId(userManager.requireCurrentUserId().s),
+                        UserId(userManager.requireCurrentUserId().id),
                         selectedLabels,
                         unselectedLabels
                     )
@@ -168,7 +168,7 @@ class LabelsActionSheetViewModel @Inject constructor(
                     if (isActionAppliedToConversation(currentMessageFolder)) {
                         val result = moveConversationsToFolder(
                             ids,
-                            UserId(userManager.requireCurrentUserId().s),
+                            UserId(userManager.requireCurrentUserId().id),
                             ARCHIVE.messageLocationTypeValue.toString(),
                         )
                         if (result is ConversationsActionResult.Error) {
@@ -199,7 +199,7 @@ class LabelsActionSheetViewModel @Inject constructor(
             // ignore location here, otherwise custom folder case does not work
             if (isActionAppliedToConversation(null)) {
                 userManager.currentUserId?.let {
-                    val result = moveConversationsToFolder(messageIds, UserId(it.s), selectedFolderId)
+                    val result = moveConversationsToFolder(messageIds, UserId(it.id), selectedFolderId)
                     if (result is ConversationsActionResult.Error) {
                         cancel("Could not complete the action")
                     }

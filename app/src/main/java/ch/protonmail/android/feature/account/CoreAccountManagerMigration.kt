@@ -29,7 +29,6 @@ import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_CURRENT_USER_ID
 import ch.protonmail.android.di.DefaultSharedPreferences
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.domain.util.requireNotBlank
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -77,15 +76,15 @@ class CoreAccountManagerMigration @Inject constructor(
     )
 
     fun migrateBlocking() = runBlocking {
-        val loggedInUserIds = oldAccountManager.getLoggedIn().map { Id(it) }
+        val loggedInUserIds = oldAccountManager.getLoggedIn().map { UserId(it) }
         if (loggedInUserIds.isNotEmpty()) {
-            val currentUserId = appPrefs.getString(PREF_CURRENT_USER_ID)?.let { Id(it) }
+            val currentUserId = appPrefs.getString(PREF_CURRENT_USER_ID)?.let { UserId(it) }
             migrateLoggedInAccounts(loggedInUserIds, currentUserId)
             oldAccountManager.clear()
         }
     }
 
-    private suspend fun migrateLoggedInAccounts(userIds: List<Id>, currentUserId: Id?) {
+    private suspend fun migrateLoggedInAccounts(userIds: List<UserId>, currentUserId: UserId?) {
         // Iterate on currentUserId at the end.
         userIds.sortedBy { it == currentUserId }.forEach { id ->
             val tokenManager = TokenManager.getInstance(context, id)
@@ -100,7 +99,7 @@ class CoreAccountManagerMigration @Inject constructor(
                     scopes = tokenManager.scope.split(" ")
                 )
                 val account = Account(
-                    userId = UserId(id.s),
+                    userId = UserId(id.id),
                     username = requireNotBlank(username),
                     email = null,
                     state = AccountState.Ready,
@@ -123,7 +122,7 @@ class CoreAccountManagerMigration @Inject constructor(
                     runCatching {
                         // Migrate User/Addresses/Keys to Core.
                         val userId = migration.account.userId
-                        val user = User.load(Id(userId.id), context, userManager, keyStoreCrypto).orThrow()
+                        val user = User.load(userId, context, userManager, keyStoreCrypto).orThrow()
                         val addresses = user.addresses
                         userManager.addUser(
                             user = user.toCoreUser(encryptedPassphrase),

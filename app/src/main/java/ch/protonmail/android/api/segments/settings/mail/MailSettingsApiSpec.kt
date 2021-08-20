@@ -20,15 +20,15 @@ package ch.protonmail.android.api.segments.settings.mail
 
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import java.io.IOException
 
 interface MailSettingsApiSpec {
 
-    suspend fun fetchMailSettings(userId: Id): MailSettingsResponse
+    suspend fun fetchMailSettings(userId: UserId): MailSettingsResponse
 
     @Throws(IOException::class)
-    fun fetchMailSettingsBlocking(userId: Id): MailSettingsResponse
+    fun fetchMailSettingsBlocking(userId: UserId): MailSettingsResponse
 
     @Throws(IOException::class)
     fun updateSignature(signature: String): ResponseBody?

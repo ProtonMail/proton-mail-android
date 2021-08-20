@@ -25,7 +25,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import kotlin.reflect.KClass
 
@@ -34,14 +34,14 @@ open class DatabaseFactory<T : RoomDatabase>(
     private val baseDatabaseName: String
 ) {
 
-    private val cache = mutableMapOf<Id, T>()
+    private val cache = mutableMapOf<UserId, T>()
 
     @Synchronized
-    fun getInstance(context: Context, userId: Id): T =
+    fun getInstance(context: Context, userId: UserId): T =
         cache.getOrPut(userId) { buildDatabase(context, userId) }
 
     @Synchronized
-    fun deleteDatabase(context: Context, userId: Id) {
+    fun deleteDatabase(context: Context, userId: UserId) {
         val username = CounterDatabase.usernameForUserId(context, userId)
 
         val baseFileName = CounterDatabase.databaseName(username)
@@ -58,7 +58,7 @@ open class DatabaseFactory<T : RoomDatabase>(
 
     private fun buildDatabase(
         context: Context,
-        userId: Id
+        userId: UserId
     ): T {
         val username = usernameForUserId(context, userId)
 
@@ -69,7 +69,7 @@ open class DatabaseFactory<T : RoomDatabase>(
             .build()
     }
 
-    protected fun usernameForUserId(context: Context, userId: Id): String {
+    protected fun usernameForUserId(context: Context, userId: UserId): String {
         val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
         return checkNotNull(prefs.getString(Constants.Prefs.PREF_USER_NAME, null))
     }

@@ -48,6 +48,10 @@ class AndroidUserNotifier @Inject constructor(
         }
     }
 
+    override fun showError(errorMessageRes: Int) {
+        showError(context.getString(errorMessageRes))
+    }
+
     override fun showSendMessageError(errorMessage: String, messageSubject: String?) {
         val error = "\"$messageSubject\" - $errorMessage"
         val user = userManager.requireCurrentUser()

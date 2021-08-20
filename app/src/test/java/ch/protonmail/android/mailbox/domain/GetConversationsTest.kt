@@ -20,7 +20,6 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants.MessageLocationType
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
@@ -34,6 +33,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import java.util.UUID
 import kotlin.test.BeforeTest
@@ -44,7 +44,7 @@ private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
 
 class GetConversationsTest : CoroutinesTest {
 
-    private var userId = Id("id")
+    private var userId = UserId("id")
 
     @RelaxedMockK
     private lateinit var conversationRepository: ConversationsRepository

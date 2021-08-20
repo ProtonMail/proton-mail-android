@@ -30,10 +30,7 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.FirebaseToken
-import ch.protonmail.android.feature.account.allLoggedIn
-import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
 import io.mockk.MockKAnnotations
@@ -145,10 +142,10 @@ class RegisterDeviceWorkerTest {
     fun shouldReturnRetryIfApiCallFails() {
         runBlocking {
             // given
-            val userId = Id("id")
+            val userId = UserId("id")
             val ioException = IOException()
 
-            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s)
+            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.id)
             coEvery { protonMailApiManager.registerDevice(any(), any()) } throws ioException
 
             val expectedResult = ListenableWorker.Result.retry()
@@ -165,12 +162,12 @@ class RegisterDeviceWorkerTest {
     fun shouldReturnSuccessIfApiCallSucceeds() {
         runBlocking {
             // given
-            val userId = Id("id")
+            val userId = UserId("id")
             val mockRegisterDeviceResponse = mockk<ResponseBody> {
                 every { code } returns RESPONSE_CODE_OK
             }
 
-            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s)
+            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.id)
             coEvery { protonMailApiManager.registerDevice(any(), any()) } returns mockRegisterDeviceResponse
 
             val expectedResult = ListenableWorker.Result.success()
@@ -187,12 +184,12 @@ class RegisterDeviceWorkerTest {
     fun verifySetTokenSentFunctionWasCalledWhenApiCallSucceeds() {
         runBlocking {
             // given
-            val userId = Id("id")
+            val userId = UserId("id")
             val mockRegisterDeviceResponse = mockk<ResponseBody> {
                 every { code } returns RESPONSE_CODE_OK
             }
 
-            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s)
+            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.id)
             coEvery { protonMailApiManager.registerDevice(any(), any()) } returns mockRegisterDeviceResponse
 
             // when
@@ -208,14 +205,14 @@ class RegisterDeviceWorkerTest {
         mockkObject(SecureSharedPreferences.Companion) {
             // given
             val (userIds, userPrefs) = (1..3).map {
-                Id(it.toString()) to newMockSharedPreferences
+                UserId(it.toString()) to newMockSharedPreferences
             }.toMap().let { it.keys to it.values.toList() }
             every { SecureSharedPreferences.getPrefsForUser(any(), any()) } answers {
                 userPrefs[userIds.indexOf(secondArg())]
             }
             val accounts = userIds.map { user ->
                 mockk<Account> {
-                    every { userId } returns UserId(user.s)
+                    every { userId } returns UserId(user.id)
                     every { state } returns AccountState.Ready
                 }
             }
@@ -239,14 +236,14 @@ class RegisterDeviceWorkerTest {
         mockkObject(SecureSharedPreferences.Companion) {
             // given
             val (userIds, userPrefs) = (1..3).map {
-                Id(it.toString()) to newMockSharedPreferences
+                UserId(it.toString()) to newMockSharedPreferences
             }.toMap().let { it.keys to it.values.toList() }
             every { SecureSharedPreferences.getPrefsForUser(any(), any()) } answers {
                 userPrefs[userIds.indexOf(secondArg())]
             }
             val accounts = userIds.map { user ->
                 mockk<Account> {
-                    every { userId } returns UserId(user.s)
+                    every { userId } returns UserId(user.id)
                     every { state } returns AccountState.Ready
                 }
             }
@@ -257,7 +254,7 @@ class RegisterDeviceWorkerTest {
             every { fcmTokenManagerFactory.create(userPrefs[1]).isTokenSentBlocking() } returns true
             every { fcmTokenManagerFactory.create(userPrefs[2]).isTokenSentBlocking() } returns true
 
-            val expectedInputData = workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userIds.first().s)
+            val expectedInputData = workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userIds.first().id)
             val expectedConstraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()

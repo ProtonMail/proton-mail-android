@@ -74,7 +74,7 @@ class PingWorkerTest {
             val pingResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
-            coEvery { api.pingAsync() } returns pingResponse
+            coEvery { api.ping() } returns pingResponse
 
             // when
             val operationResult = worker.doWork()
@@ -93,7 +93,7 @@ class PingWorkerTest {
             val pingResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_API_OFFLINE
             }
-            coEvery { api.pingAsync() } returns pingResponse
+            coEvery { api.ping() } returns pingResponse
 
             // when
             val operationResult = worker.doWork()
@@ -113,7 +113,7 @@ class PingWorkerTest {
             val pingResponse = mockk<ResponseBody> {
                 every { code } returns unknownResponseCode
             }
-            coEvery { api.pingAsync() } returns pingResponse
+            coEvery { api.ping() } returns pingResponse
 
             // when
             val operationResult = worker.doWork()
@@ -134,7 +134,7 @@ class PingWorkerTest {
             )
             mockkStatic(AppUtil::class)
             justRun { AppUtil.postEventOnUi(any()) }
-            coEvery { api.pingAsync() } throws ioException
+            coEvery { api.ping() } throws ioException
 
             // when
             val operationResult = worker.doWork()

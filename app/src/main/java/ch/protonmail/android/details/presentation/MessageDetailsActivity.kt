@@ -52,13 +52,11 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
@@ -77,6 +75,7 @@ import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
@@ -98,7 +97,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
     private lateinit var primaryBaseActivity: Context
 
-    private var messageRecipientUserId: Id? = null
+    private var messageRecipientUserId: UserId? = null
     private var messageRecipientUsername: String? = null
     private var openedFolderLocationId: Int = Constants.MessageLocationType.INVALID.messageLocationTypeValue
     private var openedFolderLabelId: String? = null
@@ -130,7 +129,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         messageOrConversationId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_OR_CONVERSATION_ID))
-        messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
+        messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::UserId)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         openedFolderLocationId = intent.getIntExtra(
             EXTRA_MESSAGE_LOCATION_ID,
@@ -311,7 +310,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             .setMessage(R.string.phishing_dialog_message)
             .setPositiveButton(R.string.send) { _: DialogInterface?, _: Int ->
                 showPhishingReportButton = false
-                mJobManager.addJobInBackground(ReportPhishingJob(message))
+                if (message != null) {
+                    viewModel.sendPhishingReport(message, mJobManager)
+                } else {
+                    showToast(R.string.cannot_send_report_send, Toast.LENGTH_SHORT)
+                }
             }
             .setNegativeButton(R.string.cancel, null).show()
     }

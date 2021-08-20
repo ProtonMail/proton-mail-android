@@ -37,18 +37,17 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.Notification
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.PushNotification
 import ch.protonmail.android.fcm.model.PushNotificationData
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
-import me.proton.core.accountmanager.domain.SessionManager
-import me.proton.core.network.domain.session.SessionId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.session.SessionId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.deserialize
 import timber.log.Timber
@@ -102,14 +101,14 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
         queueNetworkUtil.setCurrentlyHasConnectivity()
 
         val notificationUserId = sessionManager.getUserId(SessionId(sessionId))
-            // we do not show notifications for unknown/inactive users
+        // we do not show notifications for unknown/inactive users
             ?: return Result.failure(
                 workDataOf(
                     KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR to "User is unknown or inactive"
                 )
             )
 
-        val userId = Id(notificationUserId.id)
+        val userId = UserId(notificationUserId.id)
         val user = userManager.getLegacyUser(userId)
         if (!user.isBackgroundSync) {
             // we do not show notifications for users who have disabled background sync
@@ -157,7 +156,7 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
     }
 
     private suspend fun sendNotification(
-        userId: Id,
+        userId: UserId,
         user: User,
         messageId: String,
         notificationBody: String,
@@ -187,7 +186,7 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
                 user.ringtone,
                 user.isNotificationVisibilityLockScreen,
                 message,
-                if (conversationModeEnabled(null, UserId(userId.s))) message?.conversationId ?: ""
+                if (conversationModeEnabled(null, userId)) message?.conversationId ?: ""
                 else messageId,
                 notificationBody,
                 sender,

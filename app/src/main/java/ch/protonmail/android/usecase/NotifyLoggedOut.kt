@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.usecase
 
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.servers.notification.NotificationServer
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class NotifyLoggedOut @Inject constructor(
     private val loadUser: LoadUser,
     private val notificationServer: NotificationServer
 ) {
-    suspend operator fun invoke(userId: Id) {
+    suspend operator fun invoke(userId: UserId) {
         val user = loadUser(userId).orNull()
         notificationServer.notifyUserLoggedOut(user)
     }
@@ -37,7 +37,7 @@ class NotifyLoggedOut @Inject constructor(
         "Should not be used, necessary only for when non-blocking variant is not suitable",
         ReplaceWith("invoke(userId)")
     )
-    fun blocking(userId: Id) {
+    fun blocking(userId: UserId) {
         runBlocking {
             invoke(userId)
         }

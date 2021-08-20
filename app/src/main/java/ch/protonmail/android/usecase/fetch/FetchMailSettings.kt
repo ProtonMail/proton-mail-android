@@ -24,7 +24,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.di.AppProcessLifecycleOwner
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.withContext
@@ -48,8 +47,8 @@ class FetchMailSettings @Inject constructor(
     ) = withContext(dispatchers.Io) {
 
         Timber.v("FetchMailSettings started")
-        val mailSettingsResponse = protonMailApiManager.fetchMailSettings(Id(userId.id))
-        mailSettingsResponse.mailSettings.save(SecureSharedPreferences.getPrefsForUser(context, Id(userId.id)))
+        val mailSettingsResponse = protonMailApiManager.fetchMailSettings(userId)
+        mailSettingsResponse.mailSettings.save(SecureSharedPreferences.getPrefsForUser(context, userId))
 
         mailSettingsRepository.getMailSettingsFlow(userId, true).launchIn(lifecycleOwner.lifecycleScope)
     }

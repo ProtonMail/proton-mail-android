@@ -28,7 +28,7 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Label
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.feature.account.allLoggedIn
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
@@ -43,7 +43,7 @@ class NavigationViewModel @Inject constructor(
     private val userManager: UserManager
 ) : ViewModel() {
 
-    var notificationsCounterLiveData = MutableLiveData<Map<Id, Int>>()
+    var notificationsCounterLiveData = MutableLiveData<Map<UserId, Int>>()
     val currentUserId get() =
         userManager.requireCurrentUserId()
 

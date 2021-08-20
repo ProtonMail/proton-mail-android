@@ -30,7 +30,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -71,7 +70,7 @@ class MarkConversationsReadRemoteWorker @AssistedInject constructor(
         Timber.v("MarkConversationsReadRemoteWorker conversationIds: ${conversationIds.asList()}")
 
         return runCatching {
-            protonMailApiManager.markConversationsRead(requestBody, Id(userId))
+            protonMailApiManager.markConversationsRead(requestBody, UserId(userId))
         }.fold(
             onSuccess = { response ->
                 Result.success(

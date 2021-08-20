@@ -19,7 +19,6 @@
 package ch.protonmail.android.crypto
 
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
@@ -28,6 +27,8 @@ import ch.protonmail.android.domain.entity.user.UserKeys
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
+import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
@@ -44,7 +45,7 @@ import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 abstract class Crypto<K>(
     private val userManager: UserManager,
     protected val openPgp: OpenPGP,
-    private val userId: Id
+    private val userId: UserId
 ) {
 
     protected val user by lazy {
@@ -172,11 +173,11 @@ abstract class Crypto<K>(
                 "ch.protonmail.android.crypto.UserCrypto"
             )
         )
-        fun forUser(userManager: UserManager, userId: Id): UserCrypto =
+        fun forUser(userManager: UserManager, userId: UserId): UserCrypto =
             UserCrypto(userManager, userManager.openPgp, userId)
 
         @JvmStatic
-        fun forAddress(userManager: UserManager, userId: Id, addressId: Id): AddressCrypto =
+        fun forAddress(userManager: UserManager, userId: UserId, addressId: AddressId): AddressCrypto =
             AddressCrypto(userManager, userManager.openPgp, userId, addressId)
     }
 }

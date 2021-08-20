@@ -20,7 +20,6 @@ package ch.protonmail.android.crypto
 
 import android.util.Base64
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
@@ -37,19 +36,21 @@ import com.proton.gopenpgp.crypto.PlainMessage
 import com.proton.gopenpgp.crypto.SessionKey
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import timber.log.Timber
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
 class AddressCrypto @AssistedInject constructor(
     val userManager: UserManager,
     openPgp: OpenPGP,
-    @Assisted userId: Id,
-    @Assisted private val addressId: Id
+    @Assisted userId: UserId,
+    @Assisted private val addressId: AddressId
 ) : Crypto<AddressKey>(userManager, openPgp, userId) {
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(userId: Id, addressId: Id): AddressCrypto
+        fun create(userId: UserId, addressId: AddressId): AddressCrypto
     }
 
     private val address
@@ -86,7 +87,7 @@ class AddressCrypto @AssistedInject constructor(
             mailboxPassword
 
         } else {
-            val errorMessage = "Failed getting passphrase for key ${key.id.s}, " +
+            val errorMessage = "Failed getting passphrase for key ${key.id.id}, " +
                 "primary = ${key.isPrimary}, " +
                 "has activation = ${key.activation != null}"
 

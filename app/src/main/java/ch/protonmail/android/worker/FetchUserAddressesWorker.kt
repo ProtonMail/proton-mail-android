@@ -32,12 +32,11 @@ import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.attachments.KEY_INPUT_DATA_USER_ID_STRING
-import ch.protonmail.android.domain.entity.Id
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.takeIfNotBlank
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import javax.inject.Inject
 
 // region constants
@@ -68,13 +67,13 @@ class FetchUserAddressesWorker @AssistedInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        operator fun invoke(userId: Id): WorkRequest {
+        operator fun invoke(userId: UserId): WorkRequest {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
             val data = Data.Builder()
-                .putString(KEY_INPUT_DATA_USER_ID_STRING, userId.s)
+                .putString(KEY_INPUT_DATA_USER_ID_STRING, userId.id)
                 .build()
 
             val request = OneTimeWorkRequestBuilder<FetchUserAddressesWorker>()

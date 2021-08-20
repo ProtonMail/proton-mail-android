@@ -24,7 +24,6 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
@@ -47,7 +46,7 @@ import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
@@ -68,6 +67,7 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 
 class EventHandler @AssistedInject constructor(
@@ -84,7 +84,7 @@ class EventHandler @AssistedInject constructor(
     databaseProvider: DatabaseProvider,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val messageFactory: MessageFactory,
-    @Assisted val userId: Id,
+    @Assisted val userId: UserId,
     private val externalScope: CoroutineScope
 ) {
 
@@ -96,7 +96,7 @@ class EventHandler @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(userId: Id): EventHandler
+        fun create(userId: UserId): EventHandler
     }
 
     private val stagedMessages = HashMap<String, Message>()

@@ -21,7 +21,7 @@ package ch.protonmail.android.usecase
 
 import assert4k.assert
 import assert4k.that
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import io.mockk.every
 import io.mockk.mockk
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -45,7 +45,7 @@ class LoadLegacyUserTest : CoroutinesTest {
         )
 
         // when
-        val result = loadLegacyUser(Id("someId"))
+        val result = loadLegacyUser(UserId("someId"))
 
         // then
         assert that result.isRight()

@@ -44,7 +44,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mailbox.presentation.MailboxActivity
@@ -352,7 +351,7 @@ class NotificationServer @Inject constructor(
         val contentIntent = Intent(context, MessageDetailsActivity::class.java)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, messageId)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID, message?.location)
-            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.s)
+            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.id)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
 
         val stackBuilder = TaskStackBuilder.create(context)
@@ -508,9 +507,9 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(loggedInUser.id.hashCode(), notification)
     }
 
-    private fun getMailboxActivityIntent(loggedInUserId: Id): PendingIntent {
+    private fun getMailboxActivityIntent(loggedInUserId: UserId): PendingIntent {
         // Create content Intent for open MailboxActivity
-        val contentIntent = context.getMailboxActivityIntent(UserId(loggedInUserId.s))
+        val contentIntent = context.getMailboxActivityIntent(UserId(loggedInUserId.id))
         val requestCode = System.currentTimeMillis().toInt()
         return PendingIntent.getActivity(context, requestCode, contentIntent, 0)
     }
@@ -524,14 +523,14 @@ class NotificationServer @Inject constructor(
     }
 
     private fun createGenericErrorSendingMessageNotification(
-        userId: Id
+        userId: UserId
     ): NotificationCompat.Builder {
 
         // Create channel and get id
         val channelId = createAccountChannel()
 
         // Create content Intent to open Drafts
-        val contentIntent = context.getMailboxActivityIntent(UserId(userId.s), Constants.MessageLocationType.DRAFT)
+        val contentIntent = context.getMailboxActivityIntent(userId, Constants.MessageLocationType.DRAFT)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MailboxActivity::class.java)
@@ -556,7 +555,7 @@ class NotificationServer @Inject constructor(
     }
 
     fun notifySingleErrorSendingMessage(
-        userId: Id,
+        userId: UserId,
         username: Name,
         error: String,
     ) {
@@ -575,17 +574,17 @@ class NotificationServer @Inject constructor(
 
     @Deprecated(
         "Use with new user id and username",
-        ReplaceWith("notifySingleErrorSendingMessage(Id(user.id), Name(user.name), error)")
+        ReplaceWith("notifySingleErrorSendingMessage(UserId(user.id), Name(user.name), error)")
     )
     fun notifySingleErrorSendingMessage(
         user: LegacyUser,
         error: String,
     ) {
-        notifySingleErrorSendingMessage(Id(user.id), Name(user.name), error)
+        notifySingleErrorSendingMessage(UserId(user.id), Name(user.name), error)
     }
 
     fun notifySaveDraftError(
-        userId: Id,
+        userId: UserId,
         errorMessage: String,
         messageSubject: String?,
         username: Name

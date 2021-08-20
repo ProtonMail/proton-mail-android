@@ -20,7 +20,7 @@ package ch.protonmail.android.mailbox.data.remote
 
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 
@@ -36,31 +36,31 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
 
     override suspend fun fetchConversation(
         conversationId: String,
-        userId: Id
+        userId: UserId
     ) = service.fetchConversation(conversationId, userIdTag = UserIdTag(userId))
 
     override suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ) = service.markConversationsRead(conversationIds, userIdTag = UserIdTag(userId))
 
     override suspend fun markConversationsUnread(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ) = service.markConversationsUnread(conversationIds, userIdTag = UserIdTag(userId))
 
     override suspend fun labelConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ) = service.labelConversations(conversationIds, userIdTag = UserIdTag(userId))
 
     override suspend fun unlabelConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ) = service.unlabelConversations(conversationIds, userIdTag = UserIdTag(userId))
 
     override suspend fun deleteConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ) = service.deleteConversations(conversationIds, userIdTag = UserIdTag(userId))
 }

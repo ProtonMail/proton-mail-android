@@ -30,7 +30,7 @@ import assert4k.that
 import assert4k.times
 import assert4k.unaryPlus
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.getStringList
 import ch.protonmail.android.utils.putStringList
@@ -44,10 +44,10 @@ class AccountManagerTest : CoroutinesTest {
 
     class UsernameToIdMigrationTest : CoroutinesTest {
 
-        private val user1 = "username1" to Id("id1")
-        private val user2 = "username2" to Id("id2")
-        private val user3 = "username3" to Id("id3")
-        private val user4 = "username4" to Id("id4")
+        private val user1 = "username1" to UserId("id1")
+        private val user2 = "username2" to UserId("id2")
+        private val user3 = "username3" to UserId("id3")
+        private val user4 = "username4" to UserId("id4")
 
         private val defaultPreferences = newMockSharedPreferences
         private val accountManager = AccountManager(defaultPreferences, dispatchers)

@@ -19,21 +19,26 @@
 
 package ch.protonmail.android.api
 
+import ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES
 import ch.protonmail.android.events.ForceUpgradeEvent
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.BuildInfo
 import me.proton.core.network.domain.ApiClient
 import javax.inject.Inject
 
 class ProtonMailApiClient @Inject constructor(
-    buildInfo: BuildInfo
+    buildInfo: BuildInfo,
+    private val secureSharedPreferencesFactory: SecureSharedPreferences.Factory
 ) : ApiClient {
 
     override val appVersionHeader: String = "Android_${buildInfo.versionName}"
     override val enableDebugLogging: Boolean = buildInfo.isDebugVersion
-    override val shouldUseDoh: Boolean = true
     override val userAgent = "ProtonMail/${buildInfo.versionName} (Android ${buildInfo.releaseVersion};" +
         " ${buildInfo.brand} ${buildInfo.model})"
+    override val shouldUseDoh: Boolean
+        get() = secureSharedPreferencesFactory.appPreferences()
+            .getBoolean(PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, true)
 
     /**
      * Tells client to force update (this client will no longer be accepted by the API).

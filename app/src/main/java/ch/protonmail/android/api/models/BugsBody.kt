@@ -16,25 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models;
+package ch.protonmail.android.api.models
 
+import ch.protonmail.android.api.utils.Fields
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-public class AttachmentKey {
-    private String ID;
-    private String Key;
-    private String Algo;
-
-    public AttachmentKey(String algo, String ID, String key) {
-        Algo = algo;
-        this.ID = ID;
-        Key = key;
-    }
-
-    public String getID() {
-        return ID;
-    }
-
-    public String getKey() {
-        return Key;
-    }
-}
+@Serializable
+data class BugsBody(
+    @SerialName(Fields.Bugs.OS)
+    val os: String,
+    @SerialName(Fields.Bugs.OS_VERSION)
+    val osVersion: String,
+    @SerialName(Fields.Bugs.CLIENT)
+    val client: String,
+    @SerialName(Fields.Bugs.CLIENT_VERSION)
+    val clientVersion: String,
+    @SerialName(Fields.Bugs.TITLE)
+    val title: String,
+    @SerialName(Fields.Bugs.DESCRIPTION)
+    val description: String,
+    @SerialName(Fields.Bugs.USERNAME)
+    val username: String,
+    @SerialName(Fields.Bugs.EMAIL)
+    val email: String
+)

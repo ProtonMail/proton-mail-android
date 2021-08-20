@@ -51,7 +51,7 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.feature.account.allLoggedInBlocking
@@ -317,7 +317,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     @SuppressLint("CheckResult")
-    fun fetchContactGroups(userId: Id) {
+    fun fetchContactGroups(userId: UserId) {
         if (!isPaidUser()) {
             return
         }

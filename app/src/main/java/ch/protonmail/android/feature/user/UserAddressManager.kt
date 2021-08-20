@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.feature.user
 
-import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.UserAddressManager
@@ -27,18 +26,18 @@ import me.proton.core.user.domain.entity.AddressId
 
 @Deprecated("Replaced by Core UserAddressManager", ReplaceWith("Core UserAddressManager"))
 fun UserAddressManager.updateAddressBlocking(
-    userId: Id,
-    addressId: Id,
+    userId: UserId,
+    addressId: AddressId,
     displayName: String? = null,
     signature: String? = null
 ) = runBlocking {
-    updateAddress(UserId(userId.s), AddressId(addressId.s), displayName, signature)
+    updateAddress(userId, addressId, displayName, signature)
 }
 
 @Deprecated("Replaced by Core UserAddressManager", ReplaceWith("Core UserAddressManager"))
 fun UserAddressManager.updateOrderBlocking(
-    userId: Id,
-    addressIds: List<Id>
+    userId: UserId,
+    addressIds: List<UserId>
 ) = runBlocking {
-    updateOrder(UserId(userId.s), addressIds.map { AddressId(it.s) })
+    updateOrder(userId, addressIds.map { AddressId(it.id) })
 }

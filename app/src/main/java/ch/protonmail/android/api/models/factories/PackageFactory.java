@@ -47,7 +47,7 @@ import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.data.local.model.Attachment;
 import ch.protonmail.android.data.local.model.Message;
-import ch.protonmail.android.domain.entity.Id;
+import me.proton.core.domain.entity.UserId;
 import ch.protonmail.android.repository.AuthRepositoryKt;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.MIME.MIMEBuilder;
@@ -55,6 +55,7 @@ import ch.protonmail.android.utils.crypto.EOToken;
 import kotlin.text.Charsets;
 import me.proton.core.auth.domain.entity.Modulus;
 import me.proton.core.auth.domain.repository.AuthRepository;
+import me.proton.core.user.domain.entity.AddressId;
 
 public class PackageFactory {
 
@@ -82,10 +83,10 @@ public class PackageFactory {
             @NonNull Message message,
             @NonNull List<SendPreference> preferences,
             @NonNull MessageSecurityOptions securityOptions,
-            @NonNull Id userId
+            @NonNull UserId userId
     ) throws Exception {
         final Map<MIMEType, MessageSendPackage> packageMap = new HashMap<>();
-        crypto = addressCryptoFactory.create(userId, new Id(message.getAddressID()));
+        crypto = addressCryptoFactory.create(userId, new AddressId(message.getAddressID()));
 
         Set<String> recipients = getMessageRecipients(message);
         for (SendPreference sendPref : preferences) {

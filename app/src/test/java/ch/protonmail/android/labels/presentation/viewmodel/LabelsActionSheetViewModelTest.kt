@@ -24,7 +24,6 @@ import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -48,6 +47,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
@@ -244,7 +244,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
 
             // given
-            coEvery { userManager.currentUserId } returns Id("userId")
+            coEvery { userManager.currentUserId } returns UserId("userId")
             coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
             coEvery { conversationModeEnabled(any()) } returns true
             every {
@@ -265,7 +265,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyThatWhenLabelIsClickedForFolderTypeWithConversationModeEnabledAndMoveConversationsToFolderReturnsErrorResultErrorMovingToFolderIsEmitted() =
         runBlockingTest {
             // given
-            coEvery { userManager.currentUserId } returns Id("userId")
+            coEvery { userManager.currentUserId } returns UserId("userId")
             coEvery { conversationModeEnabled(any()) } returns true
             coEvery {
                 moveConversationsToFolder.invoke(any(), any(), any())
@@ -283,7 +283,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
 
             // given
-            coEvery { userManager.currentUserId } returns Id("userId")
+            coEvery { userManager.currentUserId } returns UserId("userId")
             coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
             coEvery { conversationModeEnabled(any()) } returns true
             every {

@@ -26,10 +26,12 @@ import android.widget.FrameLayout
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.extensions.isInPreviewMode
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxItemDecoration
@@ -52,7 +54,7 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
     private val labelsAdapter = ProtonAdapter(
         getView = { _, _ -> LabelChipView(context) },
         onBind = { setLabel(it) },
-        diffCallback = LabelChipUiModel.DiffCallback
+        diffCallback = DiffCallback()
     )
 
     private val dividerItemDecoration = FlexboxItemDecoration(context)
@@ -79,19 +81,30 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
         labelsAdapter.submitList(labels)
     }
 
+    private class DiffCallback : DiffUtil.ItemCallback<LabelChipUiModel>() {
+
+        override fun areItemsTheSame(oldItem: LabelChipUiModel, newItem: LabelChipUiModel) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: LabelChipUiModel, newItem: LabelChipUiModel) =
+            oldItem == newItem
+
+    }
+
     private companion object {
 
         /**
          * @return List of Labels for build a Preview
          */
         fun buildPreviewItems(): List<LabelChipUiModel> = listOf(
-            LabelChipUiModel(Id("a"), Name("long name for first label"), Color.RED),
-            LabelChipUiModel(Id("b"), Name("second label"), Color.GREEN),
-            LabelChipUiModel(Id("c"), Name("third"), Color.BLUE),
-            LabelChipUiModel(Id("d"), Name("long name for forth label"), Color.CYAN),
-            LabelChipUiModel(Id("e"), Name("fifth label"), Color.MAGENTA),
-            LabelChipUiModel(Id("f"), Name("sixth"), Color.GRAY),
-            LabelChipUiModel(Id("g"), Name("long name for seventh label"), Color.BLACK),
+            LabelChipUiModel(LabelId("a"), Name("long name for first label"), Color.RED),
+            LabelChipUiModel(LabelId("b"), Name("second label"), Color.GREEN),
+            LabelChipUiModel(LabelId("c"), Name("third"), Color.BLUE),
+            LabelChipUiModel(LabelId("d"), Name("long name for forth label"), Color.CYAN),
+            LabelChipUiModel(LabelId("e"), Name("fifth label"), Color.MAGENTA),
+            LabelChipUiModel(LabelId("f"), Name("sixth"), Color.GRAY),
+            LabelChipUiModel(LabelId("g"), Name("long name for seventh label"), Color.BLACK),
         )
     }
+
 }
