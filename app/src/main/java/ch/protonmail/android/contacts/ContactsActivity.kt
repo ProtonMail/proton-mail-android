@@ -77,8 +77,6 @@ class ContactsActivity :
     private lateinit var addFab: FloatingActionMenu
     private lateinit var tabLayoutContacts: TabLayout
 
-    private var alreadyCheckedPermission = false
-
     private val contactsViewModel: ContactsViewModel by viewModels()
 
     private val contactsListFragment get() = supportFragmentManager.fragments[0] as ContactsListFragment
@@ -175,20 +173,15 @@ class ContactsActivity :
     override fun onStart() {
         super.onStart()
         mApp.bus.register(this)
-        if (!alreadyCheckedPermission) {
-            requestContactsPermission()
-        }
     }
 
     override fun onStop() {
         mApp.bus.unregister(this)
-        alreadyCheckedPermission = false
         super.onStop()
     }
 
     override fun requestContactsPermission() {
         contactsPermissionHelper.checkPermission()
-        alreadyCheckedPermission = true
     }
 
     private fun onConnectivityCheckRetry() {
