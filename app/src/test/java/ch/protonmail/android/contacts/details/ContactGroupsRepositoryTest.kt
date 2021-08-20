@@ -23,7 +23,7 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiM
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -55,7 +55,7 @@ class ContactGroupsRepositoryTest {
 
     private val dispatcherProvider = TestDispatcherProvider
 
-    private val label1 = ContactLabelEntity(
+    private val label1 = LabelEntity(
         id = "a",
         name = "aa",
         color = "testColor",
@@ -63,7 +63,8 @@ class ContactGroupsRepositoryTest {
         path = "a/b",
         parentId = "parentId",
         expanded = 0,
-        sticky = 0
+        sticky = 0,
+        order = 0
     )
 
     private val label1UiModel = ContactLabelUiModel(
@@ -136,7 +137,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun saveContactGroupStoresGivenContactGroupInDatabase() {
-        val contactGroup = ContactLabelEntity(
+        val contactGroup = LabelEntity(
             id = "Id",
             name = "name",
             color = "color",
@@ -144,7 +145,8 @@ class ContactGroupsRepositoryTest {
             path = "a/b",
             parentId = "parentId",
             expanded = 0,
-            sticky = 0
+            sticky = 0,
+            order = 0
         )
 
         contactGroupsRepository.saveContactGroup(contactGroup)

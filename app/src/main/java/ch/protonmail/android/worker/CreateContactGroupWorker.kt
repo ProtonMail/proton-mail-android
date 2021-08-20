@@ -69,7 +69,7 @@ class CreateContactGroupWorker @AssistedInject constructor(
                 if (labelResponse.label.id.isEmpty()) {
                     return failureResultWithError("Error, Label id is empty")
                 }
-                val contactLabel = labelsMapper.mapLabelToContactLabelEntity(labelResponse.label)
+                val contactLabel = labelsMapper.mapLabelToLabelEntity(labelResponse.label)
                 repository.saveContactGroup(contactLabel)
                 return Result.success()
             }

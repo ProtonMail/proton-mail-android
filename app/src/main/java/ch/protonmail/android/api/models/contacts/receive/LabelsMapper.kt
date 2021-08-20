@@ -20,73 +20,44 @@ package ch.protonmail.android.api.models.contacts.receive
 
 import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
-import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.data.local.model.LabelEntity
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
 class LabelsMapper @Inject constructor() {
 
-    fun mapLabelToLabelEntity(serverLabel: Label) =
-        LabelEntity(
-            id = serverLabel.id,
-            name = serverLabel.name,
-            color = serverLabel.color,
-            order = serverLabel.order ?: 0,
-            type = serverLabel.type,
-            path = serverLabel.path,
-            parentId = serverLabel.parentId ?: EMPTY_STRING,
-            expanded = serverLabel.expanded ?: 0,
-            sticky = serverLabel.sticky ?: 0,
-        )
-
-    fun mapLabelEntityToServerLabel(dbObject: ContactLabelEntity): Label {
-        val id = dbObject.id
-        val name = dbObject.name
-        val color = dbObject.color
-        val order = dbObject.order
-        val type = dbObject.type
-        val path = dbObject.path
-        val parentId = dbObject.parentId
-        val expanded = dbObject.expanded
-        val sticky = dbObject.sticky
-        val notify = dbObject.notify
-        return Label(
-            id = id,
-            name = name,
-            path = path,
-            color = color,
-            order = order,
-            type = type,
-            notify = notify,
-            parentId = parentId,
-            expanded = expanded,
-            sticky = sticky,
-        )
-    }
-
-    fun mapLabelToContactLabelEntity(label: Label) = ContactLabelEntity(
-        id = label.id,
-        name = label.name,
-        color = label.color,
-        order = label.order ?: 0,
-        type = label.type,
-        path = label.path,
-        parentId = label.parentId ?: EMPTY_STRING,
-        expanded = label.expanded ?: 0,
-        sticky = label.sticky ?: 0,
-        notify = label.notify
+    fun mapLabelToLabelEntity(serverLabel: Label) = LabelEntity(
+        id = serverLabel.id,
+        name = serverLabel.name,
+        color = serverLabel.color,
+        order = serverLabel.order ?: 0,
+        type = serverLabel.type,
+        path = serverLabel.path,
+        parentId = serverLabel.parentId ?: EMPTY_STRING,
+        expanded = serverLabel.expanded ?: 0,
+        sticky = serverLabel.sticky ?: 0,
     )
 
-    fun mapContactLabelToRequestLabel(contactLabel: ContactLabelEntity): LabelRequestBody {
-        return LabelRequestBody(
-            name = contactLabel.name,
-            color = contactLabel.color,
-            type = contactLabel.type,
-            parentId = contactLabel.parentId,
-            notify = 0,
-            expanded = contactLabel.expanded,
-            sticky = contactLabel.sticky
-        )
-    }
+    fun mapLabelEntityToServerLabel(labelEntity: LabelEntity) = Label(
+        id = labelEntity.id,
+        name = labelEntity.name,
+        path = labelEntity.path,
+        color = labelEntity.color,
+        order = labelEntity.order,
+        type = labelEntity.type,
+        notify = labelEntity.notify,
+        parentId = labelEntity.parentId,
+        expanded = labelEntity.expanded,
+        sticky = labelEntity.sticky,
+    )
+
+    fun mapLabelEntityToRequestLabel(labelEntity: LabelEntity) = LabelRequestBody(
+        name = labelEntity.name,
+        color = labelEntity.color,
+        type = labelEntity.type,
+        parentId = labelEntity.parentId,
+        notify = 0,
+        expanded = labelEntity.expanded,
+        sticky = labelEntity.sticky
+    )
 }

@@ -27,7 +27,7 @@ import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
@@ -83,9 +83,9 @@ class ContactEmailsManager @Inject constructor(
         return allJoins
     }
 
-    private fun mapToContactLabelsEntity(labels: List<Label>?): List<ContactLabelEntity> {
+    private fun mapToContactLabelsEntity(labels: List<Label>?): List<LabelEntity> {
         return labels?.map { label ->
-            labelsMapper.mapLabelToContactLabelEntity(label)
+            labelsMapper.mapLabelToLabelEntity(label)
         } ?: emptyList()
     }
 

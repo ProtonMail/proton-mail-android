@@ -29,7 +29,7 @@ import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -42,7 +42,7 @@ class GroupRecipientsViewModel @Inject constructor(
     private lateinit var _recipients: ArrayList<MessageRecipient>
     private var _location: Constants.RecipientLocationType = Constants.RecipientLocationType.TO
     private lateinit var _group: String
-    private lateinit var _groupDetails: ContactLabelEntity
+    private lateinit var _groupDetails: LabelEntity
     private lateinit var _groupAllEmails: List<ContactEmail>
 
     private val _contactGroupResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()

@@ -21,7 +21,7 @@ package ch.protonmail.android.contacts.groups.details
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -38,10 +38,10 @@ class ContactGroupDetailsRepository @Inject constructor(
         databaseProvider.provideContactDao(userManager.requireCurrentUserId())
     }
 
-    fun findContactGroupDetailsBlocking(id: String): Single<ContactLabelEntity> =
+    fun findContactGroupDetailsBlocking(id: String): Single<LabelEntity> =
         contactDao.findContactGroupByIdAsync(id)
 
-    suspend fun findContactGroupDetails(id: String): ContactLabelEntity? =
+    suspend fun findContactGroupDetails(id: String): LabelEntity? =
         contactDao.findContactGroupById(id).first()
 
     fun getContactGroupEmails(id: String): Flow<List<ContactEmail>> =

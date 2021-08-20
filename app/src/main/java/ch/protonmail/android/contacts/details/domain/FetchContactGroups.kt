@@ -21,7 +21,7 @@ package ch.protonmail.android.contacts.details.domain
 
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -39,7 +39,7 @@ class FetchContactGroups @Inject constructor(
         repository.observeContactEmails(contactId)
             .transformLatest { list ->
                 if (list.isEmpty()) {
-                    emit(emptyList<ContactLabelEntity>())
+                    emit(emptyList<LabelEntity>())
                 } else {
                     val result = list.map { contactEmail ->
                         repository.getContactGroupsLabelForId(contactEmail.contactEmailId)

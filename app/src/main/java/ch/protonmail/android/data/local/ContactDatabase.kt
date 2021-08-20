@@ -24,15 +24,15 @@ import androidx.room.TypeConverters
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsConverter
+import ch.protonmail.android.data.local.model.LabelEntity
 
 @Database(
     entities = [
         ContactData::class,
         ContactEmail::class,
-        ContactLabelEntity::class,
+        LabelEntity::class,
         FullContactDetails::class,
         ContactEmailContactLabelJoin::class
     ],

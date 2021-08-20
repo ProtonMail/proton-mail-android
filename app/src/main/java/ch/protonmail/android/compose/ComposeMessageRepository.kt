@@ -29,7 +29,7 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.feature.account.allLoggedInBlocking
@@ -112,7 +112,7 @@ class ComposeMessageRepository @Inject constructor(
             .toObservable()
     }
 
-    fun getContactGroupFromDB(groupName: String): Single<ContactLabelEntity> =
+    fun getContactGroupFromDB(groupName: String): Single<LabelEntity> =
         contactDao.findContactGroupByNameAsync(groupName)
 
     fun getContactGroupEmails(groupId: String): Observable<List<ContactEmail>> =

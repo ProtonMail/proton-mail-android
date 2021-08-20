@@ -33,7 +33,7 @@ import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.Event
 import kotlinx.coroutines.flow.first
@@ -44,6 +44,7 @@ import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.extension.hasSubscription
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
@@ -163,19 +164,26 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     private fun editContactGroup(name: String, toBeAdded: List<String>, toBeDeleted: List<String>) {
-        val contactLabel = ContactLabelEntity(
+        val contactLabel = LabelEntity(
             id = contactGroupItem!!.contactId,
             name = name,
             color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.getDefault()),
             display = 0,
             exclusive = true,
             type = Constants.LABEL_TYPE_CONTACT_GROUPS,
-            path = ""
+            path = "",
+            expanded = 0,
+            order = 0,
+            parentId = "",
+            sticky = 0,
+            notify = 0
         )
         viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryUserId().first())
-            when (val editContactResult =
-                contactGroupEditCreateRepository.editContactGroup(contactLabel, userId)) {
+            when (
+                val editContactResult =
+                    contactGroupEditCreateRepository.editContactGroup(contactLabel, userId)
+            ) {
                 is ApiResult.Success -> {
                     contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel.id, name, toBeAdded)
                     contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel.id, name, toBeDeleted)
@@ -195,13 +203,19 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     private fun createContactGroup(name: String, membersList: List<String>) {
-        val contactLabel = ContactLabelEntity(
+        val contactLabel = LabelEntity(
+            id = EMPTY_STRING,
             name = name,
             color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),
             display = 1,
             exclusive = false,
             type = Constants.LABEL_TYPE_CONTACT_GROUPS,
-            path = ""
+            path = "",
+            expanded = 0,
+            order = 0,
+            parentId = "",
+            sticky = 0,
+            notify = 0
         )
         if (!validate(contactLabel)) {
             _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.VALIDATION_FAILED)))
@@ -230,7 +244,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         }
     }
 
-    private fun validate(contactLabel: ContactLabelEntity): Boolean {
+    private fun validate(contactLabel: LabelEntity): Boolean {
         if (TextUtils.isEmpty(contactLabel.name)) {
             return false
         }

@@ -21,7 +21,7 @@ package ch.protonmail.android.api.models.contacts.receive
 
 import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import org.junit.Assert.assertEquals
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -41,7 +41,7 @@ class LabelsMapperTest {
 
     @Test
     fun mappingLabelEntityToServerLabelSucceedsWhenAllFieldsAreValid() {
-        val contactLabel = ContactLabelEntity("ID", "name", "color", 1, testType, testPath, 0, testParentId)
+        val contactLabel = LabelEntity("ID", "name", "color", 1, testType, testPath,  testParentId, 0, 0)
 
         val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
 
@@ -62,7 +62,7 @@ class LabelsMapperTest {
 
     @Test
     fun mappingLabelEntityToServerLabelSucceedsWhenSomeFieldsAreNotPassedExplicitly() {
-        val contactLabel = ContactLabelEntity("ID", "name", "color", path = testPath)
+        val contactLabel = LabelEntity("ID", "name", "color", 1, testType, testPath,  testParentId, 0, 0)
 
         val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
 
@@ -70,20 +70,20 @@ class LabelsMapperTest {
             id = "ID",
             name = "name",
             color = "color",
-            order = 0,
-            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            order = 1,
+            type = testType,
             expanded = 0,
             sticky = 0,
             path = testPath,
             notify = 0,
-            parentId = ""
+            parentId = testParentId
         )
         assertEquals(expected, actual)
     }
 
     @Test
-    fun mappingContactLabelEntityToServerLabelSucceedsWhenIdIsEmpty() {
-        val contactLabel = ContactLabelEntity("", "name", "color", 1, testType, testPath, 0, testParentId)
+    fun mappingLabelEntityToServerLabelSucceedsWhenIdIsEmpty() {
+        val contactLabel = LabelEntity("", "name", "color", 1, testType, testPath,  testParentId, 0, 0)
 
         val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
 
@@ -103,7 +103,7 @@ class LabelsMapperTest {
     }
 
     @Test
-    fun mappingServerLabelToContactLabelEntitySucceedsWhenAllFieldsAreValid() {
+    fun mappingServerLabelToLabelEntitySucceedsWhenAllFieldsAreValid() {
         val serverLabel = Label(
             id = "ID",
             name = "name",
@@ -117,11 +117,11 @@ class LabelsMapperTest {
             parentId = testParentId
         )
 
-        val actual = labelsMapper.mapLabelToContactLabelEntity(serverLabel)
+        val actual = labelsMapper.mapLabelToLabelEntity(serverLabel)
 
-        val expected = ContactLabelEntity(
-            "ID", "name", "color", 1, Constants.LABEL_TYPE_MESSAGE_FOLDERS, testPath, 0,
-            testParentId
+        val expected = LabelEntity(
+            "ID", "name", "color", 1, Constants.LABEL_TYPE_MESSAGE_FOLDERS, testPath,
+            testParentId, 0, 0
         )
         assertEquals(expected, actual)
     }

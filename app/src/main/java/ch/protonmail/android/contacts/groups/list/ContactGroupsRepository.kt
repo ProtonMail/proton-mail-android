@@ -23,7 +23,7 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiM
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -61,7 +61,7 @@ class ContactGroupsRepository @Inject constructor(
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
         contactDao.findAllContactsEmailsByContactGroup(id).first()
 
-    fun saveContactGroup(contactLabel: ContactLabelEntity) {
+    fun saveContactGroup(contactLabel: LabelEntity) {
         contactDao.saveContactGroupLabel(contactLabel)
     }
 

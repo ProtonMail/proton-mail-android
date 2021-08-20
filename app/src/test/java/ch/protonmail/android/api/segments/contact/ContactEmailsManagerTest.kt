@@ -29,7 +29,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -65,7 +65,10 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
     @MockK
     private lateinit var labelsMapper: LabelsMapper
 
-    val testUserId = UserId("TestUser")
+    private val testUserId = UserId("TestUser")
+    private val testPath = "a/bcPath"
+    private val testParentId = "parentIdForTests"
+    private val testType = Constants.LABEL_TYPE_MESSAGE_LABEL
 
     @BeforeTest
     fun setUp() {
@@ -85,17 +88,31 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val label = Label(
             id = labelId1,
             name = labelName1,
-            path = "",
+            path = testPath,
             color = labelColor,
-            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            type = testType,
             notify = 0,
             order = 0,
             expanded = null,
-            sticky = null
+            sticky = null,
+            parentId = testParentId
         )
         val labelList = listOf(label)
         val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
-        val contactLabel = ContactLabelEntity(id = labelId1, name = labelName1, color = labelColor, display = 0, order = 0, exclusive = false, type = Constants.LABEL_TYPE_MESSAGE_LABEL)
+        val contactLabel = LabelEntity(
+            id = labelId1,
+            name = labelName1,
+            color = labelColor,
+            display = 0,
+            order = 0,
+            exclusive = false,
+            type = testType,
+            notify = 0,
+            parentId = testParentId,
+            path = testPath,
+            expanded = 0,
+            sticky = 0
+        )
         val contactLabelList = listOf(contactLabel)
         val contactEmailId = "emailId1"
         val labelIds = listOf(labelId1)
@@ -110,7 +127,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         }
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
         coEvery { contactDao.insertNewContactsAndLabels(newContactEmails, any(), newJoins) } returns Unit
-        every { labelsMapper.mapLabelToContactLabelEntity(any()) } returns contactLabel
+        every { labelsMapper.mapLabelToLabelEntity(any()) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
@@ -138,7 +155,20 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             sticky = null
         )
         val labelList = listOf(label)
-        val contactLabel = ContactLabelEntity(id = labelId1, name = labelName1, color = labelColor, display = 0, order = 0, exclusive = false, type = Constants.LABEL_TYPE_MESSAGE_LABEL)
+        val contactLabel = LabelEntity(
+            id = labelId1,
+            name = labelName1,
+            color = labelColor,
+            display = 0,
+            order = 0,
+            exclusive = false,
+            type = testType,
+            expanded = 0,
+            parentId = testParentId,
+            path = testPath,
+            sticky = 0,
+            notify = 0
+        )
         val contactLabelList = listOf(contactLabel)
         val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
         val contactEmailId1 = "emailId1"
@@ -179,7 +209,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
         coEvery { contactDao.insertNewContactsAndLabels(allContactEmails, any(), newJoins) } returns Unit
-        every { labelsMapper.mapLabelToContactLabelEntity(any()) } returns contactLabel
+        every { labelsMapper.mapLabelToLabelEntity(any()) } returns contactLabel
 
         // when
         manager.refresh(pageSize)

@@ -39,7 +39,7 @@ const val COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = "emailId"
             onDelete = CASCADE
         ),
         ForeignKey(
-            entity = ContactLabelEntity::class,
+            entity = LabelEntity::class,
             childColumns = [COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID],
             parentColumns = [COLUMN_LABEL_ID],
             onDelete = CASCADE

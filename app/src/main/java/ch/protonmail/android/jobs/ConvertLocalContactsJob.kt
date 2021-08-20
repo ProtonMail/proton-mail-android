@@ -300,7 +300,7 @@ class ConvertLocalContactsJob(
                         .getInstance(applicationContext, userId ?: getUserManager().requireCurrentUserId())
                         .getDao()
                     val contactLabelFactory = LabelsMapper()
-                    dao.saveContactGroupLabel(contactLabelFactory.mapLabelToContactLabelEntity(serverLabel))
+                    dao.saveContactGroupLabel(contactLabelFactory.mapLabelToLabelEntity(serverLabel))
                 }
             }
         }

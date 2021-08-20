@@ -34,7 +34,7 @@ import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabelEntity
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
@@ -81,7 +81,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
 
     private var _emailGroupsResult: MutableLiveData<ContactEmailsGroups> = MutableLiveData()
     private val _emailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
-    private val _mapEmailGroups: HashMap<String, List<ContactLabelEntity>> = HashMap()
+    private val _mapEmailGroups: HashMap<String, List<LabelEntity>> = HashMap()
 
     private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabelUiModel>> = MutableLiveData()
     private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
@@ -206,7 +206,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         )
                     }
                 },
-            { groups: List<ContactLabelEntity>,
+            { groups: List<LabelEntity>,
                 emails: List<ContactEmail> ->
                 allContactGroups = groups.map { entity ->
                     ContactLabelUiModel(

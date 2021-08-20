@@ -29,8 +29,8 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabelEntity
 import ch.protonmail.android.data.local.model.FullContactDetails
+import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
@@ -61,12 +61,12 @@ open class ContactDetailsRepository @Inject constructor(
     private val labelsMapper: LabelsMapper
 ) {
 
-    fun getContactGroups(id: String): Observable<List<ContactLabelEntity>> {
+    fun getContactGroups(id: String): Observable<List<LabelEntity>> {
         return contactDao.findAllContactGroupsByContactEmailAsyncObservable(id)
             .toObservable()
     }
 
-    suspend fun getContactGroupsLabelForId(emailId: String): List<ContactLabelEntity> =
+    suspend fun getContactGroupsLabelForId(emailId: String): List<LabelEntity> =
         contactDao.getAllContactGroupsByContactEmail(emailId)
 
     fun getContactEmails(id: String): Observable<List<ContactEmail>> {
@@ -77,7 +77,7 @@ open class ContactDetailsRepository @Inject constructor(
     fun observeContactEmails(contactId: String): Flow<List<ContactEmail>> =
         contactDao.observeContactEmailsByContactId(contactId)
 
-    fun getContactGroups(userId: UserId): Observable<List<ContactLabelEntity>> {
+    fun getContactGroups(userId: UserId): Observable<List<LabelEntity>> {
         return Observable.fromCallable {
             runBlocking {
                 val dbContacts = getContactGroupsFromDb()
@@ -90,12 +90,12 @@ open class ContactDetailsRepository @Inject constructor(
     fun getContactEmailsCount(contactGroupId: String) =
         contactDao.countContactEmailsByLabelIdBlocking(contactGroupId)
 
-    private suspend fun getContactGroupsFromApi(userId: UserId): List<ContactLabelEntity> {
+    private suspend fun getContactGroupsFromApi(userId: UserId): List<LabelEntity> {
         val contactGroupsResponse = api.fetchContactGroups(userId).valueOrNull?.labels
 
         return contactGroupsResponse?.let { labels ->
             labels.map { label ->
-                labelsMapper.mapLabelToContactLabelEntity(label)
+                labelsMapper.mapLabelToLabelEntity(label)
             }
         }?.also {
             contactDao.clearContactGroupsLabelsTable()
@@ -103,7 +103,7 @@ open class ContactDetailsRepository @Inject constructor(
         } ?: emptyList()
     }
 
-    private suspend fun getContactGroupsFromDb(): List<ContactLabelEntity> {
+    private suspend fun getContactGroupsFromDb(): List<LabelEntity> {
         return contactDao.findContactGroups()
             .flatMapConcat { list ->
                 list.map { entity ->
@@ -123,8 +123,8 @@ open class ContactDetailsRepository @Inject constructor(
             }.toList()
     }
 
-    suspend fun editContactGroup(contactLabel: ContactLabelEntity, userId: UserId): ApiResult<LabelResponse> {
-        val labelBody = labelsMapper.mapContactLabelToRequestLabel(contactLabel)
+    suspend fun editContactGroup(contactLabel: LabelEntity, userId: UserId): ApiResult<LabelResponse> {
+        val labelBody = labelsMapper.mapLabelEntityToRequestLabel(contactLabel)
         val updateLabelResult = api.updateLabel(userId, contactLabel.id, labelBody)
         when (updateLabelResult) {
             is ApiResult.Success -> {
