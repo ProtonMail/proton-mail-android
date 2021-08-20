@@ -82,7 +82,8 @@ class MessageRepository @Inject constructor(
             createBookmarkKey = { currentKey, data -> data.createBookmarkParametersOr(currentKey) },
             apiToDomainMapper = messagesResponseToMessagesMapper,
             databaseToDomainMapper = NoProtonStoreMapper(),
-            apiToDatabaseMapper = messagesResponseToMessagesMapper
+            apiToDatabaseMapper = messagesResponseToMessagesMapper,
+            connectivityManager = connectivityManager
         )
     }
 

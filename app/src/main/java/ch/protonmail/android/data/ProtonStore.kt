@@ -19,6 +19,8 @@
 
 package ch.protonmail.android.data
 
+import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.data.remote.OfflineDataResult
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.asLoadMoreFlow
 import kotlinx.coroutines.flow.Flow
@@ -52,6 +54,9 @@ import timber.log.Timber
  * @param createBookmarkKey a function that returns the next Bookmark [Key] given the current Bookmark and the result
  *  of the API call
  *  Defaults to the current Bookmark, that will work correctly for NON-paged API requests
+ *
+ * @param connectivityManager if set, will skipp calls to [fetcher] when
+ *  [NetworkConnectivityManager.isInternetConnectionPossible] is `false`, and directly emit [OfflineDataResult]
  */
 class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : Any>(
     private val fetcher: suspend (Key) -> ApiModel,
@@ -60,7 +65,8 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
     private val createBookmarkKey: (currentKey: Key, data: ApiModel) -> Key? = { currentKey, _ -> currentKey },
     private val apiToDomainMapper: ProtonStoreMapper<ApiModel, List<DomainModel>>,
     private val databaseToDomainMapper: ProtonStoreMapper<DatabaseModel, DomainModel>,
-    private val apiToDatabaseMapper: ProtonStoreMapper<ApiModel, List<DatabaseModel>>
+    private val apiToDatabaseMapper: ProtonStoreMapper<ApiModel, List<DatabaseModel>>,
+    private val connectivityManager: NetworkConnectivityManager? = null
 ) {
 
     /**
@@ -103,6 +109,11 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
         freshAsApiModel(key).toDomainModelsDataResult()
 
     private suspend fun freshAsApiModel(key: Key): DataResult<ApiModel> {
+        if (connectivityManager?.isInternetConnectionPossible() == false) {
+            Timber.i("Fetching skipped. Reason: Offline. Key: $key")
+            return OfflineDataResult
+        }
+
         Timber.i("Fetching for: $key")
         @Suppress("TooGenericExceptionCaught")
         val apiResult = try {

@@ -20,6 +20,10 @@
 package ch.protonmail.android.data
 
 import app.cash.turbine.test
+import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.data.remote.OfflineDataResult
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -79,6 +83,103 @@ class ProtonStoreTest : CoroutinesTest {
             // then
             assertEquals(expectedFromApi, expectItem())
             assertEquals(expectedFromDatabase, expectItem())
+        }
+    }
+
+    @Test
+    fun flowEmitsFetcherErrorIfNoConnectivityManager() = coroutinesTest {
+        // given
+        val connectivityManager: NetworkConnectivityManager = mockk {
+            every { isInternetConnectionPossible() } returns true
+        }
+        val expectedMessage = "Ouch!"
+        val expectedException = IllegalStateException(expectedMessage)
+        fun throwException(): ApiResponse {
+            throw expectedException
+        }
+        val store = ProtonStore(
+            fetcher = { throwException() },
+            reader = { database.findAll() },
+            writer = { _: Int, items -> database.save(items) },
+            createBookmarkKey = { _, data -> data.items.maxOfOrNull { it.position } },
+            apiToDomainMapper = fromApiMapper,
+            databaseToDomainMapper = noMapper,
+            apiToDatabaseMapper = fromApiMapper,
+            connectivityManager = null
+        )
+
+        // when
+        store.flow(0, refresh = true).test {
+
+            // then
+            val error = expectItem() as DataResult.Error.Remote
+            assertEquals(expectedException, error.cause)
+            assertEquals(expectedMessage, error.message)
+            assertEquals(emptyList<Item>().local(), expectItem())
+        }
+    }
+
+    @Test
+    fun flowEmitsFetcherErrorIfOnline() = coroutinesTest {
+        // given
+        val connectivityManager: NetworkConnectivityManager = mockk {
+            every { isInternetConnectionPossible() } returns true
+        }
+        val expectedMessage = "Ouch!"
+        val expectedException = IllegalStateException(expectedMessage)
+        fun throwException(): ApiResponse {
+            throw expectedException
+        }
+        val store = ProtonStore(
+            fetcher = { throwException() },
+            reader = { database.findAll() },
+            writer = { _: Int, items -> database.save(items) },
+            createBookmarkKey = { _, data -> data.items.maxOfOrNull { it.position } },
+            apiToDomainMapper = fromApiMapper,
+            databaseToDomainMapper = noMapper,
+            apiToDatabaseMapper = fromApiMapper,
+            connectivityManager = connectivityManager
+        )
+
+        // when
+        store.flow(0, refresh = true).test {
+
+            // then
+            val error = expectItem() as DataResult.Error.Remote
+            assertEquals(expectedException, error.cause)
+            assertEquals(expectedMessage, error.message)
+            assertEquals(emptyList<Item>().local(), expectItem())
+        }
+    }
+
+    @Test
+    fun flowEmitsFetcherOfflineDataResultIfOffline() = coroutinesTest {
+        // given
+        val connectivityManager: NetworkConnectivityManager = mockk {
+            every { isInternetConnectionPossible() } returns false
+        }
+        val expectedMessage = "Ouch!"
+        val expectedException = IllegalStateException(expectedMessage)
+        fun throwException(): ApiResponse {
+            throw expectedException
+        }
+        val store = ProtonStore(
+            fetcher = { throwException() },
+            reader = { database.findAll() },
+            writer = { _: Int, items -> database.save(items) },
+            createBookmarkKey = { _, data -> data.items.maxOfOrNull { it.position } },
+            apiToDomainMapper = fromApiMapper,
+            databaseToDomainMapper = noMapper,
+            apiToDatabaseMapper = fromApiMapper,
+            connectivityManager = connectivityManager
+        )
+
+        // when
+        store.flow(0, refresh = true).test {
+
+            // then
+            assertEquals(OfflineDataResult, expectItem())
+            assertEquals(emptyList<Item>().local(), expectItem())
         }
     }
 
