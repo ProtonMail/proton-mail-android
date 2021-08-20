@@ -87,7 +87,6 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.UUID
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -1241,8 +1240,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    @Ignore("The value that the savedStateHandle returns for location cannot be overwritten here")
-    fun verifyDeleteActionShouldBeShownWhenConversationModeIsOnAndConversationHasMoreThanOneMessageAndLocationIsTrash() {
+    fun verifyDeleteActionIsShownWhenConversationModeIsOnAndConversationHasMoreThanOneMessageAndLocationIsTrash() {
         val location = Constants.MessageLocationType.TRASH
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns location.messageLocationTypeValue
         every { conversationModeEnabled(location) } returns true
@@ -1274,12 +1272,12 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    @Ignore("The value that the savedStateHandle returns for location cannot be overwritten here")
-    fun verifyDeleteActionShouldBeShownWhenConversationModeIsOnAndConversationHasOneMessageAndLocationIsSent() {
+    fun verifyDeleteActionIsShownWhenConversationModeIsOnAndConversationHasOneMessageAndLocationIsAnyOfSentSpamDraftOrTrash() {
         val location = Constants.MessageLocationType.SENT
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns location.messageLocationTypeValue
         every { conversationModeEnabled(location) } returns true
-        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage("conversationId"))
+        val conversationResult =
+            DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage("conversationId"))
         val conversationMessage = mockk<Message> {
             every { messageId } returns "messageId4"
             every { conversationId } returns "conversationId"

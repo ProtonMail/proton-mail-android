@@ -134,7 +134,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val deleteMessage: DeleteMessage,
     private val deleteConversations: DeleteConversations,
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -144,12 +144,11 @@ internal class MessageDetailsViewModel @Inject constructor(
         savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID)
             ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
 
-    private val location: Constants.MessageLocationType by lazy {
-        Constants.MessageLocationType.fromInt(
+    private val location: Constants.MessageLocationType
+        get() = Constants.MessageLocationType.fromInt(
             savedStateHandle.get<Int>(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID)
                 ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
         )
-    }
 
     private val mailboxLocationId: String? by lazy {
         savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MAILBOX_LABEL_ID)
