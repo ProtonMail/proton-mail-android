@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.remote.OfflineDataResult
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreMap
@@ -80,7 +81,7 @@ class ObserveMessagesByLocation @Inject constructor(
             return if (protonCode == NO_MORE_MESSAGES_ERROR_CODE) {
                 GetMessagesResult.NoMessagesFound
             } else {
-                GetMessagesResult.Error(cause)
+                GetMessagesResult.Error(cause, isOffline = this == OfflineDataResult)
             }
         }
 

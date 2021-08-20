@@ -591,10 +591,7 @@ internal class MailboxActivity :
 
                 if (mailboxAdapter.itemCount > 0) {
                     include_mailbox_error.isVisible = false
-                    Toast.makeText(
-                        this, getString(R.string.inbox_could_not_retrieve_messages), Toast.LENGTH_LONG
-                    )
-                        .show()
+                    if (state.isOffline.not()) showToast(R.string.inbox_could_not_retrieve_messages)
                 } else {
                     include_mailbox_error.isVisible = true
                 }

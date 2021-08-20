@@ -33,7 +33,8 @@ sealed class MailboxState {
 
     data class Error(
         val error: String = EMPTY_STRING,
-        val throwable: Throwable?
+        val throwable: Throwable? = null,
+        val isOffline: Boolean = false
     ) : MailboxState()
 
     /**

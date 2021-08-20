@@ -376,7 +376,11 @@ class MailboxViewModel @Inject constructor(
                 is GetMessagesResult.Error -> {
                     hasReceivedFirstApiRefresh = false
 
-                    MailboxState.Error("GetMessagesResult Error", result.throwable)
+                    MailboxState.Error(
+                        error = "GetMessagesResult Error",
+                        throwable = result.throwable,
+                        isOffline = result.isOffline
+                    )
                 }
                 is GetMessagesResult.NoMessagesFound ->
                     MailboxState.NoMoreItems
