@@ -35,6 +35,7 @@ import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -123,7 +124,7 @@ class MessagesService : JobIntentService() {
     ) {
         try {
             val messages = runBlocking {
-                mApi.getMessages(currentUserId, labelId = location.messageLocationTypeValue.toString())
+                mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = location.asLabelId()))
             }
             if (messages.code == Constants.RESPONSE_CODE_OK)
                 handleResult(messages, location, refreshDetails, uuid, currentUserId, refreshMessages)
@@ -150,7 +151,7 @@ class MessagesService : JobIntentService() {
     ) {
         try {
             val messagesResponse = runBlocking {
-                mApi.getMessages(currentUserId, labelId = labelId)
+                mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = labelId))
             }
             handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
         } catch (error: Exception) {

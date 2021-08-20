@@ -27,7 +27,6 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.NoProtonStoreMapper
 import ch.protonmail.android.data.ProtonStore
-import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreCatch
@@ -48,16 +47,9 @@ import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import me.proton.core.domain.arch.DataResult
-import me.proton.core.domain.arch.DataResult.Error
-import me.proton.core.domain.arch.DataResult.Processing
-import me.proton.core.domain.arch.DataResult.Success
-import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.unsupported
@@ -239,91 +231,6 @@ class MessageRepository @Inject constructor(
         Timber.d("markUnRead $messageIds")
         jobManager.addJobInBackground(PostUnreadJob(messageIds))
     }
-
-    fun observeMessagesByLocation(
-        userId: UserId,
-        location: MessageLocationType
-    ): LoadMoreFlow<DataResult<List<Message>>> = allMessagesStore.loadMoreFlow(
-        GetAllMessagesParameters(
-            userId = userId,
-            labelId = location.asLabelId()
-        ),
-        refreshAtStart = true
-    )
-
-    fun observeMessagesByLabelId(
-        userId: UserId,
-        labelId: String
-    ): LoadMoreFlow<DataResult<List<Message>>> {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        val fromDatabaseFlow = messagesDao.observeMessagesByLabelId(labelId)
-        return observeMessagesByLocationOrLabelId(userId, labelId, fromDatabaseFlow)
-    }
-
-    private fun observeMessagesByLocationOrLabelId(
-        userId: UserId,
-        locationId: String,
-        databaseFlow: Flow<List<Message>>
-    ): LoadMoreFlow<DataResult<List<Message>>> {
-        val fromDatabaseFlow = databaseFlow
-            .map { Success(ResponseSource.Local, it) }
-
-        val parameters = GetAllMessagesParameters(userId, labelId = locationId)
-        val fromApiFlow = getMessageByLocationIdFromApi(parameters)
-            // Emit a null at start, in order emit data from Database, without waiting for first emission from Api
-            .loadMoreEmitInitialNull()
-
-        var lastSaved: Success<List<Message>>? = null
-        val saveMessages: suspend (Success<List<Message>>) -> Unit = { result ->
-            val areDifferentMessages = result.value.map { it.messageId } != lastSaved?.value?.map { it.messageId }
-            if (areDifferentMessages) saveMessages(userId, result.value)
-            lastSaved = result
-        }
-
-        return loadMoreCombineTransform(fromDatabaseFlow, fromApiFlow) { fromDatabase, fromApi ->
-            when (fromApi) {
-                is Success -> saveMessages(fromApi)
-                is Error -> if (connectivityManager.isInternetConnectionPossible()) emit(fromApi)
-                null, is Processing -> {
-                    // noop
-                }
-            }
-
-            emit(fromDatabase)
-        }
-    }
-
-    private fun observeMessagesByLocationFromDatabase(
-        location: MessageLocationType,
-        messagesDao: MessageDao
-    ) = when (location) {
-        MessageLocationType.ALL_MAIL -> messagesDao.observeAllMessages()
-        MessageLocationType.STARRED -> messagesDao.observeStarredMessages()
-        else -> messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
-    }
-
-    private fun getMessageByLocationIdFromApi(initialParams: GetAllMessagesParameters) =
-        loadMoreFlow(
-            initialBookmark = initialParams,
-            createNextBookmark = { dataResult, currentParameters ->
-                dataResult.createBookmarkParametersOr(currentParameters)
-            },
-            load = { params ->
-                Timber.v("Fetching messages from API. Params = $params")
-                val response = protonMailApiManager.getMessages(params).messages
-
-                Timber.v("Fetched ${response.size} messages from API")
-                if (response.isNotEmpty()) {
-                    Success(ResponseSource.Remote, response)
-                } else {
-                    Error.Remote("No messages", null, NO_MORE_MESSAGES_ERROR_CODE)
-                }
-            }
-        ).loadMoreCatch { throwable ->
-            if (throwable is CancellationException) throw throwable
-            Timber.e(throwable, "Cannot fetch messages from API")
-            emit(Error.Remote(throwable.message, throwable))
-        }
 
     private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {
         val dao = databaseProvider.provideMessageDao(params.userId)

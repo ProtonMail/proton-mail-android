@@ -53,7 +53,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 import me.proton.core.data.room.db.BaseDao
 import timber.log.Timber
 
@@ -175,18 +174,6 @@ abstract class MessageDao : BaseDao<Message>() {
         .onEach { message ->
             message ?: return@onEach
             message.attachments = message.attachmentsBlocking(this)
-        }
-
-    fun findMessageByDatabaseIdBlocking(messageDbId: Long): Message? = runBlocking {
-        findMessageByDatabaseId(messageDbId).first()
-    }
-
-    fun findMessageByDbId(dbId: Long): Flow<Message?> =
-        findMessageInfoByDbId(dbId).map { message ->
-            return@map message?.let {
-                it.attachments = it.attachmentsBlocking(this)
-                it
-            }
         }
 
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =

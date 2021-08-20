@@ -239,28 +239,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse =
         api.getMessages(params)
 
-    @Deprecated("Use with GetMessagesParameters", ReplaceWith("getMessages(params)"))
-    override suspend fun getMessages(
-        userId: UserId,
-        page: Int,
-        labelId: String?,
-        begin: Long?,
-        end: Long?,
-        beginId: String?,
-        endId: String?,
-        keyword: String?
-    ): MessagesResponse =
-        api.getMessages(
-            userId = userId,
-            page = page,
-            labelId = labelId,
-            begin = begin,
-            end = end,
-            beginId = beginId,
-            endId = endId,
-            keyword = keyword
-        )
-
     override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =
         api.fetchMessageMetadata(messageId, userIdTag)
 
