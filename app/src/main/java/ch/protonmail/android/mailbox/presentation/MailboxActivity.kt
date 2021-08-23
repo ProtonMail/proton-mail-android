@@ -43,6 +43,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
@@ -63,14 +64,11 @@ import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
 import ch.protonmail.android.activities.NavigationActivity
 import ch.protonmail.android.activities.SearchActivity
-import ch.protonmail.android.activities.SettingsActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.mailbox.RefreshEmptyViewTask
 import ch.protonmail.android.activities.mailbox.RefreshTotalCountersTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
-import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.adapters.messages.MailboxItemViewHolder.MessageViewHolder
 import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter
@@ -203,6 +201,7 @@ internal class MailboxActivity :
     private val isLoadingMore = AtomicBoolean(false)
     private var scrollStateChanged = false
     private var actionMode: ActionMode? = null
+    // For the time being we don't show it at all; will be re-added in MAILAND-2320
     private var swipeCustomizeSnack: Snackbar? = null
     private var mailboxLabelId: String? = null
         set(value) {
@@ -276,6 +275,7 @@ internal class MailboxActivity :
             when (selectionModeEvent) {
                 SelectionModeEnum.STARTED -> {
                     actionModeAux = startActionMode(this@MailboxActivity)
+                    mailboxActionsView.layoutParams.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
                     mailboxActionsView.visibility = View.VISIBLE
                 }
                 SelectionModeEnum.ENDED -> {
@@ -315,31 +315,6 @@ internal class MailboxActivity :
         initializeSwipeRefreshLayout(mailboxSwipeRefreshLayout)
 
         if (userManager.isFirstMailboxLoad) {
-            swipeCustomizeSnack = Snackbar.make(
-                findViewById(R.id.drawer_layout),
-                getString(R.string.customize_swipe_actions),
-                Snackbar.LENGTH_INDEFINITE
-            ).apply {
-                anchorView = mailboxActionsView
-                view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                    ?.setTextColor(getColor(R.color.text_inverted))
-                setAction(getString(R.string.settings)) {
-                    val settingsIntent = AppUtil.decorInAppIntent(
-                        Intent(
-                            this@MailboxActivity,
-                            SettingsActivity::class.java
-                        )
-                    )
-                    settingsIntent.putExtra(
-                        EXTRA_CURRENT_MAILBOX_LOCATION,
-                        mailboxViewModel.mailboxLocation.value.messageLocationTypeValue
-                    )
-                    settingsIntent.putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, mailboxLabelId)
-                    startActivity(settingsIntent)
-                }
-                setActionTextColor(getColor(R.color.text_inverted))
-                setBackgroundTint(getColor(R.color.interaction_strong))
-            }
             userManager.firstMailboxLoadDone()
         }
 
@@ -1570,7 +1545,7 @@ internal class MailboxActivity :
                     mSwipeProcessor.handleUndo(swipeAction, messageSwiped, mJobManager, mailboxLocation, mailboxLabelId)
                     mailboxAdapter.notifyDataSetChanged()
                 },
-                true
+                false
             ).apply { anchorView = mailboxActionsView }
             if (!(swipeAction == SwipeAction.TRASH && currentMailboxLocation == MessageLocationType.DRAFT)) {
                 undoSnack!!.show()
