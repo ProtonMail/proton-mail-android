@@ -28,20 +28,18 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
-<<<<<<< HEAD
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreEmitInitialNull
 import ch.protonmail.android.domain.loadMoreFlow
-=======
-import ch.protonmail.android.domain.entity.Id
->>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
+import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationDatabaseModelToConversationMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsDatabaseModelsMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsMapper
+import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
@@ -69,7 +67,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.invoke
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.max
@@ -84,9 +84,10 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
     private val api: ProtonMailApiManager,
-    conversationsResponseToConversationsMapper: ConversationsResponseToConversationsMapper,
-    conversationDatabaseModelToConversationMapper: ConversationDatabaseModelToConversationMapper,
-    conversationsResponseToConversationsDatabaseModelsMapper: ConversationsResponseToConversationsDatabaseModelsMapper,
+    responseToConversationsMapper: ConversationsResponseToConversationsMapper,
+    private val databaseToConversationMapper: ConversationDatabaseModelToConversationMapper,
+    private val apiToDatabaseConversationMapper: ConversationApiModelToConversationDatabaseModelMapper,
+    responseToDatabaseConversationsMapper: ConversationsResponseToConversationsDatabaseModelsMapper,
     private val messageFactory: MessageFactory,
     private val markConversationsReadWorker: MarkConversationsReadRemoteWorker.Enqueuer,
     private val markConversationsUnreadWorker: MarkConversationsUnreadRemoteWorker.Enqueuer,
@@ -100,11 +101,11 @@ class ConversationsRepositoryImpl @Inject constructor(
         ProtonStore(
             fetcher = api::fetchConversations,
             reader = ::observeAllConversationsFromDatabase,
-            writer = { params, conversations -> saveConversations(params.userId, conversations) },
+            writer = { params, conversations -> saveConversationsDatabaseModels(params.userId, conversations) },
             createBookmarkKey = { currentKey, data -> data.createBookmarkParametersOr(currentKey) },
-            apiToDomainMapper = conversationsResponseToConversationsMapper,
-            databaseToDomainMapper = conversationDatabaseModelToConversationMapper,
-            apiToDatabaseMapper = conversationsResponseToConversationsDatabaseModelsMapper,
+            apiToDomainMapper = responseToConversationsMapper,
+            databaseToDomainMapper = databaseToConversationMapper,
+            apiToDatabaseMapper = responseToDatabaseConversationsMapper,
             connectivityManager = connectivityManager
         )
     }
@@ -118,7 +119,8 @@ class ConversationsRepositoryImpl @Inject constructor(
                     val messages = output.messages.map(messageFactory::createMessage)
                     messageDao.saveMessages(messages)
                     Timber.v("Stored new messages size: ${messages.size}")
-                    val conversation = output.conversation.toLocal(userId = params.userId)
+                    val conversation =
+                        apiToDatabaseConversationMapper { output.conversation.toDatabaseModel(params.userId) }
                     conversationDao.insertOrUpdate(conversation)
                     Timber.v("Stored new conversation id: ${conversation.id}")
                 },
@@ -143,16 +145,10 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
-<<<<<<< HEAD
-
     override suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel? =
         conversationDao.findConversation(userId.id, conversationId)
-=======
-    override suspend fun findConversation(conversationId: String, userId: Id): ConversationDatabaseModel? =
-        conversationDao.findConversation(userId.s, conversationId)
->>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
 
-    override suspend fun saveConversations(
+    override suspend fun saveConversationsDatabaseModels(
         userId: UserId,
         conversations: List<ConversationDatabaseModel>
     ) {
@@ -513,7 +509,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationDao.observeConversation(params.userId.id, params.conversationId).combine(
             messageDao.observeAllMessagesInfoFromConversation(params.conversationId)
         ) { conversation, messages ->
-            conversation?.toDomainModel(messages.toDomainModelList())
+            databaseToConversationMapper { conversation?.toDomainModel(messages.toDomainModelList()) }
         }
             .debounce(CONVERSATION_FLOW_DEBOUNCE_TIME)
             .distinctUntilChanged()

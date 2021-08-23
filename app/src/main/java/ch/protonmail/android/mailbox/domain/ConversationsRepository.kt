@@ -22,6 +22,7 @@ package ch.protonmail.android.mailbox.domain
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
+import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
@@ -59,11 +60,20 @@ interface ConversationsRepository {
     suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel?
 
     /**
-     * @param conversations a list representing the conversations we want to save to the local data source
-     *
-     * @throws exception when the repository fails to insert conversations for any unhandled reasons into local storage
+     * @throws Exception when the repository fails to insert conversations for any unhandled reasons into local storage
      */
-    suspend fun saveConversations(userId: UserId, conversations: List<ConversationDatabaseModel>)
+    suspend fun saveConversationsDatabaseModels(
+        userId: UserId,
+        conversations: List<ConversationDatabaseModel>
+    )
+
+    /**
+     * @throws Exception when the repository fails to insert conversations for any unhandled reasons into local storage
+     */
+    suspend fun saveConversationsApiModels(
+        userId: UserId,
+        conversations: List<ConversationApiModel>
+    )
 
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage

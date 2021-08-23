@@ -25,6 +25,7 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
@@ -33,6 +34,19 @@ import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
+import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
+import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationMapper
+import ch.protonmail.android.mailbox.data.mapper.ConversationDatabaseModelToConversationMapper
+import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsDatabaseModelsMapper
+import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsMapper
+import ch.protonmail.android.mailbox.data.mapper.CorrespondentApiModelToCorrespondentMapper
+import ch.protonmail.android.mailbox.data.mapper.CorrespondentApiModelToMessageRecipientMapper
+import ch.protonmail.android.mailbox.data.mapper.CorrespondentApiModelToMessageSenderMapper
+import ch.protonmail.android.mailbox.data.mapper.LabelContextApiModelToLabelContextDatabaseModelMapper
+import ch.protonmail.android.mailbox.data.mapper.LabelContextApiModelToLabelContextMapper
+import ch.protonmail.android.mailbox.data.mapper.LabelContextDatabaseModelToLabelContextMapper
+import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
+import ch.protonmail.android.mailbox.data.mapper.MessageSenderToCorrespondentMapper
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
@@ -49,12 +63,9 @@ import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
@@ -71,10 +82,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
@@ -161,56 +172,66 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         )
     )
 
-    @RelaxedMockK
-    private lateinit var conversationDao: ConversationDao
+    private val conversationDao: ConversationDao = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var messageDao: MessageDao
+    private val messageDao: MessageDao = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var messageFactory: MessageFactory
+    private val api: ProtonMailApiManager = mockk()
 
-    @RelaxedMockK
-    private lateinit var markConversationsReadRemoteWorker: MarkConversationsReadRemoteWorker.Enqueuer
+    private val conversationApiModelToConversationMapper = ConversationApiModelToConversationMapper(
+        CorrespondentApiModelToCorrespondentMapper(),
+        LabelContextApiModelToLabelContextMapper()
+    )
 
-    @RelaxedMockK
-    private lateinit var markConversationsUnreadRemoteWorker: MarkConversationsUnreadRemoteWorker.Enqueuer
+    private val databaseModelToConversationMapper = ConversationDatabaseModelToConversationMapper(
+        MessageSenderToCorrespondentMapper(),
+        MessageRecipientToCorrespondentMapper(),
+        LabelContextDatabaseModelToLabelContextMapper()
+    )
 
-    @RelaxedMockK
-    private lateinit var labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer
+    private val apiToDatabaseConversationMapper = ConversationApiModelToConversationDatabaseModelMapper(
+        CorrespondentApiModelToMessageSenderMapper(),
+        CorrespondentApiModelToMessageRecipientMapper(),
+        LabelContextApiModelToLabelContextDatabaseModelMapper()
+    )
 
-    @RelaxedMockK
-    private lateinit var unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer
+    private val messageFactory: MessageFactory = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer
+    private val markConversationsReadRemoteWorker: MarkConversationsReadRemoteWorker.Enqueuer = mockk(relaxed = true)
 
-    @MockK
-    private lateinit var api: ProtonMailApiManager
+    private val markConversationsUnreadRemoteWorker: MarkConversationsUnreadRemoteWorker.Enqueuer = mockk(relaxed = true)
 
-    private lateinit var conversationsRepository: ConversationsRepositoryImpl
+    private val labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
 
     private val conversationId = "conversationId"
     private val conversationId1 = "conversationId1"
     private val userId = UserId("userId")
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
-
-        conversationsRepository =
-            ConversationsRepositoryImpl(
-                conversationDao,
-                messageDao,
-                api,
-                messageFactory,
-                markConversationsReadRemoteWorker,
-                markConversationsUnreadRemoteWorker,
-                labelConversationsRemoteWorker,
-                unlabelConversationsRemoteWorker,
-                deleteConversationsRemoteWorker
-            )
+    private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
+    private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
+    private val connectivityManager: NetworkConnectivityManager = mockk {
+        every { isInternetConnectionPossible() } returns true
     }
+    private val conversationsRepository = ConversationsRepositoryImpl(
+        conversationDao = conversationDao,
+        messageDao = messageDao,
+        api = api,
+        responseToConversationsMapper = ConversationsResponseToConversationsMapper(
+            conversationApiModelToConversationMapper
+        ),
+        databaseToConversationMapper = databaseModelToConversationMapper,
+        apiToDatabaseConversationMapper = apiToDatabaseConversationMapper,
+        responseToDatabaseConversationsMapper = ConversationsResponseToConversationsDatabaseModelsMapper(
+            apiToDatabaseConversationMapper
+        ),
+        messageFactory = messageFactory,
+        markConversationsReadWorker = markConversationsReadRemoteWorker,
+        markConversationsUnreadWorker = markConversationsUnreadRemoteWorker,
+        labelConversationsRemoteWorker = labelConversationsRemoteWorker,
+        unlabelConversationsRemoteWorker = unlabelConversationsRemoteWorker,
+        deleteConversationsRemoteWorker = deleteConversationsRemoteWorker,
+        connectivityManager = connectivityManager
+    )
 
     @Test
     fun verifyConversationsAreFetchedFromLocalInitially() {
@@ -234,13 +255,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val parameters = buildGetConversationsParameters()
 
-<<<<<<< HEAD
-            val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(UserId(testUserId))
+            val conversationsEntity = conversationsRemote.conversations
+                .map(apiToDatabaseConversationMapper) { it.toDatabaseModel(UserId(testUserId.s)) }
             coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
-=======
-            val conversationsEntity = conversationsRemote.conversations.toListLocal(UserId(testUserId.s))
-            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(conversationsEntity)
->>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
             // when
@@ -260,11 +277,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
-<<<<<<< HEAD
-            val expectedConversations = conversationsRemote.conversationResponse.toListLocal(UserId(testUserId))
-=======
-            val expectedConversations = conversationsRemote.conversations.toListLocal(UserId(testUserId.s))
->>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
+            val expectedConversations = conversationsRemote.conversations
+                .map(apiToDatabaseConversationMapper) { it.toDatabaseModel(UserId(testUserId.id)) }
 
             // when
             conversationsRepository.observeConversations(parameters,).test {
@@ -396,15 +410,16 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             labelId = "8234",
             end = 823_848_238
         )
-        val conversationsEntity = conversationsRemote.conversations.toListLocal(UserId(testUserId.s))
->>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
+        val conversationsEntity = conversationsRemote.conversations
+            .map(apiToDatabaseConversationMapper) { it.toDatabaseModel(UserId(testUserId.s)) }
+
         val emptyConversationsResponse = ConversationsResponse(0, emptyList())
         coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
         coEvery { api.fetchConversations(any()) } returns emptyConversationsResponse
 
         // when
-        conversationsRepository.observeConversations(parameters,).test {
+        conversationsRepository.observeConversations(parameters).test {
 
             // then
             val first = expectItem() as DataResult.Error.Remote
@@ -501,7 +516,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 Unread = false,
                 sender = MessageSender("senderName", "sender@protonmail.ch"),
                 toList = listOf(),
-                time = 82374723L,
+                time = 82_374_723L,
                 numAttachments = 1,
                 expirationTime = 0L,
                 isReplied = false,
@@ -532,7 +547,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 false,
                 Correspondent("senderName", "sender@protonmail.ch"),
                 listOf(),
-                82374723L,
+                82_374_723L,
                 1,
                 0L,
                 isReplied = false,

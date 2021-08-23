@@ -21,7 +21,6 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.event.data.remote.model.ConversationsEventResponse
 import ch.protonmail.android.event.domain.model.ActionType
-import ch.protonmail.android.mailbox.data.toLocal
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -47,8 +46,10 @@ class HandleChangeToConversations @Inject constructor(
                 ActionType.CREATE,
                 ActionType.UPDATE,
                 ActionType.UPDATE_FLAGS -> {
-                    val conversation = response.conversation.toLocal(userId = userId)
-                    conversationRepository.saveConversations(userId, listOf(conversation))
+                    conversationRepository.saveConversationsApiModels(
+                        userId,
+                        listOf(response.conversation)
+                    )
                 }
                 ActionType.DELETE -> {
                     conversationRepository.deleteConversations(listOf(response.id), userId)

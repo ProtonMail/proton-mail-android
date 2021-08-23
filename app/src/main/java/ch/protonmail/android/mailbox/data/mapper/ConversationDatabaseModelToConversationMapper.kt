@@ -23,6 +23,7 @@ import ch.protonmail.android.data.ProtonStoreMapper
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import me.proton.core.domain.arch.map
 import javax.inject.Inject
 
@@ -35,7 +36,10 @@ class ConversationDatabaseModelToConversationMapper @Inject constructor(
     private val labelMapper: LabelContextDatabaseModelToLabelContextMapper
 ) : ProtonStoreMapper<GetAllConversationsParameters, ConversationDatabaseModel, Conversation> {
 
-    override fun ConversationDatabaseModel.toOut(key: GetAllConversationsParameters) = Conversation(
+    override fun ConversationDatabaseModel.toOut(key: GetAllConversationsParameters): Conversation =
+        toDomainModel(messages = null)
+
+    fun ConversationDatabaseModel.toDomainModel(messages: List<MessageDomainModel>?) = Conversation(
         id = id,
         subject = subject,
         senders = senders.map(senderMapper) { it.toDomainModel() },
@@ -45,6 +49,6 @@ class ConversationDatabaseModelToConversationMapper @Inject constructor(
         attachmentsCount = numAttachments,
         expirationTime = expirationTime,
         labels = labels.map(labelMapper) { it.toDomainModel() },
-        messages = null
+        messages = messages
     )
 }

@@ -17,14 +17,19 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data
+package ch.protonmail.android.mailbox.data.mapper
 
-import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.mailbox.domain.model.Correspondent
+import me.proton.core.domain.arch.Mapper
+import javax.inject.Inject
 
-internal fun Correspondent.toMessageSender() = MessageSender(name, address)
+/**
+ * Maps [Correspondent] to [MessageSender] Database model
+ */
+class CorrespondentToMessageSenderMapper @Inject constructor() :
+    Mapper<Correspondent, MessageSender> {
 
-internal fun Correspondent.toMessageRecipient() = MessageRecipient(name, address)
-
-internal fun List<Correspondent>.toMessageRecipients() = map { it.toMessageRecipient() }
+    fun Correspondent.toDatabaseModel(): MessageSender =
+        MessageSender(name = name, emailAddress = address)
+}
