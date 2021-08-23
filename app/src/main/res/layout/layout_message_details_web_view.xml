@@ -140,6 +140,7 @@
         android:layout_margin="@dimen/padding_l"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        tools:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/spamScoreView" />
 
     <!-- add webview through code use application context to avoid memory leaks -->
