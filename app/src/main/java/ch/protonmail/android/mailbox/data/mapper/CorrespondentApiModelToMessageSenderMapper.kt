@@ -17,19 +17,19 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data.remote.model
+package ch.protonmail.android.mailbox.data.mapper
 
-import com.google.gson.annotations.SerializedName
+import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
+import me.proton.core.domain.arch.Mapper
+import javax.inject.Inject
 
-data class ConversationsResponse(
-    @SerializedName(TOTAL)
-    val total: Int,
-    @SerializedName(CONVERSATIONS)
-    val conversations: List<ConversationApiModel>
-) {
-    companion object {
+/**
+ * Maps [CorrespondentApiModel] to [MessageSender] Database model
+ */
+class CorrespondentApiModelToMessageSenderMapper @Inject constructor() :
+    Mapper<CorrespondentApiModel, MessageSender> {
 
-        private const val TOTAL = "Total"
-        private const val CONVERSATIONS = "Conversations"
-    }
+    fun CorrespondentApiModel.toDatabaseModel(): MessageSender =
+        MessageSender(name = name, emailAddress = address)
 }

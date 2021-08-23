@@ -19,18 +19,23 @@
 
 package ch.protonmail.android.mailbox.data.mapper
 
-import ch.protonmail.android.api.models.messages.receive.MessagesResponse
-import ch.protonmail.android.data.ProtonStoreMapper
-import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
+import ch.protonmail.android.mailbox.domain.model.LabelContext
+import me.proton.core.domain.arch.Mapper
 import javax.inject.Inject
 
 /**
- * [ProtonStoreMapper] that maps from [MessagesResponse] to [List] of [Message]
+ * Maps [LabelContextDatabaseModel] to [LabelContext] Domain model
  */
-class MessagesResponseToMessagesMapper @Inject constructor() :
-    ProtonStoreMapper<GetAllMessagesParameters, MessagesResponse, List<Message>> {
+class LabelContextDatabaseModelToLabelContextMapper @Inject constructor() :
+    Mapper<LabelContextDatabaseModel, LabelContext> {
 
-    override fun MessagesResponse.toOut(key: GetAllMessagesParameters): List<Message> =
-        messages
+    fun LabelContextDatabaseModel.toDomainModel() = LabelContext(
+        id = id,
+        contextNumUnread = contextNumUnread,
+        contextNumMessages = contextNumMessages,
+        contextTime = contextTime,
+        contextSize = contextSize,
+        contextNumAttachments = contextNumAttachments
+    )
 }

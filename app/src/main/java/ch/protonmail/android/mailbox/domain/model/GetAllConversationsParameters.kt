@@ -21,7 +21,6 @@ package ch.protonmail.android.mailbox.domain.model
 
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
-import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 
 /**
@@ -53,17 +52,17 @@ data class GetAllConversationsParameters(
 }
 
 /**
- * @return a [GetAllConversationsParameters] created from [DataResult] if [DataResult.Success] and the list is not
- *  empty, otherwise [currentParameters]
+ * @return a [GetAllConversationsParameters] created from [ConversationsResponse] if
+ *  [ConversationsResponse.conversations] list is not empty, otherwise [currentParameters]
  *
  * Note: since we're using [ConversationApiModel.time] for fetch progressively, we assume that the conversations are
  *  already ordered by time, so we pick directly the last in the list, without adding unneeded computation
  */
-fun DataResult<ConversationsResponse>.createBookmarkParametersOr(
+fun ConversationsResponse.createBookmarkParametersOr(
     currentParameters: GetAllConversationsParameters
 ): GetAllConversationsParameters {
-    return if (this is DataResult.Success && value.conversationResponse.isNotEmpty()) {
-        val lastConversation = value.conversationResponse.last()
+    return if (conversations.isNotEmpty()) {
+        val lastConversation = conversations.last()
         currentParameters.copy(
             end = lastConversation.time,
             endId = lastConversation.id

@@ -40,11 +40,11 @@ class ProtonStoreTest : CoroutinesTest {
 
     private val api = FakePagedApi()
     private val database = FakeDatabase()
-    private val noMapper = object : ProtonStoreMapper<Item, Item> {
-        override fun Item.toOut() = this
+    private val noMapper = object : ProtonStoreMapper<Int, Item, Item> {
+        override fun Item.toOut(key: Int) = this
     }
-    private val fromApiMapper = object : ProtonStoreMapper<ApiResponse, List<Item>> {
-        override fun ApiResponse.toOut() = this.items
+    private val fromApiMapper = object : ProtonStoreMapper<Int, ApiResponse, List<Item>> {
+        override fun ApiResponse.toOut(key: Int) = this.items
     }
     private val store = ProtonStore(
         fetcher = api::getItems,

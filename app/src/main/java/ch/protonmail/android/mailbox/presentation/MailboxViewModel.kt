@@ -318,24 +318,41 @@ class MailboxViewModel @Inject constructor(
     ): LoadMoreFlow<MailboxState> {
         val locationId = labelId?.takeIfNotBlank() ?: location.messageLocationTypeValue.toString()
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
-        var hasLocationOrUserChanged = true
+        var isFirstData = true
+        var hasReceivedFirstApiRefresh: Boolean? = null
         return observeConversationsByLocation(
             userId,
             locationId
         ).loadMoreMap { result ->
             when (result) {
                 is GetConversationsResult.Success -> {
+                    val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
+                    isFirstData = false
+
                     MailboxState.Data(
                         conversationsToMailboxItems(result.conversations, locationId),
-                        shouldResetPosition = hasLocationOrUserChanged
-                    ).also {
-                        hasLocationOrUserChanged = false
-                    }
+                        shouldResetPosition = shouldResetPosition
+                    )
+                }
+                is GetConversationsResult.ApiRefresh -> {
+                    if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
+                    else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
+
+                    MailboxState.ApiRefresh(
+                        lastFetchedItemsIds = result.lastFetchedConversations.map { it.id }
+                    )
+                }
+                is GetConversationsResult.Error -> {
+                    hasReceivedFirstApiRefresh = false
+
+                    MailboxState.Error(
+                        error = "Failed getting conversations",
+                        throwable = result.throwable,
+                        isOffline = result.isOffline
+                    )
                 }
                 is GetConversationsResult.NoConversationsFound ->
                     MailboxState.NoMoreItems
-                is GetConversationsResult.Error ->
-                    MailboxState.Error(error = "Failed getting conversations", throwable = result.throwable)
                 is GetConversationsResult.Loading ->
                     MailboxState.Loading
             }
@@ -370,7 +387,7 @@ class MailboxViewModel @Inject constructor(
                     else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
                     MailboxState.ApiRefresh(
-                        lastFetchedMessagesIds = result.lastFetchedMessages.mapNotNull { it.messageId }
+                        lastFetchedItemsIds = result.lastFetchedMessages.mapNotNull { it.messageId }
                     )
                 }
                 is GetMessagesResult.Error -> {

@@ -46,5 +46,5 @@ sealed class MailboxState {
         val shouldResetPosition: Boolean = false
     ) : MailboxState()
 
-    data class ApiRefresh(val lastFetchedMessagesIds: List<String>) : MailboxState()
+    data class ApiRefresh(val lastFetchedItemsIds: List<String>) : MailboxState()
 }

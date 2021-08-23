@@ -29,6 +29,7 @@ import ch.protonmail.android.data.NoProtonStoreMapper
 import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreEmitInitialNull
@@ -50,6 +51,7 @@ import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.unsupported
@@ -71,7 +73,7 @@ class MessageRepository @Inject constructor(
     private val messageBodyFileManager: MessageBodyFileManager,
     private val userManager: UserManager,
     private val jobManager: JobManager,
-    private val connectivityManager: NetworkConnectivityManager
+    connectivityManager: NetworkConnectivityManager
 ) {
 
     private val allMessagesStore by lazy {
@@ -87,7 +89,10 @@ class MessageRepository @Inject constructor(
         )
     }
 
-    fun observeMessages(params: GetAllMessagesParameters, refreshAtStart: Boolean = true) =
+    fun observeMessages(
+        params: GetAllMessagesParameters,
+        refreshAtStart: Boolean = true
+    ): LoadMoreFlow<DataResult<List<Message>>> =
         allMessagesStore.loadMoreFlow(params, refreshAtStart)
 
     fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {

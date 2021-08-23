@@ -19,18 +19,20 @@
 
 package ch.protonmail.android.mailbox.data.mapper
 
-import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.data.ProtonStoreMapper
-import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
+import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
+import me.proton.core.domain.arch.map
 import javax.inject.Inject
 
 /**
- * [ProtonStoreMapper] that maps from [MessagesResponse] to [List] of [Message]
+ * [ProtonStoreMapper] that maps from [ConversationsResponse] to [List] of [ConversationDatabaseModel]
  */
-class MessagesResponseToMessagesMapper @Inject constructor() :
-    ProtonStoreMapper<GetAllMessagesParameters, MessagesResponse, List<Message>> {
+class ConversationsResponseToConversationsDatabaseModelsMapper @Inject constructor(
+    private val mapper: ConversationApiModelToConversationDatabaseModelMapper
+) : ProtonStoreMapper<GetAllConversationsParameters, ConversationsResponse, List<ConversationDatabaseModel>> {
 
-    override fun MessagesResponse.toOut(key: GetAllMessagesParameters): List<Message> =
-        messages
+    override fun ConversationsResponse.toOut(key: GetAllConversationsParameters): List<ConversationDatabaseModel> =
+        conversations.map(mapper) { it.toDatabaseModel(key.userId) }
 }

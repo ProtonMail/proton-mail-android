@@ -29,22 +29,25 @@ import me.proton.core.domain.arch.mapSuccess
 /**
  * Interface of [Mapper] that provides [toOut] function
  */
-interface ProtonStoreMapper<in In, out Out> : Mapper<In, Out> {
+interface ProtonStoreMapper<Key, in In, out Out> : Mapper<In, Out> {
 
-    fun In.toOut(): Out
+    fun In.toOut(key: Key): Out
 }
 
 /**
  * A [ProtonStoreMapper] that has the same type as In and Out
  */
-fun <T> NoProtonStoreMapper() = object : ProtonStoreMapper<T, T> {
+fun <Key, T> NoProtonStoreMapper() = object : ProtonStoreMapper<Key, T, T> {
 
-    override fun T.toOut() = this
+    override fun T.toOut(key: Key) = this
 }
 
-fun <T : Any, V : Any> Flow<DataResult<List<T>>>.map(mapper: ProtonStoreMapper<T, V>): Flow<DataResult<List<V>>> =
+fun <K : Any, T : Any, V : Any> Flow<DataResult<List<T>>>.map(
+    key: K,
+    mapper: ProtonStoreMapper<K, T, V>
+): Flow<DataResult<List<V>>> =
     map { result ->
         result.mapSuccess { success ->
-            DataResult.Success(result.source, success.value.map(mapper) { it.toOut() })
+            DataResult.Success(result.source, success.value.map(mapper) { it.toOut(key) })
         }
     }

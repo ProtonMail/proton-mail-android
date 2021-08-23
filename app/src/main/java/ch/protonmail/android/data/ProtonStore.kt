@@ -63,9 +63,9 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
     private val reader: (Key) -> Flow<List<DatabaseModel>>,
     private val writer: suspend (Key, List<DatabaseModel>) -> Unit,
     private val createBookmarkKey: (currentKey: Key, data: ApiModel) -> Key? = { currentKey, _ -> currentKey },
-    private val apiToDomainMapper: ProtonStoreMapper<ApiModel, List<DomainModel>>,
-    private val databaseToDomainMapper: ProtonStoreMapper<DatabaseModel, DomainModel>,
-    private val apiToDatabaseMapper: ProtonStoreMapper<ApiModel, List<DatabaseModel>>,
+    private val apiToDomainMapper: ProtonStoreMapper<Key, ApiModel, List<DomainModel>>,
+    private val databaseToDomainMapper: ProtonStoreMapper<Key, DatabaseModel, DomainModel>,
+    private val apiToDatabaseMapper: ProtonStoreMapper<Key, ApiModel, List<DatabaseModel>>,
     private val connectivityManager: NetworkConnectivityManager? = null
 ) {
 
@@ -79,7 +79,7 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
      */
     fun flow(key: Key, refresh: Boolean): Flow<DataResult<List<DomainModel>>> =
         readerFlow(key)
-            .map(databaseToDomainMapper)
+            .map(key, databaseToDomainMapper)
             .onStart { if (refresh) emit(fresh(key)) }
 
     /**
@@ -95,7 +95,7 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
         flow(key, refresh = false)
             .asLoadMoreFlow(initialBookmark = key, loadAtStart = refreshAtStart) { newKey ->
                 val freshAsApiModelDataResult = freshAsApiModel(newKey)
-                emit(freshAsApiModelDataResult.toDomainModelsDataResult())
+                emit(freshAsApiModelDataResult.toDomainModelsDataResult(newKey))
 
                 freshAsApiModelDataResult.valueOrNull()
                     ?.let { createBookmarkKey(newKey, it) } ?: newKey
@@ -106,7 +106,7 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
      * @return [DataResult] of [DomainModel]
      */
     suspend fun fresh(key: Key): DataResult<List<DomainModel>> =
-        freshAsApiModel(key).toDomainModelsDataResult()
+        freshAsApiModel(key).toDomainModelsDataResult(key)
 
     private suspend fun freshAsApiModel(key: Key): DataResult<ApiModel> {
         if (connectivityManager?.isInternetConnectionPossible() == false) {
@@ -124,7 +124,7 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
         }
 
         return apiResult.onSuccess {
-            val databaseModel = apiToDatabaseMapper { it.toOut() }
+            val databaseModel = apiToDatabaseMapper { it.toOut(key) }
             writer(key, databaseModel)
         }
     }
@@ -132,9 +132,9 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
     private fun readerFlow(key: Key) =
         reader(key).mapToLocalDataResult()
 
-    private suspend fun DataResult<ApiModel>.toDomainModelsDataResult(): DataResult<List<DomainModel>> =
+    private suspend fun DataResult<ApiModel>.toDomainModelsDataResult(key: Key): DataResult<List<DomainModel>> =
         mapSuccess { result ->
-            val domainModels = apiToDomainMapper { result.value.toOut() }
+            val domainModels = apiToDomainMapper { result.value.toOut(key) }
             DataResult.Success(result.source, domainModels)
         }
 }

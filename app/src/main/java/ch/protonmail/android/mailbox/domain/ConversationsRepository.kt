@@ -31,16 +31,10 @@ import me.proton.core.domain.entity.UserId
 
 interface ConversationsRepository {
 
-    /**
-     * Emits a List of [Conversation] when the repository could successfully get conversations from some data source,
-     *  or an empty optional when the repository encounters a handled failure getting conversations
-     *
-     * @param params a model representing the params needed to define which conversations to get
-     *
-     * @return [LoadMoreFlow] of [DataResult] or [List] of [Conversation]
-     * @throws Exception when the repository fails getting conversations for any unhandled reasons
-     */
-    fun getConversations(params: GetAllConversationsParameters): LoadMoreFlow<DataResult<List<Conversation>>>
+    fun observeConversations(
+        params: GetAllConversationsParameters,
+        refreshAtStart: Boolean = true
+    ): LoadMoreFlow<DataResult<List<Conversation>>>
 
     /**
      * @param conversationId the encrypted id of the conversation to get
@@ -80,8 +74,6 @@ interface ConversationsRepository {
      * Deletes a list of conversations from the [TABLE_CONVERSATIONS] inside the local storage
      */
     suspend fun deleteConversations(conversationIds: List<String>, userId: UserId)
-
-    fun loadMore(params: GetAllConversationsParameters)
 
     suspend fun markRead(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 

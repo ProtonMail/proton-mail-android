@@ -63,7 +63,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryMappingInputToGetConversationParameters() = runBlockingTest {
         val location = MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
-        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf()
+        coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf()
 
         observeConversationsByLocation.invoke(userId, location)
 
@@ -71,14 +71,14 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
             userId = userId,
             labelId = location
         )
-        coVerify { conversationRepository.getConversations(params) }
+        coVerify { conversationRepository.observeConversations(params,) }
     }
 
     @Test
     fun getConversationsReturnsConversationsFlowWhenRepositoryRequestSucceeds() = runBlockingTest {
         val conversations = listOf(buildRandomConversation())
         val dataResult = DataResult.Success(ResponseSource.Remote, conversations)
-        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
+        coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf(dataResult)
 
         val actual = observeConversationsByLocation.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
@@ -88,7 +88,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
 
     @Test
     fun getConversationsReturnsErrorWhenRepositoryFailsGettingConversations() = runBlockingTest {
-        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(DataResult.Error.Local(null, null))
+        coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf(DataResult.Error.Local(null, null))
 
         val actual = observeConversationsByLocation.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
@@ -99,7 +99,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryPassingNullAsLastMessageTimeWhenInputWasNull() = runBlockingTest {
         val location = MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
-        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf()
+        coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf()
 
         observeConversationsByLocation.invoke(userId, location)
 
@@ -107,7 +107,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
             userId = userId.id,
             labelId = location
         )
-        coVerify { conversationRepository.getConversations(params) }
+        coVerify { conversationRepository.observeConversations(params,) }
     }
 
     @Test
@@ -121,7 +121,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         )
         val conversations = listOf(inboxConversation, archivedConversation)
         val dataResult = DataResult.Success(ResponseSource.Local, conversations)
-        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
+        coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf(dataResult)
 
         val result: GetConversationsResult = observeConversationsByLocation.invoke(
             userId, MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
@@ -143,7 +143,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         )
         val conversations = listOf(inboxConversation, customLabelConversation)
         val dataResult = DataResult.Success(ResponseSource.Local, conversations)
-        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
+        coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf(dataResult)
 
         val result: GetConversationsResult = observeConversationsByLocation.invoke(
             userId,
@@ -156,7 +156,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
 
     @Test
     fun getConversationsReturnsNoConversationsFoundWhenRepositoryReturnsNoConversations() = runBlockingTest {
-        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(
+        coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf(
             DataResult.Error.Remote("any", null, NO_MORE_CONVERSATIONS_ERROR_CODE)
         )
 

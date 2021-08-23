@@ -21,19 +21,27 @@ package ch.protonmail.android.mailbox.data
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
+<<<<<<< HEAD
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreEmitInitialNull
 import ch.protonmail.android.domain.loadMoreFlow
+=======
+import ch.protonmail.android.domain.entity.Id
+>>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
-import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
+import ch.protonmail.android.mailbox.data.mapper.ConversationDatabaseModelToConversationMapper
+import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsDatabaseModelsMapper
+import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsMapper
 import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
@@ -49,8 +57,6 @@ import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.combine
@@ -63,9 +69,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
-import me.proton.core.domain.arch.DataResult.Error
-import me.proton.core.domain.arch.DataResult.Success
-import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
@@ -81,15 +84,31 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
     private val api: ProtonMailApiManager,
+    conversationsResponseToConversationsMapper: ConversationsResponseToConversationsMapper,
+    conversationDatabaseModelToConversationMapper: ConversationDatabaseModelToConversationMapper,
+    conversationsResponseToConversationsDatabaseModelsMapper: ConversationsResponseToConversationsDatabaseModelsMapper,
     private val messageFactory: MessageFactory,
     private val markConversationsReadWorker: MarkConversationsReadRemoteWorker.Enqueuer,
     private val markConversationsUnreadWorker: MarkConversationsUnreadRemoteWorker.Enqueuer,
     private val labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer,
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer,
-    private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer
+    private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer,
+    connectivityManager: NetworkConnectivityManager
 ) : ConversationsRepository {
 
-    @FlowPreview
+    private val allConversationsStore by lazy {
+        ProtonStore(
+            fetcher = api::fetchConversations,
+            reader = ::observeAllConversationsFromDatabase,
+            writer = { params, conversations -> saveConversations(params.userId, conversations) },
+            createBookmarkKey = { currentKey, data -> data.createBookmarkParametersOr(currentKey) },
+            apiToDomainMapper = conversationsResponseToConversationsMapper,
+            databaseToDomainMapper = conversationDatabaseModelToConversationMapper,
+            apiToDatabaseMapper = conversationsResponseToConversationsDatabaseModelsMapper,
+            connectivityManager = connectivityManager
+        )
+    }
+
     private val oneConversationStore by lazy {
         StoreBuilder.from(
             fetcher = Fetcher.of(api::fetchConversation),
@@ -110,54 +129,12 @@ class ConversationsRepositoryImpl @Inject constructor(
         ).build()
     }
 
-    @FlowPreview
-    private val allConversationsStore by lazy {
-        StoreBuilder.from(
-            fetcher = Fetcher.of(api::fetchConversations),
-            sourceOfTruth = SourceOfTruth.Companion.of(
-                reader = ::observeConversationsFromDatabase,
-                writer = { params: GetAllConversationsParameters, output: ConversationsResponse ->
-                    val conversations = output.conversationResponse.toListLocal(userId = params.userId)
-                    conversationDao.insertOrUpdate(*conversations.toTypedArray())
-                    Timber.v("Stored new conversations size: ${conversations.size}")
-                },
-                delete = { params ->
-                    conversationDao.deleteAllConversations(params.userId.id,)
-                }
-            )
-        ).build()
-    }
+    override fun observeConversations(
+        params: GetAllConversationsParameters,
+        refreshAtStart: Boolean,
+    ): LoadMoreFlow<DataResult<List<Conversation>>> =
+        allConversationsStore.loadMoreFlow(params, refreshAtStart)
 
-    override fun getConversations(params: GetAllConversationsParameters): LoadMoreFlow<DataResult<List<Conversation>>> {
-        val fromDatabaseFlow = observeConversationsFromDatabase(params)
-            .map { Success(ResponseSource.Local, it) }
-
-        val fromApiFlow = getConversationsFromApi(params)
-            // Emit a null at start, in order emit data from Database, without waiting for first emission from Api
-            .loadMoreEmitInitialNull()
-
-        val saveConversations: suspend (Success<ConversationsResponse>) -> Unit = { result ->
-            saveConversations(params.userId, result.value.conversationResponse.toListLocal(params.userId))
-        }
-
-        return loadMoreCombineTransform(fromDatabaseFlow, fromApiFlow) { fromDatabase, fromApi ->
-            when (fromApi) {
-                is Success -> saveConversations(fromApi)
-                is Error -> emit(fromApi)
-                null, is DataResult.Processing -> {
-                    // noop
-                }
-            }
-
-            emit(fromDatabase)
-        }
-    }
-
-    @Deprecated("Call loadMore on the relative LoadMoreFlow from getConversations", level = DeprecationLevel.ERROR)
-    override fun loadMore(params: GetAllConversationsParameters) {
-    }
-
-    @FlowPreview
     override fun getConversation(
         userId: UserId,
         conversationId: String
@@ -166,10 +143,14 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
+<<<<<<< HEAD
 
     override suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel? =
         conversationDao.findConversation(userId.id, conversationId)
-
+=======
+    override suspend fun findConversation(conversationId: String, userId: Id): ConversationDatabaseModel? =
+        conversationDao.findConversation(userId.s, conversationId)
+>>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
 
     override suspend fun saveConversations(
         userId: UserId,
@@ -413,6 +394,26 @@ class ConversationsRepositoryImpl @Inject constructor(
         return ConversationsActionResult.Success
     }
 
+    private fun observeAllConversationsFromDatabase(
+        params: GetAllConversationsParameters
+    ): Flow<List<ConversationDatabaseModel>> {
+
+        val labelIdFilter = { conversation: ConversationDatabaseModel ->
+            params.labelId != null && params.labelId in conversation.labels.map { it.id }
+        }
+
+        val contextTimeComparator = compareByDescending { conversation: ConversationDatabaseModel ->
+            conversation.labels.find { label -> label.id == params.labelId }?.contextTime
+        }
+
+        return conversationDao.observeConversations(params.userId.id).map { list ->
+            Timber.d("Conversations update size: ${list.size}, params: $params")
+            list
+                .filter(labelIdFilter)
+                .sortedWith(contextTimeComparator.thenByDescending { it.order })
+        }
+    }
+
     private suspend fun getAllMessagesFromAConversation(conversationId: String): List<Message> =
         messageDao.findAllMessagesInfoFromConversation(conversationId).onEach { message ->
             message.attachments = message.attachments(messageDao)
@@ -507,37 +508,6 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationDao.updateLabels(conversationId, labels)
         return ConversationsActionResult.Success
     }
-
-    private fun observeConversationsFromDatabase(params: GetAllConversationsParameters): Flow<List<Conversation>> =
-        conversationDao.observeConversations(params.userId.id).map { list ->
-            Timber.d("Conversations update size: ${list.size}, params: $params")
-            list.sortedWith(
-                compareByDescending<ConversationDatabaseModel> { conversation ->
-                    conversation.labels.find { label -> label.id == params.labelId }?.contextTime
-                }.thenByDescending { it.order }
-            ).toDomainModelList()
-        }
-
-    private fun getConversationsFromApi(initialParams: GetAllConversationsParameters) =
-        loadMoreFlow(
-            initialBookmark = initialParams,
-            createNextBookmark = { dataResult, currentParameters ->
-                dataResult.createBookmarkParametersOr(currentParameters)
-            },
-            load = { params ->
-                val response = api.fetchConversations(params)
-
-                if (response.conversationResponse.isNotEmpty()) {
-                    Success(ResponseSource.Remote, response)
-                } else {
-                    Error.Remote("No conversations", null, NO_MORE_CONVERSATIONS_ERROR_CODE)
-                }
-            }
-        ).loadMoreCatch { throwable ->
-            if (throwable is CancellationException) throw throwable
-            Timber.e(throwable, "Cannot fetch conversations from API")
-            emit(Error.Remote(throwable.message, throwable))
-        }
 
     private fun observeConversationFromDatabase(params: GetOneConversationParameters): Flow<Conversation?> =
         conversationDao.observeConversation(params.userId.id, params.conversationId).combine(

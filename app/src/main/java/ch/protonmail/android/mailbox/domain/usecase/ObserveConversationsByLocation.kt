@@ -19,16 +19,20 @@
 
 package ch.protonmail.android.mailbox.domain.usecase
 
+import ch.protonmail.android.data.remote.OfflineDataResult
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreMap
-import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
+import ch.protonmail.android.repository.NO_MORE_MESSAGES_ERROR_CODE
+import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Processing
 import me.proton.core.domain.arch.DataResult.Success
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
@@ -52,33 +56,14 @@ class ObserveConversationsByLocation @Inject constructor(
         )
 
         Timber.v("GetConversations with params: $params, locationId: $locationId")
-        return conversationRepository.getConversations(params)
-            .loadMoreMap map@{ result ->
-                when (result) {
-                    is Success -> {
-                        GetConversationsResult.Success(
-                            result.value.filter { conversation ->
-                                conversation.labels.any { it.id == params.labelId }
-                            }
-                        )
-                    }
-                    is Error.Remote -> {
-                        Timber.e(result.cause, "Conversations couldn't be fetched")
-                        if (result.protonCode == NO_MORE_CONVERSATIONS_ERROR_CODE) {
-                            GetConversationsResult.NoConversationsFound
-                        } else {
-                            GetConversationsResult.Error(result.cause)
-                        }
-                    }
-                    is Error -> GetConversationsResult.Error(result.cause)
-                    is Processing -> GetConversationsResult.Loading
-                }
-            }
+        return conversationRepository.observeConversations(params,)
+            .mapToResult()
             .loadMoreCatch {
                 emit(GetConversationsResult.Error(it))
             }
     }
 
+<<<<<<< HEAD
     @Deprecated("Call loadMore on the relative LoadMoreFlow from invoke", level = DeprecationLevel.ERROR)
     fun loadMore(
         userId: UserId,
@@ -90,5 +75,35 @@ class ObserveConversationsByLocation @Inject constructor(
             labelId = locationId,
         )
         conversationRepository.loadMore(params)
+=======
+    private fun LoadMoreFlow<DataResult<List<Conversation>>>.mapToResult(): LoadMoreFlow<GetConversationsResult> {
+
+        fun Success<List<Conversation>>.successToResult(): GetConversationsResult =
+            when (source) {
+                ResponseSource.Local ->
+                    GetConversationsResult.Success(value)
+                ResponseSource.Remote ->
+                    GetConversationsResult.ApiRefresh(value)
+            }
+
+        fun Error.Remote.remoteErrorToResult(): GetConversationsResult {
+            Timber.e(cause, "Conversations couldn't be fetched")
+            return if (protonCode == NO_MORE_MESSAGES_ERROR_CODE) {
+                GetConversationsResult.NoConversationsFound
+            } else {
+                GetConversationsResult.Error(cause, isOffline = this == OfflineDataResult)
+            }
+        }
+
+        return loadMoreMap { result ->
+            when (result) {
+                is Success -> result.successToResult()
+                is Error.Remote -> result.remoteErrorToResult()
+                is Error -> GetConversationsResult.Error(result.cause)
+                is Processing -> GetConversationsResult.Loading
+            }
+        }
+>>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
     }
+
 }
