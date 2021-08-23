@@ -70,7 +70,8 @@ class PostLabelWorker @AssistedInject constructor(
                 if (labelResponse.label.id.isEmpty()) {
                     return failureResultWithError("Error, Label id is empty")
                 }
-                val contactLabelEntity = labelsMapper.mapLabelToLabelEntity(labelResponse.label)
+                val userId = requireNotNull(accountManager.getPrimaryUserId().first())
+                val contactLabelEntity = labelsMapper.mapLabelToLabelEntity(labelResponse.label, userId)
                 labelRepository.saveLabel(contactLabelEntity)
                 return Result.success()
             }

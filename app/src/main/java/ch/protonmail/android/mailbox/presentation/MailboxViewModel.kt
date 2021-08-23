@@ -600,7 +600,7 @@ internal class MailboxViewModel @Inject constructor(
 
         currentContactLabels?.forEach {
             val labelId = it.id
-            if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(labelId) && !it.exclusive) {
+            if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(labelId) && it.type == Constants.LABEL_TYPE_MESSAGE_LABEL) {
                 labelsToRemove.add(labelId)
             } else if (checkedLabelIds.contains(labelId)) {
                 checkedLabelIds.remove(labelId)
@@ -643,7 +643,7 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     private fun List<LabelEntity>.toLabelChipUiModels(): List<LabelChipUiModel> =
-        filterNot { it.exclusive }.map { label ->
+        filter { it.type == Constants.LABEL_TYPE_MESSAGE_LABEL }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 

@@ -84,8 +84,8 @@ internal class LabelsManagerViewModel @Inject constructor(
      * Triggered when a Labels are updated in DB
      */
     private val labelsSource = when (type) {
-        LabelUiModel.Type.LABELS -> messageDao.getAllLabelsNotExclusivePaged()
-        LabelUiModel.Type.FOLDERS -> messageDao.getAllLabelsExclusivePaged()
+        LabelUiModel.Type.LABELS -> messageDao.getAllLabelsPaged()
+        LabelUiModel.Type.FOLDERS -> messageDao.getAllFoldersPaged()
     }
 
     private val labelMapper = LabelUiModelMapper()

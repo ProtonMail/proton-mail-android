@@ -27,6 +27,9 @@ import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsConverter
 import ch.protonmail.android.data.local.model.LabelEntity
+import me.proton.core.account.data.entity.AccountEntity
+import me.proton.core.account.data.entity.SessionEntity
+import me.proton.core.data.room.db.CommonConverters
 
 @Database(
     entities = [
@@ -34,11 +37,18 @@ import ch.protonmail.android.data.local.model.LabelEntity
         ContactEmail::class,
         LabelEntity::class,
         FullContactDetails::class,
-        ContactEmailContactLabelJoin::class
+        ContactEmailContactLabelJoin::class,
+        // Core entity - temp solution before migration to 1 db
+        AccountEntity::class,
+        SessionEntity::class,
     ],
     version = 2
 )
-@TypeConverters(value = [FullContactDetailsConverter::class])
+@TypeConverters(
+    FullContactDetailsConverter::class,
+    // Core - temp solution before migration to 1 db
+    CommonConverters::class
+)
 abstract class ContactDatabase : RoomDatabase() {
 
     abstract fun getDao(): ContactDao

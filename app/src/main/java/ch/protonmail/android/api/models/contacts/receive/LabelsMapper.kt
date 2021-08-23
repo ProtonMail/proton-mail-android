@@ -21,13 +21,15 @@ package ch.protonmail.android.api.models.contacts.receive
 import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.data.local.model.LabelEntity
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
 class LabelsMapper @Inject constructor() {
 
-    fun mapLabelToLabelEntity(serverLabel: Label) = LabelEntity(
+    fun mapLabelToLabelEntity(serverLabel: Label, userId: UserId) = LabelEntity(
         id = serverLabel.id,
+        userId = userId,
         name = serverLabel.name,
         color = serverLabel.color,
         order = serverLabel.order ?: 0,
@@ -36,6 +38,7 @@ class LabelsMapper @Inject constructor() {
         parentId = serverLabel.parentId ?: EMPTY_STRING,
         expanded = serverLabel.expanded ?: 0,
         sticky = serverLabel.sticky ?: 0,
+        notify = serverLabel.notify
     )
 
     fun mapLabelEntityToServerLabel(labelEntity: LabelEntity) = Label(

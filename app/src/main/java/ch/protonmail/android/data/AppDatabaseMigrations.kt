@@ -26,9 +26,6 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
 import me.proton.core.account.data.entity.SessionDetailsEntity
 import me.proton.core.account.data.entity.SessionEntity
-import me.proton.core.accountmanager.data.db.AccountManagerDatabase
-import me.proton.core.data.room.db.extension.open
-import me.proton.core.data.room.db.extension.openAndClose
 import me.proton.core.humanverification.data.entity.HumanVerificationEntity
 import me.proton.core.key.data.entity.KeySaltEntity
 import me.proton.core.key.data.entity.PublicAddressEntity
@@ -45,19 +42,16 @@ object AppDatabaseMigrations {
     /**
      * Copy Core DB into Proton Mail DB.
      */
-    fun initialMigration(context: Context, coreDatabase: AccountManagerDatabase) = object : Migration(0, 1) {
+    fun initialMigration(context: Context) = object : Migration(0, 1) {
         override fun migrate(database: SupportSQLiteDatabase) {
             Timber.v("Initial core db migration")
-            // Force any migration for coreDatabase by opening then closing it.
-            coreDatabase.openAndClose()
 
             // End current transaction (from FrameworkSQLiteOpenHelper.onUpgrade(db, version, mNewVersion))
-            if (database.inTransaction()) {
-                database.setTransactionSuccessful()
-                database.endTransaction()
-            }
+            database.setTransactionSuccessful()
+            database.endTransaction()
             // Attach old Core DB to current DB (cannot be done within a transaction).
-            val coreDbPath = context.getDatabasePath(AccountManagerDatabase.name).path
+            val coreDbFile = context.getDatabasePath("db-account-manager")
+            val coreDbPath = coreDbFile.path
             database.execSQL("ATTACH DATABASE '$coreDbPath' AS coreDb")
             // Begin transaction for attached migration.
             database.beginTransaction()
@@ -68,32 +62,29 @@ object AppDatabaseMigrations {
                 AccountMetadataEntity::class.simpleName,
                 AddressEntity::class.simpleName,
                 AddressKeyEntity::class.simpleName,
-                UserEntity::class.simpleName,
-                UserKeyEntity::class.simpleName,
                 HumanVerificationEntity::class.simpleName,
                 KeySaltEntity::class.simpleName,
                 MailSettingsEntity::class.simpleName,
                 PublicAddressEntity::class.simpleName,
                 PublicAddressKeyEntity::class.simpleName,
                 SessionDetailsEntity::class.simpleName,
-                SessionEntity::class.simpleName
+                SessionEntity::class.simpleName,
+                UserEntity::class.simpleName,
+                UserKeyEntity::class.simpleName
             ).forEach { table ->
                 Timber.v("Insert table $table")
                 database.execSQL("INSERT INTO main.$table SELECT * FROM coreDb.$table")
             }
 
             // End current transaction to detach coreDb.
-            if (database.inTransaction()) {
-                database.setTransactionSuccessful()
-                database.endTransaction()
-            }
+            database.setTransactionSuccessful()
+            database.endTransaction()
             database.execSQL("DETACH DATABASE coreDb")
+            // Begin transaction as it should be for a migration/onUpgrade.
             database.beginTransaction()
 
-            // Clear old Core tables.
-            coreDatabase.open()
-            coreDatabase.runInTransaction { coreDatabase.clearAllTables() }
-            coreDatabase.close()
+            // Delete Core Database.
+            coreDbFile.delete()
         }
     }
 }

@@ -56,7 +56,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
                 val label = updateLabelResult.value.label
                 val joins = contactDao.fetchJoins(contactLabel.id)
                 contactDao.saveContactGroupLabel(
-                    labelsMapper.mapLabelToLabelEntity(label)
+                    labelsMapper.mapLabelToLabelEntity(label, userId)
                 )
                 contactDao.saveContactEmailContactLabel(joins)
             }
@@ -135,7 +135,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
             is ApiResult.Success -> {
                 val label = createLabelResult.value.label
                 contactDao.saveContactGroupLabel(
-                    labelsMapper.mapLabelToLabelEntity(label)
+                    labelsMapper.mapLabelToLabelEntity(label, userId)
                 )
             }
             is ApiResult.Error.Http -> {

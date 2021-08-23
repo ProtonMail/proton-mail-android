@@ -186,9 +186,9 @@ class MessagesService : JobIntentService() {
             runBlocking {
                 val serverLabels = mApi.fetchLabels(currentUserId).valueOrThrow.labels
                 val serverFolders = mApi.fetchFolders(currentUserId).valueOrThrow.labels
-                val labelFactory = LabelsMapper()
-                val labelList = serverLabels.map(labelFactory::mapLabelToLabelEntity)
-                val foldersList = serverFolders.map(labelFactory::mapLabelToLabelEntity)
+                val labelMapper = LabelsMapper()
+                val labelList = serverLabels.map { labelMapper.mapLabelToLabelEntity(it, currentUserId) }
+                val foldersList = serverFolders.map { labelMapper.mapLabelToLabelEntity(it, currentUserId) }
                 db.saveAllLabels(labelList + foldersList)
             }
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))

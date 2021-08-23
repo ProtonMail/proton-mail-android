@@ -118,7 +118,7 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
         for (String labelId : oldLabels) {
             LabelEntity label = messageDao.findLabelByIdBlocking(labelId);
             // find folders
-            if (label != null && label.getExclusive() && !label.getId().equals(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue()))) {
+            if (label != null && (label.getType() == Constants.LABEL_TYPE_MESSAGE_FOLDERS) && !label.getId().equals(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue()))) {
                 labelsToRemove.add(labelId);
             }
         }

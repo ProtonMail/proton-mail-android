@@ -95,7 +95,7 @@ open class ContactDetailsRepository @Inject constructor(
 
         return contactGroupsResponse?.let { labels ->
             labels.map { label ->
-                labelsMapper.mapLabelToLabelEntity(label)
+                labelsMapper.mapLabelToLabelEntity(label, userId)
             }
         }?.also {
             contactDao.clearContactGroupsLabelsTable()
@@ -136,7 +136,7 @@ open class ContactDetailsRepository @Inject constructor(
                 PostLabelWorker.Enqueuer(workManager).enqueue(
                     contactLabel.name,
                     contactLabel.color,
-                    contactLabel.display,
+                    contactLabel.expanded,
                     contactLabel.type,
                     false,
                     contactLabel.id

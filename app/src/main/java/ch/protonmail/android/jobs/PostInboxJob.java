@@ -106,7 +106,7 @@ public class PostInboxJob extends ProtonMailCounterJob {
             LabelEntity label = messageDao.findLabelByIdBlocking(labelId);
             // find folders
             if (label != null &&
-                    label.getExclusive() &&
+                    (label.getType() == Constants.LABEL_TYPE_MESSAGE_FOLDERS) &&
                     !label.getId().equals(String.valueOf(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue()))
             ) {
                 labelsToRemove.add(labelId);

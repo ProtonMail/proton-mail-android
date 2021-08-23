@@ -127,7 +127,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         }
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
         coEvery { contactDao.insertNewContactsAndLabels(newContactEmails, any(), newJoins) } returns Unit
-        every { labelsMapper.mapLabelToLabelEntity(any()) } returns contactLabel
+        every { labelsMapper.mapLabelToLabelEntity(any(),) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
@@ -209,7 +209,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
         coEvery { contactDao.insertNewContactsAndLabels(allContactEmails, any(), newJoins) } returns Unit
-        every { labelsMapper.mapLabelToLabelEntity(any()) } returns contactLabel
+        every { labelsMapper.mapLabelToLabelEntity(any(),) } returns contactLabel
 
         // when
         manager.refresh(pageSize)

@@ -164,22 +164,21 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     private fun editContactGroup(name: String, toBeAdded: List<String>, toBeDeleted: List<String>) {
-        val contactLabel = LabelEntity(
-            id = contactGroupItem!!.contactId,
-            name = name,
-            color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.getDefault()),
-            display = 0,
-            exclusive = true,
-            type = Constants.LABEL_TYPE_CONTACT_GROUPS,
-            path = "",
-            expanded = 0,
-            order = 0,
-            parentId = "",
-            sticky = 0,
-            notify = 0
-        )
         viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryUserId().first())
+            val contactLabel = LabelEntity(
+                id = contactGroupItem!!.contactId,
+                userId = userId,
+                name = name,
+                color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.getDefault()),
+                type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+                path = "",
+                expanded = 0,
+                order = 0,
+                parentId = "",
+                sticky = 0,
+                notify = 0
+            )
             when (
                 val editContactResult =
                     contactGroupEditCreateRepository.editContactGroup(contactLabel, userId)
@@ -203,28 +202,28 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     private fun createContactGroup(name: String, membersList: List<String>) {
-        val contactLabel = LabelEntity(
-            id = EMPTY_STRING,
-            name = name,
-            color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),
-            display = 1,
-            exclusive = false,
-            type = Constants.LABEL_TYPE_CONTACT_GROUPS,
-            path = "",
-            expanded = 0,
-            order = 0,
-            parentId = "",
-            sticky = 0,
-            notify = 0
-        )
-        if (!validate(contactLabel)) {
-            _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.VALIDATION_FAILED)))
-            return
-        }
+
         viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryUserId().first())
-            val createGroupResponse = contactGroupEditCreateRepository.createContactGroup(contactLabel, userId)
+            val contactLabel = LabelEntity(
+                id = EMPTY_STRING,
+                userId  = userId,
+                name = name,
+                color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),
+                type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+                path = "",
+                expanded = 0,
+                order = 0,
+                parentId = "",
+                sticky = 0,
+                notify = 0
+            )
+            if (!validate(contactLabel)) {
+                _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.VALIDATION_FAILED)))
+                return@launch
+            }
 
+            val createGroupResponse = contactGroupEditCreateRepository.createContactGroup(contactLabel, userId)
             when (createGroupResponse) {
                 is ApiResult.Success -> {
                     contactGroupEditCreateRepository.setMembersForContactGroup(

@@ -26,11 +26,14 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
 import ch.protonmail.android.data.local.model.COLUMN_LABEL_ID
+import ch.protonmail.android.data.local.model.COLUMN_LABEL_ORDER
+import ch.protonmail.android.data.local.model.COLUMN_LABEL_TYPE
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_DELETED
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
@@ -375,7 +378,7 @@ abstract class MessageDao : BaseDao<Message>() {
             if (parts.size != 4) {
                 return null
             }
-            findMessageInfoById(parts[1]) ?: return null
+            findMessageInfoById(parts[1])
         }
         return findAttachmentByIdCorrectId(attachmentId)
     }
@@ -388,21 +391,33 @@ abstract class MessageDao : BaseDao<Message>() {
     @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
     abstract fun getAllLabelsLiveData(): LiveData<List<LabelEntity>>
 
-    @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
+    @Query("SELECT * FROM $TABLE_LABELS ORDER BY $COLUMN_LABEL_ORDER")
     abstract fun observeAllLabels(): Flow<List<LabelEntity>>
 
-    @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
+    @Query("SELECT * FROM $TABLE_LABELS ORDER BY $COLUMN_LABEL_ORDER")
     abstract suspend fun findAllLabels(): List<LabelEntity>
 
     // Folders
-    @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 1 ORDER BY `LabelOrder`")
-    abstract fun getAllLabelsExclusivePaged(): DataSource.Factory<Int, LabelEntity>
+    @Query(
+        """
+        SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_FOLDERS} 
+        ORDER BY $COLUMN_LABEL_ORDER
+        """
+    )
+    abstract fun getAllFoldersPaged(): DataSource.Factory<Int, LabelEntity>
 
     // Labels
-    @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 0 ORDER BY `LabelOrder`")
-    abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, LabelEntity>
+    @Query(
+        """
+        SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_LABEL} 
+        ORDER BY $COLUMN_LABEL_ORDER
+        """
+    )
+    abstract fun getAllLabelsPaged(): DataSource.Factory<Int, LabelEntity>
 
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY LabelOrder")
+    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY $COLUMN_LABEL_ORDER")
     abstract fun observeLabelsById(labelIds: List<String>): Flow<List<LabelEntity>>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")

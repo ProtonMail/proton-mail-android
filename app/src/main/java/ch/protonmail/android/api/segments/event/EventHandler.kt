@@ -589,9 +589,11 @@ internal class EventHandler @AssistedInject constructor(
                     val parentId = item.parentId
                     val expanded = item.expanded!!
                     val sticky = item.sticky!!
+                    val notify = item.notify
                     if (labelType == Constants.LABEL_TYPE_MESSAGE_LABEL) {
                         val label = LabelEntity(
                             id = id,
+                            userId = userId,
                             name = name,
                             color = color,
                             order = order,
@@ -599,12 +601,14 @@ internal class EventHandler @AssistedInject constructor(
                             path = path,
                             parentId = parentId ?: EMPTY_STRING,
                             expanded = expanded,
-                            sticky = sticky
+                            sticky = sticky,
+                            notify = notify
                         )
                         messageDao.saveLabel(label)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
                         val label = LabelEntity(
                             id = id,
+                            userId = userId,
                             name = name,
                             color = color,
                             order = order,
@@ -612,7 +616,8 @@ internal class EventHandler @AssistedInject constructor(
                             path = path,
                             parentId = parentId ?: EMPTY_STRING,
                             expanded = expanded,
-                            sticky = sticky
+                            sticky = sticky,
+                            notify = notify
                         )
                         contactDao.saveContactGroupLabel(label)
                     }
@@ -656,7 +661,7 @@ internal class EventHandler @AssistedInject constructor(
     ) {
         if (currentLabel != null) {
             val labelFactory = LabelsMapper()
-            val labelToSave = labelFactory.mapLabelToLabelEntity(updatedLabel)
+            val labelToSave = labelFactory.mapLabelToLabelEntity(updatedLabel, userId)
             messageDao.saveLabel(labelToSave)
         }
     }
@@ -668,7 +673,7 @@ internal class EventHandler @AssistedInject constructor(
     ) {
         if (currentGroup != null) {
             val contactLabelFactory = LabelsMapper()
-            val labelToSave = contactLabelFactory.mapLabelToLabelEntity(updatedGroup)
+            val labelToSave = contactLabelFactory.mapLabelToLabelEntity(updatedGroup, userId)
             val joins = contactDao.fetchJoinsBlocking(labelToSave.id)
             contactDao.saveContactGroupLabel(labelToSave)
             contactDao.saveContactEmailContactLabelBlocking(joins)

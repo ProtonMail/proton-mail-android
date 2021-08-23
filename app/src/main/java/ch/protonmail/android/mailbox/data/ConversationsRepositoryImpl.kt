@@ -471,7 +471,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     private suspend fun getLabelIdsForRemovingWhenMovingToFolder(labelIds: Collection<String>): Collection<String> {
         return labelIds.filter { labelId ->
             val isLabelExclusive = if (labelId.length > MAX_LOCATION_ID_LENGTH) {
-                messageDao.findLabelById(labelId)?.exclusive ?: false
+                messageDao.findLabelById(labelId)?.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS
             } else {
                 true
             }

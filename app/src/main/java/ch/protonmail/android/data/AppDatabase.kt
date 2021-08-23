@@ -24,12 +24,6 @@ import androidx.room.Database
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.ContactData
-import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.FullContactDetails
-import ch.protonmail.android.data.local.model.FullContactDetailsConverter
 import ch.protonmail.android.data.local.model.LabelEntity
 import me.proton.core.account.data.db.AccountConverters
 import me.proton.core.account.data.db.AccountDatabase
@@ -37,7 +31,6 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
 import me.proton.core.account.data.entity.SessionDetailsEntity
 import me.proton.core.account.data.entity.SessionEntity
-import me.proton.core.accountmanager.data.db.AccountManagerDatabase
 import me.proton.core.crypto.android.keystore.CryptoConverters
 import me.proton.core.data.room.db.BaseDatabase
 import me.proton.core.data.room.db.CommonConverters
@@ -76,12 +69,8 @@ import timber.log.Timber
         SessionDetailsEntity::class,
         UserEntity::class,
         UserKeyEntity::class,
-        // Mail - Contacts
-        ContactData::class,
-        ContactEmail::class,
+        // Mail - Labels
         LabelEntity::class,
-        FullContactDetails::class,
-        ContactEmailContactLabelJoin::class
     ],
     version = AppDatabase.version,
     exportSchema = true
@@ -93,8 +82,8 @@ import timber.log.Timber
     UserConverters::class,
     CryptoConverters::class,
     HumanVerificationConverters::class,
-    // Mail - Contacts
-    FullContactDetailsConverter::class
+    // Mail
+    ProtonMailConverters::class
 )
 abstract class AppDatabase :
     BaseDatabase(),
@@ -106,12 +95,13 @@ abstract class AppDatabase :
     PublicAddressDatabase,
     MailSettingsDatabase {
 
-    abstract fun contactDao(): ContactDao
+    // abstract fun contactDao(): ContactDao
+    // abstract fun messagesDao(): MessageDao
 
     companion object {
 
         const val version = 1
-        private const val name = "db-proton-mail"
+        private const val name = "proton-mail.db"
 
         private fun getDbCreationCallback(context: Context): Callback = object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
@@ -119,11 +109,7 @@ abstract class AppDatabase :
                 Timber.v("New $name DB created")
 
                 // Initial migration from "old" core DB to the new Mail app db.
-                val accountManagerDatabase = AccountManagerDatabase.databaseBuilder(context)
-                    .allowMainThreadQueries()
-                    .build()
-
-                val migration01 = AppDatabaseMigrations.initialMigration(context, accountManagerDatabase)
+                val migration01 = AppDatabaseMigrations.initialMigration(context)
                 migration01.migrate(db)
             }
 

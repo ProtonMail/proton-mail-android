@@ -111,7 +111,7 @@ class CreateContactGroupWorkerTest {
             expanded = 0,
             sticky = 0
         )
-        every { labelsMapper.mapLabelToLabelEntity(any()) } returns labelEntity
+        every { labelsMapper.mapLabelToLabelEntity(any(),) } returns labelEntity
     }
 
     @Test

@@ -117,7 +117,7 @@ class LabelsMapperTest {
             parentId = testParentId
         )
 
-        val actual = labelsMapper.mapLabelToLabelEntity(serverLabel)
+        val actual = labelsMapper.mapLabelToLabelEntity(serverLabel,)
 
         val expected = LabelEntity(
             "ID", "name", "color", 1, Constants.LABEL_TYPE_MESSAGE_FOLDERS, testPath,

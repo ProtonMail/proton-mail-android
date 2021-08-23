@@ -296,11 +296,12 @@ class ConvertLocalContactsJob(
                 } else {
                     val serverLabel = response.valueOrThrow.label
                     result[it.value] = serverLabel.id
+                    val userId = userId ?: getUserManager().requireCurrentUserId()
                     val dao = ContactDatabase
-                        .getInstance(applicationContext, userId ?: getUserManager().requireCurrentUserId())
+                        .getInstance(applicationContext, userId)
                         .getDao()
                     val contactLabelFactory = LabelsMapper()
-                    dao.saveContactGroupLabel(contactLabelFactory.mapLabelToLabelEntity(serverLabel))
+                    dao.saveContactGroupLabel(contactLabelFactory.mapLabelToLabelEntity(serverLabel, userId))
                 }
             }
         }

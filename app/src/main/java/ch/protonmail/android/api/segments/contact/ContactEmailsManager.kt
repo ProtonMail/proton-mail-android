@@ -31,6 +31,7 @@ import ch.protonmail.android.data.local.model.LabelEntity
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -59,7 +60,7 @@ class ContactEmailsManager @Inject constructor(
         if (allResults.isNotEmpty()) {
             val allContactEmails = allResults.flatMap { it.contactEmails }
             val allJoins = getJoins(allContactEmails)
-            val contactLabels = mapToContactLabelsEntity(contactGroupsResponse?.labels)
+            val contactLabels = mapToContactLabelsEntity(contactGroupsResponse?.labels, userId)
             Timber.v(
                 "Refresh emails: ${allContactEmails.size}, labels: ${contactLabels.size}, allJoins: ${allJoins.size}"
             )
@@ -83,9 +84,9 @@ class ContactEmailsManager @Inject constructor(
         return allJoins
     }
 
-    private fun mapToContactLabelsEntity(labels: List<Label>?): List<LabelEntity> {
+    private fun mapToContactLabelsEntity(labels: List<Label>?, userId: UserId): List<LabelEntity> {
         return labels?.map { label ->
-            labelsMapper.mapLabelToLabelEntity(label)
+            labelsMapper.mapLabelToLabelEntity(label, userId)
         } ?: emptyList()
     }
 

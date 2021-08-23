@@ -201,7 +201,7 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     }
 
     enum class Type(val typeInt: Int) {
-        LABEL(0), // default
-        FOLDER(1)
+        LABEL(Constants.LABEL_TYPE_MESSAGE_LABEL), // default
+        FOLDER(Constants.LABEL_TYPE_MESSAGE_FOLDERS)
     }
 }

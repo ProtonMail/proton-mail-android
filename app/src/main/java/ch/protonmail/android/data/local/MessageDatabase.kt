@@ -31,6 +31,8 @@ import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
+import me.proton.core.account.data.entity.AccountEntity
+import me.proton.core.account.data.entity.SessionEntity
 import me.proton.core.data.room.db.CommonConverters
 
 @Database(
@@ -39,14 +41,16 @@ import me.proton.core.data.room.db.CommonConverters
         ConversationDatabaseModel::class,
         Message::class,
         LabelEntity::class,
-        UnreadCounterEntity::class
+        UnreadCounterEntity::class,
+        // Core entity - temp solution before migration to 1 db
+        AccountEntity::class,
+        SessionEntity::class,
     ],
     version = 12
 )
 @TypeConverters(
     value = [
         CommonConverters::class,
-
         AttachmentTypesConverter::class,
         MessagesTypesConverter::class,
         ConversationTypesConverter::class
