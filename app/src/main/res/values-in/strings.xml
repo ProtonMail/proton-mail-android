@@ -768,7 +768,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="mobile_footer_info">Footer ini ditambahkan setelah tanda tangan Anda</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Tunda</string>
-    <string name="notifications_snooze">Pemberitahuan Tunda</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 menit</item>
         <item>1 jam</item>
@@ -822,7 +822,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="settings_auto_show_embedded_images">Tampilkan Otomatis Gambar yang Disematkan</string>
     <string name="settings_prevent_taking_screenshots">Cegah pengambilan Tangkapan layar</string>
     <string name="hyperlink_confirmation">Minta tautan konfirmasi</string>
-    <string name="labels_and_folders">Label &amp; Folder </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Folder</string>
     <string name="labels">Label</string>
     <string name="labels_manager">Pengelola Label</string>
@@ -857,7 +857,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="app_settings">Pengaturan aplikasi</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Notifikasi</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Notifikasi diperpanjang</string>
     <string name="extended_notifications_description">Aktifkan fitur ini untuk melihat pengirim\nemail dalam notifikasi.</string>
     <string name="notification_settings">Pengaturan Pemberitahuan</string>
@@ -870,14 +870,14 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="allow_secure_connections_via_third_parties">Izinkan route alternatif</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Jika situs Proton di blokir, pengaturan ini memungkinkan aplikasi untuk mencoba perutean jaringan alternatif untuk mencapai Proton, yang mana dapat berguna untuk melewati/mem-bypass firewall atau masalah jaringan. Kami sarankan untuk tetap mengaktifkan pengaturan ini untuk kendala yang lebih baik.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Jika situs Proton diblokir, pengaturan ini memungkinkan aplikasi untuk mencoba perutean jaringan alternatif untuk mencapai Proton, yang mana dapat berguna untuk melewati/mem-bypass firewall atau masalah jaringan. Kami sarankan untuk tetap mengaktifkan pengatura ini untuk keaandalan yang lebih baik.<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Pelajari lebih lanjut</a></string>
-    <string name="app_language">Bahasa Aplikasi</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="auto_detect">Deteksi otomatis</string>
-    <string name="combined_contacts">Kontak Gabungan</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Aktifkan fitur ini untuk otomatis melengkapi alamat email menggunakan kontak dari semua akun masuk anda.</string>
-    <string name="local_cache_management">Pengelola Cache Lokal</string>
-    <string name="cache_cleared">Cache Lokal Disegarkan</string>
-    <string name="empty_data">Kosongkan Data</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">Diaktifkan</string>
     <string name="disabled">Dinonaktifkan</string>

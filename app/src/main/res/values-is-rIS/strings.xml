@@ -21,64 +21,64 @@
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
     <string name="x_days">Dagar</string>
-    <string name="x_folders">Folders</string>
+    <string name="x_folders">Möppur</string>
     <string name="x_hours">Klukkustundir</string>
-    <string name="x_labels">Labels</string>
-    <string name="x_more">More</string>
-    <string name="x_search">Search</string>
+    <string name="x_labels">Merkingar</string>
+    <string name="x_more">Meira</string>
+    <string name="x_search">Leita</string>
     <string name="x_set">Stilla</string>
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_contacts">Contacts</string>
-    <string name="drawer_lock_the_app">Lock the app</string>
-    <string name="drawer_report_bug">Report bug</string>
-    <string name="drawer_settings">Settings</string>
-    <string name="drawer_subscription">Subscription</string>
-    <string name="drawer_sign_out">Sign out</string>
+    <string name="drawer_contacts">Tengiliðir</string>
+    <string name="drawer_lock_the_app">Læsa forritinu</string>
+    <string name="drawer_report_bug">Tilkynna galla</string>
+    <string name="drawer_settings">Stillingar</string>
+    <string name="drawer_subscription">Áskrift</string>
+    <string name="drawer_sign_out">Skrá út</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">Bcc:</string>
-    <string name="composer_cc">Cc:</string>
-    <string name="composer_compose_email">Compose email</string>
-    <string name="composer_from">From:</string>
-    <string name="composer_subject">Subject:</string>
-    <string name="composer_to">To:</string>
-    <string name="set_msg_password_title">Set password</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Learn more</a></string>
-    <string name="set_msg_password_info_icon_description">Info</string>
-    <string name="set_msg_password_msg_password_title">Message password</string>
-    <string name="set_msg_password_msg_password_hint">4 to 21 characters long</string>
-    <string name="set_msg_password_repeat_password_title">Repeat password</string>
-    <string name="set_msg_password_repeat_password_hint">Passwords must match</string>
-    <string name="set_msg_password_password_hint_title">Password hint</string>
-    <string name="set_msg_password_password_hint_hint">Define hint (Optional)</string>
-    <string name="set_msg_password_apply_password">Apply password</string>
-    <string name="set_msg_password_remove_password">Remove password</string>
-    <string name="set_msg_password_error_too_short">Password too short</string>
-    <string name="set_msg_password_error_too_long">Password too long</string>
-    <string name="set_msg_password_error_mismatch">Password does not match</string>
-    <string name="set_msg_expiration_title">Message expiration</string>
-    <string name="set_msg_expiration_none">None</string>
-    <string name="set_msg_expiration_1_hour">1 hour</string>
-    <string name="set_msg_expiration_1_day">1 day</string>
-    <string name="set_msg_expiration_3_days">3 days</string>
-    <string name="set_msg_expiration_1_week">1 week</string>
-    <string name="set_msg_expiration_custom">Custom</string>
-    <string name="set_msg_expiration_check_description">This item is checked</string>
+    <string name="composer_bcc">Falið afrit:</string>
+    <string name="composer_cc">Afrit:</string>
+    <string name="composer_compose_email">Semja skilaboð</string>
+    <string name="composer_from">Frá:</string>
+    <string name="composer_subject">Viðfangsefni:</string>
+    <string name="composer_to">Til:</string>
+    <string name="set_msg_password_title">Stilltu lykilorð</string>
+    <string name="set_msg_password_info">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Kanna nánar</a></string>
+    <string name="set_msg_password_info_icon_description">Upplýsingar</string>
+    <string name="set_msg_password_msg_password_title">Lykilorð skilaboða</string>
+    <string name="set_msg_password_msg_password_hint">4 til 21 stafa langt</string>
+    <string name="set_msg_password_repeat_password_title">Endurtaka lykilorð</string>
+    <string name="set_msg_password_repeat_password_hint">Lykilorðin verða að samsvara</string>
+    <string name="set_msg_password_password_hint_title">Vísbending lykilorðs</string>
+    <string name="set_msg_password_password_hint_hint">Skilgreina vísbendingu (valkvætt)</string>
+    <string name="set_msg_password_apply_password">Virkja lykilorð</string>
+    <string name="set_msg_password_remove_password">Fjarlægja lykilorð</string>
+    <string name="set_msg_password_error_too_short">Lykilorð er of stutt</string>
+    <string name="set_msg_password_error_too_long">Lykilorð er of langt</string>
+    <string name="set_msg_password_error_mismatch">Lykilorðin passa ekki saman</string>
+    <string name="set_msg_expiration_title">Skilaboð renna út</string>
+    <string name="set_msg_expiration_none">Aldrei</string>
+    <string name="set_msg_expiration_1_hour">1 klst</string>
+    <string name="set_msg_expiration_1_day">1 dag</string>
+    <string name="set_msg_expiration_3_days">3 daga</string>
+    <string name="set_msg_expiration_1_week">1 viku</string>
+    <string name="set_msg_expiration_custom">Sérsniðið</string>
+    <string name="set_msg_expiration_check_description">Þetta atriði er merkt</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_create_pin_code_title">Set PIN code</string>
-    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
-    <string name="settings_pins_dont_match">The PIN codes must match!</string>
-    <string name="settings_enter_pin_code_title">Enter PIN code</string>
-    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
-    <string name="settings_swipe_left_to_right">Left to right</string>
-    <string name="settings_swipe_right_to_left">Right to left</string>
+    <string name="settings_create_pin_code_title">Setja PIN-númer</string>
+    <string name="settings_confirm_pin_code_title">Endurtaka PIN-númer</string>
+    <string name="settings_pins_dont_match">PIN-númerin verða að samsvara!</string>
+    <string name="settings_enter_pin_code_title">Settu inn PIN-númer</string>
+    <string name="settings_swipe_settings_info">Setja upp strokubendingar til að nota við mest notuðu aðgerðir.</string>
+    <string name="settings_swipe_left_to_right">Vinstri til hægri</string>
+    <string name="settings_swipe_right_to_left">Hægri til vinstri</string>
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Discard changes?</string>
-    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
-    <string name="discard">Discard</string>
+    <string name="dialog_discard_changes_title">Henda breytingum?</string>
+    <string name="dialog_discard_changes_message">Allar óvistaðar breytingar munu tapast.</string>
+    <string name="discard">Henda</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -157,7 +157,7 @@
     <string name="move_to_trash">Flytja í ruslið</string>
     <string name="move_to_spam">Flytja í ruslpóst</string>
     <string name="move_to_inbox">Flytja í innhólf</string>
-    <string name="move_to">Move to…</string>
+    <string name="move_to">Færa í…</string>
     <string name="are_you_sure_empty">Ertu viss um að þú viljir eyða öllum skilaboðum úr þessari möppu?</string>
     <string name="send">Senda</string>
     <string name="selected">Valið</string>
@@ -482,8 +482,8 @@
     <string name="vcard_other_option_role">Hlutverk</string>
     <string name="vcard_other_option_url">Slóð (URL)</string>
     <string name="convert_contact">Umbreyta tengilið</string>
-    <string name="contacts_import_contact">Import Contact</string>
-    <string name="contacts_import">Import</string>
+    <string name="contacts_import_contact">Flytja inn tengilið</string>
+    <string name="contacts_import">Flytja inn</string>
     <string name="upload_contacts">Senda inn tengiliði</string>
     <string name="upgrade_encrypted_contact">Uppfærðu áskriftina þína til að nota dulritaðar upplýsingar um tengiliði.</string>
     <string name="uploading_contacts">Sendi inn tengiliði…</string>
@@ -578,7 +578,7 @@
     <string name="recheck_delinquency">Athuga aftur</string>
     <string name="close_app">Loka forriti</string>
     <string name="empty_subject">(ekkert viðfangsefni)</string>
-    <string name="empty_recipients">(No recipients)</string>
+    <string name="empty_recipients">(Engir viðtakendur)</string>
     <string name="contacts_unknown">Óþekkt</string>
     <string name="learn_more"><u>Kanna nánar</u></string>
     <string name="info">Upplýsingar</string>
@@ -629,7 +629,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Enda-í-enda dulrituð skilaboð</string>
     <string name="sender_lock_internal_verified">Enda-í-enda dulrituð skilaboð frá sannvottuðu tölvupóstfangi</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Learn more</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Kanna nánar</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Enda-í-enda dulritað</string>
     <string name="composer_lock_internal_pinned">Enda-í-enda dulritað til sannvottaðs tölvupóstfangs</string>
@@ -642,7 +642,7 @@
     <string name="expiration_error_add_msg_password">Settu inn lykilorð á skilaboð fyrir eftirfarandi viðtakendur:</string>
     <string name="expiration_error_disable_pgp_sending">Gerðu PGP-sendingu óvirka til að gera kleift að nota gildistíma á skilaboð fyrir eftirfarandi viðtakendur:</string>
     <string name="expiration_error_proceed">Ýttu samt á sendihnappinn til að senda án gildistíma til þessara viðtakenda.</string>
-    <string name="expiration_error_learn_more">&lt;a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/"LÆRÐU MEIRA&lt;/a&gt;</string>
+    <string name="expiration_error_learn_more">&lt;a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/"LÆRA MEIRA&lt;/a&gt;</string>
     <string name="channel_name_attachments">Viðhengi</string>
     <string name="channel_description_attachments">Sýnir framvindu niðurhals á viðhengjum</string>
     <string name="channel_name_emails">Tölvupóstar</string>
@@ -664,18 +664,18 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Bæta við mynd</string>
-    <string name="contact_display_name">Display Name</string>
-    <string name="add_new_email">Add Email Address</string>
+    <string name="contact_display_name">Birtingarnafn</string>
+    <string name="add_new_email">Bæta við tölvupóstfangi</string>
     <string name="no_groups">Engir hópar</string>
     <string name="contact_vcard_note">Athugasemd</string>
     <string name="edit_contact">Breyta tengilið</string>
     <string name="create_contact_group">Búa til tengiliðahóp</string>
     <string name="edit_contact_group">Breyta tengiliðahóp</string>
-    <string name="contact_groups_manage_members">Manage Members</string>
-    <string name="contact_group_display_name">Display Name</string>
+    <string name="contact_groups_manage_members">Sýsla með meðlimi</string>
+    <string name="contact_group_display_name">Birtingarnafn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Bæta vistfangi við hópa</string>
-    <string name="title_activity_address_chooser">Manage Members</string>
+    <string name="title_activity_address_chooser">Sýsla með meðlimi</string>
     <string name="title_activity_account_manager">Sýsla með notandaaðganga</string>
     <string name="account_manager_add_account">Bæta við notandaaðgangi</string>
     <string name="account_manager_remove_all_accounts">Fjarlægi alla aðganga</string>
@@ -688,7 +688,7 @@
     <string name="account_manager_remove">Fjarlægja</string>
     <string name="default_error_message">Villa kom upp</string>
     <string name="no_contact_groups">Engir tengiliðahópar</string>
-    <string name="search_contacts_inside_group">Search for contacts</string>
+    <string name="search_contacts_inside_group">Leita að tengiliðum</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d meðlimur</item>
@@ -735,11 +735,12 @@
         Íhugaðu að losa eitthvað pláss eða að kaupa meiri geymslurýmd áður en hún klárast.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Aðgangsheimildir</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
-    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
-        access to storage.</string>
-    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_storage_permissions_add_attachment_text">Til að geta bætt við viðhengjum þarftu að leyfa
+        aðgang að gagnageymslu.</string>
+    <string name="need_storage_permissions_download_attachment_text">Til að geta sótt viðhengi þarftu að leyfa
+        aðgang að gagnageymslu.</string>
+    <string name="need_contacts_permissions_text">Til að geta flutt inn tengiliði þarftu að leyfa
+        aðgang að tengiliðum.</string>
     <string name="push_notifications_alert_title">Viðvörun vegna ýti-tilkynninga</string>
     <string name="push_notifications_alert_subtitle">Ýti-tilkynningar virka ekki nema með uppfærðum séreignahugbúnaði Google Play þjónustu.</string>
     <string name="app_locked">Forrit læst</string>
@@ -762,7 +763,7 @@
     <string name="payment_method">Greiðslumáti</string>
     <string name="password_manager">Sýsl með lykilorð</string>
     <string name="recovery_email">Endurheimtupóstur</string>
-    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
+    <string name="info_for_missing_functionality">Skráðu þig inn í gegnum <a href="https://www.protonmail.com/">protonmail.com</a> til að breyta þessum upplýsingum.</string>
     <string name="storage">Stærð pósthólfs</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Vistföng</string>
@@ -772,23 +773,23 @@
     <string name="display_name">Birtingarnafn</string>
     <string name="edit_display_name">Breyta birtingarnafni</string>
     <string name="signature">Undirskrift</string>
-    <string name="mobile_footer">Mobile footer</string>
-    <string name="edit_mobile_footer">Enable mobile footer</string>
-    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
-    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
-    <string name="mobile_footer_info">This footer is added after your signature</string>
+    <string name="mobile_footer">Farsímaundirgrein</string>
+    <string name="edit_mobile_footer">Virkja farsímaundirgrein</string>
+    <string name="default_mobile_footer">Sent úr ProtonMail-farsíma</string>
+    <string name="mobile_footer_is_premium">Einungis notendur með greidda áskrift geta breytt farsímaundirgrein</string>
+    <string name="mobile_footer_info">Þessu er bætt við á eftir undirskrift þinni</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Fresta</string>
     <string name="notifications_snooze">Frestun tilkynninga</string>
     <string-array name="quick_snooze_values">
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>2 hours</item>
-        <item>4 hours</item>
-        <item>8 hours</item>
-        <item>12 hours</item>
-        <item>Custom</item>
-        <item>Scheduled</item>
+        <item>30 mínútur</item>
+        <item>1 klukkustund</item>
+        <item>2 klukkustundir</item>
+        <item>4 klukkustundir</item>
+        <item>8 klukkustundir</item>
+        <item>12 klukkustundir</item>
+        <item>Sérsniðið</item>
+        <item>Áætlað</item>
     </string-array>
     <string name="notifications_snoozed">Tilkynningum frestað</string>
     <string name="notifications_snooze_scheduled">Áætlað</string>
@@ -810,12 +811,12 @@
     <string name="weekends">Helgar</string>
     <string name="every_day">Daglega</string>
     <string-array name="snooze_repeat_values">
-        <item>Mo</item>
-        <item>Tu</item>
-        <item>We</item>
-        <item>Th</item>
-        <item>Fr</item>
-        <item>Sa</item>
+        <item>Má</item>
+        <item>Þr</item>
+        <item>Mi</item>
+        <item>Fi</item>
+        <item>Fö</item>
+        <item>La</item>
         <item>Su</item>
     </string-array>
     <string name="quick_and_scheduled_enabled">Flýtifrestun og áætluð frestun virkar</string>
@@ -835,25 +836,25 @@
     <string name="settings_prevent_taking_screenshots">Hindra skjámyndatöku</string>
     <string name="hyperlink_confirmation">Krefjast staðfestingar á tengli</string>
     <string name="labels_and_folders">Merkingar og möppur </string>
-    <string name="folders">Folders</string>
-    <string name="labels">Labels</string>
-    <string name="labels_manager">Labels manager</string>
+    <string name="folders">Möppur</string>
+    <string name="labels">Merkingar</string>
+    <string name="labels_manager">Sýsla með merkingar</string>
     <string name="folders_manage">Sýsla með möppur</string>
-    <string name="swipe_actions">Swipe actions</string>
+    <string name="swipe_actions">Aðgerðir við stroku</string>
     <string name="swipe_action_right">Strjúka til hægri</string>
     <string name="swipe_action_left">Strjúka til vinstri</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Veldu aðgerð við stroku</string>
     <string name="swipe_action_trash">Skilaboð voru færð í ruslið</string>
-    <string name="swipe_action_trash_short">Move to Trash</string>
+    <string name="swipe_action_trash_short">Flytja í ruslið</string>
     <string name="swipe_action_star">Stjörnumerking skilaboða uppfærð</string>
-    <string name="swipe_action_star_short">Update star</string>
+    <string name="swipe_action_star_short">Uppfæra stjörnu</string>
     <string name="swipe_action_spam">Skilaboð merkt sem ruslpóstur</string>
-    <string name="swipe_action_spam_short">Spam</string>
+    <string name="swipe_action_spam_short">Ruslpóstur</string>
     <string name="swipe_action_archive">Skilaboð sett í safn</string>
-    <string name="swipe_action_archive_short">Archive</string>
+    <string name="swipe_action_archive_short">Safn</string>
     <string name="swipe_action_mark_read">Skilaboðin voru merkt sem lesin</string>
-    <string name="swipe_action_mark_read_short">Read</string>
+    <string name="swipe_action_mark_read_short">Lesið</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Skilaboð voru færð í ruslið</item>
         <item quantity="other">Skilaboð voru færð í ruslið</item>
@@ -890,9 +891,9 @@
     <string name="auto_detect">Finna sjálfvirkt</string>
     <string name="combined_contacts">Sameinaðir tengiliðir</string>
     <string name="turn_combined_contacts_on">Kveiktu á þessum eiginleika til að sjálfvirk klárun tölvupóstfanga noti tengiliði úr öllum þeim notendaaðgöngum sem þú ert skráður inn í.</string>
-    <string name="local_cache_management">Stýring á staðværu skyndiminni</string>
+    <string name="local_cache_management">Skyndiminni á tækinu</string>
     <string name="cache_cleared">Endurlas skyndiminni á tækinu</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="empty_data">Hreinsa gögn</string>
     <!-- endregion -->
     <string name="enabled">Virkt</string>
     <string name="disabled">Óvirkt</string>
@@ -930,7 +931,7 @@
     <!-- endregion -->
     <string name="allowed">Heimilað</string>
     <string name="denied">Hafnað</string>
-    <string name="more">More</string>
+    <string name="more">Meira</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Strokuhreyfingar breyttust</string>
     <string name="swipe_gestures_changed_message">Eftir síðustu uppfærslu var strokuhreyfingum víxlað. Ef þú vilt geturðu endurstillt þetta í stillingunum.</string>
@@ -943,37 +944,37 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Error loading conversations, please try again</string>
-    <string name="star">Star</string>
-    <string name="unstar">Unstar</string>
-    <string name="star_unstar">Star/unstar</string>
-    <string name="send_to_archive">Send to archive?</string>
-    <string name="new_label">New Label</string>
-    <string name="new_folder">New Folder</string>
-    <string name="label_as">Label as…</string>
-    <string name="mark_as_unread">Mark as unread</string>
-    <string name="mark_as_read">Mark as read</string>
-    <string name="mark_as_read_unread">Mark as read/unread</string>
-    <string name="move_message">Move message</string>
-    <string name="manage">Manage</string>
-    <string name="message_from">Message from %s</string>
-    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <string name="error_loading_conversations">Villa við að hlaða inn samtölum, reyndu aftur</string>
+    <string name="star">Stjörnumerkja</string>
+    <string name="unstar">Fjarlægja stjörnugjöf</string>
+    <string name="star_unstar">Stjörnumerkja/fjarlægja stjörnu</string>
+    <string name="send_to_archive">Senda í safn?</string>
+    <string name="new_label">Ný merking</string>
+    <string name="new_folder">Ný mappa</string>
+    <string name="label_as">Merkja sem…</string>
+    <string name="mark_as_unread">Merkja sem ólesið</string>
+    <string name="mark_as_read">Merkja sem lesið</string>
+    <string name="mark_as_read_unread">Merkja sem lesið/ólesið</string>
+    <string name="move_message">Færa skilaboð</string>
+    <string name="manage">Stjórna</string>
+    <string name="message_from">Skilaboð frá %s</string>
+    <string name="not_spam_move_to_inbox">Ekki ruslpóstur (flytja í innhólf)</string>
     <plurals name="x_messages_count">
-        <item quantity="one">%d message</item>
-        <item quantity="other">%d messages</item>
+        <item quantity="one">%d skilaboð</item>
+        <item quantity="other">%d skilaboð</item>
     </plurals>
     <plurals name="x_conversations_count">
-        <item quantity="one">%d conversation</item>
-        <item quantity="other">%d conversations</item>
+        <item quantity="one">%d samtal</item>
+        <item quantity="other">%d samtöl</item>
     </plurals>
     <string name="contacts_call">Hringja</string>
-    <string name="contacts_send_group_message">Send group message</string>
-    <string name="inbox_this_folder_is_empty">This folder is empty</string>
-    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
-    <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
-    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
-    <string name="edit_draft">Edit draft</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
-    <string name="details_show_history">Show history</string>
-    <string name="could_not_complete_action">Could not complete the action</string>
+    <string name="contacts_send_group_message">Senda hópskilaboð</string>
+    <string name="inbox_this_folder_is_empty">Þessi mappa er tóm</string>
+    <string name="inbox_nothing_to_see_here">Ekkert að sjá hér</string>
+    <string name="inbox_could_not_retrieve_messages">Tókst ekki að sækja skilaboðin þín</string>
+    <string name="inbox_pull_down_to_retry">Dragðu niður til að reyna aftur</string>
+    <string name="edit_draft">Breyta drögum</string>
+    <string name="primary_user_error">Tókst ekki að uppfæra, eitthvað fór úrskeiðis.</string>
+    <string name="details_show_history">Birta feril</string>
+    <string name="could_not_complete_action">Gat ekki lokið aðgerðinni</string>
 </resources>

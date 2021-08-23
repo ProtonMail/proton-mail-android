@@ -831,7 +831,7 @@
     <string name="settings_auto_show_embedded_images">Gömülü resimleri otomatik göster</string>
     <string name="settings_prevent_taking_screenshots">Ekran görüntüsü almayı önle</string>
     <string name="hyperlink_confirmation">Bağlantı onayı iste</string>
-    <string name="labels_and_folders">Etiketler ve Klasörler </string>
+    <string name="labels_and_folders">Etiketler &amp; klasörler </string>
     <string name="folders">Klasörler</string>
     <string name="labels">Etiketler</string>
     <string name="labels_manager">Etiket yöneticisi</string>
@@ -869,7 +869,7 @@
     <!-- endregion -->
     <string name="app_settings">Uygulama Ayarları</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Anlık Bildirimler</string>
+    <string name="push_notifications">Anlık bildirimler</string>
     <string name="extended_notifications">Genişletilmiş Bildirimler</string>
     <string name="extended_notifications_description">Anlık bildirimlerde e-posta göndereni\ngörmek için bu özelliği açın.</string>
     <string name="notification_settings">Bildirim Ayarları</string>
@@ -882,14 +882,14 @@
     <string name="allow_secure_connections_via_third_parties">Alternatif yönlendirmeye izin ver</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Proton sitelerinin engellenmesi durumunda, bu ayar uygulamanın Proton\'a ulaşmak için alternatif ağ yönlendirmesi denemesine izin verir, bu da güvenlik duvarlarını veya ağ sorunlarını atlamak için yararlı olabilir. Daha fazla güvenilirlik için bu ayarı açık tutmanızı öneririz.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Proton sitelerinin engellenmesi durumunda bu ayar, uygulamanın Proton\'a ulaşması için güvenlik duvarlarını ya da ağ sorunlarını aşabilecek alternatif ağ yönlendirmelerini denemesine izin verir. Daha fazla güvenilirlik için bu ayarı açık tutmanızı öneririz.<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Daha fazlası</a></string>
-    <string name="app_language">Uygulama Dili</string>
+    <string name="app_language">Uygulama dili</string>
     <string name="custom_language_dialog_title">Uygulama Dilini Seçin</string>
     <string name="auto_detect">Otomatik algılama</string>
-    <string name="combined_contacts">Birleşik Kişiler</string>
+    <string name="combined_contacts">Birleştirilmiş kişiler</string>
     <string name="turn_combined_contacts_on">Oturum açtığınız tüm hesaplardaki kişileri kullanarak e-posta adreslerini otomatik olarak tamamlamak için bu özelliği açın.</string>
-    <string name="local_cache_management">Yerel Önbellek Yönetimi</string>
+    <string name="local_cache_management">Yerel önbellek</string>
     <string name="cache_cleared">Yerel önbellek yenilendi</string>
-    <string name="empty_data">Boş Veri</string>
+    <string name="empty_data">Veriyi temizle</string>
     <!-- endregion -->
     <string name="enabled">Etkin</string>
     <string name="disabled">Devre dışı</string>

@@ -835,7 +835,7 @@
     <string name="settings_auto_show_embedded_images">Mostrar automàticament les imatges incrustades</string>
     <string name="settings_prevent_taking_screenshots">Evitar captures de pantalla</string>
     <string name="hyperlink_confirmation">Sol·licitar enllaç de confirmació</string>
-    <string name="labels_and_folders">Etiquetes &amp; Carpetes </string>
+    <string name="labels_and_folders">Etiquetes i carpetes </string>
     <string name="folders">Carpetes</string>
     <string name="labels">Etiquetes</string>
     <string name="labels_manager">Administrador d\'etiquetes</string>
@@ -891,9 +891,9 @@
     <string name="auto_detect">Auto detectar</string>
     <string name="combined_contacts">Contactes combinats</string>
     <string name="turn_combined_contacts_on">Activeu aquesta funció a les adreces de correu electrònic completades mitjançant contactes de tots els vostres comptes registrats.</string>
-    <string name="local_cache_management">Administrador de memòria cau local</string>
-    <string name="cache_cleared">La memòria cau local es restaura</string>
-    <string name="empty_data">Buidar dades</string>
+    <string name="local_cache_management">Memòria cau local</string>
+    <string name="cache_cleared">La memòria cau local s\'ha netejat</string>
+    <string name="empty_data">Netejar les dades</string>
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Desactivat</string>

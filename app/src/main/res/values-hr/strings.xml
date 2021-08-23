@@ -793,7 +793,7 @@
     <string name="mobile_footer_info">Podnožje se dodaje nakon vašeg potpisa</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Utišaj</string>
-    <string name="notifications_snooze">Utišavanje obavijesti</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 minuta</item>
         <item>1 sat</item>
@@ -849,7 +849,7 @@
     <string name="settings_auto_show_embedded_images">Automatsko prikazivanje ugrađenih slika</string>
     <string name="settings_prevent_taking_screenshots">Spriječite snimanje snimki zaslona</string>
     <string name="hyperlink_confirmation">Zatražite potvrdu poveznice</string>
-    <string name="labels_and_folders">Oznake i mape </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Mape</string>
     <string name="labels">Oznake</string>
     <string name="labels_manager">Upravljanje oznakama</string>
@@ -890,7 +890,7 @@
     <!-- endregion -->
     <string name="app_settings">Postavke aplikacije</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Obavijesti</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Proširene obavijesti</string>
     <string name="extended_notifications_description">Uključite ovu značajku da biste vidjeli\npošiljatelja e-pošte u push obavijestima.</string>
     <string name="notification_settings">Postavke obavijesti</string>
@@ -903,14 +903,14 @@
     <string name="allow_secure_connections_via_third_parties">Omogući alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Saznajte više</a></string>
-    <string name="app_language">Jezik aplikacije</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Odaberite jezik za aplikaciju</string>
     <string name="auto_detect">Automatsko otkrivanje</string>
-    <string name="combined_contacts">Spojeni kontakti</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Uključite ovu značajku za automatsko dovršavanje adresa e-pošte pomoću kontakata sa svih vaših prijavljenih računa.</string>
-    <string name="local_cache_management">Upravitelj predmemorijom</string>
-    <string name="cache_cleared">Lokalna predmemorija je osvježena</string>
-    <string name="empty_data">Očisti podatke</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">Omogućeno</string>
     <string name="disabled">Onemogućeno</string>

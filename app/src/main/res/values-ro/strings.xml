@@ -792,7 +792,7 @@
     <string name="mobile_footer_info">Acest mesaj din subsol este adăugat după semnătură</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Amânare</string>
-    <string name="notifications_snooze">Notificări amânate</string>
+    <string name="notifications_snooze">Notificări snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 de minute</item>
         <item>o oră</item>
@@ -848,7 +848,7 @@
     <string name="settings_auto_show_embedded_images">Afișare automată imagini incluse</string>
     <string name="settings_prevent_taking_screenshots">Prevenire capturare ecran</string>
     <string name="hyperlink_confirmation">Solicitare de confirmare</string>
-    <string name="labels_and_folders">Etichete și foldere </string>
+    <string name="labels_and_folders">Etichete &amp; foldere </string>
     <string name="folders">Foldere</string>
     <string name="labels">Etichete</string>
     <string name="labels_manager">Gestionare etichete</string>
@@ -889,7 +889,7 @@
     <!-- endregion -->
     <string name="app_settings">Setări aplicație</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Notificări</string>
+    <string name="push_notifications">Notificări push</string>
     <string name="extended_notifications">Notificări extinse</string>
     <string name="extended_notifications_description">Activați funcția pentru a vedea\nexpeditorul mesajelor în notificări.</string>
     <string name="notification_settings">Setări notificare</string>
@@ -902,14 +902,14 @@
     <string name="allow_secure_connections_via_third_parties">Permitere rută alternativă</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">În cazul în care serverele Proton sunt blocate, această setare permite aplicației să încerce accesarea printr-o rețea alternativă pentru a ajunge la Proton, ceea ce poate fi util pentru ocolirea paravanelor de protecție sau a problemelor de rețea. Se recomandă păstrarea acestei setări pentru o fiabilitate mai mare.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">În cazul în care serverele Proton sunt blocate, această setare permite aplicației să încerce accesarea printr-o rețea alternativă pentru a ajunge la Proton, ceea ce poate fi util pentru ocolirea paravanelor de protecție sau a problemelor de rețea. Se recomandă păstrarea acestei setări pentru o fiabilitate mai mare.<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Detalii</a></string>
-    <string name="app_language">Limbă aplicație</string>
+    <string name="app_language">Limba aplicației</string>
     <string name="custom_language_dialog_title">Selectare limbă</string>
     <string name="auto_detect">Autodetectare</string>
-    <string name="combined_contacts">Combinare contacte</string>
+    <string name="combined_contacts">Contacte combinate</string>
     <string name="turn_combined_contacts_on">Activați funcția pentru autocompletarea adreselor de e-mail folosind contactele din toate conturile conectate.</string>
-    <string name="local_cache_management">Gestionare buffer local</string>
-    <string name="cache_cleared">Buffer local actualizat</string>
-    <string name="empty_data">Golire date</string>
+    <string name="local_cache_management">Memoria cache locală</string>
+    <string name="cache_cleared">Memoria cache locală este reîmprospătată</string>
+    <string name="empty_data">Ștergere Date</string>
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Dezactivat</string>

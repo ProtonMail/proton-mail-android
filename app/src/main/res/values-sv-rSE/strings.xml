@@ -776,7 +776,7 @@
     <string name="mobile_footer_info">Denna sidfot läggs till efter din signatur</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooza</string>
-    <string name="notifications_snooze">Snooza notifieringar</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 minuter</item>
         <item>1 timme</item>
@@ -831,7 +831,7 @@
     <string name="settings_auto_show_embedded_images">Visa inbäddade bilder automatiskt</string>
     <string name="settings_prevent_taking_screenshots">Förhindra skärmdumpar</string>
     <string name="hyperlink_confirmation">Begär länkbekräftelse</string>
-    <string name="labels_and_folders">Etiketter &amp; Mappar </string>
+    <string name="labels_and_folders">Etiketter &amp; mappar </string>
     <string name="folders">Mappar</string>
     <string name="labels">Etiketter</string>
     <string name="labels_manager">Etiketthanterare</string>
@@ -869,7 +869,7 @@
     <!-- endregion -->
     <string name="app_settings">App Inställningar</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Notifieringar</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Utökade notifieringar</string>
     <string name="extended_notifications_description">Aktivera denna inställning om du vill se e-postens avsändare i aviseringarna.</string>
     <string name="notification_settings">Notifieringsinställningar</string>
@@ -882,14 +882,14 @@
     <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
-    <string name="app_language">Språkinställningar för App</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Välj app-språk</string>
     <string name="auto_detect">Identifiera automatiskt</string>
-    <string name="combined_contacts">Kombinerade Kontakter</string>
+    <string name="combined_contacts">Kombinerade kontakter</string>
     <string name="turn_combined_contacts_on">Aktivera denna funktion för att automatiskt slutföra e-postadresser med hjälp av kontakter från alla dina inloggade konton.</string>
-    <string name="local_cache_management">Hantera lokal cache</string>
-    <string name="cache_cleared">Den lokala cachen är uppdaterad</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Rensa data</string>
     <!-- endregion -->
     <string name="enabled">Aktiverad</string>
     <string name="disabled">Inaktiverad</string>

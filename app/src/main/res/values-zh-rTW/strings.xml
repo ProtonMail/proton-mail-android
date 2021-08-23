@@ -765,7 +765,7 @@
     <string name="mobile_footer_info">此註腳會新增至您的簽章之後</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">延遲</string>
-    <string name="notifications_snooze">通知延遲</string>
+    <string name="notifications_snooze">通知暫停</string>
     <string-array name="quick_snooze_values">
         <item>30 分鐘</item>
         <item>1 小時</item>
@@ -854,7 +854,7 @@
     <!-- endregion -->
     <string name="app_settings">應用程式設定</string>
     <!-- region App Settings -->
-    <string name="push_notifications">推送通知</string>
+    <string name="push_notifications">推播通知</string>
     <string name="extended_notifications">延伸通知</string>
     <string name="extended_notifications_description">啟用此功能以在推送通知中\n檢視電子郵件的寄件者。</string>
     <string name="notification_settings">通知設定</string>
@@ -870,11 +870,11 @@
     <string name="app_language">應用程式語言</string>
     <string name="custom_language_dialog_title">選擇應用程式語言</string>
     <string name="auto_detect">自動偵測</string>
-    <string name="combined_contacts">已結合聯絡人</string>
+    <string name="combined_contacts">合併聯絡人</string>
     <string name="turn_combined_contacts_on">啟用此功能以使用您所有已登入的帳號中的聯絡人來自動完成電子郵件地址。</string>
-    <string name="local_cache_management">本機快取管理</string>
+    <string name="local_cache_management">本機快取</string>
     <string name="cache_cleared">本機快取已重新整理</string>
-    <string name="empty_data">清空資料</string>
+    <string name="empty_data">清除資料</string>
     <!-- endregion -->
     <string name="enabled">已啟用</string>
     <string name="disabled">已停用</string>

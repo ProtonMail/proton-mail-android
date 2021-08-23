@@ -779,7 +779,7 @@
     <string name="mobile_footer_info">Este rodapé é adicionado após a assinatura</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Adiar</string>
-    <string name="notifications_snooze">Adiamento de notificações</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
         <item>1 hora</item>
@@ -834,7 +834,7 @@
     <string name="settings_auto_show_embedded_images">Mostrar imagens incorporadas automaticamente</string>
     <string name="settings_prevent_taking_screenshots">Impedir capturas de ecrã</string>
     <string name="hyperlink_confirmation">Pedir confirmação da hiperligação</string>
-    <string name="labels_and_folders">Etiquetas &amp; Pastas </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Pastas</string>
     <string name="labels">Etiquetas</string>
     <string name="labels_manager">Gestor de etiquetas</string>
@@ -872,7 +872,7 @@
     <!-- endregion -->
     <string name="app_settings">Definições da aplicação</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Notificações forçadas</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Notificações estendidas</string>
     <string name="extended_notifications_description">Active esta funcionalidade para ver o remetente\ndos emails nas notificações forçadas.</string>
     <string name="notification_settings">Definições de notificações</string>
@@ -885,14 +885,14 @@
     <string name="allow_secure_connections_via_third_parties">Permitir redireccionamento alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Caso as páginas do Proton estejam bloqueadas, esta definição permite à aplicação tentar redireccionar o tráfego para ligar ao Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos que mantenha esta definição para maior confiança.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Caso as páginas do Proton estejam bloqueadas, esta definição permite à aplicação tentar redireccionar o tráfego para ligar ao Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos que mantenha esta definição para maior confiança. <a href="ps://protonmail.com/blog/anti-censorship-alternative-routing/">Saiba mais</a></string>
-    <string name="app_language">Idioma da aplicação</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Seleccionar idioma da aplicação</string>
     <string name="auto_detect">Auto-detectar</string>
-    <string name="combined_contacts">Contactos combinados</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Active esta funcionalidade para preencher automaticamente endereços de email utilizando contactos de todas as suas contas ligadas.</string>
-    <string name="local_cache_management">Gestão da memória local</string>
-    <string name="cache_cleared">A memória local foi actualizada</string>
-    <string name="empty_data">Limpar dados</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">Activado</string>
     <string name="disabled">Desactivado</string>

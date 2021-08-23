@@ -780,7 +780,7 @@
     <string name="mobile_footer_info">Ce pied de page est ajouté après votre signature</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Interruption des notifications</string>
-    <string name="notifications_snooze">Ne pas déranger</string>
+    <string name="notifications_snooze">Report des notifications</string>
     <string-array name="quick_snooze_values">
         <item>30 minutes</item>
         <item>1 heure</item>
@@ -835,7 +835,7 @@
     <string name="settings_auto_show_embedded_images">Afficher automatiquement les images incorporées</string>
     <string name="settings_prevent_taking_screenshots">Empêcher la prise de captures d\'écran</string>
     <string name="hyperlink_confirmation">Demander une confirmation lors de l\'ouverture de liens</string>
-    <string name="labels_and_folders">Labels &amp; Dossiers </string>
+    <string name="labels_and_folders">Labels &amp; dossiers </string>
     <string name="folders">Dossiers</string>
     <string name="labels">Labels</string>
     <string name="labels_manager">Gestionnaire de labels</string>
@@ -891,9 +891,9 @@
     <string name="auto_detect">Détection automatique</string>
     <string name="combined_contacts">Contacts combinés</string>
     <string name="turn_combined_contacts_on">Activez cette fonctionnalité pour compléter automatiquement les adresses électroniques en utilisant les contacts de tous vos comptes connectés.</string>
-    <string name="local_cache_management">Gestion du cache local</string>
+    <string name="local_cache_management">Cache local</string>
     <string name="cache_cleared">Le cache local est actualisé</string>
-    <string name="empty_data">Vider les données</string>
+    <string name="empty_data">Effacer les données</string>
     <!-- endregion -->
     <string name="enabled">Activé</string>
     <string name="disabled">Désactivé</string>

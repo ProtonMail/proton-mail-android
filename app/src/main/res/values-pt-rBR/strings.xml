@@ -736,11 +736,11 @@
         Considere liberar algum espaço ou comprar mais armazenamento antes de ficar sem capacidade.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permissões</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
-    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
-        access to storage.</string>
-    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_storage_permissions_add_attachment_text">Para adicionar anexos, você precisa permitir o
+         acesso ao armazenamento.</string>
+    <string name="need_storage_permissions_download_attachment_text">Para baixar anexos, você precisa permitir
+         acesso ao armazenamento.</string>
+    <string name="need_contacts_permissions_text">Para importar contatos, você precisa permitir o acesso aos contatos.</string>
     <string name="push_notifications_alert_title">Alerta de notificações push</string>
     <string name="push_notifications_alert_subtitle">As notificações via Push do ProtonMail não funcionam sem o Google Play Services atualizado.</string>
     <string name="app_locked">Aplicativo bloqueado</string>
@@ -780,7 +780,7 @@
     <string name="mobile_footer_info">Este rodapé é adicionado após a sua assinatura</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Soneca</string>
-    <string name="notifications_snooze">Notificações adiadas</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
         <item>1 hora</item>
@@ -835,7 +835,7 @@
     <string name="settings_auto_show_embedded_images">Mostrar imagens incorporadas automaticamente</string>
     <string name="settings_prevent_taking_screenshots">Evitar tirar capturas de tela</string>
     <string name="hyperlink_confirmation">Solicitar link de confirmação</string>
-    <string name="labels_and_folders">Marcadores e pastas </string>
+    <string name="labels_and_folders">Marcadores &amp; pastas </string>
     <string name="folders">Pastas</string>
     <string name="labels">Marcadores</string>
     <string name="labels_manager">Gerenciador de marcadores</string>
@@ -873,7 +873,7 @@
     <!-- endregion -->
     <string name="app_settings">Configurações do aplicativo</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Notificações push</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Notificações estendidas</string>
     <string name="extended_notifications_description">Ative este recurso para ver o remetente\ndos e-mails nas notificações push.</string>
     <string name="notification_settings">Configurações de notificação</string>
@@ -891,8 +891,8 @@
     <string name="auto_detect">Detectar automaticamente</string>
     <string name="combined_contacts">Contatos combinados</string>
     <string name="turn_combined_contacts_on">Ative este recurso para preencher automaticamente endereços de e-mail usando os contatos de todas as suas contas conectadas.</string>
-    <string name="local_cache_management">Gerenciador de cache local</string>
-    <string name="cache_cleared">Cache local atualizado</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
     <string name="empty_data">Limpar dados</string>
     <!-- endregion -->
     <string name="enabled">Ativado</string>
