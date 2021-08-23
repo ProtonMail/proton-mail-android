@@ -180,8 +180,8 @@ class SendMessageWorkerTest : CoroutinesTest {
             assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
             assertEquals(securityOptions, actualMessageSecurityOptions?.deserialize(MessageSecurityOptions.serializer()))
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
-            assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
-            assertEquals(20000, workSpec.backoffDelayDuration)
+            assertEquals(BackoffPolicy.LINEAR, workSpec.backoffPolicy)
+            assertEquals(10000, workSpec.backoffDelayDuration)
             verify { workManager.getWorkInfoByIdLiveData(any()) }
         }
     }
@@ -221,11 +221,32 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun workerTriesFindingTheMessageByMessageIdWhenMessageIsNotFoundByDatabaseId() = runBlockingTest {
+        val messageDbId = 23712L
+        val messageId = "8322224-1341"
+        val message = Message(messageId = messageId)
+        val createdDraftId = "createdDraftId"
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns null
+        coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns null
+        coEvery { saveDraft.invoke(any()) } returns SaveDraftResult.Success(createdDraftId)
+
+        worker.doWork()
+
+        verify { userNotifier wasNot Called }
+        val paramsSlot = slot<SaveDraft.SaveDraftParameters>()
+        coVerify { saveDraft.invoke(capture(paramsSlot)) }
+        assertEquals(message, paramsSlot.captured.message)
+    }
+
+    @Test
     fun workerNotifiesUserAndFailsWhenMessageIsNotFoundInTheDatabase() = runBlockingTest {
         val messageDbId = 2373L
         val messageId = "8322223"
         givenFullValidInput(messageDbId, messageId)
         coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns null
+        coEvery { messageDetailsRepository.findMessageById(messageId) } returns null
         every { context.getString(R.string.message_drafted) } returns "error message 9214"
 
         val result = worker.doWork()
@@ -685,7 +706,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
         every { packageFactory.generatePackages(any(), any(), any(), any()) } throws exception
-        every { parameters.runAttemptCount } returns 2
+        every { parameters.runAttemptCount } returns 1
         mockkStatic(Timber::class)
 
         val result = worker.doWork()
@@ -1027,3 +1048,4 @@ class SendMessageWorkerTest : CoroutinesTest {
         }
     }
 }
+

@@ -56,6 +56,7 @@ app/src/beta/google-services.json
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries/**
 .idea/assetWizardSettings.xml
+.idea/deploymentTargetDropDown.xml
 # Do not exclude project Dictionary
 !.idea/**/dictionaries/project.xml
 .idea/**/shelf
@@ -126,6 +127,3 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-# # # # # # # # #
-# IDEA SETTINGS #
-# # # # # # # # #

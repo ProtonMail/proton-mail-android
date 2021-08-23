@@ -69,7 +69,10 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
@@ -89,7 +92,7 @@ internal const val KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED = "keySend
 internal const val KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM = "keySendMessageErrorResult"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
-private const val SEND_MESSAGE_MAX_RETRIES = 3
+private const val SEND_MESSAGE_MAX_RETRIES = 2
 private const val NO_CONTACTS_AUTO_SAVE = 0
 private const val SEND_MESSAGE_WORK_NAME_PREFIX = "sendMessageUniqueWorkName"
 private const val NO_SUBJECT = ""
@@ -109,8 +112,12 @@ class SendMessageWorker @WorkerInject constructor(
 
     override suspend fun doWork(): Result {
         val messageDatabaseId = getInputMessageDatabaseId()
-        Timber.i("Send Message Worker executing with messageDatabaseId $messageDatabaseId")
+        val inputMessageId = getInputMessageId()
+        Timber.i(
+            "Send Message Worker executing with messageDatabaseId $messageDatabaseId - messageID $inputMessageId"
+        )
         val message = messageDetailsRepository.findMessageByMessageDbId(messageDatabaseId)
+            ?: messageDetailsRepository.findMessageById(inputMessageId)
         if (message == null) {
             showSendMessageError(NO_SUBJECT)
             pendingActionsDao.deletePendingSendByDbId(messageDatabaseId)
@@ -122,8 +129,7 @@ class SendMessageWorker @WorkerInject constructor(
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
         val username = requireNotNull(getInputCurrentUsername())
 
-        val result = saveDraft(message, previousSenderAddressId)
-        return when (result) {
+        return when (val result = saveDraft(message, previousSenderAddressId)) {
             is SaveDraftResult.Success -> {
                 val messageId = result.draftId
                 Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
@@ -148,8 +154,10 @@ class SendMessageWorker @WorkerInject constructor(
                 }
 
                 return try {
-                    val response = apiManager.sendMessage(messageId, requestBody, RetrofitTag(username))
-                    handleSendMessageResponse(messageId, response, savedDraftMessage)
+                    withContext(NonCancellable) {
+                        val response = apiManager.sendMessage(messageId, requestBody, RetrofitTag(username))
+                        handleSendMessageResponse(messageId, response, savedDraftMessage)
+                    }
                 } catch (exception: IOException) {
                     retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
                 } catch (exception: Exception) {
@@ -323,6 +331,9 @@ class SendMessageWorker @WorkerInject constructor(
 
     private fun getInputParentId() = inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID)
 
+    private fun getInputMessageId() =
+        inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID) ?: EMPTY_STRING
+
     private fun getInputMessageDatabaseId() =
         inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, INPUT_MESSAGE_DB_ID_NOT_FOUND)
 
@@ -359,16 +370,15 @@ class SendMessageWorker @WorkerInject constructor(
                         KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED to securityOptions.serialize()
                     )
                 )
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.LINEAR, TEN_SECONDS, TimeUnit.SECONDS)
                 .build()
 
             workManager.enqueueUniqueWork(
-                "${SEND_MESSAGE_WORK_NAME_PREFIX}-${requireNotNull(message.messageId)}",
+                "$SEND_MESSAGE_WORK_NAME_PREFIX-${requireNotNull(message.messageId)}",
                 ExistingWorkPolicy.REPLACE,
                 sendMessageRequest
             )
             return workManager.getWorkInfoByIdLiveData(sendMessageRequest.id).asFlow()
         }
     }
-
 }
