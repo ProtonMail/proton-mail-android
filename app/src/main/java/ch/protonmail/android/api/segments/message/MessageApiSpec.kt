@@ -51,6 +51,13 @@ interface MessageApiSpec {
         end: Long? = null
     ): MessagesResponse
 
+    suspend fun getMessages(
+        userIdTag: UserIdTag,
+        location: String,
+        begin: Long? = null,
+        end: Long? = null
+    ): MessagesResponse
+
     @Throws(IOException::class)
     fun fetchMessages(location: Int, time: Long): MessagesResponse?
 

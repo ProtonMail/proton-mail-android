@@ -50,6 +50,9 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         ParseUtils.parse(service.messages(location, "time", "", "", userIdTag).execute())
 
     override suspend fun getMessages(userIdTag: UserIdTag, location: Int, begin: Long?, end: Long?): MessagesResponse =
+        service.getMessages(userIdTag, location.toString(), "time", begin, end)
+
+    override suspend fun getMessages(userIdTag: UserIdTag, location: String, begin: Long?, end: Long?): MessagesResponse =
         service.getMessages(userIdTag, location, "time", begin, end)
 
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? =

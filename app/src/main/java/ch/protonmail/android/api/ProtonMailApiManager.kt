@@ -238,6 +238,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse? = api.messages(location, userIdTag)
 
+    override suspend fun getMessages(userIdTag: UserIdTag, location: String, begin: Long?, end: Long?): MessagesResponse =
+        api.getMessages(userIdTag, location, begin, end)
+
     override suspend fun getMessages(userIdTag: UserIdTag, location: Int, begin: Long?, end: Long?): MessagesResponse =
         api.getMessages(userIdTag, location, begin, end)
 

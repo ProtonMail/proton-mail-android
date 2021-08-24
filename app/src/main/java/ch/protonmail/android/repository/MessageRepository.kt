@@ -22,14 +22,12 @@ package ch.protonmail.android.repository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreFlow
 import ch.protonmail.android.domain.withLoadMore
@@ -45,9 +43,7 @@ import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -232,11 +228,24 @@ class MessageRepository @Inject constructor(
     fun observeMessagesByLocation(
         userId: UserId,
         location: MessageLocationType
-    ): Flow<List<Message>> {
+    ): LoadMoreFlow<List<Message>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
 
         val databaseFlow = observeMessagesByLocationFromDatabase(location, messagesDao)
         val apiFlow = getMessageByLocationFromApi(userId, location)
+        val persist: suspend (List<Message>) -> Unit = { persistMessages(it, userId) }
+
+        return databaseFlow.withLoadMore(loader = apiFlow, onLoad = persist)
+    }
+
+    fun observeMessagesByLabelId(
+        labelId: String,
+        userId: UserId
+    ): LoadMoreFlow<List<Message>> {
+        val messagesDao = databaseProvider.provideMessageDao(userId)
+
+        val databaseFlow = messagesDao.observeMessagesByLabelId(labelId)
+        val apiFlow = getMessageByLocationIdFromApi(userId, labelId)
         val persist: suspend (List<Message>) -> Unit = { persistMessages(it, userId) }
 
         return databaseFlow.withLoadMore(loader = apiFlow, onLoad = persist)
@@ -254,46 +263,22 @@ class MessageRepository @Inject constructor(
     private fun getMessageByLocationFromApi(
         userId: UserId,
         location: MessageLocationType
+    ): LoadMoreFlow<List<Message>> = getMessageByLocationIdFromApi(userId, location.messageLocationTypeValue.toString())
+
+    private fun getMessageByLocationIdFromApi(
+        userId: UserId,
+        locationId: String
     ): LoadMoreFlow<List<Message>> = loadMoreFlow(
         initialBookmark = null as Long?,
         createNextBookmark = { result, previousBookmark -> result.minOfOrNull { it.time } ?: previousBookmark },
         load = {
             protonMailApiManager.getMessages(
                 UserIdTag(userId),
-                location.messageLocationTypeValue,
+                locationId,
                 end = it
             ).messages
         }
     ).loadMoreCatch { Timber.e(it, "Can't fetch messages from API") }
-
-    fun observeMessagesByLabelId(
-        labelId: String,
-        userId: UserId
-    ): Flow<List<Message>> {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        return messagesDao.observeMessagesByLabelId(labelId)
-            .onStart {
-                if (!connectivityManager.isInternetConnectionPossible()) {
-                    Timber.d("Skipping network refresh as connectivity is not available")
-                    return@onStart
-                }
-
-                Timber.v("labelId: $labelId, trying fetching from remote")
-                runCatching { protonMailApiManager.searchByLabelAndPage(labelId, 0) }
-                    .fold(
-                        onSuccess = { labelsResponse ->
-                            if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
-                                persistMessages(labelsResponse.messages, userId)
-                            }
-                        },
-                        onFailure = { exception ->
-                            val dbData = messagesDao.observeMessagesByLabelId(labelId).first()
-                            emit(dbData)
-                            throw exception
-                        }
-                    )
-            }
-    }
 
     private suspend fun persistMessages(
         messages: List<Message>,

@@ -20,12 +20,12 @@
 package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.core.Constants
-import me.proton.core.domain.entity.UserId
+import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.domain.loadMoreCatch
+import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -40,7 +40,7 @@ class ObserveMessagesByLocation @Inject constructor(
         mailboxLocation: Constants.MessageLocationType,
         labelId: String?,
         userId: UserId
-    ): Flow<GetMessagesResult> =
+    ): LoadMoreFlow<GetMessagesResult> =
         when (mailboxLocation) {
             Constants.MessageLocationType.LABEL,
             Constants.MessageLocationType.LABEL_FOLDER ->
@@ -64,11 +64,11 @@ class ObserveMessagesByLocation @Inject constructor(
             Constants.MessageLocationType.INVALID -> throw IllegalArgumentException("Invalid location.")
             else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")
         }
-            .map {
+            .loadMoreMap {
                 Timber.v("GetMessagesByLocation new messages size: ${it.size}, location: $mailboxLocation")
                 GetMessagesResult.Success(it) as GetMessagesResult
             }
-            .catch {
+            .loadMoreCatch {
                 emit(GetMessagesResult.Error(it))
             }
 }
