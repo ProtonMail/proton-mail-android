@@ -22,50 +22,52 @@ package ch.protonmail.android.mailbox.domain.usecase
 import app.cash.turbine.test
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.domain.asLoadMoreFlow
+import ch.protonmail.android.domain.loadMoreFlowOf
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ObserveMessagesByLocationTest {
 
-    private val mailboxRepository: MessageRepository = mockk()
-
-    private val useCase = ObserveMessagesByLocation(mailboxRepository)
-
     private val userId = UserId("user")
+    private val message1 = mockk<Message>(relaxed = true) { every { messageId } returns "1" }
+    private val message2 = mockk<Message>(relaxed = true) { every { messageId } returns "2" }
+    private val allMessages = listOf(message1, message2)
+    private val allMessagesLoadMoreFlow: LoadMoreFlow<DataResult<List<Message>>> =
+        loadMoreFlowOf(DataResult.Success(ResponseSource.Local, allMessages))
+
+    private val mailboxRepository: MessageRepository = mockk {
+        every { observeMessagesByLocation(userId, any()) } returns allMessagesLoadMoreFlow
+        every { observeMessagesByLabelId(userId, any()) } returns allMessagesLoadMoreFlow
+    }
+    private val useCase = ObserveMessagesByLocation(mailboxRepository)
 
     @Test
     fun verifyThatInboxDataModelIsReturnedNormally() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.INBOX
         val labelId = ""
-        val message1 = mockk<Message>(relaxed = true)
-        val message2 = mockk<Message>(relaxed = true)
-        val messages = listOf(message1, message2)
-        val flowOfMessages = flowOf(messages)
-        coEvery {
-            mailboxRepository.observeMessagesByLocation(
-                userId,
-                mailboxLocation
-            )
-        } returns flowOfMessages
-        val expected = GetMessagesResult.Success(messages)
+        val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        val resultsList = useCase.invoke(mailboxLocation, labelId, userId).take(1).toList()
+        useCase(mailboxLocation, labelId, userId).test {
 
-        // then
-        assertEquals(expected, resultsList[0])
+            // then
+            assertEquals(expected, expectItem())
+            expectComplete()
+        }
     }
 
     @Test
@@ -73,20 +75,15 @@ class ObserveMessagesByLocationTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.LABEL
         val labelId = "label1"
-        val message1 = mockk<Message>(relaxed = true)
-        val message2 = mockk<Message>(relaxed = true)
-        val messages = listOf(message1, message2)
-        val expected = GetMessagesResult.Success(messages)
-        val flowOfMessages = flowOf(messages)
-        coEvery {
-            mailboxRepository.observeMessagesByLabelId(userId, labelId)
-        } returns flowOfMessages
+        val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        val resultsList = useCase.invoke(mailboxLocation, labelId, userId).take(1).toList()
+        useCase(mailboxLocation, labelId, userId).test {
 
-        // then
-        assertEquals(expected, resultsList[0])
+            // then
+            assertEquals(expected, expectItem())
+            expectComplete()
+        }
     }
 
     @Test
@@ -94,20 +91,15 @@ class ObserveMessagesByLocationTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.STARRED
         val labelId = "label1"
-        val message1 = mockk<Message>(relaxed = true)
-        val message2 = mockk<Message>(relaxed = true)
-        val messages = listOf(message1, message2)
-        val expected = GetMessagesResult.Success(messages)
-        val flowOfMessages = flowOf(messages)
-        coEvery {
-            mailboxRepository.observeMessagesByLocation(userId, mailboxLocation)
-        } returns flowOfMessages
+        val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        val resultsList = useCase.invoke(mailboxLocation, labelId, userId).take(1).toList()
+        useCase(mailboxLocation, labelId, userId).test {
 
-        // then
-        assertEquals(expected, resultsList[0])
+            // then
+            assertEquals(expected, expectItem())
+            expectComplete()
+        }
     }
 
     @Test
@@ -115,20 +107,15 @@ class ObserveMessagesByLocationTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.ALL_MAIL
         val labelId = "label1"
-        val message1 = mockk<Message>(relaxed = true)
-        val message2 = mockk<Message>(relaxed = true)
-        val messages = listOf(message1, message2)
-        val expected = GetMessagesResult.Success(messages)
-        val flowOfMessages = flowOf(messages)
-        coEvery {
-            mailboxRepository.observeMessagesByLocation(userId, mailboxLocation)
-        } returns flowOfMessages
+        val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        val resultsList = useCase.invoke(mailboxLocation, labelId, userId).take(1).toList()
+        useCase(mailboxLocation, labelId, userId).test {
 
-        // then
-        assertEquals(expected, resultsList[0])
+            // then
+            assertEquals(expected, expectItem())
+            expectComplete()
+        }
     }
 
     @Test
@@ -136,23 +123,26 @@ class ObserveMessagesByLocationTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.INBOX
         val labelId = ""
-        val message1 = mockk<Message>(relaxed = true)
-        val message2 = mockk<Message>(relaxed = true)
-        val testException = Exception("Olala exception!")
-        val messagesResponseChannel = Channel<List<Message>>()
+        val messagesResponseChannel = Channel<DataResult<List<Message>>>()
         coEvery {
             mailboxRepository.observeMessagesByLocation(
                 userId,
                 mailboxLocation
             )
-        } returns messagesResponseChannel.receiveAsFlow()
-        val expected = GetMessagesResult.Error(testException)
+        } returns messagesResponseChannel.receiveAsFlow().asLoadMoreFlow()
+
+        val testExceptionMessage = "An exception!"
+        val testException = IllegalStateException(testExceptionMessage)
+        val expectedExceptionType = IllegalStateException::class
 
         // when
-        useCase.invoke(mailboxLocation, labelId, userId).test {
+        useCase(mailboxLocation, labelId, userId).test {
             // then
             messagesResponseChannel.close(testException)
-            assertEquals(expected, expectItem())
+            val actualError = expectItem() as GetMessagesResult.Error
+            val actualException = checkNotNull(actualError.throwable)
+            assertEquals(testExceptionMessage, actualException.message)
+            assertEquals(expectedExceptionType, actualException::class)
             expectComplete()
         }
     }

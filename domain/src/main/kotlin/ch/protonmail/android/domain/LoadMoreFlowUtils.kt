@@ -50,6 +50,12 @@ fun <A, B> Flow<A>.withLoadMore(
 }
 
 /**
+ * Convert the receiver [Flow] to a [LoadMoreFlow]
+ */
+fun <T> Flow<T>.asLoadMoreFlow(): LoadMoreFlow<T> =
+    withLoadMore(loadMoreFlowOf<T>()) {}
+
+/**
  * Same as [Flow.catch], but returns a [LoadMoreFlow] instead
  */
 fun <T> LoadMoreFlow<T>.loadMoreCatch(action: suspend FlowCollector<T>.(Throwable) -> Unit): LoadMoreFlow<T> =

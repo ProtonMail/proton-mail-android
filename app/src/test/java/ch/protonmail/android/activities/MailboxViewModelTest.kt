@@ -155,8 +155,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @RelaxedMockK
     private lateinit var deleteConversations: DeleteConversations
 
-    @RelaxedMockK
-    private lateinit var getMailSettings: GetMailSettings
+    private val getMailSettings: GetMailSettings = mockk(relaxed = true)
 
     private lateinit var viewModel: MailboxViewModel
 
@@ -177,28 +176,29 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(LABEL_FOLDER) } returns true // LABEL_FOLDER type to use with conversations
         every { conversationModeEnabled(ALL_MAIL) } returns true // ALL_MAIL type to use with conversations
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
+        coEvery { observeMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
+            .withLoadMore(loadMoreFlowOf<GetMessagesResult>()) {}
         every { observeConversationsByLocation(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
             .withLoadMore(loadMoreFlowOf<GetConversationsResult>()) {}
-        coEvery { observeMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
         viewModel = MailboxViewModel(
-            messageDetailsRepository,
-            userManager,
-            jobManager,
-            deleteMessage,
-            dispatchers,
-            contactsRepository,
-            labelRepository,
-            verifyConnection,
-            networkConfigurator,
-            conversationModeEnabled,
-            observeConversationsByLocation,
-            changeConversationsReadStatus,
-            changeConversationsStarredStatus,
-            observeMessagesByLocation,
-            moveConversationsToFolder,
-            moveMessagesToFolder,
-            deleteConversations,
-            getMailSettings
+            messageDetailsRepository = messageDetailsRepository,
+            userManager = userManager,
+            jobManager = jobManager,
+            deleteMessage = deleteMessage,
+            dispatchers = dispatchers,
+            contactsRepository = contactsRepository,
+            labelRepository = labelRepository,
+            verifyConnection = verifyConnection,
+            networkConfigurator = networkConfigurator,
+            conversationModeEnabled = conversationModeEnabled,
+            observeMessagesByLocation = observeMessagesByLocation,
+            observeConversationsByLocation = observeConversationsByLocation,
+            changeConversationsReadStatus = changeConversationsReadStatus,
+            changeConversationsStarredStatus = changeConversationsStarredStatus,
+            moveConversationsToFolder = moveConversationsToFolder,
+            moveMessagesToFolder = moveMessagesToFolder,
+            deleteConversations = deleteConversations,
+            getMailSettings = getMailSettings
         )
 
         val jobEntryPoint = mockk<JobEntryPoint>()
