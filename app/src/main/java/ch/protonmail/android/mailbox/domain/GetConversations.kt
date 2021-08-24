@@ -19,13 +19,13 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.domain.loadMoreCatch
+import ch.protonmail.android.domain.loadMoreMap
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,7 +42,7 @@ class GetConversations @Inject constructor(
     operator fun invoke(
         userId: UserId,
         locationId: String
-    ): Flow<GetConversationsResult> {
+    ): LoadMoreFlow<GetConversationsResult> {
         val params = GetConversationsParameters(
             locationId = locationId,
             userId = userId,
@@ -51,7 +51,7 @@ class GetConversations @Inject constructor(
 
         Timber.v("GetConversations with params: $params, locationId: $locationId")
         return conversationRepository.getConversations(params)
-            .map { result ->
+            .loadMoreMap map@{ result ->
                 return@map when (result) {
                     is DataResult.Success -> {
                         GetConversationsResult.Success(
@@ -74,7 +74,7 @@ class GetConversations @Inject constructor(
                     }
                 }
             }
-            .catch {
+            .loadMoreCatch {
                 emit(GetConversationsResult.Error(it))
             }
     }

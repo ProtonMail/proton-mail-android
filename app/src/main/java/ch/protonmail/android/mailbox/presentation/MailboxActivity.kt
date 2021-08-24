@@ -609,6 +609,8 @@ internal class MailboxActivity :
             val lastVisibleItem = layoutManager!!.findLastVisibleItemPosition()
             val lastPosition = adapter!!.itemCount - 1
             if (lastVisibleItem == lastPosition && dy > 0 && !setLoadingMore(true)) {
+                mailboxViewModel.loadMore()
+                // TODO: remove, use loadMore only
                 loadMailboxItems(oldestItemTimestamp = mailboxAdapter.getOldestMailboxItemTimestamp())
             }
 
@@ -661,6 +663,9 @@ internal class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
             delay(3.toDuration(TimeUnit.SECONDS))
+            // TODO: is this needed?
+            mailboxViewModel.loadMore()
+            // TODO: remove, use loadMore only
             loadMailboxItems(includeLabels = true)
         }
         mailboxViewModel.checkConnectivityDelayed()
@@ -709,6 +714,7 @@ internal class MailboxActivity :
             firstLogin = false
             refreshMailboxJobRunning = true
             app.updateDone()
+            // TODO: remove?
             loadMailboxItems()
             true
         }

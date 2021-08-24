@@ -40,8 +40,11 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.di.JobEntryPoint
+import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.loadMoreFlowOf
+import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -174,7 +177,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(LABEL_FOLDER) } returns true // LABEL_FOLDER type to use with conversations
         every { conversationModeEnabled(ALL_MAIL) } returns true // ALL_MAIL type to use with conversations
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
-        coEvery { getConversations(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
+        every { getConversations(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
+            .withLoadMore(loadMoreFlowOf<GetConversationsResult>()) {}
         coEvery { observeMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
         viewModel = MailboxViewModel(
             messageDetailsRepository,
@@ -627,7 +631,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun getMailboxItemsCallsGetConversationsWithTheCorrectLocationIdWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirst() {
+    fun getMailboxItemsCallsGetConversationsWithTheCorrectLocationIdWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirst() = runBlockingTest {
+
+        // given
         val location = LABEL
         val labelId = "customLabelIdi2386"
         val uuid = "9238h82388sdfa8sdf8asd3234"
@@ -637,7 +643,12 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns true
 
+        val conversationsFlow = mockk<LoadMoreFlow<GetConversationsResult>>()
+        every { getConversations(any(), any()) } returns conversationsFlow
+
+        // when
         viewModel.setNewMailboxLocation(location)
+        advanceUntilIdle()
         viewModel.loadMailboxItems(
             labelId,
             false,
@@ -646,7 +657,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             oldestMessageTimestamp
         )
 
-        // TODO: verify { getConversations.loadMore(userId, labelId, oldestMessageTimestamp) }
+        // then
+        verify { conversationsFlow.loadMore() }
     }
 
     @Test

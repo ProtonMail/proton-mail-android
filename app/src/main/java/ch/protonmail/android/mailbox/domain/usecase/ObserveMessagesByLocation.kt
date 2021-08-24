@@ -52,7 +52,7 @@ class ObserveMessagesByLocation @Inject constructor(
             Constants.MessageLocationType.SEARCH,
             Constants.MessageLocationType.SPAM,
             Constants.MessageLocationType.TRASH,
-            Constants.MessageLocationType.ALL_MAIL->
+            Constants.MessageLocationType.ALL_MAIL ->
                 messageRepository.observeMessagesByLocation(
                     userId,
                     mailboxLocation

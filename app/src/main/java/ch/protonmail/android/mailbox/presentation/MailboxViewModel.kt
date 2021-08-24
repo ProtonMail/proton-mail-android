@@ -37,8 +37,10 @@ import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchMessageCountsJob
@@ -68,7 +70,6 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -87,6 +88,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
+import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.collections.set
@@ -156,6 +158,8 @@ class MailboxViewModel @Inject constructor(
 
     val mailboxLocation = mutableMailboxLocation.asStateFlow()
 
+    private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxState>
+
     init {
         combine(
             mutableMailboxLocation,
@@ -176,7 +180,8 @@ class MailboxViewModel @Inject constructor(
 
                 if (conversationModeEnabled(location)) {
                     Timber.v("Getting conversations for $location, label: $labelId, user: $userId")
-                    conversationsAsMailboxItems(location, labelId, userId)
+                    mailboxStateFlow = conversationsAsMailboxItems(location, labelId, userId)
+                    mailboxStateFlow
                 } else {
                     Timber.v("Getting messages for $location label: $labelId user: $userId")
                     observeMessagesByLocation(location, labelId, userId)
@@ -323,9 +328,7 @@ class MailboxViewModel @Inject constructor(
         val location = mailboxLocation.value
         Timber.v("loadMailboxItems location: $location")
         if (conversationModeEnabled(location)) {
-            val userId = userManager.currentUserId ?: return
-            val locationId = labelId ?: location.messageLocationTypeValue.toString()
-            // TODO: getConversations.loadMore(userId, locationId, oldestItemTimestamp)
+            mailboxStateFlow.loadMore()
         }
 
         fetchMessages(
@@ -336,6 +339,17 @@ class MailboxViewModel @Inject constructor(
             uuid,
             refreshMessages
         )
+    }
+
+    /**
+     * Request to fetch more items from API
+     */
+    fun loadMore() {
+        if (conversationModeEnabled(mailboxLocation.value)) {
+            mailboxStateFlow.loadMore()
+        } else {
+            unsupported
+        }
     }
 
     fun messagesToMailboxItemsBlocking(messages: List<Message>) = runBlocking {
@@ -394,7 +408,7 @@ class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         labelId: String?,
         userId: UserId
-    ): Flow<MailboxState> {
+    ): LoadMoreFlow<MailboxState> {
         val locationId = if (!labelId.isNullOrEmpty()) {
             labelId
         } else {
@@ -404,7 +418,7 @@ class MailboxViewModel @Inject constructor(
         return getConversations(
             userId,
             locationId
-        ).map { result ->
+        ).loadMoreMap { result ->
             when (result) {
                 is GetConversationsResult.Success -> {
                     MailboxState.Data(
