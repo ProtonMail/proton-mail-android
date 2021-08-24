@@ -27,7 +27,9 @@ import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
-import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.DataResult.Error
+import me.proton.core.domain.arch.DataResult.Processing
+import me.proton.core.domain.arch.DataResult.Success
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -53,26 +55,24 @@ class ObserveConversationsByLocation @Inject constructor(
         Timber.v("GetConversations with params: $params, locationId: $locationId")
         return conversationRepository.getConversations(params)
             .loadMoreMap map@{ result ->
-                return@map when (result) {
-                    is DataResult.Success -> {
+                when (result) {
+                    is Success -> {
                         GetConversationsResult.Success(
                             result.value.filter { conversation ->
                                 conversation.labels.any { it.id == params.locationId }
                             }
                         )
                     }
-                    is DataResult.Error.Remote -> {
+                    is Error.Remote -> {
                         Timber.e(result.cause, "Conversations couldn't be fetched")
                         if (result.protonCode == NO_MORE_CONVERSATIONS_ERROR_CODE) {
-                            return@map GetConversationsResult.NoConversationsFound
+                            GetConversationsResult.NoConversationsFound
+                        } else {
+                            GetConversationsResult.Error(result.cause)
                         }
-                        return@map GetConversationsResult.Error(result.cause)
                     }
-                    is DataResult.Error ->
-                        GetConversationsResult.Error(result.cause)
-                    else -> {
-                        GetConversationsResult.Error()
-                    }
+                    is Error -> GetConversationsResult.Error(result.cause)
+                    is Processing -> GetConversationsResult.Loading
                 }
             }
             .loadMoreCatch {

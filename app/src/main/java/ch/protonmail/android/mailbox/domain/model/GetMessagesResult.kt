@@ -24,5 +24,6 @@ import ch.protonmail.android.data.local.model.Message
 sealed class GetMessagesResult {
     data class Success(val messages: List<Message>) : GetMessagesResult()
     data class Error(val throwable: Throwable? = null) : GetMessagesResult()
+    object Loading : GetMessagesResult()
     object NoMessagesFound : GetMessagesResult()
 }

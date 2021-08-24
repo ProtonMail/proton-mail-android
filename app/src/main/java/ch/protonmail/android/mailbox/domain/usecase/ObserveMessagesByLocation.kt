@@ -25,6 +25,10 @@ import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.repository.NO_MORE_MESSAGES_ERROR_CODE
+import me.proton.core.domain.arch.DataResult.Error
+import me.proton.core.domain.arch.DataResult.Processing
+import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
@@ -64,9 +68,20 @@ class ObserveMessagesByLocation @Inject constructor(
             Constants.MessageLocationType.INVALID -> throw IllegalArgumentException("Invalid location.")
             else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")
         }
-            .loadMoreMap {
-                Timber.v("GetMessagesByLocation new messages size: ${it.size}, location: $mailboxLocation")
-                GetMessagesResult.Success(it) as GetMessagesResult
+            .loadMoreMap { result ->
+                when (result) {
+                    is Success -> GetMessagesResult.Success(result.value)
+                    is Error.Remote -> {
+                        Timber.e(result.cause, "Messages couldn't be fetched")
+                        if (result.protonCode == NO_MORE_MESSAGES_ERROR_CODE) {
+                            GetMessagesResult.NoMessagesFound
+                        } else {
+                            GetMessagesResult.Error(result.cause)
+                        }
+                    }
+                    is Error -> GetMessagesResult.Error(result.cause)
+                    is Processing -> GetMessagesResult.Loading
+                }
             }
             .loadMoreCatch {
                 emit(GetMessagesResult.Error(it))

@@ -329,6 +329,8 @@ class MailboxViewModel @Inject constructor(
                     MailboxState.Data(noMoreItems = true)
                 is GetConversationsResult.Error ->
                     MailboxState.Error(error = "Failed getting conversations", throwable = result.throwable)
+                is GetConversationsResult.Loading ->
+                    MailboxState.Loading
             }
         }
     }
@@ -351,6 +353,8 @@ class MailboxViewModel @Inject constructor(
                     MailboxState.Data(noMoreItems = true)
                 is GetMessagesResult.Error ->
                     MailboxState.Error("GetMessagesResult Error", result.throwable)
+                is GetMessagesResult.Loading ->
+                    MailboxState.Loading
             }
         }
     }

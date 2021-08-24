@@ -115,7 +115,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         val fromDatabaseFlow = observeConversationsFromDatabase(params)
             .map { Success(ResponseSource.Local, it) }
 
-        val fromApiFlow = observeConversationsFromApi(params)
+        val fromApiFlow = getConversationsFromApi(params)
             // Emit a null at start, in order emit data from Database, without waiting for first emission from Api
             .loadMoreEmitInitialNull()
 
@@ -128,7 +128,7 @@ class ConversationsRepositoryImpl @Inject constructor(
                 is Success -> saveConversations(fromApi)
                 is Error -> emit(fromApi)
                 null, is DataResult.Processing -> {
-                    /* noop */
+                    // noop
                 }
             }
 
@@ -500,7 +500,9 @@ class ConversationsRepositoryImpl @Inject constructor(
             ).toDomainModelList()
         }
 
-    private fun observeConversationsFromApi(params: GetConversationsParameters): LoadMoreFlow<DataResult<ConversationsResponse>> =
+    private fun getConversationsFromApi(
+        params: GetConversationsParameters
+    ): LoadMoreFlow<DataResult<ConversationsResponse>> =
         loadMoreFlow(
             initialBookmark = params.oldestConversationTimestamp,
             createNextBookmark = { dataResult, currentBookmark ->
