@@ -371,20 +371,22 @@ class MessageRepositoryTest {
         } returns dbFlow
         coEvery {
             protonMailApiManager.getMessages(
+                UserIdTag(testUserId),
                 mailboxLocation.messageLocationTypeValue,
-                UserIdTag(testUserId)
+                null,
+                null
             )
         } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
         // when
-        messageRepository.observeMessagesByLocation(mailboxLocation, testUserId).test {
+        messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).test {
             dbFlow.emit(dbMessages)
 
             // then
             coVerify {
                 protonMailApiManager.getMessages(
-                    mailboxLocation.messageLocationTypeValue, UserIdTag(testUserId)
+                    UserIdTag(testUserId), mailboxLocation.messageLocationTypeValue, null, null
                 )
             }
             coVerify { messageDao.saveMessages(netMessages) }
@@ -408,14 +410,16 @@ class MessageRepositoryTest {
         val testException = IOException("NetworkError!")
         coEvery {
             protonMailApiManager.getMessages(
+                UserIdTag(testUserId),
                 mailboxLocation.messageLocationTypeValue,
-                UserIdTag(testUserId)
+                null,
+                null
             )
         } throws testException
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
         // when
-        messageRepository.observeMessagesByLocation(mailboxLocation, testUserId).test {
+        messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).test {
             dbFlow.emit(dbMessages)
 
             // then
@@ -494,8 +498,10 @@ class MessageRepositoryTest {
         coEvery { messageDao.observeAllMessages() } returns flowOf(dbMessages)
         coEvery {
             protonMailApiManager.getMessages(
+                UserIdTag(testUserId),
                 Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                UserIdTag(testUserId)
+                null,
+                null
             )
         } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
@@ -520,8 +526,10 @@ class MessageRepositoryTest {
         coEvery { messageDao.observeAllMessages() } returns flowOf(dbMessages)
         coEvery {
             protonMailApiManager.getMessages(
+                UserIdTag(testUserId),
                 Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                UserIdTag(testUserId)
+                null,
+                null
             )
         } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
@@ -548,20 +556,22 @@ class MessageRepositoryTest {
         coEvery { messageDao.observeStarredMessages() } returns flowOf(dbMessages)
         coEvery {
             protonMailApiManager.getMessages(
+                UserIdTag(testUserId),
                 Constants.MessageLocationType.STARRED.messageLocationTypeValue,
-                UserIdTag(testUserId)
+                null,
+                null
             )
         } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
 
         // when
         val resultsList =
-            messageRepository.observeMessagesByLocation(mailboxLocation, UserId(testUserName)).take(2).toList()
+            messageRepository.observeMessagesByLocation(UserId(testUserName), mailboxLocation).take(2).toList()
 
         // then
         coVerify {
             protonMailApiManager.getMessages(
-                Constants.MessageLocationType.STARRED.messageLocationTypeValue, UserIdTag(testUserId)
+                UserIdTag(testUserId), Constants.MessageLocationType.STARRED.messageLocationTypeValue, null, null
             )
         }
         coVerify { messageDao.saveMessages(netMessages) }

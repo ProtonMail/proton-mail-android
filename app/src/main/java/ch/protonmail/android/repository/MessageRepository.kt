@@ -103,7 +103,7 @@ class MessageRepository @Inject constructor(
      * if it exists there. Otherwise, fetches it.
      *
      * @param messageId A message id that should be used to get a message
-     * @param username Username for which the message is being retrieved. It is used to check whether the
+     * @param userId User id for which the message is being retrieved. It is used to check whether the
      *        auto-download-messages setting is turned on or not.
      * @param shouldFetchMessageDetails An optional parameter that should indicate whether message details
      *        should be fetched, even if the user settings say otherwise. Example: When a message is being open.
@@ -224,11 +224,11 @@ class MessageRepository @Inject constructor(
     }
 
     fun observeMessagesByLocation(
-        location: Constants.MessageLocationType,
-        userId: UserId
+        userId: UserId,
+        location: Constants.MessageLocationType
     ): Flow<List<Message>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
-        return observeLocationDbDataFlow(location, messagesDao)
+        return observeMessagesByLocationFromDatabase(location, messagesDao)
             .onStart {
                 if (!connectivityManager.isInternetConnectionPossible()) {
                     Timber.d("Skipping network refresh as connectivity is not available")
@@ -236,23 +236,24 @@ class MessageRepository @Inject constructor(
                 }
 
                 Timber.v("location: $location, trying fetching from remote")
-                runCatching { protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId)) }
-                    .fold(
-                        onSuccess = { messagesResponse ->
-                            if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                                persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
-                            }
-                        },
-                        onFailure = { exception ->
-                            val dbData = observeLocationDbDataFlow(location, messagesDao).first()
-                            emit(dbData)
-                            throw exception
+                runCatching {
+                    protonMailApiManager.getMessages(UserIdTag(userId), location.messageLocationTypeValue)
+                }.fold(
+                    onSuccess = { messagesResponse ->
+                        if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
+                            persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
                         }
-                    )
+                    },
+                    onFailure = { exception ->
+                        val dbData = observeMessagesByLocationFromDatabase(location, messagesDao).first()
+                        emit(dbData)
+                        throw exception
+                    }
+                )
             }
     }
 
-    private fun observeLocationDbDataFlow(
+    private fun observeMessagesByLocationFromDatabase(
         location: Constants.MessageLocationType,
         messagesDao: MessageDao
     ) = if (location != Constants.MessageLocationType.STARRED) {
@@ -305,8 +306,10 @@ class MessageRepository @Inject constructor(
                 Timber.v("re-fetching messages all from remote")
                 runCatching {
                     protonMailApiManager.getMessages(
+                        UserIdTag(userId),
                         Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                        UserIdTag(userId)
+                        null,
+                        null
                     )
                 }
                     .fold(

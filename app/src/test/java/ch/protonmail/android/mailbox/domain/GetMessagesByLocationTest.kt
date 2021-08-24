@@ -55,8 +55,8 @@ class GetMessagesByLocationTest {
         val flowOfMessages = flowOf(messages)
         coEvery {
             mailboxRepository.observeMessagesByLocation(
-                mailboxLocation,
-                userId
+                userId,
+                mailboxLocation
             )
         } returns flowOfMessages
         val expected = GetMessagesResult.Success(messages)
@@ -100,7 +100,7 @@ class GetMessagesByLocationTest {
         val expected = GetMessagesResult.Success(messages)
         val flowOfMessages = flowOf(messages)
         coEvery {
-            mailboxRepository.observeMessagesByLocation(mailboxLocation, userId)
+            mailboxRepository.observeMessagesByLocation(userId, mailboxLocation)
         } returns flowOfMessages
 
         // when
@@ -143,8 +143,8 @@ class GetMessagesByLocationTest {
         val messagesResponseChannel = Channel<List<Message>>()
         coEvery {
             mailboxRepository.observeMessagesByLocation(
-                mailboxLocation,
-                userId
+                userId,
+                mailboxLocation
             )
         } returns messagesResponseChannel.receiveAsFlow()
         val expected = GetMessagesResult.Error(testException)

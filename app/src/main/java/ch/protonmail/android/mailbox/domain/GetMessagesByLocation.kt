@@ -50,8 +50,8 @@ class GetMessagesByLocation @Inject constructor(
             Constants.MessageLocationType.SPAM,
             Constants.MessageLocationType.TRASH ->
                 messageRepository.observeMessagesByLocation(
-                    mailboxLocation,
-                    userId
+                    userId,
+                    mailboxLocation
                 )
             // Since a message can be self-sent which from BE makes the message have INBOX and SENT both as a location
             // we decided that for now it's best we treat SENT as label

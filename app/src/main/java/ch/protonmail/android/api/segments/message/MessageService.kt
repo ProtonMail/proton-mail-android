@@ -84,11 +84,11 @@ interface MessageService {
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun getMessages(
+        @Tag userIdTag: UserIdTag,
         @Query("LabelID") location: Int,
         @Query("Order") order: String,
-        @Query("Begin") begin: String,
-        @Query("End") end: String,
-        @Tag userIdTag: UserIdTag
+        @Query("Begin") begin: Long?,
+        @Query("End") end: Long?
     ): MessagesResponse
 
     @GET("mail/v4/messages")
