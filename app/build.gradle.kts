@@ -282,7 +282,6 @@ dependencies {
     // We should not use include any of them in the run-time of this module, we need this dependency for of being able
     // to build the Dagger's dependency graph
     compileOnly(
-        project(Module.credentials),
         `assistedInject-annotations-dagger`
     )
 
