@@ -23,7 +23,6 @@ import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
@@ -125,9 +124,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var networkConfigurator: NetworkConfigurator
-
-    @RelaxedMockK
-    private lateinit var messageServiceScheduler: MessagesService.Scheduler
 
     @MockK
     private lateinit var conversationModeEnabled: ConversationModeEnabled
