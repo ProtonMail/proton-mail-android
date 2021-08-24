@@ -258,6 +258,7 @@ internal class MessageDetailsAdapter(
             attachmentsView.visibility = View.GONE
 
             val expirationInfoView = itemView.expirationInfoView
+            val decryptionErrorView = itemView.decryptionErrorView
             val displayRemoteContentButton = itemView.displayRemoteContentButton
             val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
             val editDraftButton = itemView.editDraftButton
@@ -270,6 +271,7 @@ internal class MessageDetailsAdapter(
             displayRemoteContentButton.isVisible = false
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             editDraftButton.isVisible = message.isDraft()
+            decryptionErrorView.bind(listItem.showDecryptionError)
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
@@ -353,6 +355,7 @@ internal class MessageDetailsAdapter(
                 // go through the rendering again (through `onLoadMessageBody` callback) and load them
                 allItems.map {
                     it.showLoadEmbeddedImagesButton = false
+                    it.showDecryptionError = false
                     it.messageFormattedHtml = null
                 }
                 val item = visibleItems!![position]
@@ -393,6 +396,7 @@ internal class MessageDetailsAdapter(
         parsedBody: String?,
         messageId: String,
         showLoadEmbeddedImagesButton: Boolean,
+        showDecryptionError: Boolean,
         attachments: List<Attachment>
     ) {
         val item: MessageDetailsListItem? = visibleItems?.firstOrNull {
@@ -410,6 +414,7 @@ internal class MessageDetailsAdapter(
         item.messageFormattedHtml = messageBodyParts.messageBody
         item.messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
         item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
+        item.showDecryptionError = showDecryptionError
         item.message.setAttachmentList(attachments)
         // Mark the message as read optimistically to reflect the change on the UI right away.
         // Note that this message is being referenced to from both the header and the item.

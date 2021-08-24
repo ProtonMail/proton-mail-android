@@ -42,6 +42,7 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.LabelId
+import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -69,7 +70,6 @@ import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -538,14 +538,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         // When
         val actual = viewModel.loadMessageBody(message).first()
+        val expected = MessageBodyState.Success(message)
 
         // Then
         verify { messageRepository.markRead(listOf("messageId1")) }
-        assertEquals(message, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
-    fun loadMessageBodyDoesNotMarkMessageAsReadWhenTheMessageDecryptionFails() = runBlockingTest {
+    fun loadMessageBodyDoesMarksMessageAsReadWhenTheMessageDecryptionFails() = runBlockingTest {
         // Given
         val message = mockk<Message>(relaxed = true)
         every { message.messageId } returns "messageId2"
@@ -555,12 +556,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { message.senderEmail } returns "senderEmail"
         every { message.decrypt(any(), any(), any()) } throws Exception("Test - Decryption failed")
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
+        coEvery { messageRepository.markRead(any()) } just Runs
 
         // When
-        val actual: Flow<Message> = viewModel.loadMessageBody(message)
+        val actual = viewModel.loadMessageBody(message).first()
+        val expected = MessageBodyState.Error.DecryptionError(message)
 
         // Then
-        verify(exactly = 0) { messageRepository.markRead(any()) }
+        verify { messageRepository.markRead(listOf("messageId2")) }
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -582,7 +586,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
             // Then
             verify(exactly = 0) { messageRepository.markRead(any()) }
-            assertEquals(message, expectItem())
+            assertEquals(MessageBodyState.Success(message), expectItem())
             expectComplete()
         }
     }
@@ -604,7 +608,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
             // Then
             verify(exactly = 1) { messageRepository.markRead(any()) }
-            assertEquals(message, expectItem())
+            assertEquals(MessageBodyState.Success(message), expectItem())
             expectComplete()
         }
     }
@@ -687,7 +691,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         val decryptedMessage = viewModel.loadMessageBody(message).first()
 
-        assertEquals(decryptedMessageHtml, decryptedMessage.decryptedHTML)
+        assertEquals(decryptedMessageHtml, (decryptedMessage as MessageBodyState.Success).message.decryptedHTML)
     }
 
     @Test
@@ -712,9 +716,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         // When
         val decryptedMessage = viewModel.loadMessageBody(message).first()
+        val expectedMessage = MessageBodyState.Success(fetchedMessage)
 
         // Then
-        assertEquals(fetchedMessage, decryptedMessage)
+        assertEquals(expectedMessage, decryptedMessage)
         verify(exactly = 0) { messageRepository.markRead(any()) }
     }
 

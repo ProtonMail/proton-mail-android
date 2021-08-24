@@ -52,6 +52,7 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
+import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
@@ -178,6 +179,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 message.decryptedHTML,
                 messageId,
                 false,
+                false,
                 message.attachments
             )
         }
@@ -214,8 +216,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private fun onLoadMessageBody(message: Message) {
         if (message.messageId != null) {
-            viewModel.loadMessageBody(message).mapLatest { loadedMessage ->
+            viewModel.loadMessageBody(message).mapLatest { messageBodyState ->
 
+                val showDecryptionError = messageBodyState is MessageBodyState.Error.DecryptionError
+                val loadedMessage = messageBodyState.message
                 val parsedBody = viewModel.formatMessageHtmlBody(
                     loadedMessage,
                     UiUtil.getRenderWidth(this.windowManager),
@@ -229,6 +233,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     parsedBody,
                     messageId,
                     showLoadEmbeddedImagesButton,
+                    showDecryptionError,
                     loadedMessage.attachments
                 )
             }.launchIn(lifecycleScope)

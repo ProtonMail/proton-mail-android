@@ -53,6 +53,7 @@ import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.LabelId
+import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
@@ -300,19 +301,24 @@ internal class MessageDetailsViewModel @Inject constructor(
         Timber.v("loadMessageBody ${message.messageId} isNotDecrypted: ${message.decryptedHTML.isNullOrEmpty()}")
 
         if (!message.decryptedHTML.isNullOrEmpty()) {
-            emit(message)
+            emit(MessageBodyState.Success(message))
         } else {
             val userId = userManager.requireCurrentUserId()
             val messageId = requireNotNull(message.messageId)
-            val fetchedMessage = messageRepository.getMessage(userId, messageId, true)
-            val isDecrypted = fetchedMessage?.tryDecrypt(publicKeys)
-            if (isDecrypted == true) {
-                Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")
-                if (!fetchedMessage.isRead) {
-                    messageRepository.markRead(listOf(messageId))
-                }
-                emit(fetchedMessage)
+            val fetchedMessage = messageRepository.getMessage(userId, messageId, true) ?: return@flow
+
+            val isDecrypted = fetchedMessage.tryDecrypt(publicKeys)
+            Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")
+            if (!fetchedMessage.isRead) {
+                messageRepository.markRead(listOf(messageId))
             }
+
+            if (isDecrypted == true) {
+                emit(MessageBodyState.Success(fetchedMessage))
+            } else {
+                emit(MessageBodyState.Error.DecryptionError(fetchedMessage))
+            }
+
         }
     }.flowOn(dispatchers.Io)
 

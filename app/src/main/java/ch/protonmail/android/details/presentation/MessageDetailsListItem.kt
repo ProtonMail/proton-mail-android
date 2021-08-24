@@ -30,6 +30,7 @@ class MessageDetailsListItem : ExpandableRecyclerAdapter.ListItem {
     var messageFormattedHtmlWithQuotedHistory: String? = null
     var messageFormattedHtml: String? = null
     var showLoadEmbeddedImagesButton: Boolean = false
+    var showDecryptionError: Boolean = false
 
     constructor(message: Message) : super(TYPE_HEADER) {
         this.message = message
