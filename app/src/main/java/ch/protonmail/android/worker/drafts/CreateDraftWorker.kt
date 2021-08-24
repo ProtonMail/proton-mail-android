@@ -88,7 +88,7 @@ internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM = "keySaveDraftErrorR
 internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID = "keySaveDraftSuccessResultDbId"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
-private const val SAVE_DRAFT_MAX_RETRIES = 3
+private const val SAVE_DRAFT_MAX_RETRIES = 1
 
 @HiltWorker
 class CreateDraftWorker @AssistedInject constructor(
@@ -388,7 +388,7 @@ class CreateDraftWorker @AssistedInject constructor(
                         KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID to previousSenderAddressId
                     )
                 )
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.LINEAR, TEN_SECONDS, TimeUnit.SECONDS)
                 .build()
 
             val uniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId}"
