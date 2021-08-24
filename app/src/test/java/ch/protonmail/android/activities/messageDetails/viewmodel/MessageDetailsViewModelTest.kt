@@ -30,11 +30,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.toConversationUiModel
@@ -46,6 +43,9 @@ import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus

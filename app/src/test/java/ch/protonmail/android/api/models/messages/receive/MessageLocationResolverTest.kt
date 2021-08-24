@@ -21,7 +21,7 @@ package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.db.LabelEntity
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test

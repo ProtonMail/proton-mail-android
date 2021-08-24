@@ -32,7 +32,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
@@ -41,6 +40,7 @@ import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.utils.MessageUtils
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager

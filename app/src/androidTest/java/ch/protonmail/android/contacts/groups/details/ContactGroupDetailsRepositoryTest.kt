@@ -23,8 +23,8 @@ import androidx.room.EmptyResultSetException
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.every
 import io.mockk.mockk

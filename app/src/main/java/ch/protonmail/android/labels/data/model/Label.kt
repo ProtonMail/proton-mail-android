@@ -17,48 +17,58 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.api.models.messages.receive
+package ch.protonmail.android.labels.data.model
 
-import ch.protonmail.android.api.utils.Fields
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+internal const val ID = "ID"
+internal const val NAME = "Name"
+internal const val PATH = "Path"
+internal const val COLOR = "Color"
+internal const val TYPE = "Type"
+internal const val NOTIFY = "Notify"
+internal const val ORDER = "Order"
+internal const val EXPANDED = "Expanded"
+internal const val STICKY = "Sticky"
+internal const val PARENT_ID = "ParentID"
+
 @Serializable
 data class Label(
-    @SerialName(Fields.Label.ID)
+    @SerialName(ID)
     val id: String,
 
     //required, cannot be same as an existing label of this Type. Max length is 100 characters
-    @SerialName(Fields.Label.NAME)
+    @SerialName(NAME)
     val name: String,
 
-    @SerialName(Fields.Label.PATH)
+    @SerialName(PATH)
     val path: String,
 
     // required, must match default colors
-    @SerialName(Fields.Label.COLOR)
+    @SerialName(COLOR)
     val color: String,
 
     // required, 1 => Message Labels (default), 2 => Contact Groups, 3 => Message Folders
-    @SerialName(Fields.Label.TYPE)
+    @SerialName(TYPE)
     val type: Int,
 
     // optional, 0 => no desktop/email notifications, 1 => notifications, folders only, default is 1 for folders
-    @SerialName(Fields.Label.NOTIFY)
+    @SerialName(NOTIFY)
     val notify: Int,
 
-    @SerialName(Fields.Label.ORDER)
+    @SerialName(ORDER)
     val order: Int?,
 
     // optional, encrypted label id of parent folder, default is root level
-    @SerialName(Fields.Label.PARENT_ID)
+    @SerialName(PARENT_ID)
     val parentId: String? = null,
 
     // v4 optional, 0 => collapse and hide sub-folders, 1 => expanded and show sub-folders
-    @SerialName(Fields.Label.EXPANDED)
+    @SerialName(EXPANDED)
     val expanded: Int?,
 
     // v4 optional, 0 => not sticky, 1 => stick to the page in the sidebar
-    @SerialName(Fields.Label.STICKY)
+    @SerialName(STICKY)
     val sticky: Int?,
 )

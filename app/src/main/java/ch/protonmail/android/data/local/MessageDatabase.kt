@@ -24,9 +24,9 @@ import androidx.room.TypeConverters
 import ch.protonmail.android.data.ProtonMailConverters
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.AttachmentTypesConverter
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel

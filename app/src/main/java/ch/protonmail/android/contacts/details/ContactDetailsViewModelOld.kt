@@ -34,10 +34,10 @@ import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -207,7 +207,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                     }
                 },
             { groups: List<LabelEntity>,
-                emails: List<ContactEmail> ->
+              emails: List<ContactEmail> ->
                 allContactGroups = groups.map { entity ->
                     ContactLabelUiModel(
                         id = entity.id,

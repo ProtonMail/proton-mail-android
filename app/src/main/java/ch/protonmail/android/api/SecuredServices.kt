@@ -23,12 +23,12 @@ import ch.protonmail.android.api.segments.contact.ContactService
 import ch.protonmail.android.api.segments.device.DeviceService
 import ch.protonmail.android.api.segments.event.EventService
 import ch.protonmail.android.api.segments.key.KeyService
-import ch.protonmail.android.api.segments.label.LabelService
 import ch.protonmail.android.api.segments.message.MessageService
 import ch.protonmail.android.api.segments.organization.OrganizationService
 import ch.protonmail.android.api.segments.payment.PaymentService
 import ch.protonmail.android.api.segments.report.ReportService
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsService
+import ch.protonmail.android.labels.data.api.LabelService
 import ch.protonmail.android.mailbox.data.remote.ConversationService
 import retrofit2.Retrofit
 
@@ -59,7 +59,6 @@ class SecuredServices(private val retrofit: Retrofit) {
     val conversation: ConversationService by createService(ConversationService::class.java)
 
     // Every service gets the same Retrofit instance (lazy loaded)
-    private fun <T> createService(serviceInterface: Class<T>): Lazy<T> {
-        return lazy { retrofit.create(serviceInterface) }
-    }
+    private fun <T> createService(serviceInterface: Class<T>): Lazy<T> =
+        lazy { retrofit.create(serviceInterface) }
 }

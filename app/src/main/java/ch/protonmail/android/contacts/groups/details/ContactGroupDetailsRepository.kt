@@ -21,7 +21,7 @@ package ch.protonmail.android.contacts.groups.details
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.db.LabelEntity
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

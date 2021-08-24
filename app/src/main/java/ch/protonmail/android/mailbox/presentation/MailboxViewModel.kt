@@ -30,10 +30,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.entity.Name
@@ -43,6 +40,9 @@ import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSec
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper

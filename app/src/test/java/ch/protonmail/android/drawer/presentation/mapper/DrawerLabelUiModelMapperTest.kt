@@ -21,9 +21,9 @@ package ch.protonmail.android.drawer.presentation.mapper
 
 import android.graphics.Color
 import ch.protonmail.android.R
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.AQUA_BASE_V3_COLOR
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.SAGE_BASE_V3_COLOR
+import ch.protonmail.android.labels.data.db.LabelEntity
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic

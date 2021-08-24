@@ -23,8 +23,8 @@ import ch.protonmail.android.activities.messageDetails.DefaultDocumentParser
 import ch.protonmail.android.activities.messageDetails.DefaultImageDecoder
 import ch.protonmail.android.activities.messageDetails.DocumentParser
 import ch.protonmail.android.activities.messageDetails.ImageDecoder
-import ch.protonmail.android.data.LabelRepository
-import ch.protonmail.android.data.RoomLabelRepository
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.RoomLabelRepository
 import ch.protonmail.android.mailbox.data.ConversationsRepositoryImpl
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import dagger.Binds

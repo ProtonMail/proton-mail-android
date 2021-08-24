@@ -20,9 +20,9 @@
 package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs

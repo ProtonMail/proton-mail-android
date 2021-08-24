@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models.contacts.receive
+package ch.protonmail.android.labels.domain.mapper
 
-import ch.protonmail.android.api.models.messages.receive.Label
-import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.Label
+import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelRequestBody
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject

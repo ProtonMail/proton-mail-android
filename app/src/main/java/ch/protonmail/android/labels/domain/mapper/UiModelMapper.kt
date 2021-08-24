@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.mapper
+package ch.protonmail.android.labels.domain.mapper
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map

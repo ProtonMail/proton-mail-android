@@ -43,12 +43,8 @@ import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UnregisterDeviceRequestBody
 import ch.protonmail.android.api.models.address.KeyActivationBody
-import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
-import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
-import ch.protonmail.android.api.models.messages.receive.LabelResponse
-import ch.protonmail.android.api.models.messages.receive.LabelsResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
@@ -59,7 +55,6 @@ import ch.protonmail.android.api.segments.connectivity.ConnectivityApiSpec
 import ch.protonmail.android.api.segments.contact.ContactApiSpec
 import ch.protonmail.android.api.segments.device.DeviceApiSpec
 import ch.protonmail.android.api.segments.key.KeyApiSpec
-import ch.protonmail.android.api.segments.label.LabelApiSpec
 import ch.protonmail.android.api.segments.message.MessageApiSpec
 import ch.protonmail.android.api.segments.organization.OrganizationApiSpec
 import ch.protonmail.android.api.segments.payment.PaymentApiSpec
@@ -68,6 +63,10 @@ import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
+import ch.protonmail.android.labels.data.api.LabelApiSpec
+import ch.protonmail.android.labels.data.model.LabelRequestBody
+import ch.protonmail.android.labels.data.model.LabelResponse
+import ch.protonmail.android.labels.data.model.LabelsResponse
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
@@ -213,7 +212,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchLabels(userId: UserId): ApiResult<LabelsResponse> = api.fetchLabels(userId)
 
-    override suspend fun fetchContactGroups(userId: UserId): ApiResult<ContactGroupsResponse> =
+    override suspend fun fetchContactGroups(userId: UserId): ApiResult<LabelsResponse> =
         api.fetchContactGroups(userId)
 
     override suspend fun fetchFolders(userId: UserId): ApiResult<LabelsResponse> = api.fetchFolders(userId)

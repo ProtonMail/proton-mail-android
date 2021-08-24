@@ -34,10 +34,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
 import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.data.local.model.PendingSend
@@ -46,6 +43,9 @@ import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.model.Label
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus

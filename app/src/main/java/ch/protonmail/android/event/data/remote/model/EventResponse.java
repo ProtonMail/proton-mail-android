@@ -28,7 +28,7 @@ import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
-import ch.protonmail.android.api.models.messages.receive.Label;
+import ch.protonmail.android.labels.data.model.Label;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.data.local.model.ContactEmail;

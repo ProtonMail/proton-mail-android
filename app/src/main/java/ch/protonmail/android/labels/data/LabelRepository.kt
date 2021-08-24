@@ -17,10 +17,10 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.data
+package ch.protonmail.android.labels.data
 
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 

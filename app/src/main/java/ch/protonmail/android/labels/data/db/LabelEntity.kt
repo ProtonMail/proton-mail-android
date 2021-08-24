@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.data.local.model
+package ch.protonmail.android.labels.data.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
+import ch.protonmail.android.labels.data.model.LabelId
 import me.proton.core.domain.entity.UserId
 
 const val TABLE_LABELS = "LabelEntity"

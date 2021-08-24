@@ -23,6 +23,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.Index
+import ch.protonmail.android.labels.data.db.COLUMN_LABEL_ID
+import ch.protonmail.android.labels.data.db.LabelEntity
 
 const val TABLE_CONTACT_EMAILS_LABELS_JOIN = "ContactEmailsLabelJoin"
 const val COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = "labelId"

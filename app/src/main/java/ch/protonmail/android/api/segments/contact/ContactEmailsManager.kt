@@ -21,13 +21,13 @@ package ch.protonmail.android.api.segments.contact
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
-import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
-import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.Label
+import ch.protonmail.android.labels.data.model.LabelsResponse
+import ch.protonmail.android.labels.domain.mapper.LabelsMapper
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
@@ -44,7 +44,7 @@ class ContactEmailsManager @Inject constructor(
 
     suspend fun refresh(pageSize: Int = Constants.CONTACTS_PAGE_SIZE) {
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
-        val contactGroupsResponse: ContactGroupsResponse? =
+        val contactGroupsResponse: LabelsResponse? =
             api.fetchContactGroups(userId).valueOrNull
 
         var currentPage = 0

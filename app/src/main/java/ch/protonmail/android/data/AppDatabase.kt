@@ -24,7 +24,7 @@ import androidx.room.Database
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.db.LabelEntity
 import me.proton.core.account.data.db.AccountConverters
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.account.data.entity.AccountEntity

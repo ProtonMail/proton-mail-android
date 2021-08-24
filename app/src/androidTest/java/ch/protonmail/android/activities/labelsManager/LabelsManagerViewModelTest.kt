@@ -26,8 +26,8 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.MockKAnnotations
 import io.mockk.every

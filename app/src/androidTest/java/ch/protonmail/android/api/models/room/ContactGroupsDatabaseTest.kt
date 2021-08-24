@@ -24,8 +24,8 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId

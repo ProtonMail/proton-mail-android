@@ -22,9 +22,9 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messagesList.MailboxItemFooterView

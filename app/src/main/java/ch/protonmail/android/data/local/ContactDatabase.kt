@@ -27,7 +27,7 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsConverter
-import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.db.LabelEntity
 import me.proton.core.data.room.db.CommonConverters
 
 @Database(

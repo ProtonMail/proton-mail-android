@@ -29,7 +29,6 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.feature.account.allLoggedInBlocking
@@ -38,6 +37,7 @@ import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import com.birbit.android.jobqueue.JobManager

@@ -19,10 +19,11 @@
 
 package ch.protonmail.android.api.models.contacts.receive
 
-import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.Label
+import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.domain.mapper.LabelsMapper
 import me.proton.core.domain.entity.UserId
 import org.junit.Assert.assertEquals
 import kotlin.test.BeforeTest

@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.mapper
+package ch.protonmail.android.labels.domain.mapper
 
 import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
 import timber.log.Timber

@@ -29,9 +29,9 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
-import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
-import ch.protonmail.android.api.models.messages.receive.LabelResponse
+import ch.protonmail.android.labels.domain.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.model.LabelRequestBody
+import ch.protonmail.android.labels.data.model.LabelResponse
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
 import dagger.assisted.Assisted

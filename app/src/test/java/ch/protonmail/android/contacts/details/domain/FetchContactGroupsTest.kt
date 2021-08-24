@@ -23,8 +23,8 @@ import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

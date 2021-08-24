@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.contacts.details
 
-import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.db.LabelEntity
 
 data class ContactEmailsGroups(
     val groups: List<LabelEntity>,

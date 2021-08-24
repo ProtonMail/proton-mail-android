@@ -47,7 +47,6 @@ import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchList
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.domain.model.SignatureVerification
@@ -56,6 +55,7 @@ import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.details.presentation.mapper.MessageEncryptionUiModelMapper
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter

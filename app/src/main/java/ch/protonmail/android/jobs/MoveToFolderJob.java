@@ -32,9 +32,9 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.data.local.model.LabelEntity;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import ch.protonmail.android.labels.data.db.LabelEntity;
 import timber.log.Timber;
 
 public class MoveToFolderJob extends ProtonMailBaseJob {

@@ -27,7 +27,7 @@ import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelId
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic

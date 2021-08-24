@@ -39,13 +39,13 @@ import ch.protonmail.android.activities.messageDetails.details.RecipientContextM
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.MessageEncryptionUiModel
 import ch.protonmail.android.details.presentation.view.CollapsedMessageViews
 import ch.protonmail.android.details.presentation.view.MessageDetailsHeaderIcons
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView

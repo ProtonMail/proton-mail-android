@@ -31,9 +31,6 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
-import ch.protonmail.android.data.local.model.COLUMN_LABEL_ID
-import ch.protonmail.android.data.local.model.COLUMN_LABEL_ORDER
-import ch.protonmail.android.data.local.model.COLUMN_LABEL_TYPE
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_DELETED
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
@@ -46,11 +43,14 @@ import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_EMAIL
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_NAME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SUBJECT
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_TIME
-import ch.protonmail.android.data.local.model.LabelEntity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TABLE_ATTACHMENTS
-import ch.protonmail.android.data.local.model.TABLE_LABELS
 import ch.protonmail.android.data.local.model.TABLE_MESSAGES
+import ch.protonmail.android.labels.data.db.COLUMN_LABEL_ID
+import ch.protonmail.android.labels.data.db.COLUMN_LABEL_ORDER
+import ch.protonmail.android.labels.data.db.COLUMN_LABEL_TYPE
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.db.TABLE_LABELS
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow

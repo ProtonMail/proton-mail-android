@@ -21,15 +21,15 @@ package ch.protonmail.android.contacts.groups.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
-import ch.protonmail.android.api.models.messages.receive.Label
-import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
-import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.Label
+import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelRequestBody
+import ch.protonmail.android.labels.data.model.LabelResponse
+import ch.protonmail.android.labels.domain.mapper.LabelsMapper
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.coEvery

@@ -16,12 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.segments.label
+package ch.protonmail.android.labels.data.api
 
-import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
-import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
-import ch.protonmail.android.api.models.messages.receive.LabelResponse
-import ch.protonmail.android.api.models.messages.receive.LabelsResponse
+import ch.protonmail.android.labels.data.model.LabelRequestBody
+import ch.protonmail.android.labels.data.model.LabelResponse
+import ch.protonmail.android.labels.data.model.LabelsResponse
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiResult
@@ -33,12 +32,12 @@ class LabelApi(private val apiProvider: ApiProvider) : LabelApiSpec {
             fetchLabels()
         }
 
-    override suspend fun fetchContactGroups(userId: UserId): ApiResult<ContactGroupsResponse> =
+    override suspend fun fetchContactGroups(userId: UserId): ApiResult<LabelsResponse> =
         apiProvider.get<LabelService>(userId).invoke {
             fetchContactGroups()
         }
 
-    override suspend fun fetchFolders(userId: UserId): ApiResult<ContactGroupsResponse> =
+    override suspend fun fetchFolders(userId: UserId): ApiResult<LabelsResponse> =
         apiProvider.get<LabelService>(userId).invoke {
             fetchFolders()
         }

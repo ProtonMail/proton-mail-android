@@ -25,8 +25,8 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsRes
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic

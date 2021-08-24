@@ -33,9 +33,9 @@ import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.utils.Event
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

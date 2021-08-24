@@ -32,9 +32,8 @@ import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.mapper.LabelUiModelMapper
-import ch.protonmail.android.mapper.map
+import ch.protonmail.android.labels.domain.mapper.LabelUiModelMapper
+import ch.protonmail.android.labels.domain.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.worker.PostLabelWorker
@@ -143,7 +142,7 @@ internal class LabelsManagerViewModel @Inject constructor(
     fun saveLabel(): LiveData<WorkInfo> {
         labelEditor?.let {
             return with(it.buildParams()) {
-                createOrUpdateLabel(labelName, color, expanded, isFolder, update, labelId)
+                createOrUpdateLabel(labelName, color, expanded, update, labelId)
             }
         }
 
@@ -151,7 +150,6 @@ internal class LabelsManagerViewModel @Inject constructor(
             tempLabelName.toString(),
             tempLabelColor.toColorHex(),
             0,
-            type.toExclusive(),
             false,
             null
         )
@@ -171,7 +169,6 @@ internal class LabelsManagerViewModel @Inject constructor(
         labelName: String,
         color: String,
         expanded: Int,
-        isFolder: Int,
         update: Boolean,
         labelId: String?
     ): LiveData<WorkInfo> {

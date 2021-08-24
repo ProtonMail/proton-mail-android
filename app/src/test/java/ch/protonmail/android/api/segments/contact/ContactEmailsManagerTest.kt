@@ -22,15 +22,15 @@ package ch.protonmail.android.api.segments.contact
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
-import ch.protonmail.android.api.models.contacts.receive.LabelsMapper
-import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.data.local.model.LabelId
+import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.Label
+import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelsResponse
+import ch.protonmail.android.labels.domain.mapper.LabelsMapper
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -99,7 +99,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             parentId = testParentId
         )
         val labelList = listOf(label)
-        val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
+        val apiResult = ApiResult.Success(LabelsResponse(labelList))
         val contactLabel = LabelEntity(
             id = LabelId(labelId1),
             userId = testUserId,
@@ -169,7 +169,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             notify = 0
         )
         val contactLabelList = listOf(contactLabel)
-        val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
+        val apiResult = ApiResult.Success(LabelsResponse(labelList))
         val contactEmailId1 = "emailId1"
         val contactEmailId2 = "emailId2"
         val contactEmailId3 = "emailId3"

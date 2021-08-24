@@ -32,21 +32,6 @@ object Fields {
         const val COUNTS = "Counts"
     }
 
-    object Label {
-        const val ID = "ID"
-        const val NAME = "Name"
-        const val PATH = "Path"
-        const val COLOR = "Color"
-        const val TYPE = "Type"
-        const val NOTIFY = "Notify"
-        const val ORDER = "Order"
-        const val EXPANDED = "Expanded"
-        const val STICKY = "Sticky"
-        const val DISPLAY = "Display"
-        const val EXCLUSIVE = "Exclusive"
-        const val PARENT_ID = "ParentID"
-    }
-
     object Payment {
         const val TYPE = "Type"
         const val DETAILS = "Details"
