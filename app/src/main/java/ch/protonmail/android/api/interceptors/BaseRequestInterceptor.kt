@@ -209,8 +209,8 @@ abstract class BaseRequestInterceptor(
 
         requestBuilder.setClientHeaders()
 
-        val tagUserId = request.tag(UserIdTag::class.java)?.let { UserId(it.id.id) }
-        val currentUserId = userManager.currentUserId?.let { UserId(it.id) }
+        val tagUserId = request.tag(UserIdTag::class.java)?.id
+        val currentUserId = userManager.currentUserId
 
         when {
             tagUserId != null -> requestBuilder.setSessionHeadersFor(tagUserId)

@@ -31,6 +31,7 @@ import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import io.reactivex.Observable
+import me.proton.core.domain.entity.UserId
 import java.io.IOException
 
 interface MessageApiSpec {
@@ -38,28 +39,16 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse
 
-    @Throws(IOException::class)
-    fun messages(location: Int): MessagesResponse?
-
-    @Throws(IOException::class)
-    fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse?
-
     suspend fun getMessages(
-        userIdTag: UserIdTag,
-        location: Int,
+        userId: UserId,
+        page: Int = 0,
+        labelId: String? = null,
         begin: Long? = null,
-        end: Long? = null
+        end: Long? = null,
+        beginId: String? = null,
+        endId: String? = null,
+        keyword: String? = null
     ): MessagesResponse
-
-    suspend fun getMessages(
-        userIdTag: UserIdTag,
-        location: String,
-        begin: Long? = null,
-        end: Long? = null
-    ): MessagesResponse
-
-    @Throws(IOException::class)
-    fun fetchMessages(location: Int, time: Long): MessagesResponse?
 
     suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse
 
@@ -95,18 +84,6 @@ interface MessageApiSpec {
     @WorkerThread
     @Throws(Exception::class)
     fun messageDetailObservable(messageId: String): Observable<MessageResponse>
-
-    @WorkerThread
-    @Throws(Exception::class)
-    fun search(query: String, page: Int): MessagesResponse
-
-    @Throws(IOException::class)
-    fun searchByLabelAndPageBlocking(query: String, page: Int): MessagesResponse
-
-    suspend fun searchByLabelAndPage(query: String, page: Int): MessagesResponse
-
-    @Throws(IOException::class)
-    fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse
 
     suspend fun createDraft(draftBody: DraftBody): MessageResponse
 

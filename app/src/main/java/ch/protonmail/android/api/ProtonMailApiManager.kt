@@ -234,17 +234,26 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
         api.fetchMessagesCount(userIdTag)
 
-    override fun messages(location: Int): MessagesResponse? = api.messages(location)
-
-    override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse? = api.messages(location, userIdTag)
-
-    override suspend fun getMessages(userIdTag: UserIdTag, location: String, begin: Long?, end: Long?): MessagesResponse =
-        api.getMessages(userIdTag, location, begin, end)
-
-    override suspend fun getMessages(userIdTag: UserIdTag, location: Int, begin: Long?, end: Long?): MessagesResponse =
-        api.getMessages(userIdTag, location, begin, end)
-
-    override fun fetchMessages(location: Int, time: Long): MessagesResponse? = api.fetchMessages(location, time)
+    override suspend fun getMessages(
+        userId: UserId,
+        page: Int,
+        labelId: String?,
+        begin: Long?,
+        end: Long?,
+        beginId: String?,
+        endId: String?,
+        keyword: String?
+    ): MessagesResponse =
+        api.getMessages(
+            userId = userId,
+            page = page,
+            labelId = labelId,
+            begin = begin,
+            end = end,
+            beginId = beginId,
+            endId = endId,
+            keyword = keyword
+        )
 
     override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =
         api.fetchMessageMetadata(messageId, userIdTag)
@@ -276,23 +285,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun messageDetailObservable(
         messageId: String
     ): Observable<MessageResponse> = api.messageDetailObservable(messageId)
-
-    override fun search(query: String, page: Int): MessagesResponse = api.search(query, page)
-
-    override fun searchByLabelAndPageBlocking(
-        query: String,
-        page: Int
-    ): MessagesResponse = api.searchByLabelAndPageBlocking(query, page)
-
-    override suspend fun searchByLabelAndPage(
-        query: String,
-        page: Int
-    ): MessagesResponse = api.searchByLabelAndPage(query, page)
-
-    override fun searchByLabelAndTime(
-        query: String,
-        unixTime: Long
-    ): MessagesResponse = api.searchByLabelAndTime(query, unixTime)
 
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
 

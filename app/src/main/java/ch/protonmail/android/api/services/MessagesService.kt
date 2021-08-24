@@ -40,6 +40,7 @@ import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -122,11 +123,13 @@ class MessagesService : JobIntentService() {
         refreshMessages: Boolean
     ) {
         try {
-            val messages = mApi.messages(location.messageLocationTypeValue, UserIdTag(currentUserId))
-            if (messages?.code == Constants.RESPONSE_CODE_OK)
+            val messages = runBlocking {
+                mApi.getMessages(UserId(currentUserId.s), labelId = location.messageLocationTypeValue.toString())
+            }
+            if (messages.code == Constants.RESPONSE_CODE_OK)
                 handleResult(messages, location, refreshDetails, uuid, currentUserId, refreshMessages)
             else {
-                val errorMessage = messages?.error ?: ""
+                val errorMessage = messages.error ?: ""
                 val event = MailboxLoadedEvent(Status.FAILED, uuid, errorMessage)
                 AppUtil.postEventOnUi(event)
                 mNetworkResults.setMailboxLoaded(event)
@@ -147,7 +150,9 @@ class MessagesService : JobIntentService() {
         refreshMessages: Boolean
     ) {
         try {
-            val messagesResponse = mApi.searchByLabelAndPageBlocking(labelId, 0)
+            val messagesResponse = runBlocking {
+                mApi.getMessages(UserId(currentUserId.s), labelId = labelId)
+            }
             handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))

@@ -64,45 +64,32 @@ interface MessageService {
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun messages(
-        @Query("LabelID") location: Int,
-        @Query("Order") order: String,
-        @Query("Begin") begin: String,
-        @Query("End") end: String
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun messages(
-        @Query("LabelID") location: Int,
-        @Query("Order") order: String,
-        @Query("Begin") begin: String,
-        @Query("End") end: String,
-        @Tag userIdTag: UserIdTag
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun getMessages(
         @Tag userIdTag: UserIdTag,
-        @Query("LabelID") location: String,
-        @Query("Order") order: String,
-        @Query("Begin") begin: Long?,
-        @Query("End") end: Long?
+        @Query("Page") page: Int = 0,
+        @Query("PageSize") pageSize: Int = 50,
+        @Query("LabelID") labelId: String? = null,
+        @Query("Sort") sort: String = "time",
+        @Query("Begin") begin: Long? = null,
+        @Query("End") end: Long? = null,
+        @Query("BeginID") beginId: String? = null,
+        @Query("EndID") endId: String? = null,
+        @Query("Keyword") keyword: String? = null
     ): MessagesResponse
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchMessages(
-        @Query("LabelID") location: Int,
-        @Query("End") unixTime: Long
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun search(
-        @Query("Keyword") query: String,
-        @Query("Page") page: Int
+    fun getMessagesCall(
+        @Tag userIdTag: UserIdTag,
+        @Query("Page") page: Int = 0,
+        @Query("PageSize") pageSize: Int = 50,
+        @Query("LabelID") labelId: String? = null,
+        @Query("Sort") sort: String = "time",
+        @Query("Begin") begin: Long? = null,
+        @Query("End") end: Long? = null,
+        @Query("BeginID") beginId: String? = null,
+        @Query("EndID") endId: String? = null,
+        @Query("Keyword") keyword: String? = null
     ): Call<MessagesResponse>
 
     @GET("mail/v4/messages")
@@ -111,13 +98,6 @@ interface MessageService {
         @Query("LabelID") query: String,
         @Query("Page") page: Int
     ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun getMessagesByLabel(
-        @Query("LabelID") query: String,
-        @Query("Page") page: Int
-    ): MessagesResponse
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

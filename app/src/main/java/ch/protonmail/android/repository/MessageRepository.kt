@@ -41,6 +41,8 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
+import ch.protonmail.android.mailbox.data.FetchMailboxBookmark
+import ch.protonmail.android.mailbox.data.createBookmarkOr
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CancellationException
@@ -297,21 +299,18 @@ class MessageRepository @Inject constructor(
     private fun getMessageByLocationIdFromApi(
         userId: UserId,
         locationId: String
-    ): LoadMoreFlow<DataResult<List<Message>>> = loadMoreFlow(
-        initialBookmark = null as Long?,
+    ) = loadMoreFlow<FetchMailboxBookmark, DataResult<List<Message>>>(
+        initialBookmark = FetchMailboxBookmark.Initial,
         createNextBookmark = { dataResult, currentBookmark ->
-            (dataResult as? Success)?.value
-                ?.minOfOrNull { it.time }
-                // We don't wanna fetch twice with the same time, as it's inclusive
-                ?.let { it - 1 }
-                ?: currentBookmark
+            dataResult.createBookmarkOr(currentBookmark)
         },
         load = { bookmark ->
-            Timber.v("Fetching messages from API. End = $bookmark")
+            Timber.v("Fetching messages from API. Bookmark = $bookmark")
             val response = protonMailApiManager.getMessages(
-                UserIdTag(userId),
-                locationId,
-                end = bookmark
+                UserId(userId.s),
+                labelId = locationId,
+                end = bookmark.time,
+                endId = bookmark.itemId
             ).messages
 
             Timber.v("Fetched ${response.size} messages from API")

@@ -33,6 +33,7 @@ import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
 import io.reactivex.Observable
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.io.IOException
 
@@ -42,21 +43,25 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
         ParseUtils.parse(service.fetchMessagesCount(userIdTag).execute())
 
-    @Throws(IOException::class)
-    override fun messages(location: Int): MessagesResponse? =
-        ParseUtils.parse(service.messages(location, "time", "", "").execute())
-
-    override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse =
-        ParseUtils.parse(service.messages(location, "time", "", "", userIdTag).execute())
-
-    override suspend fun getMessages(userIdTag: UserIdTag, location: Int, begin: Long?, end: Long?): MessagesResponse =
-        service.getMessages(userIdTag, location.toString(), "time", begin, end)
-
-    override suspend fun getMessages(userIdTag: UserIdTag, location: String, begin: Long?, end: Long?): MessagesResponse =
-        service.getMessages(userIdTag, location, "time", begin, end)
-
-    override fun fetchMessages(location: Int, time: Long): MessagesResponse? =
-        ParseUtils.parse(service.fetchMessages(location, time).execute())
+    override suspend fun getMessages(
+        userId: UserId,
+        page: Int,
+        labelId: String?,
+        begin: Long?,
+        end: Long?,
+        beginId: String?,
+        endId: String?,
+        keyword: String?
+    ): MessagesResponse = service.getMessages(
+        userIdTag = UserIdTag(userId),
+        page = page,
+        labelId = labelId,
+        begin = begin,
+        end = end,
+        beginId = beginId,
+        endId = endId,
+        keyword = keyword
+    )
 
     override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =
         service.fetchMessageMetadata(messageId, userIdTag)
@@ -115,22 +120,6 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     @Throws(Exception::class)
     override fun messageDetailObservable(messageId: String): Observable<MessageResponse> =
         service.messageDetailObservable(messageId)
-
-    @WorkerThread
-    @Throws(Exception::class)
-    override fun search(query: String, page: Int): MessagesResponse =
-        ParseUtils.parse(service.search(query, page).execute())
-
-    @Throws(IOException::class)
-    override fun searchByLabelAndPageBlocking(query: String, page: Int): MessagesResponse =
-        ParseUtils.parse(service.searchByLabel(query, page).execute())
-
-    override suspend fun searchByLabelAndPage(query: String, page: Int): MessagesResponse =
-        service.getMessagesByLabel(query, page)
-
-    @Throws(IOException::class)
-    override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse =
-        ParseUtils.parse(service.searchByLabel(query, unixTime).execute())
 
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = service.createDraft(draftBody)
 
