@@ -40,7 +40,6 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.di.JobEntryPoint
-import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreFlowOf
@@ -83,7 +82,6 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.mockk.verifySequence
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -576,12 +574,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun getMailboxItemsCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabelOrFolder() {
         val location = ARCHIVE
-        val labelId = "labelId92323"
-        val includeLabels = false
-        val uuid = "9238423bbe2h3283742h3hh2bjsd"
-        val refreshMessages = true
         // Represents pagination. Only messages older than the given timestamp will be returned
-        val timestamp = 123L
         val userId = UserId("userId")
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns false
@@ -589,19 +582,12 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         viewModel.setNewMailboxLocation(location)
         viewModel.loadMailboxItems()
 
-        verifySequence { messageServiceScheduler.fetchMessagesOlderThanTime(location, userId, timestamp) }
         verify(exactly = 0) { jobManager.addJobInBackground(any()) }
     }
 
     @Test
     fun getMailboxItemsCallsMessageServiceStartFetchMessagesByLabelWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsALabelOrFolder() {
         val location = LABEL_FOLDER
-        val labelId = "folderIdi2384"
-        val includeLabels = false
-        val uuid = "9238h82388sdfa8sdf8asd3hh2bjsd"
-        val refreshMessages = false
-        // Represents pagination. Only messages older than the given timestamp will be returned
-        val oldestMessageTimestamp = 1323L
         val userId = UserId("userId1")
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns false
@@ -609,37 +595,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         viewModel.setNewMailboxLocation(location)
         viewModel.loadMailboxItems()
 
-        verifySequence {
-            messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(
-                location, userId, oldestMessageTimestamp, labelId
-            )
-        }
         verify(exactly = 0) { messageDetailsRepository.reloadDependenciesForUser(userId) }
-    }
-
-    @Test
-    fun getMailboxItemsCallsGetConversationsWithTheCorrectLocationIdWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirst() = runBlockingTest {
-
-        // given
-        val location = LABEL
-        val labelId = "customLabelIdi2386"
-        val uuid = "9238h82388sdfa8sdf8asd3234"
-        // Represents pagination. Only messages older than the given timestamp will be returned
-        val oldestMessageTimestamp = 1323L
-        val userId = UserId("userId1")
-        every { userManager.currentUserId } returns userId
-        every { conversationModeEnabled(location) } returns true
-
-        val conversationsFlow = mockk<LoadMoreFlow<GetConversationsResult>>()
-        every { observeConversationsByLocation(any(), any()) } returns conversationsFlow
-
-        // when
-        viewModel.setNewMailboxLocation(location)
-        advanceUntilIdle()
-        viewModel.loadMailboxItems()
-
-        // then
-        verify { conversationsFlow.loadMore() }
     }
 
     @Test
@@ -674,7 +630,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     hasAttachments = true,
                     isStarred = false,
                     isRead = true,
-                    expirationTime = 823764623,
+                    expirationTime = 823_764_623,
                     messagesCount = 4,
                     messageData = null,
                     isDeleted = false,
