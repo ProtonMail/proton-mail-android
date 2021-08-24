@@ -48,7 +48,7 @@ class ObserveMessagesByLocation @Inject constructor(
         when (mailboxLocation) {
             Constants.MessageLocationType.LABEL,
             Constants.MessageLocationType.LABEL_FOLDER ->
-                messageRepository.observeMessagesByLabelId(requireNotNull(labelId), userId)
+                messageRepository.observeMessagesByLabelId(userId, requireNotNull(labelId))
             Constants.MessageLocationType.STARRED,
             Constants.MessageLocationType.DRAFT,
             Constants.MessageLocationType.ARCHIVE,

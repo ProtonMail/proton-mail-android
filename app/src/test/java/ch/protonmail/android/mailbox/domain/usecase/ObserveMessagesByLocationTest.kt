@@ -79,7 +79,7 @@ class ObserveMessagesByLocationTest {
         val expected = GetMessagesResult.Success(messages)
         val flowOfMessages = flowOf(messages)
         coEvery {
-            mailboxRepository.observeMessagesByLabelId(labelId, userId)
+            mailboxRepository.observeMessagesByLabelId(userId, labelId)
         } returns flowOfMessages
 
         // when

@@ -239,44 +239,29 @@ class MessageRepository @Inject constructor(
         location: MessageLocationType
     ): LoadMoreFlow<DataResult<List<Message>>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
-
         val fromDatabaseFlow = observeMessagesByLocationFromDatabase(location, messagesDao)
-            .map { Success(ResponseSource.Local, it) }
-
-        val fromApiFlow = getMessageByLocationFromApi(userId, location)
-            // Emit a null at start, in order emit data from Database, without waiting for first emission from Api
-            .loadMoreEmitInitialNull()
-
-        var lastSaved: Success<List<Message>>? = null
-        val saveMessages: suspend (Success<List<Message>>) -> Unit = { result ->
-            val areDifferentMessages = result.value.map { it.messageId } != lastSaved?.value?.map { it.messageId }
-            if (areDifferentMessages) persistMessages(result.value, userId)
-            lastSaved = result
-        }
-
-        return loadMoreCombineTransform(fromDatabaseFlow, fromApiFlow) { fromDatabase, fromApi ->
-            when (fromApi) {
-                is Success -> saveMessages(fromApi)
-                is Error -> if (connectivityManager.isInternetConnectionPossible()) emit(fromApi)
-                null, is Processing -> {
-                    // noop
-                }
-            }
-
-            emit(fromDatabase)
-        }
+        val locationId = location.messageLocationTypeValue.toString()
+        return observeMessagesByLocationOrLabelId(userId, locationId, fromDatabaseFlow)
     }
 
     fun observeMessagesByLabelId(
-        labelId: String,
-        userId: UserId
+        userId: UserId,
+        labelId: String
     ): LoadMoreFlow<DataResult<List<Message>>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
-
         val fromDatabaseFlow = messagesDao.observeMessagesByLabelId(labelId)
+        return observeMessagesByLocationOrLabelId(userId, labelId, fromDatabaseFlow)
+    }
+
+    private fun observeMessagesByLocationOrLabelId(
+        userId: UserId,
+        locationId: String,
+        databaseFlow: Flow<List<Message>>
+    ): LoadMoreFlow<DataResult<List<Message>>> {
+        val fromDatabaseFlow = databaseFlow
             .map { Success(ResponseSource.Local, it) }
 
-        val fromApiFlow = getMessageByLocationIdFromApi(userId, labelId)
+        val fromApiFlow = getMessageByLocationIdFromApi(userId, locationId)
             // Emit a null at start, in order emit data from Database, without waiting for first emission from Api
             .loadMoreEmitInitialNull()
 
@@ -308,11 +293,6 @@ class MessageRepository @Inject constructor(
         MessageLocationType.STARRED -> messagesDao.observeStarredMessages()
         else -> messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
     }
-
-    private fun getMessageByLocationFromApi(
-        userId: UserId,
-        location: MessageLocationType
-    ): LoadMoreFlow<DataResult<List<Message>>> = getMessageByLocationIdFromApi(userId, location.messageLocationTypeValue.toString())
 
     private fun getMessageByLocationIdFromApi(
         userId: UserId,

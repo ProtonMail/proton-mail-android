@@ -464,7 +464,7 @@ class MessageRepositoryTest {
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
         // when
-        messageRepository.observeMessagesByLabelId(label1, testUserId).test {
+        messageRepository.observeMessagesByLabelId(testUserId, label1).test {
             dbFlow.emit(dbMessages)
 
             // then
@@ -492,7 +492,7 @@ class MessageRepositoryTest {
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
         // when
-        messageRepository.observeMessagesByLabelId(label1, testUserId).test {
+        messageRepository.observeMessagesByLabelId(testUserId, label1).test {
             dbFlow.emit(dbMessages)
 
             // then
