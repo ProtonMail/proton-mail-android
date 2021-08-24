@@ -32,6 +32,7 @@ import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.mailbox.domain.model.GetMessagesParameters
 import io.reactivex.Observable
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
@@ -43,6 +44,22 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
         ParseUtils.parse(service.fetchMessagesCount(userIdTag).execute())
 
+    override suspend fun getMessages(params: GetMessagesParameters): MessagesResponse =
+        service.getMessages(
+            userIdTag = UserIdTag(params.userId),
+            page = params.page,
+            pageSize = params.pageSize,
+            labelId = params.labelId,
+            sort = params.sortBy.stringValue,
+            desc = params.sortDirection.intValue,
+            begin = params.begin,
+            end = params.end,
+            beginId = params.beginId,
+            endId = params.endId,
+            keyword = params.keyword
+        )
+
+    @Deprecated("Use with GetMessagesParameters", ReplaceWith("getMessages(params)"))
     override suspend fun getMessages(
         userId: UserId,
         page: Int,
@@ -52,16 +69,19 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         beginId: String?,
         endId: String?,
         keyword: String?
-    ): MessagesResponse = service.getMessages(
-        userIdTag = UserIdTag(userId),
-        page = page,
-        labelId = labelId,
-        begin = begin,
-        end = end,
-        beginId = beginId,
-        endId = endId,
-        keyword = keyword
-    )
+    ): MessagesResponse {
+        val params = GetMessagesParameters(
+            userId = userId,
+            page = page,
+            labelId = labelId,
+            begin = begin,
+            end = end,
+            beginId = beginId,
+            endId = endId,
+            keyword = keyword
+        )
+        return getMessages(params)
+    }
 
     override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =
         service.fetchMessageMetadata(messageId, userIdTag)

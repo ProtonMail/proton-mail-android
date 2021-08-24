@@ -19,16 +19,15 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
-import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
+import ch.protonmail.android.data.local.model.Message
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 
 /**
  * Representation of Rest Query Parameters for 'mail/v4/conversations' endpoint
- * Documentation at '*\/Slim-API/mail/#operation/get_mail-v4-conversations'
+ * Documentation at '*\/Slim-API/mail/#operation/get_mail-v4-messages'
  */
-data class GetConversationsParameters(
+data class GetMessagesParameters(
     val userId: UserId,
     val page: Int? = null,
     val pageSize: Int = 50,
@@ -53,20 +52,20 @@ data class GetConversationsParameters(
 }
 
 /**
- * @return a [GetConversationsParameters] created from [DataResult] if [DataResult.Success] and the list is not empty,
+ * @return a [GetMessagesParameters] created from [DataResult] if [DataResult.Success] and the list is not empty,
  *  otherwise [currentParameters]
  *
- * Note: since we're using [ConversationApiModel.time] for fetch progressively, we assume that the conversations are
- *  already ordered by time, so we pick directly the last in the list, without adding unneeded computation
+ * Note: since we're using [Message.time] for fetch progressively, we assume that the messages are already ordered by
+ *  time, so we pick directly the last in the list, without adding unneeded computation
  */
-fun DataResult<ConversationsResponse>.createBookmarkParametersOr(
-    currentParameters: GetConversationsParameters
-): GetConversationsParameters {
-    return if (this is DataResult.Success && value.conversationResponse.isNotEmpty()) {
-        val lastConversation = value.conversationResponse.last()
+fun DataResult<List<Message>>.createBookmarkParametersOr(
+    currentParameters: GetMessagesParameters
+): GetMessagesParameters {
+    return if (this is DataResult.Success && value.isNotEmpty()) {
+        val lastMessage = value.last()
         currentParameters.copy(
-            end = lastConversation.time,
-            endId = lastConversation.id
+            end = lastMessage.time,
+            endId = checkNotNull(lastMessage.messageId) { "Can't create params: messageId is null" }
         )
     } else {
         currentParameters

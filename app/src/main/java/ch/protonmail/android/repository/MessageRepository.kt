@@ -41,8 +41,8 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
-import ch.protonmail.android.mailbox.data.FetchMailboxBookmark
-import ch.protonmail.android.mailbox.data.createBookmarkOr
+import ch.protonmail.android.mailbox.domain.model.GetMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CancellationException
@@ -263,7 +263,8 @@ class MessageRepository @Inject constructor(
         val fromDatabaseFlow = databaseFlow
             .map { Success(ResponseSource.Local, it) }
 
-        val fromApiFlow = getMessageByLocationIdFromApi(userId, locationId)
+        val parameters = GetMessagesParameters(userId, labelId = locationId)
+        val fromApiFlow = getMessageByLocationIdFromApi(parameters)
             // Emit a null at start, in order emit data from Database, without waiting for first emission from Api
             .loadMoreEmitInitialNull()
 
@@ -296,35 +297,28 @@ class MessageRepository @Inject constructor(
         else -> messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
     }
 
-    private fun getMessageByLocationIdFromApi(
-        userId: UserId,
-        locationId: String
-    ) = loadMoreFlow<FetchMailboxBookmark, DataResult<List<Message>>>(
-        initialBookmark = FetchMailboxBookmark.Initial,
-        createNextBookmark = { dataResult, currentBookmark ->
-            dataResult.createBookmarkOr(currentBookmark)
-        },
-        load = { bookmark ->
-            Timber.v("Fetching messages from API. Bookmark = $bookmark")
-            val response = protonMailApiManager.getMessages(
-                UserId(userId.s),
-                labelId = locationId,
-                end = bookmark.time,
-                endId = bookmark.itemId
-            ).messages
+    private fun getMessageByLocationIdFromApi(initialParams: GetMessagesParameters) =
+        loadMoreFlow(
+            initialBookmark = initialParams,
+            createNextBookmark = { dataResult, currentParameters ->
+                dataResult.createBookmarkParametersOr(currentParameters)
+            },
+            load = { params ->
+                Timber.v("Fetching messages from API. Params = $params")
+                val response = protonMailApiManager.getMessages(params).messages
 
-            Timber.v("Fetched ${response.size} messages from API")
-            if (response.isNotEmpty()) {
-                Success(ResponseSource.Remote, response)
-            } else {
-                Error.Remote("No messages", null, NO_MORE_MESSAGES_ERROR_CODE)
+                Timber.v("Fetched ${response.size} messages from API")
+                if (response.isNotEmpty()) {
+                    Success(ResponseSource.Remote, response)
+                } else {
+                    Error.Remote("No messages", null, NO_MORE_MESSAGES_ERROR_CODE)
+                }
             }
+        ).loadMoreCatch { throwable ->
+            if (throwable is CancellationException) throw throwable
+            Timber.e(throwable, "Cannot fetch messages from API")
+            emit(Error.Remote(throwable.message, throwable))
         }
-    ).loadMoreCatch { throwable ->
-        if (throwable is CancellationException) throw throwable
-        Timber.e(throwable, "Cannot fetch messages from API")
-        emit(Error.Remote(throwable.message, throwable))
-    }
 
     private suspend fun persistMessages(
         messages: List<Message>,

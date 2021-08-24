@@ -30,6 +30,7 @@ import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
+import ch.protonmail.android.mailbox.domain.model.GetMessagesParameters
 import io.reactivex.Observable
 import me.proton.core.domain.entity.UserId
 import java.io.IOException
@@ -39,6 +40,9 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse
 
+    suspend fun getMessages(params: GetMessagesParameters): MessagesResponse
+
+    @Deprecated("Use with GetMessagesParameters", ReplaceWith("getMessages(params)"))
     suspend fun getMessages(
         userId: UserId,
         page: Int = 0,

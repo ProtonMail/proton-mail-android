@@ -29,8 +29,8 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.user.User
+import ch.protonmail.android.mailbox.domain.model.GetMessagesParameters
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
 import java.io.IOException
@@ -84,8 +85,7 @@ class MessageRepositoryTest {
         every { isInternetConnectionPossible() } returns true
     }
 
-    private val testUserName = "userName1"
-    private val testUserId = UserId(testUserName)
+    private val testUserId = UserId("id")
     private val message1 = mockk<Message>(relaxed = true) { every { messageId } returns "1" }
     private val message2 = mockk<Message>(relaxed = true) { every { messageId } returns "2" }
     private val message3 = mockk<Message>(relaxed = true) { every { messageId } returns "3" }
@@ -368,12 +368,11 @@ class MessageRepositoryTest {
             every { messages } returns apiMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        coEvery {
-            protonMailApiManager.getMessages(
-                UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue.toString()
-            )
-        } returns apiResponse
+        val params = GetMessagesParameters(
+            testUserId,
+            labelId = mailboxLocation.asLabelId()
+        )
+        coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
         // endregion
 
         // region Dao
@@ -399,10 +398,7 @@ class MessageRepositoryTest {
 
             // verify api fetch
             coVerify {
-                protonMailApiManager.getMessages(
-                    UserIdTag(testUserId),
-                    mailboxLocation.messageLocationTypeValue.toString()
-                )
+                protonMailApiManager.getMessages(params)
             }
             coVerify { messageDao.saveMessages(apiMessages) }
 
@@ -425,12 +421,11 @@ class MessageRepositoryTest {
         } returns dbFlow
         val exceptionMessage = "NetworkError!"
         val testException = IOException(exceptionMessage)
-        coEvery {
-            protonMailApiManager.getMessages(
-                UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue.toString()
-            )
-        } throws testException
+        val params = GetMessagesParameters(
+            testUserId,
+            labelId = mailboxLocation.asLabelId()
+        )
+        coEvery { protonMailApiManager.getMessages(params) } throws testException
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
         // when
@@ -456,9 +451,8 @@ class MessageRepositoryTest {
         }
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
         coEvery { messageDao.observeMessagesByLabelId(label1) } returns dbFlow
-        coEvery {
-            protonMailApiManager.getMessages(UserIdTag(testUserId), label1)
-        } returns netResponse
+        val params = GetMessagesParameters(testUserId, labelId = label1)
+        coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
         // when
@@ -482,9 +476,8 @@ class MessageRepositoryTest {
         coEvery { messageDao.observeMessagesByLabelId(label1) } returns dbFlow
         val testExceptionMessage = "NetworkError!"
         val testException = IOException(testExceptionMessage)
-        coEvery {
-            protonMailApiManager.getMessages(UserIdTag(testUserId), label1)
-        } throws testException
+        val params = GetMessagesParameters(testUserId, labelId = label1)
+        coEvery { protonMailApiManager.getMessages(params) } throws testException
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
         // when
@@ -501,26 +494,29 @@ class MessageRepositoryTest {
     fun verifyThatAllMessagesFromDbAndNetworkAreFetched() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.ALL_MAIL
-        val dbMessages = listOf(message1, message2)
+        val databaseMessages = listOf(message1, message2)
+        val databaseMessagesFlow = MutableStateFlow(databaseMessages)
         val netMessages = listOf(message1, message2, message3, message4)
         val netResponse = mockk<MessagesResponse> {
             every { messages } returns netMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        coEvery { messageDao.observeAllMessages() } returns flowOf(dbMessages)
-        coEvery {
-            protonMailApiManager.getMessages(
-                UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue.toString()
-            )
-        } returns netResponse
-        coEvery { messageDao.saveMessages(netMessages) } just Runs
+        coEvery { messageDao.observeAllMessages() } returns databaseMessagesFlow
+        val params = GetMessagesParameters(
+            testUserId,
+            labelId = mailboxLocation.asLabelId()
+        )
+        coEvery { protonMailApiManager.getMessages(params) } returns netResponse
+        coEvery { messageDao.saveMessages(netMessages) } answers {
+            val messages = firstArg<List<Message>>()
+            databaseMessagesFlow.value = messages
+        }
 
         // when
         messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).test {
 
             // then
-            assertEquals(DataResult.Success(ResponseSource.Local, dbMessages), expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, databaseMessages), expectItem())
             assertEquals(DataResult.Success(ResponseSource.Local, netMessages), expectItem())
 
             coVerify(exactly = 1) { messageDao.saveMessages(netMessages) }
@@ -540,8 +536,8 @@ class MessageRepositoryTest {
         coEvery { messageDao.observeAllMessages() } returns flowOf(dbMessages)
         coEvery {
             protonMailApiManager.getMessages(
-                UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue.toString()
+                testUserId,
+                labelId = mailboxLocation.asLabelId()
             )
         } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
@@ -567,12 +563,11 @@ class MessageRepositoryTest {
             every { messages } returns apiMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        coEvery {
-            protonMailApiManager.getMessages(
-                UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue.toString()
-            )
-        } returns apiResponse
+        val params = GetMessagesParameters(
+            testUserId,
+            labelId = mailboxLocation.asLabelId()
+        )
+        coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
         // endregion
 
         // region Dao
@@ -596,12 +591,7 @@ class MessageRepositoryTest {
             assertEquals(DataResult.Success(ResponseSource.Local, initialDatabaseMessages), expectItem())
 
             // verify api fetch
-            coVerify {
-                protonMailApiManager.getMessages(
-                    UserIdTag(testUserId),
-                    mailboxLocation.messageLocationTypeValue.toString()
-                )
-            }
+            coVerify { protonMailApiManager.getMessages(params) }
             coVerify { messageDao.saveMessages(apiMessages) }
 
             // verify message from api

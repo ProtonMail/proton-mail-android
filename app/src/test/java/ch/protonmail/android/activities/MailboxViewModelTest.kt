@@ -225,7 +225,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     fun verifyBasicInitFlowWithEmptyMessages() = runBlockingTest {
         // Given
         val messages = emptyList<Message>()
-        val expected = MailboxState.Data()
+        val expected = MailboxState.Data(emptyList())
 
         // When
         viewModel.mailboxState.test {
@@ -974,7 +974,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     true
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected)
 
             // When
             viewModel.mailboxState.test {
@@ -1031,7 +1031,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected)
 
             // When
             viewModel.mailboxState.test {

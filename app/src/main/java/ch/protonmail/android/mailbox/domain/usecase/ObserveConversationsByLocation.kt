@@ -25,6 +25,7 @@ import ch.protonmail.android.domain.loadMoreMap
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Processing
@@ -47,9 +48,8 @@ class ObserveConversationsByLocation @Inject constructor(
         locationId: String
     ): LoadMoreFlow<GetConversationsResult> {
         val params = GetConversationsParameters(
-            userId = UserId(UserId(userId.s).s),
+            userId = UserId(userId.s),
             labelId = locationId,
-            end = oldestConversationTimestamp
         )
 
         Timber.v("GetConversations with params: $params, locationId: $locationId")
@@ -87,9 +87,8 @@ class ObserveConversationsByLocation @Inject constructor(
         lastConversationTime: Long
     ) {
         val params = GetConversationsParameters(
-            userId = UserId(UserId(userId.s).s),
+            userId = UserId(userId.s),
             labelId = locationId,
-            end = oldestConversationTimestamp
         )
         conversationRepository.loadMore(params)
     }

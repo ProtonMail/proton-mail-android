@@ -43,6 +43,7 @@ import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
@@ -157,8 +158,9 @@ class ConversationsRepositoryImpl @Inject constructor(
     override suspend fun saveConversations(
         conversations: List<ConversationDatabaseModel>,
         userId: UserId
-    ) =
+    ) {
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
+    }
 
     override suspend fun deleteConversations(conversationIds: List<String>, userId: UserId) {
         conversationDao.deleteConversations(*conversationIds.toTypedArray(), userId = userId.id)
@@ -500,19 +502,14 @@ class ConversationsRepositoryImpl @Inject constructor(
             ).toDomainModelList()
         }
 
-    private fun getConversationsFromApi(
-        params: GetConversationsParameters
-    ): LoadMoreFlow<DataResult<ConversationsResponse>> =
+    private fun getConversationsFromApi(initialParams: GetConversationsParameters) =
         loadMoreFlow(
-            initialBookmark = params.oldestConversationTimestamp,
-            createNextBookmark = { dataResult, currentBookmark ->
-                (dataResult as? Success)?.value
-                    ?.conversationResponse
-                    ?.minOfOrNull { it.time }
-                    ?: currentBookmark
+            initialBookmark = initialParams,
+            createNextBookmark = { dataResult, currentParameters ->
+                dataResult.createBookmarkParametersOr(currentParameters)
             },
-            load = { bookmark ->
-                val response = api.fetchConversations(params.copy(oldestConversationTimestamp = bookmark))
+            load = { params ->
+                val response = api.fetchConversations(params)
 
                 if (response.conversationResponse.isNotEmpty()) {
                     Success(ResponseSource.Remote, response)
