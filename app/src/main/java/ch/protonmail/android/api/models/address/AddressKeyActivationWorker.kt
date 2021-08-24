@@ -81,7 +81,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
         // get orgKeys if existent -> This will work only if user is an organisation owner, otherwise
         // backend will return 403 for all other users (e.g. just members of an organisation)
         val orgKeysResult = if (context.app.organization != null) {
-            api.fetchOrganizationKeys(UserId(user.name.s))
+            api.fetchOrganizationKeys(userId)
         } else {
             null
         }
