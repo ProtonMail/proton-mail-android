@@ -105,7 +105,7 @@ class ComposeMessageRepository @Inject constructor(
                         parentId = entity.parentId,
                         expanded = entity.expanded,
                         sticky = entity.sticky,
-                        contactEmailsCount = tempContactDao.countContactEmailsByLabelIdBlocking(entity.id)
+                        contactEmailsCount = tempContactDao.countContactEmailsByLabelIdBlocking(entity.id.id)
                     )
                 }
             }

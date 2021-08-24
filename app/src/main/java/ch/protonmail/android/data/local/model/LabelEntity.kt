@@ -25,7 +25,7 @@ import androidx.room.Index
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 
-const val TABLE_LABELS = "Labels"
+const val TABLE_LABELS = "LabelEntity"
 const val COLUMN_LABEL_ID = "id"
 const val COLUMN_LABEL_USER_ID = "userId"
 const val COLUMN_LABEL_NAME = "name"
@@ -48,7 +48,7 @@ const val COLUMN_LABEL_STICKY = "sticky"
     foreignKeys = [
         ForeignKey(
             entity = AccountEntity::class,
-            parentColumns = [COLUMN_LABEL_USER_ID],
+            parentColumns = ["userId"],
             childColumns = [COLUMN_LABEL_USER_ID],
             onDelete = ForeignKey.CASCADE
         )
@@ -56,7 +56,7 @@ const val COLUMN_LABEL_STICKY = "sticky"
 )
 data class LabelEntity(
     @ColumnInfo(name = COLUMN_LABEL_ID)
-    val id: String,
+    val id: LabelId,
     @ColumnInfo(name = COLUMN_LABEL_USER_ID)
     val userId: UserId,
     @ColumnInfo(name = COLUMN_LABEL_NAME)

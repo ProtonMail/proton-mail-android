@@ -35,10 +35,10 @@ fun initVersions() {
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.4"         // Released: Oct 31, 2020
-    `espresso version` =                        "3.4.0-beta01"  // Released: May 15, 2021
+    `espresso version` =                        "3.4.0"         // Released: Jul 04, 2021
     `hilt-android version` =                    "2.37"          // Released: Jun 10, 2021
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
-    `ktx version` =                             "1.6.0"         // Released: Jul 04, 2021
+    `ktx version` =                             "1.6.0"         // Released: Jun 30, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.4.0"         // Released: Jul 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
@@ -108,7 +108,7 @@ const val `junit-ktx version` =                 "1.1.2"         // Released: Aug
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
-const val `android-fragment version` =          "1.2.0-rc01"    // Released: Oct 24, 2019
+const val `android-fragment version` =          "1.3.6"         // Released: Jul 21, 2021
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
 const val `flexbox version` =                   "2.0.1"         // Released: Jan 17, 2020
 const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020

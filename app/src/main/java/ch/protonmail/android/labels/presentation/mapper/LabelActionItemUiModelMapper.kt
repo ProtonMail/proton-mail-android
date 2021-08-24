@@ -62,7 +62,7 @@ class LabelActionItemUiModelMapper @Inject constructor(
         }
 
         return LabelActonItemUiModel(
-            labelId = label.id,
+            labelId = label.id.id,
             iconRes = iconRes,
             title = label.name,
             titleRes = null,

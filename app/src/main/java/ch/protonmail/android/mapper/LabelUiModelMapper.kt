@@ -47,7 +47,7 @@ internal class LabelUiModelMapper : UiModelMapper<LabelEntity, LabelUiModel> {
         }
 
         return LabelUiModel(
-            labelId = id,
+            labelId = id.id,
             name = name,
             image = image,
             color = normalizeColor(color),

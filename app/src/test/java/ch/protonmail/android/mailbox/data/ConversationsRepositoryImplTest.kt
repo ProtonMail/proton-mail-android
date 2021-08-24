@@ -927,7 +927,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 LabelContextDatabaseModel(inboxId, 0, 2, 123, 123, 0)
             )
             val label: LabelEntity = mockk {
-                every { exclusive } returns false
+                every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             coEvery { messageDao.findLabelById(any()) } returns label
@@ -972,7 +972,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 allLabelIDs = listOf(inboxId, allMailId),
             )
             val label: LabelEntity = mockk {
-                every { exclusive } returns false
+                every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             coEvery { messageDao.findLabelById(any()) } returns label

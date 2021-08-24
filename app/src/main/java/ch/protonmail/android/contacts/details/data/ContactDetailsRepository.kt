@@ -31,6 +31,7 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
@@ -87,8 +88,8 @@ open class ContactDetailsRepository @Inject constructor(
         }
     }
 
-    fun getContactEmailsCount(contactGroupId: String) =
-        contactDao.countContactEmailsByLabelIdBlocking(contactGroupId)
+    fun getContactEmailsCount(contactGroupId: LabelId) =
+        contactDao.countContactEmailsByLabelIdBlocking(contactGroupId.id)
 
     private suspend fun getContactGroupsFromApi(userId: UserId): List<LabelEntity> {
         val contactGroupsResponse = api.fetchContactGroups(userId).valueOrNull?.labels
@@ -125,10 +126,10 @@ open class ContactDetailsRepository @Inject constructor(
 
     suspend fun editContactGroup(contactLabel: LabelEntity, userId: UserId): ApiResult<LabelResponse> {
         val labelBody = labelsMapper.mapLabelEntityToRequestLabel(contactLabel)
-        val updateLabelResult = api.updateLabel(userId, contactLabel.id, labelBody)
+        val updateLabelResult = api.updateLabel(userId, contactLabel.id.id, labelBody)
         when (updateLabelResult) {
             is ApiResult.Success -> {
-                val joins = contactDao.fetchJoins(contactLabel.id)
+                val joins = contactDao.fetchJoins(contactLabel.id.id)
                 contactDao.saveContactGroupLabel(contactLabel)
                 contactDao.saveContactEmailContactLabel(joins)
             }
@@ -139,7 +140,7 @@ open class ContactDetailsRepository @Inject constructor(
                     contactLabel.expanded,
                     contactLabel.type,
                     false,
-                    contactLabel.id
+                    contactLabel.id.id
                 )
             }
             else -> {

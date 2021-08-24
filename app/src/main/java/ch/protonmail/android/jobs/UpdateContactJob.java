@@ -203,7 +203,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             mContactDao.insertFullContactDetailsBlocking(contact);
             if (updateJoins) {
                 for (Map.Entry<ContactLabelUiModel, List<String>> entry : mapContactGroupContactEmails.entrySet()) {
-                    updateJoins(entry.getKey().getId(), entry.getKey().getName(), entry.getValue());
+                    updateJoins(entry.getKey().getId().getId(), entry.getKey().getName(), entry.getValue());
                 }
             } else {
                 AppUtil.postEventOnUi(new ContactEvent(ContactEvent.SAVED, true));

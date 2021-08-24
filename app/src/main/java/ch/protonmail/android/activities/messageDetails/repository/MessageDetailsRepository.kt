@@ -276,8 +276,8 @@ class MessageDetailsRepository @Inject constructor(
             val labelId = label.id
             if (!mutableLabelIds.contains(labelId) && label.type == Constants.LABEL_TYPE_MESSAGE_LABEL) {
                 // this label should be removed
-                labelsToRemove.add(labelId)
-                jobList.add(RemoveLabelJob(listOf(messageId), labelId))
+                labelsToRemove.add(labelId.id)
+                jobList.add(RemoveLabelJob(listOf(messageId), labelId.id))
             } else if (mutableLabelIds.contains(labelId)) {
                 // the label remains
                 mutableLabelIds.remove(labelId)

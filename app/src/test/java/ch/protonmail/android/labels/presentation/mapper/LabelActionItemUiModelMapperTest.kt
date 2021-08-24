@@ -24,12 +24,14 @@ import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import me.proton.core.domain.entity.UserId
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -44,6 +46,8 @@ class LabelActionItemUiModelMapperTest {
         every { getColor(any()) } returns defaultColorInt
     }
     private val mapper = LabelActionItemUiModelMapper(context)
+
+    private val testUserId = UserId("testUserId")
 
     @BeforeTest
     fun setUp() {
@@ -60,26 +64,26 @@ class LabelActionItemUiModelMapperTest {
     fun verifyThatLabelTypeMessagesAreMappedCorrectly() {
 
         // given
-        val labelId1 = "asdasdad"
+        val labelId1 = LabelId("asdasdad")
         val labelName1 = "name1"
         val labelColor1 = "olive"
         val label = LabelEntity(
             labelId1,
+            testUserId,
             labelName1,
             labelColor1,
-            display = 0,
             order = 0,
-            exclusive = false,
             type = Constants.LABEL_TYPE_MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
             expanded = 0,
-            sticky = 0
+            sticky = 0,
+            notify = 0
         )
-        val currentLabelsIds = listOf(labelId1)
+        val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelsActionSheet.Type.LABEL
         val expected = LabelActonItemUiModel(
-            labelId1,
+            labelId1.id,
             R.drawable.circle_labels_selection,
             labelName1,
             null,
@@ -99,26 +103,26 @@ class LabelActionItemUiModelMapperTest {
     fun verifyThatFolderTypeMessagesAreMappedCorrectly() {
 
         // given
-        val labelId1 = "asdasdad"
+        val labelId1 = LabelId("asdasdad")
         val labelName1 = "name1"
         val labelColor1 = "olive"
         val label = LabelEntity(
             labelId1,
+            testUserId,
             labelName1,
             labelColor1,
-            display = 0,
             order = 0,
-            exclusive = false,
             type = Constants.LABEL_TYPE_MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
             expanded = 0,
-            sticky = 0
+            sticky = 0,
+            notify = 0
         )
-        val currentLabelsIds = listOf(labelId1)
+        val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelsActionSheet.Type.FOLDER
         val expected = LabelActonItemUiModel(
-            labelId1,
+            labelId1.id,
             R.drawable.ic_folder_filled,
             labelName1,
             null,

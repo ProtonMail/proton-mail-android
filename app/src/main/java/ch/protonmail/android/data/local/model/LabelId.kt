@@ -17,21 +17,12 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.contacts.details.presentation.model
+package ch.protonmail.android.data.local.model
 
-import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState
-import ch.protonmail.android.data.local.model.LabelId
+import me.proton.core.domain.entity.UserId
 
-data class ContactLabelUiModel(
-    val id: LabelId,
-    val name: String,
-    val color: String,
-    val type: Int,
-    val path: String,
-    val parentId: String,
-    val expanded: Int,
-    val sticky: Int,
-    val contactEmailsCount: Int,
-    val contactDataCount: Int = 0,
-    val isSelected: ContactEmailGroupSelectionState = ContactEmailGroupSelectionState.DEFAULT
-)
+/**
+ * Entity representing a LabelId.
+ */
+typealias LabelId = UserId
+//data class LabelId(val id: String)

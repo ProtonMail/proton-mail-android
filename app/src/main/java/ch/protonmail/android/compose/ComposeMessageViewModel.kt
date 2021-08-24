@@ -332,7 +332,7 @@ class ComposeMessageViewModel @Inject constructor(
         val disposable = composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
             .flatMap {
                 for (group in it) {
-                    val emails = composeMessageRepository.getContactGroupEmailsSync(group.id)
+                    val emails = composeMessageRepository.getContactGroupEmailsSync(group.id.id)
                     val recipients = ArrayList<MessageRecipient>()
                     for (email in emails) {
                         val recipient = MessageRecipient(email.name, email.email)

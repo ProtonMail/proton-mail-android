@@ -21,6 +21,7 @@ package ch.protonmail.android.api.models.contacts.receive
 import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
@@ -28,7 +29,7 @@ import javax.inject.Inject
 class LabelsMapper @Inject constructor() {
 
     fun mapLabelToLabelEntity(serverLabel: Label, userId: UserId) = LabelEntity(
-        id = serverLabel.id,
+        id = LabelId(serverLabel.id),
         userId = userId,
         name = serverLabel.name,
         color = serverLabel.color,
@@ -42,7 +43,7 @@ class LabelsMapper @Inject constructor() {
     )
 
     fun mapLabelEntityToServerLabel(labelEntity: LabelEntity) = Label(
-        id = labelEntity.id,
+        id = labelEntity.id.id,
         name = labelEntity.name,
         path = labelEntity.path,
         color = labelEntity.color,

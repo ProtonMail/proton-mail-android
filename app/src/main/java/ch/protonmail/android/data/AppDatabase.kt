@@ -83,7 +83,7 @@ import timber.log.Timber
     CryptoConverters::class,
     HumanVerificationConverters::class,
     // Mail
-    ProtonMailConverters::class
+    // ProtonMailConverters::class
 )
 abstract class AppDatabase :
     BaseDatabase(),

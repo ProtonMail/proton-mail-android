@@ -30,6 +30,7 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -100,18 +101,17 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val labelList = listOf(label)
         val apiResult = ApiResult.Success(ContactGroupsResponse(labelList))
         val contactLabel = LabelEntity(
-            id = labelId1,
+            id = LabelId(labelId1),
+            userId = testUserId,
             name = labelName1,
             color = labelColor,
-            display = 0,
             order = 0,
-            exclusive = false,
             type = testType,
-            notify = 0,
             parentId = testParentId,
             path = testPath,
             expanded = 0,
-            sticky = 0
+            sticky = 0,
+            notify = 0,
         )
         val contactLabelList = listOf(contactLabel)
         val contactEmailId = "emailId1"
@@ -127,7 +127,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         }
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
         coEvery { contactDao.insertNewContactsAndLabels(newContactEmails, any(), newJoins) } returns Unit
-        every { labelsMapper.mapLabelToLabelEntity(any(),) } returns contactLabel
+        every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
@@ -156,12 +156,11 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         )
         val labelList = listOf(label)
         val contactLabel = LabelEntity(
-            id = labelId1,
+            id = LabelId(labelId1),
+            userId = testUserId,
             name = labelName1,
             color = labelColor,
-            display = 0,
             order = 0,
-            exclusive = false,
             type = testType,
             expanded = 0,
             parentId = testParentId,
@@ -209,7 +208,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
         coEvery { contactDao.insertNewContactsAndLabels(allContactEmails, any(), newJoins) } returns Unit
-        every { labelsMapper.mapLabelToLabelEntity(any(),) } returns contactLabel
+        every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)

@@ -20,7 +20,7 @@
 package ch.protonmail.android.data
 
 import androidx.room.TypeConverter
-import ch.protonmail.android.domain.entity.LabelId
+import ch.protonmail.android.data.local.model.LabelId
 
 /**
  * DB converters specific to Proton Mail app.

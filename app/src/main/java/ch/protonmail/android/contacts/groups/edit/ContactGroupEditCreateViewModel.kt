@@ -34,6 +34,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.Event
 import kotlinx.coroutines.flow.first
@@ -167,7 +168,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryUserId().first())
             val contactLabel = LabelEntity(
-                id = contactGroupItem!!.contactId,
+                id = LabelId(contactGroupItem!!.contactId),
                 userId = userId,
                 name = name,
                 color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.getDefault()),
@@ -184,8 +185,8 @@ class ContactGroupEditCreateViewModel @Inject constructor(
                     contactGroupEditCreateRepository.editContactGroup(contactLabel, userId)
             ) {
                 is ApiResult.Success -> {
-                    contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel.id, name, toBeAdded)
-                    contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel.id, name, toBeDeleted)
+                    contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel.id.id, name, toBeAdded)
+                    contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel.id.id, name, toBeDeleted)
                     _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
                 }
                 is ApiResult.Error.Http -> {
@@ -206,7 +207,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryUserId().first())
             val contactLabel = LabelEntity(
-                id = EMPTY_STRING,
+                id = LabelId(EMPTY_STRING),
                 userId  = userId,
                 name = name,
                 color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),

@@ -527,7 +527,7 @@ data class Message @JvmOverloads constructor(
         for (labelId in allLabelIDs) {
             val label = messageDao.findLabelByIdBlocking(labelId)
             if (label != null && label.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS) {
-                folderLocation = label.id
+                folderLocation = label.id.id
             }
         }
     }

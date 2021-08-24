@@ -116,7 +116,7 @@ class ContactsListMapper @Inject constructor() {
 
     fun mapLabelToContactGroup(label: ContactLabelUiModel): ContactGroupListItem =
         ContactGroupListItem(
-            contactId = label.id,
+            contactId = label.id.id,
             name = label.name,
             contactEmailsCount = label.contactEmailsCount,
             color = Color.parseColor(UiUtil.normalizeColor(label.color)),
@@ -124,7 +124,7 @@ class ContactsListMapper @Inject constructor() {
 
     fun mapLabelEntityToContactGroup(label: LabelEntity, contactEmailsCount: Int): ContactGroupListItem =
         ContactGroupListItem(
-            contactId = label.id,
+            contactId = label.id.id,
             name = label.name,
             contactEmailsCount = contactEmailsCount,
             color = Color.parseColor(UiUtil.normalizeColor(label.color)),

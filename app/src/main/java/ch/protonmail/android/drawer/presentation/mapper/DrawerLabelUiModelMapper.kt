@@ -50,7 +50,7 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
             else DrawerLabelUiModel.Type.LABELS
 
         return DrawerLabelUiModel(
-            labelId = id,
+            labelId = id.id,
             name = name,
             icon = buildIcon(type, color),
             type = type

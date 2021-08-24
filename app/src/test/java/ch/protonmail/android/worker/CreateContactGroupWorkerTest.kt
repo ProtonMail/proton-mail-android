@@ -31,6 +31,7 @@ import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -99,19 +100,19 @@ class CreateContactGroupWorkerTest {
         MockKAnnotations.init(this)
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
         val labelEntity = LabelEntity(
-            id = "labelID",
+            id = LabelId("labelID"),
+            userId = testUserId,
             name = "name",
             color = "color",
             order = 0,
-            display = 0,
-            exclusive = false,
             type = Constants.LABEL_TYPE_MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
             expanded = 0,
-            sticky = 0
+            sticky = 0,
+            notify = 0
         )
-        every { labelsMapper.mapLabelToLabelEntity(any(),) } returns labelEntity
+        every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns labelEntity
     }
 
     @Test

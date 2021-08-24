@@ -52,7 +52,7 @@ class ContactGroupsRepository @Inject constructor(
                         parentId = entity.parentId,
                         expanded = entity.expanded,
                         sticky = entity.sticky,
-                        contactEmailsCount = contactDao.countContactEmailsByLabelIdBlocking(entity.id)
+                        contactEmailsCount = contactDao.countContactEmailsByLabelIdBlocking(entity.id.id)
                     )
                 }
             }

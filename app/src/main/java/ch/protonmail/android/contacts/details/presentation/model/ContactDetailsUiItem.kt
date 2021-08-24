@@ -20,11 +20,12 @@
 package ch.protonmail.android.contacts.details.presentation.model
 
 import androidx.annotation.ColorInt
+import ch.protonmail.android.data.local.model.LabelId
 
 sealed class ContactDetailsUiItem {
 
     data class Group(
-        val id: String,
+        val id: LabelId,
         val name: String,
         @ColorInt val colorInt: Int,
         val groupIndex: Int

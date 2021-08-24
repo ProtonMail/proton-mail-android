@@ -28,6 +28,7 @@ import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
@@ -69,11 +70,11 @@ class ContactGroupsViewModelTest : CoroutinesTest {
 
     private val testPath = "test/path1234"
     private val label1 =
-        ContactLabelUiModel("a", "aa", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("a"), "aa", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
     private val label2 =
-        ContactLabelUiModel("b", "bb", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("b"), "bb", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
     private val label3 =
-        ContactLabelUiModel("c", "cc", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("c"), "cc", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
 
     private val testColorInt = 871
 
@@ -96,19 +97,19 @@ class ContactGroupsViewModelTest : CoroutinesTest {
         val resultLiveData = contactGroupsViewModel.contactGroupsResult.testObserver()
         val contactLabels = listOf(label1, label2, label3)
         val listItem1 = ContactGroupListItem(
-            label1.id,
+            label1.id.id,
             label1.name,
             0,
             color = testColorInt,
         )
         val listItem2 = ContactGroupListItem(
-            label2.id,
+            label2.id.id,
             label2.name,
             0,
             color = testColorInt,
         )
         val listItem3 = ContactGroupListItem(
-            label3.id,
+            label3.id.id,
             label3.name,
             0,
             color = testColorInt,

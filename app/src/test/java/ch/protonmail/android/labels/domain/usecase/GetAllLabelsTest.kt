@@ -23,6 +23,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
@@ -56,21 +57,21 @@ class GetAllLabelsTest {
     @Test
     fun verifyThatLabelsTypeAreReceivedAndProcessedCorrectly() = runBlockingTest {
         // given
-        val testLabelId1 = "labelId1"
-        val testLabelId2 = "labelId2"
+        val testLabelId1 = LabelId("labelId1")
+        val testLabelId2 = LabelId("labelId2")
         val testColorInt = 123
-        val currentLabelsSelection = listOf(testLabelId1, testLabelId2)
+        val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
         val sheetType = LabelsActionSheet.Type.LABEL
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
-            every { exclusive } returns false // false for normal label/not a folder (api v3)
+            every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
         }
         val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
-            every { exclusive } returns false // false for normal label/not a folder (api v3)
+            every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
         }
         val uiLabel1 = LabelActonItemUiModel(
-            testLabelId1,
+            testLabelId1.id,
             R.drawable.circle_labels_selection,
             "labelName1",
             null,
@@ -79,7 +80,7 @@ class GetAllLabelsTest {
             LabelsActionSheet.Type.LABEL.typeInt
         )
         val uiLabel2 = LabelActonItemUiModel(
-            testLabelId2,
+            testLabelId2.id,
             R.drawable.circle_labels_selection,
             "labelName2",
             null,
@@ -105,21 +106,21 @@ class GetAllLabelsTest {
     @Test
     fun verifyThatFolderTypeAreReceivedAndProcessedCorrectly() = runBlockingTest {
         // given
-        val testLabelId1 = "labelId1"
-        val testLabelId2 = "labelId2"
+        val testLabelId1 = LabelId("labelId1")
+        val testLabelId2 = LabelId("labelId2")
         val testColorInt = 123
-        val currentLabelsSelection = listOf(testLabelId1, testLabelId2)
+        val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
         val sheetType = LabelsActionSheet.Type.FOLDER
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
-            every { exclusive } returns true // true for a folder/not a normal label (api v3)
+            every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
         }
         val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
-            every { exclusive } returns true  // true for a folder/not a normal label (api v3)
+            every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
         }
         val uiLabel1 = LabelActonItemUiModel(
-            testLabelId1,
+            testLabelId1.id,
             R.drawable.circle_labels_selection,
             "labelName1",
             null,
@@ -128,7 +129,7 @@ class GetAllLabelsTest {
             LabelsActionSheet.Type.FOLDER.typeInt
         )
         val uiLabel2 = LabelActonItemUiModel(
-            testLabelId2,
+            testLabelId2.id,
             R.drawable.circle_labels_selection,
             "labelName2",
             null,
@@ -156,21 +157,21 @@ class GetAllLabelsTest {
     @Test
     fun verifyThatFolderTypeAreReceivedAndProcessedCorrectlyAndCurrentInboxFolderIsOmitted() = runBlockingTest {
         // given
-        val testLabelId1 = "labelId1"
-        val testLabelId2 = "labelId2"
+        val testLabelId1 = LabelId("labelId1")
+        val testLabelId2 = LabelId("labelId2")
         val testColorInt = 123
-        val currentLabelsSelection = listOf(testLabelId1, testLabelId2)
+        val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
         val sheetType = LabelsActionSheet.Type.FOLDER
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
-            every { exclusive } returns true // true for a folder/not a normal label (api v3)
+            every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
         }
         val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
-            every { exclusive } returns true  // true for a folder/not a normal label (api v3)
+            every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
         }
         val uiLabel1 = LabelActonItemUiModel(
-            testLabelId1,
+            testLabelId1.id,
             R.drawable.circle_labels_selection,
             "labelName1",
             null,
@@ -179,7 +180,7 @@ class GetAllLabelsTest {
             LabelsActionSheet.Type.FOLDER.typeInt
         )
         val uiLabel2 = LabelActonItemUiModel(
-            testLabelId2,
+            testLabelId2.id,
             R.drawable.circle_labels_selection,
             "labelName2",
             null,

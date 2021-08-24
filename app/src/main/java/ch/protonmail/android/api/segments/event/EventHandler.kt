@@ -40,6 +40,7 @@ import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
@@ -592,7 +593,7 @@ internal class EventHandler @AssistedInject constructor(
                     val notify = item.notify
                     if (labelType == Constants.LABEL_TYPE_MESSAGE_LABEL) {
                         val label = LabelEntity(
-                            id = id,
+                            id = LabelId(id),
                             userId = userId,
                             name = name,
                             color = color,
@@ -607,7 +608,7 @@ internal class EventHandler @AssistedInject constructor(
                         messageDao.saveLabel(label)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
                         val label = LabelEntity(
-                            id = id,
+                            id = LabelId(id),
                             userId = userId,
                             name = name,
                             color = color,
@@ -674,7 +675,7 @@ internal class EventHandler @AssistedInject constructor(
         if (currentGroup != null) {
             val contactLabelFactory = LabelsMapper()
             val labelToSave = contactLabelFactory.mapLabelToLabelEntity(updatedGroup, userId)
-            val joins = contactDao.fetchJoinsBlocking(labelToSave.id)
+            val joins = contactDao.fetchJoinsBlocking(labelToSave.id.id)
             contactDao.saveContactGroupLabel(labelToSave)
             contactDao.saveContactEmailContactLabelBlocking(joins)
         }

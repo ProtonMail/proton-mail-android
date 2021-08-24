@@ -125,7 +125,7 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<LabelEntity> {
-                every { exclusive } returns true
+                every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
             }
             every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
@@ -145,7 +145,7 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL
             val testLabel = mockk<LabelEntity> {
-                every { exclusive } returns false
+                every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
             }
             every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
@@ -166,7 +166,7 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<LabelEntity> {
-                every { exclusive } returns true
+                every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
             }
             every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
@@ -189,7 +189,7 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<LabelEntity> {
-                every { exclusive } returns true
+                every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
             }
             every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
@@ -232,10 +232,10 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val exclusiveLabel = mockk<LabelEntity> {
-                every { exclusive } returns true
+                every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
             }
             val nonExclusiveLabel = mockk<LabelEntity> {
-                every { exclusive } returns false
+                every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
             }
             every { messageDao.findLabelByIdBlocking(exclusiveLabelId) } returns exclusiveLabel
             every { messageDao.findLabelByIdBlocking(nonExclusiveLabelId) } returns nonExclusiveLabel

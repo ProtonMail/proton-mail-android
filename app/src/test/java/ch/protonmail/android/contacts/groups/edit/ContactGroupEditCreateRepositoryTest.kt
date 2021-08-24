@@ -29,6 +29,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.coEvery
@@ -84,7 +85,9 @@ class ContactGroupEditCreateRepositoryTest {
     fun whenEditContactGroupSucceedsThenSaveContactGroupAndContactEmailToTheDb() = runBlocking {
         // given
         val contactGroupId = "contact-group-id"
-        val contactLabel = LabelEntity(contactGroupId, "name", "color", 1, testType, testPath, testParentId, 0, 0)
+        val contactLabel = LabelEntity(
+            LabelId(contactGroupId), testUserId, "name", "color", 1, testType, testPath, testParentId, 0, 0, 0
+        )
         val labelResponse =
             LabelResponse(testLabel.copy(id = contactGroupId, type = Constants.LABEL_TYPE_CONTACT_GROUPS))
         coEvery { apiManager.updateLabel(any(), any(), any()) } returns ApiResult.Success(labelResponse)
@@ -118,7 +121,8 @@ class ContactGroupEditCreateRepositoryTest {
     fun whenEditContactGroupApiCallFailsThenCreateContactGroupWorkerIsCalled() = runBlocking {
         val contactGroupId = "contact-group-id"
         val contactLabel = LabelEntity(
-            contactGroupId,
+            LabelId(contactGroupId),
+            testUserId,
             "name",
             "color",
             0,
@@ -145,7 +149,8 @@ class ContactGroupEditCreateRepositoryTest {
         runBlocking {
             val contactGroupId = "contact-group-id"
             val contactLabel = LabelEntity(
-                contactGroupId,
+                LabelId(contactGroupId),
+                testUserId,
                 "name",
                 "color",
                 0,
@@ -170,13 +175,15 @@ class ContactGroupEditCreateRepositoryTest {
         // given
         val contactLabel =
             LabelEntity(
-                "labelID",
+                LabelId("labelID"),
+                testUserId,
                 "name",
                 "color",
                 1,
                 Constants.LABEL_TYPE_CONTACT_GROUPS,
                 testPath,
                 testParentId,
+                0,
                 0,
                 0
             )
@@ -195,7 +202,10 @@ class ContactGroupEditCreateRepositoryTest {
     @Test
     fun whenCreateContactGroupApiCallFailsThenCreateContactGroupWorkerIsCalled() = runBlocking {
         val contactLabel =
-            LabelEntity("", "name", "color", 1, Constants.LABEL_TYPE_CONTACT_GROUPS, "a/b", "ParentId", 1, 0)
+            LabelEntity(
+                LabelId(""), testUserId, "name", "color", 1, Constants.LABEL_TYPE_CONTACT_GROUPS, "a/b", "ParentId", 1,
+                0, 0
+            )
         val error = "Test API Error"
         val protonErrorData = ApiResult.Error.ProtonData(123, error)
         val apiResponse = ApiResult.Error.Http(123, error, protonErrorData)

@@ -33,6 +33,7 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsU
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.utils.FileHelper
 import io.mockk.coEvery
 import io.mockk.every
@@ -42,6 +43,7 @@ import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.AfterTest
@@ -99,6 +101,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val testPath = "a/bpath"
     private val testParentId = "parentIdForTests"
     private val testType = Constants.LABEL_TYPE_CONTACT_GROUPS
+    private val testUserId = UserId("testUserId")
 
     @BeforeTest
     fun setUp() {
@@ -116,10 +119,11 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         // given
         val contactId = "contactId1"
         every { fetchContactDetails(contactId) } returns flowOf(fetchContactResult)
-        val groupId1 = "ID1"
+        val groupId1 = LabelId("ID1")
         val groupName1 = "name1"
         val contactLabel = LabelEntity(
             groupId1,
+            testUserId,
             groupName1,
             "color",
             1,
@@ -172,11 +176,12 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { fetchContactDetails(contactId) } returns flow {
             throw exception
         }
-        val groupId1 = "ID1"
+        val groupId1 = LabelId("ID1")
         val groupName1 = "name1"
         val contactLabel =
             LabelEntity(
                 groupId1,
+                testUserId,
                 groupName1,
                 "color",
                 1,

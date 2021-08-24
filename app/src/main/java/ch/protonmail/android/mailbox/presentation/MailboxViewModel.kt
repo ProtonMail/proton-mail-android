@@ -33,9 +33,9 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
@@ -600,8 +600,10 @@ internal class MailboxViewModel @Inject constructor(
 
         currentContactLabels?.forEach {
             val labelId = it.id
-            if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(labelId) && it.type == Constants.LABEL_TYPE_MESSAGE_LABEL) {
-                labelsToRemove.add(labelId)
+            if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(
+                    labelId
+                ) && it.type == Constants.LABEL_TYPE_MESSAGE_LABEL) {
+                labelsToRemove.add(labelId.id)
             } else if (checkedLabelIds.contains(labelId)) {
                 checkedLabelIds.remove(labelId)
             }
@@ -647,7 +649,7 @@ internal class MailboxViewModel @Inject constructor(
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 
-            LabelChipUiModel(LabelId(label.id), Name(label.name), labelColor)
+            LabelChipUiModel(label.id, Name(label.name), labelColor)
         }
 
     fun markRead(

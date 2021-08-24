@@ -20,7 +20,7 @@
 package ch.protonmail.android.data
 
 import ch.protonmail.android.data.local.model.LabelEntity
-import ch.protonmail.android.domain.entity.LabelId
+import ch.protonmail.android.data.local.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 

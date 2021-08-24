@@ -27,6 +27,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -37,6 +38,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Rule
 import kotlin.test.BeforeTest
@@ -85,7 +87,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
         assertEquals(0, adapter.itemCount)
 
         // Add single label
-        val label = LabelEntity("1", EMPTY_STRING, EMPTY_STRING, 0, 0, EMPTY_STRING, EMPTY_STRING, 0, 0)
+        val label = LabelEntity(LabelId("1"), UserId("testUser"), EMPTY_STRING, EMPTY_STRING, 0, 0, EMPTY_STRING, EMPTY_STRING, 0, 0, 0)
         messageDao.saveLabel(label)
         runBlocking { delay(50) } // Wait for async delivery
         assertEquals(1, adapter.itemCount)

@@ -179,7 +179,7 @@ class MailboxRecyclerViewAdapter(
     }
 
     fun setLabels(labels: List<LabelEntity>) {
-        this.labels = labels.map { it.id to it }.toMap()
+        this.labels = labels.map { it.id.id to it }.toMap()
         notifyDataSetChanged()
     }
 

@@ -50,11 +50,11 @@ class ContactGroupEditCreateRepository @Inject constructor(
 
     suspend fun editContactGroup(contactLabel: LabelEntity, userId: UserId): ApiResult<LabelResponse> {
         val labelBody = labelsMapper.mapLabelEntityToRequestLabel(contactLabel)
-        val updateLabelResult = apiManager.updateLabel(userId, contactLabel.id, labelBody)
+        val updateLabelResult = apiManager.updateLabel(userId, contactLabel.id.id, labelBody)
         when (updateLabelResult) {
             is ApiResult.Success -> {
                 val label = updateLabelResult.value.label
-                val joins = contactDao.fetchJoins(contactLabel.id)
+                val joins = contactDao.fetchJoins(contactLabel.id.id)
                 contactDao.saveContactGroupLabel(
                     labelsMapper.mapLabelToLabelEntity(label, userId)
                 )
@@ -156,7 +156,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
             contactLabel.expanded,
             contactLabel.sticky,
             isUpdate,
-            contactLabel.id
+            contactLabel.id.id
         )
     }
 }

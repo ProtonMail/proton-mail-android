@@ -24,6 +24,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.LabelEntity
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -33,6 +34,7 @@ import io.mockk.verify
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -55,8 +57,11 @@ class ContactGroupsRepositoryTest {
 
     private val dispatcherProvider = TestDispatcherProvider
 
+    private val testUserId = UserId("testUserId")
+
     private val label1 = LabelEntity(
-        id = "a",
+        id = LabelId("a"),
+        userId = testUserId,
         name = "aa",
         color = "testColor",
         type = Constants.LABEL_TYPE_MESSAGE_LABEL,
@@ -64,11 +69,12 @@ class ContactGroupsRepositoryTest {
         parentId = "parentId",
         expanded = 0,
         sticky = 0,
-        order = 0
+        order = 0,
+        notify = 0
     )
 
     private val label1UiModel = ContactLabelUiModel(
-        id = "a",
+        id = LabelId("a"),
         name = "aa",
         color = "testColor",
         type = Constants.LABEL_TYPE_MESSAGE_LABEL,
@@ -138,7 +144,8 @@ class ContactGroupsRepositoryTest {
     @Test
     fun saveContactGroupStoresGivenContactGroupInDatabase() {
         val contactGroup = LabelEntity(
-            id = "Id",
+            id = LabelId("Id"),
+            userId = testUserId,
             name = "name",
             color = "color",
             type = Constants.LABEL_TYPE_MESSAGE_LABEL,
@@ -146,7 +153,8 @@ class ContactGroupsRepositoryTest {
             parentId = "parentId",
             expanded = 0,
             sticky = 0,
-            order = 0
+            order = 0,
+            notify = 0
         )
 
         contactGroupsRepository.saveContactGroup(contactGroup)

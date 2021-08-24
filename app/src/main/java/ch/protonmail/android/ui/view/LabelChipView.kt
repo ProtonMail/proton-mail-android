@@ -28,7 +28,7 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.withStyledAttributes
 import ch.protonmail.android.R
-import ch.protonmail.android.domain.entity.LabelId
+import ch.protonmail.android.data.local.model.LabelId
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.extensions.fromAttributesOrPreviewOrNull
 import com.google.android.material.shape.MaterialShapeDrawable

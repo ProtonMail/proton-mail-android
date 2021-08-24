@@ -73,7 +73,7 @@ class RemoveMembersFromContactGroupWorker @AssistedInject constructor(
             val contactLabel = withContext(dispatchers.Io) {
                 contactDao.findContactGroupByName(contactGroupName)
             }
-            id = contactLabel?.id ?: ""
+            id = contactLabel?.id?.id ?: ""
         }
 
         if (id.isEmpty()) {
