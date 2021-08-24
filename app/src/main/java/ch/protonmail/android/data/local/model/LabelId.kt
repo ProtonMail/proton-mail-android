@@ -19,10 +19,8 @@
 
 package ch.protonmail.android.data.local.model
 
-import me.proton.core.domain.entity.UserId
-
 /**
  * Entity representing a LabelId.
  */
-typealias LabelId = UserId
-//data class LabelId(val id: String)
+//typealias LabelId = UserId
+data class LabelId(val id: String)

@@ -73,7 +73,11 @@ object AppDatabaseMigrations {
                 UserKeyEntity::class.simpleName
             ).forEach { table ->
                 Timber.v("Insert table $table")
-                database.execSQL("INSERT INTO main.$table SELECT * FROM coreDb.$table")
+                runCatching {
+                    database.execSQL("INSERT INTO main.$table SELECT * FROM coreDb.$table")
+                }.onFailure {
+                    Timber.i("Insert table $table has failed, probably core db it does not exist, ${it.message}")
+                }
             }
 
             // End current transaction to detach coreDb.

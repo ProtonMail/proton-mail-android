@@ -20,9 +20,7 @@ package ch.protonmail.android.data.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
-import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 
 const val TABLE_LABELS = "LabelEntity"
@@ -46,12 +44,13 @@ const val COLUMN_LABEL_STICKY = "sticky"
         Index(COLUMN_LABEL_USER_ID)
     ],
     foreignKeys = [
-        ForeignKey(
-            entity = AccountEntity::class,
-            parentColumns = ["userId"],
-            childColumns = [COLUMN_LABEL_USER_ID],
-            onDelete = ForeignKey.CASCADE
-        )
+        // TODO: add after contacts migration
+//        ForeignKey(
+//            entity = UserEntity::class,
+//            parentColumns = [COLUMN_LABEL_USER_ID],
+//            childColumns = [COLUMN_LABEL_USER_ID],
+//            onDelete = ForeignKey.CASCADE
+//        )
     ]
 )
 data class LabelEntity(

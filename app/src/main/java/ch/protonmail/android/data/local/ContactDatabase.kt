@@ -21,14 +21,13 @@ package ch.protonmail.android.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import ch.protonmail.android.data.ProtonMailConverters
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsConverter
 import ch.protonmail.android.data.local.model.LabelEntity
-import me.proton.core.account.data.entity.AccountEntity
-import me.proton.core.account.data.entity.SessionEntity
 import me.proton.core.data.room.db.CommonConverters
 
 @Database(
@@ -38,16 +37,14 @@ import me.proton.core.data.room.db.CommonConverters
         LabelEntity::class,
         FullContactDetails::class,
         ContactEmailContactLabelJoin::class,
-        // Core entity - temp solution before migration to 1 db
-        AccountEntity::class,
-        SessionEntity::class,
     ],
     version = 2
 )
 @TypeConverters(
     FullContactDetailsConverter::class,
     // Core - temp solution before migration to 1 db
-    CommonConverters::class
+    CommonConverters::class,
+    ProtonMailConverters::class
 )
 abstract class ContactDatabase : RoomDatabase() {
 
