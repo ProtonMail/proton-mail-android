@@ -23,10 +23,16 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.loadMoreCatch
+import ch.protonmail.android.domain.loadMoreFlow
+import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
@@ -225,42 +231,40 @@ class MessageRepository @Inject constructor(
 
     fun observeMessagesByLocation(
         userId: UserId,
-        location: Constants.MessageLocationType
+        location: MessageLocationType
     ): Flow<List<Message>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
-        return observeMessagesByLocationFromDatabase(location, messagesDao)
-            .onStart {
-                if (!connectivityManager.isInternetConnectionPossible()) {
-                    Timber.d("Skipping network refresh as connectivity is not available")
-                    return@onStart
-                }
 
-                Timber.v("location: $location, trying fetching from remote")
-                runCatching {
-                    protonMailApiManager.getMessages(UserIdTag(userId), location.messageLocationTypeValue)
-                }.fold(
-                    onSuccess = { messagesResponse ->
-                        if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                            persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
-                        }
-                    },
-                    onFailure = { exception ->
-                        val dbData = observeMessagesByLocationFromDatabase(location, messagesDao).first()
-                        emit(dbData)
-                        throw exception
-                    }
-                )
-            }
+        val databaseFlow = observeMessagesByLocationFromDatabase(location, messagesDao)
+        val apiFlow = getMessageByLocationFromApi(userId, location)
+        val persist: suspend (List<Message>) -> Unit = { persistMessages(it, userId) }
+
+        return databaseFlow.withLoadMore(loader = apiFlow, onLoad = persist)
     }
 
     private fun observeMessagesByLocationFromDatabase(
-        location: Constants.MessageLocationType,
+        location: MessageLocationType,
         messagesDao: MessageDao
-    ) = if (location != Constants.MessageLocationType.STARRED) {
-        messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
-    } else {
-        messagesDao.observeStarredMessages()
+    ) = when (location) {
+        MessageLocationType.ALL_MAIL -> messagesDao.observeAllMessages()
+        MessageLocationType.STARRED -> messagesDao.observeStarredMessages()
+        else -> messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
     }
+
+    private fun getMessageByLocationFromApi(
+        userId: UserId,
+        location: MessageLocationType
+    ): LoadMoreFlow<List<Message>> = loadMoreFlow(
+        initialBookmark = null as Long?,
+        createNextBookmark = { result, previousBookmark -> result.minOfOrNull { it.time } ?: previousBookmark },
+        load = {
+            protonMailApiManager.getMessages(
+                UserIdTag(userId),
+                location.messageLocationTypeValue,
+                end = it
+            ).messages
+        }
+    ).loadMoreCatch { Timber.e(it, "Can't fetch messages from API") }
 
     fun observeMessagesByLabelId(
         labelId: String,
@@ -291,6 +295,13 @@ class MessageRepository @Inject constructor(
             }
     }
 
+    @Deprecated(
+        "Use 'observeMessagesByLocation'",
+        ReplaceWith(
+            "observeMessagesByLocation(userId, MessageLocationType.ALL_MAIL",
+            "ch.protonmail.android.core.Constants.MessageLocationType"
+        )
+    )
     fun observeAllMessages(
         userId: UserId
     ): Flow<List<Message>> {
@@ -307,7 +318,7 @@ class MessageRepository @Inject constructor(
                 runCatching {
                     protonMailApiManager.getMessages(
                         UserIdTag(userId),
-                        Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                        MessageLocationType.ALL_MAIL.messageLocationTypeValue,
                         null,
                         null
                     )

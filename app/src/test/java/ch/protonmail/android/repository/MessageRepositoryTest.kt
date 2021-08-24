@@ -44,6 +44,7 @@ import io.mockk.slot
 import io.mockk.spyk
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
@@ -83,10 +84,10 @@ class MessageRepositoryTest {
 
     private val testUserName = "userName1"
     private val testUserId = UserId(testUserName)
-    private val message1 = mockk<Message>(relaxed = true)
-    private val message2 = mockk<Message>(relaxed = true)
-    private val message3 = mockk<Message>(relaxed = true)
-    private val message4 = mockk<Message>(relaxed = true)
+    private val message1 = mockk<Message>(relaxed = true) { every { messageId } returns "1" }
+    private val message2 = mockk<Message>(relaxed = true) { every { messageId } returns "2" }
+    private val message3 = mockk<Message>(relaxed = true) { every { messageId } returns "3" }
+    private val message4 = mockk<Message>(relaxed = true) { every { messageId } returns "4" }
 
     private val messageRepository = MessageRepository(
         TestDispatcherProvider,
@@ -357,18 +358,14 @@ class MessageRepositoryTest {
     fun verifyThatInboxMessagesFromNetAndDbAreFetched() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.INBOX
-        val dbMessages = listOf(message1, message2)
-        val netMessages = listOf(message1, message2, message3, message4)
-        val netResponse = mockk<MessagesResponse> {
-            every { messages } returns netMessages
+        val initialDatabaseMessages = listOf(message1, message2)
+        val apiMessages = listOf(message1, message2, message3, message4)
+
+        // region API
+        val apiResponse = mockk<MessagesResponse> {
+            every { messages } returns apiMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-        coEvery {
-            messageDao.observeMessagesByLocation(
-                mailboxLocation.messageLocationTypeValue
-            )
-        } returns dbFlow
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
@@ -376,22 +373,40 @@ class MessageRepositoryTest {
                 null,
                 null
             )
-        } returns netResponse
-        coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
+        } returns apiResponse
+        // endregion
+
+        // region Dao
+        val databaseMessages = MutableStateFlow(initialDatabaseMessages)
+        every { messageDao.observeMessagesByLocation(mailboxLocation.messageLocationTypeValue) } returns
+            databaseMessages
+        coEvery { messageDao.saveMessages(apiMessages) } answers {
+            val oldMessages = databaseMessages.value
+            val newMessages = (firstArg<List<Message>>() + oldMessages).distinctBy { it.messageId }
+            // We just compare sized of the lists, as the messages are mock
+            if (newMessages.size > oldMessages.size) {
+                databaseMessages.tryEmit(newMessages)
+            }
+        }
+        // endregion
 
         // when
         messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).test {
-            dbFlow.emit(dbMessages)
 
             // then
+            // verify messages from database
+            assertEquals(initialDatabaseMessages, expectItem())
+
+            // verify api fetch
             coVerify {
                 protonMailApiManager.getMessages(
                     UserIdTag(testUserId), mailboxLocation.messageLocationTypeValue, null, null
                 )
             }
-            coVerify { messageDao.saveMessages(netMessages) }
-            assertEquals(netMessages, expectItem())
-            assertEquals(dbMessages, expectItem())
+            coVerify { messageDao.saveMessages(apiMessages) }
+
+            // verify message from api
+            assertEquals(apiMessages, expectItem())
         }
     }
 
@@ -424,7 +439,7 @@ class MessageRepositoryTest {
 
             // then
             assertEquals(dbMessages, expectItem())
-            expectError()
+            expectNoEvents()
         }
     }
 
@@ -547,35 +562,54 @@ class MessageRepositoryTest {
     fun verifyThatAllStaredFromDbAndNetAreFetched() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.STARRED
-        val dbMessages = listOf(message1, message2)
-        val netMessages = listOf(message1, message2, message3, message4)
-        val netResponse = mockk<MessagesResponse> {
-            every { messages } returns netMessages
+        val initialDatabaseMessages = listOf(message1, message2)
+        val apiMessages = listOf(message1, message2, message3, message4)
+
+        // region API
+        val apiResponse = mockk<MessagesResponse> {
+            every { messages } returns apiMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        coEvery { messageDao.observeStarredMessages() } returns flowOf(dbMessages)
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
-                Constants.MessageLocationType.STARRED.messageLocationTypeValue,
+                mailboxLocation.messageLocationTypeValue,
                 null,
                 null
             )
-        } returns netResponse
-        coEvery { messageDao.saveMessages(netMessages) } just Runs
+        } returns apiResponse
+        // endregion
+
+        // region Dao
+        val databaseMessages = MutableStateFlow(initialDatabaseMessages)
+        every { messageDao.observeStarredMessages() } returns databaseMessages
+        coEvery { messageDao.saveMessages(apiMessages) } answers {
+            val oldMessages = databaseMessages.value
+            val newMessages = (firstArg<List<Message>>() + oldMessages).distinctBy { it.messageId }
+            // We just compare sized of the lists, as the messages are mock
+            if (newMessages.size > oldMessages.size) {
+                databaseMessages.tryEmit(newMessages)
+            }
+        }
+        // endregion
 
         // when
-        val resultsList =
-            messageRepository.observeMessagesByLocation(UserId(testUserName), mailboxLocation).take(2).toList()
+        messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).test {
 
-        // then
-        coVerify {
-            protonMailApiManager.getMessages(
-                UserIdTag(testUserId), Constants.MessageLocationType.STARRED.messageLocationTypeValue, null, null
-            )
+            // then
+            // verify messages from database
+            assertEquals(initialDatabaseMessages, expectItem())
+
+            // verify api fetch
+            coVerify {
+                protonMailApiManager.getMessages(
+                    UserIdTag(testUserId), mailboxLocation.messageLocationTypeValue, null, null
+                )
+            }
+            coVerify { messageDao.saveMessages(apiMessages) }
+
+            // verify message from api
+            assertEquals(apiMessages, expectItem())
         }
-        coVerify { messageDao.saveMessages(netMessages) }
-
-        assertEquals(dbMessages, resultsList[0])
     }
 }

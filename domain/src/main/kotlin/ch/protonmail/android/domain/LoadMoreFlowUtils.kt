@@ -21,6 +21,8 @@ package ch.protonmail.android.domain
 
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -41,6 +43,18 @@ fun <A, B> Flow<A>.withLoadMore(loader: LoadMoreFlow<B>, onLoad: suspend (B) -> 
     }.distinctUntilChanged()
     return LoadMoreFlow(underlying, loader.trigger)
 }
+
+/**
+ * Same as [Flow.catch], but returns a [LoadMoreFlow] instead
+ */
+fun <T> LoadMoreFlow<T>.loadMoreCatch(action: suspend FlowCollector<T>.(Throwable) -> Unit): LoadMoreFlow<T> =
+    LoadMoreFlow(catch(action), trigger)
+
+/**
+ * Same as [Flow.map], but returns a [LoadMoreFlow] instead
+ */
+fun <A, B> LoadMoreFlow<A>.loadMoreMap(mapper: suspend (A) -> B): LoadMoreFlow<B> =
+    LoadMoreFlow(map(mapper), trigger)
 
 @Suppress("USELESS_CAST") // Cast as nullable is needed in order to emit `null`
 private fun <T> Flow<T>.emitInitialNull(): Flow<T?> =
