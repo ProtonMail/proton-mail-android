@@ -574,8 +574,7 @@ internal class MailboxActivity :
                 include_mailbox_no_messages.isVisible = state.items.isEmpty()
                 mailboxRecyclerView.isVisible != state.items.isEmpty()
 
-                mailboxAdapter.clear()
-                mailboxAdapter.addAll(state.items)
+                mailboxAdapter.submitList(state.items)
             }
             is MailboxState.Error -> {
                 setRefreshing(false)

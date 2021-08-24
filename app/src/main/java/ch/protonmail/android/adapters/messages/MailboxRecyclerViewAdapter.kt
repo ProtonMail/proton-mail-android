@@ -20,7 +20,7 @@ package ch.protonmail.android.adapters.messages
 
 import android.content.Context
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.PendingSend
@@ -35,12 +35,12 @@ import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 class MailboxRecyclerViewAdapter(
     private val context: Context,
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
-) : RecyclerView.Adapter<MailboxItemViewHolder>() {
+) : ListAdapter<MailboxUiItem, MailboxItemViewHolder>(MailboxUiItem.DiffCallback) {
 
     private var mailboxLocation = Constants.MessageLocationType.INVALID
 
     private var labels = mapOf<String, Label>()
-    private val mailboxItems = mutableListOf<MailboxUiItem>()
+    private var mailboxItems = listOf<MailboxUiItem>()
     private val selectedMailboxItemsIds: MutableSet<String> = mutableSetOf()
 
     private var pendingUploadList: List<PendingUpload>? = null
@@ -65,20 +65,16 @@ class MailboxRecyclerViewAdapter(
     val checkedMailboxItems get() =
         selectedMailboxItemsIds.mapNotNull { mailboxItems.find { message -> message.itemId == it } }
 
-    fun getItem(position: Int) = mailboxItems[position]
+    public override fun getItem(position: Int) = mailboxItems[position]
 
-    fun addAll(items: List<MailboxUiItem>) {
-        this.mailboxItems.addAll(
-            items.filter {
-                !it.isDeleted
-            }
-        )
-        notifyDataSetChanged()
+    override fun submitList(list: List<MailboxUiItem>?) {
+        mailboxItems = list ?: emptyList()
+        super.submitList(list)
     }
 
-    fun clear() {
-        mailboxItems.clear()
-        notifyDataSetChanged()
+    override fun submitList(list: List<MailboxUiItem>?, commitCallback: Runnable?) {
+        mailboxItems = list ?: emptyList()
+        super.submitList(list, commitCallback)
     }
 
     fun setItemClick(onItemClick: ((MailboxUiItem) -> Unit)?) {

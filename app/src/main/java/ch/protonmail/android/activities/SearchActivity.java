@@ -18,6 +18,10 @@
  */
 package ch.protonmail.android.activities;
 
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING;
+import static ch.protonmail.android.core.Constants.MessageLocationType;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,10 +60,6 @@ import ch.protonmail.android.mailbox.presentation.MailboxViewModel;
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem;
 import ch.protonmail.android.utils.AppUtil;
 import dagger.hilt.android.AndroidEntryPoint;
-
-import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
-import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING;
-import static ch.protonmail.android.core.Constants.MessageLocationType;
 
 @AndroidEntryPoint
 public class SearchActivity extends BaseActivity {
@@ -151,8 +151,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void showSearchResults(List<MailboxUiItem> items) {
-        mAdapter.clear();
-        mAdapter.addAll(items);
+        mAdapter.submitList(items);
         setLoadingMore(false);
         mProgressBar.setVisibility(View.GONE);
         mAdapter.setNewLocation(MessageLocationType.SEARCH);
@@ -243,7 +242,7 @@ public class SearchActivity extends BaseActivity {
         setLoadingMore(false);
         mProgressBar.setVisibility(View.GONE);
         if (event.getPage() == 0) {
-            mAdapter.clear();
+            mAdapter.submitList(null);
             noMessagesView.setVisibility(View.VISIBLE);
         }
     }

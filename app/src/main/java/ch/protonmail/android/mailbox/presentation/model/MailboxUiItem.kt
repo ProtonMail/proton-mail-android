@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.presentation.model
 
+import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.ui.model.LabelChipUiModel
 
 data class MailboxUiItem(
@@ -36,7 +37,20 @@ data class MailboxUiItem(
     val labels: List<LabelChipUiModel>,
     val recipients: String,
     val isDraft: Boolean
-)
+) {
+
+    companion object {
+
+        val DiffCallback = object : DiffUtil.ItemCallback<MailboxUiItem>() {
+
+            override fun areItemsTheSame(oldItem: MailboxUiItem, newItem: MailboxUiItem) =
+                oldItem.itemId == newItem.itemId
+
+            override fun areContentsTheSame(oldItem: MailboxUiItem, newItem: MailboxUiItem) =
+                oldItem == newItem
+        }
+    }
+}
 
 data class MessageData(
     val location: Int,
