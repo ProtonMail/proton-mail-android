@@ -191,17 +191,11 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
         senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))
 
-        if (nonExclusiveLabels.isEmpty().not()) {
-            labelsCollapsedGroupView.setLabels(nonExclusiveLabels)
-            labelsExpandedGroupView.setLabels(nonExclusiveLabels)
-            collapsedHeaderGroup.addView(labelsCollapsedGroupView)
-            expandedHeaderGroup.addView(labelsExpandedGroupView)
-            expandedHeaderGroup.addView(labelsImageView)
-        } else {
-            labelsCollapsedGroupView.visibility = View.GONE
-            labelsExpandedGroupView.visibility = View.GONE
-            labelsImageView.visibility = View.GONE
-        }
+        labelsCollapsedGroupView.setLabels(nonExclusiveLabels)
+        labelsExpandedGroupView.setLabels(nonExclusiveLabels)
+        collapsedHeaderGroup.addView(labelsCollapsedGroupView)
+        expandedHeaderGroup.addView(labelsExpandedGroupView)
+        expandedHeaderGroup.addView(labelsImageView)
 
         val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
         lockIconTextView.text = context.getText(senderLockIcon.icon)
