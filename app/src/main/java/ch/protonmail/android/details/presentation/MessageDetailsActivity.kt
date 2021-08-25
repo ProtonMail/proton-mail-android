@@ -58,6 +58,8 @@ import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostSpamJob
+import ch.protonmail.android.jobs.ReportPhishingJob
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
@@ -585,11 +587,17 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         val actionsUiModel = BottomActionsView.UiModel(
             if (message.toList.size + message.ccList.size > 1) R.drawable.ic_reply_all else R.drawable.ic_reply,
             R.drawable.ic_envelope_dot,
-            R.drawable.ic_trash
+            if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_trash_empty else R.drawable.ic_trash,
+            R.drawable.ic_label
         )
         messageDetailsActionsView.bind(actionsUiModel)
+        messageDetailsActionsView.setOnFourthActionClickListener {
+            showLabelsManager()
+        }
         messageDetailsActionsView.setOnThirdActionClickListener {
-            viewModel.moveLastMessageToTrash()
+            if (viewModel.shouldShowDeleteActionInBottomActionBar()) {
+                viewModel.delete()
+            } else viewModel.moveLastMessageToTrash()
             onBackPressed()
         }
         messageDetailsActionsView.setOnSecondActionClickListener {
@@ -599,6 +607,17 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         messageDetailsActionsView.setOnFirstActionClickListener {
             onReplyMessage(message)
         }
+    }
+
+    private fun showLabelsManager() {
+        LabelsActionSheet.newInstance(
+            messageIds = listOf(messageOrConversationId),
+            currentFolderLocationId = openedFolderLocationId,
+            actionSheetTarget =
+            if (viewModel.isConversationEnabled()) ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+            else ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        )
+            .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
     }
 
     private fun onReplyMessage(message: Message) {

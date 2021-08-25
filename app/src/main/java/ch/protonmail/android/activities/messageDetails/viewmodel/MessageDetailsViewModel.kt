@@ -63,12 +63,14 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
@@ -130,7 +132,9 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val conversationRepository: ConversationsRepository,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
-    savedStateHandle: SavedStateHandle,
+    private val deleteMessage: DeleteMessage,
+    private val deleteConversations: DeleteConversations,
+    private val savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -140,12 +144,11 @@ internal class MessageDetailsViewModel @Inject constructor(
         savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID)
             ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
 
-    private val location: Constants.MessageLocationType by lazy {
-        Constants.MessageLocationType.fromInt(
+    private val location: Constants.MessageLocationType
+        get() = Constants.MessageLocationType.fromInt(
             savedStateHandle.get<Int>(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID)
                 ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
         )
-    }
 
     private val mailboxLocationId: String? by lazy {
         savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MAILBOX_LABEL_ID)
@@ -710,6 +713,26 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
+    fun delete() {
+        viewModelScope.launch {
+            if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
+                val primaryUserId = UserId(userManager.requireCurrentUserId().id)
+                deleteConversations(
+                    listOf(messageOrConversationId),
+                    primaryUserId,
+                    location.messageLocationTypeValue.toString()
+                )
+            } else {
+                lastMessage()?.let { message ->
+                    deleteMessage(
+                        listOf(requireNotNull(message.messageId)),
+                        location.messageLocationTypeValue.toString()
+                    )
+                }
+            }
+        }
+    }
+
     fun handleStarUnStar(messageOrConversationId: String, isChecked: Boolean) {
         val ids = listOf(messageOrConversationId)
 
@@ -749,5 +772,18 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun storagePermissionDenied() {
         _showPermissionMissingDialog.value = Unit
+    }
+
+    fun shouldShowDeleteActionInBottomActionBar(): Boolean {
+        return if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
+            location == Constants.MessageLocationType.TRASH
+        } else {
+            location in arrayOf(
+                Constants.MessageLocationType.TRASH,
+                Constants.MessageLocationType.DRAFT,
+                Constants.MessageLocationType.SENT,
+                Constants.MessageLocationType.SPAM
+            )
+        }
     }
 }
