@@ -348,15 +348,6 @@ interface MessageDao {
         WHERE $COLUMN_MESSAGE_ID = :messageId
     """
     )
-    fun updateStarredBlocking(messageId: String, starred: Boolean)
-
-    @Query(
-        """
-        UPDATE $TABLE_MESSAGES 
-        SET $COLUMN_MESSAGE_IS_STARRED = :starred
-        WHERE $COLUMN_MESSAGE_ID = :messageId
-    """
-    )
     suspend fun updateStarred(messageId: String, starred: Boolean)
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")

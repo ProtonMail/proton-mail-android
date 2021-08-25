@@ -45,6 +45,9 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -64,7 +67,10 @@ import kotlin.math.max
 import kotlin.time.toDuration
 
 const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723_478
-private const val MAX_LOCATION_ID_LENGTH = 2 // For non-custom locations such as: Inbox, Sent, Archive etc.
+
+// For non-custom locations such as: Inbox, Sent, Archive etc.
+private const val MAX_LOCATION_ID_LENGTH = 2
+private const val CONVERSATION_FLOW_DEBOUNCE_TIME = 1000L
 
 class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
@@ -501,20 +507,13 @@ class ConversationsRepositoryImpl @Inject constructor(
         }
 
     private fun observeConversationLocal(conversationId: String, userId: UserId): Flow<Conversation?> =
-        conversationDao.observeConversation(conversationId, userId.id)
-            .map { conversation ->
-                if (conversation != null) {
-                    val messages = getAllMessagesFromAConversation(conversation.id)
-                        .onEach { Timber.d("message id: ${it.messageId}, body: ${it.messageBody?.length}") }
-                        .toDomainModelList()
-                    Timber.d(
-                        "Processed conversation id: ${conversation.id} messages size: ${messages.size}"
-                    )
-                    conversation.toDomainModel(messages)
-                } else {
-                    null
-                }
-            }
+        conversationDao.observeConversation(conversationId, userId.id).combine(
+            messageDao.observeAllMessagesInfoFromConversation(conversationId)
+        ) { conversation, messages ->
+            conversation?.toDomainModel(messages.toDomainModelList())
+        }
+            .debounce(CONVERSATION_FLOW_DEBOUNCE_TIME)
+            .distinctUntilChanged()
 
     private data class ConversationStoreKey(val conversationId: String, val userId: UserId)
 }
