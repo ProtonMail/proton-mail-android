@@ -106,6 +106,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private var openedFolderLabelId: String? = null
     private var onOffsetChangedListener: AppBarLayout.OnOffsetChangedListener? = null
     private var showPhishingReportButton = true
+    private var shouldScrollToPosition = true
 
     private val attachmentToDownload = AtomicReference<Attachment?>(null)
     private val viewModel: MessageDetailsViewModel by viewModels()
@@ -505,6 +506,19 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             progress.visibility = View.GONE
             invalidateOptionsMenu()
+            if (viewModel.renderingPassed && shouldScrollToPosition) {
+                // Scroll to the last message on the second call of this observer and
+                // if there is more than one message, i.e. the item count is greater than 2 (header and body)
+                if (messageExpandableAdapter.itemCount > 2) {
+                    appBarLayout.setExpanded(false, true)
+                    // delay for better scrolling experience
+                    messageDetailsRecyclerView.postDelayed(
+                        { messageDetailsRecyclerView.smoothScrollToPosition(messageExpandableAdapter.itemCount - 1) },
+                        500
+                    )
+                    shouldScrollToPosition = false
+                }
+            }
             viewModel.renderingPassed = true
         }
     }
