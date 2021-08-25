@@ -28,7 +28,6 @@ private const val STARRED_LABEL_ID = "10"
 internal fun Conversation.toConversationUiModel() = ConversationUiModel(
     isStarred = labels.any { it.id == STARRED_LABEL_ID },
     subject = subject,
-    labelIds = labels.map { it.id },
     messages = messages?.toDbModelList().orEmpty(),
     messagesCount = messagesCount
 )
@@ -36,7 +35,6 @@ internal fun Conversation.toConversationUiModel() = ConversationUiModel(
 internal fun Message.toConversationUiModel() = ConversationUiModel(
     isStarred = isStarred ?: false,
     subject = subject,
-    labelIds = labelIDsNotIncludingLocations,
     messages = listOf(this),
     messagesCount = null
 )

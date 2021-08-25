@@ -52,6 +52,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
+import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
@@ -429,9 +430,10 @@ internal class MessageDetailsAdapter(
         }
     }
 
-    fun setMessageData(messageData: List<Message>) {
-        Timber.v("setMessageData size: ${messageData.size} ")
-        messages = messageData
+    fun setMessageData(conversation: ConversationUiModel) {
+        messages = conversation.messages
+        exclusiveLabelsPerMessage = conversation.exclusiveLabels
+        nonExclusiveLabelsPerMessage = conversation.nonExclusiveLabels
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
             items.add(MessageDetailsListItem(message))
@@ -454,14 +456,6 @@ internal class MessageDetailsAdapter(
         if (!isExpanded(lastNonDraftHeaderIndex)) {
             toggleExpandedItems(lastNonDraftHeaderIndex, true)
         }
-    }
-
-    fun setExclusiveLabelsPerMessage(labels: HashMap<String, List<Label>>) {
-        exclusiveLabelsPerMessage = labels
-    }
-
-    fun setNonExclusiveLabelsPerMessage(labels: HashMap<String, List<LabelChipUiModel>>) {
-        nonExclusiveLabelsPerMessage = labels
     }
 
     @SuppressLint("ClickableViewAccessibility")

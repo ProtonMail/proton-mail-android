@@ -19,12 +19,16 @@
 
 package ch.protonmail.android.details.presentation.model
 
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.ui.model.LabelChipUiModel
 
 data class ConversationUiModel(
     val isStarred: Boolean,
     val subject: String?,
-    val labelIds: List<String>,
     val messages: List<Message>,
-    val messagesCount: Int?
+    val messagesCount: Int?,
+    // TODO: The labels should be part of the message UI model instead
+    val nonExclusiveLabels: HashMap<String, List<LabelChipUiModel>> = hashMapOf(),
+    val exclusiveLabels: HashMap<String, List<Label>> = hashMapOf(),
 )

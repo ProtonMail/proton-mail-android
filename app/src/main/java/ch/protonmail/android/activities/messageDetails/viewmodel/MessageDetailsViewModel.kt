@@ -102,6 +102,7 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.mapSecond
 import me.proton.core.util.kotlin.takeIfNotBlank
 import okio.buffer
 import okio.sink
@@ -179,43 +180,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     val conversationUiModel: SharedFlow<ConversationUiModel>
         get() = _conversationUiFLow
 
-    val exclusiveLabelsPerMessage: Flow<HashMap<String, List<Label>>> =
-        conversationUiModel
-            .flatMapLatest { conversation ->
-                val labelsHashMap = hashMapOf<String, List<Label>>()
-                val userId = UserId(userManager.requireCurrentUserId().id)
-                conversation.messages.forEach { message ->
-                    val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
-                    labelsHashMap[requireNotNull(message.messageId)] =
-                        labelRepository.findLabels(userId, allLabelIds).first()
-                            .filter { label ->
-                                label.exclusive
-                            }
-                }
-                return@flatMapLatest flowOf(labelsHashMap)
-            }
-
-    val nonExclusiveLabelsPerMessage: Flow<HashMap<String, List<LabelChipUiModel>>> =
-        conversationUiModel
-            .flatMapLatest { conversation ->
-                val labelsHashMap = hashMapOf<String, List<LabelChipUiModel>>()
-                val userId = UserId(userManager.requireCurrentUserId().id)
-                conversation.messages.forEach { message ->
-                    val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
-                    labelsHashMap[requireNotNull(message.messageId)] =
-                        labelRepository.findLabels(userId, allLabelIds).first()
-                            .filter { label ->
-                                !label.exclusive
-                            }
-                            .map { label ->
-                                val labelColor = label.color.takeIfNotBlank()
-                                    ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-                                LabelChipUiModel(LabelId(label.id), Name(label.name), labelColor)
-                            }
-                }
-                return@flatMapLatest flowOf(labelsHashMap)
-            }
-
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission
 
@@ -249,6 +213,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
             .filterNotNull()
             .distinctUntilChanged()
+            .combineWithLabels()
             .onEach {
                 Timber.i("Emit conversation Ui model subject ${it.subject}")
                 emitConversationUiItem(it)
@@ -281,6 +246,41 @@ internal class MessageDetailsViewModel @Inject constructor(
             .map {
                 loadConversationDetails(it, userId)
             }
+
+    private fun Flow<ConversationUiModel>.combineWithLabels() = flatMapLatest { conversation ->
+        val nonExclusiveLabelsHashMap = hashMapOf<String, List<LabelChipUiModel>>()
+        val exclusiveLabelsHashMap = hashMapOf<String, List<Label>>()
+        conversation.messages.filter { it.allLabelIDs.isNotEmpty() }.forEach { message ->
+            val messageId = requireNotNull(message.messageId)
+            getAllLabelsFor(userManager.requireCurrentUserId(), message)?.let { (exclusiveLabels, nonExclusiveLabels) ->
+                exclusiveLabelsHashMap[messageId] = exclusiveLabels.toList()
+                nonExclusiveLabelsHashMap[messageId] = nonExclusiveLabels
+            }
+        }
+        return@flatMapLatest flowOf(
+            conversation.copy(
+                nonExclusiveLabels = nonExclusiveLabelsHashMap,
+                exclusiveLabels = exclusiveLabelsHashMap
+            )
+        )
+    }
+
+    private suspend fun getAllLabelsFor(
+        userId: UserId,
+        message: Message
+    ): Pair<Collection<Label>, List<LabelChipUiModel>>? {
+        val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
+        return labelRepository.findLabels(userId, allLabelIds)
+            .firstOrNull()
+            ?.partition { it.exclusive }
+            ?.mapSecond { it.toNonExclusiveLabelModel() }
+    }
+
+    private fun Label.toNonExclusiveLabelModel(): LabelChipUiModel {
+        val labelColor = color.takeIfNotBlank()
+            ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
+        return LabelChipUiModel(LabelId(id), Name(name), labelColor)
+    }
 
     fun markUnread() {
         viewModelScope.launch {

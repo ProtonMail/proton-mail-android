@@ -90,8 +90,10 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 private const val INPUT_ITEM_DETAIL_ID = "inputMessageOrConversationId"
+private const val MESSAGE_SENDER_EMAIL_ADDRESS = "sender@protonmail.com"
 
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
@@ -168,6 +170,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
     }
 
+    private val messageSender = MessageSender("senderName", MESSAGE_SENDER_EMAIL_ADDRESS)
+
     private lateinit var viewModel: MessageDetailsViewModel
 
     @BeforeTest
@@ -204,18 +208,16 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         // given
         every { userManager.requireCurrentUserId() } returns testId1
-        val sender = MessageSender("senderName", "senderEmail")
         val messageOrConversationId = INPUT_ITEM_DETAIL_ID
         val downLoadedMessage = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = true,
-            sender = sender
+            sender = messageSender
         )
         coEvery { messageRepository.getMessage(testId1, messageOrConversationId, true) } returns downLoadedMessage
         val expected = ConversationUiModel(
             false,
             null,
-            emptyList(),
             listOf(downLoadedMessage),
             null
         )
@@ -266,9 +268,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { conversationMessage.messageId } returns "messageId4"
         every { conversationMessage.conversationId } returns conversationId
         every { conversationMessage.subject } returns "subject4"
-        every { conversationMessage.sender } returns MessageSender("senderName", "sender@protonmail.ch")
+        every { conversationMessage.sender } returns messageSender
         every { conversationMessage.isDownloaded } returns true
-        every { conversationMessage.senderEmail } returns "sender@protonmail.com"
+        every { conversationMessage.senderEmail } returns MESSAGE_SENDER_EMAIL_ADDRESS
         every { conversationMessage.numAttachments } returns 1
         every { conversationMessage.time } returns 82374730L
         every { conversationMessage.decrypt(any(), any(), any()) } just Runs
@@ -292,172 +294,24 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyExclusiveLabelsAreFetchedWhenConversationFlowEmits() {
-        runBlockingTest {
-            // given
-            every { conversationModeEnabled.invoke(any()) } returns true
-            every { userManager.requireCurrentUserId() } returns testId2
-            val conversationId = UUID.randomUUID().toString()
-            val conversationResult = DataResult.Success(
-                ResponseSource.Local,
-                buildConversationWithExclusiveAndNonExclusiveLabels(conversationId)
-            )
-            val folderId1 = "folderId1"
-            val folder1 = Label(folderId1, "folder1", "color", 0, 0, true)
-            val folderId2 = "folderId2"
-            val folder2 = Label(folderId2, "folder2", "color", 0, 0, true)
-            val labelId1 = "labelId1"
-            val label1 = Label(labelId1, "label1", "-16776961", 0, 0, false)
-            val labelId2 = "labelId2"
-            val label2 = Label(labelId2, "label2", "-65281", 0, 0, false)
-            every {
-                labelRepository.findLabels(testUserId2, listOf(LabelId("folderId1"), LabelId("labelId1"), LabelId("labelId2")))
-            } returns flowOf(listOf(folder1, label1, label2))
-            every {
-                labelRepository.findLabels(testUserId2, listOf(LabelId("folderId2"), LabelId("labelId1")))
-            } returns flowOf(listOf(folder2, label1))
-            val messageId1 = "messageId1"
-            val messageId2 = "messageId2"
-            val sender = MessageSender("senderName", "sender@protonmail.ch")
-            val message1 = Message(
-                messageId = messageId1,
-                isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
-                sender = sender,
-                time = 82_374_724L,
-                subject = "subject4",
-                conversationId = conversationId,
-                isReplied = false,
-                isRepliedAll = true,
-                isForwarded = false,
-                numAttachments = 1,
-                allLabelIDs = listOf(folderId1, labelId1, labelId2)
-            )
-            val message2 = Message(
-                messageId = messageId2,
-                isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
-                sender = sender,
-                time = 82_374_724L,
-                subject = "subject4",
-                conversationId = conversationId,
-                isReplied = false,
-                isRepliedAll = true,
-                isForwarded = false,
-                numAttachments = 1,
-                allLabelIDs = listOf(folderId2, labelId1)
-            )
-            coEvery { messageRepository.findMessage(testId2, messageId1) } returns message1
-            coEvery { messageRepository.findMessage(testId2, messageId2) } returns message2
-
-            val expectedResult = hashMapOf(
-                messageId1 to listOf(folder1),
-                messageId2 to listOf(folder2)
-            )
-
-            // when
-            viewModel.exclusiveLabelsPerMessage.test {
-                userIdFlow.emit(testUserId2)
-                observeConversationFlow.emit(conversationResult)
-                // then
-                assertEquals(expectedResult, expectItem())
-            }
-        }
-    }
-
-    @Test
-    fun verifyNonExclusiveLabelsAreFetchedWhenConversationFlowEmits() {
-        runBlockingTest {
-            // given
-            every { conversationModeEnabled.invoke(any()) } returns true
-            every { userManager.requireCurrentUserId() } returns testId2
-            val conversationId = UUID.randomUUID().toString()
-            val conversationResult = DataResult.Success(
-                ResponseSource.Local,
-                buildConversationWithExclusiveAndNonExclusiveLabels(conversationId)
-            )
-            val folderId1 = "folderId1"
-            val folder1 = Label(folderId1, "folder1", "color", 0, 0, true)
-            val folderId2 = "folderId2"
-            val folder2 = Label(folderId2, "folder2", "color", 0, 0, true)
-            val labelId1 = "labelId1"
-            val label1 = Label(labelId1, "label1", "", 0, 0, false)
-            val labelChipUIModel1 = LabelChipUiModel(LabelId(labelId1), Name("label1"), null)
-            val labelId2 = "labelId2"
-            val label2 = Label(labelId2, "label2", "", 0, 0, false)
-            val labelChipUIModel2 = LabelChipUiModel(LabelId(labelId2), Name("label2"), null)
-            every {
-                labelRepository.findLabels(testUserId2, listOf(LabelId("folderId1"), LabelId("labelId1"), LabelId("labelId2")))
-            } returns flowOf(listOf(folder1, label1, label2))
-            every {
-                labelRepository.findLabels(testUserId2, listOf(LabelId("folderId2"), LabelId("labelId1")))
-            } returns flowOf(listOf(folder2, label1))
-            val messageId1 = "messageId1"
-            val messageId2 = "messageId2"
-            val sender = MessageSender("senderName", "sender@protonmail.ch")
-            val message1 = Message(
-                messageId = messageId1,
-                isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
-                sender = sender,
-                time = 82_374_724L,
-                subject = "subject4",
-                conversationId = conversationId,
-                isReplied = false,
-                isRepliedAll = true,
-                isForwarded = false,
-                numAttachments = 1,
-                allLabelIDs = listOf(folderId1, labelId1, labelId2)
-            )
-            val message2 = Message(
-                messageId = messageId2,
-                isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
-                sender = sender,
-                time = 82_374_724L,
-                subject = "subject4",
-                conversationId = conversationId,
-                isReplied = false,
-                isRepliedAll = true,
-                isForwarded = false,
-                numAttachments = 1,
-                allLabelIDs = listOf(folderId2, labelId1)
-            )
-            coEvery { messageRepository.findMessage(testId2, messageId1) } returns message1
-            coEvery { messageRepository.findMessage(testId2, messageId2) } returns message2
-
-            val expectedResult = hashMapOf(
-                messageId1 to listOf(labelChipUIModel1, labelChipUIModel2),
-                messageId2 to listOf(labelChipUIModel1)
-            )
-
-            // when
-            viewModel.nonExclusiveLabelsPerMessage.test {
-                userIdFlow.emit(testUserId2)
-                observeConversationFlow.emit(conversationResult)
-                // then
-                assertEquals(expectedResult, expectItem())
-            }
-        }
-    }
-
-    @Test
     fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserId() = runBlockingTest {
         // Given
         every { userManager.requireCurrentUserId() } returns testId1
-        val sender = MessageSender("senderName", "senderEmail")
         val message = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = false,
-            sender = sender
+            sender = messageSender
         )
         val downLoadedMessage = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = true,
-            sender = sender
+            sender = messageSender
         )
 
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
         val expected = ConversationUiModel(
             false,
             null,
-            emptyList(),
             listOf(downLoadedMessage),
             null
         )
@@ -475,6 +329,67 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun shouldLoadMessageWithLabelsWhenLabelsPresent() = runBlockingTest {
+        val allLabels = (1..5).map { Label(id = "id$it", name = "name$it", color = "", exclusive = it > 2) }
+        val allLabelIds = allLabels.map { LabelId(it.id) }
+        every { userManager.requireCurrentUserId() } returns testId1
+        val message = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = false,
+            sender = messageSender,
+            allLabelIDs = allLabelIds.map { it.id }
+        )
+        val downLoadedMessage = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = true,
+            sender = messageSender,
+            allLabelIDs = allLabelIds.map { it.id }
+        )
+        val nonExclusiveLabels = hashMapOf(
+            INPUT_ITEM_DETAIL_ID to allLabels.take(2).map {
+                LabelChipUiModel(LabelId(it.id), Name(it.name), color = null)
+            }
+        )
+        val exclusiveLabels = hashMapOf(INPUT_ITEM_DETAIL_ID to allLabels.takeLast(3))
+        every {
+            labelRepository.findLabels(testId1, allLabelIds)
+        } returns flowOf(allLabels)
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
+
+        viewModel.conversationUiModel.test {
+            observeMessageFlow.emit(message)
+            val actualItem = expectItem()
+            assertEquals(exclusiveLabels, actualItem.exclusiveLabels)
+            assertEquals(nonExclusiveLabels, actualItem.nonExclusiveLabels)
+        }
+    }
+
+    @Test
+    fun shouldLoadMessageWithoutLabelsWhenLabelsNotPresent() = runBlockingTest {
+        every { userManager.requireCurrentUserId() } returns testId1
+        val message = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = false,
+            sender = messageSender,
+            allLabelIDs = emptyList()
+        )
+        val downLoadedMessage = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = true,
+            sender = messageSender,
+            allLabelIDs = emptyList()
+        )
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
+
+        viewModel.conversationUiModel.test {
+            observeMessageFlow.emit(message)
+            val actualItem = expectItem()
+            assertTrue(actualItem.exclusiveLabels.isEmpty())
+            assertTrue(actualItem.nonExclusiveLabels.isEmpty())
+        }
+    }
+
+    @Test
     fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserIdForConversations() = runBlockingTest {
         // Given
         every { conversationModeEnabled.invoke(any()) } returns true
@@ -483,13 +398,12 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val testConversation = buildConversation(conversationId)
         val testConversationResult = DataResult.Success(ResponseSource.Local, testConversation)
         every { userManager.requireCurrentUserId() } returns testId1
-        val sender = MessageSender("senderName", "sender@protonmail.ch")
         val messageId = "messageId4"
         val secondMessageId = "messageId5"
         val downLoadedMessage1 = Message(
             messageId = messageId,
             isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
-            sender = sender,
+            sender = messageSender,
             time = 82_374_724L,
             subject = "subject4",
             conversationId = conversationId,
@@ -502,7 +416,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val downLoadedMessage2 = Message(
             messageId = secondMessageId,
             isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
-            sender = sender,
+            sender = messageSender,
             time = 82_374_724L,
             subject = "subject4",
             conversationId = conversationId,
@@ -625,11 +539,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     fun loadMessageDoesNotEmitMessageToLiveDataWhenTheMessageWasNotFound() = runBlockingTest {
         // Given
         every { userManager.requireCurrentUserId() } returns testId1
-        val sender = MessageSender("senderName", "senderEmail")
         val message = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = false,
-            sender = sender
+            sender = messageSender
         )
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns null
         val messageErrorObserver = viewModel.messageDetailsError.testObserver()
@@ -650,9 +563,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { conversationMessage.messageId } returns "messageId4"
             every { conversationMessage.conversationId } returns conversationId
             every { conversationMessage.subject } returns "subject4"
-            every { conversationMessage.sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { conversationMessage.sender } returns messageSender
             every { conversationMessage.isDownloaded } returns true
-            every { conversationMessage.senderEmail } returns "sender@protonmail.com"
+            every { conversationMessage.senderEmail } returns MESSAGE_SENDER_EMAIL_ADDRESS
             every { conversationMessage.numAttachments } returns 1
             every { conversationMessage.time } returns 82374730L
             every { conversationMessage.decrypt(any(), any(), any()) } just Runs
@@ -661,9 +574,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { olderConversationMessage.messageId } returns "messageId5"
             every { olderConversationMessage.conversationId } returns conversationId
             every { olderConversationMessage.subject } returns "subject5"
-            every { olderConversationMessage.sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { olderConversationMessage.sender } returns messageSender
             every { olderConversationMessage.isDownloaded } returns true
-            every { olderConversationMessage.senderEmail } returns "sender@protonmail.com"
+            every { olderConversationMessage.senderEmail } returns MESSAGE_SENDER_EMAIL_ADDRESS
             every { olderConversationMessage.numAttachments } returns 0
             every { olderConversationMessage.time } returns 82374724L
             every { olderConversationMessage.decrypt(any(), any(), any()) } just Runs
@@ -682,7 +595,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val conversationUiModel = ConversationUiModel(
                 false,
                 "Conversation subject",
-                listOf("0"),
                 listOf(olderConversationMessage, conversationMessage),
                 5
             )
@@ -749,13 +661,14 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns "messageId4"
             every { conversationId } returns "conversationId"
             every { subject } returns "subject4"
-            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { sender } returns messageSender
             every { isDownloaded } returns true
-            every { senderEmail } returns "sender@protonmail.com"
+            every { senderEmail } returns MESSAGE_SENDER_EMAIL_ADDRESS
             every { numAttachments } returns 1
             every { time } returns 82374730L
             every { decrypt(any(), any(), any()) } just Runs
             every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+            every { allLabelIDs } returns emptyList()
         }
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
         coEvery { messageRepository.findMessage(any(), "messageId5") } returns conversationMessage
@@ -798,13 +711,14 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns "messageId4"
             every { conversationId } returns "conversationId"
             every { subject } returns "subject4"
-            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { sender } returns messageSender
             every { isDownloaded } returns true
-            every { senderEmail } returns "sender@protonmail.com"
+            every { senderEmail } returns MESSAGE_SENDER_EMAIL_ADDRESS
             every { numAttachments } returns 1
             every { time } returns 82374730L
             every { decrypt(any(), any(), any()) } just Runs
             every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+            every { allLabelIDs } returns emptyList()
         }
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
         coEvery { messageRepository.markUnRead(listOf("messageId4")) } just runs
@@ -842,11 +756,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
         coEvery { messageRepository.markUnRead(any()) } just Runs
-        val sender = MessageSender("senderName", "senderEmail")
         val message = Message(
             messageId = inputConversationId,
             isDownloaded = true,
-            sender = sender
+            sender = messageSender
         )
         coEvery { messageRepository.getMessage(userId, inputConversationId, true) } returns message
 
@@ -918,13 +831,14 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns "messageId4"
             every { conversationId } returns "conversationId"
             every { subject } returns "subject4"
-            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { sender } returns messageSender
             every { isDownloaded } returns true
-            every { senderEmail } returns "sender@protonmail.com"
+            every { senderEmail } returns MESSAGE_SENDER_EMAIL_ADDRESS
             every { numAttachments } returns 1
             every { time } returns 82374730L
             every { decrypt(any(), any(), any()) } just Runs
             every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+            every { allLabelIDs } returns emptyList()
         }
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
         coEvery { messageRepository.findMessage(any(), "messageId5") } returns conversationMessage
@@ -970,14 +884,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns "messageId4"
             every { conversationId } returns "conversationId"
             every { subject } returns "subject4"
-            every { sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { sender } returns messageSender
             every { isDownloaded } returns true
-            every { senderEmail } returns "sender@protonmail.com"
+            every { senderEmail } returns MESSAGE_SENDER_EMAIL_ADDRESS
             every { numAttachments } returns 1
             every { time } returns 82374730L
             every { decrypt(any(), any(), any()) } just Runs
             every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
             every { folderLocation } returns "folderLocation"
+            every { allLabelIDs } returns emptyList()
         }
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
 
@@ -1071,6 +986,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { time } returns 82374730L
             every { decrypt(any(), any(), any()) } just Runs
             every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+            every { allLabelIDs } returns emptyList()
         }
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
         coEvery { messageRepository.findMessage(any(), "messageId5") } returns conversationMessage
@@ -1122,6 +1038,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { decrypt(any(), any(), any()) } just Runs
             every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
             every { folderLocation } returns "folderLocation"
+            every { allLabelIDs } returns emptyList()
         }
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
 
@@ -1256,6 +1173,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { time } returns 82374730L
             every { decrypt(any(), any(), any()) } just Runs
             every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+            every { allLabelIDs } returns emptyList()
         }
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
         coEvery { messageRepository.findMessage(any(), "messageId5") } returns conversationMessage
@@ -1289,6 +1207,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { time } returns 82374730L
             every { decrypt(any(), any(), any()) } just Runs
             every { this@mockk setProperty "senderDisplayName" value any<String>() } just runs
+            every { allLabelIDs } returns emptyList()
         }
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
 
@@ -1341,41 +1260,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         )
     }
 
-    private fun buildConversationWithExclusiveAndNonExclusiveLabels(conversationId: String): Conversation {
-        val folderId1 = "folderId1"
-        val folderId2 = "folderId2"
-        val labelId1 = "labelId1"
-        val labelId2 = "labelId2"
-        return Conversation(
-            conversationId,
-            "Conversation subject",
-            listOf(),
-            listOf(),
-            5,
-            2,
-            1,
-            0,
-            listOf(
-                customFolderLabelContext(folderId1),
-                customFolderLabelContext(folderId2),
-                customLabelLabelContext(labelId1),
-                customLabelLabelContext(labelId2)
-            ),
-            listOf(
-                buildMessageDomainModelWithExclusiveAndNonExclusiveLabels(
-                    "messageId1",
-                    conversationId,
-                    listOf(folderId1, labelId1, labelId2)
-                ),
-                buildMessageDomainModelWithExclusiveAndNonExclusiveLabels(
-                    "messageId2",
-                    conversationId,
-                    listOf(folderId2, labelId1)
-                )
-            )
-        )
-    }
-
     private fun buildMessageDomainModel(
         messageId: String,
         conversationId: String,
@@ -1384,7 +1268,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         conversationId,
         "subject4",
         false,
-        Correspondent("senderName", "sender@protonmail.ch"),
+        Correspondent("senderName", MESSAGE_SENDER_EMAIL_ADDRESS),
         listOf(),
         82374724L,
         1,
@@ -1397,32 +1281,5 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         labelsIds = listOf("1", "2")
     )
 
-    private fun buildMessageDomainModelWithExclusiveAndNonExclusiveLabels(
-        messageId: String,
-        conversationId: String,
-        labelIds: List<String>
-    ) = MessageDomainModel(
-        messageId,
-        conversationId,
-        "subject4",
-        false,
-        Correspondent("senderName", "sender@protonmail.ch"),
-        listOf(),
-        82374724L,
-        1,
-        0L,
-        isReplied = false,
-        isRepliedAll = true,
-        isForwarded = false,
-        ccReceivers = emptyList(),
-        bccReceivers = emptyList(),
-        labelsIds = labelIds
-    )
-
     private fun inboxLabelContext() = LabelContext(INBOX.messageLocationTypeValue.toString(), 0, 0, 0L, 0, 0)
-
-    private fun customFolderLabelContext(folderId: String) = LabelContext(folderId, 1, 2, 3, 4, 5)
-
-    private fun customLabelLabelContext(labelId: String) = LabelContext(labelId, 1, 2, 3, 4, 5)
-
 }
