@@ -263,61 +263,64 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
         }
 
-    @Test(expected = IOException::class)
+    @Test
     fun verifyGetConversationsThrowsExceptionWhenFetchingDataFromApiWasNotSuccessful() = runBlocking {
         // given
         val parameters = buildGetConversationsParameters()
+        val errorMessage = "Test - Bad Request"
 
         coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(emptyList())
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
-        coEvery { api.fetchConversations(any()) } throws IOException("Test - Bad Request")
+        coEvery { api.fetchConversations(any()) } throws IOException(errorMessage)
 
         // when
-        val result = conversationsRepository.getConversations(parameters).take(2).toList()
-
-        // Then
-        val actualLocalItems = result[0] as DataResult.Success
-        assertEquals(ResponseSource.Local, actualLocalItems.source)
-
-        val actualLocalItems2 = result[1] as DataResult.Success
-        assertEquals(ResponseSource.Local, actualLocalItems2.source)
+        conversationsRepository.getConversations(parameters)
+            .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
+                // Then
+                val actualItem = expectItem() as DataResult.Success
+                assertEquals(ResponseSource.Local, actualItem.source)
+                assertEquals(errorMessage, expectError().message)
+            }
     }
 
-    @Test(expected = IOException::class)
+    @Test
     fun verifyGetConversationsReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
         // given
         val parameters = buildGetConversationsParameters()
+        val errorMessage = "Api call failed"
 
         coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(
             listOf(buildConversationDatabaseModel())
         )
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
-        coEvery { api.fetchConversations(any()) } throws IOException("Api call failed")
+        coEvery { api.fetchConversations(any()) } throws IOException(errorMessage)
 
         // when
-        val result = conversationsRepository.getConversations(parameters).take(2).toList()
+        conversationsRepository.getConversations(parameters)
+            .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
+                // Then
+                val firstActualItem = expectItem() as DataResult.Success
+                assertEquals(ResponseSource.Local, firstActualItem.source)
 
-        // Then
-        val actualLocalItems0 = result[0] as DataResult.Success
-        assertEquals(ResponseSource.Local, actualLocalItems0.source)
+                assertEquals(errorMessage, expectError().message)
 
-        val actualLocalItems = result[1] as DataResult.Success
-        assertEquals(ResponseSource.Local, actualLocalItems.source)
-        val expectedLocalConversations = listOf(
-            Conversation(
-                "conversationId234423",
-                "subject28348",
-                listOf(Correspondent("sender", "sender@pm.me")),
-                listOf(Correspondent("recipient", "recipient@pm.ch")),
-                3,
-                1,
-                4,
-                0,
-                listOf(LabelContext("labelId123", 1, 0, 0, 0, 0)),
-                null
-            )
-        )
-        assertEquals(expectedLocalConversations, actualLocalItems.value)
+                val expectedLocalConversations = listOf(
+                    Conversation(
+                        conversationId,
+                        "subject",
+                        listOf(Correspondent("sender-name", "email@proton.com")),
+                        listOf(Correspondent("receiver-name", "email-receiver@proton.com")),
+                        1,
+                        0,
+                        0,
+                        0,
+                        emptyList(),
+                        null
+                    )
+                )
+                assertEquals(expectedLocalConversations, firstActualItem.value)
+            }
+
     }
 
     @Test
@@ -616,7 +619,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
     }
 
-    @Test(expected = CancellationException::class)
+    @Test
     fun verifyGetConversationsReThrowsCancellationExceptionWithoutEmittingError() {
         runBlocking {
             // given
@@ -625,11 +628,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { api.fetchConversations(parameters) } throws CancellationException("Cancelled")
 
             // when
-
-            val result = conversationsRepository.getConversations(parameters).take(2).toList()
-
-            val actualLocalItems0 = result[0] as DataResult.Success
-            assertEquals(ResponseSource.Local, actualLocalItems0.source)
+            conversationsRepository.getConversations(parameters)
+                .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
+                    // then
+                    val actual = expectItem() as DataResult.Success
+                    assertEquals(ResponseSource.Local, actual.source)
+                }
         }
     }
 
