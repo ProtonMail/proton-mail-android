@@ -22,7 +22,7 @@ package ch.protonmail.android.contacts.details
 import androidx.work.WorkManager
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.labels.domain.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData

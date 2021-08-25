@@ -32,8 +32,8 @@ import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.labels.data.db.LabelDao
-import ch.protonmail.android.labels.domain.mapper.LabelUiModelMapper
-import ch.protonmail.android.labels.domain.mapper.map
+import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
+import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.worker.PostLabelWorker
