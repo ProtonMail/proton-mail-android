@@ -51,16 +51,16 @@ class ObserveMessagesByLocation @Inject constructor(
             Constants.MessageLocationType.INBOX,
             Constants.MessageLocationType.SEARCH,
             Constants.MessageLocationType.SPAM,
-            Constants.MessageLocationType.TRASH ->
+            Constants.MessageLocationType.TRASH,
+            Constants.MessageLocationType.ALL_MAIL->
                 messageRepository.observeMessagesByLocation(
                     userId,
                     mailboxLocation
                 )
             // Since a message can be self-sent which from BE makes the message have INBOX and SENT both as a location
-            // we decided that for now it's best we treat SENT as label
+            //  we decided that for now it's best we treat SENT as label
             Constants.MessageLocationType.SENT ->
                 messageRepository.observeMessagesByLabelId(mailboxLocation.messageLocationTypeValue.toString(), userId)
-            Constants.MessageLocationType.ALL_MAIL -> messageRepository.observeAllMessages(userId)
             Constants.MessageLocationType.INVALID -> throw IllegalArgumentException("Invalid location.")
             else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")
         }

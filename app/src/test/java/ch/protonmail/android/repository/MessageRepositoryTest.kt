@@ -504,6 +504,7 @@ class MessageRepositoryTest {
     @Test
     fun verifyThatAllMessagesFromDbAndNetworkAreFetched() = runBlockingTest {
         // given
+        val mailboxLocation = Constants.MessageLocationType.ALL_MAIL
         val dbMessages = listOf(message1, message2)
         val netMessages = listOf(message1, message2, message3, message4)
         val netResponse = mockk<MessagesResponse> {
@@ -514,7 +515,7 @@ class MessageRepositoryTest {
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
-                Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                mailboxLocation.messageLocationTypeValue,
                 null,
                 null
             )
@@ -522,7 +523,7 @@ class MessageRepositoryTest {
         coEvery { messageDao.saveMessages(netMessages) } just Runs
 
         // when
-        val resultsList = messageRepository.observeAllMessages(testUserId).take(2).toList()
+        val resultsList = messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).take(2).toList()
 
         // then
         coVerify(exactly = 1) { messageDao.saveMessages(netMessages) }
@@ -532,6 +533,7 @@ class MessageRepositoryTest {
     @Test
     fun verifyThatAllMessagesFromDbAndNetworkAreNotFetchedDueToLackOfConnectivity() = runBlockingTest {
         // given
+        val mailboxLocation = Constants.MessageLocationType.ALL_MAIL
         val dbMessages = listOf(message1, message2)
         val netMessages = listOf(message1, message2, message3, message4)
         val netResponse = mockk<MessagesResponse> {
@@ -542,7 +544,7 @@ class MessageRepositoryTest {
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
-                Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                mailboxLocation.messageLocationTypeValue,
                 null,
                 null
             )
@@ -551,7 +553,7 @@ class MessageRepositoryTest {
         coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns false
 
         // when
-        val resultsList = messageRepository.observeAllMessages(testUserId).take(1).toList()
+        val resultsList = messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).take(1).toList()
 
         // then
         coVerify(exactly = 0) { messageDao.saveMessages(netMessages) }

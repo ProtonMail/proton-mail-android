@@ -121,7 +121,7 @@ class ObserveMessagesByLocationTest {
         val expected = GetMessagesResult.Success(messages)
         val flowOfMessages = flowOf(messages)
         coEvery {
-            mailboxRepository.observeAllMessages(userId)
+            mailboxRepository.observeMessagesByLocation(userId, mailboxLocation)
         } returns flowOfMessages
 
         // when
@@ -138,7 +138,6 @@ class ObserveMessagesByLocationTest {
         val labelId = ""
         val message1 = mockk<Message>(relaxed = true)
         val message2 = mockk<Message>(relaxed = true)
-        val messages = listOf(message1, message2)
         val testException = Exception("Olala exception!")
         val messagesResponseChannel = Channel<List<Message>>()
         coEvery {

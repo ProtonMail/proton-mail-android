@@ -295,49 +295,6 @@ class MessageRepository @Inject constructor(
             }
     }
 
-    @Deprecated(
-        "Use 'observeMessagesByLocation'",
-        ReplaceWith(
-            "observeMessagesByLocation(userId, MessageLocationType.ALL_MAIL",
-            "ch.protonmail.android.core.Constants.MessageLocationType"
-        )
-    )
-    fun observeAllMessages(
-        userId: UserId
-    ): Flow<List<Message>> {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        return messagesDao.observeAllMessages()
-            .onStart {
-                // only continue when we have connectivity available
-                if (!connectivityManager.isInternetConnectionPossible()) {
-                    Timber.d("Skipping network refresh as connectivity is not available")
-                    return@onStart
-                }
-
-                Timber.v("re-fetching messages all from remote")
-                runCatching {
-                    protonMailApiManager.getMessages(
-                        UserIdTag(userId),
-                        MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                        null,
-                        null
-                    )
-                }
-                    .fold(
-                        onSuccess = { messagesResponse ->
-                            if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                                persistMessages(messagesResponse.messages, userId)
-                            }
-                        },
-                        onFailure = { exception ->
-                            val dbData = messagesDao.observeAllMessages().first()
-                            emit(dbData)
-                            throw exception
-                        }
-                    )
-            }
-    }
-
     private suspend fun persistMessages(
         messages: List<Message>,
         userId: UserId,
