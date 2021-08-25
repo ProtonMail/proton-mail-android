@@ -32,7 +32,7 @@ import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLabelCounter;
 
-
+@Deprecated // Replaced with ApplyLabelWorker
 public class ApplyLabelJob extends ProtonMailEndlessJob {
     private List<String> messageIds;
     private String labelId;

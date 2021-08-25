@@ -27,10 +27,6 @@ import java.util.List;
 import ch.protonmail.android.api.models.base.MultipleResponseBody;
 import ch.protonmail.android.api.utils.Fields;
 
-/**
- * Created by dino on 2/24/17.
- */
-
 public class MoveToFolderResponse extends MultipleResponseBody {
 
     @SerializedName(Fields.Response.RESPONSES)

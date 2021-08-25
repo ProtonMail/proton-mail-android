@@ -24,7 +24,7 @@ import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.repository.MessageRepository
-import com.birbit.android.jobqueue.JobManager
+import ch.protonmail.android.worker.ApplyLabelWorker
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -43,7 +43,7 @@ import kotlin.test.Test
 class UpdateLabelsTest {
 
     @MockK
-    private lateinit var jobManager: JobManager
+    private lateinit var applyLabelWorker: ApplyLabelWorker.Enqueuer
 
     @MockK
     private lateinit var messageRepository: MessageRepository
@@ -61,9 +61,9 @@ class UpdateLabelsTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { jobManager.addJobInBackground(any()) } just Runs
+        every { applyLabelWorker.enqueue(any(), any()) } returns mockk()
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
-        useCase = UpdateLabels(jobManager, messageRepository, accountManager, labelRepository)
+        useCase = UpdateLabels(messageRepository, accountManager, labelRepository, applyLabelWorker)
     }
 
     @Test
@@ -75,11 +75,13 @@ class UpdateLabelsTest {
         val message = mockk<Message> {
             every { messageId } returns testMessageId
             every { labelIDsNotIncludingLocations } returns listOf(testLabelId1)
+            every { addLabels(any()) } just Runs
+            every { removeLabels(any()) } just Runs
         }
         val label = mockk<LabelEntity> {
             every { id } returns LabelId(testLabelId1)
         }
-        coEvery { messageRepository.findMessageById(testMessageId) } returns message
+        coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns message
         val existingLabels = listOf(label)
         coEvery { labelRepository.findAllLabels(testUserId) } returns existingLabels
         val checkedLabelIds = listOf(testLabelId1)

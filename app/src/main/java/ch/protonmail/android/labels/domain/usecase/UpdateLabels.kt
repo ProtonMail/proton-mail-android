@@ -21,13 +21,12 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.worker.ApplyLabelWorker
 import com.birbit.android.jobqueue.Job
-import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
@@ -36,18 +35,18 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal class UpdateLabels @Inject constructor(
-    private val jobManager: JobManager,
     private val messageRepository: MessageRepository,
     private val accountManager: AccountManager,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val applyLabelWorker: ApplyLabelWorker.Enqueuer
 ) {
 
     suspend operator fun invoke(
         messageId: String,
         checkedLabelIds: List<String>
     ) {
-        val message = requireNotNull(messageRepository.findMessageById(messageId))
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
+        val message = requireNotNull(messageRepository.findMessage(userId, messageId))
         val existingLabels = labelRepository.findAllLabels(userId)
             .filter { it.id in message.labelIDsNotIncludingLocations }
         Timber.v("UpdateLabels checkedLabelIds: $checkedLabelIds")
@@ -67,7 +66,7 @@ internal class UpdateLabels @Inject constructor(
     ) {
         val labelsToRemove = ArrayList<String>()
         val jobList = ArrayList<Job>()
-        val messageId = message.messageId
+        val messageId = requireNotNull(message.messageId)
         val mutableLabelIds = checkedLabelIds.toMutableList()
         for (label in labels) {
             val labelId = label.id
@@ -81,13 +80,11 @@ internal class UpdateLabels @Inject constructor(
             }
         }
         // what remains are the new labels
-        val applyLabelsJobs = mutableLabelIds.map { ApplyLabelJob(listOf(messageId), it) }
-        jobList.addAll(applyLabelsJobs)
+        mutableLabelIds.map { applyLabelWorker.enqueue(listOf(messageId), it) }
         // update the message with the new labels
         message.addLabels(mutableLabelIds)
         message.removeLabels(labelsToRemove)
 
-        jobList.forEach(jobManager::addJobInBackground)
         messageRepository.saveMessage(userId, message)
     }
 }
