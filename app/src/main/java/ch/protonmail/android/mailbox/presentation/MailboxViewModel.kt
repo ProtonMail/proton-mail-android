@@ -43,6 +43,7 @@ import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
@@ -602,7 +603,7 @@ internal class MailboxViewModel @Inject constructor(
             val labelId = it.id
             if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(
                     labelId
-                ) && it.type == Constants.LABEL_TYPE_MESSAGE_LABEL) {
+                ) && it.type == LabelType.MESSAGE_LABEL) {
                 labelsToRemove.add(labelId.id)
             } else if (checkedLabelIds.contains(labelId)) {
                 checkedLabelIds.remove(labelId)
@@ -645,7 +646,7 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     private fun List<LabelEntity>.toLabelChipUiModels(): List<LabelChipUiModel> =
-        filter { it.type == Constants.LABEL_TYPE_MESSAGE_LABEL }.map { label ->
+        filter { it.type == LabelType.MESSAGE_LABEL }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 

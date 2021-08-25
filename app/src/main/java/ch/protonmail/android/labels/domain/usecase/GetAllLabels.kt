@@ -45,7 +45,7 @@ class GetAllLabels @Inject constructor(
         val dbLabels = labelRepository.findAllLabels(userId)
 
         val uiLabelsFromDb = dbLabels
-            .filter { it.type == labelsSheetType.typeInt }
+            .filter { it.type.typeInt == labelsSheetType.typeInt }
             .map { label ->
                 labelsMapper.mapLabelToUi(label, currentLabelsSelection, labelsSheetType)
             }

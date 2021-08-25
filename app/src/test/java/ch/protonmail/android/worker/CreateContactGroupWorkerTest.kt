@@ -27,11 +27,12 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelRequestBody
 import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.model.LabelType
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -80,7 +81,7 @@ class CreateContactGroupWorkerTest {
             color = "color",
             notify = 0,
             order = 0,
-            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            type = LabelType.MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
             expanded = 0,
@@ -105,7 +106,7 @@ class CreateContactGroupWorkerTest {
             name = "name",
             color = "color",
             order = 0,
-            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            type = LabelType.MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
             expanded = 0,
@@ -258,7 +259,7 @@ class CreateContactGroupWorkerTest {
                         name = "name",
                         color = "color",
                         path = "",
-                        type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+                        type = LabelType.MESSAGE_LABEL,
                         notify = 0,
                         order = 0,
                         expanded = null,

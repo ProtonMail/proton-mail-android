@@ -17,22 +17,10 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.contacts.details.presentation.model
+package ch.protonmail.android.labels.data.model
 
-import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
-
-data class ContactLabelUiModel(
-    val id: LabelId,
-    val name: String,
-    val color: String,
-    val type: LabelType,
-    val path: String,
-    val parentId: String,
-    val expanded: Int,
-    val sticky: Int,
-    val contactEmailsCount: Int,
-    val contactDataCount: Int = 0,
-    val isSelected: ContactEmailGroupSelectionState = ContactEmailGroupSelectionState.DEFAULT
-)
+enum class LabelType(val typeInt: Int) {
+    MESSAGE_LABEL(1),
+    CONTACT_GROUP(2),
+    FOLDER(3)
+}

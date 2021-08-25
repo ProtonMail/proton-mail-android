@@ -25,10 +25,10 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
@@ -70,11 +70,11 @@ class ContactGroupsViewModelTest : CoroutinesTest {
 
     private val testPath = "test/path1234"
     private val label1 =
-        ContactLabelUiModel(LabelId("a"), "aa", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("a"), "aa", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0, 0, 0)
     private val label2 =
-        ContactLabelUiModel(LabelId("b"), "bb", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("b"), "bb", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0, 0, 0)
     private val label3 =
-        ContactLabelUiModel(LabelId("c"), "cc", "color", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath,"parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("c"), "cc", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0, 0, 0)
 
     private val testColorInt = 871
 

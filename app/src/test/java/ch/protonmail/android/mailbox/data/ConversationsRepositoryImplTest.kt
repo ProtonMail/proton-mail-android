@@ -32,6 +32,7 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
@@ -931,7 +932,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 LabelContextDatabaseModel(inboxId, 0, 2, 123, 123, 0)
             )
             val label: LabelEntity = mockk {
-                every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
+                every { type } returns LabelType.MESSAGE_LABEL
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             coEvery { labelsRepository.findLabel(any()) } returns label
@@ -976,7 +977,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 allLabelIDs = listOf(inboxId, allMailId),
             )
             val label: LabelEntity = mockk {
-                every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
+                every { type } returns LabelType.MESSAGE_LABEL
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             coEvery { labelsRepository.findLabel(any()) } returns label

@@ -47,6 +47,7 @@ import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -178,6 +179,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
         val allLabels = (0..11).map {
             LabelEntity(id = "$it", name = "label $it", color = EMPTY_STRING)
+
         }
         every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
         every { labelRepository.findLabels(any(), any()) } answers {
@@ -523,8 +525,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 listOf(LabelId("1"), LabelId("2"))
             )
         } returns listOf(
-            LabelEntity(LabelId("1"), currentUserId, "label 1", "blue", 0, 1, "", "", 0, 0, 0),
-            LabelEntity(LabelId("2"), currentUserId, "label 2", "blue", 0, 1, "", "", 0, 0, 0)
+            LabelEntity(LabelId("1"), currentUserId, "label 1", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0, 0),
+            LabelEntity(LabelId("2"), currentUserId, "label 2", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0, 0)
         )
 
         val expected = MailboxUiItem(
@@ -1057,8 +1059,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     listOf(LabelId(ALL_DRAFT_LABEL_ID), LabelId(DRAFT_LABEL_ID))
                 )
             } returns listOf(
-                LabelEntity(LabelId(ALL_DRAFT_LABEL_ID), currentUserId, "label 1", "blue", 0, 1, "", "", 0, 0, 0),
-                LabelEntity(LabelId(DRAFT_LABEL_ID), currentUserId, "label 8", "blue", 0, 1, "", "", 0, 0, 0)
+                LabelEntity(LabelId(ALL_DRAFT_LABEL_ID), currentUserId, "label 1", "blue", 0,  LabelType.MESSAGE_LABEL, "", "", 0, 0, 0),
+                LabelEntity(LabelId(DRAFT_LABEL_ID), currentUserId, "label 8", "blue", 0,  LabelType.MESSAGE_LABEL, "", "", 0, 0, 0)
             )
 
             // Then

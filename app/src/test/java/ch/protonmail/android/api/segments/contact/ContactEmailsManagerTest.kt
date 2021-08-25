@@ -27,10 +27,11 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.data.model.LabelsResponse
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -69,7 +70,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
     private val testUserId = UserId("TestUser")
     private val testPath = "a/bcPath"
     private val testParentId = "parentIdForTests"
-    private val testType = Constants.LABEL_TYPE_MESSAGE_LABEL
+    private val testType = LabelType.MESSAGE_LABEL
 
     @BeforeTest
     fun setUp() {
@@ -148,7 +149,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             name = labelName1,
             path = "",
             color = labelColor,
-            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            type =  LabelType.MESSAGE_LABEL,
             notify = 0,
             order = 0,
             expanded = null,

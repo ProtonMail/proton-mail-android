@@ -46,6 +46,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.domain.util.checkNotBlank
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
@@ -529,7 +530,7 @@ data class Message @JvmOverloads constructor(
         for (labelId in allLabelIDs) {
             runBlocking {
                 val label = labelRepository.findLabel(LabelId(labelId))
-                if (label != null && label.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS) {
+                if (label != null && label.type == LabelType.FOLDER) {
                     folderLocation = label.id.id
                 }
             }

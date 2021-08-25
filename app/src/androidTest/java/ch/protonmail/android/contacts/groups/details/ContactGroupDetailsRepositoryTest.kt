@@ -25,6 +25,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.every
 import io.mockk.mockk
@@ -68,7 +69,7 @@ class ContactGroupDetailsRepositoryTest {
 
     @Test
     fun testCorrectContactGroupReturnedById() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "color", 0, 1, EMPTY_STRING, "parent", 0, 0, 0)
+        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "color", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
         every { database.findContactGroupByIdAsync("") } returns Single.just(label1)
 
         val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("").test()
@@ -78,7 +79,7 @@ class ContactGroupDetailsRepositoryTest {
 
     @Test
     fun testReturnNullWrongContactId() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "color", 0, 1, EMPTY_STRING, "parent", 0, 0, 0)
+        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "color", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
         every { database.findContactGroupByIdAsync("a") } returns Single.just(label1)
         every { database.findContactGroupByIdAsync(any()) } returns Single.error(
             EmptyResultSetException("no such element")

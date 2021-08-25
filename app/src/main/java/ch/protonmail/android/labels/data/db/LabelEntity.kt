@@ -22,6 +22,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import me.proton.core.domain.entity.UserId
 
 const val TABLE_LABELS = "LabelEntity"
@@ -66,7 +67,7 @@ data class LabelEntity(
     @ColumnInfo(name = COLUMN_LABEL_ORDER)
     val order: Int,
     @ColumnInfo(name = COLUMN_LABEL_TYPE)
-    val type: Int,
+    val type: LabelType,
     @ColumnInfo(name = COLUMN_LABEL_PATH)
     val path: String,
     @ColumnInfo(name = COLUMN_LABEL_PARENT_ID)

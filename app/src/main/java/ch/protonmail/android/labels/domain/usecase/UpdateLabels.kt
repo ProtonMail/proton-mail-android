@@ -19,11 +19,11 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.worker.ApplyLabelWorker
 import com.birbit.android.jobqueue.Job
@@ -70,7 +70,7 @@ internal class UpdateLabels @Inject constructor(
         val mutableLabelIds = checkedLabelIds.toMutableList()
         for (label in labels) {
             val labelId = label.id
-            if (!mutableLabelIds.contains(labelId) && label.type == Constants.LABEL_TYPE_MESSAGE_LABEL) {
+            if (!mutableLabelIds.contains(labelId) && label.type == LabelType.MESSAGE_LABEL) {
                 // this label should be removed
                 labelsToRemove.add(labelId.id)
                 jobList.add(RemoveLabelJob(listOf(messageId), labelId.id))

@@ -23,6 +23,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.Test
@@ -126,7 +127,7 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<LabelEntity> {
-                every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
+                every { type } returns LabelType.FOLDER
             }
             coEvery { labelRepository.findLabel(any()) } returns testLabel
 
@@ -146,7 +147,7 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL
             val testLabel = mockk<LabelEntity> {
-                every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
+                every { type } returns LabelType.MESSAGE_LABEL
             }
             coEvery { labelRepository.findLabel(any()) } returns testLabel
 
@@ -167,7 +168,7 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<LabelEntity> {
-                every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
+                every { type } returns LabelType.FOLDER
             }
             coEvery { labelRepository.findLabel(any()) } returns testLabel
 
@@ -190,7 +191,7 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<LabelEntity> {
-                every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
+                every { type } returns LabelType.FOLDER
             }
             coEvery { labelRepository.findLabel(any()) } returns testLabel
 
@@ -233,10 +234,10 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val exclusiveLabel = mockk<LabelEntity> {
-                every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
+                every { type } returns LabelType.FOLDER
             }
             val nonExclusiveLabel = mockk<LabelEntity> {
-                every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
+                every { type } returns LabelType.MESSAGE_LABEL
             }
             coEvery { labelRepository.findLabel(LabelId(exclusiveLabelId)) } returns exclusiveLabel
             coEvery { labelRepository.findLabel(LabelId(nonExclusiveLabelId)) } returns nonExclusiveLabel

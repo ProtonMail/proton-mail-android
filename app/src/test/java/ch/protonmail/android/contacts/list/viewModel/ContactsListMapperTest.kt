@@ -24,10 +24,10 @@ import ch.protonmail.android.R
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.listView.ContactItem
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -198,7 +198,7 @@ class ContactsListMapperTest {
         val testPath = "test/path123"
         val label1 =
             ContactLabelUiModel(
-                LabelId(testId), testName, "green", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath, "parentId", 0, 0, 1
+                LabelId(testId), testName, "green", LabelType.MESSAGE_LABEL, testPath, "parentId", 0, 0, 1
             )
         val expected = ContactGroupListItem(
             contactId = testId,
@@ -224,9 +224,9 @@ class ContactsListMapperTest {
         val testName2 = "name2"
         val testPath = "test/path123"
         val label1 =
-            ContactLabelUiModel(LabelId(testId), testName, "green", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath, "", 0, 2, 0)
+            ContactLabelUiModel(LabelId(testId), testName, "green", LabelType.MESSAGE_LABEL, testPath, "", 0, 2, 0)
         val label2 = ContactLabelUiModel(
-            LabelId(testId2), testName2, "yellow", Constants.LABEL_TYPE_MESSAGE_LABEL, testPath, "0", 0, 2, 0
+            LabelId(testId2), testName2, "yellow", LabelType.MESSAGE_LABEL, testPath, "0", 0, 2, 0
         )
         val listItem1 = ContactGroupListItem(
             contactId = testId,

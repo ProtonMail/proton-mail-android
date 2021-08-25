@@ -21,6 +21,7 @@ package ch.protonmail.android.api.models.messages.receive
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -86,7 +87,7 @@ class MessageLocationResolver @Inject constructor(
     private fun resolveLabelType(labelId: String): Constants.MessageLocationType {
         return runBlocking {
             val label = labelRepository?.findLabel(LabelId(labelId))
-            if (label != null && label.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS) {
+            if (label != null && label.type == LabelType.FOLDER) {
                 Constants.MessageLocationType.LABEL_FOLDER
             } else {
                 Constants.MessageLocationType.LABEL

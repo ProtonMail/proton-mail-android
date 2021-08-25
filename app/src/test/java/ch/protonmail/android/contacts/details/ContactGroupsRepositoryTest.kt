@@ -21,10 +21,10 @@ package ch.protonmail.android.contacts.details
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -64,7 +64,7 @@ class ContactGroupsRepositoryTest {
         userId = testUserId,
         name = "aa",
         color = "testColor",
-        type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+        type = LabelType.MESSAGE_LABEL,
         path = "a/b",
         parentId = "parentId",
         expanded = 0,
@@ -77,7 +77,7 @@ class ContactGroupsRepositoryTest {
         id = LabelId("a"),
         name = "aa",
         color = "testColor",
-        type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+        type = LabelType.MESSAGE_LABEL,
         path = "a/b",
         parentId = "parentId",
         expanded = 0,
@@ -148,7 +148,7 @@ class ContactGroupsRepositoryTest {
             userId = testUserId,
             name = "name",
             color = "color",
-            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            type = LabelType.MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
             expanded = 0,

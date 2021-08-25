@@ -44,9 +44,10 @@ import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -593,14 +594,14 @@ internal class EventHandler @AssistedInject constructor(
                     val expanded = item.expanded!!
                     val sticky = item.sticky!!
                     val notify = item.notify
-                    if (labelType == Constants.LABEL_TYPE_MESSAGE_LABEL) {
+                    if (labelType == LabelType.MESSAGE_LABEL) {
                         val label = LabelEntity(
                             id = LabelId(id),
                             userId = userId,
                             name = name,
                             color = color,
                             order = order,
-                            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+                            type = labelType,
                             path = path,
                             parentId = parentId ?: EMPTY_STRING,
                             expanded = expanded,
@@ -610,14 +611,14 @@ internal class EventHandler @AssistedInject constructor(
                         runBlocking {
                             labelRepository.saveLabel(label)
                         }
-                    } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
+                    } else if (labelType == LabelType.CONTACT_GROUP) {
                         val label = LabelEntity(
                             id = LabelId(id),
                             userId = userId,
                             name = name,
                             color = color,
                             order = order,
-                            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+                            type = labelType,
                             path = path,
                             parentId = parentId ?: EMPTY_STRING,
                             expanded = expanded,
@@ -631,12 +632,12 @@ internal class EventHandler @AssistedInject constructor(
                 ActionType.UPDATE -> {
                     val labelType = item.type!!
                     val labelId = item.id
-                    if (labelType == Constants.LABEL_TYPE_MESSAGE_LABEL) {
+                    if (labelType == LabelType.MESSAGE_LABEL) {
                         runBlocking {
                             val label = labelRepository.findLabel(LabelId(labelId))
                             writeMessageLabel(label, item)
                         }
-                    } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
+                    } else if (labelType == LabelType.CONTACT_GROUP) {
                         val contactLabel = contactDao.findContactGroupByIdBlocking(labelId!!)
                         writeContactGroup(contactLabel, item, contactDao)
                     }

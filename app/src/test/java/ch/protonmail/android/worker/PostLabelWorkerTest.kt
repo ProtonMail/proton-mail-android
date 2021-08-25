@@ -24,12 +24,13 @@ import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelRequestBody
 import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.model.LabelType
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -82,7 +83,7 @@ class PostLabelWorkerTest {
             name = "name",
             color = "color",
             path = "",
-            type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+            type = LabelType.MESSAGE_LABEL,
             notify = 0,
             order = 0,
             expanded = null,
@@ -226,7 +227,7 @@ class PostLabelWorkerTest {
                         name = "name",
                         color = "color",
                         path = "",
-                        type = Constants.LABEL_TYPE_MESSAGE_LABEL,
+                        type = LabelType.MESSAGE_LABEL,
                         notify = 0,
                         order = 0,
                         expanded = null,

@@ -20,8 +20,8 @@ package ch.protonmail.android.labels.presentation.mapper
 
 import android.graphics.Color
 import ch.protonmail.android.R
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.mapper.UiModelMapper
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
@@ -38,7 +38,7 @@ internal class LabelUiModelMapper : UiModelMapper<LabelEntity, LabelUiModel> {
     /** @return [LabelUiModel] from receiver [LabelEntity] Entity */
     override fun LabelEntity.toUiModel(): LabelUiModel {
 
-        val type = if (type == Constants.LABEL_TYPE_MESSAGE_FOLDERS) {
+        val type = if (type == LabelType.FOLDER) {
             LabelUiModel.Type.FOLDERS
         } else LabelUiModel.Type.LABELS
 

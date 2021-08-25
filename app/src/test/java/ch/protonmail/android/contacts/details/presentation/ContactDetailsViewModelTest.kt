@@ -31,9 +31,9 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsRe
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.utils.FileHelper
 import io.mockk.coEvery
 import io.mockk.every
@@ -100,7 +100,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val testPath = "a/bpath"
     private val testParentId = "parentIdForTests"
-    private val testType = Constants.LABEL_TYPE_CONTACT_GROUPS
+    private val testType =  LabelType.CONTACT_GROUP
     private val testUserId = UserId("testUserId")
 
     @BeforeTest

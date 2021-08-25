@@ -29,11 +29,11 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.LabelRequestBody
 import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.model.LabelType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
@@ -117,7 +117,7 @@ class PostLabelWorker @AssistedInject constructor(
 
     private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 
-    private fun getTypeParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, Constants.LABEL_TYPE_MESSAGE_LABEL)
+    private fun getTypeParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, LabelType.MESSAGE_LABEL.typeInt)
 
     private fun getExpandedParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_EXPANDED, 0)
 
@@ -133,7 +133,7 @@ class PostLabelWorker @AssistedInject constructor(
             labelName: String,
             color: String,
             expanded: Int? = 0,
-            type: Int? = Constants.LABEL_TYPE_MESSAGE_LABEL, // default label type
+            type: LabelType,
             update: Boolean? = false,
             labelId: String? = null
         ): LiveData<WorkInfo> {
@@ -144,7 +144,7 @@ class PostLabelWorker @AssistedInject constructor(
                         KEY_INPUT_DATA_LABEL_ID to labelId,
                         KEY_INPUT_DATA_LABEL_NAME to labelName,
                         KEY_INPUT_DATA_LABEL_COLOR to color,
-                        KEY_INPUT_DATA_LABEL_TYPE to type,
+                        KEY_INPUT_DATA_LABEL_TYPE to type.typeInt,
                         KEY_INPUT_DATA_IS_UPDATE to update,
                         KEY_INPUT_DATA_LABEL_EXPANDED to expanded
                     )

@@ -207,7 +207,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                     }
                 },
             { groups: List<LabelEntity>,
-              emails: List<ContactEmail> ->
+                emails: List<ContactEmail> ->
                 allContactGroups = groups.map { entity ->
                     ContactLabelUiModel(
                         id = entity.id,

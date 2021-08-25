@@ -31,11 +31,11 @@ import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.utils.Event
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -172,7 +172,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
                 userId = userId,
                 name = name,
                 color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.getDefault()),
-                type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+                type = LabelType.CONTACT_GROUP,
                 path = "",
                 expanded = 0,
                 order = 0,
@@ -211,7 +211,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
                 userId  = userId,
                 name = name,
                 color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),
-                type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+                type = LabelType.CONTACT_GROUP,
                 path = "",
                 expanded = 0,
                 order = 0,

@@ -24,6 +24,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
@@ -73,11 +74,11 @@ class GetAllLabelsTest {
         val sheetType = LabelsActionSheet.Type.LABEL
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
-            every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
+            every { type } returns LabelType.MESSAGE_LABEL
         }
         val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
-            every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
+            every { type } returns LabelType.MESSAGE_LABEL
         }
         val uiLabel1 = LabelActonItemUiModel(
             testLabelId1.id,
@@ -122,11 +123,11 @@ class GetAllLabelsTest {
         val sheetType = LabelsActionSheet.Type.FOLDER
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
-            every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
+            every { type } returns LabelType.FOLDER
         }
         val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
-            every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
+            every { type } returns LabelType.FOLDER
         }
         val uiLabel1 = LabelActonItemUiModel(
             testLabelId1.id,
@@ -173,11 +174,11 @@ class GetAllLabelsTest {
         val sheetType = LabelsActionSheet.Type.FOLDER
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
-            every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
+            every { type } returns LabelType.FOLDER
         }
         val label2 = mockk<LabelEntity> {
             every { id } returns testLabelId2
-            every { type } returns Constants.LABEL_TYPE_MESSAGE_FOLDERS
+            every { type } returns LabelType.FOLDER
         }
         val uiLabel1 = LabelActonItemUiModel(
             testLabelId1.id,

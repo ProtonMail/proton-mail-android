@@ -57,10 +57,10 @@ internal class NotificationSettingsViewModelTest {
     }
 
     private val app = InstrumentationRegistry.getInstrumentation()
-            .targetContext.applicationContext as Application
+        .targetContext.applicationContext as Application
 
     private fun viewModel(uri: Uri? = null) =
-            NotificationSettingsViewModel(app, mockUserManager(uri))
+        NotificationSettingsViewModel(app, mockUserManager(uri))
 
     // FIXME: Davide check this, it is causing a lot of test failures
 //    @Test
@@ -102,10 +102,10 @@ internal class NotificationSettingsViewModelTest {
         val uri = viewModel(soundUri).currentRingtoneUri
         val notificationManager = app.getSystemService<NotificationManager>()!!
         val notification = NotificationCompat.Builder(app)
-                .setSmallIcon(R.drawable.notification_icon)
-                .setContentTitle("ciao")
-                .setSound(uri)
-                .build()
+            .setSmallIcon(R.drawable.notification_icon)
+            .setContentTitle("ciao")
+            .setSound(uri)
+            .build()
 
         try {
             notificationManager.notify(0, notification)

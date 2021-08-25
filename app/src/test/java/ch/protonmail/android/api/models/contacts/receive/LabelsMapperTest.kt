@@ -19,11 +19,11 @@
 
 package ch.protonmail.android.api.models.contacts.receive
 
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.model.LabelType
 import me.proton.core.domain.entity.UserId
 import org.junit.Assert.assertEquals
 import kotlin.test.BeforeTest
@@ -35,7 +35,7 @@ class LabelsMapperTest {
 
     private val testPath = "a/bpath"
     private val testParentId = "parentIdForTests"
-    private val testType = Constants.LABEL_TYPE_MESSAGE_FOLDERS
+    private val testType = LabelType.FOLDER
     private val testUserId = UserId("TestUserId")
 
     @BeforeTest
@@ -113,7 +113,7 @@ class LabelsMapperTest {
             name = "name",
             color = "color",
             order = 1,
-            type = Constants.LABEL_TYPE_MESSAGE_FOLDERS,
+            type = LabelType.FOLDER,
             path = testPath,
             notify = 0,
             expanded = null,
@@ -124,7 +124,7 @@ class LabelsMapperTest {
         val actual = labelsMapper.mapLabelToLabelEntity(serverLabel, testUserId)
 
         val expected = LabelEntity(
-            LabelId("ID"), testUserId, "name", "color", 1, Constants.LABEL_TYPE_MESSAGE_FOLDERS, testPath,
+            LabelId("ID"), testUserId, "name", "color", 1, LabelType.FOLDER, testPath,
             testParentId, 0, 0, 0
         )
         assertEquals(expected, actual)

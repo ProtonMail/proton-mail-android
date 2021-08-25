@@ -32,6 +32,7 @@ import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.labels.data.db.LabelDao
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
@@ -189,7 +190,7 @@ internal class LabelsManagerViewModel @Inject constructor(
             labelName,
             color,
             expanded,
-            null,
+            LabelType.MESSAGE_LABEL,
             update,
             labelId
         )

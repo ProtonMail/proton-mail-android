@@ -51,7 +51,7 @@ data class Label(
 
     // required, 1 => Message Labels (default), 2 => Contact Groups, 3 => Message Folders
     @SerialName(TYPE)
-    val type: Int,
+    val type: LabelType,
 
     // optional, 0 => no desktop/email notifications, 1 => notifications, folders only, default is 1 for folders
     @SerialName(NOTIFY)

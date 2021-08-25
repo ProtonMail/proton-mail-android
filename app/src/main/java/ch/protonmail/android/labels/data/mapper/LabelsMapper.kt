@@ -58,7 +58,7 @@ class LabelsMapper @Inject constructor() {
     fun mapLabelEntityToRequestLabel(labelEntity: LabelEntity) = LabelRequestBody(
         name = labelEntity.name,
         color = labelEntity.color,
-        type = labelEntity.type,
+        type = labelEntity.type.typeInt,
         parentId = labelEntity.parentId,
         notify = 0,
         expanded = labelEntity.expanded,

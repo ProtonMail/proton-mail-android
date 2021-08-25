@@ -37,6 +37,7 @@ import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.labels.data.LabelRepository;
 import ch.protonmail.android.labels.data.db.LabelEntity;
 import ch.protonmail.android.labels.data.model.LabelId;
+import ch.protonmail.android.labels.data.model.LabelType;
 import timber.log.Timber;
 
 public class MoveToFolderJob extends ProtonMailBaseJob {
@@ -113,7 +114,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         for (String labelId : oldLabels) {
             LabelEntity label = labelRepository.findLabelBlocking(new LabelId(labelId));
             // find folders
-            if (label != null && (label.getType() == Constants.LABEL_TYPE_MESSAGE_FOLDERS) && !label.getId().equals(mLabelId)) {
+            if (label != null && (label.getType() == LabelType.FOLDER) && !label.getId().equals(mLabelId)) {
                 labelsToRemove.add(labelId);
             }
         }

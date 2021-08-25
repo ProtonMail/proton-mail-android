@@ -21,15 +21,15 @@ package ch.protonmail.android.contacts.groups.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelRequestBody
 import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.coEvery
@@ -64,7 +64,7 @@ class ContactGroupEditCreateRepositoryTest {
 
     private val testPath = "a/bpath"
     private val testParentId = "parentIdForTests"
-    private val testType = Constants.LABEL_TYPE_CONTACT_GROUPS
+    private val testType =  LabelType.CONTACT_GROUP
 
     private val testLabel = Label(
         id = "labelID",
@@ -89,14 +89,14 @@ class ContactGroupEditCreateRepositoryTest {
             LabelId(contactGroupId), testUserId, "name", "color", 1, testType, testPath, testParentId, 0, 0, 0
         )
         val labelResponse =
-            LabelResponse(testLabel.copy(id = contactGroupId, type = Constants.LABEL_TYPE_CONTACT_GROUPS))
+            LabelResponse(testLabel.copy(id = contactGroupId, type = LabelType.CONTACT_GROUP))
         coEvery { apiManager.updateLabel(any(), any(), any()) } returns ApiResult.Success(labelResponse)
         val emailLabelJoinedList = listOf(ContactEmailContactLabelJoin("emailId", "labelId"))
         coEvery { contactDao.fetchJoins(contactGroupId) } returns emailLabelJoinedList
         val updateLabelRequest = LabelRequestBody(
             name = "name",
             color = "color",
-            type = testType,
+            type = testType.typeInt,
             notify = 0,
             parentId = testParentId,
             expanded = 0,
@@ -180,7 +180,7 @@ class ContactGroupEditCreateRepositoryTest {
                 "name",
                 "color",
                 1,
-                Constants.LABEL_TYPE_CONTACT_GROUPS,
+                LabelType.CONTACT_GROUP,
                 testPath,
                 testParentId,
                 0,
@@ -203,7 +203,7 @@ class ContactGroupEditCreateRepositoryTest {
     fun whenCreateContactGroupApiCallFailsThenCreateContactGroupWorkerIsCalled() = runBlocking {
         val contactLabel =
             LabelEntity(
-                LabelId(""), testUserId, "name", "color", 1, Constants.LABEL_TYPE_CONTACT_GROUPS, "a/b", "ParentId", 1,
+                LabelId(""), testUserId, "name", "color", 1, LabelType.CONTACT_GROUP, "a/b", "ParentId", 1,
                 0, 0
             )
         val error = "Test API Error"

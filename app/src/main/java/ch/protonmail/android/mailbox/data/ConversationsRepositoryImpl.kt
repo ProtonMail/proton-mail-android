@@ -30,6 +30,7 @@ import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
@@ -474,7 +475,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     private suspend fun getLabelIdsForRemovingWhenMovingToFolder(labelIds: Collection<String>): Collection<String> {
         return labelIds.filter { labelId ->
             val isLabelExclusive = if (labelId.length > MAX_LOCATION_ID_LENGTH) {
-                labelsRepository.findLabel(LabelId(labelId))?.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS
+                labelsRepository.findLabel(LabelId(labelId))?.type == LabelType.FOLDER
             } else {
                 true
             }
