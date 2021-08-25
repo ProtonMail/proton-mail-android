@@ -37,6 +37,7 @@ import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
@@ -62,7 +63,8 @@ class ComposeMessageRepository @Inject constructor(
     private var messageDao: MessageDao,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val accountManager: AccountManager,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val labelRepository: LabelRepository
 ) {
 
     val lazyManager = resettableManager()
@@ -148,7 +150,7 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun startFetchMessageDetail(messageId: String) {
-        jobManager.addJobInBackground(FetchMessageDetailJob(messageId))
+        jobManager.addJobInBackground(FetchMessageDetailJob(messageId, labelRepository))
     }
 
     suspend fun createAttachmentList(

@@ -19,14 +19,27 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.jobs.ApplyLabelJob
+import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.repository.MessageRepository
+import com.birbit.android.jobqueue.Job
+import com.birbit.android.jobqueue.JobManager
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
 internal class UpdateLabels @Inject constructor(
-    private val messageDetailsRepository: MessageDetailsRepository, // TODO: Replace it with future LabelsRepository
-    private val messageRepository: MessageRepository
+    private val jobManager: JobManager,
+    private val messageRepository: MessageRepository,
+    private val accountManager: AccountManager,
+    private val labelRepository: LabelRepository
 ) {
 
     suspend operator fun invoke(
@@ -34,13 +47,47 @@ internal class UpdateLabels @Inject constructor(
         checkedLabelIds: List<String>
     ) {
         val message = requireNotNull(messageRepository.findMessageById(messageId))
-        val existingLabels = messageDetailsRepository.getAllLabels()
+        val userId = accountManager.getPrimaryUserId().filterNotNull().first()
+        val existingLabels = labelRepository.findAllLabels(userId)
             .filter { it.id in message.labelIDsNotIncludingLocations }
         Timber.v("UpdateLabels checkedLabelIds: $checkedLabelIds")
-        messageDetailsRepository.findAllLabelsWithIds(
+        findAllLabelsWithIds(
             message,
             checkedLabelIds,
-            existingLabels
+            existingLabels,
+            userId
         )
+    }
+
+    private suspend fun findAllLabelsWithIds(
+        message: Message,
+        checkedLabelIds: List<String>,
+        labels: List<LabelEntity>,
+        userId: UserId
+    ) {
+        val labelsToRemove = ArrayList<String>()
+        val jobList = ArrayList<Job>()
+        val messageId = message.messageId
+        val mutableLabelIds = checkedLabelIds.toMutableList()
+        for (label in labels) {
+            val labelId = label.id
+            if (!mutableLabelIds.contains(labelId) && label.type == Constants.LABEL_TYPE_MESSAGE_LABEL) {
+                // this label should be removed
+                labelsToRemove.add(labelId.id)
+                jobList.add(RemoveLabelJob(listOf(messageId), labelId.id))
+            } else if (mutableLabelIds.contains(labelId)) {
+                // the label remains
+                mutableLabelIds.remove(labelId)
+            }
+        }
+        // what remains are the new labels
+        val applyLabelsJobs = mutableLabelIds.map { ApplyLabelJob(listOf(messageId), it) }
+        jobList.addAll(applyLabelsJobs)
+        // update the message with the new labels
+        message.addLabels(mutableLabelIds)
+        message.removeLabels(labelsToRemove)
+
+        jobList.forEach(jobManager::addJobInBackground)
+        messageRepository.saveMessage(userId, message)
     }
 }

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.activities
 
+import android.graphics.Color
 import androidx.lifecycle.liveData
 import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -150,6 +151,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val messagesResponseChannel = Channel<GetMessagesResult>()
     private val conversationsResponseFlow = Channel<GetConversationsResult>()
 
+    private val currentUserId = UserId("8237462347237428")
+    private val testColorInt = 871
+
     @BeforeTest
     fun setUp() {
         every { conversationModeEnabled(INBOX) } returns false // INBOX type to use with messages
@@ -173,7 +177,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery { contactsRepository.findContactsByEmail(any()) } returns flowOf(emptyList())
 
         val allLabels = (0..11).map {
-            Label(id = "$it", name = "label $it", color = EMPTY_STRING)
+            LabelEntity(id = "$it", name = "label $it", color = EMPTY_STRING)
         }
         every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
         every { labelRepository.findLabels(any(), any()) } answers {
@@ -211,6 +215,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @After
     fun tearDown() {
         unmockkStatic(EntryPoints::class)
+        unmockkStatic(Color::class)
     }
 
     @Test
@@ -512,6 +517,15 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             }
         )
         every { conversationModeEnabled(any()) } returns false
+        coEvery {
+            labelRepository.findLabels(
+                currentUserId,
+                listOf(LabelId("1"), LabelId("2"))
+            )
+        } returns listOf(
+            LabelEntity(LabelId("1"), currentUserId, "label 1", "blue", 0, 1, "", "", 0, 0, 0),
+            LabelEntity(LabelId("2"), currentUserId, "label 2", "blue", 0, 1, "", "", 0, 0, 0)
+        )
 
         val expected = MailboxUiItem(
             itemId = "messageId",
@@ -532,8 +546,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             ),
             isDeleted = false,
             labels = listOf(
-                LabelChipUiModel(LabelId("0"), Name("label 0"), null),
-                LabelChipUiModel(LabelId("2"), Name("label 2"), null)
+                LabelChipUiModel(LabelId("0"), Name("label 0"), testColorInt),
+                LabelChipUiModel(LabelId("2"), Name("label 2"), testColorInt)
             ),
             recipients = "recipientName",
             isDraft = false
@@ -744,7 +758,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messagesCount = 2,
                 messageData = null,
                 isDeleted = false,
-                labels = listOf(LabelChipUiModel(LabelId("10"), Name("label 10"), null)),
+                labels = listOf(LabelChipUiModel(LabelId("10"), Name("label 10"), testColorInt)),
                 recipients = "",
                 isDraft = false
             ).toMailboxState()
@@ -846,8 +860,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messageData = null,
                 isDeleted = false,
                 labels = listOf(
-                    LabelChipUiModel(LabelId("0"), Name("label 0"), null),
-                    LabelChipUiModel(LabelId("6"), Name("label 6"), null)
+                    LabelChipUiModel(LabelId("0"), Name("label 0"), testColorInt),
+                    LabelChipUiModel(LabelId("6"), Name("label 6"), testColorInt)
                 ),
                 recipients = "",
                 isDraft = false
@@ -902,7 +916,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messagesCount = 2,
                 messageData = null,
                 isDeleted = false,
-                labels = listOf(LabelChipUiModel(LabelId("6"), Name("label 6"), null)),
+                labels = listOf(LabelChipUiModel(LabelId("6"), Name("label 6"), testColorInt)),
                 recipients = "",
                 isDraft = false
             ).toMailboxState()
@@ -954,8 +968,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messageData = null,
                 isDeleted = false,
                 labels = listOf(
-                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
                 ),
                 recipients = "",
                 true
@@ -1007,8 +1021,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messageData = null,
                 isDeleted = false,
                 labels = listOf(
-                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
                 ),
                 recipients = "",
                 false
@@ -1037,6 +1051,15 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 }
             )
             every { conversationModeEnabled(any()) } returns false
+            coEvery {
+                labelRepository.findLabels(
+                    currentUserId,
+                    listOf(LabelId(ALL_DRAFT_LABEL_ID), LabelId(DRAFT_LABEL_ID))
+                )
+            } returns listOf(
+                LabelEntity(LabelId(ALL_DRAFT_LABEL_ID), currentUserId, "label 1", "blue", 0, 1, "", "", 0, 0, 0),
+                LabelEntity(LabelId(DRAFT_LABEL_ID), currentUserId, "label 8", "blue", 0, 1, "", "", 0, 0, 0)
+            )
 
             // Then
             val expected = MailboxUiItem(
@@ -1058,8 +1081,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 ),
                 isDeleted = false,
                 labels = listOf(
-                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
                 ),
                 recipients = "",
                 isDraft = true

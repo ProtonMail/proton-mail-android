@@ -23,23 +23,28 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
+import ch.protonmail.android.labels.data.LabelRepository
 import com.birbit.android.jobqueue.Job
 
 class SpamSwipeHandler : ISwipeHandler {
 
-    override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
-        return PostSpamJob(listOf(message.messageId), currentLocation)
-    }
+    override fun handleSwipe(
+        message: SimpleMessage,
+        currentLocation: String,
+        labelRepository: LabelRepository
+    ): Job =
+        PostSpamJob(listOf(message.messageId), currentLocation)
 
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String?
+        currentLocation: String,
+        labelRepository: LabelRepository
     ): Job {
         return if (messageLocation == Constants.MessageLocationType.LABEL_FOLDER) {
-            MoveToFolderJob(listOf(message.messageId), currentLocation)
+            MoveToFolderJob(listOf(message.messageId), currentLocation, labelRepository)
         } else {
-            PostInboxJob(listOf(message.messageId))
+            PostInboxJob(listOf(message.messageId), labelRepository)
         }
     }
 }

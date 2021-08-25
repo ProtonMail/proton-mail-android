@@ -102,6 +102,7 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
@@ -136,6 +137,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.util.android.sharedpreferences.get
@@ -184,6 +186,9 @@ internal class MailboxActivity :
 
     @Inject
     lateinit var isConversationModeEnabled: ConversationModeEnabled
+
+    @Inject
+    lateinit var labelRepository: LabelRepository
 
     @Inject
     @DefaultSharedPreferences
@@ -285,7 +290,8 @@ internal class MailboxActivity :
 
         mailboxViewModel.pendingSendsLiveData.observe(this, mailboxAdapter::setPendingForSendingList)
         mailboxViewModel.pendingUploadsLiveData.observe(this, mailboxAdapter::setPendingUploadsList)
-        messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
+        messageDetailsRepository.getAllLabelsLiveData(userManager.requireCurrentUserId())
+            .observe(this, mailboxAdapter::setLabels)
 
         mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this) { isSuccess ->
             Timber.v("Delete message status is success $isSuccess")
@@ -549,7 +555,8 @@ internal class MailboxActivity :
         mailboxViewModel.setNewUserId(currentUserId)
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
-        messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
+        messageDetailsRepository.getAllLabelsLiveData(userManager.requireCurrentUserId())
+            .observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account
@@ -828,12 +835,12 @@ internal class MailboxActivity :
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH,
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_FOLDER
-        )
+                MessageLocationType.DRAFT,
+                MessageLocationType.SPAM,
+                MessageLocationType.TRASH,
+                MessageLocationType.LABEL,
+                MessageLocationType.LABEL_FOLDER
+            )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -1213,7 +1220,8 @@ internal class MailboxActivity :
             labelId,
             isFolder,
             newLocation,
-            labelName
+            labelName,
+            userManager.requireCurrentUserId()
         ).execute()
     }
 
@@ -1353,12 +1361,15 @@ internal class MailboxActivity :
         private val labelId: String,
         private val isFolder: Boolean,
         private val newLocation: Int,
-        private val labelName: String?
+        private val labelName: String?,
+        private val userId: UserId
     ) : AsyncTask<Unit, Unit, LabelEntity?>() {
 
         override fun doInBackground(vararg params: Unit): LabelEntity? {
-            val labels = messageDetailsRepository.findAllLabelsWithIds(listOf(labelId))
-            return if (labels.isEmpty()) null else labels[0]
+            return runBlocking {
+                val labels = messageDetailsRepository.findLabelsWithIds(listOf(labelId), userId)
+                if (labels.isEmpty()) null else labels[0]
+            }
         }
 
         override fun onPostExecute(label: LabelEntity?) {
@@ -1484,7 +1495,7 @@ internal class MailboxActivity :
                     mailboxLabelId ?: mailboxLocation.messageLocationTypeValue.toString()
                 )
             } else {
-                mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, mailboxLabelId)
+                mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, mailboxLabelId, labelRepository)
             }
             if (undoSnack != null && undoSnack!!.isShownOrQueued) {
                 undoSnack!!.dismiss()
@@ -1494,7 +1505,9 @@ internal class MailboxActivity :
                 findViewById(R.id.drawer_layout),
                 getString(swipeAction.actionDescription),
                 {
-                    mSwipeProcessor.handleUndo(swipeAction, messageSwiped, mJobManager, mailboxLocation, mailboxLabelId)
+                    mSwipeProcessor.handleUndo(
+                        swipeAction, messageSwiped, mJobManager, mailboxLocation, mailboxLabelId, labelRepository
+                    )
                     mailboxAdapter.notifyDataSetChanged()
                 },
                 false

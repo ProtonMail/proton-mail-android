@@ -25,34 +25,68 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.domain.entity.UserId
 
 @Dao
 interface LabelDao {
 
-    @Query("SELECT * FROM $TABLE_LABELS ORDER BY $COLUMN_LABEL_ORDER")
-    fun observeAllLabels(): Flow<List<LabelEntity>>
+    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ORDER BY $COLUMN_LABEL_ORDER")
+    fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>>
 
-    @Query("SELECT * FROM $TABLE_LABELS ORDER BY $COLUMN_LABEL_ORDER")
-    suspend fun findAllLabels(): List<LabelEntity>
+    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ORDER BY $COLUMN_LABEL_ORDER ")
+    suspend fun findAllLabels(userId: UserId): List<LabelEntity>
+
+
+    @Query(
+        """
+        SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_ID IN (:labelIds) 
+        AND $COLUMN_LABEL_USER_ID=:userId  
+        ORDER BY $COLUMN_LABEL_ORDER
+        """
+    )
+    fun observeLabelsById(userId: UserId, labelIds: List<LabelId>): Flow<List<LabelEntity>>
+
+    @Query(
+        """
+        SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_ID IN (:labelIds) 
+        AND $COLUMN_LABEL_USER_ID=:userId
+        ORDER BY $COLUMN_LABEL_ORDER
+        """
+    )
+    suspend fun findLabelsById(userId: UserId, labelIds: List<LabelId>): List<LabelEntity>
+
+    @Query(
+        """
+        SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_ID=:labelId 
+        ORDER BY $COLUMN_LABEL_ORDER
+        """
+    )
+    suspend fun findLabelById(labelId: LabelId): LabelEntity?
 
     @Query(
         """
         SELECT * FROM $TABLE_LABELS 
         WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_LABEL} 
+        AND $COLUMN_LABEL_USER_ID=:userId 
         ORDER BY $COLUMN_LABEL_ORDER
         """
     )
-    fun findAllLabelsPaged(): DataSource.Factory<Int, LabelEntity>
+    fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY $COLUMN_LABEL_ORDER")
-    fun observeLabelsById(labelIds: List<String>): Flow<List<LabelEntity>>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    suspend fun findLabelsById(labelIds: List<String>): List<LabelEntity>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    suspend fun findLabelById(labelId: String): LabelEntity?
+    @Query(
+        """
+        SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_FOLDERS} 
+        AND $COLUMN_LABEL_USER_ID=:userId 
+        ORDER BY $COLUMN_LABEL_ORDER
+        """
+    )
+    fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
     @Query("DELETE FROM $TABLE_LABELS")
     fun clearLabelsCache()
@@ -61,9 +95,12 @@ interface LabelDao {
     suspend fun saveLabel(label: LabelEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveAllLabels(labels: List<LabelEntity>): List<Long>
+    suspend fun saveLabels(labels: List<LabelEntity>): List<Long>
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    suspend fun deleteLabelById(labelId: String)
+    suspend fun deleteLabelById(labelId: LabelId)
+
+    @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ")
+    suspend fun deleteAllLabels(userId: UserId)
 
 }

@@ -30,28 +30,31 @@ import ch.protonmail.android.api.models.IDList;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
-import ch.protonmail.android.data.local.MessageDao;
-import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import ch.protonmail.android.labels.data.LabelRepository;
 import ch.protonmail.android.labels.data.db.LabelEntity;
+import ch.protonmail.android.labels.data.model.LabelId;
 import timber.log.Timber;
 
 public class PostInboxJob extends ProtonMailCounterJob {
 
     private final List<String> mMessageIds;
     private final List<String> mFolderIds;
+    private final LabelRepository labelRepository;
 
-    public PostInboxJob(final List<String> messageIds) {
+    public PostInboxJob(final List<String> messageIds, LabelRepository labelRepository) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist());
         mMessageIds = messageIds;
+        this.labelRepository = labelRepository;
         mFolderIds = null;
     }
 
-    public PostInboxJob(final List<String> messageIds, List<String> folderIds) {
+    public PostInboxJob(final List<String> messageIds, List<String> folderIds, LabelRepository labelRepository) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist());
         mMessageIds = messageIds;
         mFolderIds = folderIds;
+        this.labelRepository = labelRepository;
     }
 
     @Override
@@ -98,12 +101,8 @@ public class PostInboxJob extends ProtonMailCounterJob {
         List<String> oldLabels = message.getAllLabelIDs();
         ArrayList<String> labelsToRemove = new ArrayList<>();
 
-        MessageDao messageDao = MessageDatabase.Factory
-                .getInstance(getApplicationContext(), getUserId())
-                .getDao();
-
         for (String labelId : oldLabels) {
-            LabelEntity label = messageDao.findLabelByIdBlocking(labelId);
+            LabelEntity label = labelRepository.findLabelBlocking(new LabelId(labelId));
             // find folders
             if (label != null &&
                     (label.getType() == Constants.LABEL_TYPE_MESSAGE_FOLDERS) &&

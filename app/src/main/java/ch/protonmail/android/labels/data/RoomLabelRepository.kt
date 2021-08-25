@@ -19,41 +19,53 @@
 
 package ch.protonmail.android.labels.data
 
-import android.content.Context
-import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.labels.data.db.LabelDao
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
+import timber.log.Timber
 import javax.inject.Inject
 
 internal class RoomLabelRepository @Inject constructor(
-    private val context: Context,
-    private val messageDatabaseFactory: MessageDatabase.Factory,
-    private val messageDao: MessageDao
+    private val labelDao: LabelDao
 ) : LabelRepository {
 
-    override fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>> =
-        getDao(userId).observeLabelsById(labelsIds.map { it.id })
-
-    override suspend fun findLabels(userId: UserId, labelsIds: List<LabelId>): List<LabelEntity> =
-        getDao(userId).findLabelsById(labelsIds.map { it.id })
-
     override fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>> =
-        getDao(userId).observeAllLabels()
+        labelDao.observeAllLabels(userId)
 
     override suspend fun findAllLabels(userId: UserId): List<LabelEntity> =
-        getDao(userId).findAllLabels()
+        labelDao.findAllLabels(userId)
 
-    override suspend fun saveLabel(userId: UserId, label: LabelEntity) {
-        getDao(userId).saveLabel(label)
+    override fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>> =
+        labelDao.observeLabelsById(userId, labelsIds)
+
+    override suspend fun findLabels(userId: UserId, labelsIds: List<LabelId>): List<LabelEntity> =
+        labelDao.findLabelsById(userId, labelsIds)
+
+    override suspend fun findLabel(labelId: LabelId): LabelEntity? =
+        labelDao.findLabelById(labelId)
+
+    override fun findLabelBlocking(labelId: LabelId): LabelEntity? {
+        return runBlocking {
+            findLabel(labelId)
+        }
     }
 
-    override suspend fun saveLabel(label: LabelEntity) {
-        messageDao.saveLabel(label)
+    override suspend fun saveLabels(labels: List<LabelEntity>) {
+        Timber.v("Save labels: ${labels.map { it.id.id }}")
+        labelDao.saveLabels(labels)
     }
 
-    private fun getDao(userId: UserId): MessageDao =
-        messageDatabaseFactory.getInstance(context, userId).getDao()
+    override suspend fun saveLabel(label: LabelEntity) =
+        saveLabels(listOf(label))
+
+    override suspend fun deleteLabel(labelId: LabelId) {
+        labelDao.deleteLabelById(labelId)
+    }
+
+    override suspend fun deleteAllLabels(userId: UserId) {
+        labelDao.deleteAllLabels(userId)
+    }
 }

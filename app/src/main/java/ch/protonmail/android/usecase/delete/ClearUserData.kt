@@ -22,6 +22,7 @@ package ch.protonmail.android.usecase.delete
 import android.content.Context
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.storage.MessageBodyClearingService
 import ch.protonmail.android.utils.AppUtil
@@ -45,7 +46,8 @@ import javax.inject.Inject
 class ClearUserData @Inject constructor(
     private val context: Context,
     private val databaseProvider: DatabaseProvider,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val labelRepository: LabelRepository
 ) {
 
     suspend operator fun invoke(userId: UserId, alsoClearContacts: Boolean = true) {
@@ -79,8 +81,8 @@ class ClearUserData @Inject constructor(
             messageDao?.run {
                 clearMessagesCache()
                 clearAttachmentsCache()
-                clearLabelsCache()
             }
+            labelRepository.deleteAllLabels(userId)
             conversationDao?.clear()
             notificationDao?.clearNotificationCache()
             pendingActionDao?.run {

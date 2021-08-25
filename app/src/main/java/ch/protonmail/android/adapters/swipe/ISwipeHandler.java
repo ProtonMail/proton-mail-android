@@ -22,13 +22,11 @@ import com.birbit.android.jobqueue.Job;
 
 import ch.protonmail.android.api.models.SimpleMessage;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.labels.data.LabelRepository;
 
-/**
- * Created by dkadrikj on 9.7.15.
- */
 public interface ISwipeHandler {
 
-    Job handleSwipe(SimpleMessage message, String currentLocation);
+    Job handleSwipe(SimpleMessage message, String currentLocation, LabelRepository labelRepository);
 
-    Job handleUndo(SimpleMessage message, Constants.MessageLocationType messageLocation, String currentLocation);
+    Job handleUndo(SimpleMessage message, Constants.MessageLocationType messageLocation, String currentLocation, LabelRepository labelRepository);
 }

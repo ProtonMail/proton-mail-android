@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -29,14 +29,12 @@ import javax.inject.Singleton;
 
 import ch.protonmail.android.api.models.SimpleMessage;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.labels.data.LabelRepository;
 
-/**
- * Created by dkadrikj on 9.7.15.
- */
 @Singleton
 public class SwipeProcessor {
 
-    private Map<SwipeAction,ISwipeHandler> handlers=new EnumMap<>(SwipeAction.class);
+    private Map<SwipeAction, ISwipeHandler> handlers = new EnumMap<>(SwipeAction.class);
 
     @Inject
     public SwipeProcessor() {
@@ -44,21 +42,21 @@ public class SwipeProcessor {
     }
 
     public void addHandler(SwipeAction swipeAction, ISwipeHandler swipeHandler) {
-        handlers.put(swipeAction,swipeHandler);
+        handlers.put(swipeAction, swipeHandler);
     }
 
-    public void handleSwipe(SwipeAction swipeAction, SimpleMessage message, JobManager jobManager, String currentLocation) {
+    public void handleSwipe(SwipeAction swipeAction, SimpleMessage message, JobManager jobManager, String currentLocation, LabelRepository labelRepository) {
         ISwipeHandler handler = handlers.get(swipeAction);
         if (handler != null) {
-            Job job = handler.handleSwipe(message, currentLocation);
+            Job job = handler.handleSwipe(message, currentLocation, labelRepository);
             jobManager.addJobInBackground(job);
         }
     }
 
-    public void handleUndo(SwipeAction swipeAction, SimpleMessage message, JobManager jobManager, Constants.MessageLocationType messageLocation, String currentLocation) {
+    public void handleUndo(SwipeAction swipeAction, SimpleMessage message, JobManager jobManager, Constants.MessageLocationType messageLocation, String currentLocation, LabelRepository labelRepository) {
         ISwipeHandler handler = handlers.get(swipeAction);
         if (handler != null) {
-            Job job = handler.handleUndo(message, messageLocation, currentLocation);
+            Job job = handler.handleUndo(message, messageLocation, currentLocation, labelRepository);
             jobManager.addJobInBackground(job);
         }
     }

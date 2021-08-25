@@ -56,7 +56,7 @@ class LabelActionItemUiModelMapper @Inject constructor(
         val colorInt = if (useFolderColor) label.color.toColorIntOrDefault() else defaultIconColor
 
         val isChecked = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
-            currentLabelsSelection.contains(label.id)
+            currentLabelsSelection.contains(label.id.id)
         } else {
             null
         }

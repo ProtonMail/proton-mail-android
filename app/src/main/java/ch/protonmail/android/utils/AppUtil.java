@@ -350,7 +350,7 @@ public class AppUtil {
                 }
                 messageDao.clearMessagesCache();
                 messageDao.clearAttachmentsCache();
-                messageDao.clearLabelsCache();
+                //labelRepository.deleteAllLabels(userId);
                 conversationDao.clear();
                 notificationDao.clearNotificationCache();
                 attachmentMetadataDao.clearAttachmentMetadataCache();

@@ -25,12 +25,13 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsAdapter
-import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.labels.data.model.LabelEntity
+import ch.protonmail.android.data.AppDatabase
+import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.MockKAnnotations
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -38,6 +39,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Rule
@@ -56,9 +58,12 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var workManager: WorkManager
 
+    @MockK
+    private lateinit var accountManager: AccountManager
+
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val messageDao = MessageDatabase.buildInMemoryDatabase(context).getDao()
+    private val labelDao = AppDatabase.buildInMemoryDatabase(context).labelDao()
 
     private lateinit var viewModel: LabelsManagerViewModel
 
@@ -71,15 +76,16 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
         MockKAnnotations.init(this)
         viewModel =
             LabelsManagerViewModel(
-                messageDao = messageDao,
+                labelDao = labelDao,
                 savedStateHandle = savedState,
                 deleteLabel = mockk(),
-                workManager = workManager
+                workManager = workManager,
+                accountManager = accountManager
             )
     }
 
     @Test
-    fun verifyCheckedStateIsUpdatedCorrectlyForAdapterItems() {
+    fun verifyCheckedStateIsUpdatedCorrectlyForAdapterItems() = runBlocking {
         val adapter = LabelsAdapter()
         viewModel.labels.observeDataForever(adapter::submitList)
 
@@ -88,19 +94,19 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
 
         // Add single label
         val label = LabelEntity(LabelId("1"), UserId("testUser"), EMPTY_STRING, EMPTY_STRING, 0, 0, EMPTY_STRING, EMPTY_STRING, 0, 0, 0)
-        messageDao.saveLabel(label)
-        runBlocking { delay(50) } // Wait for async delivery
+        labelDao.saveLabel(label)
+        delay(50) // Wait for async delivery
         assertEquals(1, adapter.itemCount)
 
         // Select label
         assertFalse(adapter.currentList!![0]!!.isChecked)
         viewModel.onLabelSelected("1", true)
-        runBlocking { delay(50) } // Wait for async delivery
+        delay(50) // Wait for async delivery
         assertTrue(adapter.currentList!![0]!!.isChecked)
 
         // Deselect label
         viewModel.onLabelSelected("1", false)
-        runBlocking { delay(50) } // Wait for async delivery
+        delay(50)  // Wait for async delivery
         assertFalse(adapter.currentList!![0]!!.isChecked)
     }
 

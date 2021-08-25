@@ -24,8 +24,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.worker.DeleteLabelWorker
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -50,7 +51,7 @@ class DeleteLabelTest {
     private lateinit var workScheduler: DeleteLabelWorker.Enqueuer
 
     @MockK
-    private lateinit var messageDao: MessageDao
+    private lateinit var labelRepository: LabelRepository
 
     @MockK
     private lateinit var contactDao: ContactDao
@@ -60,7 +61,7 @@ class DeleteLabelTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        deleteLabel = DeleteLabel(TestDispatcherProvider, contactDao, messageDao, workScheduler)
+        deleteLabel = DeleteLabel(TestDispatcherProvider, contactDao, labelRepository, workScheduler,)
     }
 
     @Test
@@ -85,7 +86,7 @@ class DeleteLabelTest {
 
             coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
             coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
-            every { messageDao.deleteLabelById(labelId) } returns Unit
+            coEvery { labelRepository.deleteLabel(LabelId(labelId)) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
             // when
@@ -120,7 +121,7 @@ class DeleteLabelTest {
 
             coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
             coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
-            every { messageDao.deleteLabelById(labelId) } returns Unit
+            coEvery { labelRepository.deleteLabel(LabelId(labelId)) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
             // when
@@ -154,7 +155,7 @@ class DeleteLabelTest {
 
             coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
             coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
-            every { messageDao.deleteLabelById(labelId) } returns Unit
+            coEvery { labelRepository.deleteLabel(LabelId(labelId)) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
             // when

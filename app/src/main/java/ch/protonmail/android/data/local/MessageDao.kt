@@ -20,13 +20,11 @@ package ch.protonmail.android.data.local
 
 import android.provider.BaseColumns
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
@@ -46,11 +44,6 @@ import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_TIME
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TABLE_ATTACHMENTS
 import ch.protonmail.android.data.local.model.TABLE_MESSAGES
-import ch.protonmail.android.labels.data.db.COLUMN_LABEL_ID
-import ch.protonmail.android.labels.data.db.COLUMN_LABEL_ORDER
-import ch.protonmail.android.labels.data.db.COLUMN_LABEL_TYPE
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.db.TABLE_LABELS
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
@@ -385,62 +378,4 @@ abstract class MessageDao : BaseDao<Message>() {
 
     @Query("DELETE FROM $TABLE_ATTACHMENTS")
     abstract fun clearAttachmentsCache()
-
-
-    @Query("SELECT * FROM $TABLE_LABELS")
-    @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
-    abstract fun getAllLabelsLiveData(): LiveData<List<LabelEntity>>
-
-    @Query("SELECT * FROM $TABLE_LABELS ORDER BY $COLUMN_LABEL_ORDER")
-    abstract fun observeAllLabels(): Flow<List<LabelEntity>>
-
-    @Query("SELECT * FROM $TABLE_LABELS ORDER BY $COLUMN_LABEL_ORDER")
-    abstract suspend fun findAllLabels(): List<LabelEntity>
-
-    // Folders
-    @Query(
-        """
-        SELECT * FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_FOLDERS} 
-        ORDER BY $COLUMN_LABEL_ORDER
-        """
-    )
-    abstract fun getAllFoldersPaged(): DataSource.Factory<Int, LabelEntity>
-
-    // Labels
-    @Query(
-        """
-        SELECT * FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_LABEL} 
-        ORDER BY $COLUMN_LABEL_ORDER
-        """
-    )
-    abstract fun getAllLabelsPaged(): DataSource.Factory<Int, LabelEntity>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY $COLUMN_LABEL_ORDER")
-    abstract fun observeLabelsById(labelIds: List<String>): Flow<List<LabelEntity>>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    abstract suspend fun findLabelsById(labelIds: List<String>): List<LabelEntity>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<LabelEntity>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract fun findLabelByIdBlocking(labelId: String): LabelEntity?
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract suspend fun findLabelById(labelId: String): LabelEntity?
-
-    @Query("DELETE FROM $TABLE_LABELS")
-    abstract fun clearLabelsCache()
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveLabel(label: LabelEntity): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAllLabels(labels: List<LabelEntity>): List<Long>
-
-    @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract fun deleteLabelById(labelId: String)
 }

@@ -23,8 +23,6 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.labels.domain.mapper.LabelsMapper
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
@@ -36,6 +34,8 @@ import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.mapper.LabelsMapper
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
@@ -74,6 +74,9 @@ class MessagesService : JobIntentService() {
 
     @Inject
     lateinit var contactEmailsManager: ContactEmailsManager
+
+    @Inject
+    lateinit var labelsRepository: LabelRepository
 
     @Inject
     lateinit var messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory
@@ -181,7 +184,6 @@ class MessagesService : JobIntentService() {
     private fun handleFetchLabels() {
         try {
             val currentUserId = userManager.requireCurrentUserId()
-            val db = MessageDatabase.getInstance(applicationContext, currentUserId).getDao()
 
             runBlocking {
                 val serverLabels = mApi.fetchLabels(currentUserId).valueOrThrow.labels
@@ -189,7 +191,7 @@ class MessagesService : JobIntentService() {
                 val labelMapper = LabelsMapper()
                 val labelList = serverLabels.map { labelMapper.mapLabelToLabelEntity(it, currentUserId) }
                 val foldersList = serverFolders.map { labelMapper.mapLabelToLabelEntity(it, currentUserId) }
-                db.saveAllLabels(labelList + foldersList)
+                labelsRepository.saveLabels(labelList + foldersList)
             }
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
         } catch (error: Exception) {
@@ -216,8 +218,6 @@ class MessagesService : JobIntentService() {
         try {
             var unixTime = 0L
             val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDb = messagesDbFactory.getDao()
             val actionsDb = actionsDbFactory.getDao()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
@@ -226,7 +226,7 @@ class MessagesService : JobIntentService() {
                 val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
                 msg.setLabelIDs(msg.getEventLabelIDs())
                 msg.location = location.messageLocationTypeValue
-                msg.setFolderLocation(messagesDb)
+                msg.setFolderLocation(labelsRepository)
                 if (savedMessage != null) {
                     if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
                         return@map null
@@ -249,7 +249,7 @@ class MessagesService : JobIntentService() {
                     }
                     msg.isInline = savedMessage.isInline
                     savedMessage.location = location.messageLocationTypeValue
-                    savedMessage.setFolderLocation(messagesDb)
+                    savedMessage.setFolderLocation(labelsRepository)
                     val attachments = savedMessage.attachments
                     if (attachments.isNotEmpty()) {
                         msg.setAttachmentList(attachments)
@@ -300,7 +300,7 @@ class MessagesService : JobIntentService() {
                 val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
                 msg.setLabelIDs(msg.getEventLabelIDs())
                 msg.location = location.messageLocationTypeValue
-                msg.setFolderLocation(messagesDb)
+                msg.setFolderLocation(labelsRepository)
                 if (savedMessage != null) {
                     if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
                         return@map null
@@ -321,7 +321,7 @@ class MessagesService : JobIntentService() {
                     msg.isInline = savedMessage.isInline
                     msg.mimeType = savedMessage.mimeType
                     savedMessage.location = location.messageLocationTypeValue
-                    savedMessage.setFolderLocation(messagesDb)
+                    savedMessage.setFolderLocation(labelsRepository)
                     val attachments = savedMessage.attachments
                     if (attachments.isNotEmpty()) {
                         msg.setAttachmentList(attachments)

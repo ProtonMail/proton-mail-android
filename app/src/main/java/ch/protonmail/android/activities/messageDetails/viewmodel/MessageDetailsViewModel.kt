@@ -664,7 +664,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         fetchingPubKeys = false
         // render with the new verification keys
         if (renderingPassed) {
-            RegisterReloadTask(message).execute()
+            RegisterReloadTask(message, labelRepository).execute()
         }
     }
 

@@ -19,14 +19,16 @@
 package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.model.LabelId
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class MessageLocationResolver @Inject constructor(
     // Unfortunately with the current "architecture" we cannot properly inject anything here and verify label type
     // correctly in resolveLabelType(), that should be updated with the networking module implementation
     // currently this is used in [MessageResponse] & [MessagesResponse] which should be simple data classes
-    private val messageDao: MessageDao?
+    private val labelRepository: LabelRepository?
 ) {
 
     fun resolveLocationFromLabels(labelIds: List<String>): Constants.MessageLocationType {
@@ -82,11 +84,13 @@ class MessageLocationResolver @Inject constructor(
     }
 
     private fun resolveLabelType(labelId: String): Constants.MessageLocationType {
-        val label = messageDao?.findLabelByIdBlocking(labelId)
-        return if (label != null && label.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS) {
-            Constants.MessageLocationType.LABEL_FOLDER
-        } else {
-            Constants.MessageLocationType.LABEL
+        return runBlocking {
+            val label = labelRepository?.findLabel(LabelId(labelId))
+            if (label != null && label.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS) {
+                Constants.MessageLocationType.LABEL_FOLDER
+            } else {
+                Constants.MessageLocationType.LABEL
+            }
         }
     }
 

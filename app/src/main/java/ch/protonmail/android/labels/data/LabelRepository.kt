@@ -26,17 +26,24 @@ import me.proton.core.domain.entity.UserId
 
 interface LabelRepository {
 
-    fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>>
-
-    suspend fun findLabels(userId: UserId, labelsIds: List<LabelId>): List<LabelEntity>
-
     fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>>
 
     suspend fun findAllLabels(userId: UserId): List<LabelEntity>
 
-    suspend fun saveLabel(userId: UserId, label: LabelEntity)
+    fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>>
 
-    @Deprecated("Save with userId", ReplaceWith("saveLabel(userId, label)"))
+    suspend fun findLabels(userId: UserId, labelsIds: List<LabelId>): List<LabelEntity>
+
+    suspend fun findLabel(labelId: LabelId): LabelEntity?
+
+    fun findLabelBlocking(labelId: LabelId): LabelEntity?
+
     suspend fun saveLabel(label: LabelEntity)
+
+    suspend fun saveLabels(labels: List<LabelEntity>)
+
+    suspend fun deleteLabel(labelId: LabelId)
+
+    suspend fun deleteAllLabels(userId: UserId)
 
 }

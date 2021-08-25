@@ -20,10 +20,13 @@
 package ch.protonmail.android.data
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import ch.protonmail.android.labels.data.db.LabelDao
 import ch.protonmail.android.labels.data.db.LabelEntity
 import me.proton.core.account.data.db.AccountConverters
 import me.proton.core.account.data.db.AccountDatabase
@@ -69,7 +72,7 @@ import timber.log.Timber
         SessionDetailsEntity::class,
         UserEntity::class,
         UserKeyEntity::class,
-        // Mail - Labels
+        // Mail
         LabelEntity::class,
     ],
     version = AppDatabase.version,
@@ -95,6 +98,7 @@ abstract class AppDatabase :
     PublicAddressDatabase,
     MailSettingsDatabase {
 
+    abstract fun labelDao(): LabelDao
     // abstract fun contactDao(): ContactDao
     // abstract fun messagesDao(): MessageDao
 
@@ -135,6 +139,12 @@ abstract class AppDatabase :
                 }
                 .build()
         }
+
+        @VisibleForTesting
+        fun buildInMemoryDatabase(context: Context) =
+            Room.inMemoryDatabaseBuilder(context.applicationContext, AppDatabase::class.java)
+                .fallbackToDestructiveMigration()
+                .build()
 
     }
 }

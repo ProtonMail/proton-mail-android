@@ -44,6 +44,8 @@ import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.domain.util.checkNotBlank
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
@@ -298,8 +300,8 @@ data class Message @JvmOverloads constructor(
             return user!!.addresses!!.any { it.email.equals(senderEmail, ignoreCase = true) }
         }
 
-    fun locationFromLabel(messageDao: MessageDao? = null): Constants.MessageLocationType =
-        MessageLocationResolver(messageDao).resolveLocationFromLabels(allLabelIDs)
+    fun locationFromLabel(labelRepository: LabelRepository? = null): Constants.MessageLocationType =
+        MessageLocationResolver(labelRepository).resolveLocationFromLabels(allLabelIDs)
 
     fun writeTo(message: Message) {
         message.messageBody = messageBody
@@ -523,11 +525,13 @@ data class Message @JvmOverloads constructor(
         location = locationFromLabel().messageLocationTypeValue
     }
 
-    fun setFolderLocation(messageDao: MessageDao) {
+    fun setFolderLocation(labelRepository: LabelRepository) {
         for (labelId in allLabelIDs) {
-            val label = messageDao.findLabelByIdBlocking(labelId)
-            if (label != null && label.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS) {
-                folderLocation = label.id.id
+            runBlocking {
+                val label = labelRepository.findLabel(LabelId(labelId))
+                if (label != null && label.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS) {
+                    folderLocation = label.id.id
+                }
             }
         }
     }

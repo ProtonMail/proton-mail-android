@@ -31,6 +31,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.user.User
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -102,7 +103,10 @@ class MessageRepositoryTest {
         every { isInternetConnectionPossible() } returns true
     }
 
-    private val testUserId = UserId("id")
+    private val labelRepository = mockk<LabelRepository>()
+
+    private val testUserName = "userName1"
+    private val testUserId = UserId(testUserName)
     private val message1 = Message(messageId = "1")
     private val message2 = Message(messageId = "2")
     private val message3 = Message(messageId = "3")
@@ -125,7 +129,8 @@ class MessageRepositoryTest {
         messageBodyFileManager = messageBodyFileManager,
         userManager = userManager,
         jobManager = jobManager,
-        connectivityManager = networkConnectivityManager
+        connectivityManager = networkConnectivityManager,
+        labelRepository
     )
 
     @Test

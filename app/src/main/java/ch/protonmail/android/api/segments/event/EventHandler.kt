@@ -42,6 +42,7 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
 import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelId
@@ -87,7 +88,8 @@ internal class EventHandler @AssistedInject constructor(
     private val messageFactory: MessageFactory,
     @Assisted val userId: UserId,
     private val externalScope: CoroutineScope,
-    private val messageFlagsToEncryptionMapper: MessageFlagsToEncryptionMapper
+    private val messageFlagsToEncryptionMapper: MessageFlagsToEncryptionMapper,
+    private val labelRepository: LabelRepository
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
@@ -123,14 +125,13 @@ internal class EventHandler @AssistedInject constructor(
      * the correct state. We can do api requests here, because our data already has been invalidated
      * anyway.
      */
-    fun handleRefresh() {
+    fun handleRefresh(userId: UserId) {
         messageDao.run {
             clearMessagesCache()
             clearAttachmentsCache()
-            clearLabelsCache()
         }
         launchInitialDataFetch(
-            userId,
+            this.userId,
             shouldRefreshDetails = false,
             shouldRefreshContacts = false
         )
@@ -428,7 +429,7 @@ internal class EventHandler @AssistedInject constructor(
             }
             if (locationPotentiallyChanged) {
                 message.calculateLocation()
-                message.setFolderLocation(messageDao)
+                message.setFolderLocation(labelRepository)
             }
             if (expired) {
                 messageDetailsRepository.deleteMessage(message)
@@ -606,7 +607,9 @@ internal class EventHandler @AssistedInject constructor(
                             sticky = sticky,
                             notify = notify
                         )
-                        messageDao.saveLabel(label)
+                        runBlocking {
+                            labelRepository.saveLabel(label)
+                        }
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
                         val label = LabelEntity(
                             id = LabelId(id),
@@ -629,8 +632,10 @@ internal class EventHandler @AssistedInject constructor(
                     val labelType = item.type!!
                     val labelId = item.id
                     if (labelType == Constants.LABEL_TYPE_MESSAGE_LABEL) {
-                        val label = messageDao.findLabelByIdBlocking(labelId!!)
-                        writeMessageLabel(label, item, messageDao)
+                        runBlocking {
+                            val label = labelRepository.findLabel(LabelId(labelId))
+                            writeMessageLabel(label, item)
+                        }
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
                         val contactLabel = contactDao.findContactGroupByIdBlocking(labelId!!)
                         writeContactGroup(contactLabel, item, contactDao)
@@ -639,7 +644,9 @@ internal class EventHandler @AssistedInject constructor(
 
                 ActionType.DELETE -> {
                     val labelId = event.id
-                    messageDao.deleteLabelById(labelId)
+                    runBlocking {
+                        labelRepository.deleteLabel(LabelId(labelId))
+                    }
                     contactDao.deleteByContactGroupLabelId(labelId)
                 }
 
@@ -658,13 +665,14 @@ internal class EventHandler @AssistedInject constructor(
 
     private fun writeMessageLabel(
         currentLabel: LabelEntity?,
-        updatedLabel: Label,
-        messageDao: MessageDao
+        updatedLabel: Label
     ) {
         if (currentLabel != null) {
             val labelFactory = LabelsMapper()
             val labelToSave = labelFactory.mapLabelToLabelEntity(updatedLabel, userId)
-            messageDao.saveLabel(labelToSave)
+            runBlocking {
+                labelRepository.saveLabel(labelToSave)
+            }
         }
     }
 

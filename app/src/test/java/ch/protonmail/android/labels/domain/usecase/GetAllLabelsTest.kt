@@ -20,8 +20,8 @@
 package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
@@ -33,7 +33,10 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,17 +44,23 @@ import kotlin.test.assertEquals
 class GetAllLabelsTest {
 
     @MockK
-    private lateinit var repository: MessageDetailsRepository
-
-    @MockK
     private lateinit var labelsMapper: LabelActionItemUiModelMapper
 
+    @MockK
+    private lateinit var accountManager: AccountManager
+
+    @MockK
+    private lateinit var repository: LabelRepository
+
     private lateinit var useCase: GetAllLabels
+
+    private val testUserId = UserId("TestUser")
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = GetAllLabels(repository, labelsMapper)
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
+        useCase = GetAllLabels(labelsMapper, accountManager, repository)
     }
 
     @Test
@@ -89,7 +98,7 @@ class GetAllLabelsTest {
             LabelsActionSheet.Type.LABEL.typeInt
         )
         val expected = listOf(uiLabel1, uiLabel2)
-        coEvery { repository.getAllLabels() } returns listOf(label1, label2)
+        coEvery { repository.findAllLabels(testUserId) } returns listOf(label1, label2)
         every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
         every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
 
@@ -138,7 +147,7 @@ class GetAllLabelsTest {
             LabelsActionSheet.Type.FOLDER.typeInt
         )
         val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
-        coEvery { repository.getAllLabels() } returns listOf(label1, label2)
+        coEvery { repository.findAllLabels(testUserId) } returns listOf(label1, label2)
         every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
         every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
 
@@ -190,7 +199,7 @@ class GetAllLabelsTest {
         )
         val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
             .filter { it.labelId != Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() }
-        coEvery { repository.getAllLabels() } returns listOf(label1, label2)
+        coEvery { repository.findAllLabels(testUserId) } returns listOf(label1, label2)
         every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
         every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
 

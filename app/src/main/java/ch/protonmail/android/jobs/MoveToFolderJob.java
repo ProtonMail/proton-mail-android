@@ -34,17 +34,21 @@ import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import ch.protonmail.android.labels.data.LabelRepository;
 import ch.protonmail.android.labels.data.db.LabelEntity;
+import ch.protonmail.android.labels.data.model.LabelId;
 import timber.log.Timber;
 
 public class MoveToFolderJob extends ProtonMailBaseJob {
     private List<String> mMessageIds;
     private String mLabelId;
+    private final LabelRepository labelRepository;
 
-    public MoveToFolderJob(List<String> messageIds, String labelId) {
+    public MoveToFolderJob(List<String> messageIds, String labelId, LabelRepository labelRepository) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_LABEL));
         this.mMessageIds = messageIds;
         this.mLabelId = labelId;
+        this.labelRepository = labelRepository;
     }
 
     @Override
@@ -79,7 +83,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
 
         if (!TextUtils.isEmpty(mLabelId)) {
             message.addLabels(Collections.singletonList(mLabelId));
-            removeOldFolderIds(message, messageDao);
+            removeOldFolderIds(message);
         }
 
         if (!message.isRead()) {
@@ -96,18 +100,18 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
             message.setLocation(Constants.MessageLocationType.LABEL_FOLDER.getMessageLocationTypeValue());
         }
 
-        message.setFolderLocation(messageDao);
+        message.setFolderLocation(labelRepository);
         Timber.d("Move message id: %s, location: %s, labels: %s", message.getMessageId(), message.getLocation(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }
 
-    private void removeOldFolderIds(Message message, MessageDao messageDao) {
+    private void removeOldFolderIds(Message message) {
         List<String> oldLabels = message.getAllLabelIDs();
         ArrayList<String> labelsToRemove = new ArrayList<>();
 
         for (String labelId : oldLabels) {
-            LabelEntity label = messageDao.findLabelByIdBlocking(labelId);
+            LabelEntity label = labelRepository.findLabelBlocking(new LabelId(labelId));
             // find folders
             if (label != null && (label.getType() == Constants.LABEL_TYPE_MESSAGE_FOLDERS) && !label.getId().equals(mLabelId)) {
                 labelsToRemove.add(labelId);

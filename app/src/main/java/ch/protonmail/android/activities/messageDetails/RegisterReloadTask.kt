@@ -23,15 +23,19 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.jobs.FetchMessageDetailJob
+import ch.protonmail.android.labels.data.LabelRepository
 
-internal class RegisterReloadTask(private val message: Message) : AsyncTask<Void, Void, Void>() {
+internal class RegisterReloadTask(
+    private val message: Message,
+    private val labelRepository: LabelRepository
+) : AsyncTask<Void, Void, Void>() {
 
     override fun doInBackground(vararg voids: Void): Void? {
         val app = ProtonMailApplication.getApplication()
         val messagesDatabase = MessageDatabase.getInstance(app, app.userManager.requireCurrentUserId()).getDao()
         val jobManager = app.jobManager
         if (message.checkIfAttHeadersArePresent(messagesDatabase)) {
-            jobManager.addJobInBackground(FetchMessageDetailJob(message.messageId))
+            jobManager.addJobInBackground(FetchMessageDetailJob(message.messageId, labelRepository))
         }
         return null
     }

@@ -30,6 +30,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
@@ -217,6 +218,8 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     private val messageFactory: MessageFactory = mockk(relaxed = true)
 
+    private val labelsRepository: LabelRepository = mockk(relaxed = true)
+
     private val markConversationsReadRemoteWorker: MarkConversationsReadRemoteWorker.Enqueuer = mockk(relaxed = true)
 
     private val markConversationsUnreadRemoteWorker: MarkConversationsUnreadRemoteWorker.Enqueuer = mockk(relaxed = true)
@@ -258,7 +261,8 @@ class ConversationsRepositoryImplTest : ArchTest {
         unlabelConversationsRemoteWorker = unlabelConversationsRemoteWorker,
         deleteConversationsRemoteWorker = deleteConversationsRemoteWorker,
         connectivityManager = connectivityManager,
-        markUnreadLatestNonDraftMessageInLocation = markUnreadLatestNonDraftMessageInLocation
+        markUnreadLatestNonDraftMessageInLocation = markUnreadLatestNonDraftMessageInLocation,
+        labelsRepository = labelsRepository
     )
 
     @Test
@@ -930,7 +934,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
-            coEvery { messageDao.findLabelById(any()) } returns label
+            coEvery { labelsRepository.findLabel(any()) } returns label
             coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
@@ -975,7 +979,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 every { type } returns Constants.LABEL_TYPE_MESSAGE_LABEL
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
-            coEvery { messageDao.findLabelById(any()) } returns label
+            coEvery { labelsRepository.findLabel(any()) } returns label
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 

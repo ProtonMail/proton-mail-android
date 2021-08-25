@@ -23,7 +23,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.DeleteLabelWorker
 import kotlinx.coroutines.ensureActive
@@ -39,7 +40,7 @@ import javax.inject.Inject
 class DeleteLabel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val contactDao: ContactDao,
-    private val messageDao: MessageDao,
+    private val labelRepository: LabelRepository,
     private val deleteLabelWorker: DeleteLabelWorker.Enqueuer
 ) {
 
@@ -56,7 +57,7 @@ class DeleteLabel @Inject constructor(
                     contactDao.deleteContactGroup(label)
                 }
                 Timber.v("Delete DB label $labelId")
-                messageDao.deleteLabelById(labelId)
+                labelRepository.deleteLabel(LabelId(labelId))
             }
 
             // schedule worker to remove label ids over the network

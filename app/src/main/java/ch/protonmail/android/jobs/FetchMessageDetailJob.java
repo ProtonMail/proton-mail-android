@@ -26,6 +26,7 @@ import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
+import ch.protonmail.android.labels.data.LabelRepository;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
 
@@ -34,10 +35,12 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
     private static final String TAG_FETCH_MESSAGE_DETAIL_JOB = "FetchMessageDetailJob";
 
     private final String mMessageId;
+    private final LabelRepository labelRepository;
 
-    public FetchMessageDetailJob(final String messageId) {
+    public FetchMessageDetailJob(final String messageId, LabelRepository labelRepository) {
         super(new Params(Priority.MEDIUM).requireNetwork().groupBy(Constants.JOB_GROUP_MESSAGE));
         mMessageId = messageId;
+        this.labelRepository = labelRepository;
     }
 
     @Override
@@ -80,7 +83,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
                     }
                 }
                 message.setLocation(location.getMessageLocationTypeValue());
-                message.setFolderLocation(messageDao);
+                message.setFolderLocation(labelRepository);
                 getMessageDetailsRepository().saveMessageBlocking(message);
                 event.setMessage(message);
             }

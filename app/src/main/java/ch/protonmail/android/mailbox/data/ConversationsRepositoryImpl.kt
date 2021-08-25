@@ -28,6 +28,8 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
@@ -83,6 +85,7 @@ private const val MAX_LOCATION_ID_LENGTH = 2
 internal class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
+    private val labelsRepository: LabelRepository,
     private val unreadCounterDao: UnreadCounterDao,
     private val api: ProtonMailApiManager,
     responseToConversationsMapper: ConversationsResponseToConversationsMapper,
@@ -131,7 +134,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                     Timber.v("Stored new conversation id: ${conversation.id}")
                 },
                 delete = { params ->
-                    conversationDao.deleteConversation(params.userId.id, params.conversationId,)
+                    conversationDao.deleteConversation(params.userId.id, params.conversationId)
                 }
             )
         ).build()
@@ -471,7 +474,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     private suspend fun getLabelIdsForRemovingWhenMovingToFolder(labelIds: Collection<String>): Collection<String> {
         return labelIds.filter { labelId ->
             val isLabelExclusive = if (labelId.length > MAX_LOCATION_ID_LENGTH) {
-                messageDao.findLabelById(labelId)?.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS
+                labelsRepository.findLabel(LabelId(labelId))?.type == Constants.LABEL_TYPE_MESSAGE_FOLDERS
             } else {
                 true
             }

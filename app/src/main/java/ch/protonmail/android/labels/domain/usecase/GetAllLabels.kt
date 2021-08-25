@@ -19,17 +19,21 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 
 class GetAllLabels @Inject constructor(
-    private val messageDetailsRepository: MessageDetailsRepository,
-    private val labelsMapper: LabelActionItemUiModelMapper
+    private val labelsMapper: LabelActionItemUiModelMapper,
+    private val accountManager: AccountManager,
+    private val labelRepository: LabelRepository
 ) {
 
     suspend operator fun invoke(
@@ -37,7 +41,8 @@ class GetAllLabels @Inject constructor(
         labelsSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL,
         currentMessageFolder: Constants.MessageLocationType? = null // only required for Type.FOLDER
     ): List<LabelActonItemUiModel> {
-        val dbLabels = messageDetailsRepository.getAllLabels()
+        val userId = accountManager.getPrimaryUserId().filterNotNull().first()
+        val dbLabels = labelRepository.findAllLabels(userId)
 
         val uiLabelsFromDb = dbLabels
             .filter { it.type == labelsSheetType.typeInt }

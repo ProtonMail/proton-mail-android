@@ -302,7 +302,7 @@ internal class MailboxViewModel @Inject constructor(
 
                     if (message != null) {
                         val currentLabelsIds = message.labelIDsNotIncludingLocations
-                        val labels = getAllLabelsByIds(currentLabelsIds)
+                        val labels = getAllLabelsByIds(currentLabelsIds, userManager.requireCurrentUserId())
                         val applyRemoveLabels = resolveMessageLabels(
                             message, ArrayList(checkedLabelIds),
                             ArrayList(unchangedLabels),
@@ -467,7 +467,7 @@ internal class MailboxViewModel @Inject constructor(
 
             val conversationLabelsIds = conversation.labels.map { it.id }
             val labelChipUiModels = labels
-                .filter { it.id in conversationLabelsIds }
+                .filter { it.id.id in conversationLabelsIds }
                 .toLabelChipUiModels()
 
             val isDraft = conversationContainsSingleDraftMessage(conversation)
@@ -587,8 +587,8 @@ internal class MailboxViewModel @Inject constructor(
             ?: correspondent.address
     }
 
-    private fun getAllLabelsByIds(labelIds: List<String>) =
-        messageDetailsRepository.findAllLabelsWithIds(labelIds)
+    private suspend fun getAllLabelsByIds(labelIds: List<String>, userId: UserId) =
+        messageDetailsRepository.findLabelsWithIds(labelIds, userId)
 
     private fun resolveMessageLabels(
         message: Message,

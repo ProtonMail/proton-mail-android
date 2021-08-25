@@ -46,6 +46,7 @@ import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMappe
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CancellationException
@@ -82,7 +83,8 @@ internal class MessageRepository @Inject constructor(
     private val messageBodyFileManager: MessageBodyFileManager,
     private val userManager: UserManager,
     private val jobManager: JobManager,
-    connectivityManager: NetworkConnectivityManager
+    connectivityManager: NetworkConnectivityManager,
+    private val labelRepository: LabelRepository
 ) {
 
     private val allMessagesStore by lazy {
@@ -228,7 +230,8 @@ internal class MessageRepository @Inject constructor(
             PostTrashJobV2(
                 messageIds,
                 listOf(currentFolderLabelId),
-                currentFolderLabelId
+                currentFolderLabelId,
+                labelRepository
             )
         )
     }
@@ -241,7 +244,7 @@ internal class MessageRepository @Inject constructor(
 
     fun moveToInbox(messageIds: List<String>, currentFolderLabelId: String) {
         jobManager.addJobInBackground(
-            PostInboxJob(messageIds, listOf(currentFolderLabelId))
+            PostInboxJob(messageIds, listOf(currentFolderLabelId), labelRepository)
         )
     }
 
@@ -253,7 +256,7 @@ internal class MessageRepository @Inject constructor(
 
     fun moveToCustomFolderLocation(messageIds: List<String>, newFolderLocationId: String) {
         jobManager.addJobInBackground(
-            MoveToFolderJob(messageIds, newFolderLocationId)
+            MoveToFolderJob(messageIds, newFolderLocationId, labelRepository)
         )
     }
 
@@ -310,7 +313,7 @@ internal class MessageRepository @Inject constructor(
             val messagesDao = databaseProvider.provideMessageDao(userId)
             messages.forEach { message ->
                 message.saveBodyToFileIfNeeded()
-                message.setFolderLocation(messagesDao)
+                message.setFolderLocation(labelRepository)
             }
             messagesDao.saveMessages(messages)
         }

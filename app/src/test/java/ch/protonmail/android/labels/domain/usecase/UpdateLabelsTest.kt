@@ -19,11 +19,12 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.repository.MessageRepository
+import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -32,24 +33,37 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class UpdateLabelsTest {
 
     @MockK
-    private lateinit var repository: MessageDetailsRepository
+    private lateinit var jobManager: JobManager
 
     @MockK
-    private lateinit var newRepository: MessageRepository
+    private lateinit var messageRepository: MessageRepository
+
+    @MockK
+    private lateinit var accountManager: AccountManager
+
+    @MockK
+    private lateinit var labelRepository: LabelRepository
 
     private lateinit var useCase: UpdateLabels
+
+    private val testUserId = UserId("testUserId")
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = UpdateLabels(repository, newRepository)
+        every { jobManager.addJobInBackground(any()) } just Runs
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
+        useCase = UpdateLabels(jobManager, messageRepository, accountManager, labelRepository)
     }
 
     @Test
@@ -65,27 +79,25 @@ class UpdateLabelsTest {
         val label = mockk<LabelEntity> {
             every { id } returns LabelId(testLabelId1)
         }
-        coEvery { newRepository.findMessageById(testMessageId) } returns message
+        coEvery { messageRepository.findMessageById(testMessageId) } returns message
         val existingLabels = listOf(label)
-        coEvery { repository.getAllLabels() } returns existingLabels
+        coEvery { labelRepository.findAllLabels(testUserId) } returns existingLabels
         val checkedLabelIds = listOf(testLabelId1)
         coEvery {
-            repository.findAllLabelsWithIds(
-                message,
-                checkedLabelIds,
-                any()
+            messageRepository.saveMessage(
+                testUserId,
+                message
             )
-        } just Runs
+        } returns message
 
         // when
         useCase.invoke(testMessageId, checkedLabelIds)
 
         // then
         coVerify {
-            repository.findAllLabelsWithIds(
-                message,
-                checkedLabelIds,
-                existingLabels
+            messageRepository.saveMessage(
+                testUserId,
+                message
             )
         }
     }

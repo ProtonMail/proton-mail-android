@@ -30,11 +30,11 @@ import ch.protonmail.android.api.models.IDList;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
-import ch.protonmail.android.data.local.MessageDao;
-import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import ch.protonmail.android.labels.data.LabelRepository;
 import ch.protonmail.android.labels.data.db.LabelEntity;
+import ch.protonmail.android.labels.data.model.LabelId;
 import timber.log.Timber;
 
 public class PostTrashJobV2 extends ProtonMailCounterJob {
@@ -42,19 +42,22 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
     private final List<String> mMessageIds;
     private final List<String> mFolderIds;
     private final String mLabelId;
+    private final LabelRepository labelRepository;
 
-    public PostTrashJobV2(final List<String> messageIds, String labelId) {
+    public PostTrashJobV2(final List<String> messageIds, String labelId, LabelRepository labelRepo) {
         super(new Params(Priority.HIGH).requireNetwork().persist().groupBy(Constants.JOB_GROUP_MESSAGE));
         mMessageIds = messageIds;
+        labelRepository = labelRepo;
         mFolderIds = null;
         mLabelId = labelId;
     }
 
-    public PostTrashJobV2(final List<String> messageIds, List<String> folderIds, String labelId) {
+    public PostTrashJobV2(final List<String> messageIds, List<String> folderIds, String labelId, LabelRepository labelRepo) {
         super(new Params(Priority.HIGH).requireNetwork().persist().groupBy(Constants.JOB_GROUP_MESSAGE));
         mMessageIds = messageIds;
         mFolderIds = folderIds;
         mLabelId = labelId;
+        labelRepository = labelRepo;
     }
 
     @Override
@@ -111,12 +114,8 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
         List<String> oldLabels = message.getAllLabelIDs();
         ArrayList<String> labelsToRemove = new ArrayList<>();
 
-        MessageDao messageDao = MessageDatabase.Factory
-                .getInstance(getApplicationContext(), getUserId())
-                .getDao();
-
         for (String labelId : oldLabels) {
-            LabelEntity label = messageDao.findLabelByIdBlocking(labelId);
+            LabelEntity label = labelRepository.findLabelBlocking(new LabelId(labelId));
             // find folders
             if (label != null && (label.getType() == Constants.LABEL_TYPE_MESSAGE_FOLDERS) && !label.getId().equals(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue()))) {
                 labelsToRemove.add(labelId);

@@ -31,13 +31,17 @@ import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.labels.data.db.LabelDao
 import ch.protonmail.android.labels.domain.mapper.LabelUiModelMapper
 import ch.protonmail.android.labels.domain.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.worker.PostLabelWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.AccountManager
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
 import studio.forface.viewstatestore.paging.PagedViewStateStore
@@ -51,10 +55,11 @@ import javax.inject.Inject
  */
 @HiltViewModel
 internal class LabelsManagerViewModel @Inject constructor(
-    messageDao: MessageDao,
+    labelDao: LabelDao,
     savedStateHandle: SavedStateHandle,
     private val deleteLabel: DeleteLabel,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
+    private val accountManager: AccountManager
 ) : ViewModel(), ViewStateStoreScope {
 
     // Extract the original form of the data
@@ -83,8 +88,16 @@ internal class LabelsManagerViewModel @Inject constructor(
      * Triggered when a Labels are updated in DB
      */
     private val labelsSource = when (type) {
-        LabelUiModel.Type.LABELS -> messageDao.getAllLabelsPaged()
-        LabelUiModel.Type.FOLDERS -> messageDao.getAllFoldersPaged()
+        LabelUiModel.Type.LABELS -> labelDao.findAllLabelsPaged(
+            runBlocking {
+                accountManager.getPrimaryUserId().filterNotNull().first()
+            }
+        )
+        LabelUiModel.Type.FOLDERS -> labelDao.findAllFoldersPaged(
+            runBlocking {
+                accountManager.getPrimaryUserId().filterNotNull().first()
+            }
+        )
     }
 
     private val labelMapper = LabelUiModelMapper()

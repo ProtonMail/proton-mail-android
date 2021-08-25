@@ -32,6 +32,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.labels.data.db.LabelDao
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import dagger.Module
@@ -51,6 +52,11 @@ internal object DatabaseModule {
     fun provideAppDatabase(
         @ApplicationContext context: Context
     ): AppDatabase = AppDatabase.buildDatabase(context)
+
+    @Provides
+    fun provideLabelDao(
+        appDatabase: AppDatabase
+    ): LabelDao = appDatabase.labelDao()
 
     @Provides
     fun provideAttachmentMetadataDao(
