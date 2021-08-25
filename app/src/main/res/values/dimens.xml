@@ -122,6 +122,7 @@
 
     <!-- Labels -->
     <dimen name="min_width_label">56dp</dimen>
+    <dimen name="diameter_collapsed_label">14dp</dimen>
 
     <!-- Settings -->
     <dimen name="settings_item_min_height">48dp</dimen>

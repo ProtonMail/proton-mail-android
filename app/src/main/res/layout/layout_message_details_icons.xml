@@ -19,51 +19,41 @@
   -->
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <TextView
         android:id="@+id/messageExpirationView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="12h" />
-
-    <TextView
-        android:id="@+id/messageLabelsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/messageExpirationView"
-        tools:text="labels placeholder" />
+        tools:text="12h" />
 
     <ImageView
         android:id="@+id/attachmentsImageView"
         android:layout_width="@dimen/message_details_header_small_icon_size"
         android:layout_height="@dimen/message_details_header_small_icon_size"
         android:layout_marginEnd="@dimen/message_details_header_margin_small"
-        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_paper_clip"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/messageLabelsView"
-        app:tint="@color/icon_weak"
-        android:src="@drawable/attached_main"
-        tools:src="@drawable/attached_main" />
+        app:layout_constraintEnd_toStartOf="@id/starredToggleButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/icon_weak" />
 
     <ImageView
         android:id="@+id/starredToggleButton"
         android:layout_width="@dimen/mailbox_list_item_icon_size"
         android:layout_height="@dimen/mailbox_list_item_icon_size"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/attachmentsImageView"
-        android:src="@drawable/ic_star_filled"
         android:contentDescription="@string/starred"
+        android:src="@drawable/ic_star_filled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/sunglow" />
 
 </merge>

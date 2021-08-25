@@ -21,6 +21,7 @@ package ch.protonmail.android.ui.layout
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -50,6 +51,8 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
      */
     open val minTextViewWidth = 0
 
+    open val maxVisibleChildrenCount = MAX_NUMBER_OF_VISIBLE_CHILDREN_UNDEFINED
+
     val allChildren: Sequence<View> get() = object : Sequence<View> {
         override fun iterator() = this@MoreItemsLinearLayout.iterator()
     }
@@ -65,7 +68,9 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
 
     private val moreTextView = TextView(context).apply {
         id = R.id.more_items_ll_more_text_view
-        layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+            gravity = Gravity.CENTER_VERTICAL
+        }
         setTextAppearance(R.style.Proton_Text_Caption)
     }
 
@@ -87,6 +92,9 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
         // Measure this layout
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         var availableRelevantSize = getRelevantSizeFor(this)
+
+        var childrenAddedInThisPass = 0
+        var desiredWidth = 0
 
         // Measure children
         var limitReached = false
@@ -113,29 +121,44 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
                 getChildHeightMeasureSpec(effectiveAvailableSize, heightMeasureSpec)
             )
             val relevantSize = getRelevantSizeFor(child)
+            val maxNumberOfChildrenReached = maxVisibleChildrenCount != MAX_NUMBER_OF_VISIBLE_CHILDREN_UNDEFINED
+                && childrenAddedInThisPass >= maxVisibleChildrenCount
 
-            child.isVisible = relevantSize <= effectiveAvailableSize
-            limitReached = relevantSize > effectiveAvailableSize
+            child.isVisible = relevantSize <= effectiveAvailableSize && !maxNumberOfChildrenReached
+            limitReached = relevantSize > effectiveAvailableSize || maxNumberOfChildrenReached
             if (relevantSize <= effectiveAvailableSize) {
                 availableRelevantSize -= relevantSize
             }
+
+            childrenAddedInThisPass++
+            desiredWidth += child.measuredWidth
         }
 
         // Update "more" text for final result
         moreTextView.apply {
             text = "+$hiddenChildCount"
             isVisible = limitReached
+            if (isVisible.not()) width = 0
         }
+        desiredWidth += moreTextView.measuredWidth
 
-        setMeasuredDimension(getWidthMeasureSpec(widthMeasureSpec), getHeightMeasureSpec(heightMeasureSpec))
+        setMeasuredDimension(
+            getWidthMeasureSpec(widthMeasureSpec, desiredWidth),
+            getHeightMeasureSpec(heightMeasureSpec)
+        )
     }
 
-    private fun getWidthMeasureSpec(widthMeasureSpec: Int): Int {
+    private fun getWidthMeasureSpec(widthMeasureSpec: Int, desiredWidth: Int): Int {
         return if (orientation == VERTICAL) {
             val maxChildrenWidth = allChildren.maxOfOrNull { it.measuredWidth } ?: 0
             MeasureSpec.makeMeasureSpec(maxChildrenWidth, MeasureSpec.EXACTLY)
         } else {
-            widthMeasureSpec
+            val requestedWidth = MeasureSpec.getSize(widthMeasureSpec)
+            return when (widthMeasureSpec) {
+                MeasureSpec.EXACTLY -> requestedWidth
+                MeasureSpec.AT_MOST -> requestedWidth.coerceAtMost(desiredWidth)
+                else -> desiredWidth
+            }
         }
     }
 
@@ -234,4 +257,7 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
         else measuredView.measuredHeight
     }
 
+    private companion object {
+        const val MAX_NUMBER_OF_VISIBLE_CHILDREN_UNDEFINED = -1
+    }
 }
