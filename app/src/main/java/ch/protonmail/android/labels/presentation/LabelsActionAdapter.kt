@@ -28,6 +28,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import timber.log.Timber
@@ -69,6 +70,12 @@ class LabelsActionAdapter(
             model: LabelActonItemUiModel
         ) {
             Timber.v("Bind ManageLabelsViewHolder $model")
+
+            // Apply a padding for sub-folders
+            (itemView.layoutParams as RecyclerView.LayoutParams).marginStart =
+                model.folderLevel * itemView.context.resources.getDimensionPixelSize(R.dimen.gap_large)
+
+            // Set Title and icon
             titleTextView.apply {
                 text = if (model.titleRes != null) {
                     resources.getString(model.titleRes)
@@ -85,6 +92,8 @@ class LabelsActionAdapter(
                     null
                 )
             }
+
+            // Set checkbox
             with(checkbox) {
                 if (model.isChecked == null) {
                     isVisible = false

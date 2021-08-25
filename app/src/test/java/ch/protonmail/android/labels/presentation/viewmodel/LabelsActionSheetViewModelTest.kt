@@ -141,22 +141,24 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     )
 
     private val model1UiLabel = LabelActonItemUiModel(
-        LabelId(labelId1),
-        iconRes,
-        title,
-        titleRes,
-        colorInt,
-        true,
-        LabelType.MESSAGE_LABEL
+        labelId = LabelId(labelId1),
+        iconRes = iconRes,
+        title = title,
+        titleRes = titleRes,
+        colorInt = colorInt,
+        folderLevel = 0,
+        isChecked = true,
+        labelType = LabelType.MESSAGE_LABEL
     )
     private val model2UiFolder = LabelActonItemUiModel(
-        LabelId(labelId2),
-        iconRes,
-        title,
-        titleRes,
-        colorInt,
-        false,
-        LabelType.FOLDER
+        labelId = LabelId(labelId2),
+        iconRes = iconRes,
+        title = title,
+        titleRes = titleRes,
+        colorInt = colorInt,
+        folderLevel = 0,
+        isChecked = false,
+        labelType = LabelType.FOLDER
     )
 
     @BeforeTest

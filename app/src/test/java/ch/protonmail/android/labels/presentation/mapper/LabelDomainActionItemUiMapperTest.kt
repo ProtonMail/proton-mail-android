@@ -78,13 +78,14 @@ class LabelDomainActionItemUiMapperTest {
         val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelType.MESSAGE_LABEL
         val expected = LabelActonItemUiModel(
-            labelId1,
-            R.drawable.circle_labels_selection,
-            labelName1,
-            null,
-            testColorInt,
-            true,
-            LabelType.MESSAGE_LABEL
+            labelId = labelId1,
+            iconRes = R.drawable.circle_labels_selection,
+            title = labelName1,
+            titleRes = null,
+            colorInt = testColorInt,
+            folderLevel = 0,
+            isChecked = true,
+            labelType = LabelType.MESSAGE_LABEL
         )
 
         // when
@@ -113,13 +114,14 @@ class LabelDomainActionItemUiMapperTest {
         val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelType.FOLDER
         val expected = LabelActonItemUiModel(
-            labelId1,
-            R.drawable.ic_folder_filled,
-            labelName1,
-            null,
-            testColorInt,
-            null,
-            LabelType.FOLDER
+            labelId = labelId1,
+            iconRes = R.drawable.ic_folder_filled,
+            title = labelName1,
+            titleRes = null,
+            colorInt = testColorInt,
+            folderLevel = 0,
+            isChecked = null,
+            labelType = LabelType.FOLDER
         )
 
         // when

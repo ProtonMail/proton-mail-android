@@ -26,12 +26,18 @@ import androidx.annotation.StringRes
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 
+/**
+ * @property title for item custom titles e.g. "Label123"
+ * @property titleRes for standard titles e.g. "Inbox"
+ * @property folderLevel related to Folders' parent/children relationships
+ */
 data class LabelActonItemUiModel(
     val labelId: LabelId,
     @DrawableRes val iconRes: Int,
-    val title: String? = null, // for item custom titles e.g. "Lablel123"
-    @StringRes val titleRes: Int? = null, // for standard titles e.g. "Inbox"
+    val title: String? = null,
+    @StringRes val titleRes: Int? = null,
     @ColorInt val colorInt: Int = Color.BLACK,
+    val folderLevel: Int = 0,
     val isChecked: Boolean? = null,
     val labelType: LabelType = LabelType.MESSAGE_LABEL
 )
