@@ -223,7 +223,7 @@ class ProtonRetrofitPublic(
             endpointUri,
             THIRTY_SECONDS,
             interceptor,
-            HttpLoggingInterceptor.Level.BODY,
+            HttpLoggingInterceptor.Level.HEADERS,
             spec,
             serverTimeInterceptor,
             cookieStore
@@ -251,7 +251,7 @@ class ProtonRetrofitPing(
             endpointUri,
             THIRTY_SECONDS,
             interceptor,
-            HttpLoggingInterceptor.Level.BODY,
+            HttpLoggingInterceptor.Level.HEADERS,
             spec,
             serverTimeInterceptor,
             cookieStore
@@ -279,7 +279,7 @@ class ProtonRetrofitExtended(
             endpointUri,
             ONE_MINUTE,
             interceptor,
-            HttpLoggingInterceptor.Level.BODY,
+            HttpLoggingInterceptor.Level.HEADERS,
             spec,
             serverTimeInterceptor,
             cookieStore
@@ -307,7 +307,7 @@ class ProtonRetrofitAttachments(
             endpointUri + ATTACH_PATH,
             THIRTY_SECONDS,
             interceptor,
-            HttpLoggingInterceptor.Level.BODY,
+            HttpLoggingInterceptor.Level.BASIC,
             spec,
             serverTimeInterceptor,
             cookieStore
@@ -335,7 +335,7 @@ class ProtonRetrofitSecure(
             endpointUri,
             THIRTY_SECONDS,
             interceptor,
-            HttpLoggingInterceptor.Level.BODY,
+            HttpLoggingInterceptor.Level.BASIC,
             spec,
             serverTimeInterceptor,
             cookieStore
