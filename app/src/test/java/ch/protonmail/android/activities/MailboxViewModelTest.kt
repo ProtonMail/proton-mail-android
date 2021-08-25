@@ -490,7 +490,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 Unread = true
                 expirationTime = 82334L
                 deleted = false
-                allLabelIDs = listOf("1", "2")
+                allLabelIDs = listOf("0", "2")
                 toList = recipients
                 location = SENT.messageLocationTypeValue
                 isReplied = true
@@ -525,7 +525,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     ),
                     isDeleted = false,
                     labels = listOf(
-                        LabelChipUiModel(LabelId("1"), Name("label 1"), null),
+                        LabelChipUiModel(LabelId("0"), Name("label 0"), null),
                         LabelChipUiModel(LabelId("2"), Name("label 2"), null)
                     ),
                     recipients = toContactsAndGroupsString(

@@ -33,8 +33,8 @@ import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemote
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
-import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import com.dropbox.android.external.store4.Fetcher
@@ -276,10 +276,10 @@ class ConversationsRepositoryImpl @Inject constructor(
             var lastMessageTime = 0L
             val messagesToUpdate = getAllMessagesFromAConversation(conversationId).map { message ->
                 yield()
-                val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
-                message.removeLabels(labelsToRemoveFromMessage.toList())
                 val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
+                val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
                 message.addLabels(labelsToAddToMessage.toList())
+                message.removeLabels(labelsToRemoveFromMessage.toList())
                 Timber.v("Remove labels $labelsToRemoveFromMessage, add labels: $labelsToAddToMessage")
                 lastMessageTime = max(lastMessageTime, message.time)
                 message

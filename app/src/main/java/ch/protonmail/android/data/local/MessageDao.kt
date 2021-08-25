@@ -117,11 +117,19 @@ interface MessageDao {
     )
     fun getMessagesByLabelId(label: String): List<Message>
 
+    /** Since we have decided to use this query to also retrieve messages that are SENT
+    now the query looks for the :label at the beginning, middle or end of the $COLUMN_MESSAGE_LABELS string.
+    The $COLUMN_MESSAGE_LABELS string uses semicolon(;) as separator ex.
+    `0;5;7;N2ttCeO9GZ7kNTfW5MUfZ8nP6pUOEnNiWVVlOIPgeIFGBKqrBowMR4wefbeIelXsgDLiYZ5YFRDiFZ-VPC0YUA==`
+    so the label that we are looking for can be preceded and followed by zero or one semicolon(;)
+     **/
     @Query(
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  
+        WHERE $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+        OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
+        OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%'
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
