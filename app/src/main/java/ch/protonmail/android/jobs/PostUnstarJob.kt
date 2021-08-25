@@ -25,8 +25,9 @@ import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromIn
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.model.UnreadLocationCounter
 import com.birbit.android.jobqueue.Params
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
+import timber.log.Timber
 import java.util.ArrayList
 
 class PostUnstarJob(private val messageIds: List<String>) : ProtonMailEndlessJob(
@@ -72,7 +73,12 @@ class PostUnstarJob(private val messageIds: List<String>) : ProtonMailEndlessJob
     }
 
     private fun unstarLocalMessage(messageId: String) = runBlocking {
-        val message = getMessageDetailsRepository().findMessageById(messageId).first() ?: return@runBlocking
+        val message = getMessageDetailsRepository().findMessageById(messageId).firstOrNull()
+        if (message == null) {
+            Timber.w("Trying to unstar a message which was not found in the DB. messageId = $messageId")
+            return@runBlocking
+        }
+
         message.removeLabels(listOf(MessageLocationType.STARRED.messageLocationTypeValue.toString()))
         message.isStarred = false
         getMessageDetailsRepository().saveMessage(message)

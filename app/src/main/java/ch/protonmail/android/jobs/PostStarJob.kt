@@ -21,8 +21,9 @@ package ch.protonmail.android.jobs
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.core.Constants
 import com.birbit.android.jobqueue.Params
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
+import timber.log.Timber
 import java.util.ArrayList
 
 class PostStarJob(private val messageIds: List<String>) : ProtonMailEndlessJob(
@@ -42,7 +43,12 @@ class PostStarJob(private val messageIds: List<String>) : ProtonMailEndlessJob(
     }
 
     private fun starLocalMessage(messageId: String) = runBlocking {
-        val message = getMessageDetailsRepository().findMessageById(messageId).first() ?: return@runBlocking
+        val message = getMessageDetailsRepository().findMessageById(messageId).firstOrNull()
+        if (message == null) {
+            Timber.w("Trying to star message which was not found in the DB. messageId = $messageId")
+            return@runBlocking
+        }
+
         message.addLabels(listOf(Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()))
         message.isStarred = true
         getMessageDetailsRepository().saveMessage(message)
