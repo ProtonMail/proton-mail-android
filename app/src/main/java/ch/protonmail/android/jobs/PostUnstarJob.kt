@@ -23,6 +23,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.data.local.CounterDatabase
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.UnreadLocationCounter
 import com.birbit.android.jobqueue.Params
 import kotlinx.coroutines.flow.firstOrNull
@@ -35,53 +36,51 @@ class PostUnstarJob(private val messageIds: List<String>) : ProtonMailEndlessJob
 ) {
 
     override fun onAdded() = messageIds.forEach { messageId ->
-        val counterDao = CounterDatabase
-            .getInstance(applicationContext, userId!!)
-            .getDao()
-
-        unstarLocalMessage(messageId)
-
-        var messageLocation = MessageLocationType.INVALID
-        var isUnread = false
-        val message = getMessageDetailsRepository().findMessageByIdBlocking(
-            messageId
-        )
-        if (message != null) {
-            messageLocation = fromInt(message.location)
-            isUnread = !message.isRead
+        val message = runBlocking { getMessageDetailsRepository().findMessageById(messageId).firstOrNull() }
+        if (message == null) {
+            Timber.w("Trying to unstar a message which was not found in the DB. messageId = $messageId")
+            return
         }
+
+        unstarLocalMessage(message)
+
+        val messageLocation = fromInt(message.location)
+        val isUnread = !message.isRead
         if (messageLocation !== MessageLocationType.INVALID && isUnread) {
-            val unreadLocationCounter =
-                counterDao.findUnreadLocationById(messageLocation.messageLocationTypeValue) ?: return
-            unreadLocationCounter.increment(messageIds.size)
-            val countersToUpdate: MutableList<UnreadLocationCounter> = ArrayList()
-            countersToUpdate.add(unreadLocationCounter)
-            val starredUnread =
-                counterDao.findUnreadLocationById(MessageLocationType.STARRED.messageLocationTypeValue)
-            if (starredUnread != null) {
-                starredUnread.increment()
-                countersToUpdate.add(starredUnread)
-            }
-            counterDao.insertAllUnreadLocations(countersToUpdate)
+            updateUnreadMessagesCounter(messageLocation)
         }
     }
 
-    @Throws(Throwable::class)
     override fun onRun() {
         val messageIds: List<String> = ArrayList(messageIds)
         getApi().unlabelMessages(IDList(MessageLocationType.STARRED.messageLocationTypeValue.toString(), messageIds))
     }
 
-    private fun unstarLocalMessage(messageId: String) = runBlocking {
-        val message = getMessageDetailsRepository().findMessageById(messageId).firstOrNull()
-        if (message == null) {
-            Timber.w("Trying to unstar a message which was not found in the DB. messageId = $messageId")
-            return@runBlocking
+    private fun unstarLocalMessage(message: Message) {
+        runBlocking {
+            message.removeLabels(listOf(MessageLocationType.STARRED.messageLocationTypeValue.toString()))
+            message.isStarred = false
+            getMessageDetailsRepository().saveMessage(message)
         }
-
-        message.removeLabels(listOf(MessageLocationType.STARRED.messageLocationTypeValue.toString()))
-        message.isStarred = false
-        getMessageDetailsRepository().saveMessage(message)
     }
 
+    private fun updateUnreadMessagesCounter(messageLocation: MessageLocationType) {
+        val counterDao = CounterDatabase
+            .getInstance(applicationContext, userId!!)
+            .getDao()
+
+        val locationId = messageLocation.messageLocationTypeValue
+        val unreadLocationCounter = counterDao.findUnreadLocationById(locationId) ?: return
+        unreadLocationCounter.increment(messageIds.size)
+
+        val countersToUpdate: MutableList<UnreadLocationCounter> = ArrayList()
+        countersToUpdate.add(unreadLocationCounter)
+
+        val starredUnread = counterDao.findUnreadLocationById(MessageLocationType.STARRED.messageLocationTypeValue)
+        if (starredUnread != null) {
+            starredUnread.increment()
+            countersToUpdate.add(starredUnread)
+        }
+        counterDao.insertAllUnreadLocations(countersToUpdate)
+    }
 }
