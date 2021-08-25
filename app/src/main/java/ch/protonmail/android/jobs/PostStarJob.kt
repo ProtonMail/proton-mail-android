@@ -42,16 +42,18 @@ class PostStarJob(private val messageIds: List<String>) : ProtonMailEndlessJob(
         )
     }
 
-    private fun starLocalMessage(messageId: String) = runBlocking {
-        val message = getMessageDetailsRepository().findMessageById(messageId).firstOrNull()
-        if (message == null) {
-            Timber.w("Trying to star message which was not found in the DB. messageId = $messageId")
-            return@runBlocking
-        }
+    private fun starLocalMessage(messageId: String) {
+        runBlocking {
+            val message = getMessageDetailsRepository().findMessageById(messageId).firstOrNull()
+            if (message == null) {
+                Timber.w("Trying to star message which was not found in the DB. messageId = $messageId")
+                return@runBlocking
+            }
 
-        message.addLabels(listOf(Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()))
-        message.isStarred = true
-        getMessageDetailsRepository().saveMessage(message)
+            message.addLabels(listOf(Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()))
+            message.isStarred = true
+            getMessageDetailsRepository().saveMessage(message)
+        }
     }
 
 }

@@ -35,19 +35,21 @@ class PostUnstarJob(private val messageIds: List<String>) : ProtonMailEndlessJob
     Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_LABEL)
 ) {
 
-    override fun onAdded() = messageIds.forEach { messageId ->
-        val message = runBlocking { getMessageDetailsRepository().findMessageById(messageId).firstOrNull() }
-        if (message == null) {
-            Timber.w("Trying to unstar a message which was not found in the DB. messageId = $messageId")
-            return
-        }
+    override fun onAdded() {
+        messageIds.forEach { messageId ->
+            val message = runBlocking { getMessageDetailsRepository().findMessageById(messageId).firstOrNull() }
+            if (message == null) {
+                Timber.w("Trying to unstar a message which was not found in the DB. messageId = $messageId")
+                return
+            }
 
-        unstarLocalMessage(message)
+            unstarLocalMessage(message)
 
-        val messageLocation = fromInt(message.location)
-        val isUnread = !message.isRead
-        if (messageLocation !== MessageLocationType.INVALID && isUnread) {
-            updateUnreadMessagesCounter(messageLocation)
+            val messageLocation = fromInt(message.location)
+            val isUnread = !message.isRead
+            if (messageLocation !== MessageLocationType.INVALID && isUnread) {
+                updateUnreadMessagesCounter(messageLocation)
+            }
         }
     }
 
