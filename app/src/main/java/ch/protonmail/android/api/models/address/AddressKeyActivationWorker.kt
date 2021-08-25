@@ -26,7 +26,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.Keys
+import ch.protonmail.android.api.models.OrganizationKeysResponse
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKey
@@ -42,6 +42,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import ch.protonmail.android.api.models.address.Address as OldAddress
@@ -79,19 +80,26 @@ class AddressKeyActivationWorker @AssistedInject constructor(
 
         // get orgKeys if existent -> This will work only if user is an organisation owner, otherwise
         // backend will return 403 for all other users (e.g. just members of an organisation)
-        val orgKeys = if (context.app.organization != null) {
-            api.fetchOrganizationKeys()
+        val orgKeysResult = if (context.app.organization != null) {
+            api.fetchOrganizationKeys(userId)
         } else {
             null
         }
 
-        val errors = keysToActivate.map {
-            activateKey(it, user.keys, mailboxPassword, orgKeys, it in primaryKeys)
-        }.filterIsInstance<ActivationResult.Error>()
-        val failedCountMessage = "impossible to activate ${errors.size} keys out of ${keysToActivate.size}"
+        val errors = if (orgKeysResult is ApiResult.Success) {
+            val keysResponse = orgKeysResult.value
+
+            keysToActivate.map {
+                activateKey(it, user.keys, mailboxPassword, keysResponse, it in primaryKeys)
+            }.filterIsInstance<ActivationResult.Error>()
+        } else {
+            null
+        }
+
+        val failedCountMessage = "impossible to activate ${errors?.size} keys out of ${keysToActivate.size}"
 
         return@withContext when {
-            errors.isEmpty() -> Result.success()
+            errors.isNullOrEmpty() -> Result.success()
             errors.any { it is ActivationResult.Error.Network } -> {
                 Timber.w("Network error: $failedCountMessage, runAttemptCount: $runAttemptCount")
                 if (runAttemptCount < MAX_RETRY_COUNT) {
@@ -111,7 +119,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
         addressKey: AddressKey,
         userKeys: UserKeys,
         mailboxPassword: ByteArray,
-        orgKeys: Keys?,
+        orgKeysResponse: OrganizationKeysResponse,
         isPrimary: Boolean
     ): ActivationResult {
         return try {
@@ -156,7 +164,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
                 } else {
                     Timber.v("Activate key for non-legacy user")
                     val generatedTokenAndSignature =
-                        GenerateTokenAndSignature(userManager, openPgp).invoke(orgKeys?.toUserKey())
+                        GenerateTokenAndSignature(userManager, openPgp).invoke(orgKeysResponse.privateKey)
                     val keyActivationBody = KeyActivationBody(
                         newPrivateKey,
                         signedKeyList,
@@ -207,6 +215,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
     sealed class ActivationResult {
         object Success : ActivationResult()
         sealed class Error : ActivationResult() {
+
             abstract val id: UserId
 
             class Network(override val id: UserId) : Error()

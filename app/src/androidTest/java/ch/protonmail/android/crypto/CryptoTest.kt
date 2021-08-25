@@ -58,7 +58,8 @@ internal class CryptoTest {
     //region One Address Key Setup
     private val oneAddressKeyUserId = UserId("one_address_key_user")
     private val oneAddressKeyMailboxPassword = "7NgO4d0h72zt4XuFLOUbg352vhrn.tu"
-    private val oneAddressKeyAddressId = "MMxTCP7DMErrWkOREQljdviitcZ1mDzjWcnzdg8wqObisClP25ILZ18vUsNgUVi-JD3O2EgmOuiEmx8C5qmofw=="
+    private val oneAddressKeyAddressId =
+        "MMxTCP7DMErrWkOREQljdviitcZ1mDzjWcnzdg8wqObisClP25ILZ18vUsNgUVi-JD3O2EgmOuiEmx8C5qmofw=="
     private val oneAddressKeyUserKeyFingerprint = "20cf363b58ec99e722e53ec411c31e8e5e07f4d0"
     private val armoredPrivateKey =
         """
@@ -125,7 +126,7 @@ internal class CryptoTest {
                 dlEt7f8XNvX3HxQw9w==
                 =FW0u
                 -----END PGP PRIVATE KEY BLOCK-----
-            """.trimIndent()
+        """.trimIndent()
     private val oneAddressKeyAddressKeys = listOf(
         Keys(
             "DvRZxrFRFUnjsL6MCOdGjyMZ9AoECd7kNXX9uKxmV-75K4iArEHijRPvd7Dhw43yBlCDxIsbNSW7cg2Uu5FUFg==",
@@ -589,7 +590,7 @@ internal class CryptoTest {
                     a2j5Ak+MfeXknuaYqP6hs5BzulMTTJjM
                     =sm1p
                     -----END PGP PRIVATE KEY BLOCK-----
-                """.trimIndent(),
+            """.trimIndent(),
             0,
             1,
             null,
@@ -663,7 +664,7 @@ internal class CryptoTest {
                     b5BlAx31rUZ+NdCZyPnU+83opOdYrRjy
                     =kArG
                     -----END PGP PRIVATE KEY BLOCK-----
-                """.trimIndent(),
+            """.trimIndent(),
             0,
             0,
             null,
@@ -689,40 +690,40 @@ internal class CryptoTest {
     private val userKeyMapper = UserKeyBridgeMapper()
 
     private val oneKeyUserMock: ch.protonmail.android.domain.entity.user.User = mockk {
-            every { addresses } returns mockk {
-                every { findBy(AddressId(oneAddressKeyAddressId)) } answers { addresses[1] }
-                every { addresses } returns mapOf(
-                    1 to mockk {
-                        every { keys } returns mockk {
-                            every { keys } returns oneAddressKeyAddressKeys.map(addressKeyMapper) { it.toNewModel() }
-                            every { primaryKey } returns keys.first()
-                        }
+        every { addresses } returns mockk {
+            every { findBy(AddressId(oneAddressKeyAddressId)) } answers { addresses[1] }
+            every { addresses } returns mapOf(
+                1 to mockk {
+                    every { keys } returns mockk {
+                        every { keys } returns oneAddressKeyAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                        every { primaryKey } returns keys.first()
                     }
-                )
-            }
-            every { keys } returns mockk {
-                every { keys } returns oneAddressKeyUserKeys.map(userKeyMapper) { it.toNewModel() }
-                every { primaryKey } returns keys.first()
-            }
+                }
+            )
         }
+        every { keys } returns mockk {
+            every { keys } returns oneAddressKeyUserKeys.map(userKeyMapper) { it.toNewModel() }
+            every { primaryKey } returns keys.first()
+        }
+    }
 
     private val manyAddressKeysUserMock: ch.protonmail.android.domain.entity.user.User = mockk {
-            every { addresses } returns mockk {
-                every { findBy(AddressId(manyAddressKeysAddressId)) } answers { addresses[1] }
-                every { addresses } returns mapOf(
-                    1 to mockk {
-                        every { keys } returns mockk {
-                            every { keys } returns manyAddressKeysAddressKeys.map(addressKeyMapper) { it.toNewModel() }
-                            every { primaryKey } returns keys.first()
-                        }
+        every { addresses } returns mockk {
+            every { findBy(AddressId(manyAddressKeysAddressId)) } answers { addresses[1] }
+            every { addresses } returns mapOf(
+                1 to mockk {
+                    every { keys } returns mockk {
+                        every { keys } returns manyAddressKeysAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                        every { primaryKey } returns keys.first()
                     }
-                )
-            }
-            every { keys } returns mockk {
-                every { keys } returns manyAddressKeysUserKeys.map(userKeyMapper) { it.toNewModel() }
-                every { primaryKey } returns keys.first()
-            }
+                }
+            )
         }
+        every { keys } returns mockk {
+            every { keys } returns manyAddressKeysUserKeys.map(userKeyMapper) { it.toNewModel() }
+            every { primaryKey } returns keys.first()
+        }
+    }
 
     init {
         mockkStatic(TextUtils::class)
@@ -736,7 +737,11 @@ internal class CryptoTest {
             every { keys } returns oneAddressKeyAddressKeys
         }*/
         every { userManagerMock.getUserBlocking(oneAddressKeyUserId) } returns oneKeyUserMock
-        every { userManagerMock.getUserPassphraseBlocking(oneAddressKeyUserId) } returns oneAddressKeyMailboxPassword.toByteArray()
+        every {
+            userManagerMock.getUserPassphraseBlocking(
+                oneAddressKeyUserId
+            )
+        } returns oneAddressKeyMailboxPassword.toByteArray()
 
         // many address keys
         /*
@@ -745,7 +750,11 @@ internal class CryptoTest {
             every { keys } returns manyAddressKeysAddressKeys
         }*/
         every { userManagerMock.getUserBlocking(manyAddressKeysUserId) } returns manyAddressKeysUserMock
-        every { userManagerMock.getUserPassphraseBlocking(manyAddressKeysUserId) } returns manyAddressKeysMailboxPassword.toByteArray()
+        every {
+            userManagerMock.getUserPassphraseBlocking(
+                manyAddressKeysUserId
+            )
+        } returns manyAddressKeysMailboxPassword.toByteArray()
 
         // token and signature generation
         every { userManagerMock.currentUserId } returns tokenAndSignatureUserId
@@ -1609,7 +1618,7 @@ internal class CryptoTest {
                 every { mimeType } returns "text/rfc822-headers; protected-headers=\"v1\""
                 every { fileSize } returns 48
                 every { messageId } returns mockedMessageId
-                //every { headers } returns
+                // every { headers } returns
             },
             mockk {
                 every { attachmentId } returns "PGPAttachment/0-KKFldtlrtWQRGmOQR1V4QVsnqq7nuHw_nkmdDAd2xtIvibEqnV0IYVS3FfX-RT8BruIrL35HQ35rQkP6VbBg==/778b4f3c8e74a652aefbee588e67421a/1"
@@ -1617,7 +1626,7 @@ internal class CryptoTest {
                 every { mimeType } returns "image/jpeg; name=\"elon.jpg\""
                 every { fileSize } returns 27723
                 every { messageId } returns mockedMessageId
-                //every { headers } returns
+                // every { headers } returns
             }
         )
 
@@ -1652,8 +1661,12 @@ internal class CryptoTest {
 
     @Test
     fun check_key_passphrase() {
-        assertTrue(openPgp.checkPassphrase(oneAddressKeyAddressKeys[0].privateKey, oneAddressKeyMailboxPassword.toByteArray()))
-        assertFalse(openPgp.checkPassphrase(oneAddressKeyAddressKeys[0].privateKey, "incorrect key password".toByteArray()))
+        assertTrue(
+            openPgp.checkPassphrase(oneAddressKeyAddressKeys[0].privateKey, oneAddressKeyMailboxPassword.toByteArray())
+        )
+        assertFalse(
+            openPgp.checkPassphrase(oneAddressKeyAddressKeys[0].privateKey, "incorrect key password".toByteArray())
+        )
     }
 
     @Test
@@ -1704,7 +1717,7 @@ internal class CryptoTest {
         every { userManagerMock.getCurrentUserPassphrase() } returns passphrase
         runBlocking {
             val (token, signature) =
-                GenerateTokenAndSignature(userManagerMock, openPgpMock).invoke(null)
+                GenerateTokenAndSignature(userManagerMock, openPgpMock).invoke("")
             val testMessage = newPGPMessageFromArmored(token)
             val testKey = newKeyFromArmored(armoredPrivateKey)
             val unlocked = testKey.unlock(passphrase)
@@ -1714,7 +1727,9 @@ internal class CryptoTest {
             assertEquals(randomTokenString, decryptedTokenString)
             val armoredSignature = newPGPSignatureFromArmored(signature)
 
-            verificationKeyRing.verifyDetached(decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime())
+            verificationKeyRing.verifyDetached(
+                decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime()
+            )
         }
     }
 

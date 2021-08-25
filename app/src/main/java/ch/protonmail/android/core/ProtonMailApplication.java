@@ -74,11 +74,11 @@ import ch.protonmail.android.api.NetworkSwitcher;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.Organization;
+import ch.protonmail.android.api.models.OrganizationResponse;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.di.DefaultSharedPreferences;
-import me.proton.core.domain.entity.UserId;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -104,6 +104,7 @@ import dagger.hilt.android.HiltAndroidApp;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import me.proton.core.accountmanager.domain.AccountManager;
+import me.proton.core.domain.entity.UserId;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
@@ -268,7 +269,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Subscribe
     public void onOrganizationEvent(OrganizationEvent event) {
         if (event.getStatus() == Status.SUCCESS) {
-            mOrganization = event.getResponse().getOrganization();
+            OrganizationResponse response = event.getResponse().getValueOrNull();
+            if (response != null) {
+                mOrganization = response.getOrganization();
+            }
         }
     }
 

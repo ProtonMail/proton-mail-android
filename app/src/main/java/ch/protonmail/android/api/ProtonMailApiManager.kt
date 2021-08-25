@@ -28,15 +28,14 @@ import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.ContactsDataResponse
 import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
-import ch.protonmail.android.api.models.CreateOrganizationBody
 import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.IDList
-import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
+import ch.protonmail.android.api.models.OrganizationKeysResponse
 import ch.protonmail.android.api.models.OrganizationResponse
 import ch.protonmail.android.api.models.PaymentMethodsResponse
 import ch.protonmail.android.api.models.PaymentsStatusResponse
@@ -310,11 +309,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun labelMessages(body: IDList): MoveToFolderResponse? = api.labelMessages(body)
 
-    override fun fetchOrganization(): OrganizationResponse = api.fetchOrganization()
+    override suspend fun fetchOrganization(userId: UserId): ApiResult<OrganizationResponse> =
+        api.fetchOrganization(userId)
 
-    override fun fetchOrganizationKeys(): Keys = api.fetchOrganizationKeys()
-
-    override fun createOrganization(body: CreateOrganizationBody): OrganizationResponse? = api.createOrganization(body)
+    override suspend fun fetchOrganizationKeys(userId: UserId): ApiResult<OrganizationKeysResponse> =
+        api.fetchOrganizationKeys(userId)
 
     override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
 
