@@ -806,7 +806,7 @@
     <string name="mobile_footer_info">Эта информация будет добавлена после вашей подписи</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Приглушение</string>
-    <string name="notifications_snooze">Приглушение уведомлений</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 минут</item>
         <item>1 час</item>
@@ -863,7 +863,7 @@
     <string name="settings_auto_show_embedded_images">Авто-показ встроенных изображений</string>
     <string name="settings_prevent_taking_screenshots">Предотвратить снятие снимков экрана</string>
     <string name="hyperlink_confirmation">Запрашивать подтверждение при переходе по ссылкам</string>
-    <string name="labels_and_folders">Ярлыки и папки </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Папки</string>
     <string name="labels">Ярлыки</string>
     <string name="labels_manager">Управление ярлыками</string>
@@ -907,7 +907,7 @@
     <!-- endregion -->
     <string name="app_settings">Настройки приложения</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push-уведомления</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Расширенные уведомления</string>
     <string name="extended_notifications_description">Включите эту функцию, чтобы видеть отправителя\nписем в push-уведомлениях.</string>
     <string name="notification_settings">Настройки уведомлений</string>
@@ -920,14 +920,14 @@
     <string name="allow_secure_connections_via_third_parties">Разрешить альтернативную маршрутизацию</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">В случае блокировки сайтов Proton эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию, чтобы достигнуть Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Для большей надёжности мы рекомендуем оставить эту настройку включённой.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">В случае блокировки сайтов Proton эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию, чтобы достигнуть Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Для большей надёжности мы рекомендуем оставить эту настройку включённой. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Подробнее</a></string>
-    <string name="app_language">Язык приложения</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Выберите язык приложения</string>
     <string name="auto_detect">Автоопределение</string>
-    <string name="combined_contacts">Совмещённые контакты</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Включите эту функцию для автозавершения адресов эл. почты путём использования контактов из всех учётных записей, в которые вы вошли.</string>
-    <string name="local_cache_management">Управление локальным кэшем</string>
-    <string name="cache_cleared">Локальный кэш обновлён</string>
-    <string name="empty_data">Пусто</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">Включено</string>
     <string name="disabled">Отключено</string>
@@ -985,7 +985,7 @@
     <string name="send_to_archive">Отправить в архив?</string>
     <string name="new_label">Новый ярлык</string>
     <string name="new_folder">Новая папка</string>
-    <string name="label_as">Отметить...</string>
+    <string name="label_as">Отметить…</string>
     <string name="mark_as_unread">Отметить как непрочитанное</string>
     <string name="mark_as_read">Отметить как прочитанное</string>
     <string name="mark_as_read_unread">Пометить как прочитанное/снять пометку</string>

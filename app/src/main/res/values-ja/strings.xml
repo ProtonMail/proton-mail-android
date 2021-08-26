@@ -761,7 +761,7 @@
     <string name="mobile_footer_info">このフッターは署名の後に追加されます</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">通知の停止</string>
-    <string name="notifications_snooze">通知の停止計画</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30分</item>
         <item>1時間</item>
@@ -815,7 +815,7 @@
     <string name="settings_auto_show_embedded_images">埋め込み画像の自動表示</string>
     <string name="settings_prevent_taking_screenshots">画面撮影の防止</string>
     <string name="hyperlink_confirmation">リンク先を開くときに確認する</string>
-    <string name="labels_and_folders">ラベルとフォルダー</string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">フォルダー</string>
     <string name="labels">ラベル</string>
     <string name="labels_manager">ラベルの管理</string>
@@ -850,7 +850,7 @@
     <!-- endregion -->
     <string name="app_settings">設定</string>
     <!-- region App Settings -->
-    <string name="push_notifications">プッシュ通知</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">拡張通知</string>
     <string name="extended_notifications_description">この機能を有効にするとメールの送信者をプッシュ通知します。</string>
     <string name="notification_settings">通知の設定</string>
@@ -863,14 +863,14 @@
     <string name="allow_secure_connections_via_third_parties">代替ルーティングを許可</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">より詳しく</a></string>
-    <string name="app_language">言語の設定</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>
-    <string name="combined_contacts">連絡先の相互利用</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">この機能を有効化すると、ログイン済みのアカウントの連絡先を、メールアドレスの自動補完に利用可能になります。</string>
-    <string name="local_cache_management">端末のキャッシュ管理</string>
-    <string name="cache_cleared">端末のキャッシュが更新されました。</string>
-    <string name="empty_data">空データ</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">有効</string>
     <string name="disabled">無効</string>

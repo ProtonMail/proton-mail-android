@@ -781,7 +781,7 @@ compre más
     <string name="mobile_footer_info">This footer is added after your signature</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>
-    <string name="notifications_snooze">Silenciar notificaciones</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
         <item>1 hora</item>
@@ -836,7 +836,7 @@ compre más
     <string name="settings_auto_show_embedded_images">Mostrar automáticamente las imágenes incrustadas</string>
     <string name="settings_prevent_taking_screenshots">Prevenir capturas de pantalla</string>
     <string name="hyperlink_confirmation">Solicitar confirmación de enlace</string>
-    <string name="labels_and_folders">Etiquetas y carpetas </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Carpetas</string>
     <string name="labels">Etiquetas</string>
     <string name="labels_manager">Labels manager</string>
@@ -874,7 +874,7 @@ compre más
     <!-- endregion -->
     <string name="app_settings">Ajustes de la aplicación</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Notificaciones push</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Notificaciones extendidas</string>
     <string name="extended_notifications_description">Active esta función para ver el remitente\nde los mensajes en las notificaciones push.</string>
     <string name="notification_settings">Ajuste de las notificaciones</string>
@@ -887,14 +887,14 @@ compre más
     <string name="allow_secure_connections_via_third_parties">Permitir el enrutado alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En caso de que los sitios de Proton estén bloqueados, esta configuración permite a la aplicación intentar un enrutamiento de red alternativo para llegar a Proton, lo que puede ser útil para evitar los cortafuegos o los problemas de red. Recomendamos mantener esta configuración activada para una mayor fiabilidad.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En caso de que los sitios de Proton estén bloqueados, esta configuración permitirá a la aplicación intentar un enrutamiento de red alternativo para llegar a Proton, lo que puede ser útil para evitar los cortafuegos o los problemas de red. Recomendamos mantener esta configuración activada para una mayor fiabilidad. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Más información</a></string>
-    <string name="app_language">Idioma de la aplicación</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Seleccionar idioma de la app</string>
     <string name="auto_detect">Detectar automáticamente</string>
-    <string name="combined_contacts">Contactos combinados</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Active esta función para completar automáticamente las direcciones usando los contactos de todas sus cuentas conectadas.</string>
-    <string name="local_cache_management">Gestionar caché local</string>
-    <string name="cache_cleared">La caché local está actualizada</string>
-    <string name="empty_data">Vaciar datos</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">Habilitado</string>
     <string name="disabled">Deshabilitado</string>

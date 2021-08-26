@@ -781,7 +781,7 @@ Svájci székhellyel</string>
     <string name="mobile_footer_info">This footer is added after your signature</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Szüneteltetés</string>
-    <string name="notifications_snooze">Értesítések szüneteltetése</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 perc</item>
         <item>1 óra</item>
@@ -836,7 +836,7 @@ Svájci székhellyel</string>
     <string name="settings_auto_show_embedded_images">Beágyazott képek automatikus megjelenítése</string>
     <string name="settings_prevent_taking_screenshots">Képernyőkép készítés megakadályozása</string>
     <string name="hyperlink_confirmation">Kérés link megerősítése</string>
-    <string name="labels_and_folders">Címkék és Mappák </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Mappák</string>
     <string name="labels">Címkék</string>
     <string name="labels_manager">Labels manager</string>
@@ -874,7 +874,7 @@ Svájci székhellyel</string>
     <!-- endregion -->
     <string name="app_settings">Alkalmazás beállítások</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push értesítések</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Bővített értesítések</string>
     <string name="extended_notifications_description">Kapcsolja be ezt a funkciót, hogy az e-mailek feladóját\nláthassa a push értesítésekben.</string>
     <string name="notification_settings">Értesítési beállítások</string>
@@ -887,14 +887,14 @@ Svájci székhellyel</string>
     <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
-    <string name="app_language">Alkalmazás nyelve</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Alkalmazás nyelv választása</string>
     <string name="auto_detect">Automatikus-észlelés</string>
-    <string name="combined_contacts">Kombinált névjegyek</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Kapcsolja be ezt a funkciót az automatikus e-mail címek kitöltéséhez az összes bejelentkezett fiók névjegyei alapján.</string>
-    <string name="local_cache_management">Helyi gyorsítótár-kezelő</string>
-    <string name="cache_cleared">Helyi gyorsítótár frissítve</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">Engedélyezve</string>
     <string name="disabled">Letiltva</string>

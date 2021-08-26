@@ -780,7 +780,7 @@
     <string name="mobile_footer_info">Questo piè di pagina viene aggiunto dopo la firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Posticipa</string>
-    <string name="notifications_snooze">Silenzia notifiche</string>
+    <string name="notifications_snooze">Posticipa notifiche</string>
     <string-array name="quick_snooze_values">
         <item>30 minuti</item>
         <item>1 ora</item>
@@ -835,7 +835,7 @@
     <string name="settings_auto_show_embedded_images">Mostra automaticamente le immagini incorporate</string>
     <string name="settings_prevent_taking_screenshots">Previeni la cattura degli screenshot</string>
     <string name="hyperlink_confirmation">Richiedi link di conferma</string>
-    <string name="labels_and_folders">Etichette &amp; Cartelle </string>
+    <string name="labels_and_folders">Etichette e cartelle </string>
     <string name="folders">Cartelle</string>
     <string name="labels">Etichette</string>
     <string name="labels_manager">Gestione etichette</string>
@@ -891,9 +891,9 @@
     <string name="auto_detect">Riconoscimento automatico</string>
     <string name="combined_contacts">Contatti combinati</string>
     <string name="turn_combined_contacts_on">Attiva questa funzione per completare automaticamente gli indirizzi email utilizzando i contatti da tutti i tuoi account collegati.</string>
-    <string name="local_cache_management">Gestione cache locale</string>
-    <string name="cache_cleared">La cache locale è aggiornata</string>
-    <string name="empty_data">Dato vuoto</string>
+    <string name="local_cache_management">Cache locale</string>
+    <string name="cache_cleared">La cache locale è Ricaricata</string>
+    <string name="empty_data">Cancella Dati</string>
     <!-- endregion -->
     <string name="enabled">Abilitata</string>
     <string name="disabled">Disabilitata</string>

@@ -771,7 +771,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="mobile_footer_info">Diese Fußzeile wird nach Ihrer Signatur eingefügt</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Zurückstellen</string>
-    <string name="notifications_snooze">Benachrichtigungen später lesen</string>
+    <string name="notifications_snooze">Benachrichtigungen verzögern</string>
     <string-array name="quick_snooze_values">
         <item>30 Minuten</item>
         <item>1 Stunde</item>
@@ -864,7 +864,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- endregion -->
     <string name="app_settings">App-Einstellungen</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push Benachrichtigungen</string>
+    <string name="push_notifications">Push-Mitteilungen</string>
     <string name="extended_notifications">Erweiterte Benachrichtigungen</string>
     <string name="extended_notifications_description">Aktivieren Sie diese Funktion, um den Absender der\nNachrichten in den Push-Benachrichtigungen anzuzeigen.</string>
     <string name="notification_settings">Benachrichtigungseinstellungen</string>
@@ -882,7 +882,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="auto_detect">Automatisch erkennen</string>
     <string name="combined_contacts">Zusammengeführte Kontakte</string>
     <string name="turn_combined_contacts_on">Aktivieren Sie diese Funktion, um E-Mail-Adressen aus Kontakten all Ihren angemeldeten Konten automatisch zu vervollständigen.</string>
-    <string name="local_cache_management">Lokalen Zwischenspeicher verwalten</string>
+    <string name="local_cache_management">Lokaler Zwischenspeicher</string>
     <string name="cache_cleared">Lokaler Zwischenspeicher wurde aktualisiert</string>
     <string name="empty_data">Daten löschen</string>
     <!-- endregion -->

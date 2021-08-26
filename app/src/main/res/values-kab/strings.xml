@@ -780,7 +780,7 @@
     <string name="mobile_footer_info">Aḍar-agi n usebter yettwarna seld azmul-inek•inem</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Ales</string>
-    <string name="notifications_snooze">Ilɣa n usmekti</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 n tesdatin</item>
         <item>1 n usrag</item>
@@ -835,7 +835,7 @@
     <string name="settings_auto_show_embedded_images">Sken-d tugna tusliγt s wudem awurman</string>
     <string name="settings_prevent_taking_screenshots">Sewḥel tuṭṭfa n ugdil</string>
     <string name="hyperlink_confirmation">Suter aseɣwen n usentem</string>
-    <string name="labels_and_folders">Tibzimin&amp; Ikaramen </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Ikaramen</string>
     <string name="labels">Tibzimin</string>
     <string name="labels_manager">Amsefrak n tibzimin</string>
@@ -873,7 +873,7 @@
     <!-- endregion -->
     <string name="app_settings">Iɣewwaṛen n usnas</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Tilɣa yettudemmren</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Ilɣa n usiɣzef</string>
     <string name="extended_notifications_description">Turn this feature on to see the senderof the emails in the push notifications.</string>
     <string name="notification_settings">Iɣewwaren n ilɣa</string>
@@ -886,14 +886,14 @@
     <string name="allow_secure_connections_via_third_parties">Rnu aseglu amlellay</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. [Issin ugar]<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/"> Issin ugar</a></string>
-    <string name="app_language">Tutlayt n usnas</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Fren tutlayt n usnas</string>
     <string name="auto_detect">Tifin tawurmant</string>
-    <string name="combined_contacts">Inermisen uddisen</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Sermed tawuri-agi i usemmed awurman n tansiwin imayl s useqdec n yinermisen n yal imiḍanen-inek•inem yeqqnen.</string>
-    <string name="local_cache_management">Tuffirt tadigant</string>
-    <string name="cache_cleared">Tuffirt tadigant tettwalqem</string>
-    <string name="empty_data">Isefka ilmawen</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">Urmid</string>
     <string name="disabled">Yensa</string>

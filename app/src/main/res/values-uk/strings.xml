@@ -763,9 +763,11 @@
         Спробуйте звільнити трохи місця або придбати більше обсягу, перш ніж воно повністю заповниться.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Дозволи</string>
-    <string name="need_storage_permissions_add_attachment_text">Для того, щоб додати вкладення вам потрібно надати доступ до сховища.</string>
-    <string name="need_storage_permissions_download_attachment_text">Для того, що завантажити вкладення вам потрібно надати доступ до сховища.</string>
-    <string name="need_contacts_permissions_text">Для того, щоб імпортувати контакти, вам потрібно надати дозвіл до контактів.</string>
+    <string name="need_storage_permissions_add_attachment_text">Щоб додати вкладення вам потрібно надати
+        доступ до сховища.</string>
+    <string name="need_storage_permissions_download_attachment_text">Щоб завантажити вкладення вам потрібно надати
+        доступ до сховища.</string>
+    <string name="need_contacts_permissions_text">Щоб імпортувати контакти, вам потрібно надати доступ до контактів.</string>
     <string name="push_notifications_alert_title">Push-сповіщення</string>
     <string name="push_notifications_alert_subtitle">Push-сповіщення ProtonMail не працюють без оновлених сервісів Google Play.</string>
     <string name="app_locked">Програму заблоковано</string>
@@ -805,7 +807,7 @@
     <string name="mobile_footer_info">Цей підпис мобільного клієнта додається під вашим підписом</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Відкласти</string>
-    <string name="notifications_snooze">Відкладення сповіщень</string>
+    <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 хвилин</item>
         <item>1 година</item>
@@ -862,7 +864,7 @@
     <string name="settings_auto_show_embedded_images">Показувати вбудовані зображення</string>
     <string name="settings_prevent_taking_screenshots">Не дозволяти знімки екрану</string>
     <string name="hyperlink_confirmation">Запит підтвердження при переході за посиланнями</string>
-    <string name="labels_and_folders">Мітки й Теки </string>
+    <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Теки</string>
     <string name="labels">Мітки</string>
     <string name="labels_manager">Менеджер міток</string>
@@ -906,7 +908,7 @@
     <!-- endregion -->
     <string name="app_settings">Параметри програми</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push-сповіщення</string>
+    <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Розширені сповіщення</string>
     <string name="extended_notifications_description">Увімкніть цю функцію, щоб бачити відправника листів у push-сповіщеннях.</string>
     <string name="notification_settings">Налаштування сповіщень</string>
@@ -919,14 +921,14 @@
     <string name="allow_secure_connections_via_third_parties">Дозволити альтернативну маршрутизацію</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">У випадку блокування сайтів Proton, цей параметр дозволяє програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Рекомендовано увімкнути цей параметр для більшої надійності.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">У випадку блокування сайтів Proton, цей параметр дозволяє програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Рекомендовано увімкнути цей параметр для більшої надійності. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Докладніше</a></string>
-    <string name="app_language">Мова програми</string>
+    <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Вибір мови програми</string>
     <string name="auto_detect">Автовизначення</string>
-    <string name="combined_contacts">Об\'єднані контакти</string>
+    <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Увімкніть цю функцію для автозавершення адрес з використанням контактів з усіх ваших під\'єднаних облікових записів.</string>
-    <string name="local_cache_management">Локальний кеш</string>
-    <string name="cache_cleared">Локальний кеш оновлено</string>
-    <string name="empty_data">Очистити дані</string>
+    <string name="local_cache_management">Local cache</string>
+    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="empty_data">Clear Data</string>
     <!-- endregion -->
     <string name="enabled">Увімкнено</string>
     <string name="disabled">Вимкнено</string>
