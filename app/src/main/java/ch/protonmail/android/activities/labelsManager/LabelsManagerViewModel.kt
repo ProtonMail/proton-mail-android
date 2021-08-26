@@ -31,7 +31,7 @@ import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import ch.protonmail.android.labels.data.db.LabelDao
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
@@ -56,7 +56,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 internal class LabelsManagerViewModel @Inject constructor(
-    labelDao: LabelDao,
+    labelRepository: LabelRepository,
     savedStateHandle: SavedStateHandle,
     private val deleteLabel: DeleteLabel,
     private val workManager: WorkManager,
@@ -89,12 +89,12 @@ internal class LabelsManagerViewModel @Inject constructor(
      * Triggered when a Labels are updated in DB
      */
     private val labelsSource = when (type) {
-        LabelUiModel.Type.LABELS -> labelDao.findAllLabelsPaged(
+        LabelUiModel.Type.LABELS -> labelRepository.findAllLabelsPaged(
             runBlocking {
                 accountManager.getPrimaryUserId().filterNotNull().first()
             }
         )
-        LabelUiModel.Type.FOLDERS -> labelDao.findAllFoldersPaged(
+        LabelUiModel.Type.FOLDERS -> labelRepository.findAllFoldersPaged(
             runBlocking {
                 accountManager.getPrimaryUserId().filterNotNull().first()
             }

@@ -19,9 +19,9 @@
 
 package ch.protonmail.android.labels.data
 
+import androidx.paging.DataSource
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 
@@ -47,4 +47,7 @@ interface LabelRepository {
 
     suspend fun deleteAllLabels(userId: UserId)
 
+    fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
+
+    fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 }

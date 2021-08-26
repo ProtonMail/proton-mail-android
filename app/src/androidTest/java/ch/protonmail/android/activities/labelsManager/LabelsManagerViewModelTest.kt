@@ -25,7 +25,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsAdapter
-import ch.protonmail.android.data.AppDatabase
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelType.MESSAGE_LABEL
@@ -65,7 +65,8 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val labelDao = AppDatabase.buildInMemoryDatabase(context).labelDao()
+    @MockK
+    private lateinit var labelRepository: LabelRepository
 
     private lateinit var viewModel: LabelsManagerViewModel
 
@@ -78,9 +79,10 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
     fun setUp() {
         MockKAnnotations.init(this)
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        every { labelRepository.findAllLabelsPaged(userId) } returns mockk()
         viewModel =
             LabelsManagerViewModel(
-                labelDao = labelDao,
+                labelRepository = labelRepository,
                 savedStateHandle = savedState,
                 deleteLabel = mockk(),
                 workManager = workManager,
@@ -102,7 +104,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
             val label = LabelEntity(
                 LabelId("1"), userId, EMPTY_STRING, EMPTY_STRING, 0, MESSAGE_LABEL, EMPTY_STRING, EMPTY_STRING, 0, 0, 0
             )
-            labelDao.saveLabel(label)
+            labelRepository.saveLabel(label)
             delay(50) // Wait for async delivery
             assertEquals(1, adapter.itemCount)
 

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.labels.data
 
+import androidx.paging.DataSource
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.labels.data.db.LabelDao
 import ch.protonmail.android.labels.data.db.LabelEntity
@@ -83,6 +84,12 @@ internal class LabelRepositoryImpl @Inject constructor(
     override suspend fun deleteAllLabels(userId: UserId) {
         labelDao.deleteAllLabels(userId)
     }
+
+    override fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
+        labelDao.findAllLabelsPaged(userId)
+
+    override fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
+        labelDao.findAllFoldersPaged(userId)
 
     private suspend fun fetchAndSaveAllLabels(
         userId: UserId
