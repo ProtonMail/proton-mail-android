@@ -28,7 +28,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.withStyledAttributes
 import ch.protonmail.android.R
-import ch.protonmail.android.domain.entity.LabelId
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.extensions.fromAttributesOrPreviewOrNull
 

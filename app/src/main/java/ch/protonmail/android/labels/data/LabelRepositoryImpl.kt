@@ -19,8 +19,10 @@
 
 package ch.protonmail.android.labels.data
 
+import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.labels.data.db.LabelDao
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
@@ -28,8 +30,10 @@ import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
-internal class RoomLabelRepository @Inject constructor(
-    private val labelDao: LabelDao
+internal class LabelRepositoryImpl @Inject constructor(
+    private val labelDao: LabelDao,
+    private val api: ProtonMailApi,
+    private val labelMapper: LabelsMapper
 ) : LabelRepository {
 
     override fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>> =

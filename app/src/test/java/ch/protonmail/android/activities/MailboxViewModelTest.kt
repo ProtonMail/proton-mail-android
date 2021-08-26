@@ -89,7 +89,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
-import org.junit.After
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -214,7 +214,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         )
     }
 
-    @After
+    @AfterTest
     fun tearDown() {
         unmockkStatic(EntryPoints::class)
         unmockkStatic(Color::class)
@@ -522,10 +522,10 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery {
             labelRepository.findLabels(
                 currentUserId,
-                listOf(LabelId("1"), LabelId("2"))
+                listOf(LabelId("0"), LabelId("2"))
             )
         } returns listOf(
-            LabelEntity(LabelId("1"), currentUserId, "label 1", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0, 0),
+            LabelEntity(LabelId("0"), currentUserId, "label 0", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0, 0),
             LabelEntity(LabelId("2"), currentUserId, "label 2", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0, 0)
         )
 

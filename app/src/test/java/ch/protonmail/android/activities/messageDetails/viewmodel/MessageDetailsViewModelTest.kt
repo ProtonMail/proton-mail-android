@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
+import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
@@ -41,7 +42,6 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.details.presentation.model.RenderedMessage
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
@@ -71,13 +71,16 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.spyk
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
@@ -88,6 +91,7 @@ import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.UUID
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -127,7 +131,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val testSenderContactEmail = ContactEmail(
         "defaultMockContactEmailId", "defaultMockContactEmailAddress", "defaultMockContactName"
     )
-    private val contactsRepository: ContactsRepository = mockk(relaxed = true) {
+    private val contactsRepository: ContactsRepository = mockk {
         coEvery { findContactEmailByEmail(any()) } returns testSenderContactEmail
     }
 
@@ -183,8 +187,12 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private lateinit var viewModel: MessageDetailsViewModel
 
+    private val testColorInt = 871
+
     @BeforeTest
     fun setUp() {
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
         viewModel = MessageDetailsViewModel(
             messageDetailsRepository,
             messageRepository,
@@ -210,6 +218,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             verifyConnection,
             networkConfigurator,
         )
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(Color::class)
     }
 
     @Test
@@ -315,8 +328,38 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun shouldLoadMessageWithLabelsWhenLabelsPresent() = runBlockingTest {
-        val allLabels = (1..5).map { Label(id = "id$it", name = "name$it", color = "", exclusive = it > 2) }
-        val allLabelIds = allLabels.map { LabelId(it.id) }
+        val labels = (1..2).map {
+            LabelEntity(
+                id = LabelId("id$it"),
+                userId = testId1,
+                "name$it",
+                testColorInt.toString(),
+                0,
+                LabelType.MESSAGE_LABEL,
+                EMPTY_STRING,
+                "parent",
+                0,
+                0,
+                0
+            )
+        }
+        val folders = (3..5).map {
+            LabelEntity(
+                id = LabelId("id$it"),
+                userId = testId1,
+                "name$it",
+                testColorInt.toString(),
+                0,
+                LabelType.FOLDER,
+                EMPTY_STRING,
+                "parent",
+                0,
+                0,
+                0
+            )
+        }
+        val allLabels = labels + folders
+        val allLabelIds = allLabels.map { it.id }
         val message = buildMessage(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = false,
@@ -329,12 +372,12 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         )
         val nonExclusiveLabels = hashMapOf(
             INPUT_ITEM_DETAIL_ID to allLabels.take(2).map {
-                LabelChipUiModel(LabelId(it.id), Name(it.name), color = null)
+                LabelChipUiModel(it.id, Name(it.name), color = testColorInt)
             }
         )
         val exclusiveLabels = hashMapOf(INPUT_ITEM_DETAIL_ID to allLabels.takeLast(3))
         every {
-            labelRepository.findLabels(testId1, allLabelIds)
+            labelRepository.observeLabels(testId1, allLabelIds)
         } returns flowOf(allLabels)
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
 
@@ -521,7 +564,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun loadMessageBodyEmitsInputMessageWhenBodyIsAlreadyDecrypted() = runBlockingTest {
         val decryptedMessageHtml = "<html>Decrypted message body HTML</html>"
-        val message = buildMessage().apply { decryptedHTML =  decryptedMessageHtml }
+        val message = buildMessage().apply { decryptedHTML = decryptedMessageHtml }
 
         val decryptedMessage = viewModel.loadMessageBody(message).first()
 
@@ -847,7 +890,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
+        val conversationResult =
+            DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
         coEvery { messageRepository.findMessage(any(), MESSAGE_ID_ONE) } returns conversationMessage
 

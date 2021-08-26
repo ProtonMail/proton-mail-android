@@ -29,7 +29,6 @@ import ch.protonmail.android.data.AppDatabase
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelType.MESSAGE_LABEL
-import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -39,10 +38,12 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.util.kotlin.EMPTY_STRING
 import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -71,10 +72,12 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
     private val savedState = mockk<SavedStateHandle> {
         every { get<Boolean>(EXTRA_MANAGE_FOLDERS) } returns false
     }
+    val userId = UserId("testUser")
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         viewModel =
             LabelsManagerViewModel(
                 labelDao = labelDao,
@@ -86,29 +89,34 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun verifyCheckedStateIsUpdatedCorrectlyForAdapterItems() = runBlocking {
-        val adapter = LabelsAdapter()
-        viewModel.labels.observeDataForever(adapter::submitList)
+    fun verifyCheckedStateIsUpdatedCorrectlyForAdapterItems() {
 
-        // Assert adapter is empty
-        assertEquals(0, adapter.itemCount)
+        runBlocking {
+            val adapter = LabelsAdapter()
+            viewModel.labels.observeDataForever(adapter::submitList)
 
-        // Add single label
-        val label = LabelEntity(LabelId("1"), UserId("testUser"), EMPTY_STRING, EMPTY_STRING, 0, MESSAGE_LABEL, EMPTY_STRING, EMPTY_STRING, 0, 0, 0)
-        labelDao.saveLabel(label)
-        delay(50) // Wait for async delivery
-        assertEquals(1, adapter.itemCount)
+            // Assert adapter is empty
+            assertEquals(0, adapter.itemCount)
 
-        // Select label
-        assertFalse(adapter.currentList!![0]!!.isChecked)
-        viewModel.onLabelSelected("1", true)
-        delay(50) // Wait for async delivery
-        assertTrue(adapter.currentList!![0]!!.isChecked)
+            // Add single label
+            val label = LabelEntity(
+                LabelId("1"), userId, EMPTY_STRING, EMPTY_STRING, 0, MESSAGE_LABEL, EMPTY_STRING, EMPTY_STRING, 0, 0, 0
+            )
+            labelDao.saveLabel(label)
+            delay(50) // Wait for async delivery
+            assertEquals(1, adapter.itemCount)
 
-        // Deselect label
-        viewModel.onLabelSelected("1", false)
-        delay(50)  // Wait for async delivery
-        assertFalse(adapter.currentList!![0]!!.isChecked)
+            // Select label
+            assertFalse(adapter.currentList!![0]!!.isChecked)
+            viewModel.onLabelSelected("1", true)
+            delay(50) // Wait for async delivery
+            assertTrue(adapter.currentList!![0]!!.isChecked)
+
+            // Deselect label
+            viewModel.onLabelSelected("1", false)
+            delay(50)  // Wait for async delivery
+            assertFalse(adapter.currentList!![0]!!.isChecked)
+        }
     }
 
     @Test

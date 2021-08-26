@@ -26,8 +26,8 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.StyleRes
 import androidx.core.view.isVisible
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.ui.layout.MoreItemsLinearLayout
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.extensions.isInPreviewMode

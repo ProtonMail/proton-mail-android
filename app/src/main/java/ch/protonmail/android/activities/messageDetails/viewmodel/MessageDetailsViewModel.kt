@@ -249,7 +249,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private fun Flow<ConversationUiModel>.combineWithLabels() = flatMapLatest { conversation ->
         val nonExclusiveLabelsHashMap = hashMapOf<String, List<LabelChipUiModel>>()
-        val exclusiveLabelsHashMap = hashMapOf<String, List<Label>>()
+        val exclusiveLabelsHashMap = hashMapOf<String, List<LabelEntity>>()
         conversation.messages.filter { it.allLabelIDs.isNotEmpty() }.forEach { message ->
             val messageId = requireNotNull(message.messageId)
             getAllLabelsFor(userManager.requireCurrentUserId(), message)?.let { (exclusiveLabels, nonExclusiveLabels) ->
@@ -268,18 +268,18 @@ internal class MessageDetailsViewModel @Inject constructor(
     private suspend fun getAllLabelsFor(
         userId: UserId,
         message: Message
-    ): Pair<Collection<Label>, List<LabelChipUiModel>>? {
+    ): Pair<Collection<LabelEntity>, List<LabelChipUiModel>>? {
         val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
-        return labelRepository.findLabels(userId, allLabelIds)
+        return labelRepository.observeLabels(userId, allLabelIds)
             .firstOrNull()
-            ?.partition { it.exclusive }
+            ?.partition { it.type == LabelType.FOLDER }
             ?.mapSecond { it.toNonExclusiveLabelModel() }
     }
 
-    private fun Label.toNonExclusiveLabelModel(): LabelChipUiModel {
+    private fun LabelEntity.toNonExclusiveLabelModel(): LabelChipUiModel {
         val labelColor = color.takeIfNotBlank()
             ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-        return LabelChipUiModel(LabelId(id), Name(name), labelColor)
+        return LabelChipUiModel(id, Name(name), labelColor)
     }
 
     fun markUnread() {
