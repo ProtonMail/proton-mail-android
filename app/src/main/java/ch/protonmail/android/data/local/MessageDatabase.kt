@@ -26,7 +26,6 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.AttachmentTypesConverter
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
-import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
@@ -39,7 +38,6 @@ import me.proton.core.data.room.db.CommonConverters
         Attachment::class,
         ConversationDatabaseModel::class,
         Message::class,
-        LabelEntity::class,
         UnreadCounterEntity::class,
     ],
     version = 12
