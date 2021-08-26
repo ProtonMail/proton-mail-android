@@ -88,7 +88,7 @@ import timber.log.Timber
     // Mail
     ProtonMailConverters::class
 )
-abstract class AppDatabase :
+internal abstract class AppDatabase :
     BaseDatabase(),
     AccountDatabase,
     UserDatabase,

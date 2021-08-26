@@ -34,7 +34,7 @@ import me.proton.core.usersettings.data.db.UserSettingsDatabase
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class CoreDatabaseBindsModule {
+internal abstract class CoreDatabaseBindsModule {
 
     @Binds
     abstract fun provideAccountDatabase(db: AppDatabase): AccountDatabase

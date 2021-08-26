@@ -29,7 +29,7 @@ import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 
 @Dao
-abstract class LabelDao : BaseDao<LabelEntity>() {
+internal abstract class LabelDao : BaseDao<LabelEntity>() {
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ORDER BY $COLUMN_LABEL_ORDER")
     abstract fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>>

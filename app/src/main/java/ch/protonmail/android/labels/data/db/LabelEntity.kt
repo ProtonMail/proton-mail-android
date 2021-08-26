@@ -25,18 +25,18 @@ import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelType
 import me.proton.core.domain.entity.UserId
 
-const val TABLE_LABELS = "LabelEntity"
-const val COLUMN_LABEL_ID = "id"
-const val COLUMN_LABEL_USER_ID = "userId"
-const val COLUMN_LABEL_NAME = "name"
-const val COLUMN_LABEL_COLOR = "color"
-const val COLUMN_LABEL_ORDER = "labelOrder"
-const val COLUMN_LABEL_TYPE = "type"
-const val COLUMN_LABEL_PATH = "path"
-const val COLUMN_LABEL_PARENT_ID = "parentID"
-const val COLUMN_LABEL_NOTIFY = "notify"
-const val COLUMN_LABEL_EXPANDED = "expanded"
-const val COLUMN_LABEL_STICKY = "sticky"
+internal const val TABLE_LABELS = "LabelEntity"
+internal const val COLUMN_LABEL_ID = "id"
+internal const val COLUMN_LABEL_USER_ID = "userId"
+internal const val COLUMN_LABEL_NAME = "name"
+internal const val COLUMN_LABEL_COLOR = "color"
+internal const val COLUMN_LABEL_ORDER = "labelOrder"
+internal const val COLUMN_LABEL_TYPE = "type"
+internal const val COLUMN_LABEL_PATH = "path"
+internal const val COLUMN_LABEL_PARENT_ID = "parentID"
+internal const val COLUMN_LABEL_NOTIFY = "notify"
+internal const val COLUMN_LABEL_EXPANDED = "expanded"
+internal const val COLUMN_LABEL_STICKY = "sticky"
 
 @Entity(
     tableName = TABLE_LABELS,
