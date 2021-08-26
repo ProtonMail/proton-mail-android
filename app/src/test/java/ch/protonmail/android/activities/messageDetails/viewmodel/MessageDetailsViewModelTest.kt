@@ -377,7 +377,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         )
         val exclusiveLabels = hashMapOf(INPUT_ITEM_DETAIL_ID to allLabels.takeLast(3))
         every {
-            labelRepository.observeLabels(testId1, allLabelIds)
+            labelRepository.observeLabels(testId1, allLabelIds,)
         } returns flowOf(allLabels)
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
 

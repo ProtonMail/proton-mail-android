@@ -25,6 +25,7 @@ import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
@@ -38,9 +39,19 @@ internal class LabelRepositoryImpl @Inject constructor(
 
     override fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>> =
         labelDao.observeAllLabels(userId)
+            .onStart {
+                Timber.v("Fetching fresh labels")
+                fetchAndSaveAllLabels(userId)
+            }
 
-    override suspend fun findAllLabels(userId: UserId): List<LabelEntity> =
-        labelDao.findAllLabels(userId)
+    override suspend fun findAllLabels(userId: UserId): List<LabelEntity> {
+        val dbData = labelDao.findAllLabels(userId)
+        return if (dbData.isEmpty()) {
+            fetchAndSaveAllLabels(userId)
+        } else {
+            dbData
+        }
+    }
 
     override fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>> =
         labelDao.observeLabelsById(userId, labelsIds)
@@ -71,5 +82,19 @@ internal class LabelRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllLabels(userId: UserId) {
         labelDao.deleteAllLabels(userId)
+    }
+
+    private suspend fun fetchAndSaveAllLabels(
+        userId: UserId
+    ): List<LabelEntity> {
+        val serverLabels = api.fetchLabels(userId).valueOrThrow.labels
+        val serverFolders = api.fetchFolders(userId).valueOrThrow.labels
+        val serverContactGroups = api.fetchContactGroups(userId).valueOrThrow.labels
+        val labelList = serverLabels.map { labelMapper.mapLabelToLabelEntity(it, userId) }
+        val foldersList = serverFolders.map { labelMapper.mapLabelToLabelEntity(it, userId) }
+        val groupsList = serverContactGroups.map { labelMapper.mapLabelToLabelEntity(it, userId) }
+        val allLabels = labelList + foldersList + groupsList
+        saveLabels(allLabels)
+        return allLabels
     }
 }

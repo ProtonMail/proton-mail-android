@@ -19,8 +19,18 @@
 
 package ch.protonmail.android.labels.data.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class LabelType(val typeInt: Int) {
+
+    @SerialName("1")
     MESSAGE_LABEL(1),
+
+    @SerialName("2")
     CONTACT_GROUP(2),
+
+    @SerialName("3")
     FOLDER(3)
 }

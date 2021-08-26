@@ -21,6 +21,7 @@ package ch.protonmail.android.labels.data
 
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 
