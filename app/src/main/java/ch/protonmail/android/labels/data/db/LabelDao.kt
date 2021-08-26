@@ -21,23 +21,21 @@ package ch.protonmail.android.labels.data.db
 
 import androidx.paging.DataSource
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 
 @Dao
-interface LabelDao {
+abstract class LabelDao : BaseDao<LabelEntity>(){
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ORDER BY $COLUMN_LABEL_ORDER")
-    fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>>
+    abstract fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ORDER BY $COLUMN_LABEL_ORDER ")
-    suspend fun findAllLabels(userId: UserId): List<LabelEntity>
-
+    abstract suspend fun findAllLabels(userId: UserId): List<LabelEntity>
 
     @Query(
         """
@@ -47,7 +45,7 @@ interface LabelDao {
         ORDER BY $COLUMN_LABEL_ORDER
         """
     )
-    fun observeLabelsById(userId: UserId, labelIds: List<LabelId>): Flow<List<LabelEntity>>
+    abstract fun observeLabelsById(userId: UserId, labelIds: List<LabelId>): Flow<List<LabelEntity>>
 
     @Query(
         """
@@ -57,7 +55,7 @@ interface LabelDao {
         ORDER BY $COLUMN_LABEL_ORDER
         """
     )
-    suspend fun findLabelsById(userId: UserId, labelIds: List<LabelId>): List<LabelEntity>
+    abstract suspend fun findLabelsById(userId: UserId, labelIds: List<LabelId>): List<LabelEntity>
 
     @Query(
         """
@@ -66,7 +64,7 @@ interface LabelDao {
         ORDER BY $COLUMN_LABEL_ORDER
         """
     )
-    suspend fun findLabelById(labelId: LabelId): LabelEntity?
+    abstract suspend fun findLabelById(labelId: LabelId): LabelEntity?
 
     @Query(
         """
@@ -76,7 +74,7 @@ interface LabelDao {
         ORDER BY $COLUMN_LABEL_ORDER
         """
     )
-    fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
+    abstract fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
     @Query(
         """
@@ -86,21 +84,14 @@ interface LabelDao {
         ORDER BY $COLUMN_LABEL_ORDER
         """
     )
-    fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
+    abstract fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
     @Query("DELETE FROM $TABLE_LABELS")
-    fun clearLabelsCache()
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveLabel(label: LabelEntity): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveLabels(labels: List<LabelEntity>): List<Long>
+    abstract fun clearLabelsCache()
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    suspend fun deleteLabelById(labelId: LabelId)
+    abstract suspend fun deleteLabelById(labelId: LabelId)
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ")
-    suspend fun deleteAllLabels(userId: UserId)
-
+    abstract suspend fun deleteAllLabels(userId: UserId)
 }

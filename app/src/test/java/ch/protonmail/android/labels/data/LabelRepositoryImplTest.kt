@@ -111,9 +111,8 @@ class LabelRepositoryImplTest : CoroutinesTest {
         )
 
         val dataToSaveInDb = listOf(testLabelEntity1, testLabelEntity2, testLabelEntity3)
-        coEvery { labelDao.saveLabels(any()) } answers {
+        coEvery { labelDao.insertOrUpdate(*anyVararg()) } answers {
             dbFlow.tryEmit(dataToSaveInDb)
-            listOf(3L)
         }
 
         val subsequentDbReply = listOf(testLabelEntity1)
@@ -122,7 +121,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
         repository.observeAllLabels(testUserId).test {
 
             // then
-            coVerify { labelDao.saveLabels(any()) }
+            coVerify { labelDao.insertOrUpdate(*anyVararg()) }
             assertEquals(dataToSaveInDb, expectItem())
             dbFlow.tryEmit(subsequentDbReply)
             assertEquals(subsequentDbReply, expectItem())
@@ -136,13 +135,13 @@ class LabelRepositoryImplTest : CoroutinesTest {
         coEvery { api.fetchLabels(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel1)))
         coEvery { api.fetchContactGroups(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel2)))
         coEvery { api.fetchFolders(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel3)))
-        coEvery { labelDao.saveLabels(any()) } returns listOf(1L)
+        coEvery { labelDao.insertOrUpdate(*anyVararg()) } returns Unit
         // when
         val response = repository.findAllLabels(testUserId)
 
         // then
         assertTrue(response.size == 3)
-        coVerify { labelDao.saveLabels(any()) }
+        coVerify { labelDao.insertOrUpdate(*anyVararg()) }
     }
 
     companion object {
@@ -151,6 +150,8 @@ class LabelRepositoryImplTest : CoroutinesTest {
         private const val labelId2 = "labelId2"
         private const val labelId3 = "labelId3"
         private const val labelName1 = "labelName1"
+        private const val labelName2 = "labelName2"
+        private const val labelName3 = "labelName3"
         private const val labelColor = "labelColor11"
         private const val testPath = "a/bcPath"
         private const val testParentId = "parentIdForTests"
@@ -168,7 +169,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
         )
         val testLabel2 = Label(
             id = labelId2,
-            name = labelName1,
+            name = labelName2,
             path = testPath,
             color = labelColor,
             type = LabelType.CONTACT_GROUP,
@@ -180,7 +181,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
         )
         val testLabel3 = Label(
             id = labelId3,
-            name = labelName1,
+            name = labelName3,
             path = testPath,
             color = labelColor,
             type = LabelType.FOLDER,

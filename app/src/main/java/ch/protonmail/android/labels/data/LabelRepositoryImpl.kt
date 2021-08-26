@@ -70,7 +70,7 @@ internal class LabelRepositoryImpl @Inject constructor(
 
     override suspend fun saveLabels(labels: List<LabelEntity>) {
         Timber.v("Save labels: ${labels.map { it.id.id }}")
-        labelDao.saveLabels(labels)
+        labelDao.insertOrUpdate(*labels.toTypedArray())
     }
 
     override suspend fun saveLabel(label: LabelEntity) =
