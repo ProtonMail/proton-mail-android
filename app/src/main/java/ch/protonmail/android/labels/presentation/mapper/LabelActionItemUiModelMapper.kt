@@ -23,8 +23,8 @@ import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -44,18 +44,19 @@ class LabelActionItemUiModelMapper @Inject constructor(
     fun mapLabelToUi(
         label: LabelEntity,
         currentLabelsSelection: List<String>,
-        labelsSheetType: LabelsActionSheet.Type
+        labelType: LabelType
     ): LabelActonItemUiModel {
 
-        val iconRes = when (labelsSheetType) {
-            LabelsActionSheet.Type.LABEL -> R.drawable.circle_labels_selection
-            LabelsActionSheet.Type.FOLDER ->
+        val iconRes = when (labelType) {
+            LabelType.MESSAGE_LABEL -> R.drawable.circle_labels_selection
+            LabelType.FOLDER ->
                 if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
+            LabelType.CONTACT_GROUP -> throw IllegalArgumentException("Contacts are currently unsupported")
         }
 
         val colorInt = if (useFolderColor) label.color.toColorIntOrDefault() else defaultIconColor
 
-        val isChecked = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
+        val isChecked = if (labelType == LabelType.MESSAGE_LABEL) {
             currentLabelsSelection.contains(label.id.id)
         } else {
             null
@@ -68,7 +69,7 @@ class LabelActionItemUiModelMapper @Inject constructor(
             titleRes = null,
             colorInt = colorInt,
             isChecked = isChecked,
-            labelType = labelsSheetType.typeInt
+            labelType = labelType.typeInt
         )
     }
 

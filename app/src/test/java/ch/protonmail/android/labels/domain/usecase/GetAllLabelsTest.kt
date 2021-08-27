@@ -28,7 +28,6 @@ import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
@@ -71,7 +70,7 @@ class GetAllLabelsTest {
         val testLabelId2 = LabelId("labelId2")
         val testColorInt = 123
         val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
-        val sheetType = LabelsActionSheet.Type.LABEL
+        val sheetType = LabelType.MESSAGE_LABEL
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
             every { type } returns LabelType.MESSAGE_LABEL
@@ -87,7 +86,7 @@ class GetAllLabelsTest {
             null,
             testColorInt,
             true,
-            LabelsActionSheet.Type.LABEL.typeInt
+            LabelType.MESSAGE_LABEL.typeInt
         )
         val uiLabel2 = LabelActonItemUiModel(
             testLabelId2.id,
@@ -96,7 +95,7 @@ class GetAllLabelsTest {
             null,
             testColorInt,
             true,
-            LabelsActionSheet.Type.LABEL.typeInt
+            LabelType.MESSAGE_LABEL.typeInt
         )
         val expected = listOf(uiLabel1, uiLabel2)
         coEvery { repository.findAllLabels(testUserId) } returns listOf(label1, label2)
@@ -120,7 +119,7 @@ class GetAllLabelsTest {
         val testLabelId2 = LabelId("labelId2")
         val testColorInt = 123
         val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
-        val sheetType = LabelsActionSheet.Type.FOLDER
+        val sheetType = LabelType.FOLDER
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
             every { type } returns LabelType.FOLDER
@@ -136,7 +135,7 @@ class GetAllLabelsTest {
             null,
             testColorInt,
             true,
-            LabelsActionSheet.Type.FOLDER.typeInt
+            LabelType.FOLDER.typeInt
         )
         val uiLabel2 = LabelActonItemUiModel(
             testLabelId2.id,
@@ -145,7 +144,7 @@ class GetAllLabelsTest {
             null,
             testColorInt,
             true,
-            LabelsActionSheet.Type.FOLDER.typeInt
+            LabelType.FOLDER.typeInt
         )
         val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
         coEvery { repository.findAllLabels(testUserId) } returns listOf(label1, label2)
@@ -156,7 +155,7 @@ class GetAllLabelsTest {
         // when
         val result = useCase.invoke(
             currentLabelsSelection,
-            LabelsActionSheet.Type.FOLDER,
+            LabelType.FOLDER,
             Constants.MessageLocationType.INVALID
         )
 
@@ -171,7 +170,7 @@ class GetAllLabelsTest {
         val testLabelId2 = LabelId("labelId2")
         val testColorInt = 123
         val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
-        val sheetType = LabelsActionSheet.Type.FOLDER
+        val sheetType = LabelType.FOLDER
         val label1 = mockk<LabelEntity> {
             every { id } returns testLabelId1
             every { type } returns LabelType.FOLDER
@@ -187,7 +186,7 @@ class GetAllLabelsTest {
             null,
             testColorInt,
             true,
-            LabelsActionSheet.Type.FOLDER.typeInt
+            LabelType.FOLDER.typeInt
         )
         val uiLabel2 = LabelActonItemUiModel(
             testLabelId2.id,
@@ -196,7 +195,7 @@ class GetAllLabelsTest {
             null,
             testColorInt,
             true,
-            LabelsActionSheet.Type.FOLDER.typeInt
+            LabelType.FOLDER.typeInt
         )
         val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
             .filter { it.labelId != Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() }
@@ -208,7 +207,7 @@ class GetAllLabelsTest {
         // when
         val result = useCase.invoke(
             currentLabelsSelection,
-            LabelsActionSheet.Type.FOLDER,
+            LabelType.FOLDER,
             Constants.MessageLocationType.INBOX
         )
 
@@ -223,7 +222,7 @@ class GetAllLabelsTest {
                     labelId = location.id,
                     iconRes = location.iconRes,
                     titleRes = location.title,
-                    labelType = LabelsActionSheet.Type.FOLDER.typeInt
+                    labelType = LabelType.FOLDER.typeInt
                 )
             }
 

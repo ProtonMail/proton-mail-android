@@ -25,7 +25,6 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
@@ -285,7 +284,7 @@ class CreateContactGroupWorkerTest {
         LabelRequestBody(
             name = "labelName",
             color = "labelColor",
-            type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+            type = LabelType.CONTACT_GROUP.typeInt,
             parentId = EMPTY_STRING,
             notify = 0,
             expanded = 0,

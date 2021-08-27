@@ -24,7 +24,6 @@ import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
@@ -152,7 +151,7 @@ class PostLabelWorkerTest {
             every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
-            every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns Constants.LABEL_TYPE_CONTACT_GROUPS
+            every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns LabelType.CONTACT_GROUP.typeInt
 
             val result = worker.doWork()
 
@@ -168,7 +167,7 @@ class PostLabelWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns "labelID"
-            every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns Constants.LABEL_TYPE_CONTACT_GROUPS
+            every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns LabelType.CONTACT_GROUP.typeInt
 
             val result = worker.doWork()
 
@@ -252,7 +251,7 @@ class PostLabelWorkerTest {
         LabelRequestBody(
             name = "labelName",
             color = "labelColor",
-            type = Constants.LABEL_TYPE_CONTACT_GROUPS, // Constants.LABEL_TYPE_CONTACT_GROUPS
+            type = LabelType.CONTACT_GROUP.typeInt,
             parentId = null,
             notify = 0, // Constants.LABEL_TYPE_CONTACT_GROUPS,
             expanded = 0,

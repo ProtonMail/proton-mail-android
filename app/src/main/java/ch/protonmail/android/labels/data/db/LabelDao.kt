@@ -22,7 +22,9 @@ package ch.protonmail.android.labels.data.db
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_CONTACT_GROUP
+import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_FOLDER
+import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_MESSAGE_LABEL
 import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
@@ -78,7 +80,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
     @Query(
         """
         SELECT * FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_LABEL} 
+        WHERE $COLUMN_LABEL_TYPE = $LABEL_TYPE_ID_MESSAGE_LABEL 
         AND $COLUMN_LABEL_USER_ID=:userId 
         ORDER BY $COLUMN_LABEL_ORDER
         """
@@ -88,7 +90,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
     @Query(
         """
         SELECT * FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_FOLDERS} 
+        WHERE $COLUMN_LABEL_TYPE = $LABEL_TYPE_ID_FOLDER 
         AND $COLUMN_LABEL_USER_ID=:userId 
         ORDER BY $COLUMN_LABEL_ORDER
         """
@@ -96,7 +98,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
     abstract fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
     @Query("DELETE FROM $TABLE_LABELS")
-    abstract fun clearLabelsCache()
+    abstract fun deleteLabelsTableData()
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
     abstract suspend fun deleteLabelById(labelId: LabelId)
@@ -108,7 +110,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         """
         DELETE FROM $TABLE_LABELS 
         WHERE $COLUMN_LABEL_USER_ID=:userId
-        AND $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_CONTACT_GROUPS}
+        AND $COLUMN_LABEL_TYPE = $LABEL_TYPE_ID_CONTACT_GROUP
         """
     )
     abstract suspend fun deleteContactGroups(userId: UserId)

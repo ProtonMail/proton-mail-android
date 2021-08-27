@@ -23,7 +23,7 @@ import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.labels.data.model.LabelType
 
 data class LabelActonItemUiModel(
     val labelId: String,
@@ -32,5 +32,5 @@ data class LabelActonItemUiModel(
     @StringRes val titleRes: Int? = null, // for standard titles e.g. "Inbox"
     @ColorInt val colorInt: Int = Color.BLACK,
     val isChecked: Boolean? = null,
-    val labelType: Int = LabelsActionSheet.Type.LABEL.typeInt
+    val labelType: Int = LabelType.MESSAGE_LABEL.typeInt
 )

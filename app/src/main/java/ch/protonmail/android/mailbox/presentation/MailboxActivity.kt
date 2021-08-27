@@ -104,6 +104,7 @@ import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -1166,7 +1167,7 @@ internal class MailboxActivity :
         LabelsActionSheet.newInstance(
             messageIds = messageIds,
             currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
-            labelActionSheetType = LabelsActionSheet.Type.FOLDER,
+            labelType = LabelType.FOLDER,
             actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)

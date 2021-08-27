@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.ui.actionsheet
 
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 
 /**
@@ -31,7 +31,7 @@ sealed class MessageActionSheetAction {
     data class ShowLabelsManager(
         val messageIds: List<String>,
         val currentFolderLocationId: Int,
-        val labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL,
+        val labelActionSheetType: LabelType = LabelType.MESSAGE_LABEL,
         val actionSheetTarget: ActionSheetTarget
     ) : MessageActionSheetAction()
 

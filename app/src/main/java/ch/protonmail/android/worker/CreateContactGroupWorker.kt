@@ -30,8 +30,8 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_CONTACT_GROUP
 import ch.protonmail.android.labels.data.model.LabelRequestBody
 import ch.protonmail.android.labels.data.model.LabelResponse
 import dagger.assisted.Assisted
@@ -104,7 +104,7 @@ class CreateContactGroupWorker @AssistedInject constructor(
         LabelRequestBody(
             name = name,
             color = color,
-            type = Constants.LABEL_TYPE_CONTACT_GROUPS,
+            type = LABEL_TYPE_ID_CONTACT_GROUP,
             parentId = "",
             notify = 0,
             expanded = getExpandedParam(),

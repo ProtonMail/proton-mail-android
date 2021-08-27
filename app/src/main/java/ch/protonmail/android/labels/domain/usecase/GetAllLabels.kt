@@ -21,10 +21,10 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
@@ -38,7 +38,7 @@ class GetAllLabels @Inject constructor(
 
     suspend operator fun invoke(
         currentLabelsSelection: List<String>,
-        labelsSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL,
+        labelsSheetType: LabelType = LabelType.MESSAGE_LABEL,
         currentMessageFolder: Constants.MessageLocationType? = null // only required for Type.FOLDER
     ): List<LabelActonItemUiModel> {
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
@@ -49,7 +49,7 @@ class GetAllLabels @Inject constructor(
             .map { label ->
                 labelsMapper.mapLabelToUi(label, currentLabelsSelection, labelsSheetType)
             }
-        return if (labelsSheetType == LabelsActionSheet.Type.FOLDER) {
+        return if (labelsSheetType == LabelType.FOLDER) {
             requireNotNull(currentMessageFolder)
             uiLabelsFromDb + getStandardFolders(currentMessageFolder)
         } else
@@ -79,7 +79,7 @@ class GetAllLabels @Inject constructor(
                 labelId = location.id,
                 iconRes = location.iconRes,
                 titleRes = location.title,
-                labelType = LabelsActionSheet.Type.FOLDER.typeInt
+                labelType = LabelType.FOLDER.typeInt
             )
         }
 }

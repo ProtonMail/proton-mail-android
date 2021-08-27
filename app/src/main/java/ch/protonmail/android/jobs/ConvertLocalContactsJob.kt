@@ -46,6 +46,7 @@ import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_CONTACT_GROUP
 import ch.protonmail.android.labels.data.model.LabelRequestBody
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.views.models.LocalContact
@@ -282,7 +283,7 @@ class ConvertLocalContactsJob(
                 val requestBody = LabelRequestBody(
                     it.value,
                     defaultColor,
-                    Constants.LABEL_TYPE_CONTACT_GROUPS,
+                    LABEL_TYPE_ID_CONTACT_GROUP,
                     parentId = null,
                     notify = false.toInt(),
                     null,
@@ -291,7 +292,8 @@ class ConvertLocalContactsJob(
                 val response = getApi().createLabel(currentUser, requestBody)
 
                 if (response is ApiResult.Error.Http &&
-                    response.proton?.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST) {
+                    response.proton?.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST
+                ) {
                     someGroupsAlreadyExist = true
                 } else {
                     val serverLabel = response.valueOrThrow.label
@@ -359,7 +361,7 @@ class ConvertLocalContactsJob(
             contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.ALREADY_EXIST
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_INVALID_EMAIL || response
-                .responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED
+            .responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED
         ) {
             contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.INVALID_EMAIL

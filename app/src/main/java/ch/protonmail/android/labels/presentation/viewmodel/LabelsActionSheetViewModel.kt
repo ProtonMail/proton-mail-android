@@ -27,6 +27,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
 import ch.protonmail.android.core.Constants.MessageLocationType.INVALID
 import ch.protonmail.android.core.Constants.MessageLocationType.TRASH
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -67,9 +68,9 @@ internal class LabelsActionSheetViewModel @Inject constructor(
     private val conversationsRepository: ConversationsRepository
 ) : ViewModel() {
 
-    private val labelsSheetType = savedStateHandle.get<LabelsActionSheet.Type>(
+    private val labelsSheetType = savedStateHandle.get<LabelType>(
         LabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
-    ) ?: LabelsActionSheet.Type.LABEL
+    ) ?: LabelType.MESSAGE_LABEL
 
     private val currentMessageFolder =
         Constants.MessageLocationType.fromInt(
@@ -106,12 +107,12 @@ internal class LabelsActionSheetViewModel @Inject constructor(
 
     fun onLabelClicked(model: LabelActonItemUiModel) {
 
-        if (model.labelType == LabelsActionSheet.Type.FOLDER.typeInt) {
+        if (model.labelType == LabelType.FOLDER.typeInt) {
             onFolderClicked(model.labelId)
         } else {
             // label type clicked
             val updatedLabels = labels.value
-                .filter { it.labelType == LabelsActionSheet.Type.LABEL.typeInt }
+                .filter { it.labelType == LabelType.MESSAGE_LABEL.typeInt }
                 .map { label ->
                     if (label.labelId == model.labelId) {
                         Timber.v("Label: ${label.labelId} was clicked")
@@ -135,7 +136,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
     }
 
     fun onDoneClicked(shallMoveToArchive: Boolean = false) {
-        if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
+        if (labelsSheetType == LabelType.MESSAGE_LABEL) {
             onLabelDoneClicked(messageIds, shallMoveToArchive)
         } else {
             throw IllegalStateException("This action is unsupported for type $labelsSheetType")

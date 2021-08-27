@@ -22,15 +22,19 @@ package ch.protonmail.android.labels.data.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+const val LABEL_TYPE_ID_MESSAGE_LABEL = 1
+const val LABEL_TYPE_ID_CONTACT_GROUP = 2
+const val LABEL_TYPE_ID_FOLDER = 3
+
 @Serializable
 enum class LabelType(val typeInt: Int) {
 
-    @SerialName("1")
-    MESSAGE_LABEL(1),
+    @SerialName(LABEL_TYPE_ID_MESSAGE_LABEL.toString())
+    MESSAGE_LABEL(LABEL_TYPE_ID_MESSAGE_LABEL),
 
-    @SerialName("2")
-    CONTACT_GROUP(2),
+    @SerialName(LABEL_TYPE_ID_CONTACT_GROUP.toString())
+    CONTACT_GROUP(LABEL_TYPE_ID_CONTACT_GROUP),
 
-    @SerialName("3")
-    FOLDER(3)
+    @SerialName(LABEL_TYPE_ID_FOLDER.toString())
+    FOLDER(LABEL_TYPE_ID_FOLDER)
 }

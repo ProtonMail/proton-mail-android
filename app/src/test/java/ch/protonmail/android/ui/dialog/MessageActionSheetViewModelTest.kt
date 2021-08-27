@@ -22,8 +22,8 @@ package ch.protonmail.android.ui.dialog
 import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -116,7 +116,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val labelId2 = "labelId2"
         val messageIds = listOf(messageId1, messageId2)
         val currentLocation = Constants.MessageLocationType.INBOX
-        val labelsSheetType = LabelsActionSheet.Type.LABEL
+        val labelsSheetType = LabelType.MESSAGE_LABEL
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
@@ -153,7 +153,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val labelId2 = "labelId2"
         val messageIds = listOf(messageId1, messageId2)
         val currentLocation = Constants.MessageLocationType.INBOX
-        val labelsSheetType = LabelsActionSheet.Type.FOLDER
+        val labelsSheetType = LabelType.FOLDER
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
@@ -175,7 +175,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
         // when
-        viewModel.showLabelsManager(messageIds, currentLocation, LabelsActionSheet.Type.FOLDER)
+        viewModel.showLabelsManager(messageIds, currentLocation, LabelType.FOLDER)
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)

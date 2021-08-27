@@ -25,6 +25,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -115,7 +116,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         titleRes,
         colorInt,
         false,
-        LabelsActionSheet.Type.FOLDER.typeInt
+        LabelType.FOLDER.typeInt
     )
 
     @BeforeTest
@@ -126,10 +127,10 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageId1
         )
         every {
-            savedStateHandle.get<LabelsActionSheet.Type>(
+            savedStateHandle.get<LabelType>(
                 LabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
             )
-        } returns LabelsActionSheet.Type.LABEL
+        } returns LabelType.MESSAGE_LABEL
 
         every {
             savedStateHandle.get<Int>(LabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
