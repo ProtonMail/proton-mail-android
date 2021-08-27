@@ -48,8 +48,8 @@ import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
 import ch.protonmail.android.contacts.REQUEST_CODE_CONTACT_DETAILS
 import ch.protonmail.android.contacts.REQUEST_CODE_CONVERT_CONTACT
-import ch.protonmail.android.contacts.details.presentation.ContactDetailsActivity
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity
+import ch.protonmail.android.contacts.details.presentation.ContactDetailsActivity
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.list.listView.ContactsListAdapter
 import ch.protonmail.android.contacts.list.progress.ProgressDialogFactory
@@ -58,6 +58,7 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
@@ -89,6 +90,9 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     @Inject
     lateinit var jobManager: JobManager
+
+    @Inject
+    lateinit var labelRepository: LabelRepository
 
     override var actionMode: ActionMode? = null
         private set
@@ -168,7 +172,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 if (!allContactsLocal) {
                     requireContext().showToast(R.string.please_select_only_phone_contacts)
                 } else {
-                    LocalContactsConverter(jobManager, viewModel)
+                    LocalContactsConverter(jobManager, viewModel, labelRepository)
                         .startConversion(
                             selectedItems.toList()
                         )
@@ -248,7 +252,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     fun optionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_convert -> {
-                val localContactsConverter = LocalContactsConverter(jobManager, viewModel)
+                val localContactsConverter = LocalContactsConverter(jobManager, viewModel, labelRepository)
 
                 if (viewModel.hasPermission) {
                     val contacts = viewModel.androidContacts.value

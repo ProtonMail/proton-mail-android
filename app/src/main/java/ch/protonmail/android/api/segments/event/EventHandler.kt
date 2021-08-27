@@ -230,7 +230,7 @@ internal class EventHandler @AssistedInject constructor(
         val addresses = response.addresses
 
         if (labels != null) {
-            writeLabelsUpdates(messageDao, contactDao, labels)
+            writeLabelsUpdates(contactDao, labels)
         }
         if (messages != null) {
             messages.sortByDescending { eventMessageSortSelector(it) }
@@ -576,7 +576,6 @@ internal class EventHandler @AssistedInject constructor(
     }
 
     private fun writeLabelsUpdates(
-        messageDao: MessageDao,
         contactDao: ContactDao,
         events: List<EventResponse.LabelsEventBody>
     ) {
@@ -608,7 +607,7 @@ internal class EventHandler @AssistedInject constructor(
                             sticky = sticky,
                             notify = notify
                         )
-                        runBlocking {
+                        externalScope.launch {
                             labelRepository.saveLabel(label)
                         }
                     } else if (labelType == LabelType.CONTACT_GROUP) {
@@ -625,30 +624,30 @@ internal class EventHandler @AssistedInject constructor(
                             sticky = sticky,
                             notify = notify
                         )
-                        contactDao.saveContactGroupLabel(label)
+                        externalScope.launch {
+                            labelRepository.saveLabel(label)
+                        }
                     }
                 }
 
-                ActionType.UPDATE -> {
-                    val labelType = item.type!!
+                ActionType.UPDATE ->  externalScope.launch {
+                    val labelType = item.type
                     val labelId = item.id
                     if (labelType == LabelType.MESSAGE_LABEL) {
-                        runBlocking {
-                            val label = labelRepository.findLabel(LabelId(labelId))
-                            writeMessageLabel(label, item)
-                        }
+                        val label = labelRepository.findLabel(LabelId(labelId))
+                        writeMessageLabel(label, item)
                     } else if (labelType == LabelType.CONTACT_GROUP) {
-                        val contactLabel = contactDao.findContactGroupByIdBlocking(labelId!!)
-                        writeContactGroup(contactLabel, item, contactDao)
+                        val contactGroupLabel = labelRepository.findLabel(LabelId(labelId))
+                        writeContactGroup(contactGroupLabel, item, contactDao)
                     }
                 }
 
                 ActionType.DELETE -> {
                     val labelId = event.id
-                    runBlocking {
+                    externalScope.launch {
                         labelRepository.deleteLabel(LabelId(labelId))
+                        contactDao.deleteByContactGroupLabelId(labelId)
                     }
-                    contactDao.deleteByContactGroupLabelId(labelId)
                 }
 
                 ActionType.UPDATE_FLAGS -> {
@@ -671,7 +670,7 @@ internal class EventHandler @AssistedInject constructor(
         if (currentLabel != null) {
             val labelFactory = LabelsMapper()
             val labelToSave = labelFactory.mapLabelToLabelEntity(updatedLabel, userId)
-            runBlocking {
+            externalScope.launch {
                 labelRepository.saveLabel(labelToSave)
             }
         }
@@ -686,8 +685,10 @@ internal class EventHandler @AssistedInject constructor(
             val contactLabelFactory = LabelsMapper()
             val labelToSave = contactLabelFactory.mapLabelToLabelEntity(updatedGroup, userId)
             val joins = contactDao.fetchJoinsBlocking(labelToSave.id.id)
-            contactDao.saveContactGroupLabel(labelToSave)
-            contactDao.saveContactEmailContactLabelBlocking(joins)
+            externalScope.launch {
+                labelRepository.saveLabel(labelToSave)
+                contactDao.saveContactEmailContactLabelBlocking(joins)
+            }
         }
     }
 }

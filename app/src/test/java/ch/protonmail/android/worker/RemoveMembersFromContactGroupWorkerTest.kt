@@ -24,13 +24,16 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.labels.data.LabelRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -44,24 +47,30 @@ class RemoveMembersFromContactGroupWorkerTest {
     @RelaxedMockK
     private lateinit var parameters: WorkerParameters
 
-
-    @MockK
-    private lateinit var contactDb: ContactDao
-
     @MockK
     private lateinit var api: ProtonMailApiManager
+
+    @MockK
+    private lateinit var labelRepository: LabelRepository
+
+    @MockK
+    private lateinit var accountManager: AccountManager
+
+    private val testUserId = UserId("TestUserId")
 
     private lateinit var worker: RemoveMembersFromContactGroupWorker
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
         worker = RemoveMembersFromContactGroupWorker(
             context,
             parameters,
             api,
-            contactDb,
-            TestDispatcherProvider
+            TestDispatcherProvider,
+            labelRepository,
+            accountManager
         )
     }
 

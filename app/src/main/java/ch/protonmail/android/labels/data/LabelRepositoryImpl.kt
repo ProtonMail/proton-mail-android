@@ -73,8 +73,23 @@ internal class LabelRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>> =
+        labelDao.observeLabelsByType(userId, LabelType.CONTACT_GROUP.typeInt)
+
+    override fun observeSimilarContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>> =
+        labelDao.observeSimilarLabelsByNameAndType(userId, labelName, LabelType.CONTACT_GROUP.typeInt)
+
     override suspend fun findContactGroups(userId: UserId): List<LabelEntity> =
         labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP.typeInt)
+
+    override suspend fun findLabelByName(userId: UserId, labelName: String): LabelEntity? =
+        labelDao.findLabelByName(userId, labelName)
+
+    override fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
+        labelDao.findAllMessageLabelsPaged(userId)
+
+    override fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
+        labelDao.findAllFoldersPaged(userId)
 
     override suspend fun saveLabels(labels: List<LabelEntity>) {
         Timber.v("Save labels: ${labels.map { it.id.id }}")
@@ -91,12 +106,6 @@ internal class LabelRepositoryImpl @Inject constructor(
     override suspend fun deleteAllLabels(userId: UserId) {
         labelDao.deleteAllLabels(userId)
     }
-
-    override fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
-        labelDao.findAllLabelsPaged(userId)
-
-    override fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
-        labelDao.findAllFoldersPaged(userId)
 
     override suspend fun deleteContactGroups(userId: UserId) {
         labelDao.deleteContactGroups(userId)

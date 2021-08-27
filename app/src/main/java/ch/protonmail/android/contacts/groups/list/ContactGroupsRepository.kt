@@ -18,29 +18,36 @@
  */
 package ch.protonmail.android.contacts.groups.list
 
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class ContactGroupsRepository @Inject constructor(
-    private val api: ProtonMailApiManager,
     private val contactDao: ContactDao,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val labelRepository: LabelRepository,
+    private val accountsManager: AccountManager
 ) {
 
     fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactDao.observeJoins()
 
     fun observeContactGroups(filter: String): Flow<List<ContactLabelUiModel>> =
-        contactDao.findContactGroups("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
+        accountsManager.getPrimaryUserId().filterNotNull()
+            .flatMapLatest {
+                labelRepository.observeSimilarContactGroups(it, filter)
+            }
             .map { labels ->
                 labels.map { entity ->
                     ContactLabelUiModel(
@@ -61,11 +68,8 @@ class ContactGroupsRepository @Inject constructor(
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
         contactDao.findAllContactsEmailsByContactGroup(id).first()
 
-    fun saveContactGroup(contactLabel: LabelEntity) {
-        contactDao.saveContactGroupLabel(contactLabel)
+    suspend fun saveContactGroup(contactLabel: LabelEntity) {
+        labelRepository.saveLabel(contactLabel)
     }
 
-    private companion object {
-        private const val SEARCH_DELIMITER = "%"
-    }
 }

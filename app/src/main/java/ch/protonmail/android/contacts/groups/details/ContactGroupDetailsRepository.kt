@@ -21,16 +21,17 @@ package ch.protonmail.android.contacts.groups.details
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
-import io.reactivex.Single
+import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import javax.inject.Inject
 
 class ContactGroupDetailsRepository @Inject constructor(
     private val databaseProvider: DatabaseProvider,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val labelRepository: LabelRepository
 ) {
 
     private val contactDao by lazy {
@@ -39,7 +40,7 @@ class ContactGroupDetailsRepository @Inject constructor(
     }
 
     suspend fun findContactGroupDetails(id: String): LabelEntity? =
-        contactDao.findContactGroupById(id).first()
+        labelRepository.findLabel(LabelId(id))
 
     fun getContactGroupEmails(id: String): Flow<List<ContactEmail>> =
         contactDao.findAllContactsEmailsByContactGroup(id)

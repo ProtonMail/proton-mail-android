@@ -74,7 +74,6 @@ import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.GlobalScope
@@ -84,7 +83,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
@@ -329,9 +331,9 @@ class ComposeMessageViewModel @Inject constructor(
             handleContactGroupsResult()
             return
         }
-        val disposable = composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
-            .flatMap {
-                for (group in it) {
+        composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
+            .onEach { models ->
+                for (group in models) {
                     val emails = composeMessageRepository.getContactGroupEmailsSync(group.id.id)
                     val recipients = ArrayList<MessageRecipient>()
                     for (email in emails) {
@@ -344,33 +346,26 @@ class ComposeMessageViewModel @Inject constructor(
                     }
                     _groupsRecipientsMap[group] = recipients
                 }
-                Observable.just(it)
-            }
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe(
-                {
-                    _data = it
-                    handleContactGroupsResult()
-                    _setupCompleteValue = true
-                    sendingInProcess = false
-                    _setupComplete.postValue(Event(true))
-                    if (!_protonMailContactsLoaded) {
-                        loadPMContacts()
-                    }
-                },
-                {
-                    _data = ArrayList()
-                    _setupCompleteValue = false
-                    sendingInProcess = false
-                    _setupComplete.postValue(Event(false))
-                    if (!_protonMailContactsLoaded) {
-                        loadPMContacts()
-                    }
-                }
-            )
 
-        compositeDisposable.add(disposable)
+                _data = models
+                handleContactGroupsResult()
+                _setupCompleteValue = true
+                sendingInProcess = false
+                _setupComplete.postValue(Event(true))
+                if (!_protonMailContactsLoaded) {
+                    loadPMContacts()
+                }
+            }
+            .catch {
+                _data = ArrayList()
+                _setupCompleteValue = false
+                sendingInProcess = false
+                _setupComplete.postValue(Event(false))
+                if (!_protonMailContactsLoaded) {
+                    loadPMContacts()
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun getContactGroupRecipients(group: ContactLabelUiModel): List<MessageRecipient> =

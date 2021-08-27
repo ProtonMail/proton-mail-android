@@ -19,29 +19,23 @@
 package ch.protonmail.android.contacts.groups.details
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.EmptyResultSetException
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.every
 import io.mockk.mockk
-import io.reactivex.Single
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.EMPTY_STRING
-import org.junit.Assert
 import org.junit.Rule
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class ContactGroupDetailsRepositoryTest {
 
     //region mocks
     private val database = mockk<ContactDao>(relaxed = true)
     private val userManager = mockk<UserManager>(relaxed = true)
+    private val labelRepository = mockk<LabelRepository>(relaxed = true)
     private val databaseProvider = mockk<DatabaseProvider>(relaxed = true) {
         every { provideContactDao(any()) } returns database
     }
@@ -62,32 +56,10 @@ class ContactGroupDetailsRepositoryTest {
     @BeforeTest
     fun setUp() {
         contactGroupDetailsRepository =
-            ContactGroupDetailsRepository(databaseProvider, userManager)
+            ContactGroupDetailsRepository(databaseProvider, userManager, labelRepository)
 
         every { userManager.requireCurrentUserId() } returns testUserId
     }
 
-    @Test
-    fun testCorrectContactGroupReturnedById() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "color", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        every { database.findContactGroupByIdAsync("") } returns Single.just(label1)
 
-        val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("").test()
-        testObserver.awaitTerminalEvent()
-        testObserver.assertValue(label1)
-    }
-
-    @Test
-    fun testReturnNullWrongContactId() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "color", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        every { database.findContactGroupByIdAsync("a") } returns Single.just(label1)
-        every { database.findContactGroupByIdAsync(any()) } returns Single.error(
-            EmptyResultSetException("no such element")
-        )
-
-        val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("b").test()
-        testObserver.awaitTerminalEvent()
-        Assert.assertEquals(0, testObserver.valueCount())
-        testObserver.assertError(EmptyResultSetException::class.java)
-    }
 }

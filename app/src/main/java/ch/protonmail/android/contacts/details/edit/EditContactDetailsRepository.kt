@@ -39,8 +39,8 @@ class EditContactDetailsRepository @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     contactDao: ContactDao,
     labelsMapper: LabelsMapper,
-    labelRepository: LabelRepository
-) : ContactDetailsRepository(workManager, jobManager, api, contactDao, dispatcherProvider, labelsMapper, labelRepository) {
+    private val labelRepository: LabelRepository
+) : ContactDetailsRepository(jobManager, api, contactDao, dispatcherProvider, labelsMapper, labelRepository) {
 
     suspend fun clearEmail(email: String) {
         contactDao.clearByEmail(email)
@@ -52,12 +52,12 @@ class EditContactDetailsRepository @Inject constructor(
         emails: List<ContactEmail>,
         vCardEncrypted: VCard,
         vCardSigned: VCard,
-        mapEmailGroupsIds: Map<ContactEmail, List<ContactLabelUiModel>>
+        mapEmailGroupsIds: Map<ContactEmail, List<ContactLabelUiModel>>,
     ) {
         jobManager.addJobInBackground(
             UpdateContactJob(
                 contactId, contactName, emails, vCardEncrypted.write(),
-                vCardSigned.write(), mapEmailGroupsIds
+                vCardSigned.write(), mapEmailGroupsIds, labelRepository
             )
         )
     }

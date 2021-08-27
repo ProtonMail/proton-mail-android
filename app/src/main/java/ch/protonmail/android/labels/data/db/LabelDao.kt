@@ -75,7 +75,41 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         AND $COLUMN_LABEL_TYPE = :labelType
         """
     )
+    abstract fun observeLabelsByType(userId: UserId, labelType: Int): Flow<List<LabelEntity>>
+
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_USER_ID=:userId
+        AND $COLUMN_LABEL_TYPE = :labelType
+        AND $COLUMN_LABEL_NAME LIKE '%' || :labelName || '%'
+        ORDER BY $COLUMN_LABEL_NAME
+    """
+    )
+    abstract fun observeSimilarLabelsByNameAndType(
+        userId: UserId,
+        labelName: String,
+        labelType: Int
+    ): Flow<List<LabelEntity>>
+
+    @Query(
+        """
+         SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_USER_ID=:userId
+        AND $COLUMN_LABEL_TYPE = :labelType
+        """
+    )
     abstract suspend fun findLabelsByType(userId: UserId, labelType: Int): List<LabelEntity>
+
+    @Query(
+        """
+         SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_USER_ID=:userId
+        AND $COLUMN_LABEL_NAME = :labelName
+        """
+    )
+    abstract suspend fun findLabelByName(userId: UserId, labelName: String): LabelEntity?
 
     @Query(
         """
@@ -85,7 +119,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         ORDER BY $COLUMN_LABEL_ORDER
         """
     )
-    abstract fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
+    abstract fun findAllMessageLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
     @Query(
         """

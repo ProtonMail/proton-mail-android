@@ -45,6 +45,7 @@ import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_CONTACT_GROUP
 import ch.protonmail.android.labels.data.model.LabelRequestBody
@@ -67,7 +68,8 @@ import java.util.ArrayList
 import java.util.UUID
 
 class ConvertLocalContactsJob(
-    localContacts: List<ContactItem>
+    localContacts: List<ContactItem>,
+    private val labelRepository: LabelRepository
 ) : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
 
     private val localContacts: List<LocalContactItem> = localContacts
@@ -299,11 +301,8 @@ class ConvertLocalContactsJob(
                     val serverLabel = response.valueOrThrow.label
                     result[it.value] = serverLabel.id
                     val userId = userId ?: getUserManager().requireCurrentUserId()
-                    val dao = ContactDatabase
-                        .getInstance(applicationContext, userId)
-                        .getDao()
                     val contactLabelFactory = LabelsMapper()
-                    dao.saveContactGroupLabel(contactLabelFactory.mapLabelToLabelEntity(serverLabel, userId))
+                    labelRepository.saveLabel(contactLabelFactory.mapLabelToLabelEntity(serverLabel, userId))
                 }
             }
         }

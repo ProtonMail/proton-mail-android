@@ -50,7 +50,6 @@ import ch.protonmail.android.labels.data.db.COLUMN_LABEL_ORDER
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.db.TABLE_LABELS
 import io.reactivex.Flowable
-import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -166,7 +165,7 @@ interface ContactDao {
         WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
     """
     )
-    fun findAllContactsEmailsByContactGroupBlocking(contactGroupId: String): List<ContactEmail>
+    suspend fun findAllContactsEmailsByContactGroupOnce(contactGroupId: String): List<ContactEmail>
 
     @Query(
         """
@@ -258,36 +257,6 @@ interface ContactDao {
     """
     )
     suspend fun getAllContactGroupsByContactEmail(emailId: String): List<LabelEntity>
-
-    //region contacts labels aka contacts groups
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID = :labelId")
-    fun findContactGroupById(labelId: String): Flow<LabelEntity?>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID = :labelId")
-    fun findContactGroupByIdBlocking(labelId: String): LabelEntity?
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_NAME = :labelName")
-    fun findContactGroupByNameAsync(labelName: String): Single<LabelEntity>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_NAME = :groupName")
-    fun findContactGroupByName(groupName: String): LabelEntity?
-
-
-    @Query("SELECT * FROM $TABLE_LABELS ORDER BY $COLUMN_LABEL_NAME")
-    fun findContactGroupsObservable(): Flowable<List<LabelEntity>>
-
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_NAME LIKE :filter
-        ORDER BY $COLUMN_LABEL_NAME
-    """
-    )
-    fun findContactGroups(filter: String): Flow<List<LabelEntity>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactGroupLabel(contactLabel: LabelEntity): Long
 
     @Query("DELETE FROM $TABLE_LABELS")
     fun clearContactGroupsLabelsTableBlocking()

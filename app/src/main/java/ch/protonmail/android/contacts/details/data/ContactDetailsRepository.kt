@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.details.data
 
-import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.data.local.ContactDao
@@ -43,7 +42,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 open class ContactDetailsRepository @Inject constructor(
-    private val workManager: WorkManager,
     protected val jobManager: JobManager,
     protected val api: ProtonMailApiManager,
     protected val contactDao: ContactDao,

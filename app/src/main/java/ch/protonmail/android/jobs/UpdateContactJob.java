@@ -52,6 +52,7 @@ import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
 import ch.protonmail.android.events.ContactEvent;
+import ch.protonmail.android.labels.data.LabelRepository;
 import ch.protonmail.android.utils.AppUtil;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
@@ -66,6 +67,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
     private final String mEncryptedData;
     private final String mSignedData;
     private final Map<ContactEmail, List<ContactLabelUiModel>> mMapEmailGroupsIds;
+    private final LabelRepository labelRepository;
 
     private transient ContactDao mContactDao;
 
@@ -75,7 +77,8 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             @NonNull List<ContactEmail> contactEmails,
             String encryptedData,
             String signedData,
-            Map<ContactEmail, List<ContactLabelUiModel>> mapEmailGroupsIds
+            Map<ContactEmail, List<ContactLabelUiModel>> mapEmailGroupsIds,
+            LabelRepository labelRepository
     ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT));
         mContactId = contactId;
@@ -84,6 +87,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         mEncryptedData = encryptedData;
         mSignedData = signedData;
         mMapEmailGroupsIds = mapEmailGroupsIds;
+        this.labelRepository = labelRepository;
     }
 
     @Override
@@ -224,7 +228,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                     })
                     .doOnError(throwable ->
                             getJobManager().addJobInBackground(
-                                    new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)
+                                    new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList, labelRepository)
                             )
                     )
                     .subscribeOn(ThreadSchedulers.io())

@@ -47,42 +47,6 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     //region tests
-    @Test
-    fun testFindLabelById() = coroutinesTest {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "acolor", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label2 = LabelEntity(LabelId("b"), testUserId, "bb", "acolor", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label3 = LabelEntity(LabelId("c"), testUserId, "cc", "acolor", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        database.saveContactGroupLabel(label1)
-        database.saveContactGroupLabel(label2)
-        database.saveContactGroupLabel(label3)
-
-        val needed = database.findContactGroupById("b").first()
-        Assert.assertEquals(label2, needed)
-    }
-
-    @Test
-    fun testUpdateFullLabel() = coroutinesTest {
-        val label1 =
-            LabelEntity(LabelId("a"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label2 = LabelEntity(LabelId("a"), testUserId, "ab", "", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        database.saveContactGroupLabel(label1)
-
-        val needed = database.findContactGroupById("a").first()
-        Assert.assertEquals(needed?.name, "ab")
-    }
-
-    @Test
-    fun testLabelSameKeyShouldSaveOnlyLast() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label2 = LabelEntity(LabelId("a"), testUserId, "ab", "aab", 0, LabelType.FOLDER, EMPTY_STRING, "parent", 0, 0, 0)
-        val label3 = LabelEntity(LabelId("a"), testUserId, "ac", "aac", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        database.saveContactGroupLabel(label1)
-        database.saveContactGroupLabel(label2)
-        database.saveContactGroupLabel(label3)
-
-        val actual = database.findContactGroupByIdBlocking("a")
-        Assert.assertEquals(label3, actual)
-    }
 
     @Test
     fun testRelationship() {

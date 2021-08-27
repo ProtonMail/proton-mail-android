@@ -31,10 +31,13 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.labels.data.LabelRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 
@@ -57,8 +60,9 @@ class RemoveMembersFromContactGroupWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val contactDao: ContactDao,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val labelRepository: LabelRepository,
+    private val accountManager: AccountManager
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -66,13 +70,12 @@ class RemoveMembersFromContactGroupWorker @AssistedInject constructor(
         var id = inputData.getString(KEY_INPUT_DATA_CONTACT_GROUP_ID) ?: ""
         val contactGroupName = inputData.getString(KEY_INPUT_DATA_CONTACT_GROUP_NAME)
         val membersList = inputData.getStringArray(KEY_INPUT_DATA_MEMBERS_LIST) ?: emptyArray()
+        val userId = accountManager.getPrimaryUserId().filterNotNull().first()
 
         Timber.v("Remove group Members $membersList")
 
         if (id.isEmpty() && contactGroupName?.isNotEmpty() == true) {
-            val contactLabel = withContext(dispatchers.Io) {
-                contactDao.findContactGroupByName(contactGroupName)
-            }
+            val contactLabel = labelRepository.findLabelByName(userId, contactGroupName)
             id = contactLabel?.id?.id ?: ""
         }
 

@@ -61,7 +61,7 @@ class DeleteLabelTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        deleteLabel = DeleteLabel(TestDispatcherProvider, contactDao, labelRepository, workScheduler)
+        deleteLabel = DeleteLabel(TestDispatcherProvider, labelRepository, workScheduler)
     }
 
     @Test
@@ -86,7 +86,7 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = true
 
-            coEvery { contactDao.findContactGroupByIdBlocking(testLabelId.id) } returns contactLabel
+            coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
             coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
@@ -122,7 +122,7 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = false
 
-            coEvery { contactDao.findContactGroupByIdBlocking(testLabelId.id) } returns contactLabel
+            coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
             coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
@@ -157,7 +157,7 @@ class DeleteLabelTest {
             val workerStatusLiveData = MutableLiveData<WorkInfo>()
             workerStatusLiveData.value = workInfo
 
-            coEvery { contactDao.findContactGroupByIdBlocking(testLabelId.id) } returns contactLabel
+            coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
             coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 

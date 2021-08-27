@@ -39,7 +39,17 @@ interface LabelRepository {
 
     fun findLabelBlocking(labelId: LabelId): LabelEntity?
 
+    fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>>
+
+    fun observeSimilarContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>>
+
     suspend fun findContactGroups(userId: UserId): List<LabelEntity>
+
+    suspend fun findLabelByName(userId: UserId, labelName: String): LabelEntity?
+
+    fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
+
+    fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
     suspend fun saveLabel(label: LabelEntity)
 
@@ -48,10 +58,6 @@ interface LabelRepository {
     suspend fun deleteLabel(labelId: LabelId)
 
     suspend fun deleteAllLabels(userId: UserId)
-
-    fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
-
-    fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
     suspend fun deleteContactGroups(userId: UserId)
 }

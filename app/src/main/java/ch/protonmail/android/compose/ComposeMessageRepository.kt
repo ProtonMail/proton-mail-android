@@ -48,7 +48,9 @@ import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
@@ -90,12 +92,12 @@ class ComposeMessageRepository @Inject constructor(
         messageDao = databaseProvider.provideMessageDao(userId)
     }
 
-    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Observable<List<ContactLabelUiModel>> {
+    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Flow<List<ContactLabelUiModel>> {
         var tempContactDao: ContactDao = contactDao
         if (combinedContacts) {
             tempContactDao = contactDaos[userId]!!
         }
-        return tempContactDao.findContactGroupsObservable()
+        return labelRepository.observeContactGroups(userId)
             .map { list ->
                 list.map { entity ->
                     ContactLabelUiModel(
@@ -111,17 +113,16 @@ class ComposeMessageRepository @Inject constructor(
                     )
                 }
             }
-            .toObservable()
     }
 
-    fun getContactGroupFromDB(groupName: String): Single<LabelEntity> =
-        contactDao.findContactGroupByNameAsync(groupName)
+    suspend fun getContactGroupFromDB(userId: UserId, groupName: String): LabelEntity? =
+        labelRepository.findLabelByName(userId, groupName)
 
     fun getContactGroupEmails(groupId: String): Observable<List<ContactEmail>> =
         contactDao.findAllContactsEmailsByContactGroupAsyncObservable(groupId).toObservable()
 
-    fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> =
-        contactDao.findAllContactsEmailsByContactGroupBlocking(groupId)
+    suspend fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> =
+        contactDao.findAllContactsEmailsByContactGroupOnce(groupId)
 
     suspend fun getAttachments(message: Message, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {

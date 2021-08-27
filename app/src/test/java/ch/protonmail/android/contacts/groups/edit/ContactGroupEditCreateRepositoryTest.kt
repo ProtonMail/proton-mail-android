@@ -23,6 +23,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
@@ -32,9 +33,11 @@ import ch.protonmail.android.labels.data.model.LabelResponse
 import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
@@ -56,10 +59,12 @@ class ContactGroupEditCreateRepositoryTest {
 
     private val labelsMapper: LabelsMapper = LabelsMapper()
 
+    private val labelRepository: LabelRepository = mockk()
+
     private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer = mockk(relaxed = true)
 
     private val repository = ContactGroupEditCreateRepository(
-        jobManager, workManager, apiManager, contactDao, labelsMapper, createContactGroupWorker
+        jobManager, workManager, apiManager, contactDao, labelsMapper, createContactGroupWorker, labelRepository
     )
 
     private val testPath = "a/bpath"
@@ -93,6 +98,7 @@ class ContactGroupEditCreateRepositoryTest {
         coEvery { apiManager.updateLabel(any(), any(), any()) } returns ApiResult.Success(labelResponse)
         val emailLabelJoinedList = listOf(ContactEmailContactLabelJoin("emailId", "labelId"))
         coEvery { contactDao.fetchJoins(contactGroupId) } returns emailLabelJoinedList
+        coEvery { labelRepository.saveLabel(contactLabel) } just Runs
         val updateLabelRequest = LabelRequestBody(
             name = "name",
             color = "color",
@@ -111,7 +117,7 @@ class ContactGroupEditCreateRepositoryTest {
         coVerify { apiManager.updateLabel(testUserId, contactGroupId, updateLabelRequest) }
         coVerifyOrder {
             contactDao.fetchJoins(contactGroupId)
-            contactDao.saveContactGroupLabel(contactLabel)
+            labelRepository.saveLabel(contactLabel)
             contactDao.saveContactEmailContactLabel(emailLabelJoinedList)
         }
     }
@@ -164,6 +170,7 @@ class ContactGroupEditCreateRepositoryTest {
             val updateLabelRequest = labelsMapper.mapLabelEntityToRequestLabel(contactLabel)
             val labelResponse = LabelResponse(testLabel)
             coEvery { apiManager.createLabel(testUserId, any()) } returns ApiResult.Success(labelResponse)
+            coEvery { labelRepository.saveLabel(any()) } just Runs
 
             repository.createContactGroup(contactLabel, testUserId)
 
@@ -189,6 +196,7 @@ class ContactGroupEditCreateRepositoryTest {
             )
         val labelResponse = LabelResponse(testLabel)
         coEvery { apiManager.createLabel(testUserId, any()) } returns ApiResult.Success(labelResponse)
+        coEvery { labelRepository.saveLabel(contactLabel) } just Runs
 
         // when
         val apiResult = repository.createContactGroup(contactLabel, testUserId)
@@ -196,7 +204,7 @@ class ContactGroupEditCreateRepositoryTest {
         // then
         assertNotNull(apiResult)
         assertEquals(testLabel, (apiResult as? ApiResult.Success)?.valueOrThrow?.label)
-        verify { contactDao.saveContactGroupLabel(contactLabel) }
+        coVerify { labelRepository.saveLabel(contactLabel) }
     }
 
     @Test

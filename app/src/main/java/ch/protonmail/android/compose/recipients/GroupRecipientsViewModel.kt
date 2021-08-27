@@ -18,12 +18,11 @@
  */
 package ch.protonmail.android.compose.recipients
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.compose.ComposeMessageRepository
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
@@ -32,11 +31,18 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class GroupRecipientsViewModel @Inject constructor(
-    private val composeMessageRepository: ComposeMessageRepository
+    private val composeMessageRepository: ComposeMessageRepository,
+    private val accountManager: AccountManager
 ) : ViewModel() {
 
     private lateinit var _recipients: ArrayList<MessageRecipient>
@@ -58,45 +64,45 @@ class GroupRecipientsViewModel @Inject constructor(
         _recipients = recipients
         _group = _recipients[0].group
         _location = location
-        getContactGroupFromDB()
+
+        viewModelScope.launch {
+            val userId = accountManager.getPrimaryUserId().filterNotNull().first()
+            getContactGroupFromDB(userId)
+        }
     }
 
     fun getLocation(): Constants.RecipientLocationType = _location
 
     fun getGroup(): String = _group
 
-    @SuppressLint("CheckResult")
-    private fun getContactGroupFromDB() {
+    private suspend fun getContactGroupFromDB(userId: UserId) {
         val groupName = _recipients[0].group
-        composeMessageRepository.getContactGroupFromDB(groupName).subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .flatMapObservable {
-                _groupDetails = it
-                composeMessageRepository.getContactGroupEmails(it.id.id)
+        val contactGroup = composeMessageRepository.getContactGroupFromDB(userId, groupName)
+        if (contactGroup != null) {
+            _groupDetails = contactGroup
+            val emails = composeMessageRepository.getContactGroupEmailsSync(contactGroup.id.id)
+            _groupAllEmails = emails
+            _groupAllEmails.forEach { email ->
+                email.selected = _recipients.find { selected ->
+                    selected.emailAddress == email.email && selected.name == email.name
+                } != null
+                email.isPGP = _recipients.find { selected -> selected.emailAddress == email.email }?.isPGP ?: false
+                email.pgpIcon = _recipients.find { selected -> selected.emailAddress == email.email }?.icon ?: 0
+                email.pgpIconColor = _recipients.find { selected ->
+                    selected.emailAddress == email.email
+                }?.iconColor ?: 0
+                email.pgpDescription =
+                    _recipients.find { selected -> selected.emailAddress == email.email }?.description ?: 0
             }
-            .subscribe(
-                { it ->
-                    _groupAllEmails = it
-                    _groupAllEmails.forEach {
-                        it.selected =
-                            _recipients.find { selected ->
-                            selected.emailAddress == it.email && selected.name == it.name
-                        } != null
-                        it.isPGP = _recipients.find { selected -> selected.emailAddress == it.email }?.isPGP ?: false
-                        it.pgpIcon = _recipients.find { selected -> selected.emailAddress == it.email }?.icon ?: 0
-                        it.pgpIconColor = _recipients.find {
-                            selected ->
-                            selected.emailAddress == it.email
-                        }?.iconColor ?: 0
-                        it.pgpDescription =
-                            _recipients.find { selected -> selected.emailAddress == it.email }?.description ?: 0
-                    }
-                    _contactGroupResult.postValue(it)
-                },
-                {
-                    _contactGroupError.postValue(Event(ErrorResponse(it.message ?: "", ErrorEnum.DEFAULT_ERROR)))
-                }
-            )
+            _contactGroupResult.postValue(emails)
+
+
+        } else {
+            val errorMessage = "Cannot find contact group $groupName for user: $userId"
+            Timber.i(errorMessage)
+            _contactGroupError.postValue(Event(ErrorResponse(errorMessage, ErrorEnum.DEFAULT_ERROR)))
+        }
+
     }
 
     fun getData(): ArrayList<MessageRecipient> = _recipients
