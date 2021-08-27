@@ -1,0 +1,224 @@
+/*
+ * Copyright (c) 2020 Proton Technologies AG
+ *
+ * This file is part of ProtonMail.
+ *
+ * ProtonMail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ProtonMail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ */
+package ch.protonmail.android.activities
+
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.R
+import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter
+import ch.protonmail.android.api.segments.event.FetchUpdatesJob
+import ch.protonmail.android.core.Constants.MessageLocationType
+import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.events.NoResultsEvent
+import ch.protonmail.android.events.SearchResultEvent
+import ch.protonmail.android.jobs.SearchMessagesJob
+import ch.protonmail.android.mailbox.presentation.MailboxViewModel
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.utils.AppUtil
+import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import javax.inject.Provider
+
+@AndroidEntryPoint
+class SearchActivity : BaseActivity() {
+
+    private lateinit var adapter: MailboxRecyclerViewAdapter
+    private lateinit var noMessagesView: TextView
+    private lateinit var progressBar: ProgressBar
+    private var scrollStateChanged = false
+    private var queryText = ""
+    private var currentPage = 0
+    private lateinit var searchView: SearchView
+    private lateinit var mailboxViewModel: MailboxViewModel
+
+    @Inject
+    lateinit var messageDetailsRepository: MessageDetailsRepository
+
+    @Inject
+    lateinit var mailboxViewModelProvider: Provider<MailboxViewModel>
+
+    override fun getLayoutId(): Int = R.layout.activity_search
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mailboxViewModel = mailboxViewModelProvider.get()
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            title = null
+        }
+        val messagesListView = findViewById<RecyclerView>(R.id.messages_list_view)
+        progressBar = findViewById(R.id.progress_bar)
+        noMessagesView = findViewById(R.id.no_messages)
+        adapter = MailboxRecyclerViewAdapter(this, null)
+        messagesListView.adapter = adapter
+        messagesListView.layoutManager = LinearLayoutManager(this)
+        messagesListView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(view: RecyclerView, scrollState: Int) {
+                scrollStateChanged =
+                    scrollState == RecyclerView.SCROLL_STATE_DRAGGING ||
+                    scrollState == RecyclerView.SCROLL_STATE_SETTLING
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager?
+                val adapter = recyclerView.adapter
+                val lastVisibleItem = layoutManager?.findLastVisibleItemPosition() ?: return
+                val lastPosition = adapter?.itemCount?.let { it - 1 } ?: return
+                if (scrollStateChanged && lastVisibleItem == lastPosition && dy > 0) {
+                    scrollStateChanged = false
+                    currentPage++
+                    performSearch(true)
+                }
+            }
+        })
+        adapter.setItemClick { mailboxUiItem: MailboxUiItem ->
+            if (isDraft(mailboxUiItem)) {
+                val intent =
+                    AppUtil.decorInAppIntent(Intent(this@SearchActivity, ComposeMessageActivity::class.java))
+                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, mailboxUiItem.itemId)
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, mailboxUiItem.messageData?.isInline
+                )
+                startActivity(intent)
+            } else {
+                val intent =
+                    AppUtil.decorInAppIntent(Intent(this@SearchActivity, MessageDetailsActivity::class.java))
+                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, mailboxUiItem.itemId)
+                intent.putExtra(
+                    MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID,
+                    MessageLocationType.SEARCH.messageLocationTypeValue
+                )
+                startActivity(intent)
+            }
+        }
+        messageDetailsRepository.getAllLabelsLiveData().observe(
+            this,
+            { labels: List<Label>? ->
+                if (labels != null) {
+                    adapter.setLabels(labels)
+                }
+            }
+        )
+    }
+
+    private fun showSearchResults(items: List<MailboxUiItem>) {
+        adapter.submitList(items)
+        progressBar.visibility = View.GONE
+        adapter.setNewLocation(MessageLocationType.SEARCH)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ProtonMailApplication.getApplication().bus.register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ProtonMailApplication.getApplication().bus.unregister(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mJobManager.addJobInBackground(FetchUpdatesJob())
+        if (queryText.isNotEmpty()) {
+            progressBar.visibility = View.VISIBLE
+            Handler().postDelayed({ performSearch(false) }, 1000)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.search_menu, menu)
+        val searchItem = menu.findItem(R.id.search)
+        searchView = searchItem.actionView as SearchView
+        searchView.maxWidth = Int.MAX_VALUE
+        searchView.queryHint = getString(R.string.x_search)
+        searchView.onActionViewExpanded()
+        searchView.imeOptions =
+            EditorInfo.IME_ACTION_SEARCH or EditorInfo.IME_FLAG_NO_EXTRACT_UI or EditorInfo.IME_FLAG_NO_FULLSCREEN
+        searchItem.expandActionView()
+        searchView.requestFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                currentPage = 0
+                queryText = query
+                performSearch(false)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                progressBar.visibility = View.GONE
+                noMessagesView.visibility = View.GONE
+                return true
+            }
+        })
+        return true
+    }
+
+    private fun performSearch(loadMore: Boolean) {
+        progressBar.visibility = if (loadMore) View.GONE else View.VISIBLE
+        mJobManager.addJobInBackground(SearchMessagesJob(queryText, currentPage))
+        searchView.clearFocus()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun isDraft(item: MailboxUiItem): Boolean {
+        val messageLocation = item.messageData?.location?.let { fromInt(it) }
+        return messageLocation === MessageLocationType.ALL_DRAFT ||
+            messageLocation === MessageLocationType.DRAFT
+    }
+
+    @Subscribe
+    fun onNoResultsEvent(event: NoResultsEvent) {
+        progressBar.visibility = View.GONE
+        if (event.page == 0) {
+            adapter.submitList(null)
+            noMessagesView.visibility = View.VISIBLE
+        }
+    }
+
+    @Subscribe
+    fun onSearchResults(event: SearchResultEvent) {
+        val messages = event.results
+        val items = mailboxViewModel.messagesToMailboxItemsBlocking(messages)
+        showSearchResults(items)
+    }
+}
