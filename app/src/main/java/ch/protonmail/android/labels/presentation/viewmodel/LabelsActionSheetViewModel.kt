@@ -144,16 +144,12 @@ class LabelsActionSheetViewModel @Inject constructor(
                 val selectedLabels = labels.value
                     .filter { it.isChecked == true }
                     .map { it.labelId }
-                val unselectedLabels = labels.value
-                    .filter { it.isChecked == false }
-                    .map { it.labelId }
                 Timber.v("Selected labels: $selectedLabels messageId: $ids")
                 if (isActionAppliedToConversation(currentMessageFolder)) {
                     updateConversationsLabels.enqueue(
                         ids,
                         UserId(userManager.requireCurrentUserId().id),
-                        selectedLabels,
-                        unselectedLabels
+                        selectedLabels
                     )
                 } else {
                     ids.forEach { id ->

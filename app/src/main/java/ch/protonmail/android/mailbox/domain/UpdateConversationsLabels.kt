@@ -19,7 +19,9 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
@@ -27,14 +29,14 @@ import javax.inject.Inject
  * A use case that handles labeling/unlabeling conversations
  */
 class UpdateConversationsLabels @Inject constructor(
-    private val conversationsRepository: ConversationsRepository
+    private val conversationsRepository: ConversationsRepository,
+    private val labelRepository: LabelRepository
 ) {
 
     suspend operator fun invoke(
         conversationIds: List<String>,
         userId: UserId,
-        selectedLabels: List<String>,
-        unselectedLabels: List<String>
+        selectedLabels: List<String>
     ): ConversationsActionResult {
 
         selectedLabels.forEach {
@@ -43,6 +45,12 @@ class UpdateConversationsLabels @Inject constructor(
                 return result
             }
         }
+
+        val allLabels = labelRepository.findAllLabels(userId).first().toMutableList()
+        val unselectedLabels = mutableListOf<String>()
+        allLabels.forEach { if(it.id !in selectedLabels) unselectedLabels.add(it.id) }
+
+
         unselectedLabels.forEach {
             val result = conversationsRepository.unlabel(conversationIds, userId, it)
             if (result is ConversationsActionResult.Error) {

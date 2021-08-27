@@ -191,7 +191,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyThatAfterDoneIsClickedErrorUpdatingLabelsIsEmittedWhenAConversationActionReturnsErrorResult() {
         // given
         val shallMoveToArchive = true
-        every { updateConversationsLabels.enqueue(any(), any(), any(), any()) } returns mockk()
+        every { updateConversationsLabels.enqueue(any(), any(), any()) } returns mockk()
         coEvery {
             moveConversationsToFolder.invoke(
                 any(), any(),
