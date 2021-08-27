@@ -17,7 +17,8 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -102,6 +103,18 @@
         android:drawableTint="@color/white"
         tools:visibility="visible" />
 
+    <include
+        android:id="@+id/include_open_in_proton_calendar"
+        layout="@layout/layout_open_in_proton_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_l"
+        app:layout_constraintTop_toBottomOf="@id/loadEmbeddedImagesButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <Button
         android:id="@+id/editDraftButton"
         android:layout_width="match_parent"
@@ -112,7 +125,7 @@
         android:layout_marginBottom="@dimen/message_spacing_small"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/loadEmbeddedImagesButton"
+        app:layout_constraintTop_toBottomOf="@id/include_open_in_proton_calendar"
         android:visibility="gone"
         android:text="@string/edit_draft"
         android:gravity="center"

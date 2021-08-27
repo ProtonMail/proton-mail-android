@@ -67,7 +67,7 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import ch.protonmail.android.views.messageDetails.ReplyActionsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
-import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
+import kotlinx.android.synthetic.main.layout_message_details_body.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 
@@ -133,7 +133,7 @@ internal class MessageDetailsAdapter(
             )
         } else {
             val itemView = LayoutInflater.from(context).inflate(
-                R.layout.layout_message_details_web_view,
+                R.layout.layout_message_details_body,
                 parent,
                 false
             )
@@ -311,6 +311,7 @@ internal class MessageDetailsAdapter(
             val expirationInfoView = itemView.expirationInfoView
             val decryptionErrorView = itemView.decryptionErrorView
             val displayRemoteContentButton = itemView.displayRemoteContentButton
+            val openInProtonCalendarView = itemView.include_open_in_proton_calendar
             val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
             val editDraftButton = itemView.editDraftButton
             val webView = itemView.messageWebViewContainer
