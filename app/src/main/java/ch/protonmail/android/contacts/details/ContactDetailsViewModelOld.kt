@@ -131,34 +131,6 @@ open class ContactDetailsViewModelOld @Inject constructor(
             )
     }
 
-    fun fetchContactEmailGroups(rowID: Int, email: String) {
-        val emailId = allContactEmails.find {
-            it.email == email
-        }?.contactEmailId
-
-        emailId?.let { _ ->
-            contactDetailsRepository.getContactGroups(emailId)
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main())
-                .subscribe(
-                    {
-                        _mapEmailGroups[emailId] = it
-                        _emailGroupsResult.value = ContactEmailsGroups(it, emailId, rowID)
-                    },
-                    {
-                        _emailGroupsError.postValue(
-                            Event(
-                                ErrorResponse(
-                                    it.message ?: "",
-                                    ErrorEnum.SERVER_ERROR
-                                )
-                            )
-                        )
-                    }
-                )
-        }
-    }
-
     fun fetchContactGroupsAndContactEmails(contactId: String) {
         val userId = userManager.requireCurrentUserId()
         Observable.zip(
@@ -206,7 +178,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         )
                     }
                 },
-            { groups: List<LabelEntity>,
+            { groups: List<ContactLabelUiModel>,
                 emails: List<ContactEmail> ->
                 allContactGroups = groups.map { entity ->
                     ContactLabelUiModel(

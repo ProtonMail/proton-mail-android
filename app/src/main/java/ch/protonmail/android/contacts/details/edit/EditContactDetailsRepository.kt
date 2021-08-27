@@ -20,12 +20,13 @@ package ch.protonmail.android.contacts.details.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.jobs.UpdateContactJob
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import com.birbit.android.jobqueue.JobManager
 import ezvcard.VCard
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -37,8 +38,9 @@ class EditContactDetailsRepository @Inject constructor(
     api: ProtonMailApiManager,
     dispatcherProvider: DispatcherProvider,
     contactDao: ContactDao,
-    labelsMapper: LabelsMapper
-) : ContactDetailsRepository(workManager, jobManager, api, contactDao, dispatcherProvider, labelsMapper) {
+    labelsMapper: LabelsMapper,
+    labelRepository: LabelRepository
+) : ContactDetailsRepository(workManager, jobManager, api, contactDao, dispatcherProvider, labelsMapper, labelRepository) {
 
     suspend fun clearEmail(email: String) {
         contactDao.clearByEmail(email)

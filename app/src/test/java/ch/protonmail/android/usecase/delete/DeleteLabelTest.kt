@@ -61,15 +61,17 @@ class DeleteLabelTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        deleteLabel = DeleteLabel(TestDispatcherProvider, contactDao, labelRepository, workScheduler,)
+        deleteLabel = DeleteLabel(TestDispatcherProvider, contactDao, labelRepository, workScheduler)
     }
 
     @Test
     fun verifyThatMessageIsSuccessfullyDeleted() {
         runBlockingTest {
             // given
-            val labelId = "Id1"
-            val contactLabel = mockk<LabelEntity>()
+            val testLabelId = LabelId("Id1")
+            val contactLabel = mockk<LabelEntity>{
+                every { id } returns testLabelId
+            }
             val finishState = WorkInfo.State.SUCCEEDED
             val outputData = workDataOf("a" to "b")
             val workInfo = WorkInfo(
@@ -84,13 +86,12 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = true
 
-            coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
-            coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
-            coEvery { labelRepository.deleteLabel(LabelId(labelId)) } returns Unit
+            coEvery { contactDao.findContactGroupByIdBlocking(testLabelId.id) } returns contactLabel
+            coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
             // when
-            val response = deleteLabel(listOf(labelId))
+            val response = deleteLabel(listOf(testLabelId.id))
             response.observeForever { }
 
             // then
@@ -103,8 +104,10 @@ class DeleteLabelTest {
     fun verifyThatMessageDeleteHasFailed() {
         runBlockingTest {
             // given
-            val labelId = "Id1"
-            val contactLabel = mockk<LabelEntity>()
+            val testLabelId =  LabelId("Id1")
+            val contactLabel = mockk<LabelEntity> {
+                every { id } returns testLabelId
+            }
             val finishState = WorkInfo.State.FAILED
             val outputData = workDataOf()
             val workInfo = WorkInfo(
@@ -119,13 +122,12 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = false
 
-            coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
-            coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
-            coEvery { labelRepository.deleteLabel(LabelId(labelId)) } returns Unit
+            coEvery { contactDao.findContactGroupByIdBlocking(testLabelId.id) } returns contactLabel
+            coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
             // when
-            val response = deleteLabel(listOf(labelId))
+            val response = deleteLabel(listOf(testLabelId.id))
             response.observeForever { }
 
             // then
@@ -138,8 +140,10 @@ class DeleteLabelTest {
     fun verifyThatMessageIsEnqueuedThereIsNoValueEmitted() {
         runBlockingTest {
             // given
-            val labelId = "Id1"
-            val contactLabel = mockk<LabelEntity>()
+            val testLabelId = LabelId("Id1")
+            val contactLabel = mockk<LabelEntity> {
+                every { id } returns testLabelId
+            }
             val finishState = WorkInfo.State.ENQUEUED
             val outputData = workDataOf("a" to "b")
             val workInfo = WorkInfo(
@@ -153,13 +157,12 @@ class DeleteLabelTest {
             val workerStatusLiveData = MutableLiveData<WorkInfo>()
             workerStatusLiveData.value = workInfo
 
-            coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
-            coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
-            coEvery { labelRepository.deleteLabel(LabelId(labelId)) } returns Unit
+            coEvery { contactDao.findContactGroupByIdBlocking(testLabelId.id) } returns contactLabel
+            coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
             // when
-            val response = deleteLabel(listOf(labelId))
+            val response = deleteLabel(listOf(testLabelId.id))
             response.observeForever { }
 
             // then

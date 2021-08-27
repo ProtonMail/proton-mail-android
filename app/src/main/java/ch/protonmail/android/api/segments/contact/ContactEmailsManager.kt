@@ -24,6 +24,7 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
@@ -39,7 +40,8 @@ class ContactEmailsManager @Inject constructor(
     private var api: ProtonMailApiManager,
     private val databaseProvider: DatabaseProvider,
     private val accountManager: AccountManager,
-    private val labelsMapper: LabelsMapper
+    private val labelsMapper: LabelsMapper,
+    private val labelRepository: LabelRepository
 ) {
 
     suspend fun refresh(pageSize: Int = Constants.CONTACTS_PAGE_SIZE) {
@@ -65,7 +67,8 @@ class ContactEmailsManager @Inject constructor(
                 "Refresh emails: ${allContactEmails.size}, labels: ${contactLabels.size}, allJoins: ${allJoins.size}"
             )
             val contactsDao = databaseProvider.provideContactDao(userId)
-            contactsDao.insertNewContactsAndLabels(allContactEmails, contactLabels, allJoins)
+            labelRepository.saveLabels(contactLabels)
+            contactsDao.insertNewContacts(allContactEmails, allJoins)
         } else {
             Timber.v("contactEmails result list is empty")
         }

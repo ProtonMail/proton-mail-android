@@ -26,6 +26,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.Label
@@ -67,6 +68,9 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
     @MockK
     private lateinit var labelsMapper: LabelsMapper
 
+    @MockK
+    private lateinit var labelRepository: LabelRepository
+
     private val testUserId = UserId("TestUser")
     private val testPath = "a/bcPath"
     private val testParentId = "parentIdForTests"
@@ -77,7 +81,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         MockKAnnotations.init(this)
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
         every { dbProvider.provideContactDao(any()) } returns contactDao
-        manager = ContactEmailsManager(api, dbProvider, accountManager, labelsMapper)
+        manager = ContactEmailsManager(api, dbProvider, accountManager, labelsMapper, labelRepository)
     }
 
     @Test
@@ -127,14 +131,15 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             every { total } returns 0
         }
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
-        coEvery { contactDao.insertNewContactsAndLabels(newContactEmails, any(), newJoins) } returns Unit
+        coEvery { labelRepository.saveLabels(any()) } returns Unit
+        coEvery { contactDao.insertNewContacts(newContactEmails, newJoins) } returns Unit
         every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
 
         // then
-        coVerify { contactDao.insertNewContactsAndLabels(newContactEmails, contactLabelList, newJoins) }
+        coVerify { contactDao.insertNewContacts(newContactEmails, newJoins) }
     }
 
     @Test
@@ -208,14 +213,15 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(0, pageSize) } returns emailsResponse1
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
-        coEvery { contactDao.insertNewContactsAndLabels(allContactEmails, any(), newJoins) } returns Unit
+        coEvery { labelRepository.saveLabels(any()) } returns Unit
+        coEvery { contactDao.insertNewContacts(allContactEmails, newJoins) } returns Unit
         every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
 
         // then
-        coVerify { contactDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, newJoins) }
+        coVerify { contactDao.insertNewContacts(allContactEmails, newJoins) }
     }
 
 }

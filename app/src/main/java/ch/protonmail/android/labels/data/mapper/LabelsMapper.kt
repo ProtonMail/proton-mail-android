@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.labels.data.mapper
 
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.data.model.LabelId
@@ -64,4 +65,29 @@ class LabelsMapper @Inject constructor() {
         expanded = labelEntity.expanded,
         sticky = labelEntity.sticky
     )
+
+    fun mapLabelToContactLabelUiModel(serverLabel: Label, contactEmailsCount: Int) = ContactLabelUiModel(
+        id = LabelId(serverLabel.id),
+        name = serverLabel.name,
+        color = serverLabel.color,
+        type = serverLabel.type,
+        path = serverLabel.path,
+        parentId = serverLabel.parentId ?: EMPTY_STRING,
+        expanded = serverLabel.expanded ?: 0,
+        sticky = serverLabel.sticky ?: 0,
+        contactEmailsCount = contactEmailsCount
+    )
+
+    fun mapLabelEntityToContactLabelUiModel(entity: LabelEntity, contactEmailsCount: Int) =
+        ContactLabelUiModel(
+            id = entity.id,
+            name = entity.name,
+            color = entity.color,
+            type = entity.type,
+            path = entity.path,
+            parentId = entity.parentId,
+            expanded = entity.expanded,
+            sticky = entity.sticky,
+            contactEmailsCount = contactEmailsCount
+        )
 }

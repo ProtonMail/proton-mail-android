@@ -38,9 +38,6 @@ class ContactGroupDetailsRepository @Inject constructor(
         databaseProvider.provideContactDao(userManager.requireCurrentUserId())
     }
 
-    fun findContactGroupDetailsBlocking(id: String): Single<LabelEntity> =
-        contactDao.findContactGroupByIdAsync(id)
-
     suspend fun findContactGroupDetails(id: String): LabelEntity? =
         contactDao.findContactGroupById(id).first()
 

@@ -34,7 +34,6 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import org.junit.Assert
 import org.junit.Rule
-import java.util.Arrays
 import kotlin.test.Test
 
 class ContactGroupsDatabaseTest : CoroutinesTest {
@@ -67,50 +66,9 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
             LabelEntity(LabelId("a"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
         val label2 = LabelEntity(LabelId("a"), testUserId, "ab", "", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
         database.saveContactGroupLabel(label1)
-        database.updateFullContactGroup(label2)
 
         val needed = database.findContactGroupById("a").first()
         Assert.assertEquals(needed?.name, "ab")
-    }
-
-    @Test
-    fun testUpdateFullLabelNotUpdatingOtherRows() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label2 = LabelEntity(LabelId("b"), testUserId, "bb", "bbb", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label3 = LabelEntity(LabelId("a"), testUserId, "ab", "", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        database.saveAllContactGroups(label1, label2)
-        database.updateFullContactGroup(label3)
-
-        val neededUpdated = database.findContactGroupByIdBlocking("a")
-        val neededNotUpdated = database.findContactGroupByIdBlocking("b")
-        Assert.assertEquals(neededUpdated?.name, "ab")
-        Assert.assertEquals(neededNotUpdated?.name, "bb")
-    }
-
-    @Test
-    fun testUpdateLabelPartially() {
-        val label1 =
-            LabelEntity(LabelId("a"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label2 =
-            LabelEntity(LabelId("a"), testUserId, "ab", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        database.saveContactGroupLabel(label1)
-        database.updatePartially(label2)
-
-        val needed = database.findContactGroupByIdBlocking("a")
-        Assert.assertEquals(needed?.color, "aaa")
-        Assert.assertEquals(needed?.name, "ab")
-        Assert.assertEquals(needed?.order, 1)
-    }
-
-    @Test
-    fun testInsertAllLabels() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label2 = LabelEntity(LabelId("b"), testUserId, "ab", "aaa", 0, LabelType.FOLDER, EMPTY_STRING, "parent", 0, 0, 0)
-        val label3 = LabelEntity(LabelId("c"), testUserId, "ac", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label4 = LabelEntity(LabelId("d"), testUserId, "ad", "aaa", 0, LabelType.FOLDER, EMPTY_STRING, "parent", 0, 0, 0)
-        database.saveAllContactGroups(label1, label2, label3, label4)
-        val size = database.findContactGroupsLiveData().testValue?.size
-        Assert.assertEquals(size, 4)
     }
 
     @Test
@@ -124,40 +82,6 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
         val actual = database.findContactGroupByIdBlocking("a")
         Assert.assertEquals(label3, actual)
-    }
-
-    @Test
-    fun testClearLabelsTable() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label2 = LabelEntity(LabelId("b"), testUserId, "ab", "aab", 0, LabelType.FOLDER, EMPTY_STRING, "parent", 0, 0, 0)
-        val label3 = LabelEntity(LabelId("c"), testUserId, "ac", "aac", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        database.saveAllContactGroups(label1, label2, label3)
-        val sizeAfterInsert = database.findContactGroupsLiveData().testValue?.size
-        Assert.assertEquals(sizeAfterInsert, 3)
-        database.clearContactGroupsLabelsTableBlocking()
-        val sizeAfterClearing = database.findContactGroupsLiveData().testValue?.size
-        Assert.assertEquals(sizeAfterClearing, 0)
-    }
-
-    @Test
-    fun testFindAllLabelsByIds() {
-        val label1 = LabelEntity(LabelId("a"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label2 = LabelEntity(LabelId("b"), testUserId, "ab", "aab", 0, LabelType.FOLDER, EMPTY_STRING, "parent", 0, 0, 0)
-        val label3 = LabelEntity(LabelId("c"), testUserId, "ac", "aac", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label4 = LabelEntity(LabelId("d"), testUserId, "ad", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        val label5 = LabelEntity(LabelId("e"), testUserId, "ae", "aab", 0, LabelType.FOLDER, EMPTY_STRING, "parent", 0, 0, 0)
-        val label6 = LabelEntity(LabelId("f"), testUserId, "af", "aac", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
-        database.saveAllContactGroups(label1, label2, label3, label4, label5, label6)
-        val requiredIds = Arrays.asList("b", "d", "f")
-        val returnedLabels = database.getAllContactGroupsByIds(requiredIds).testValue
-        val sizeOfReturnedLabels = returnedLabels?.size
-        Assert.assertEquals(sizeOfReturnedLabels, 3)
-        val labelFirst = returnedLabels?.get(0)
-        val labelSecond = returnedLabels?.get(1)
-        val labelThird = returnedLabels?.get(2)
-        Assert.assertEquals(labelFirst, label2)
-        Assert.assertEquals(labelSecond, label4)
-        Assert.assertEquals(labelThird, label6)
     }
 
     @Test
@@ -175,7 +99,6 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
         val email6 = ContactEmail("e6", "6@6.6", "f", labelIds = listOf("ld"))
 
         database.saveAllContactsEmails(email1, email2, email3, email4, email5, email6)
-        database.saveAllContactGroups(label1, label2, label3, label4)
 
         val contactEmailContactLabel1 = ContactEmailContactLabelJoin("e1", "la")
         val contactEmailContactLabel2 = ContactEmailContactLabelJoin("e1", "lc")
@@ -219,7 +142,6 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
         val email5 = ContactEmail("e5", "5@5.5", labelIds = listOf("lb", "la"), name = "ce4")
 
         database.saveAllContactsEmails(email1, email2, email4, email5)
-        database.saveAllContactGroups(label1, label2)
 
         val contactEmailContactLabel1 = ContactEmailContactLabelJoin("e1", "la")
         val contactEmailContactLabel2 = ContactEmailContactLabelJoin("e1", "lb")
@@ -257,7 +179,6 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
         val email5 = ContactEmail("e4", "4@3.4", labelIds = listOf("lb", "la"), name = "ce4")
 
         database.saveAllContactsEmails(email1, email2, email4, email5)
-        database.saveAllContactGroups(label1, label2)
 
         val contactEmailContactLabel1 = ContactEmailContactLabelJoin("e1", "la")
         val contactEmailContactLabel2 = ContactEmailContactLabelJoin("e1", "lb")
@@ -289,7 +210,7 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
     }
 
     @Test
-    fun testReturnedCorrectContactGroupsForContactEmail() {
+    fun testReturnedCorrectContactGroupsForContactEmail() = runBlockingTest {
         val label1 = LabelEntity(LabelId("la"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
         val label2 = LabelEntity(LabelId("lb"), testUserId, "ab", "aab", 0, LabelType.FOLDER, EMPTY_STRING, "parent", 0, 0, 0)
 
@@ -299,7 +220,6 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
         val email5 = ContactEmail("e5", "5@5.5", labelIds = listOf("lb", "la"), name = "ce4")
 
         database.saveAllContactsEmails(email1, email2, email4, email5)
-        database.saveAllContactGroups(label1, label2)
 
         val contactEmailContactLabel1 = ContactEmailContactLabelJoin("e1", "la")
         val contactEmailContactLabel2 = ContactEmailContactLabelJoin("e1", "lb")
@@ -316,7 +236,7 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
             contactEmailContactLabel7,
             contactEmailContactLabel8
         )
-        val laReturnedEmails = database.findAllContactGroupsByContactEmailAsync("e1").testValue
+        val laReturnedEmails = database.getAllContactGroupsByContactEmail("e1")
 
         Assert.assertNotNull(laReturnedEmails)
         Assert.assertEquals(listOf(label1, label2), laReturnedEmails)

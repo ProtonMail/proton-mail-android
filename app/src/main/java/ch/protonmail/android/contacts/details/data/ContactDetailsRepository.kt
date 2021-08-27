@@ -20,37 +20,26 @@ package ch.protonmail.android.contacts.details.data
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.labels.data.model.LabelResponse
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
-import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.FullContactDetails
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.worker.PostLabelWorker
-import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
-import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
-import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 open class ContactDetailsRepository @Inject constructor(
@@ -59,13 +48,9 @@ open class ContactDetailsRepository @Inject constructor(
     protected val api: ProtonMailApiManager,
     protected val contactDao: ContactDao,
     private val dispatcherProvider: DispatcherProvider,
-    private val labelsMapper: LabelsMapper
+    private val labelsMapper: LabelsMapper,
+    private val labelRepository: LabelRepository
 ) {
-
-    fun getContactGroups(id: String): Observable<List<LabelEntity>> {
-        return contactDao.findAllContactGroupsByContactEmailAsyncObservable(id)
-            .toObservable()
-    }
 
     suspend fun getContactGroupsLabelForId(emailId: String): List<LabelEntity> =
         contactDao.getAllContactGroupsByContactEmail(emailId)
@@ -78,10 +63,10 @@ open class ContactDetailsRepository @Inject constructor(
     fun observeContactEmails(contactId: String): Flow<List<ContactEmail>> =
         contactDao.observeContactEmailsByContactId(contactId)
 
-    fun getContactGroups(userId: UserId): Observable<List<LabelEntity>> {
+    fun getContactGroups(userId: UserId): Observable<List<ContactLabelUiModel>> {
         return Observable.fromCallable {
             runBlocking {
-                val dbContacts = getContactGroupsFromDb()
+                val dbContacts = getContactGroupsFromDb(userId)
                 val apiContacts = getContactGroupsFromApi(userId)
                 dbContacts.plus(apiContacts)
             }
@@ -91,108 +76,29 @@ open class ContactDetailsRepository @Inject constructor(
     fun getContactEmailsCount(contactGroupId: LabelId) =
         contactDao.countContactEmailsByLabelIdBlocking(contactGroupId.id)
 
-    private suspend fun getContactGroupsFromApi(userId: UserId): List<LabelEntity> {
+    private suspend fun getContactGroupsFromApi(userId: UserId): List<ContactLabelUiModel> {
         val contactGroupsResponse = api.fetchContactGroups(userId).valueOrNull?.labels
 
         return contactGroupsResponse?.let { labels ->
-            labels.map { label ->
-                labelsMapper.mapLabelToLabelEntity(label, userId)
+            val entities = labels.map {
+                labelsMapper.mapLabelToLabelEntity(it, userId)
             }
-        }?.also {
-            contactDao.clearContactGroupsLabelsTable()
-            contactDao.saveContactGroupsList(it)
+            labelRepository.deleteContactGroups(userId)
+            labelRepository.saveLabels(entities)
+            labels.map {
+                labelsMapper.mapLabelToContactLabelUiModel(it, getContactEmailsCount(LabelId(it.id)))
+            }
+
         } ?: emptyList()
     }
 
-    private suspend fun getContactGroupsFromDb(): List<LabelEntity> {
-        return contactDao.findContactGroups()
-            .flatMapConcat { list ->
-                list.map { entity ->
-                    ContactLabelUiModel(
-                        id = entity.id,
-                        name = entity.name,
-                        color = entity.color,
-                        type = entity.type,
-                        path = entity.path,
-                        parentId = entity.parentId,
-                        expanded = entity.expanded,
-                        sticky = entity.sticky,
-                        contactEmailsCount = getContactEmailsCount(entity.id)
-                    )
-                }
-                list.asFlow()
-            }.toList()
-    }
-
-    suspend fun editContactGroup(contactLabel: LabelEntity, userId: UserId): ApiResult<LabelResponse> {
-        val labelBody = labelsMapper.mapLabelEntityToRequestLabel(contactLabel)
-        val updateLabelResult = api.updateLabel(userId, contactLabel.id.id, labelBody)
-        when (updateLabelResult) {
-            is ApiResult.Success -> {
-                val joins = contactDao.fetchJoins(contactLabel.id.id)
-                contactDao.saveContactGroupLabel(contactLabel)
-                contactDao.saveContactEmailContactLabel(joins)
-            }
-            is ApiResult.Error.Http -> {
-                PostLabelWorker.Enqueuer(workManager).enqueue(
-                    contactLabel.name,
-                    contactLabel.color,
-                    contactLabel.expanded,
-                    contactLabel.type,
-                    false,
-                    contactLabel.id.id
-                )
-            }
-            else -> {
-                Timber.w("updateLabel error $updateLabelResult")
-            }
-        }
-        return updateLabelResult
-    }
-
-    fun setMembersForContactGroup(
-        contactGroupId: String, contactGroupName: String, membersList: List<String>
-    ): Completable {
-        val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
-        return api.labelContacts(labelContactsBody)
-            .doOnComplete {
-                val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
-                for (contactEmail in membersList) {
-                    joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
-                }
-                contactDao.saveContactEmailContactLabelBlocking(joins)
-            }
-            .doOnError { throwable ->
-                if (throwable is IOException) {
-                    jobManager.addJobInBackground(
-                        SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)
-                    )
-                }
+    private suspend fun getContactGroupsFromDb(userId: UserId): List<ContactLabelUiModel> {
+        return labelRepository.findContactGroups(userId)
+            .map { entity ->
+                labelsMapper.mapLabelEntityToContactLabelUiModel(entity, getContactEmailsCount(entity.id))
             }
     }
 
-    fun removeMembersForContactGroup(
-        contactGroupId: String, contactGroupName: String,
-        membersList: List<String>
-    ): Completable {
-        if (membersList.isEmpty()) {
-            return Completable.complete()
-        }
-        val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
-        return api.unlabelContactEmailsCompletable(labelContactsBody)
-            .doOnComplete {
-                contactDao.deleteJoinByGroupIdAndEmailId(membersList, contactGroupId)
-            }
-            .doOnError { throwable ->
-                if (throwable is IOException) {
-                    RemoveMembersFromContactGroupWorker.Enqueuer(workManager).enqueue(
-                        contactGroupId,
-                        contactGroupName,
-                        membersList
-                    )
-                }
-            }
-    }
 
     suspend fun saveContactEmails(emails: List<ContactEmail>) = withContext(dispatcherProvider.Io) {
         contactDao.saveAllContactsEmails(emails)
@@ -241,7 +147,7 @@ open class ContactDetailsRepository @Inject constructor(
             }
             .filterNotNull()
 
-    suspend fun insertFullContactDetails(fullContactDetails: FullContactDetails) =
+    private suspend fun insertFullContactDetails(fullContactDetails: FullContactDetails) =
         contactDao.insertFullContactDetails(fullContactDetails)
 
 }

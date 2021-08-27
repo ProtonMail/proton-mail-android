@@ -25,6 +25,7 @@ import ch.protonmail.android.labels.data.db.LabelDao
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.runBlocking
@@ -48,6 +49,7 @@ internal class LabelRepositoryImpl @Inject constructor(
     override suspend fun findAllLabels(userId: UserId): List<LabelEntity> {
         val dbData = labelDao.findAllLabels(userId)
         return if (dbData.isEmpty()) {
+            Timber.v("Fetching fresh labels")
             fetchAndSaveAllLabels(userId)
         } else {
             dbData
@@ -68,6 +70,9 @@ internal class LabelRepositoryImpl @Inject constructor(
             findLabel(labelId)
         }
     }
+
+    override suspend fun findContactGroups(userId: UserId): List<LabelEntity> =
+        labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP.typeInt)
 
     override suspend fun saveLabels(labels: List<LabelEntity>) {
         Timber.v("Save labels: ${labels.map { it.id.id }}")
@@ -90,6 +95,10 @@ internal class LabelRepositoryImpl @Inject constructor(
 
     override fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
         labelDao.findAllFoldersPaged(userId)
+
+    override suspend fun deleteContactGroups(userId: UserId) {
+        labelDao.deleteContactGroups(userId)
+    }
 
     private suspend fun fetchAndSaveAllLabels(
         userId: UserId

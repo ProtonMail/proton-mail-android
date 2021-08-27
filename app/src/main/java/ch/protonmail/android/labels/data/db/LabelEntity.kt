@@ -43,7 +43,8 @@ internal const val COLUMN_LABEL_STICKY = "sticky"
     primaryKeys = [COLUMN_LABEL_ID],
     indices = [
         Index(COLUMN_LABEL_ID),
-        Index(COLUMN_LABEL_USER_ID)
+        Index(COLUMN_LABEL_USER_ID),
+        Index(COLUMN_LABEL_TYPE)
     ],
     foreignKeys = [
         // TODO: add after contacts migration

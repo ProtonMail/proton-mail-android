@@ -68,6 +68,15 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
 
     @Query(
         """
+         SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_USER_ID=:userId
+        AND $COLUMN_LABEL_TYPE = :labelType
+        """
+    )
+    abstract suspend fun findLabelsByType(userId: UserId, labelType: Int): List<LabelEntity>
+
+    @Query(
+        """
         SELECT * FROM $TABLE_LABELS 
         WHERE $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_MESSAGE_LABEL} 
         AND $COLUMN_LABEL_USER_ID=:userId 
@@ -94,4 +103,14 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ")
     abstract suspend fun deleteAllLabels(userId: UserId)
+
+    @Query(
+        """
+        DELETE FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_USER_ID=:userId
+        AND $COLUMN_LABEL_TYPE = ${Constants.LABEL_TYPE_CONTACT_GROUPS}
+        """
+    )
+    abstract suspend fun deleteContactGroups(userId: UserId)
+
 }

@@ -22,13 +22,14 @@ package ch.protonmail.android.contacts.details
 import androidx.work.WorkManager
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
+import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -55,6 +56,8 @@ class ContactDetailsRepositoryTest {
 
     private val labelsMapper: LabelsMapper = mockk()
 
+    private val labelsRepository: LabelRepository = mockk()
+
     private val contactDao: ContactDao = mockk {
         every { deleteContactData(any()) } just Runs
         every { deleteAllContactsEmails(any()) } just Runs
@@ -63,7 +66,7 @@ class ContactDetailsRepositoryTest {
     }
 
     private val repository = ContactDetailsRepository(
-        workManager, jobManager, apiManager, contactDao, TestDispatcherProvider, labelsMapper
+        workManager, jobManager, apiManager, contactDao, TestDispatcherProvider, labelsMapper, labelsRepository
     )
 
     @Test

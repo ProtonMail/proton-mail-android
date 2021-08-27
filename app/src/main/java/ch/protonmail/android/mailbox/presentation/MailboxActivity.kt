@@ -555,8 +555,6 @@ internal class MailboxActivity :
         mailboxViewModel.setNewUserId(currentUserId)
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
-        messageDetailsRepository.getAllLabelsLiveData(userManager.requireCurrentUserId())
-            .observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account
@@ -835,12 +833,12 @@ internal class MailboxActivity :
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-                MessageLocationType.DRAFT,
-                MessageLocationType.SPAM,
-                MessageLocationType.TRASH,
-                MessageLocationType.LABEL,
-                MessageLocationType.LABEL_FOLDER
-            )
+            MessageLocationType.DRAFT,
+            MessageLocationType.SPAM,
+            MessageLocationType.TRASH,
+            MessageLocationType.LABEL,
+            MessageLocationType.LABEL_FOLDER
+        )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -1567,8 +1565,8 @@ internal class MailboxActivity :
 
         override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
             super.onSelectedChanged(viewHolder, actionState)
-            val isSwiping = actionState == ItemTouchHelper.ACTION_STATE_SWIPE;
-            mailboxSwipeRefreshLayout.isEnabled = isSwiping.not();
+            val isSwiping = actionState == ItemTouchHelper.ACTION_STATE_SWIPE
+            mailboxSwipeRefreshLayout.isEnabled = isSwiping.not()
         }
     }
 
