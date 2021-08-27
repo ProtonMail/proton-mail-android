@@ -53,6 +53,12 @@
     <string name="drawer_create_label_description">Create new label</string>
     <!-- endregion -->
 
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
+    <!-- endregion -->
+
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>
