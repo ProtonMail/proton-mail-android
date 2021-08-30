@@ -68,7 +68,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         observeConversationsByLocation.invoke(userId, location)
 
         val params = GetConversationsParameters(
-            userId = UserId(userId.s),
+            userId = UserId(userId.id),
             labelId = location
         )
         coVerify { conversationRepository.getConversations(params) }
@@ -104,7 +104,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         observeConversationsByLocation.invoke(userId, location)
 
         val params = GetConversationsParameters(
-            userId = UserId(userId.s),
+            userId = UserId(userId.id),
             labelId = location
         )
         coVerify { conversationRepository.getConversations(params) }

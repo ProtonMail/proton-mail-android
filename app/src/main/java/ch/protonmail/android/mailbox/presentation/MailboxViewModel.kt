@@ -345,7 +345,7 @@ class MailboxViewModel @Inject constructor(
     private fun messagesAsMailboxItems(
         location: Constants.MessageLocationType,
         labelId: String?,
-        userId: Id
+        userId: UserId
     ): LoadMoreFlow<MailboxState> {
         Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
         var hasLocationOrUserChanged = true

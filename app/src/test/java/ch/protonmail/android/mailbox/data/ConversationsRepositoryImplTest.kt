@@ -59,8 +59,8 @@ import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
@@ -282,9 +282,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         conversationsRepository.getConversations(parameters)
             .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
                 // Then
+                val error = expectItem() as DataResult.Error
+                assertEquals(errorMessage, error.message)
+
                 val actualItem = expectItem() as DataResult.Success
                 assertEquals(ResponseSource.Local, actualItem.source)
-                assertEquals(errorMessage, expectError().message)
+                expectComplete()
             }
     }
 
@@ -304,10 +307,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         conversationsRepository.getConversations(parameters)
             .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
                 // Then
+                val error = expectItem() as DataResult.Error
+                assertEquals(errorMessage, error.message)
+
                 val firstActualItem = expectItem() as DataResult.Success
                 assertEquals(ResponseSource.Local, firstActualItem.source)
-
-                assertEquals(errorMessage, expectError().message)
 
                 val expectedLocalConversations = listOf(
                     Conversation(
@@ -324,6 +328,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     )
                 )
                 assertEquals(expectedLocalConversations, firstActualItem.value)
+                expectComplete()
             }
 
     }
@@ -628,7 +633,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
     }
 
-    @Test
+    @Test(expected = ClosedReceiveChannelException::class)
     fun verifyGetConversationsReThrowsCancellationExceptionWithoutEmittingError() {
         runBlockingTest {
             // given
@@ -1132,12 +1137,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     )
 
     private fun buildGetConversationsParameters(
-        oldestConversationTimestamp: Long? = 1616496670,
+        oldestConversationTimestamp: Long? = 1_616_496_670,
         pageSize: Int? = 50
     ) = GetConversationsParameters(
-        locationId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+        labelId = Constants.MessageLocationType.INBOX.asLabelId(),
         userId = testUserId,
-        oldestConversationTimestamp = oldestConversationTimestamp,
+        end = oldestConversationTimestamp,
         pageSize = pageSize!!
     )
 

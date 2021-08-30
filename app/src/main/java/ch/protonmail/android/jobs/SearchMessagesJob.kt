@@ -24,7 +24,6 @@ import ch.protonmail.android.events.SearchResultEvent
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 import kotlinx.coroutines.runBlocking
-import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 
 class SearchMessagesJob(private val queryString: String, private val page: Int) : ProtonMailBaseJob(
@@ -56,10 +55,9 @@ class SearchMessagesJob(private val queryString: String, private val page: Int) 
 
     private fun doRemoteSearch(): List<Message> {
         return try {
-            val userIdString = checkNotNull(userId ?: getUserManager().currentUserId) {
+            val userId = checkNotNull(userId ?: getUserManager().currentUserId) {
                 "No User Id provided and no current User Id from UserManager"
-            }.s
-            val userId = UserId(userIdString)
+            }
             val response = runBlocking { getApi().getMessages(userId, page = page, keyword = queryString) }
             response.messages
         } catch (error: Exception) {

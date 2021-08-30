@@ -22,7 +22,6 @@ package ch.protonmail.android.mailbox.domain.usecase
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreMap
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
@@ -48,7 +47,7 @@ class ObserveConversationsByLocation @Inject constructor(
         locationId: String
     ): LoadMoreFlow<GetConversationsResult> {
         val params = GetConversationsParameters(
-            userId = UserId(userId.s),
+            userId = userId,
             labelId = locationId,
         )
 
@@ -87,7 +86,7 @@ class ObserveConversationsByLocation @Inject constructor(
         lastConversationTime: Long
     ) {
         val params = GetConversationsParameters(
-            userId = UserId(userId.s),
+            userId = userId,
             labelId = locationId,
         )
         conversationRepository.loadMore(params)

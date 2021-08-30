@@ -225,7 +225,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     fun verifyBasicInitFlowWithEmptyMessages() = runBlockingTest {
         // Given
         val messages = emptyList<Message>()
-        val expected = MailboxState.Data(emptyList())
+        val expected = MailboxState.Data(emptyList(), shouldResetPosition = true)
 
         // When
         viewModel.mailboxState.test {
@@ -295,7 +295,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         recipients = "",
                         isDraft = false
                     )
-                )
+                ),
+                shouldResetPosition = true
             )
 
             // When
@@ -353,7 +354,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     recipients = "",
                     isDraft = false
                 )
-            )
+            ),
+            shouldResetPosition = true
         )
 
         // When
@@ -407,7 +409,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         recipients = "",
                         isDraft = false
                     )
-                )
+                ),
+                shouldResetPosition = true
             )
 
             // When
@@ -461,7 +464,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         recipients = "",
                         isDraft = false
                     )
-                )
+                ),
+                shouldResetPosition = true
             )
             // When
             viewModel.mailboxState.test {
@@ -530,7 +534,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     ),
                     isDraft = false
                 )
-            )
+            ),
+            shouldResetPosition = true
         )
 
         // When
@@ -556,7 +561,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val expected = listOf(
                 fakeMailboxUiData("messageId9238482", "senderName", "subject1283")
             )
-            val expectedState = MailboxState.Data(expected)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -635,7 +640,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expectedItems)
+            val expectedState = MailboxState.Data(expectedItems, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -695,7 +700,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -750,7 +755,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -801,7 +806,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -860,7 +865,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -917,7 +922,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -974,7 +979,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     true
                 )
             )
-            val expectedState = MailboxState.Data(expected)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -1031,7 +1036,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     false
                 )
             )
-            val expectedState = MailboxState.Data(expected)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -1088,7 +1093,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         recipients = "",
                         isDraft = true
                     )
-                )
+                ),
+                shouldResetPosition = true
             )
             // When
             viewModel.mailboxState.test {
