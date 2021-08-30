@@ -567,8 +567,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="signature_error">Verifizierungsfehler</string>
     <string name="signature_error_desc">Überprüfung der Signatur dieses Inhalts ist fehlgeschlagen</string>
-    <string name="decryption_error">Entschlüsselungsfehler</string>
-    <string name="decryption_error_desc">Entschlüsselung dieses Inhalts fehlgeschlagen</string>
     <string name="address">Adresse: </string>
     <string name="address_street">Straße</string>
     <string name="address_city">Stadt</string>
@@ -967,4 +965,5 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="primary_user_error">Ein Problem ist aufgetreten - Umstieg konnte nicht ausgeführt werden.</string>
     <string name="details_show_history">Verlauf anzeigen</string>
     <string name="could_not_complete_action">Die Aktion konnte nicht abgeschlossen werden</string>
+    <string name="decryption_of_message_failed">Entschlüsselungsfehler: Das Entschlüsseln des verschlüsselten Inhalts dieser Nachricht ist fehlgeschlagen.</string>
 </resources>

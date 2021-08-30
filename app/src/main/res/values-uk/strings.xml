@@ -586,8 +586,6 @@
     <string name="print_bcc_template">Прихована копія: %s;  </string>
     <string name="signature_error">Помилка підтвердження</string>
     <string name="signature_error_desc">Не вдалося перевірити підпис цього вмісту</string>
-    <string name="decryption_error">Помилка розшифрування</string>
-    <string name="decryption_error_desc">Не вдалося розшифрувати цей вміст</string>
     <string name="address">Адреса: </string>
     <string name="address_street">Вулиця</string>
     <string name="address_city">Місто</string>
@@ -807,7 +805,7 @@
     <string name="mobile_footer_info">Цей підпис мобільного клієнта додається під вашим підписом</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Відкласти</string>
-    <string name="notifications_snooze">Notifications snooze</string>
+    <string name="notifications_snooze">Відкладення сповіщень</string>
     <string-array name="quick_snooze_values">
         <item>30 хвилин</item>
         <item>1 година</item>
@@ -864,7 +862,7 @@
     <string name="settings_auto_show_embedded_images">Показувати вбудовані зображення</string>
     <string name="settings_prevent_taking_screenshots">Не дозволяти знімки екрану</string>
     <string name="hyperlink_confirmation">Запит підтвердження при переході за посиланнями</string>
-    <string name="labels_and_folders">Labels &amp; folders </string>
+    <string name="labels_and_folders">Мітки й теки </string>
     <string name="folders">Теки</string>
     <string name="labels">Мітки</string>
     <string name="labels_manager">Менеджер міток</string>
@@ -908,7 +906,7 @@
     <!-- endregion -->
     <string name="app_settings">Параметри програми</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push notifications</string>
+    <string name="push_notifications">Push-сповіщення</string>
     <string name="extended_notifications">Розширені сповіщення</string>
     <string name="extended_notifications_description">Увімкніть цю функцію, щоб бачити відправника листів у push-сповіщеннях.</string>
     <string name="notification_settings">Налаштування сповіщень</string>
@@ -921,14 +919,14 @@
     <string name="allow_secure_connections_via_third_parties">Дозволити альтернативну маршрутизацію</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">У випадку блокування сайтів Proton, цей параметр дозволяє програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Рекомендовано увімкнути цей параметр для більшої надійності.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">У випадку блокування сайтів Proton, цей параметр дозволяє програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Рекомендовано увімкнути цей параметр для більшої надійності. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Докладніше</a></string>
-    <string name="app_language">App language</string>
+    <string name="app_language">Мова програми</string>
     <string name="custom_language_dialog_title">Вибір мови програми</string>
     <string name="auto_detect">Автовизначення</string>
-    <string name="combined_contacts">Combined contacts</string>
+    <string name="combined_contacts">Об\'єднані контакти</string>
     <string name="turn_combined_contacts_on">Увімкніть цю функцію для автозавершення адрес з використанням контактів з усіх ваших під\'єднаних облікових записів.</string>
-    <string name="local_cache_management">Local cache</string>
-    <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear Data</string>
+    <string name="local_cache_management">Локальний кеш</string>
+    <string name="cache_cleared">Локальний кеш оновлено</string>
+    <string name="empty_data">Очистити дані</string>
     <!-- endregion -->
     <string name="enabled">Увімкнено</string>
     <string name="disabled">Вимкнено</string>
@@ -1016,4 +1014,5 @@
     <string name="primary_user_error">Не вдалося оновити. Щось пішло не так.</string>
     <string name="details_show_history">Показати історію</string>
     <string name="could_not_complete_action">Неможливо завершити цю дію</string>
+    <string name="decryption_of_message_failed">Помилка розшифрування: не вдалося розшифрувати вміст цього повідомлення.</string>
 </resources>

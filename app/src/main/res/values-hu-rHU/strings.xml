@@ -568,8 +568,6 @@ Svájci székhellyel</string>
     <string name="print_bcc_template">Titkos másolat: %s;  </string>
     <string name="signature_error">Ellenőrzési hiba</string>
     <string name="signature_error_desc">A tartalom aláírásának ellenőrzése sikertelen</string>
-    <string name="decryption_error">Visszafejtési hiba</string>
-    <string name="decryption_error_desc">A tartalom visszafejtése sikertelen</string>
     <string name="address">Cím: </string>
     <string name="address_street">Utca, házszám</string>
     <string name="address_city">Település</string>
@@ -978,4 +976,5 @@ Svájci székhellyel</string>
     <string name="primary_user_error">Could not upgrade, something went wrong.</string>
     <string name="details_show_history">Show history</string>
     <string name="could_not_complete_action">Could not complete the action</string>
+    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
 </resources>

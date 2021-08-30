@@ -567,8 +567,6 @@
     <string name="print_bcc_template">CCO: %s;  </string>
     <string name="signature_error">Erro de verificação</string>
     <string name="signature_error_desc">Falha na verificação da assinatura do conteúdo</string>
-    <string name="decryption_error">Erro ao descriptografar</string>
-    <string name="decryption_error_desc">Falha ao descriptografar este conteúdo</string>
     <string name="address">Endereço: </string>
     <string name="address_street">Rua</string>
     <string name="address_city">Cidade</string>
@@ -780,7 +778,7 @@
     <string name="mobile_footer_info">Este rodapé é adicionado após a sua assinatura</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Soneca</string>
-    <string name="notifications_snooze">Notifications snooze</string>
+    <string name="notifications_snooze">Suspensão de notificações</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
         <item>1 hora</item>
@@ -873,7 +871,7 @@
     <!-- endregion -->
     <string name="app_settings">Configurações do aplicativo</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push notifications</string>
+    <string name="push_notifications">Notificações via push</string>
     <string name="extended_notifications">Notificações estendidas</string>
     <string name="extended_notifications_description">Ative este recurso para ver o remetente\ndos e-mails nas notificações push.</string>
     <string name="notification_settings">Configurações de notificação</string>
@@ -891,8 +889,8 @@
     <string name="auto_detect">Detectar automaticamente</string>
     <string name="combined_contacts">Contatos combinados</string>
     <string name="turn_combined_contacts_on">Ative este recurso para preencher automaticamente endereços de e-mail usando os contatos de todas as suas contas conectadas.</string>
-    <string name="local_cache_management">Local cache</string>
-    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="local_cache_management">Cache local</string>
+    <string name="cache_cleared">O cache local está atualizado</string>
     <string name="empty_data">Limpar dados</string>
     <!-- endregion -->
     <string name="enabled">Ativado</string>
@@ -977,4 +975,5 @@
     <string name="primary_user_error">Não foi possível atualizar, algo deu errado.</string>
     <string name="details_show_history">Exibir histórico</string>
     <string name="could_not_complete_action">Não foi possível completar a ação</string>
+    <string name="decryption_of_message_failed">Erro ao descriptografar: a decodificação do conteúdo criptografado desta mensagem falhou.</string>
 </resources>

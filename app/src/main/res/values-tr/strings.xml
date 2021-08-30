@@ -98,8 +98,8 @@
     <string name="messages_load_failure">İletiler alınamadı</string>
     <string name="message_details_load_failure">İleti ayrıntıları alınamadı</string>
     <string name="no_more_messages">Başka ileti yok</string>
-    <string name="mailbox_login_failure">Posta kutusuna giriş yapılamadı</string>
-    <string name="login_failure">Giriş yapılamadı</string>
+    <string name="mailbox_login_failure">Posta kutusunda oturum açılamadı</string>
+    <string name="login_failure">Oturum açma başarısız</string>
     <string name="incorrect_key_parameters">Yanlış anahtar parametreleri</string>
     <string name="not_signed_up">ProtonMail Android Beta\'ya kaydolmadınız</string>
     <string name="no_network">Ağ bağlantısı yok</string>
@@ -181,7 +181,7 @@
     <string name="define_message_password">İleti Şifresi</string>
     <string name="confirm_message_password">Şifreyi Doğrula</string>
     <string name="define_password_hint">İpucu tanımla (İsteğe bağlı)</string>
-    <string name="message_passwords_do_not_match">Giriş şifreleri uyuşmuyor</string>
+    <string name="message_passwords_do_not_match">Oturum açma parolaları uyuşmuyor</string>
     <string name="eo_passwords_do_not_match">Şifreler eşleşmiyor</string>
     <string name="define_expiration_period">Sona erme süresini tanımlayın</string>
     <string name="set_message_expiration">İleti sona ermesini ayarla</string>
@@ -264,7 +264,7 @@
     <string name="edit_settings">Ayarları Düzenle</string>
     <string name="save_settings">Ayarları Kaydet</string>
     <string name="share">Paylaş</string>
-    <string name="settings_not_saved_password"> Ayarlar kaydedilmedi - yanlış giriş şifresi</string>
+    <string name="settings_not_saved_password"> Ayarlar kaydedilmedi - yanlış oturum açma parolası</string>
     <string name="settings_not_saved_email"> Ayarlar kaydedilmedi, geçersiz bildirim e-postası</string>
     <string name="enter">Giriş</string>
     <string name="cancel">İptal</string>
@@ -529,7 +529,7 @@
     <string name="print_error">Yazdırma Hatası</string>
     <string name="download_complete">İndirme tamamlandı</string>
     <string name="download_in_progress">İndirme devam ediyor</string>
-    <string name="message_expires_in">Bu iletinin süresi şu zamanda dolacak: %s</string>
+    <string name="message_expires_in">Bu iletinin süresi %s içinde sona erecek</string>
     <string name="unsaved_changes_title">Kaydedilmemiş Değişiklikler</string>
     <string name="unsaved_changes_subtitle">Formda kaydedilmemiş girişler var. Onları atmak istediğinden emin misin?</string>
     <string name="request_timeout">İstek zaman aşımına uğradı. Lütfen tekrar deneyin</string>
@@ -567,8 +567,6 @@
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="signature_error">Doğrulama hatası</string>
     <string name="signature_error_desc">Bu içeriğin imzasının doğrulanması başarısız oldu</string>
-    <string name="decryption_error">Şifre çözme hatası</string>
-    <string name="decryption_error_desc">Bu içeriğin şifre çözülmesi başarısız oldu</string>
     <string name="address">Adres: </string>
     <string name="address_street">Cadde</string>
     <string name="address_city">Şehir</string>
@@ -736,15 +734,15 @@
         access to storage.</string>
     <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
         access to storage.</string>
-    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_contacts_permissions_text">Kişileri içe aktarmak için kişilere erişim izni vermeniz gerekmektedir.</string>
     <string name="push_notifications_alert_title">Anlık bildirim uyarıları</string>
     <string name="push_notifications_alert_subtitle">ProtonMail anlık bildirimleri, güncellenmiş Google Play hizmetleri olmadan çalışmaz.</string>
     <string name="app_locked">Uygulama kilitlendi</string>
     <string name="use_pin_instead">Bunun yerine PIN kullanın</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Kayıtlı biyometrik veri yok</string>
-    <string name="log_in_using_biometric_credential">Biyometrik kimlik bilgilerinizi kullanarak giriş yapın</string>
-    <string name="unlock_using_biometrics">Kilidi biyometri ile aç</string>
+    <string name="log_in_using_biometric_credential">Biyometrik kimlik bilgilerinizi kullanarak kilidi açın</string>
+    <string name="unlock_using_biometrics">Kilidi biyometrik veriyle aç</string>
     <string name="biometric_error_hw_not_available">Parmak izi donanımı kullanılamıyor.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Açıklanmayan Alıcılar</string>
@@ -769,11 +767,11 @@
     <string name="display_name">Görünen ad</string>
     <string name="edit_display_name">Görünen adı düzenle</string>
     <string name="signature">İmza</string>
-    <string name="mobile_footer">Mobil Alt Bilgi</string>
-    <string name="edit_mobile_footer">Mobil Alt Bilgiyi aç</string>
+    <string name="mobile_footer">Mobil alt bilgi</string>
+    <string name="edit_mobile_footer">Mobil alt bilgiyi etkinleştir</string>
     <string name="default_mobile_footer">ProtonMail mobil ile gönderildi</string>
     <string name="mobile_footer_is_premium">Mobil Alt Bilgi özelliğini, yalnızca ücretli planlardaki kullanıcılar değiştirebilir</string>
-    <string name="mobile_footer_info">Altbilgi, imzanızdan sonra eklenir</string>
+    <string name="mobile_footer_info">Bu alt bilgi, imzanızdan sonra eklenir</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Ertele</string>
     <string name="notifications_snooze">Bildirimleri ertele</string>
@@ -889,7 +887,7 @@
     <string name="turn_combined_contacts_on">Oturum açtığınız tüm hesaplardaki kişileri kullanarak e-posta adreslerini otomatik olarak tamamlamak için bu özelliği açın.</string>
     <string name="local_cache_management">Yerel önbellek</string>
     <string name="cache_cleared">Yerel önbellek yenilendi</string>
-    <string name="empty_data">Veriyi temizle</string>
+    <string name="empty_data">Veriyi Temizle</string>
     <!-- endregion -->
     <string name="enabled">Etkin</string>
     <string name="disabled">Devre dışı</string>
@@ -973,4 +971,5 @@
     <string name="primary_user_error">Yükseltilemedi, bir şeyler yanlış gitti.</string>
     <string name="details_show_history">Geçmişi göster</string>
     <string name="could_not_complete_action">İşlem tamamlanamadı</string>
+    <string name="decryption_of_message_failed">Şifre çözme hatası: Bu iletinin şifrelenmiş içeriğinin şifresi çözülemedi.</string>
 </resources>

@@ -567,8 +567,6 @@
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="signature_error">Bekræftelsesfejl</string>
     <string name="signature_error_desc">Mislykkedes at bekræfte dette indholds signatur</string>
-    <string name="decryption_error">Dekrypteringsfejl</string>
-    <string name="decryption_error_desc">Mislykkedes at dekryptere dette indhold</string>
     <string name="address">Adresse: </string>
     <string name="address_street">Gade</string>
     <string name="address_city">By</string>
@@ -736,11 +734,11 @@
         Overvej at frigive eller tilkøbe yderligere lagerplads, inden den er opbrugt.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Tilladelser</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
-    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
-        access to storage.</string>
-    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_storage_permissions_add_attachment_text">For at downloade vedhæftninger skal du tillade
+        adgang til lager.</string>
+    <string name="need_storage_permissions_download_attachment_text">For at downloade vedhæftninger skal du tillade
+        adgang til lager.</string>
+    <string name="need_contacts_permissions_text">For at importere kontakter skal du tillade adgang til kontakter.</string>
     <string name="push_notifications_alert_title">Push-notifikationsadvarsel</string>
     <string name="push_notifications_alert_subtitle">Push-notifikationer i ProtonMail fungerer ikke uden opdaterede Google Play-tjenester.</string>
     <string name="app_locked">App er låst</string>
@@ -780,7 +778,7 @@
     <string name="mobile_footer_info">Denne sidefod tilføjes efter din signatur</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Udsæt</string>
-    <string name="notifications_snooze">Notifications snooze</string>
+    <string name="notifications_snooze">Notifikationsudsættelse</string>
     <string-array name="quick_snooze_values">
         <item>30 minutter</item>
         <item>1 time</item>
@@ -835,7 +833,7 @@
     <string name="settings_auto_show_embedded_images">Auto-vis indlejrede billeder</string>
     <string name="settings_prevent_taking_screenshots">Forhindre skærmfotos</string>
     <string name="hyperlink_confirmation">Anmod om linkbekræftelse</string>
-    <string name="labels_and_folders">Labels &amp; folders </string>
+    <string name="labels_and_folders">Etiketter &amp; mapper </string>
     <string name="folders">Mapper</string>
     <string name="labels">Etiketter</string>
     <string name="labels_manager">Etikethåndtering</string>
@@ -873,7 +871,7 @@
     <!-- endregion -->
     <string name="app_settings">App-indstillinger</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push notifications</string>
+    <string name="push_notifications">Push-notifikationer</string>
     <string name="extended_notifications">Udvidede notifikationer</string>
     <string name="extended_notifications_description">Slå denne funktion til for at se afsenderen\naf e-mails i push-notifikationer.</string>
     <string name="notification_settings">Notifikationsindstillinger</string>
@@ -886,14 +884,14 @@
     <string name="allow_secure_connections_via_third_parties">Tillad alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Hvis Proton-websteder er blokeret giver denne indstilling appen mulighed for at prøve alternativ netværksrouting for at nå Proton, hvilket kan være nyttige til at omgå firewalls eller ved netværksproblemer. Vi anbefaler at holde denne indstilling slået til for større pålidelighed.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Hvis Proton-websteder er blokeret giver denne indstilling appen mulighed for at prøve alternativ netværksrouting for at nå Proton, hvilket kan være nyttige til at omgå firewalls eller ved netværksproblemer. Vi anbefaler at holde denne indstilling slået til for større pålidelighed. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Få mere at vide</a></string>
-    <string name="app_language">App language</string>
+    <string name="app_language">App-sprog</string>
     <string name="custom_language_dialog_title">Vælg App-sprog</string>
     <string name="auto_detect">Autoregistrér</string>
-    <string name="combined_contacts">Combined contacts</string>
+    <string name="combined_contacts">Kombinerede kontakter</string>
     <string name="turn_combined_contacts_on">Slå funktionen til for at autoudfylde e-mailadresser vha. kontakter fra alle dine indloggede konti.</string>
-    <string name="local_cache_management">Local cache</string>
-    <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear Data</string>
+    <string name="local_cache_management">Lokal cache</string>
+    <string name="cache_cleared">Lokal cache er opfrisket</string>
+    <string name="empty_data">Ryd data</string>
     <!-- endregion -->
     <string name="enabled">Aktiv</string>
     <string name="disabled">Inaktiv</string>
@@ -977,4 +975,5 @@
     <string name="primary_user_error">Kunne ikke opgradere, noget gik galt.</string>
     <string name="details_show_history">Vis historik</string>
     <string name="could_not_complete_action">Kunne ikke fuldføre handlingen</string>
+    <string name="decryption_of_message_failed">Dekrypteringsfejl: Dekryptering af denne beskeds krypterede indhold mislykkedes.</string>
 </resources>

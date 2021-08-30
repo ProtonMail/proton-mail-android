@@ -558,8 +558,6 @@
     <string name="print_bcc_template">密件副本：%s;  </string>
     <string name="signature_error">驗證錯誤</string>
     <string name="signature_error_desc">內容簽章驗證失敗</string>
-    <string name="decryption_error">解密發生錯誤</string>
-    <string name="decryption_error_desc">內容解密失敗</string>
     <string name="address">地址： </string>
     <string name="address_street">街道</string>
     <string name="address_city">城市</string>
@@ -956,4 +954,5 @@
     <string name="primary_user_error">無法升級，出了點問題。</string>
     <string name="details_show_history">顯示紀錄</string>
     <string name="could_not_complete_action">無法完成此動作</string>
+    <string name="decryption_of_message_failed">解密錯誤：此郵件的加密內容解密失敗。</string>
 </resources>
