@@ -23,9 +23,8 @@ import android.content.Context
 import android.graphics.text.LineBreaker
 import android.util.AttributeSet
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
 import ch.protonmail.android.api.models.MessageRecipient
@@ -41,70 +40,44 @@ class MessageDetailsRecipientsContainerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     init {
+        orientation = VERTICAL
         inflate(R.layout.layout_message_details_recipients_container, true)
     }
 
-    private var recipientViewIds: HashMap<Int, Int> = hashMapOf()
-
     fun bind(recipients: List<MessageRecipient>) {
-        removeOldViews()
+        removeAllViews()
         if (recipients.isEmpty()) {
-            val recipientTextView = createRecipientTextView()
+            val recipientTextView = createRecipientTextView(shouldIncludeTopMargin = false)
             recipientTextView.text = context.getString(R.string.undisclosed_recipients)
             addView(recipientTextView)
-
-            val constraintSet = createConstraintSet(recipientTextView, 0)
-            constraintSet.applyTo(this)
             return
         }
 
         recipients.forEachIndexed { index, messageRecipient ->
-            val recipientTextView = createRecipientTextView()
+            val recipientTextView = createRecipientTextView(shouldIncludeTopMargin = index != 0)
             val onRecipientClickListener = getOnRecipientClickListener(messageRecipient)
             recipientTextView.setOnClickListener(onRecipientClickListener)
             recipientTextView.text = getFormattedRecipientString(messageRecipient)
-            recipientViewIds[index] = recipientTextView.id
             addView(recipientTextView)
-
-            val constraintSet = createConstraintSet(recipientTextView, index)
-            constraintSet.applyTo(this)
         }
     }
 
-    private fun removeOldViews() {
-        removeAllViews()
-        recipientViewIds.clear()
-    }
-
-    private fun createRecipientTextView(): TextView {
+    private fun createRecipientTextView(shouldIncludeTopMargin: Boolean): TextView {
         val recipientTextView = TextView(
             context,
             null,
             R.style.Proton_Text_DefaultSmall_Interaction,
             R.style.Proton_Text_DefaultSmall_Interaction
         )
-        recipientTextView.layoutParams = LayoutParams(LayoutParams.MATCH_CONSTRAINT, LayoutParams.WRAP_CONTENT)
+        recipientTextView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+            if (shouldIncludeTopMargin) setMargins(0, MARGIN_TOP_RECIPIENT_TEXT_VIEW, 0, 0)
+        }
         recipientTextView.breakStrategy = LineBreaker.BREAK_STRATEGY_SIMPLE
         recipientTextView.id = View.generateViewId()
         return recipientTextView
-    }
-
-    private fun createConstraintSet(recipientTextView: TextView, index: Int): ConstraintSet {
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(this)
-        constraintSet.connect(recipientTextView.id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
-        constraintSet.connect(recipientTextView.id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
-        constraintSet.connect(
-            recipientTextView.id,
-            ConstraintSet.TOP,
-            if (index == 0) ConstraintSet.PARENT_ID else recipientViewIds[index - 1]!!,
-            if (index == 0) ConstraintSet.TOP else ConstraintSet.BOTTOM,
-            if (index == 0) 0 else MARGIN_TOP_RECIPIENT_TEXT_VIEW
-        )
-        return constraintSet
     }
 
     private fun getOnRecipientClickListener(messageRecipient: MessageRecipient): OnClickListener {
