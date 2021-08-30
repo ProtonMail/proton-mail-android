@@ -21,6 +21,7 @@ package ch.protonmail.android.labels.data
 
 import androidx.paging.DataSource
 import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.db.LabelDao
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
@@ -29,6 +30,7 @@ import ch.protonmail.android.labels.data.model.LabelType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
@@ -38,31 +40,27 @@ import javax.inject.Inject
 internal class LabelRepositoryImpl @Inject constructor(
     private val labelDao: LabelDao,
     private val api: ProtonMailApi,
-    private val labelMapper: LabelsMapper
+    private val labelMapper: LabelsMapper,
+    private val networkConnectivityManager: NetworkConnectivityManager
 ) : LabelRepository {
 
-    override fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>> =
+    override fun observeAllLabels(userId: UserId, shallRefresh: Boolean): Flow<List<LabelEntity>> =
         labelDao.observeAllLabels(userId)
             .onStart {
-                Timber.v("Fetching fresh labels")
-                fetchAndSaveAllLabels(userId)
+                if (shallRefresh && networkConnectivityManager.isInternetConnectionPossible()) {
+                    Timber.v("Fetching fresh labels")
+                    fetchAndSaveAllLabels(userId)
+                }
             }
 
-    override suspend fun findAllLabels(userId: UserId): List<LabelEntity> {
-        val dbData = labelDao.findAllLabels(userId)
-        return if (dbData.isEmpty()) {
-            Timber.v("Fetching fresh labels")
-            fetchAndSaveAllLabels(userId)
-        } else {
-            dbData
-        }
-    }
+    override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<LabelEntity> =
+        observeAllLabels(userId, shallRefresh).first()
 
     override fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>> =
         labelDao.observeLabelsById(userId, labelsIds)
 
     override suspend fun findLabels(userId: UserId, labelsIds: List<LabelId>): List<LabelEntity> =
-        labelDao.findLabelsById(userId, labelsIds)
+        observeLabels(userId, labelsIds).first()
 
     override suspend fun findLabel(labelId: LabelId): LabelEntity? =
         labelDao.findLabelById(labelId)
@@ -76,11 +74,11 @@ internal class LabelRepositoryImpl @Inject constructor(
     override fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>> =
         labelDao.observeLabelsByType(userId, LabelType.CONTACT_GROUP.typeInt)
 
-    override fun observeSimilarContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>> =
-        labelDao.observeSimilarLabelsByNameAndType(userId, labelName, LabelType.CONTACT_GROUP.typeInt)
-
     override suspend fun findContactGroups(userId: UserId): List<LabelEntity> =
         labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP.typeInt)
+
+    override fun observeSearchContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>> =
+        labelDao.observeSearchLabelsByNameAndType(userId, labelName, LabelType.CONTACT_GROUP.typeInt)
 
     override suspend fun findLabelByName(userId: UserId, labelName: String): LabelEntity? =
         labelDao.findLabelByName(userId, labelName)

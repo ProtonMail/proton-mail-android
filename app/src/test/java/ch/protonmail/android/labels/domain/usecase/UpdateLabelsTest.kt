@@ -83,7 +83,7 @@ class UpdateLabelsTest {
         }
         coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns message
         val existingLabels = listOf(label)
-        coEvery { labelRepository.findAllLabels(testUserId) } returns existingLabels
+        coEvery { labelRepository.findAllLabels(testUserId,) } returns existingLabels
         val checkedLabelIds = listOf(testLabelId1)
         coEvery {
             messageRepository.saveMessage(

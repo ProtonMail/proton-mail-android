@@ -42,7 +42,7 @@ class GetAllLabels @Inject constructor(
         currentMessageFolder: Constants.MessageLocationType? = null // only required for Type.FOLDER
     ): List<LabelActonItemUiModel> {
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
-        val dbLabels = labelRepository.findAllLabels(userId)
+        val dbLabels = labelRepository.findAllLabels(userId, false)
 
         val uiLabelsFromDb = dbLabels
             .filter { it.type.typeInt == labelsSheetType.typeInt }

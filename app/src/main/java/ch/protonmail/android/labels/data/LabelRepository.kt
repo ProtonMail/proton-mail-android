@@ -27,9 +27,9 @@ import me.proton.core.domain.entity.UserId
 
 interface LabelRepository {
 
-    fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>>
+    fun observeAllLabels(userId: UserId, shallRefresh: Boolean = false): Flow<List<LabelEntity>>
 
-    suspend fun findAllLabels(userId: UserId): List<LabelEntity>
+    suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean = false): List<LabelEntity>
 
     fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>>
 
@@ -41,7 +41,7 @@ interface LabelRepository {
 
     fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>>
 
-    fun observeSimilarContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>>
+    fun observeSearchContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>>
 
     suspend fun findContactGroups(userId: UserId): List<LabelEntity>
 

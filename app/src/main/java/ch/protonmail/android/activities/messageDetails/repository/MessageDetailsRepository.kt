@@ -37,15 +37,12 @@ import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
-import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.utils.MessageUtils
-import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
@@ -265,7 +262,7 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
 
-    fun getAllLabelsLiveData(userId: UserId) = labelRepository.observeAllLabels(userId).asLiveData()
+    fun getAllLabelsLiveData(userId: UserId) = labelRepository.observeAllLabels(userId, false).asLiveData()
 
     suspend fun findLabelsWithIds(labelIds: List<String>, userId: UserId): List<LabelEntity> =
         labelRepository.findLabels(userId, labelIds.map { LabelId(it) })

@@ -36,9 +36,6 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ORDER BY $COLUMN_LABEL_ORDER")
     abstract fun observeAllLabels(userId: UserId): Flow<List<LabelEntity>>
 
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ORDER BY $COLUMN_LABEL_ORDER ")
-    abstract suspend fun findAllLabels(userId: UserId): List<LabelEntity>
-
     @Query(
         """
         SELECT * FROM $TABLE_LABELS 
@@ -48,16 +45,6 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         """
     )
     abstract fun observeLabelsById(userId: UserId, labelIds: List<LabelId>): Flow<List<LabelEntity>>
-
-    @Query(
-        """
-        SELECT * FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_ID IN (:labelIds) 
-        AND $COLUMN_LABEL_USER_ID=:userId
-        ORDER BY $COLUMN_LABEL_ORDER
-        """
-    )
-    abstract suspend fun findLabelsById(userId: UserId, labelIds: List<LabelId>): List<LabelEntity>
 
     @Query(
         """
@@ -79,6 +66,15 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
 
     @Query(
         """
+         SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_USER_ID=:userId
+        AND $COLUMN_LABEL_TYPE = :labelType
+        """
+    )
+    abstract suspend fun findLabelsByType(userId: UserId, labelType: Int): List<LabelEntity>
+
+    @Query(
+        """
         SELECT *
         FROM $TABLE_LABELS 
         WHERE $COLUMN_LABEL_USER_ID=:userId
@@ -87,20 +83,11 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         ORDER BY $COLUMN_LABEL_NAME
     """
     )
-    abstract fun observeSimilarLabelsByNameAndType(
+    abstract fun observeSearchLabelsByNameAndType(
         userId: UserId,
         labelName: String,
         labelType: Int
     ): Flow<List<LabelEntity>>
-
-    @Query(
-        """
-         SELECT * FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_USER_ID=:userId
-        AND $COLUMN_LABEL_TYPE = :labelType
-        """
-    )
-    abstract suspend fun findLabelsByType(userId: UserId, labelType: Int): List<LabelEntity>
 
     @Query(
         """

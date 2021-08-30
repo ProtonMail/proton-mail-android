@@ -98,7 +98,7 @@ class GetAllLabelsTest {
             LabelType.MESSAGE_LABEL.typeInt
         )
         val expected = listOf(uiLabel1, uiLabel2)
-        coEvery { repository.findAllLabels(testUserId) } returns listOf(label1, label2)
+        coEvery { repository.findAllLabels(testUserId,) } returns listOf(label1, label2)
         every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
         every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
 
@@ -147,7 +147,7 @@ class GetAllLabelsTest {
             LabelType.FOLDER.typeInt
         )
         val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
-        coEvery { repository.findAllLabels(testUserId) } returns listOf(label1, label2)
+        coEvery { repository.findAllLabels(testUserId,) } returns listOf(label1, label2)
         every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
         every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
 
@@ -199,7 +199,7 @@ class GetAllLabelsTest {
         )
         val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
             .filter { it.labelId != Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() }
-        coEvery { repository.findAllLabels(testUserId) } returns listOf(label1, label2)
+        coEvery { repository.findAllLabels(testUserId,) } returns listOf(label1, label2)
         every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
         every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
 

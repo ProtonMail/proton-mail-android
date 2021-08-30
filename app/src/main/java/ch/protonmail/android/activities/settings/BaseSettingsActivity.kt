@@ -432,7 +432,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                         FetchByLocationJob(
                             mMailboxLocation,
                             mLabelId,
-                            true,
                             null,
                             false
                         )

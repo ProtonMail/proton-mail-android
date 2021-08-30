@@ -459,7 +459,7 @@ internal class MailboxViewModel @Inject constructor(
         val userId = userManager.currentUserId ?: return emptyList()
 
         val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.findAllLabels(userId)
+        val labels = labelRepository.findAllLabels(userId, false)
 
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {

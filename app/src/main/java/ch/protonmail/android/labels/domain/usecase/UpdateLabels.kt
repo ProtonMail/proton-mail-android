@@ -47,7 +47,7 @@ internal class UpdateLabels @Inject constructor(
     ) {
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
         val message = requireNotNull(messageRepository.findMessage(userId, messageId))
-        val existingLabels = labelRepository.findAllLabels(userId)
+        val existingLabels = labelRepository.findAllLabels(userId, false)
             .filter { it.id in message.labelIDsNotIncludingLocations }
         Timber.v("UpdateLabels checkedLabelIds: $checkedLabelIds")
         findAllLabelsWithIds(

@@ -46,7 +46,7 @@ class ContactGroupsRepository @Inject constructor(
     fun observeContactGroups(filter: String): Flow<List<ContactLabelUiModel>> =
         accountsManager.getPrimaryUserId().filterNotNull()
             .flatMapLatest {
-                labelRepository.observeSimilarContactGroups(it, filter)
+                labelRepository.observeSearchContactGroups(it, filter)
             }
             .map { labels ->
                 labels.map { entity ->

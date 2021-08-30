@@ -28,7 +28,6 @@ import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -45,8 +44,6 @@ import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
-private const val ACTION_FETCH_MESSAGE_LABELS = "ACTION_FETCH_MESSAGE_LABELS"
-private const val ACTION_FETCH_CONTACT_GROUPS_LABELS = "ACTION_FETCH_CONTACT_GROUPS_LABELS"
 private const val ACTION_FETCH_MESSAGES_BY_PAGE = "ACTION_FETCH_MESSAGES_BY_PAGE"
 
 private const val EXTRA_USER_ID = "extra.user.id"
@@ -114,8 +111,6 @@ class MessagesService : JobIntentService() {
                     )
                 }
             }
-            ACTION_FETCH_MESSAGE_LABELS -> handleFetchLabels()
-            ACTION_FETCH_CONTACT_GROUPS_LABELS -> handleFetchContactGroups()
         }
     }
 
@@ -161,42 +156,6 @@ class MessagesService : JobIntentService() {
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
             Timber.e(error, "Error while fetching messages")
-        }
-    }
-
-    private fun handleFetchContactGroups() {
-        val userId = userManager.currentUserId
-
-        if (userId == null) {
-            Timber.i("No logged in user")
-            return
-        }
-
-        try {
-            runBlocking {
-                contactEmailsManager.refresh()
-            }
-        } catch (e: Exception) {
-            Timber.w(e, "handleFetchContactGroups has failed")
-        }
-    }
-
-    private fun handleFetchLabels() {
-        try {
-            val currentUserId = userManager.requireCurrentUserId()
-
-            runBlocking {
-                val serverLabels = mApi.fetchLabels(currentUserId).valueOrThrow.labels
-                val serverFolders = mApi.fetchFolders(currentUserId).valueOrThrow.labels
-                val labelMapper = LabelsMapper()
-                val labelList = serverLabels.map { labelMapper.mapLabelToLabelEntity(it, currentUserId) }
-                val foldersList = serverFolders.map { labelMapper.mapLabelToLabelEntity(it, currentUserId) }
-                labelsRepository.saveLabels(labelList + foldersList)
-            }
-            AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
-        } catch (error: Exception) {
-            Timber.w(error, "handleFetchLabels has failed")
-            AppUtil.postEventOnUi(FetchLabelsEvent(Status.FAILED))
         }
     }
 
@@ -290,8 +249,6 @@ class MessagesService : JobIntentService() {
         try {
             var unixTime = 0L
             val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDb = messagesDbFactory.getDao()
             val actionsDb = actionsDbFactory.getDao()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
@@ -343,26 +300,6 @@ class MessagesService : JobIntentService() {
     }
 
     companion object {
-
-        fun startFetchLabels(
-            context: Context,
-            userId: UserId
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_MESSAGE_LABELS)
-                .putExtra(EXTRA_USER_ID, userId.id)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
-        fun startFetchContactGroups(
-            context: Context,
-            userId: UserId
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_CONTACT_GROUPS_LABELS)
-                .putExtra(EXTRA_USER_ID, userId.id)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
 
         /**
          * Load initial page and detail of every message it fetch

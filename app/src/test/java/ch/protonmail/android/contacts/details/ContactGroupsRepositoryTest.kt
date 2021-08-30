@@ -105,7 +105,7 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { labelRepository.observeSimilarContactGroups(testUserId, searchTerm) } returns flowOf(
+            coEvery { labelRepository.observeSearchContactGroups(testUserId, searchTerm) } returns flowOf(
                 dbContactsList
             )
             coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
@@ -124,7 +124,7 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { labelRepository.observeSimilarContactGroups(testUserId, searchTerm) } returns flowOf(
+            coEvery { labelRepository.observeSearchContactGroups(testUserId, searchTerm) } returns flowOf(
                 dbContactsList
             )
             coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
@@ -143,7 +143,7 @@ class ContactGroupsRepositoryTest {
             // given
             val searchTerm = "search"
             val dbContactsList = listOf(label1)
-            coEvery { labelRepository.observeSimilarContactGroups(testUserId, searchTerm) } returns flowOf(
+            coEvery { labelRepository.observeSearchContactGroups(testUserId, searchTerm) } returns flowOf(
                 dbContactsList
             )
             coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
