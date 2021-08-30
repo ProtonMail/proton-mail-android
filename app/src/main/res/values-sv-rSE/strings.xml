@@ -567,8 +567,6 @@
     <string name="print_bcc_template">Hemlig kopia: %s;  </string>
     <string name="signature_error">Verifieringsfel</string>
     <string name="signature_error_desc">Verifiering av detta innehållets signatur misslyckades</string>
-    <string name="decryption_error">Dekrypteringsfel</string>
-    <string name="decryption_error_desc">Dekryptering av innehållet misslyckades</string>
     <string name="address">Adress: </string>
     <string name="address_street">Gatuadress</string>
     <string name="address_city">Ort</string>
@@ -973,4 +971,5 @@
     <string name="primary_user_error">Kunde inte uppgradera, något gick fel.</string>
     <string name="details_show_history">Visa historik</string>
     <string name="could_not_complete_action">Det gick inte att slutföra åtgärden</string>
+    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
 </resources>

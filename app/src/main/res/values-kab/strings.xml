@@ -567,8 +567,6 @@
     <string name="print_bcc_template">Anɣ. Uffi. I.: %s;  </string>
     <string name="signature_error">Tuccḍa n usenqed</string>
     <string name="signature_error_desc">Asenqed n uzmul n ugbur-agi yecceḍ</string>
-    <string name="decryption_error">Tuccḍa n uzmak</string>
-    <string name="decryption_error_desc">Azmak n agbur agi icceḍ</string>
     <string name="address">Tansa: </string>
     <string name="address_street">Abrid</string>
     <string name="address_city">Tamdint</string>
@@ -977,4 +975,5 @@
     <string name="primary_user_error">Ulamek aleqqem n uswir, tella-d tuccḍa.</string>
     <string name="details_show_history">Sken amazray</string>
     <string name="could_not_complete_action">D awezd awezɣi ad temmed tigawt</string>
+    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
 </resources>

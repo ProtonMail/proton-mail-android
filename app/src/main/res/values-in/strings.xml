@@ -561,8 +561,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="signature_error">Kesalahan verifikasi</string>
     <string name="signature_error_desc">Verifikasi tanda tangan konten ini gagal</string>
-    <string name="decryption_error">Kesalahan dekripsi</string>
-    <string name="decryption_error_desc">Dekripsi konten ini gagal</string>
     <string name="address">Alamat: </string>
     <string name="address_street">Jalan</string>
     <string name="address_city">Kota</string>
@@ -959,4 +957,5 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="primary_user_error">Tidak dapat meningkatkan, ada yang salah.</string>
     <string name="details_show_history">Tampilkan riwayat</string>
     <string name="could_not_complete_action">Tidak dapat menyelesaikan tindakan</string>
+    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
 </resources>

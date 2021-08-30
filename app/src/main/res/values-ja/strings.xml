@@ -558,8 +558,6 @@
     <string name="print_bcc_template">BCC：%s; </string>
     <string name="signature_error">検証エラーが発生しました。</string>
     <string name="signature_error_desc">このコンテンツの署名の検証に失敗しました。</string>
-    <string name="decryption_error">復号エラー</string>
-    <string name="decryption_error_desc">コンテンツの復号に失敗しました。</string>
     <string name="address">アドレス：</string>
     <string name="address_street">番地</string>
     <string name="address_city">市区町村</string>
@@ -952,4 +950,5 @@
     <string name="primary_user_error">Could not upgrade, something went wrong.</string>
     <string name="details_show_history">履歴を表示</string>
     <string name="could_not_complete_action">Could not complete the action</string>
+    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
 </resources>

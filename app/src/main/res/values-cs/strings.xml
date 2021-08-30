@@ -585,8 +585,6 @@
     <string name="print_bcc_template">Skrytá kopie: %s;  </string>
     <string name="signature_error">Chyba při ověření</string>
     <string name="signature_error_desc">Ověření podpisu obsahu selhalo</string>
-    <string name="decryption_error">Chyba dešifrování</string>
-    <string name="decryption_error_desc">Dešifrování obsahu se nezdařilo</string>
     <string name="address">Adresa: </string>
     <string name="address_street">Ulice</string>
     <string name="address_city">Město</string>
@@ -1015,4 +1013,5 @@
     <string name="primary_user_error">Nebylo možné navýšit předplatné, něco se pokazilo.</string>
     <string name="details_show_history">Zobrazit historii</string>
     <string name="could_not_complete_action">Nebylo možné dokončit akci</string>
+    <string name="decryption_of_message_failed">Chyba dešifrování: dešifrování zašifrovaného obsahu této zprávy se nezdařilo.</string>
 </resources>

@@ -567,8 +567,6 @@
     <string name="print_bcc_template">Cci : %s;  </string>
     <string name="signature_error">Erreur de vérification</string>
     <string name="signature_error_desc">La vérification de la signature de ce contenu a échoué</string>
-    <string name="decryption_error">Erreur de déchiffrement</string>
-    <string name="decryption_error_desc">Le déchiffrement de ce contenu a échoué</string>
     <string name="address">Adresse : </string>
     <string name="address_street">Rue</string>
     <string name="address_city">Ville</string>
@@ -977,4 +975,5 @@
     <string name="primary_user_error">Impossible d’améliorer, une erreur s\'est produite.</string>
     <string name="details_show_history">Afficher l\'historique</string>
     <string name="could_not_complete_action">Impossible de terminer l\'action</string>
+    <string name="decryption_of_message_failed">Erreur de déchiffrement : le déchiffrement du contenu chiffré de ce message a échoué.</string>
 </resources>

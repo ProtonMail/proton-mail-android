@@ -557,8 +557,6 @@
     <string name="print_bcc_template">密送：%s;  </string>
     <string name="signature_error">签名校验失败</string>
     <string name="signature_error_desc">此内容未能通过签名校验</string>
-    <string name="decryption_error">解密失败</string>
-    <string name="decryption_error_desc">内容解密失败</string>
     <string name="address">地址：</string>
     <string name="address_street">街道</string>
     <string name="address_city">城市</string>
@@ -948,4 +946,5 @@
     <string name="primary_user_error">发生错误，升级失败。</string>
     <string name="details_show_history">显示历史记录</string>
     <string name="could_not_complete_action">操作无法完成</string>
+    <string name="decryption_of_message_failed">解密失败：解密此邮件的内容时出错。</string>
 </resources>

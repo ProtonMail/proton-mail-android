@@ -332,7 +332,7 @@
     <string name="retry">Spróbuj ponownie</string>
     <string name="saving_failed_no_conn">Zapisywanie nie powiodło się. Brak połączenia z Internetem</string>
     <string name="close_engagement">zamknij przewodnik</string>
-    <string name="engagement_title_welcome">Witaj w ProtonMail!</string>
+    <string name="engagement_title_welcome">Witaj w ProtonMailu!</string>
     <string name="engagement_title_swipe">Szybkie gesty</string>
     <string name="engagement_title_labels">Zarządzanie etykietą</string>
     <string name="engagement_title_encryption">Szyfrowanie end-to-end</string>
@@ -585,8 +585,6 @@
     <string name="print_bcc_template">UDW: %s;  </string>
     <string name="signature_error">Błąd weryfikacji</string>
     <string name="signature_error_desc">Nie można zweryfikować podpisu tej zawartości</string>
-    <string name="decryption_error">Błąd odszyfrowywania</string>
-    <string name="decryption_error_desc">Odszyfrowanie zawartości nie powiodło się</string>
     <string name="address">Adres: </string>
     <string name="address_street">Ulica</string>
     <string name="address_city">Miasto</string>
@@ -1013,4 +1011,5 @@
     <string name="primary_user_error">Nie można ulepszyć. Coś poszło nie tak.</string>
     <string name="details_show_history">Pokaż historię</string>
     <string name="could_not_complete_action">Nie można zakończyć akcji</string>
+    <string name="decryption_of_message_failed">Błąd odszyfrowywania: odszyfrowanie tej wiadomości nie powiodło się.</string>
 </resources>
