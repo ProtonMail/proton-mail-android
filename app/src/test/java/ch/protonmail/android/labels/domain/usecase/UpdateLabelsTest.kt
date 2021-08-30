@@ -23,8 +23,10 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.worker.ApplyLabelWorker
+import ch.protonmail.android.worker.RemoveLabelWorker
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -37,6 +39,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -44,6 +47,9 @@ class UpdateLabelsTest {
 
     @MockK
     private lateinit var applyLabelWorker: ApplyLabelWorker.Enqueuer
+
+    @MockK
+    private lateinit var removeLabelWorker: RemoveLabelWorker.Enqueuer
 
     @MockK
     private lateinit var messageRepository: MessageRepository
@@ -62,8 +68,12 @@ class UpdateLabelsTest {
     fun setUp() {
         MockKAnnotations.init(this)
         every { applyLabelWorker.enqueue(any(), any()) } returns mockk()
+        every { removeLabelWorker.enqueue(any(), any()) } returns mockk()
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
-        useCase = UpdateLabels(messageRepository, accountManager, labelRepository, applyLabelWorker)
+        useCase = UpdateLabels(
+            messageRepository, accountManager, labelRepository, applyLabelWorker, removeLabelWorker,
+            TestDispatcherProvider
+        )
     }
 
     @Test
@@ -80,10 +90,11 @@ class UpdateLabelsTest {
         }
         val label = mockk<LabelEntity> {
             every { id } returns LabelId(testLabelId1)
+            every { type } returns LabelType.MESSAGE_LABEL
         }
         coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns message
         val existingLabels = listOf(label)
-        coEvery { labelRepository.findAllLabels(testUserId,) } returns existingLabels
+        coEvery { labelRepository.findAllLabels(testUserId) } returns existingLabels
         val checkedLabelIds = listOf(testLabelId1)
         coEvery {
             messageRepository.saveMessage(

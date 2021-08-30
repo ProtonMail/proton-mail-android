@@ -166,7 +166,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val shallMoveToArchive = true
         val inboxLocationId = "0"
         val archiveLocationId = "6"
-        coEvery { updateLabels.invoke(any(), any()) } just Runs
+        coEvery { updateLabels.invoke(any(), any()) } returns mockk()
         coEvery {
             moveMessagesToFolder(
                 listOf(messageId1), Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
