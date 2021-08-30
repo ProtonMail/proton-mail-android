@@ -646,8 +646,15 @@ internal class MessageDetailsViewModel @Inject constructor(
                 .find { message -> attachmentId in message.attachments.map { it.attachmentId } }
                 ?: return@launch
             val senderEmail = EmailAddress(message.senderEmail)
-            val recipientEmail = protonCalendarUtil
-                .extractRecipientEmailOrNull(message.header ?: EMPTY_STRING)
+            val header = message.header
+            val recipientEmail = if (header != null) {
+                protonCalendarUtil.extractRecipientEmailOrNull(header)
+                    ?: EmailAddress(message.toList.first().emailAddress)
+            } else {
+                val messageToEmails = message.toList.map { EmailAddress(it.emailAddress) }
+                val currentUserAddresses = userManager.requireCurrentUser().addresses.addresses.values
+                currentUserAddresses.first { it.email in messageToEmails }.email
+            }
 
             val mimeType = downloadUtils.getMimeType(uri, filename)
             Timber.d("viewAttachment mimeType: $mimeType uri: $uri uriScheme: ${uri.scheme}")

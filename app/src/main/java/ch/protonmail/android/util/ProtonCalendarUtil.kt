@@ -54,7 +54,7 @@ class ProtonCalendarUtil @Inject constructor(private val context: Context) {
      * @throws ActivityNotFoundException if Proton Calendar is not installed; ensure to call
      *  [isProtonCalendarInstalled] first
      */
-    fun openIcsInProtonCalendar(uri: Uri, senderEmail: EmailAddress, recipientEmail: EmailAddress?) {
+    fun openIcsInProtonCalendar(uri: Uri, senderEmail: EmailAddress, recipientEmail: EmailAddress) {
         val intent = Intent(ACTION_OPEN_ICS).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
                 Intent.FLAG_ACTIVITY_NEW_TASK or
