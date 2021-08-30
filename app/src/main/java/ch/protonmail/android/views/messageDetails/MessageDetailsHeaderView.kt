@@ -197,8 +197,18 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         labelsExpandedGroupView.setLabels(nonExclusiveLabels)
         collapsedHeaderGroup.addView(labelsCollapsedGroupView)
         expandedHeaderGroup.addView(labelsExpandedGroupView)
-        expandedHeaderGroup.addView(labelsImageView)
         collapsedLabelsView.setLabels(nonExclusiveLabels)
+
+        // Can't control the visibility of individual views within the group as the group visibility trumps the
+        // visibility of the individual views within the group; thus we want to add the icon to the group only
+        // if there are labels to show, otherwise we won't be able to hide the icon.
+        // See https://issuetracker.google.com/issues/73186245
+        expandedHeaderGroup.removeView(labelsImageView)
+        if (nonExclusiveLabels.isEmpty()) {
+            labelsImageView.isVisible = false
+        } else {
+            expandedHeaderGroup.addView(labelsImageView)
+        }
 
         val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
         lockIconTextView.text = context.getText(senderLockIcon.icon)
@@ -222,6 +232,9 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
                 val folderColor = Color.parseColor(UiUtil.normalizeColor(exclusiveLabels[0].color))
                 locationImageView.setColorFilter(folderColor)
                 locationExtendedImageView.setColorFilter(folderColor)
+            } else {
+                locationImageView.clearColorFilter()
+                locationExtendedImageView.clearColorFilter()
             }
         }
         getTextForMessageLocation(Constants.MessageLocationType.fromInt(messageLocation), exclusiveLabels)?.let {

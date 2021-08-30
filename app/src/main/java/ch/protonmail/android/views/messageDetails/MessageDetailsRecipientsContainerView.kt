@@ -49,6 +49,36 @@ class MessageDetailsRecipientsContainerView @JvmOverloads constructor(
 
     private var recipientViewIds: HashMap<Int, Int> = hashMapOf()
 
+    fun bind(recipients: List<MessageRecipient>) {
+        removeOldViews()
+        if (recipients.isEmpty()) {
+            val recipientTextView = createRecipientTextView()
+            recipientTextView.text = context.getString(R.string.undisclosed_recipients)
+            addView(recipientTextView)
+
+            val constraintSet = createConstraintSet(recipientTextView, 0)
+            constraintSet.applyTo(this)
+            return
+        }
+
+        recipients.forEachIndexed { index, messageRecipient ->
+            val recipientTextView = createRecipientTextView()
+            val onRecipientClickListener = getOnRecipientClickListener(messageRecipient)
+            recipientTextView.setOnClickListener(onRecipientClickListener)
+            recipientTextView.text = getFormattedRecipientString(messageRecipient)
+            recipientViewIds[index] = recipientTextView.id
+            addView(recipientTextView)
+
+            val constraintSet = createConstraintSet(recipientTextView, index)
+            constraintSet.applyTo(this)
+        }
+    }
+
+    private fun removeOldViews() {
+        removeAllViews()
+        recipientViewIds.clear()
+    }
+
     private fun createRecipientTextView(): TextView {
         val recipientTextView = TextView(
             context,
@@ -94,30 +124,6 @@ class MessageDetailsRecipientsContainerView @JvmOverloads constructor(
                 messageRecipient.name,
                 messageRecipient.emailAddress
             )
-        }
-    }
-
-    fun bind(recipients: List<MessageRecipient>) {
-        if (recipients.isEmpty()) {
-            val recipientTextView = createRecipientTextView()
-            recipientTextView.text = context.getString(R.string.undisclosed_recipients)
-            addView(recipientTextView)
-
-            val constraintSet = createConstraintSet(recipientTextView, 0)
-            constraintSet.applyTo(this)
-            return
-        }
-
-        recipients.forEachIndexed { index, messageRecipient ->
-            val recipientTextView = createRecipientTextView()
-            val onRecipientClickListener = getOnRecipientClickListener(messageRecipient)
-            recipientTextView.setOnClickListener(onRecipientClickListener)
-            recipientTextView.text = getFormattedRecipientString(messageRecipient)
-            recipientViewIds[index] = recipientTextView.id
-            addView(recipientTextView)
-
-            val constraintSet = createConstraintSet(recipientTextView, index)
-            constraintSet.applyTo(this)
         }
     }
 }
