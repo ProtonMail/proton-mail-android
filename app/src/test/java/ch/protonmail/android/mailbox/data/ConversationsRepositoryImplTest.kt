@@ -678,7 +678,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val mailboxLocation = Constants.MessageLocationType.ARCHIVE
-            val locationId = Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+            val locationId = Constants.MessageLocationType.ARCHIVE.asLabelId()
             val message = Message(
                 location = mailboxLocation.messageLocationTypeValue
             )
@@ -716,7 +716,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val mailboxLocation = Constants.MessageLocationType.ARCHIVE
-            val locationId = Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+            val locationId = Constants.MessageLocationType.ARCHIVE.asLabelId()
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 

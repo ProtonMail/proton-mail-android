@@ -25,11 +25,11 @@ import ch.protonmail.android.domain.loadMoreMap
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Processing
 import me.proton.core.domain.arch.DataResult.Success
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -47,9 +47,9 @@ class ObserveConversationsByLocation @Inject constructor(
         locationId: String
     ): LoadMoreFlow<GetConversationsResult> {
         val params = GetConversationsParameters(
-            locationId = locationId,
-            userId = userId,
-            oldestConversationTimestamp = null
+            userId = UserId(UserId(userId.s).s),
+            labelId = locationId,
+            end = oldestConversationTimestamp
         )
 
         Timber.v("GetConversations with params: $params, locationId: $locationId")
@@ -59,7 +59,7 @@ class ObserveConversationsByLocation @Inject constructor(
                     is Success -> {
                         GetConversationsResult.Success(
                             result.value.filter { conversation ->
-                                conversation.labels.any { it.id == params.locationId }
+                                conversation.labels.any { it.id == params.labelId }
                             }
                         )
                     }
@@ -87,9 +87,9 @@ class ObserveConversationsByLocation @Inject constructor(
         lastConversationTime: Long
     ) {
         val params = GetConversationsParameters(
-            locationId = locationId,
-            userId = userId,
-            oldestConversationTimestamp = lastConversationTime
+            userId = UserId(UserId(userId.s).s),
+            labelId = locationId,
+            end = oldestConversationTimestamp
         )
         conversationRepository.loadMore(params)
     }

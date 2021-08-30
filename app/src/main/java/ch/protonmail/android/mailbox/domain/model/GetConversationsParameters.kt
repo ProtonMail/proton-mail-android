@@ -21,10 +21,30 @@ package ch.protonmail.android.mailbox.domain.model
 
 import me.proton.core.domain.entity.UserId
 
+/**
+ * Representation of Rest Query Parameters for 'mail/v4/conversations' endpoint
+ * Documentation at '*\/Slim-API/mail/#operation/get_mail-v4-conversations'
+ */
 data class GetConversationsParameters(
-    val locationId: String,
     val userId: UserId,
-    // Field used for pagination to require only conversations older then this timestamp
-    val oldestConversationTimestamp: Long?,
-    val pageSize: Int = 50
-)
+    val page: Int? = null,
+    val pageSize: Int = 50,
+    val labelId: String? = null,
+    val sortBy: SortBy = SortBy.TIME,
+    val sortDirection: SortDirection = SortDirection.DESCENDANT,
+    val begin: Long? = null,
+    val end: Long? = null,
+    val beginId: String? = null,
+    val endId: String? = null,
+    val keyword: String? = null
+) {
+
+    enum class SortBy(val stringValue: String) {
+        TIME("Time")
+    }
+
+    enum class SortDirection(val intValue: Int) {
+        ASCENDANT(0),
+        DESCENDANT(1)
+    }
+}

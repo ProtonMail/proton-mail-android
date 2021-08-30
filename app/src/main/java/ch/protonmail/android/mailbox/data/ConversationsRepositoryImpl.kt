@@ -495,7 +495,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             Timber.d("Conversations update size: ${list.size}, params: $params")
             list.sortedWith(
                 compareByDescending<ConversationDatabaseModel> { conversation ->
-                    conversation.labels.find { label -> label.id == params.locationId }?.contextTime
+                    conversation.labels.find { label -> label.id == params.labelId }?.contextTime
                 }.thenByDescending { it.order }
             ).toDomainModelList()
         }

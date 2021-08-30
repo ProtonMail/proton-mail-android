@@ -22,7 +22,6 @@ package ch.protonmail.android.mailbox.domain
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.mailbox.domain.model.Conversation
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
@@ -68,9 +67,9 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         observeConversationsByLocation.invoke(userId, location)
 
         val params = GetConversationsParameters(
-            locationId = location,
-            userId = userId,
-            oldestConversationTimestamp = null
+            userId = UserId(userId.s),
+            labelId = location,
+            end = null
         )
         coVerify { conversationRepository.getConversations(params) }
     }
@@ -105,9 +104,9 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         observeConversationsByLocation.invoke(userId, location)
 
         val params = GetConversationsParameters(
-            locationId = location,
-            userId = userId,
-            oldestConversationTimestamp = null
+            userId = UserId(userId.s),
+            labelId = location,
+            end = null
         )
         coVerify { conversationRepository.getConversations(params) }
     }
