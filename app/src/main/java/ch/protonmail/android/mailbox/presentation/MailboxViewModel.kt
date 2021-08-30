@@ -325,7 +325,7 @@ class MailboxViewModel @Inject constructor(
         if (conversationModeEnabled(location)) {
             val userId = userManager.currentUserId ?: return
             val locationId = labelId ?: location.messageLocationTypeValue.toString()
-            return getConversations.loadMore(userId, locationId, oldestItemTimestamp)
+            // TODO: getConversations.loadMore(userId, locationId, oldestItemTimestamp)
         }
 
         fetchMessages(

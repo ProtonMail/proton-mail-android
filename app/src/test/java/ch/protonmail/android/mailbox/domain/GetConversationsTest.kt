@@ -20,6 +20,7 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants.MessageLocationType
+import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
@@ -29,7 +30,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
@@ -62,7 +62,7 @@ class GetConversationsTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryMappingInputToGetConversationParameters() = runBlockingTest {
         val location = MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
-        coEvery { conversationRepository.getConversations(any()) } returns flowOf()
+        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf()
 
         getConversations.invoke(userId, location)
 
@@ -78,7 +78,7 @@ class GetConversationsTest : CoroutinesTest {
     fun getConversationsReturnsConversationsFlowWhenRepositoryRequestSucceeds() = runBlockingTest {
         val conversations = listOf(buildRandomConversation())
         val dataResult = DataResult.Success(ResponseSource.Remote, conversations)
-        coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
+        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
 
         val actual = getConversations.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
@@ -88,7 +88,7 @@ class GetConversationsTest : CoroutinesTest {
 
     @Test
     fun getConversationsReturnsErrorWhenRepositoryFailsGettingConversations() = runBlockingTest {
-        coEvery { conversationRepository.getConversations(any()) } returns flowOf(DataResult.Error.Local(null, null))
+        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(DataResult.Error.Local(null, null))
 
         val actual = getConversations.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
@@ -99,7 +99,7 @@ class GetConversationsTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryPassingNullAsLastMessageTimeWhenInputWasNull() = runBlockingTest {
         val location = MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
-        coEvery { conversationRepository.getConversations(any()) } returns flowOf()
+        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf()
 
         getConversations.invoke(userId, location)
 
@@ -122,7 +122,7 @@ class GetConversationsTest : CoroutinesTest {
         )
         val conversations = listOf(inboxConversation, archivedConversation)
         val dataResult = DataResult.Success(ResponseSource.Local, conversations)
-        coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
+        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
 
         val result: GetConversationsResult = getConversations.invoke(
             userId, MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
@@ -144,7 +144,7 @@ class GetConversationsTest : CoroutinesTest {
         )
         val conversations = listOf(inboxConversation, customLabelConversation)
         val dataResult = DataResult.Success(ResponseSource.Local, conversations)
-        coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
+        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
 
         val result: GetConversationsResult = getConversations.invoke(
             userId,
@@ -157,7 +157,7 @@ class GetConversationsTest : CoroutinesTest {
 
     @Test
     fun getConversationsReturnsNoConversationsFoundWhenRepositoryReturnsNoConversations() = runBlockingTest {
-        coEvery { conversationRepository.getConversations(any()) } returns flowOf(
+        coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(
             DataResult.Error.Remote("any", null, NO_MORE_CONVERSATIONS_ERROR_CODE)
         )
 

@@ -19,12 +19,15 @@
 
 package ch.protonmail.android.domain
 
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
@@ -35,8 +38,10 @@ import kotlinx.coroutines.flow.onStart
  * A common use case is that the receiver [Flow] is a Flow from database and [loader] is a [LoadMoreFlow] from API and
  *  we want to observe only the database, and fetch more data by calling [LoadMoreFlow.loadMore]
  */
-@OptIn(FlowPreview::class)
-fun <A, B> Flow<A>.withLoadMore(loader: LoadMoreFlow<B>, onLoad: suspend (B) -> Unit): LoadMoreFlow<A> {
+fun <A, B> Flow<A>.withLoadMore(
+    loader: LoadMoreFlow<B>,
+    onLoad: suspend (B) -> Unit
+): LoadMoreFlow<A> {
     val underlying = combine(this, loader.emitInitialNull()) { fromFlow, fromLoadMore ->
         if (fromLoadMore != null) onLoad(fromLoadMore)
         fromFlow
@@ -49,6 +54,37 @@ fun <A, B> Flow<A>.withLoadMore(loader: LoadMoreFlow<B>, onLoad: suspend (B) -> 
  */
 fun <T> LoadMoreFlow<T>.loadMoreCatch(action: suspend FlowCollector<T>.(Throwable) -> Unit): LoadMoreFlow<T> =
     LoadMoreFlow(catch(action), trigger)
+
+/**
+ * Same as [combineTransform], but returns a [LoadMoreFlow] instead
+ */
+public fun <T1, T2, R> loadMoreCombineTransform(
+    flow: Flow<T1>,
+    loadMoreFlow: LoadMoreFlow<T2>,
+    transform: suspend FlowCollector<R>.(a: T1, b: T2) -> Unit
+): LoadMoreFlow<R> = LoadMoreFlow(combineTransform(flow, loadMoreFlow, transform), loadMoreFlow.trigger)
+
+/**
+ * @return [LoadMoreFlow] with nullable [T], emitting one `null` when Flow is started
+ *  @see Flow.onStart
+ *
+ * A common scenario is when combining a Flow from Database, with a Flow from Api, where we want to call this on
+ *  the Flow from API, in order to emit whenever the Database emits, without waiting for first emission from Api
+ */
+fun <T> LoadMoreFlow<T>.loadMoreEmitInitialNull(): LoadMoreFlow<T?> =
+    LoadMoreFlow(emitInitialNull(), trigger)
+
+/**
+ * Same as [flowOf], but returns a [LoadMoreFlow] instead
+ */
+fun <T> loadMoreFlowOf(vararg elements: T): LoadMoreFlow<T> =
+    LoadMoreFlow(flowOf(*elements), MutableSharedFlow())
+
+/**
+ * Same as [Flow.flatMapLatest], but returns a [LoadMoreFlow] instead
+ */
+fun <A, B> LoadMoreFlow<A>.loadMoreFlatMapLatest(transform: suspend (A) -> Flow<B>): LoadMoreFlow<B> =
+    LoadMoreFlow(flatMapLatest(transform), trigger)
 
 /**
  * Same as [Flow.map], but returns a [LoadMoreFlow] instead

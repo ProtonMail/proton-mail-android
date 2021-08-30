@@ -79,6 +79,7 @@ class GetConversations @Inject constructor(
             }
     }
 
+    @Deprecated("Call loadMore on the relative LoadMoreFlow from invoke", level = DeprecationLevel.ERROR)
     fun loadMore(
         userId: UserId,
         locationId: String,

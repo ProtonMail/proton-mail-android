@@ -52,7 +52,8 @@ class ConversationMapperTest {
             listOf(
                 LabelContextApiModel("0", 1, 2, 2, 30, 0),
                 LabelContextApiModel("7", 0, 1, 0, 0, 0)
-            )
+            ),
+            time = 123
         ),
         ConversationApiModel(
             id = "conversation2",
@@ -68,7 +69,8 @@ class ConversationMapperTest {
             numAttachments = 4,
             expirationTime = 12_345L,
             size = 0L,
-            listOf(LabelContextApiModel("0", 0, 1, 3, 0, 4))
+            listOf(LabelContextApiModel("0", 0, 1, 3, 0, 4)),
+            time = 123
         )
     )
 

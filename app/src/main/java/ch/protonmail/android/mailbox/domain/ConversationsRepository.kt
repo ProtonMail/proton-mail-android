@@ -20,6 +20,7 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.Conversation
@@ -31,13 +32,15 @@ import me.proton.core.domain.entity.UserId
 interface ConversationsRepository {
 
     /**
+     * Emits a List of [Conversation] when the repository could successfully get conversations from some data source,
+     *  or an empty optional when the repository encounters a handled failure getting conversations
+     *
      * @param params a model representing the params needed to define which conversations to get
      *
-     * @return a List<Conversation> when the repository could successfully get conversations from some data source.
-     * @return an empty optional when the repository encounters a handled failure getting conversations
-     * @throws exception when the repository fails getting conversations for any unhandled reasons
+     * @return [LoadMoreFlow] of [DataResult] or [List] of [Conversation]
+     * @throws Exception when the repository fails getting conversations for any unhandled reasons
      */
-    fun getConversations(params: GetConversationsParameters): Flow<DataResult<List<Conversation>>>
+    fun getConversations(params: GetConversationsParameters): LoadMoreFlow<DataResult<List<Conversation>>>
 
     /**
      * @param conversationId the encrypted id of the conversation to get
