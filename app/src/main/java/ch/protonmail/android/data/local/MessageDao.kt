@@ -76,19 +76,6 @@ abstract class MessageDao : BaseDao<Message>() {
     )
     abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): Flow<List<Message>>
 
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_DELETED = 0
-          AND $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
-          OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
-          OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """
-    )
-    abstract fun searchMessagesBlocking(subject: String, senderName: String, senderEmail: String): List<Message>
-
     @Query("SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location ")
     abstract fun getMessagesCountByLocation(location: Int): Int
 
