@@ -32,6 +32,7 @@ import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
 import ch.protonmail.android.data.local.model.COLUMN_LABEL_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_DELETED
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_IS_STARRED
@@ -66,10 +67,11 @@ abstract class MessageDao : BaseDao<Message>() {
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
+        WHERE $COLUMN_MESSAGE_DELETED = 0
+          AND $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
           OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
           OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
-            ORDER BY $COLUMN_MESSAGE_TIME DESC
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
     abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): Flow<List<Message>>
@@ -78,10 +80,11 @@ abstract class MessageDao : BaseDao<Message>() {
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
+        WHERE $COLUMN_MESSAGE_DELETED = 0
+          AND $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
           OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
           OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
-            ORDER BY $COLUMN_MESSAGE_TIME DESC
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
     abstract fun searchMessagesBlocking(subject: String, senderName: String, senderEmail: String): List<Message>
@@ -91,17 +94,19 @@ abstract class MessageDao : BaseDao<Message>() {
 
     @Query(
         """
-            SELECT * FROM $TABLE_MESSAGES 
-            WHERE $COLUMN_MESSAGE_LOCATION = :location  
-            ORDER BY $COLUMN_MESSAGE_TIME DESC
-            """
+        SELECT * FROM $TABLE_MESSAGES 
+        WHERE $COLUMN_MESSAGE_LOCATION = :location 
+          AND $COLUMN_MESSAGE_DELETED = 0
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+        """
     )
     abstract fun observeMessagesByLocation(location: Int): Flow<List<Message>>
 
     @Query(
         """
         SELECT * FROM $TABLE_MESSAGES 
-        WHERE $COLUMN_MESSAGE_IS_STARRED=1
+        WHERE $COLUMN_MESSAGE_IS_STARRED = 1
+          AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
     )
@@ -116,10 +121,13 @@ abstract class MessageDao : BaseDao<Message>() {
     )
     abstract fun getMessagesCountByByLabelId(labelId: String): Int
 
-    @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
-    abstract fun getAllMessages(): LiveData<List<Message>>
-
-    @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
+    @Query(
+        """
+        SELECT * FROM $TABLE_MESSAGES 
+        WHERE $COLUMN_MESSAGE_DELETED = 0
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+        """
+    )
     abstract fun observeAllMessages(): Flow<List<Message>>
 
     @Query(
@@ -142,9 +150,10 @@ abstract class MessageDao : BaseDao<Message>() {
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
-        OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
-        OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%'
+        WHERE $COLUMN_MESSAGE_DELETED = 0
+          AND $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%'
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
@@ -228,8 +237,9 @@ abstract class MessageDao : BaseDao<Message>() {
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_CONVERSATION_ID = :conversationId
+          AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """
+        """
     )
     abstract suspend fun findAllMessagesInfoFromConversation(conversationId: String): List<Message>
 
