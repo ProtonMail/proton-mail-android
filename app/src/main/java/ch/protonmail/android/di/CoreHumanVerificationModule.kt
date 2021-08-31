@@ -36,7 +36,6 @@ import me.proton.core.humanverification.domain.repository.HumanVerificationRepos
 import me.proton.core.humanverification.domain.repository.UserVerificationRepository
 import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator
 import me.proton.core.network.data.ApiProvider
-import me.proton.core.network.domain.client.ClientIdProvider
 import me.proton.core.network.domain.humanverification.HumanVerificationListener
 import me.proton.core.network.domain.humanverification.HumanVerificationProvider
 import javax.inject.Singleton
@@ -83,11 +82,9 @@ object HumanVerificationModule {
     @Provides
     @Singleton
     fun provideUserVerificationRepository(
-        apiProvider: ApiProvider,
-        clientIdProvider: ClientIdProvider,
-        humanVerificationRepository: HumanVerificationRepository
+        apiProvider: ApiProvider
     ): UserVerificationRepository =
-        UserVerificationRepositoryImpl(apiProvider, clientIdProvider, humanVerificationRepository)
+        UserVerificationRepositoryImpl(apiProvider)
 }
 
 @Module

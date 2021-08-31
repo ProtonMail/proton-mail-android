@@ -20,12 +20,14 @@ package ch.protonmail.android.di
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import ch.protonmail.android.core.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.domain.entity.Product
+import me.proton.core.user.data.DefaultDomainHost
 import javax.inject.Singleton
 
 @Module
@@ -39,6 +41,10 @@ object CoreAppModule {
     @Provides
     @Singleton
     fun provideRequiredAccountType(): AccountType = AccountType.Internal
+
+    @Provides
+    @DefaultDomainHost
+    fun provideDefaultDomainHost() = Constants.MAIL_DOMAIN_COM
 
     @Provides
     @Singleton

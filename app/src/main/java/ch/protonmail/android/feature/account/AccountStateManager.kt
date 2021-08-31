@@ -50,6 +50,7 @@ import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.account.domain.entity.isDisabled
 import me.proton.core.account.domain.entity.isReady
+import me.proton.core.account.domain.entity.isStepNeeded
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.AccountManagerObserver
 import me.proton.core.accountmanager.presentation.disableInitialNotReadyAccounts
@@ -120,18 +121,14 @@ class AccountStateManager @Inject constructor(
                         onAccountNeeded()
                         mutableStateFlow.tryEmit(State.AccountNeeded)
                     }
-                    accounts.any { it.isReady() } -> {
-                        mutableStateFlow.tryEmit(State.PrimaryExist)
-                    }
-                    else -> {
-                        mutableStateFlow.tryEmit(State.Processing)
-                    }
+                    accounts.any { it.isReady() } -> mutableStateFlow.tryEmit(State.PrimaryExist)
+                    accounts.any { it.isStepNeeded() } -> mutableStateFlow.tryEmit(State.Processing)
                 }
             }.launchIn(scope)
     }
 
     private fun observeAccountManager(lifecycle: Lifecycle): AccountManagerObserver =
-        accountManager.observe(lifecycle, Lifecycle.State.STARTED)
+        accountManager.observe(lifecycle, Lifecycle.State.CREATED)
 
     private fun observeHumanVerificationManager(lifecycle: Lifecycle): HumanVerificationManagerObserver =
         humanVerificationManager.observe(lifecycle, Lifecycle.State.STARTED)
