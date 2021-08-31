@@ -878,13 +878,8 @@ internal class MailboxActivity :
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
 
-    private fun setLoadingMore(loadingMore: Boolean): Boolean {
-        val previousValue = isLoadingMore.getAndSet(loadingMore)
-        if (previousValue != loadingMore) {
-            mailboxRecyclerView.post { mailboxAdapter.includeFooter = isLoadingMore.get() }
-        }
-        return previousValue
-    }
+    private fun setLoadingMore(loadingMore: Boolean): Boolean =
+        isLoadingMore.getAndSet(loadingMore)
 
     override fun onInbox(type: DrawerOptionType) {
         AppUtil.clearNotifications(applicationContext, userManager.requireCurrentUserId())

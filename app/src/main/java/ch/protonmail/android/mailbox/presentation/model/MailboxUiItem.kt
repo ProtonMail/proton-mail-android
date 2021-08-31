@@ -39,17 +39,15 @@ data class MailboxUiItem(
     val isDraft: Boolean
 ) {
 
-    companion object {
+    class DiffCallback : DiffUtil.ItemCallback<MailboxUiItem>() {
 
-        val DiffCallback = object : DiffUtil.ItemCallback<MailboxUiItem>() {
+        override fun areItemsTheSame(oldItem: MailboxUiItem, newItem: MailboxUiItem) =
+            oldItem.itemId == newItem.itemId
 
-            override fun areItemsTheSame(oldItem: MailboxUiItem, newItem: MailboxUiItem) =
-                oldItem.itemId == newItem.itemId
-
-            override fun areContentsTheSame(oldItem: MailboxUiItem, newItem: MailboxUiItem) =
-                oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: MailboxUiItem, newItem: MailboxUiItem) =
+            oldItem == newItem
     }
+
 }
 
 data class MessageData(

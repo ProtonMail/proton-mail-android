@@ -23,7 +23,6 @@ import ch.protonmail.android.data.ProtonStoreMapper
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
-import me.proton.core.domain.arch.map
 import javax.inject.Inject
 
 /**
@@ -34,5 +33,5 @@ class ConversationsResponseToConversationsDatabaseModelsMapper @Inject construct
 ) : ProtonStoreMapper<GetAllConversationsParameters, ConversationsResponse, List<ConversationDatabaseModel>> {
 
     override fun ConversationsResponse.toOut(key: GetAllConversationsParameters): List<ConversationDatabaseModel> =
-        conversations.map(mapper) { it.toDatabaseModel(key.userId) }
+        mapper.toDatabaseModels(this.conversations, key.userId)
 }

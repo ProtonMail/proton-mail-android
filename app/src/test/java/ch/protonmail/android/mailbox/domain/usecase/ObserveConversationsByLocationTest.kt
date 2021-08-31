@@ -17,15 +17,15 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.domain.loadMoreFlowOf
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
-import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -104,7 +104,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         observeConversationsByLocation.invoke(userId, location)
 
         val params = GetAllConversationsParameters(
-            userId = userId.id,
+            userId = userId,
             labelId = location
         )
         coVerify { conversationRepository.observeConversations(params,) }

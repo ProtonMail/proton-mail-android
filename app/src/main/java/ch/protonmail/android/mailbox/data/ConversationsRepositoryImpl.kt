@@ -28,10 +28,6 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.loadMoreCatch
-import ch.protonmail.android.domain.loadMoreCombineTransform
-import ch.protonmail.android.domain.loadMoreEmitInitialNull
-import ch.protonmail.android.domain.loadMoreFlow
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
@@ -56,18 +52,14 @@ import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
-import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.invoke
 import timber.log.Timber
@@ -120,7 +112,7 @@ class ConversationsRepositoryImpl @Inject constructor(
                     messageDao.saveMessages(messages)
                     Timber.v("Stored new messages size: ${messages.size}")
                     val conversation =
-                        apiToDatabaseConversationMapper { output.conversation.toDatabaseModel(params.userId) }
+                        apiToDatabaseConversationMapper.toDatabaseModel(output.conversation, params.userId)
                     conversationDao.insertOrUpdate(conversation)
                     Timber.v("Stored new conversation id: ${conversation.id}")
                 },
@@ -153,6 +145,14 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversations: List<ConversationDatabaseModel>
     ) {
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
+    }
+
+    override suspend fun saveConversationsApiModels(
+        userId: UserId,
+        conversations: List<ConversationApiModel>
+    ) {
+        val databaseModels = apiToDatabaseConversationMapper.toDatabaseModels(conversations, userId)
+        conversationDao.insertOrUpdate(*databaseModels.toTypedArray())
     }
 
     override suspend fun deleteConversations(conversationIds: List<String>, userId: UserId) {

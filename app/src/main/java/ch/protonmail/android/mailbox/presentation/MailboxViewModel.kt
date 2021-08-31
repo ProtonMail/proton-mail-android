@@ -368,7 +368,7 @@ class MailboxViewModel @Inject constructor(
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
         return observeMessagesByLocation(
-            userId = UserId(userId.s),
+            userId = userId,
             mailboxLocation = location,
             labelId = labelId
         ).loadMoreMap { result ->

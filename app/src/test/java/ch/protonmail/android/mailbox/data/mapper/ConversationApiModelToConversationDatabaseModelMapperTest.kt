@@ -22,9 +22,7 @@ package ch.protonmail.android.mailbox.data.mapper
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import io.mockk.mockk
-import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.invoke
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -117,7 +115,7 @@ class ConversationApiModelToConversationDatabaseModelMapperTest {
         )
 
         // when
-        val result = mapper { input.toDatabaseModel(userId) }
+        val result = mapper.toDatabaseModel(input, userId)
 
         // then
         assertEquals(expected, result)
@@ -130,7 +128,7 @@ class ConversationApiModelToConversationDatabaseModelMapperTest {
         val expected = emptyList<ConversationDatabaseModel>()
 
         // when
-        val result = input.map(mapper) { it.toDatabaseModel(userId) }
+        val result = mapper.toDatabaseModels(input, userId)
 
         // then
         assertEquals(expected, result)
@@ -171,7 +169,7 @@ class ConversationApiModelToConversationDatabaseModelMapperTest {
         val expected = listOf(expectedElement1, expectedElement2)
 
         // when
-        val result = input.map(mapper) { it.toDatabaseModel(userId) }
+        val result = mapper.toDatabaseModels(input, userId)
 
         // then
         assertEquals(expected, result)

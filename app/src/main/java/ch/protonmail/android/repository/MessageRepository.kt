@@ -29,11 +29,6 @@ import ch.protonmail.android.data.NoProtonStoreMapper
 import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.loadMoreCatch
-import ch.protonmail.android.domain.loadMoreCombineTransform
-import ch.protonmail.android.domain.loadMoreEmitInitialNull
-import ch.protonmail.android.domain.loadMoreFlow
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
@@ -54,7 +49,6 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -258,11 +252,10 @@ class MessageRepository @Inject constructor(
         return if (params.keyword != null) {
             dao.searchMessages(params.keyword)
         } else {
-            when (params.labelId) {
+            when (requireNotNull(params.labelId) { "Label Id is required" }) {
                 sentAsLabelId() -> dao.observeMessagesByLabelId(params.labelId)
                 allMailAsLabelId() -> dao.observeAllMessages()
                 starredAsLabelId() -> dao.observeStarredMessages()
-                null -> unsupported
                 in locationTypesAlLabelId() -> dao.observeMessagesByLocation(params.labelId.toInt())
                 else -> dao.observeMessagesByLabelId(params.labelId)
             }

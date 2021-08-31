@@ -35,18 +35,27 @@ class ConversationApiModelToConversationDatabaseModelMapper @Inject constructor(
     private val labelMapper: LabelContextApiModelToLabelContextDatabaseModelMapper
 ) : Mapper<ConversationApiModel, ConversationDatabaseModel> {
 
-    fun ConversationApiModel.toDatabaseModel(userId: UserId) = ConversationDatabaseModel(
-        id = id,
-        order = order,
+    fun toDatabaseModel(
+        conversationApiModel: ConversationApiModel,
+        userId: UserId
+    ) = ConversationDatabaseModel(
+        id = conversationApiModel.id,
+        order = conversationApiModel.order,
         userId = userId.id,
-        subject = subject,
-        senders = senders.map(messageSenderMapper) { it.toDatabaseModel() },
-        recipients = recipients.map(messageRecipientMapper) { it.toDatabaseModel() },
-        numMessages = numMessages,
-        numUnread = numUnread,
-        numAttachments = numAttachments,
-        expirationTime = expirationTime,
-        size = size,
-        labels = labels.map(labelMapper) { it.toDatabaseModel() }
+        subject = conversationApiModel.subject,
+        senders = conversationApiModel.senders.map(messageSenderMapper) { it.toDatabaseModel() },
+        recipients = conversationApiModel.recipients.map(messageRecipientMapper) { it.toDatabaseModel() },
+        numMessages = conversationApiModel.numMessages,
+        numUnread = conversationApiModel.numUnread,
+        numAttachments = conversationApiModel.numAttachments,
+        expirationTime = conversationApiModel.expirationTime,
+        size = conversationApiModel.size,
+        labels = conversationApiModel.labels.map(labelMapper) { it.toDatabaseModel() }
     )
+
+    fun toDatabaseModels(
+        conversationApiModels: List<ConversationApiModel>,
+        userId: UserId
+    ): List<ConversationDatabaseModel> =
+        conversationApiModels.map { toDatabaseModel(it, userId) }
 }

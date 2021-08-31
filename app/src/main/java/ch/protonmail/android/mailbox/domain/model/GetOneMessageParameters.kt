@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.domain.entity.Id
 import me.proton.core.domain.entity.UserId
 
 /**
@@ -28,5 +27,5 @@ import me.proton.core.domain.entity.UserId
  */
 data class GetOneMessageParameters(
     val userId: UserId,
-    val messageId: Id,
+    val messageId: String,
 )

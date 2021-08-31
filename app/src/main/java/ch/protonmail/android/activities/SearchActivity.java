@@ -152,7 +152,6 @@ public class SearchActivity extends BaseActivity {
 
     private void showSearchResults(List<MailboxUiItem> items) {
         mAdapter.submitList(items);
-        setLoadingMore(false);
         mProgressBar.setVisibility(View.GONE);
         mAdapter.setNewLocation(MessageLocationType.SEARCH);
     }
@@ -215,7 +214,6 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void performSearch(Boolean loadMore) {
-        setLoadingMore(loadMore);
         mProgressBar.setVisibility(loadMore ? View.GONE : View.VISIBLE);
         mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage));
         searchView.clearFocus();
@@ -239,7 +237,6 @@ public class SearchActivity extends BaseActivity {
 
     @Subscribe
     public void onNoResultsEvent(NoResultsEvent event) {
-        setLoadingMore(false);
         mProgressBar.setVisibility(View.GONE);
         if (event.getPage() == 0) {
             mAdapter.submitList(null);
@@ -252,10 +249,6 @@ public class SearchActivity extends BaseActivity {
         List<Message> messages = event.getResults();
         List<MailboxUiItem> items = mailboxViewModel.messagesToMailboxItemsBlocking(messages);
         showSearchResults(items);
-    }
-
-    private void setLoadingMore(boolean loadingMore) {
-        mAdapter.setIncludeFooter(loadingMore);
     }
 
 }

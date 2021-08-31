@@ -35,7 +35,7 @@ import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 class MailboxRecyclerViewAdapter(
     private val context: Context,
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
-) : ListAdapter<MailboxUiItem, MailboxItemViewHolder>(MailboxUiItem.DiffCallback) {
+) : ListAdapter<MailboxUiItem, MailboxItemViewHolder>(MailboxUiItem.DiffCallback()) {
 
     private var mailboxLocation = Constants.MessageLocationType.INVALID
 
@@ -48,20 +48,6 @@ class MailboxRecyclerViewAdapter(
 
     private var onItemClick: ((MailboxUiItem) -> Unit)? = null
     private var onItemSelectionChangedListener: (() -> Unit)? = null
-
-    var includeFooter: Boolean = false
-        set(value) {
-            // TODO: footer will be re-implemented in next MR
-            // if (field == value) {
-            //     return
-            // }
-            // field = value
-            // if (value) {
-            //     notifyItemInserted(mailboxItems.size)
-            // } else {
-            //     notifyItemRemoved(mailboxItems.size)
-            // }
-        }
 
     val checkedMailboxItems get() =
         selectedMailboxItemsIds.mapNotNull { mailboxItems.find { message -> message.itemId == it } }

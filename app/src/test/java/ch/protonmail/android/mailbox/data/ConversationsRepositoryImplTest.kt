@@ -82,7 +82,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
-import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -255,8 +254,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val parameters = buildGetConversationsParameters()
 
-            val conversationsEntity = conversationsRemote.conversations
-                .map(apiToDatabaseConversationMapper) { it.toDatabaseModel(UserId(testUserId.s)) }
+            val conversationsEntity = apiToDatabaseConversationMapper
+                .toDatabaseModels(conversationsRemote.conversations, testUserId)
             coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
@@ -277,8 +276,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
-            val expectedConversations = conversationsRemote.conversations
-                .map(apiToDatabaseConversationMapper) { it.toDatabaseModel(UserId(testUserId.id)) }
+            val expectedConversations = apiToDatabaseConversationMapper
+                .toDatabaseModels(conversationsRemote.conversations, testUserId)
 
             // when
             conversationsRepository.observeConversations(parameters,).test {
@@ -305,18 +304,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchConversations(any()) } throws IOException(errorMessage)
 
         // when
-<<<<<<< HEAD
-        conversationsRepository.getConversations(parameters)
-            .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
-                // Then
-                val error = expectItem() as DataResult.Error
-                assertEquals(errorMessage, error.message)
-
-                val actualItem = expectItem() as DataResult.Success
-                assertEquals(ResponseSource.Local, actualItem.source)
-                expectComplete()
-            }
-=======
         conversationsRepository.observeConversations(parameters,).test {
 
             // then
@@ -329,7 +316,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
             expectComplete()
         }
->>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
     }
 
     @Test
@@ -345,30 +331,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchConversations(any()) } throws IOException(errorMessage)
 
         // when
-<<<<<<< HEAD
-        conversationsRepository.getConversations(parameters)
-            .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
-                // Then
-                val error = expectItem() as DataResult.Error
-                assertEquals(errorMessage, error.message)
-
-                val firstActualItem = expectItem() as DataResult.Success
-                assertEquals(ResponseSource.Local, firstActualItem.source)
-
-                val expectedLocalConversations = listOf(
-                    Conversation(
-                        conversationId,
-                        "subject",
-                        listOf(Correspondent("sender-name", "email@proton.com")),
-                        listOf(Correspondent("receiver-name", "email-receiver@proton.com")),
-                        1,
-                        0,
-                        0,
-                        0,
-                        emptyList(),
-                        null
-                    )
-=======
         conversationsRepository.observeConversations(parameters,).test {
 
             // then
@@ -376,8 +338,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             assertEquals(ResponseSource.Remote, actualError.source)
             assertEquals("Api call failed", actualError.message)
 
-            val actualLocalItems = expectItem() as DataResult.Success
-            assertEquals(ResponseSource.Local, actualLocalItems.source)
+            val firstActualItem = expectItem() as DataResult.Success
+            assertEquals(ResponseSource.Local, firstActualItem.source)
             val expectedLocalConversations = listOf(
                 Conversation(
                     "conversationId234423",
@@ -390,28 +352,19 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     0,
                     listOf(LabelContext("labelId123", 1, 0, 0, 0, 0)),
                     null
->>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
                 )
-                assertEquals(expectedLocalConversations, firstActualItem.value)
-                expectComplete()
-            }
-
+            )
+            assertEquals(expectedLocalConversations, firstActualItem.value)
+            expectComplete()
+        }
     }
 
     @Test
     fun verifyGetConversationsEmitNoMoreConversationsErrorWhenRemoteReturnsEmptyList() = runBlocking {
         // given
-<<<<<<< HEAD
         val parameters = buildGetConversationsParameters()
-        val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(UserId(testUserId))
-=======
-        val parameters = GetAllConversationsParameters(
-            userId = UserId(testUserId.s),
-            labelId = "8234",
-            end = 823_848_238
-        )
-        val conversationsEntity = conversationsRemote.conversations
-            .map(apiToDatabaseConversationMapper) { it.toDatabaseModel(UserId(testUserId.s)) }
+        val conversationsEntity = apiToDatabaseConversationMapper
+            .toDatabaseModels(conversationsRemote.conversations, userId)
 
         val emptyConversationsResponse = ConversationsResponse(0, emptyList())
         coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
@@ -435,7 +388,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     @Test
     fun verifyLocalConversationWithMessagesIsReturnedWhenDataIsAvailableInTheLocalDB() {
-        runBlocking {
+        runBlockingTest {
             // given
             val conversationDbModel = buildConversationDatabaseModel()
             val message = Message(
@@ -445,7 +398,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 Unread = false,
                 sender = MessageSender("senderName", "sender@protonmail.ch"),
                 toList = listOf(),
-                time = 82374723L,
+                time = 82_374_723L,
                 numAttachments = 1,
                 expirationTime = 0L,
                 isReplied = false,
@@ -472,7 +425,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 false,
                 Correspondent("senderName", "sender@protonmail.ch"),
                 listOf(),
-                82374723L,
+                82_374_723L,
                 1,
                 0L,
                 isReplied = false,
@@ -581,7 +534,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     @Test
     fun verifyConversationIsNotEmittedAgainIfItsValueDidntChange() {
-        runBlocking {
+        runBlockingTest {
             // given
             val conversationDbModel = buildConversationDatabaseModel()
             val message = Message(
@@ -653,7 +606,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     @Test
     fun verifyConversationIsFetchedFromRemoteDataSourceAndStoredLocallyWhenNotAvailableInDb() {
-        runBlocking {
+        runBlockingTest {
             // given
             val conversationApiModel = ConversationApiModel(
                 id = conversationId,
@@ -718,16 +671,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { api.fetchConversations(parameters) } throws CancellationException("Cancelled")
 
             // when
-<<<<<<< HEAD
-            conversationsRepository.getConversations(parameters)
+            conversationsRepository.observeConversations(parameters)
                 .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
                     // then
                     val actual = expectItem() as DataResult.Success
                     assertEquals(ResponseSource.Local, actual.source)
                 }
-=======
-            conversationsRepository.observeConversations(parameters,).collect { }
->>>>>>> 9874f3e45 (Apply ProtonStore.kt to Conversations)
         }
     }
 
