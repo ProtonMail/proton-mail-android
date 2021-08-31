@@ -18,36 +18,26 @@
  */
 package ch.protonmail.android.contacts.groups.details
 
-import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import kotlinx.coroutines.flow.Flow
-import timber.log.Timber
 import javax.inject.Inject
 
 class ContactGroupDetailsRepository @Inject constructor(
-    private val databaseProvider: DatabaseProvider,
-    private val userManager: UserManager,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val contactRepository: ContactsRepository
 ) {
-
-    private val contactDao by lazy {
-        Timber.v("Instantiating contactDao in ContactGroupDetailsRepository")
-        databaseProvider.provideContactDao(userManager.requireCurrentUserId())
-    }
 
     suspend fun findContactGroupDetails(id: String): LabelEntity? =
         labelRepository.findLabel(LabelId(id))
 
-    fun getContactGroupEmails(id: String): Flow<List<ContactEmail>> =
-        contactDao.findAllContactsEmailsByContactGroup(id)
+    fun getContactGroupEmails(groupLabelId: String): Flow<List<ContactEmail>> =
+        contactRepository.observeAllContactEmailsByContactGroupId(groupLabelId)
 
-    fun filterContactGroupEmails(id: String, filter: String): Flow<List<ContactEmail>> =
-        contactDao.filterContactsEmailsByContactGroup(id, "%$filter%")
+    fun filterContactGroupEmails(groupLabelId: String, filter: String): Flow<List<ContactEmail>> =
+        contactRepository.observeFilterContactEmailsByContactGroup(groupLabelId, filter)
 
-    suspend fun getContactEmailsCount(contactGroupId: String) =
-        contactDao.countContactEmailsByLabelId(contactGroupId)
 }

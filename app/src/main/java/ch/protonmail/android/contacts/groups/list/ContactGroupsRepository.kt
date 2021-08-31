@@ -19,14 +19,13 @@
 package ch.protonmail.android.contacts.groups.list
 
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -38,10 +37,9 @@ class ContactGroupsRepository @Inject constructor(
     private val contactDao: ContactDao,
     private val dispatchers: DispatcherProvider,
     private val labelRepository: LabelRepository,
-    private val accountsManager: AccountManager
+    private val accountsManager: AccountManager,
+    private val contactRepository: ContactsRepository
 ) {
-
-    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactDao.observeJoins()
 
     fun observeContactGroups(filter: String): Flow<List<ContactLabelUiModel>> =
         accountsManager.getPrimaryUserId().filterNotNull()
@@ -59,14 +57,14 @@ class ContactGroupsRepository @Inject constructor(
                         parentId = entity.parentId,
                         expanded = entity.expanded,
                         sticky = entity.sticky,
-                        contactEmailsCount = contactDao.countContactEmailsByLabelIdBlocking(entity.id.id)
+                        contactEmailsCount = contactRepository.countContactEmailsByLabelId(entity.id)
                     )
                 }
             }
             .flowOn(dispatchers.Io)
 
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
-        contactDao.findAllContactsEmailsByContactGroup(id).first()
+        contactRepository.findAllContactEmailsByContactGroupId(id)
 
     suspend fun saveContactGroup(contactLabel: LabelEntity) {
         labelRepository.saveLabel(contactLabel)

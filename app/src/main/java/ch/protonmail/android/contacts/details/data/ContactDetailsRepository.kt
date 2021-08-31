@@ -20,6 +20,7 @@ package ch.protonmail.android.contacts.details.data
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -47,11 +48,12 @@ open class ContactDetailsRepository @Inject constructor(
     protected val contactDao: ContactDao,
     private val dispatcherProvider: DispatcherProvider,
     private val labelsMapper: LabelsMapper,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val contactRepository: ContactsRepository
 ) {
 
     suspend fun getContactGroupsLabelForId(emailId: String): List<LabelEntity> =
-        contactDao.getAllContactGroupsByContactEmail(emailId)
+        contactRepository.getAllContactGroupsByContactEmail(emailId)
 
     fun getContactEmails(id: String): Observable<List<ContactEmail>> {
         return contactDao.findContactEmailsByContactIdObservable(id)
@@ -71,8 +73,8 @@ open class ContactDetailsRepository @Inject constructor(
         }
     }
 
-    fun getContactEmailsCount(contactGroupId: LabelId) =
-        contactDao.countContactEmailsByLabelIdBlocking(contactGroupId.id)
+    suspend fun getContactEmailsCount(contactGroupId: LabelId) =
+        contactRepository.countContactEmailsByLabelId(contactGroupId)
 
     private suspend fun getContactGroupsFromApi(userId: UserId): List<ContactLabelUiModel> {
         val contactGroupsResponse = api.fetchContactGroups(userId).valueOrNull?.labels

@@ -22,8 +22,6 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
@@ -61,30 +59,13 @@ class ContactEmailsManager @Inject constructor(
 
         if (allResults.isNotEmpty()) {
             val allContactEmails = allResults.flatMap { it.contactEmails }
-            val allJoins = getJoins(allContactEmails)
             val contactLabels = mapToContactLabelsEntity(contactGroupsResponse?.labels, userId)
-            Timber.v(
-                "Refresh emails: ${allContactEmails.size}, labels: ${contactLabels.size}, allJoins: ${allJoins.size}"
-            )
             val contactsDao = databaseProvider.provideContactDao(userId)
             labelRepository.saveLabels(contactLabels)
-            contactsDao.insertNewContacts(allContactEmails, allJoins)
+            contactsDao.insertNewContacts(allContactEmails)
         } else {
             Timber.v("contactEmails result list is empty")
         }
-    }
-
-    private fun getJoins(allContactEmails: List<ContactEmail>): List<ContactEmailContactLabelJoin> {
-        val allJoins = mutableListOf<ContactEmailContactLabelJoin>()
-        for (contactEmail in allContactEmails) {
-            val labelIds = contactEmail.labelIds
-            if (labelIds != null) {
-                for (labelId in labelIds) {
-                    allJoins.add(ContactEmailContactLabelJoin(contactEmail.contactEmailId, labelId))
-                }
-            }
-        }
-        return allJoins
     }
 
     private fun mapToContactLabelsEntity(labels: List<Label>?, userId: UserId): List<LabelEntity> {

@@ -29,7 +29,9 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,7 +52,8 @@ import kotlin.time.milliseconds
 class ContactGroupDetailsViewModel @Inject constructor(
     private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
     private val deleteLabel: DeleteLabel,
-    private val contactsMapper: ContactsListMapper
+    private val contactsMapper: ContactsListMapper,
+    private val contactRepository: ContactsRepository
 ) : ViewModel() {
 
     private lateinit var _contactLabel: ContactGroupListItem
@@ -120,7 +123,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
     private suspend fun updateContactGroup() {
         runCatching {
             val contactGroupDetails = contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.contactId)
-            val contactEmailsCount = contactGroupDetailsRepository.getContactEmailsCount(_contactLabel.contactId)
+            val contactEmailsCount = contactRepository.countContactEmailsByLabelId(LabelId(_contactLabel.contactId))
             contactGroupDetails to contactEmailsCount
         }
             .fold(

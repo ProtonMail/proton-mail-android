@@ -32,23 +32,14 @@ import ch.protonmail.android.data.local.model.COLUMN_CONTACT_DATA_NAME
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_CONTACT_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_EMAIL
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_ID
-import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
-import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABEL_IDS
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_ID
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.TABLE_CONTACT_DATA
 import ch.protonmail.android.data.local.model.TABLE_CONTACT_EMAILS
-import ch.protonmail.android.data.local.model.TABLE_CONTACT_EMAILS_LABELS_JOIN
 import ch.protonmail.android.data.local.model.TABLE_FULL_CONTACT_DETAILS
-import ch.protonmail.android.labels.data.db.COLUMN_LABEL_ID
-import ch.protonmail.android.labels.data.db.COLUMN_LABEL_NAME
-import ch.protonmail.android.labels.data.db.COLUMN_LABEL_ORDER
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.db.TABLE_LABELS
 import io.reactivex.Flowable
 import kotlinx.coroutines.flow.Flow
 
@@ -90,7 +81,10 @@ interface ContactDao {
 
     //region Contact email
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_ID = :id")
-    fun findContactEmailById(id: String): ContactEmail?
+    suspend fun findContactEmailById(id: String): ContactEmail?
+
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_ID = :id")
+    fun observeContactEmailById(id: String): Flow<ContactEmail?>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL = :email")
     suspend fun findContactEmailByEmail(email: String): ContactEmail?
@@ -131,71 +125,71 @@ interface ContactDao {
     )
     fun findAllContactsEmailsAsyncObservable(filter: String): Flowable<List<ContactEmail>>
 
-    @Query(
-        """
-        SELECT $TABLE_CONTACT_EMAILS.* 
-        FROM $TABLE_CONTACT_EMAILS 
-        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID = 
-            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID 
-        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    fun findAllContactsEmailsByContactGroupAsync(contactGroupId: String): LiveData<List<ContactEmail>>
+//    @Query(
+//        """
+//        SELECT $TABLE_CONTACT_EMAILS.*
+//        FROM $TABLE_CONTACT_EMAILS
+//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
+//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
+//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//    """
+//    )
+//    fun findAllContactsEmailsByContactGroupAsync(contactGroupId: String): LiveData<List<ContactEmail>>
 
-    @Query(
-        """
-        SELECT $TABLE_CONTACT_EMAILS.* 
-        FROM $TABLE_CONTACT_EMAILS 
-        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN 
-          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID 
-        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    fun findAllContactsEmailsByContactGroup(contactGroupId: String): Flow<List<ContactEmail>>
+//    @Query(
+//        """
+//        SELECT $TABLE_CONTACT_EMAILS.*
+//        FROM $TABLE_CONTACT_EMAILS
+//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
+//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
+//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//    """
+//    )
+//    fun findAllContactsEmailsByContactGroup(contactGroupId: String): Flow<List<ContactEmail>>
 
-    @Query(
-        """
-        SELECT $TABLE_CONTACT_EMAILS.* 
-        FROM $TABLE_CONTACT_EMAILS 
-        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN 
-          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID 
-        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    suspend fun findAllContactsEmailsByContactGroupOnce(contactGroupId: String): List<ContactEmail>
+//    @Query(
+//        """
+//        SELECT $TABLE_CONTACT_EMAILS.*
+//        FROM $TABLE_CONTACT_EMAILS
+//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
+//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
+//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//    """
+//    )
+//    suspend fun findAllContactsEmailsByContactGroupOnce(contactGroupId: String): List<ContactEmail>
 
-    @Query(
-        """
-        SELECT $TABLE_CONTACT_EMAILS.* 
-        FROM $TABLE_CONTACT_EMAILS 
-        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN 
-          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID 
-        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    fun findAllContactsEmailsByContactGroupAsyncObservable(
-        contactGroupId: String
-    ): Flowable<List<ContactEmail>>
+//    @Query(
+//        """
+//        SELECT $TABLE_CONTACT_EMAILS.*
+//        FROM $TABLE_CONTACT_EMAILS
+//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
+//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
+//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//    """
+//    )
+//    fun findAllContactsEmailsByContactGroupAsyncObservable(
+//        contactGroupId: String
+//    ): Flowable<List<ContactEmail>>
 
     /**
      * Make sure you provide @param filter with included % or ?
      */
-    @Query(
-        """
-        SELECT $TABLE_CONTACT_EMAILS.* 
-        FROM $TABLE_CONTACT_EMAILS
-        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
-        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-          AND $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_EMAIL LIKE :filter
-      """
-    )
-    fun filterContactsEmailsByContactGroup(contactGroupId: String, filter: String): Flow<List<ContactEmail>>
+//    @Query(
+//        """
+//        SELECT $TABLE_CONTACT_EMAILS.*
+//        FROM $TABLE_CONTACT_EMAILS
+//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
+//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
+//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//          AND $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_EMAIL LIKE :filter
+//      """
+//    )
+//    fun filterContactsEmailsByContactGroup(contactGroupId: String, filter: String): Flow<List<ContactEmail>>
 
     @Query(
         """
@@ -228,9 +222,6 @@ interface ContactDao {
     fun saveContactEmail(contactEmail: ContactEmail): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAllContactsEmails(vararg emailData: ContactEmail): List<Long>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAllContactsEmails(emailData: Collection<ContactEmail>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -240,38 +231,59 @@ interface ContactDao {
         """
         SELECT count(*)
         FROM $TABLE_CONTACT_EMAILS
-        WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS LIKE :contactGroupId
+        WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS LIKE '%' || :contactGroupId || '%'
     """
     )
-    fun countContactEmails(contactGroupId: String): Int
+    suspend fun countContactEmailsByGroupId(contactGroupId: String): Int
+
 
     @Query(
         """
-        SELECT $TABLE_LABELS.* 
-        FROM $TABLE_LABELS 
-        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-          ON $TABLE_LABELS.$COLUMN_LABEL_ID =
-            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID 
-        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = :emailId
-        ORDER BY $COLUMN_LABEL_NAME
-    """
+        SELECT * FROM $TABLE_CONTACT_EMAILS
+        WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS LIKE '%' || :contactGroupId || '%'
+        """
     )
-    suspend fun getAllContactGroupsByContactEmail(emailId: String): List<LabelEntity>
+    fun observeAllContactsEmailsByContactGroup(contactGroupId: String): Flow<List<ContactEmail>>
 
-    @Query("DELETE FROM $TABLE_LABELS")
-    fun clearContactGroupsLabelsTableBlocking()
+    @Query(
+        """
+        SELECT * FROM $TABLE_CONTACT_EMAILS
+        WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS LIKE '%' || :contactGroupId || '%'
+        AND $COLUMN_CONTACT_EMAILS_EMAIL LIKE :filter
+        """
+    )
+    fun observeFilterContactEmailsByContactGroup(contactGroupId: String, filter: String): Flow<List<ContactEmail>>
 
-    @Query("UPDATE $TABLE_LABELS SET $COLUMN_LABEL_NAME = :name")
-    fun updateName(name: String)
+    @Query(
+        """
+        SELECT $COLUMN_CONTACT_EMAILS_LABEL_IDS FROM $TABLE_CONTACT_EMAILS 
+        WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS != ''
+        """
+    )
+    suspend fun findAllContactGroupsLabels(): List<String>
 
-    @Query("UPDATE $TABLE_LABELS SET $COLUMN_LABEL_ORDER = :order")
-    fun updateOrder(order: Int)
+//    @Query(
+//        """
+//        SELECT $TABLE_LABELS.*
+//        FROM $TABLE_LABELS
+//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//          ON $TABLE_LABELS.$COLUMN_LABEL_ID =
+//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID
+//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = :emailId
+//        ORDER BY $COLUMN_LABEL_NAME
+//    """
+//    )
+//    suspend fun getAllContactGroupsByContactEmail(emailId: String): List<LabelEntity>
 
-    @Query("DELETE FROM $TABLE_LABELS")
-    fun clearContactGroupsList()
+//    @Query("UPDATE $TABLE_LABELS SET $COLUMN_LABEL_NAME = :name")
+//    fun updateName(name: String)
 
-    @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID = :labelId")
-    fun deleteByContactGroupLabelId(labelId: String)
+//    @Query("UPDATE $TABLE_LABELS SET $COLUMN_LABEL_ORDER = :order")
+//    fun updateOrder(order: Int)
+
+//    @Query("DELETE FROM $TABLE_LABELS")
+//    fun clearContactGroupsList()
+
 
     //endregion
 
@@ -297,117 +309,77 @@ interface ContactDao {
     //endregion
 
     //region contact emails contact label join
-    @Query(
-        """
-        SELECT count(*) 
-        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    suspend fun countContactEmailsByLabelId(contactGroupId: String): Int
+//    @Query(
+//        """
+//        SELECT count(*)
+//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//    """
+//    )
+//    suspend fun countContactEmailsByLabelId(contactGroupId: String): Int
 
-    @Query(
-        """
-        SELECT count(*) 
-        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    fun countContactEmailsByLabelIdBlocking(contactGroupId: String): Int
+//    @Query(
+//        """
+//        SELECT count(*)
+//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//    """
+//    )
+//    fun countContactEmailsByLabelIdBlocking(contactGroupId: String): Int
 
-    @Query("DELETE FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN")
-    fun clearContactEmailsLabelsJoin()
+//    @Query(
+//        """
+//        SELECT *
+//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//    """
+//    )
+//    suspend fun fetchJoins(contactGroupId: String): List<ContactEmailContactLabelJoin>
 
-    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN")
-    fun observeJoins(): Flow<List<ContactEmailContactLabelJoin>>
+//    @Query(
+//        """
+//        SELECT *
+//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
+//    """
+//    )
+//    fun fetchJoinsBlocking(contactGroupId: String): List<ContactEmailContactLabelJoin>
 
-    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN")
-    fun fetchJoinsObservable(): Flowable<List<ContactEmailContactLabelJoin>>
+//    @Query(
+//        """
+//        SELECT *
+//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
+//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = :contactEmailId
+//    """
+//    )
+//    fun fetchJoinsByEmail(contactEmailId: String): List<ContactEmailContactLabelJoin>
 
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN 
-        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    fun observeJoins(contactGroupId: String): Flow<List<ContactEmailContactLabelJoin>>
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun saveContactEmailContactLabel(
+//        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
+//    ): List<Long>
 
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN 
-        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    suspend fun fetchJoins(contactGroupId: String): List<ContactEmailContactLabelJoin>
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    fun saveContactEmailContactLabelBlocking(
+//        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
+//    ): List<Long>
 
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN 
-        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    fun fetchJoinsBlocking(contactGroupId: String): List<ContactEmailContactLabelJoin>
+//    @Delete
+//    fun deleteContactEmailContactLabel(
+//        contactEmailContactLabelJoin: Collection<ContactEmailContactLabelJoin>
+//    )
 
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = :contactEmailId
-    """
-    )
-    fun fetchJoinsByEmail(contactEmailId: String): List<ContactEmailContactLabelJoin>
-
-    @Query(
-        """
-        DELETE FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID IN (:contactEmailIds)
-          AND $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-    """
-    )
-    fun deleteJoinByGroupIdAndEmailId(contactEmailIds: List<String>, contactGroupId: String)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveContactEmailContactLabel(
-        contactEmailContactLabelJoin: ContactEmailContactLabelJoin
-    ): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabelBlocking(
-        contactEmailContactLabelJoin: ContactEmailContactLabelJoin
-    ): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabel(
-        vararg contactEmailContactLabelJoin: ContactEmailContactLabelJoin
-    ): List<Long>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveContactEmailContactLabel(
-        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
-    ): List<Long>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabelBlocking(
-        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
-    ): List<Long>
-
-    @Delete
-    fun deleteContactEmailContactLabel(
-        contactEmailContactLabelJoin: Collection<ContactEmailContactLabelJoin>
-    )
 
     @Transaction
     suspend fun insertNewContacts(
         allContactEmails: List<ContactEmail>,
-        allJoins: List<ContactEmailContactLabelJoin>
+//        allJoins: List<ContactEmailContactLabelJoin>
     ) {
         clearContactEmailsCache()
-        clearContactGroupsList()
+//        clearContactGroupsList()
         saveAllContactsEmails(allContactEmails)
-        saveContactEmailContactLabel(allJoins)
+        //saveContactEmailContactLabel(allJoins)
     }
+
     //endregion
 }

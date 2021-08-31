@@ -26,6 +26,7 @@ import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_CONTACT_GROUP
 import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_FOLDER
 import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_MESSAGE_LABEL
 import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.model.LabelType
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
@@ -62,7 +63,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         AND $COLUMN_LABEL_TYPE = :labelType
         """
     )
-    abstract fun observeLabelsByType(userId: UserId, labelType: Int): Flow<List<LabelEntity>>
+    abstract fun observeLabelsByType(userId: UserId, labelType: LabelType): Flow<List<LabelEntity>>
 
     @Query(
         """
@@ -71,7 +72,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         AND $COLUMN_LABEL_TYPE = :labelType
         """
     )
-    abstract suspend fun findLabelsByType(userId: UserId, labelType: Int): List<LabelEntity>
+    abstract suspend fun findLabelsByType(userId: UserId, labelType: LabelType): List<LabelEntity>
 
     @Query(
         """
@@ -86,7 +87,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
     abstract fun observeSearchLabelsByNameAndType(
         userId: UserId,
         labelName: String,
-        labelType: Int
+        labelType: LabelType
     ): Flow<List<LabelEntity>>
 
     @Query(

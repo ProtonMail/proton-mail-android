@@ -42,7 +42,6 @@ import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.model.ContactData
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.labels.data.LabelRepository
@@ -346,11 +345,11 @@ class ConvertLocalContactsJob(
                     val emailsList = contact.emails!!.map { it.contactEmailId }
                     getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
                         .doOnComplete {
-                            val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
+                            //val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
                             for (contactEmail in emailsList) {
-                                joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
+                              //  joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                             }
-                            contactDao.saveContactEmailContactLabelBlocking(joins)
+                            //contactDao.saveContactEmailContactLabelBlocking(joins)
                         }
                         .blockingAwait()
                 }

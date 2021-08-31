@@ -342,10 +342,9 @@ public class AppUtil {
                 pendingActionDao.clearPendingSendCache();
                 pendingActionDao.clearPendingUploadCache();
                 if (clearContacts) {
-                    contactDao.clearContactEmailsLabelsJoin();
                     contactDao.clearContactEmailsCache();
                     contactDao.clearContactDataCache();
-                    contactDao.clearContactGroupsLabelsTableBlocking();
+                    //contactDao.clearContactGroupsLabelsTableBlocking();
                     contactDao.clearFullContactDetailsCache();
                 }
                 messageDao.clearMessagesCache();

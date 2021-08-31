@@ -27,7 +27,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
@@ -209,7 +208,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     private fun startObserving() {
         contactGroupEditCreateViewModel.contactGroupEmailsResult.observe(
             this,
-            Observer {
+            {
                 // prevent flickering between previous and future contacts list while waiting for response
                 if (progress.visibility != View.VISIBLE) {
                     refreshData(HashSet(it))
@@ -218,13 +217,13 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         )
         contactGroupEditCreateViewModel.contactGroupEmailsError.observe(
             this,
-            Observer {
+            {
                 membersList.visibility = View.GONE
             }
         )
         contactGroupEditCreateViewModel.cleanUpComplete.observe(
             this,
-            Observer {
+            {
                 it?.getContentIfNotHandled()?.let {
                     if (!it) {
                         buildAndShowUnsavedEditDialog()

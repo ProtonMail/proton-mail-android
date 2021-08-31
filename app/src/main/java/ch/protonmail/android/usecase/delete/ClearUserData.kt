@@ -70,10 +70,8 @@ class ClearUserData @Inject constructor(
             attachmentMetadataDao?.clearAttachmentMetadataCache()
             if (alsoClearContacts) {
                 contactDao?.run {
-                    clearContactEmailsLabelsJoin()
                     clearContactEmailsCache()
                     clearContactDataCache()
-                    clearContactGroupsLabelsTableBlocking()
                     clearFullContactDetailsCache()
                 }
             }

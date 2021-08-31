@@ -28,6 +28,7 @@ import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelType
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -49,7 +50,7 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
     //region tests
 
     @Test
-    fun testRelationship() {
+    fun testRelationship() = runBlocking {
         val label1 = LabelEntity(LabelId("la"), testUserId, "aa", "aaa", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)
         val label2 = LabelEntity(LabelId("lb"), testUserId, "ab", "aab", 0, LabelType.FOLDER, EMPTY_STRING, "parent", 0, 0, 0)
         val label3 = LabelEntity(LabelId("lc"), testUserId, "ac", "aac", 0, LabelType.MESSAGE_LABEL, EMPTY_STRING, "parent", 0, 0, 0)

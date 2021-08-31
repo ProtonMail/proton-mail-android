@@ -18,10 +18,10 @@
  */
 package ch.protonmail.android.contacts.details.edit
 
-import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.jobs.UpdateContactJob
@@ -33,14 +33,16 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class EditContactDetailsRepository @Inject constructor(
-    workManager: WorkManager,
     jobManager: JobManager,
     api: ProtonMailApiManager,
     dispatcherProvider: DispatcherProvider,
     contactDao: ContactDao,
     labelsMapper: LabelsMapper,
-    private val labelRepository: LabelRepository
-) : ContactDetailsRepository(jobManager, api, contactDao, dispatcherProvider, labelsMapper, labelRepository) {
+    private val labelRepository: LabelRepository,
+    val contactRepository: ContactsRepository
+) : ContactDetailsRepository(
+    jobManager, api, contactDao, dispatcherProvider, labelsMapper, labelRepository, contactRepository
+) {
 
     suspend fun clearEmail(email: String) {
         contactDao.clearByEmail(email)

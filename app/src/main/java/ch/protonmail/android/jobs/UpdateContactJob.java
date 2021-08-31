@@ -48,7 +48,6 @@ import ch.protonmail.android.data.local.ContactDao;
 import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactData;
 import ch.protonmail.android.data.local.model.ContactEmail;
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
 import ch.protonmail.android.events.ContactEvent;
@@ -220,11 +219,11 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         try {
             getApi().labelContacts(labelContactsBody)
                     .doOnComplete(() -> {
-                        List<ContactEmailContactLabelJoin> joins = mContactDao.fetchJoinsBlocking(contactGroupId);
+                        //List<ContactEmailContactLabelJoin> joins = mContactDao.fetchJoinsBlocking(contactGroupId);
                         for (String contactEmail : membersList) {
-                            joins.add(new ContactEmailContactLabelJoin(contactEmail, contactGroupId));
+                           // joins.add(new ContactEmailContactLabelJoin(contactEmail, contactGroupId));
                         }
-                        mContactDao.saveContactEmailContactLabelBlocking(joins);
+                        //mContactDao.saveContactEmailContactLabelBlocking(joins);
                     })
                     .doOnError(throwable ->
                             getJobManager().addJobInBackground(

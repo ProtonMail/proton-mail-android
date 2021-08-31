@@ -117,8 +117,6 @@ class ContactGroupsViewModelTest : CoroutinesTest {
         val contactListItems = listOf(listItem1, listItem2, listItem3)
         coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } returns flowOf(contactLabels)
         val join1 = mockk<ContactEmailContactLabelJoin>()
-        val joins = listOf(join1)
-        coEvery { contactGroupsRepository.getJoins() } returns flowOf(joins)
 
         // when
         contactGroupsViewModel.setSearchPhrase(searchTerm)
@@ -137,9 +135,6 @@ class ContactGroupsViewModelTest : CoroutinesTest {
             val resultLiveData = contactGroupsViewModel.contactGroupsError.testObserver()
             val exception = Exception("test-exception")
             coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } throws exception
-            val join1 = mockk<ContactEmailContactLabelJoin>()
-            val joins = listOf(join1)
-            coEvery { contactGroupsRepository.getJoins() } returns flowOf(joins)
 
             // when
             contactGroupsViewModel.setSearchPhrase(searchTerm)

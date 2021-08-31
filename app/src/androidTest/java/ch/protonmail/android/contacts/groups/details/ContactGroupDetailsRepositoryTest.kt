@@ -56,7 +56,7 @@ class ContactGroupDetailsRepositoryTest {
     @BeforeTest
     fun setUp() {
         contactGroupDetailsRepository =
-            ContactGroupDetailsRepository(databaseProvider, userManager, labelRepository)
+            ContactGroupDetailsRepository(databaseProvider, userManager, labelRepository,)
 
         every { userManager.requireCurrentUserId() } returns testUserId
     }

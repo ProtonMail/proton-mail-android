@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.rx.RxEventBus
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
@@ -37,9 +36,11 @@ import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.utils.Event
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.network.domain.ApiResult
@@ -105,7 +106,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     fun setGroupColor(@ColorInt color: Int) {
         contactGroupItem = if (contactGroupItem == null) {
-            ContactGroupListItem("", "", 0, color,)
+            ContactGroupListItem("", "", 0, color)
         } else {
             contactGroupItem?.copy(color = color)
         }
@@ -113,19 +114,17 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     fun getContactGroupEmails() {
         val label = contactGroupItem
-        if (label != null)
+        if (label != null) {
             contactGroupEditCreateRepository.getContactGroupEmails(label.contactId)
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main()).subscribe(
-                    {
-                        _data = it
-                        _contactGroupEmailsResult.postValue(it)
-                    },
-                    {
-                        _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                    }
-                )
-        else {
+                .onEach {
+                    _data = it
+                    _contactGroupEmailsResult.postValue(it)
+                }
+                .catch {
+                    _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                }
+                .launchIn(viewModelScope)
+        } else {
             _data = ArrayList()
             _contactGroupEmailsResult.postValue(ArrayList())
         }
@@ -134,32 +133,33 @@ class ContactGroupEditCreateViewModel @Inject constructor(
     }
 
     fun save(name: String) {
-        val isPaidUser = runBlocking {
+        viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryAccount().first()?.userId)
-            userManager.getUser(userId).hasSubscription()
-        }
-        if (!isPaidUser) {
-            _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.UNAUTHORIZED)))
-            return
-        }
-        when (mode) {
-            ContactGroupMode.CREATE ->
-                createContactGroup(
-                    name,
-                    _toBeAdded.mapNotNull {
-                        it.contactEmailId
-                    }
-                )
-            ContactGroupMode.EDIT ->
-                editContactGroup(
-                    name,
-                    _toBeAdded.mapNotNull {
-                        it.contactEmailId
-                    },
-                    _toBeDeleted.mapNotNull {
-                        it.contactEmailId
-                    }
-                )
+            val isPaidUser = userManager.getUser(userId).hasSubscription()
+            if (!isPaidUser) {
+                _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.UNAUTHORIZED)))
+                return@launch
+            }
+
+            when (mode) {
+                ContactGroupMode.CREATE ->
+                    createContactGroup(
+                        name,
+                        _toBeAdded.map {
+                            it.contactEmailId
+                        }
+                    )
+                ContactGroupMode.EDIT ->
+                    editContactGroup(
+                        name,
+                        _toBeAdded.map {
+                            it.contactEmailId
+                        },
+                        _toBeDeleted.map {
+                            it.contactEmailId
+                        }
+                    )
+            }
         }
     }
 
@@ -186,7 +186,9 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             ) {
                 is ApiResult.Success -> {
                     contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel.id.id, name, toBeAdded)
-                    contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel.id.id, name, toBeDeleted)
+                    contactGroupEditCreateRepository.removeMembersFromContactGroup(
+                        contactLabel.id.id, name, toBeDeleted
+                    )
                     _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
                 }
                 is ApiResult.Error.Http -> {
@@ -208,7 +210,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             val userId = requireNotNull(accountManager.getPrimaryUserId().first())
             val contactLabel = LabelEntity(
                 id = LabelId(EMPTY_STRING),
-                userId  = userId,
+                userId = userId,
                 name = name,
                 color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),
                 type = LabelType.CONTACT_GROUP,

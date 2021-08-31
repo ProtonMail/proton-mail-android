@@ -44,6 +44,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.DispatcherProvider
 import studio.forface.viewstatestore.ViewStateStore
 import java.io.FileNotFoundException
@@ -190,7 +191,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         parentId = entity.parentId,
                         expanded = entity.expanded,
                         sticky = entity.sticky,
-                        contactEmailsCount = contactDetailsRepository.getContactEmailsCount(entity.id)
+                        contactEmailsCount = runBlocking { contactDetailsRepository.getContactEmailsCount(entity.id) }
                     )
                 }
                 allContactEmails = emails

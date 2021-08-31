@@ -25,6 +25,7 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Attachment
@@ -43,7 +44,6 @@ import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +66,8 @@ class ComposeMessageRepository @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val accountManager: AccountManager,
     private val userManager: UserManager,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val contactRepository: ContactsRepository
 ) {
 
     val lazyManager = resettableManager()
@@ -109,7 +110,7 @@ class ComposeMessageRepository @Inject constructor(
                         parentId = entity.parentId,
                         expanded = entity.expanded,
                         sticky = entity.sticky,
-                        contactEmailsCount = tempContactDao.countContactEmailsByLabelIdBlocking(entity.id.id)
+                        contactEmailsCount = contactRepository.countContactEmailsByLabelId(entity.id)
                     )
                 }
             }
@@ -118,11 +119,8 @@ class ComposeMessageRepository @Inject constructor(
     suspend fun getContactGroupFromDB(userId: UserId, groupName: String): LabelEntity? =
         labelRepository.findLabelByName(userId, groupName)
 
-    fun getContactGroupEmails(groupId: String): Observable<List<ContactEmail>> =
-        contactDao.findAllContactsEmailsByContactGroupAsyncObservable(groupId).toObservable()
-
     suspend fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> =
-        contactDao.findAllContactsEmailsByContactGroupOnce(groupId)
+        emptyList() //contactDao.findAllContactsEmailsByContactGroupOnce(groupId)
 
     suspend fun getAttachments(message: Message, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {

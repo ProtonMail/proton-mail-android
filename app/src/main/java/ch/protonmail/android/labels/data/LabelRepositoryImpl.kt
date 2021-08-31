@@ -72,13 +72,13 @@ internal class LabelRepositoryImpl @Inject constructor(
     }
 
     override fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>> =
-        labelDao.observeLabelsByType(userId, LabelType.CONTACT_GROUP.typeInt)
+        labelDao.observeLabelsByType(userId, LabelType.CONTACT_GROUP)
 
     override suspend fun findContactGroups(userId: UserId): List<LabelEntity> =
-        labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP.typeInt)
+        labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP)
 
     override fun observeSearchContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>> =
-        labelDao.observeSearchLabelsByNameAndType(userId, labelName, LabelType.CONTACT_GROUP.typeInt)
+        labelDao.observeSearchLabelsByNameAndType(userId, labelName, LabelType.CONTACT_GROUP)
 
     override suspend fun findLabelByName(userId: UserId, labelName: String): LabelEntity? =
         labelDao.findLabelByName(userId, labelName)
