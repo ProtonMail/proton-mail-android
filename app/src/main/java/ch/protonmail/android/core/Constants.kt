@@ -31,6 +31,7 @@ object Constants {
     const val DUMMY_URL_PREFIX = "http://androidlinksfix.protonmail.com"
 
     // Mail domains
+    const val MAIL_DOMAIN_COM = "protonmail.com"
     const val MAIL_DOMAIN_PM_ME = "pm.me"
     //endregion
 

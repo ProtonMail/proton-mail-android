@@ -35,6 +35,7 @@ import me.proton.core.user.data.entity.AddressEntity
 import me.proton.core.user.data.entity.AddressKeyEntity
 import me.proton.core.user.data.entity.UserEntity
 import me.proton.core.user.data.entity.UserKeyEntity
+import me.proton.core.usersettings.data.entity.UserSettingsEntity
 import timber.log.Timber
 
 object AppDatabaseMigrations {
@@ -70,7 +71,8 @@ object AppDatabaseMigrations {
                 SessionDetailsEntity::class.simpleName,
                 SessionEntity::class.simpleName,
                 UserEntity::class.simpleName,
-                UserKeyEntity::class.simpleName
+                UserKeyEntity::class.simpleName,
+                UserSettingsEntity::class.simpleName
             ).forEach { table ->
                 Timber.v("Insert table $table")
                 runCatching {

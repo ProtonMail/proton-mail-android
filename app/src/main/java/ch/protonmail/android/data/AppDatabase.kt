@@ -54,6 +54,9 @@ import me.proton.core.user.data.entity.AddressEntity
 import me.proton.core.user.data.entity.AddressKeyEntity
 import me.proton.core.user.data.entity.UserEntity
 import me.proton.core.user.data.entity.UserKeyEntity
+import me.proton.core.usersettings.data.db.UserSettingsConverters
+import me.proton.core.usersettings.data.db.UserSettingsDatabase
+import me.proton.core.usersettings.data.entity.UserSettingsEntity
 import timber.log.Timber
 
 @Database(
@@ -72,6 +75,7 @@ import timber.log.Timber
         SessionDetailsEntity::class,
         UserEntity::class,
         UserKeyEntity::class,
+        UserSettingsEntity::class,
         // Mail
         LabelEntity::class,
     ],
@@ -85,6 +89,7 @@ import timber.log.Timber
     UserConverters::class,
     CryptoConverters::class,
     HumanVerificationConverters::class,
+    UserSettingsConverters::class,
     // Mail
     ProtonMailConverters::class
 )
@@ -96,7 +101,8 @@ internal abstract class AppDatabase :
     KeySaltDatabase,
     HumanVerificationDatabase,
     PublicAddressDatabase,
-    MailSettingsDatabase {
+    MailSettingsDatabase,
+    UserSettingsDatabase {
 
     abstract fun labelDao(): LabelDao
     // abstract fun contactDao(): ContactDao

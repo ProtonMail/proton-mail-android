@@ -58,5 +58,5 @@ internal abstract class CoreDatabaseBindsModule {
     abstract fun provideMailSettingsDatabase(db: AppDatabase): MailSettingsDatabase
 
     @Binds
-    abstract fun provideUserSettingsDatabase(db: AccountManagerDatabase): UserSettingsDatabase
+    abstract fun provideUserSettingsDatabase(db: AppDatabase): UserSettingsDatabase
 }
