@@ -468,7 +468,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
 
             // when
-            val result = conversationsRepository.getConversation(userId, conversationId).take(1).toList()
+            val result = conversationsRepository.getConversation(userId, conversationId).take(2).toList()
 
             // then
             val expectedMessage = MessageDomainModel(
@@ -506,7 +506,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     expectedMessage
                 )
             )
-            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[0])
+            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[1])
         }
     }
 
@@ -634,7 +634,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
                     // then
                     assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
-                    assertEquals(ResponseSource.Remote, (expectItem() as DataResult.Success).source)
+                    assertEquals(ResponseSource.Local, (expectItem() as DataResult.Success).source)
                     coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
                     coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
                 }

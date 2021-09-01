@@ -53,7 +53,6 @@ import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -67,7 +66,6 @@ import kotlin.math.max
 
 // For non-custom locations such as: Inbox, Sent, Archive etc.
 private const val MAX_LOCATION_ID_LENGTH = 2
-private const val CONVERSATION_FLOW_DEBOUNCE_TIME = 1000L
 
 class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
@@ -509,8 +507,6 @@ class ConversationsRepositoryImpl @Inject constructor(
             conversation?.let {
                 databaseToConversationMapper.toDomainModel(conversation, messages.toDomainModelList())
             }
-        }
-            .debounce(CONVERSATION_FLOW_DEBOUNCE_TIME)
-            .distinctUntilChanged()
+        }.distinctUntilChanged()
 
 }
