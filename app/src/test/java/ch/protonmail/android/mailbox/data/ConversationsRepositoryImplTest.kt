@@ -855,6 +855,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         runBlockingTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns mockk(relaxed = true)
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 

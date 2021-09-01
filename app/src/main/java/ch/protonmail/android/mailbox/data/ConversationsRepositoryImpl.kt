@@ -240,14 +240,14 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             Timber.v("UnStar conversation $conversationId")
-            val result = removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
-            if (result is ConversationsActionResult.Error) {
-                return result
-            }
-
             getAllMessagesFromAConversation(conversationId).forEach { message ->
                 yield()
                 messageDao.updateStarred(message.messageId!!, false)
+            }
+
+            val result = removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
+            if (result is ConversationsActionResult.Error) {
+                return result
             }
         }
 
