@@ -61,7 +61,7 @@ class ConversationApiModelToConversationDatabaseModelMapperTest {
         expirationTime = expirationTime1,
         size = size1,
         labels = emptyList(),
-        time = time1
+        contextTime = time1
     )
     // endregion
 
@@ -87,7 +87,7 @@ class ConversationApiModelToConversationDatabaseModelMapperTest {
         expirationTime = expirationTime2,
         size = size2,
         labels = emptyList(),
-        time = time2
+        contextTime = time2
     )
     // endregion
     private val conversationsApiModels = listOf(

@@ -624,7 +624,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 expirationTime = 0,
                 size = 1L,
                 labels = emptyList(),
-                time = 357
+                contextTime = 357
             )
             val apiMessage = ServerMessage(id = "messageId23842737", conversationId)
             val conversationResponse = ConversationResponse(
@@ -1162,7 +1162,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         expirationTime = 0L,
         size = 0,
         labels = labels,
-        time = 357
+        contextTime = 357
     )
 
     private fun buildGetConversationsParameters(

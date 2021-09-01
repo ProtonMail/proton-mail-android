@@ -55,8 +55,8 @@ data class GetAllConversationsParameters(
  * @return a [GetAllConversationsParameters] created from [ConversationsResponse] if
  *  [ConversationsResponse.conversations] list is not empty, otherwise [currentParameters]
  *
- * Note: since we're using [ConversationApiModel.time] for fetch progressively, we assume that the conversations are
- *  already ordered by time, so we pick directly the last in the list, without adding unneeded computation
+ * Note: since we're using [ConversationApiModel.contextTime] for fetch progressively, we assume that the conversations
+ *  are already ordered by time, so we pick directly the last in the list, without adding unneeded computation
  */
 fun ConversationsResponse.createBookmarkParametersOr(
     currentParameters: GetAllConversationsParameters
@@ -64,7 +64,7 @@ fun ConversationsResponse.createBookmarkParametersOr(
     return if (conversations.isNotEmpty()) {
         val lastConversation = conversations.last()
         currentParameters.copy(
-            end = lastConversation.time,
+            end = lastConversation.contextTime,
             endId = lastConversation.id
         )
     } else {
