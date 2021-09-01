@@ -21,19 +21,13 @@ package ch.protonmail.android.utils;
 import android.content.Context;
 import android.util.Base64;
 
-import androidx.annotation.NonNull;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import ch.protonmail.android.core.Constants;
+import kotlin.Deprecated;
 import timber.log.Timber;
 
 public class FileUtils {
@@ -45,39 +39,7 @@ public class FileUtils {
         }
     }
 
-    public static String readRawTextFile(Context ctx, int resId) {
-        InputStream inputStream = ctx.getResources().openRawResource(resId);
-
-        InputStreamReader inputreader = new InputStreamReader(inputStream);
-        BufferedReader buffreader = new BufferedReader(inputreader);
-        String line;
-        StringBuilder text = new StringBuilder();
-
-        try {
-            while ((line = buffreader.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-        } catch (IOException e) {
-            Timber.i(e);
-            return null;
-        }
-        return text.toString();
-    }
-
-    public static String buildAttachmentFileName(@NonNull String filename, @NonNull String suffix) {
-        String fileNewName = filename;
-        fileNewName = fileNewName.replace("/", ":");
-        int dotIndex = fileNewName.lastIndexOf(".");
-        String extension = "";
-        String name = fileNewName;
-        if (dotIndex >= 0) {
-            extension = fileNewName.substring(dotIndex);
-            name = fileNewName.substring(0, dotIndex);
-        }
-        return name + suffix + extension;
-    }
-
+    @Deprecated(message = "Scheduled for deletion. Please use kolin serialization instead")
     public static String toString(Object value) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
@@ -87,19 +49,5 @@ public class FileUtils {
         }
 
         return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT);
-    }
-
-    public static <T> T deserializeStringToObject(String value) {
-        if (value == null || value.equals("")) {
-            return null;
-        }
-        ByteArrayInputStream in = new ByteArrayInputStream(Base64.decode(value, Base64.DEFAULT));
-        T result = null;
-        try {
-            result = (T) new ObjectInputStream(in).readObject();
-        } catch (Exception e) {
-            Timber.e(e, "Deserialization of recipients failed");
-        }
-        return result;
     }
 }
