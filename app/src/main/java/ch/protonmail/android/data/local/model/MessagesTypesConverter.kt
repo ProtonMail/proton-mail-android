@@ -24,6 +24,8 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.utils.FileUtils
+import me.proton.core.util.kotlin.deserialize
+import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
@@ -39,12 +41,11 @@ class MessagesTypesConverter {
         MessageEncryption.values()[messageEncryptionOrdinal]
 
     @TypeConverter
-    fun parsedHeadersToString(parsedHeaders: ParsedHeaders?): String? =
-        parsedHeaders?.let(FileUtils::toString)
+    fun parsedHeadersToString(parsedHeaders: ParsedHeaders?) = parsedHeaders?.serialize()
 
     @TypeConverter
-    fun stringToParsedHeaders(parsedHeadersString: String?): ParsedHeaders? =
-        FileUtils.deserializeStringToObject(parsedHeadersString) as ParsedHeaders?
+    fun stringToParsedHeaders(parsedHeadersString: String?) =
+        parsedHeadersString?.deserialize(ParsedHeaders.serializer())
 
     @TypeConverter
     fun messageRecipientsListToString(messageRecipient: List<MessageRecipient>?): String? =
