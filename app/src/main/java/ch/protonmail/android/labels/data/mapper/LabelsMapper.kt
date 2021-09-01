@@ -60,10 +60,10 @@ class LabelsMapper @Inject constructor() {
         name = labelEntity.name,
         color = labelEntity.color,
         type = labelEntity.type.typeInt,
-        parentId = labelEntity.parentId,
-        notify = 0,
-        expanded = labelEntity.expanded,
-        sticky = labelEntity.sticky
+        parentId = if (labelEntity.parentId.isBlank()) null else labelEntity.parentId,
+        notify = null,
+        expanded = null,
+        sticky = null
     )
 
     fun mapLabelToContactLabelUiModel(serverLabel: Label, contactEmailsCount: Int) = ContactLabelUiModel(

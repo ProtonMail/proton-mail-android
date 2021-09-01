@@ -29,13 +29,13 @@ data class LabelRequestBody(
     @SerialName(COLOR)
     val color: String,
     @SerialName(TYPE)
-    val type: Int, // only '1', '2', or '3
+    val type: Int? = null, // only '1', '2', or '3
     @SerialName(PARENT_ID)
-    val parentId: String?,
+    val parentId: String? = null,
     @SerialName(NOTIFY)
-    val notify: Int?,
+    val notify: Int? = null,
     @SerialName(EXPANDED) // v4
-    val expanded: Int?,
+    val expanded: Int? = null,
     @SerialName(STICKY) // v4
-    val sticky: Int?
+    val sticky: Int? = null
 )

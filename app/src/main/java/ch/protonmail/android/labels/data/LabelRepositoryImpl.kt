@@ -117,6 +117,7 @@ internal class LabelRepositoryImpl @Inject constructor(
         val serverContactGroups = async { api.fetchContactGroups(userId).valueOrThrow.labels }
         val allLabels = serverLabels.await() + serverFolders.await() + serverContactGroups.await()
         val allLabelsEntities = allLabels.map { labelMapper.mapLabelToLabelEntity(it, userId) }
+        Timber.v("fetchAndSaveAllLabels size: ${allLabelsEntities.size} user: $userId")
         saveLabels(allLabelsEntities)
         allLabelsEntities
     }

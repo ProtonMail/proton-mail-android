@@ -34,7 +34,8 @@ interface LabelApiSpec {
 
     suspend fun createLabel(userId: UserId, label: LabelRequestBody): ApiResult<LabelResponse>
 
-    suspend fun updateLabel(userId: UserId, labelId: String, label: LabelRequestBody): ApiResult<LabelResponse>
+    suspend fun updateLabel(userId: UserId, labelId: String, labelRequestBody: LabelRequestBody):
+        ApiResult<LabelResponse>
 
     suspend fun deleteLabel(userId: UserId, labelId: String): ApiResult<Unit>
 }

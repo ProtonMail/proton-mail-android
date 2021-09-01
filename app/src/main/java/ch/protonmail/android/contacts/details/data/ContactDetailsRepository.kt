@@ -99,7 +99,6 @@ open class ContactDetailsRepository @Inject constructor(
             }
     }
 
-
     suspend fun saveContactEmails(emails: List<ContactEmail>) = withContext(dispatcherProvider.Io) {
         contactDao.saveAllContactsEmails(emails)
     }

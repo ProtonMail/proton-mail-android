@@ -223,9 +223,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun updateLabel(
         userId: UserId,
         labelId: String,
-        label: LabelRequestBody
+        labelRequestBody: LabelRequestBody
     ): ApiResult<LabelResponse> =
-        api.updateLabel(userId, labelId, label)
+        api.updateLabel(userId, labelId, labelRequestBody)
 
     override suspend fun deleteLabel(userId: UserId, labelId: String): ApiResult<Unit> =
         api.deleteLabel(userId, labelId)
