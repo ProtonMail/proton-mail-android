@@ -93,6 +93,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.toDuration
 
+private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
+private const val STARRED_LABEL_ID = "10"
+
 @OptIn(FlowPreview::class)
 class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
@@ -756,7 +759,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val testMessageId = "messageId"
             val message = Message(
                 messageId = testMessageId,
-                time = 123
+                allLabelIDs = emptyList(),
+                isStarred = false
             )
             coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
@@ -769,18 +773,23 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
-            coEvery { messageDao.updateStarred(testMessageId, true) } just runs
             val expectedResult = ConversationsActionResult.Success
 
             // when
             val result = conversationsRepository.star(conversationIds, userId)
 
             // then
+            val expected = Message(
+                messageId = testMessageId,
+                isStarred = true,
+                allLabelIDs = listOf(STARRED_LABEL_ID), // Needed to ensure that the starred label is added locally
+                location = 10 // Changed to starred (10) when adding starred label
+            )
             coVerify(exactly = 2) {
                 conversationDao.updateLabels(any(), any())
             }
             coVerify(exactly = 4) {
-                messageDao.updateStarred(any(), true)
+                messageDao.saveMessage(expected)
             }
             assertEquals(expectedResult, result)
         }
@@ -799,7 +808,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
-            coEvery { messageDao.updateStarred(testMessageId, true) } just runs
             val expectedResult = ConversationsActionResult.Error
 
             // when
@@ -820,7 +828,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("2", 0, 3, 123, 123, 0)
             )
             val testMessageId = "messageId"
-            val message = Message(messageId = testMessageId)
+            val message = Message(
+                messageId = testMessageId,
+                isStarred = true,
+                allLabelIDs = listOf(STARRED_LABEL_ID),
+            )
             coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
@@ -833,18 +845,24 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
-            coEvery { messageDao.updateStarred(testMessageId, false) } just runs
             val expectedResult = ConversationsActionResult.Success
 
             // when
             val result = conversationsRepository.unstar(conversationIds, userId)
 
             // then
+            val expected = Message(
+                messageId = testMessageId,
+                isStarred = false,
+                allLabelIDs = emptyList(), // Needed to ensure that the starred label is removed locally
+                location = 0 // Changed when removing labels, defaults to INBOX (0) if no labels
+            )
             coVerify(exactly = 2) {
                 conversationDao.updateLabels(any(), any())
             }
+            // Expected exactly 4 times as we unstar two conversations with two messages each
             coVerify(exactly = 4) {
-                messageDao.updateStarred(testMessageId, false)
+                messageDao.saveMessage(expected)
             }
             assertEquals(expectedResult, result)
         }

@@ -750,7 +750,6 @@ internal class MessageDetailsViewModel @Inject constructor(
                 )
             }
         } else {
-            messageRepository
             if (isChecked) {
                 messageRepository.starMessages(ids)
             } else {

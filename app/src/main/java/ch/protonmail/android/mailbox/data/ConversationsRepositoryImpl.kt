@@ -217,7 +217,9 @@ class ConversationsRepositoryImpl @Inject constructor(
             var lastMessageTime = 0L
             getAllMessagesFromAConversation(conversationId).forEach { message ->
                 yield()
-                messageDao.updateStarred(requireNotNull(message.messageId), true)
+                message.addLabels(listOf(starredLabelId))
+                message.isStarred = true
+                messageDao.saveMessage(message)
                 lastMessageTime = max(lastMessageTime, message.time)
             }
 
@@ -242,7 +244,9 @@ class ConversationsRepositoryImpl @Inject constructor(
             Timber.v("UnStar conversation $conversationId")
             getAllMessagesFromAConversation(conversationId).forEach { message ->
                 yield()
-                messageDao.updateStarred(message.messageId!!, false)
+                message.removeLabels(listOf(starredLabelId))
+                message.isStarred = false
+                messageDao.saveMessage(message)
             }
 
             val result = removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
