@@ -112,7 +112,7 @@ class ConversationDatabaseModelToConversationMapperTest {
         )
 
         // when
-        val result = mapper { input.toDomainModel(messages = null) }
+        val result = mapper { toDomainModel(conversation = input, messages = null) }
 
         // then
         assertEquals(expected, result)
@@ -125,7 +125,7 @@ class ConversationDatabaseModelToConversationMapperTest {
         val expected = emptyList<Conversation>()
 
         // when
-        val result = input.map(mapper) { it.toDomainModel(messages = null) }
+        val result = input.map(mapper) { toDomainModel(conversation = it, messages = null) }
 
         // then
         assertEquals(expected, result)
@@ -162,7 +162,7 @@ class ConversationDatabaseModelToConversationMapperTest {
         val expected = listOf(expectedElement1, expectedElement2)
 
         // when
-        val result = input.map(mapper) { it.toDomainModel(messages = null) }
+        val result = input.map(mapper) { toDomainModel(conversation = it, messages = null) }
 
         // then
         assertEquals(expected, result)

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain.usecase
 
+import ch.protonmail.android.data.remote.NoMoreItemsDataResult
 import ch.protonmail.android.data.remote.OfflineDataResult
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreCatch
@@ -27,7 +28,6 @@ import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
-import ch.protonmail.android.repository.NO_MORE_MESSAGES_ERROR_CODE
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Processing
@@ -71,7 +71,7 @@ class ObserveConversationsByLocation @Inject constructor(
 
         fun Error.Remote.remoteErrorToResult(): GetConversationsResult {
             Timber.e(cause, "Messages couldn't be fetched")
-            return if (protonCode == NO_MORE_MESSAGES_ERROR_CODE) {
+            return if (this == NoMoreItemsDataResult) {
                 GetConversationsResult.NoConversationsFound
             } else {
                 GetConversationsResult.Error(cause, isOffline = this == OfflineDataResult)

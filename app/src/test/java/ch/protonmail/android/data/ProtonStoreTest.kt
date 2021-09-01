@@ -26,10 +26,12 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.assertIs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -234,6 +236,69 @@ class ProtonStoreTest : CoroutinesTest {
             flow.loadMore()
             assertEquals(allItems.slice(4..5).remote(), expectItem())
             assertEquals(allItems.take(6).local(), expectItem())
+        }
+    }
+
+    @Test
+    fun loadMoreFlowEmitsFetcherErrorIfOnline() = coroutinesTest {
+        // given
+        val connectivityManager: NetworkConnectivityManager = mockk {
+            every { isInternetConnectionPossible() } returns true
+        }
+        val expectedMessage = "Ouch!"
+        val expectedException = IllegalStateException(expectedMessage)
+        fun throwException(): ApiResponse {
+            throw expectedException
+        }
+        val store = ProtonStore(
+            fetcher = { throwException() },
+            reader = { database.findAll() },
+            writer = { _: Int, items -> database.save(items) },
+            createBookmarkKey = { _, data -> data.items.maxOfOrNull { it.position } },
+            apiToDomainMapper = fromApiMapper,
+            databaseToDomainMapper = noMapper,
+            apiToDatabaseMapper = fromApiMapper,
+            connectivityManager = connectivityManager
+        )
+
+        // when
+        store.loadMoreFlow(0, refreshAtStart = true).test {
+
+            // then
+            assertEquals(emptyList<Item>().local(), expectItem())
+
+            val error = expectItem() as DataResult.Error.Remote
+            assertEquals(expectedException, error.cause)
+            assertEquals(expectedMessage, error.message)
+        }
+    }
+
+    @Test
+    fun loadMoreFlowEmitsFromReaderIfFetcherThrowsError() = coroutinesTest {
+        // given
+        val items = listOf(
+            Item(14, "hello"),
+            Item(17, "world"),
+        )
+        fun throwException(): ApiResponse {
+            throw IllegalStateException("Ouch!")
+        }
+        val store = ProtonStore(
+            fetcher = { throwException() },
+            reader = { flowOf(items) },
+            writer = { _: Int, _ -> },
+            createBookmarkKey = { _, data -> data.items.maxOfOrNull { it.position } },
+            apiToDomainMapper = fromApiMapper,
+            databaseToDomainMapper = noMapper,
+            apiToDatabaseMapper = fromApiMapper
+        )
+
+        // when
+        store.loadMoreFlow(0, refreshAtStart = true).test {
+
+            // then
+            assertEquals(items.local(), expectItem())
+            assertIs<DataResult.Error.Remote>(expectItem())
         }
     }
 

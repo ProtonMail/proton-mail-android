@@ -37,18 +37,24 @@ class ConversationDatabaseModelToConversationMapper @Inject constructor(
 ) : ProtonStoreMapper<GetAllConversationsParameters, ConversationDatabaseModel, Conversation> {
 
     override fun ConversationDatabaseModel.toOut(key: GetAllConversationsParameters): Conversation =
-        toDomainModel(messages = null)
+        toDomainModel(conversation = this, messages = null)
 
-    fun ConversationDatabaseModel.toDomainModel(messages: List<MessageDomainModel>?) = Conversation(
-        id = id,
-        subject = subject,
-        senders = senders.map(senderMapper) { it.toDomainModel() },
-        receivers = recipients.map(recipientMapper) { it.toDomainModel() },
-        messagesCount = numMessages,
-        unreadCount = numUnread,
-        attachmentsCount = numAttachments,
-        expirationTime = expirationTime,
-        labels = labels.map(labelMapper) { it.toDomainModel() },
+    fun toDomainModel(
+        conversation: ConversationDatabaseModel,
+        messages: List<MessageDomainModel>?
+    ) = Conversation(
+        id = conversation.id,
+        subject = conversation.subject,
+        senders = conversation.senders.map(senderMapper) { it.toDomainModel() },
+        receivers = conversation.recipients.map(recipientMapper) { it.toDomainModel() },
+        messagesCount = conversation.numMessages,
+        unreadCount = conversation.numUnread,
+        attachmentsCount = conversation.numAttachments,
+        expirationTime = conversation.expirationTime,
+        labels = conversation.labels.map(labelMapper) { it.toDomainModel() },
         messages = messages
     )
+
+    fun toDomainModels(conversations: List<ConversationDatabaseModel>): List<Conversation> =
+        conversations.map { toDomainModel(it, messages = null) }
 }

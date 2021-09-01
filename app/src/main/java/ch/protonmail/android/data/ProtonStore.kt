@@ -23,6 +23,7 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.remote.OfflineDataResult
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.asLoadMoreFlow
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
@@ -120,6 +121,7 @@ class ProtonStore<Key : Any, ApiModel : Any, DatabaseModel : Any, DomainModel : 
             val apiModels = fetcher(key)
             DataResult.Success(ResponseSource.Remote, apiModels)
         } catch (t: Throwable) {
+            if (t is CancellationException) throw t
             DataResult.Error.Remote(t.message, t)
         }
 

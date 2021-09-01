@@ -21,7 +21,16 @@ package ch.protonmail.android.data.remote
 
 import me.proton.core.domain.arch.DataResult
 
+const val NO_MORE_ITEMS_EXCEPTION_MESSAGE = "No more items!"
 const val OFFLINE_EXCEPTION_MESSAGE = "You're offline!"
+
+/**
+ * Represent a particular case of [DataResult.Error.Remote] for when remote returns an empty list of items
+ */
+val NoMoreItemsDataResult = DataResult.Error.Remote(
+    NO_MORE_ITEMS_EXCEPTION_MESSAGE,
+    NoMoreItemsException()
+)
 
 /**
  * Represent a particular case of [DataResult.Error.Remote] for when the user is offline
@@ -31,4 +40,5 @@ val OfflineDataResult = DataResult.Error.Remote(
     OfflineException()
 )
 
+class NoMoreItemsException : IllegalStateException(NO_MORE_ITEMS_EXCEPTION_MESSAGE)
 class OfflineException : IllegalStateException(OFFLINE_EXCEPTION_MESSAGE)

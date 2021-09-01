@@ -25,9 +25,11 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.remote.NoMoreItemsDataResult
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
@@ -60,13 +62,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.invoke
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.max
-
-const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723_478
 
 // For non-custom locations such as: Inbox, Sent, Archive etc.
 private const val MAX_LOCATION_ID_LENGTH = 2
@@ -128,6 +128,13 @@ class ConversationsRepositoryImpl @Inject constructor(
         refreshAtStart: Boolean,
     ): LoadMoreFlow<DataResult<List<Conversation>>> =
         allConversationsStore.loadMoreFlow(params, refreshAtStart)
+            .loadMoreMap {
+                if (it is DataResult.Success && it.source == ResponseSource.Remote && it.value.isEmpty()) {
+                    NoMoreItemsDataResult
+                } else {
+                    it
+                }
+            }
 
     override fun getConversation(
         userId: UserId,
@@ -509,7 +516,9 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationDao.observeConversation(params.userId.id, params.conversationId).combine(
             messageDao.observeAllMessagesInfoFromConversation(params.conversationId)
         ) { conversation, messages ->
-            databaseToConversationMapper { conversation?.toDomainModel(messages.toDomainModelList()) }
+            conversation?.let {
+                databaseToConversationMapper.toDomainModel(conversation, messages.toDomainModelList())
+            }
         }
             .debounce(CONVERSATION_FLOW_DEBOUNCE_TIME)
             .distinctUntilChanged()
