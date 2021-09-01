@@ -55,15 +55,13 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import org.junit.Test
 import java.io.IOException
 import kotlin.random.Random.Default.nextBytes
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-/**
- * Tests the functionality of [MessageRepository].
- */
 class MessageRepositoryTest {
 
     private val messageDao: MessageDao = mockk()
@@ -88,15 +86,15 @@ class MessageRepositoryTest {
     }
 
     private val testUserId = UserId("id")
-    private val message1 = mockk<Message>(relaxed = true) { every { messageId } returns "1" }
-    private val message2 = mockk<Message>(relaxed = true) { every { messageId } returns "2" }
-    private val message3 = mockk<Message>(relaxed = true) { every { messageId } returns "3" }
-    private val message4 = mockk<Message>(relaxed = true) { every { messageId } returns "4" }
+    private val message1 = Message(messageId = "1")
+    private val message2 = Message(messageId = "2")
+    private val message3 = Message(messageId = "3")
+    private val message4 = Message(messageId = "4")
     private val allMessages = listOf(message1, message2, message3, message4)
-    private val serverMessage1 = mockk<ServerMessage>(relaxed = true) { every { id } returns "1" }
-    private val serverMessage2 = mockk<ServerMessage>(relaxed = true) { every { id } returns "2" }
-    private val serverMessage3 = mockk<ServerMessage>(relaxed = true) { every { id } returns "3" }
-    private val serverMessage4 = mockk<ServerMessage>(relaxed = true) { every { id } returns "4" }
+    private val serverMessage1 = ServerMessage(id = "1", ConversationID = EMPTY_STRING)
+    private val serverMessage2 = ServerMessage(id = "2", ConversationID = EMPTY_STRING)
+    private val serverMessage3 = ServerMessage(id = "3", ConversationID = EMPTY_STRING)
+    private val serverMessage4 = ServerMessage(id = "4", ConversationID = EMPTY_STRING)
     private val allServerMessages = listOf(serverMessage1, serverMessage2, serverMessage3, serverMessage4)
 
     private val messageRepository = MessageRepository(
@@ -372,17 +370,10 @@ class MessageRepositoryTest {
         val initialDatabaseMessages = allMessages.take(2)
         val apiMessages = allMessages
 
-        // region API
-        val apiResponse = mockk<MessagesResponse> {
-            every { serverMessages } returns allServerMessages
-            every { messages } returns apiMessages
-            every { code } returns Constants.RESPONSE_CODE_OK
-        }
+        val apiResponse = buildMockMessageResponse()
         val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelId())
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
-        // endregion
 
-        // region Dao
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
         every { messageDao.observeMessagesByLocation(mailboxLocation.messageLocationTypeValue) } returns
             databaseMessages
@@ -394,7 +385,6 @@ class MessageRepositoryTest {
                 databaseMessages.tryEmit(newMessages)
             }
         }
-        // endregion
 
         // when
         messageRepository.observeMessages(params).test {
@@ -566,20 +556,13 @@ class MessageRepositoryTest {
         val initialDatabaseMessages = allMessages.take(2)
         val apiMessages = allMessages
 
-        // region API
-        val apiResponse = mockk<MessagesResponse> {
-            every { serverMessages } returns allServerMessages
-            every { messages } returns apiMessages
-            every { code } returns Constants.RESPONSE_CODE_OK
-        }
+        val apiResponse = buildMockMessageResponse()
         val params = GetAllMessagesParameters(
             testUserId,
             labelId = mailboxLocation.asLabelId()
         )
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
-        // endregion
 
-        // region Dao
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
         every { messageDao.observeStarredMessages() } returns databaseMessages
         coEvery { messageDao.saveMessages(apiMessages) } answers {
@@ -590,7 +573,6 @@ class MessageRepositoryTest {
                 databaseMessages.tryEmit(newMessages)
             }
         }
-        // endregion
 
         // when
         messageRepository.observeMessages(params).test {
@@ -611,4 +593,14 @@ class MessageRepositoryTest {
 
     private fun <T> List<T>.local() = DataResult.Success(ResponseSource.Local, this)
     private fun <T> List<T>.remote() = DataResult.Success(ResponseSource.Remote, this)
+
+    private fun buildMockMessageResponse(
+        messages: List<Message> = allMessages,
+        serverMessages: List<ServerMessage> = allServerMessages,
+        code: Int = Constants.RESPONSE_CODE_OK
+    ): MessagesResponse = mockk {
+        every { this@mockk.messages } returns messages
+        every { this@mockk.serverMessages } returns serverMessages
+        every { this@mockk.code } returns code
+    }
 }
