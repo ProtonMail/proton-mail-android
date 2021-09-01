@@ -343,15 +343,9 @@ class ConvertLocalContactsJob(
                 contactDao.saveAllContactsEmailsBlocking(contact.emails!!)
                 contactGroupIds.forEach { contactGroupId ->
                     val emailsList = contact.emails!!.map { it.contactEmailId }
-                    getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
-                        .doOnComplete {
-                            //val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
-                            for (contactEmail in emailsList) {
-                              //  joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
-                            }
-                            //contactDao.saveContactEmailContactLabelBlocking(joins)
-                        }
-                        .blockingAwait()
+                    runBlocking {
+                        getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
+                    }
                 }
             }
             return ContactEvent.SUCCESS

@@ -177,7 +177,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun deleteContact(contactIds: IDList): DeleteResponse = api.deleteContact(contactIds)
 
-    override fun labelContacts(labelContactsBody: LabelContactsBody): Completable = api.labelContacts(labelContactsBody)
+    override suspend fun labelContacts(labelContactsBody: LabelContactsBody) =
+        api.labelContacts(labelContactsBody)
 
     override fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable =
         api.unlabelContactEmailsCompletable(labelContactsBody)

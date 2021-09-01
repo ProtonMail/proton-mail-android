@@ -79,7 +79,7 @@ class ContactsRepository @Inject constructor(
     fun observeFilterContactEmailsByContactGroup(groupLabelId: String, filter: String): Flow<List<ContactEmail>> =
         contactDao.observeFilterContactEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT), filter)
 
-    fun saveContactEmail(contactEmail: ContactEmail) =
+    suspend fun saveContactEmail(contactEmail: ContactEmail) =
         contactDao.saveContactEmail(contactEmail)
 
     private suspend fun getUniqueContactGroupsIds(): Set<String> {

@@ -348,7 +348,7 @@ internal class ContactDaoTest {
     }
 
     @Test
-    fun saveContactEmail() {
+    fun saveContactEmail() = runBlocking {
         val inserted = ContactEmail(
             "z",
             "z@z.com",

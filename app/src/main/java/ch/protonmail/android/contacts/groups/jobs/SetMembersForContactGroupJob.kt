@@ -19,7 +19,6 @@
 package ch.protonmail.android.contacts.groups.jobs
 
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
@@ -42,10 +41,9 @@ class SetMembersForContactGroupJob(
                 id = contactLabel?.id?.id ?: ""
             }
         }
-        val labelContactsBody = LabelContactsBody(id, membersList)
-        getApi().labelContacts(labelContactsBody)
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.io())
-            .blockingAwait()
+        runBlocking {
+            val labelContactsBody = LabelContactsBody(id, membersList)
+            getApi().labelContacts(labelContactsBody)
+        }
     }
 }

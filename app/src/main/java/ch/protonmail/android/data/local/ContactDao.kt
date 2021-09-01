@@ -153,7 +153,7 @@ interface ContactDao {
     fun deleteAllContactsEmails(contactEmail: Collection<ContactEmail>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmail(contactEmail: ContactEmail): Long
+    suspend fun saveContactEmail(contactEmail: ContactEmail): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAllContactsEmails(emailData: Collection<ContactEmail>): List<Long>
@@ -183,7 +183,7 @@ interface ContactDao {
         """
         SELECT * FROM $TABLE_CONTACT_EMAILS
         WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS LIKE '%' || :contactGroupId || '%'
-        AND $COLUMN_CONTACT_EMAILS_EMAIL LIKE :filter
+        AND $COLUMN_CONTACT_EMAILS_EMAIL LIKE '%' || :filter || '%'
         """
     )
     fun observeFilterContactEmailsByContactGroup(contactGroupId: String, filter: String): Flow<List<ContactEmail>>

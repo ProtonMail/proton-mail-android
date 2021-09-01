@@ -47,7 +47,11 @@ class LabelApi(private val apiProvider: ApiProvider) : LabelApiSpec {
             createLabel(label)
         }
 
-    override suspend fun updateLabel(userId: UserId, labelId: String, labelRequestBody: LabelRequestBody):
+    override suspend fun updateLabel(
+        userId: UserId,
+        labelId: String,
+        labelRequestBody: LabelRequestBody
+    ):
         ApiResult<LabelResponse> = apiProvider.get<LabelService>(userId).invoke {
         updateLabel(labelId, labelRequestBody)
     }

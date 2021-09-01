@@ -100,10 +100,10 @@ class ContactGroupEditCreateRepositoryTest {
             name = "name",
             color = "color",
             type = testType.typeInt,
-            notify = 0,
+            notify = null,
             parentId = testParentId,
-            expanded = 0,
-            sticky = 0
+            expanded = null,
+            sticky = null
         )
 
         // when

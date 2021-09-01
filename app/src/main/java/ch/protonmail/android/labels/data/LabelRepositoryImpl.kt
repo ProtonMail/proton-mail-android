@@ -31,6 +31,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
@@ -51,6 +52,9 @@ internal class LabelRepositoryImpl @Inject constructor(
                     Timber.v("Fetching fresh labels")
                     fetchAndSaveAllLabels(userId)
                 }
+            }
+            .onEach {
+                Timber.v("Emitting new labels size: ${it.size} user: $userId")
             }
 
     override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<LabelEntity> =
