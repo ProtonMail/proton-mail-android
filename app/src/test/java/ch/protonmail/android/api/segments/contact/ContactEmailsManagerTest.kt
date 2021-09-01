@@ -25,7 +25,6 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
@@ -118,13 +117,10 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             sticky = 0,
             notify = 0,
         )
-        val contactLabelList = listOf(contactLabel)
         val contactEmailId = "emailId1"
         val labelIds = listOf(labelId1)
         val contactEmail = ContactEmail(contactEmailId, "test1@abc.com", "name1", labelIds = labelIds)
         val newContactEmails = listOf(contactEmail)
-        val join1 = ContactEmailContactLabelJoin(contactEmailId, labelId1)
-        val newJoins = listOf(join1)
         coEvery { api.fetchContactGroups(testUserId) } returns apiResult
         val emailsResponse = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails
@@ -132,14 +128,14 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         }
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
         coEvery { labelRepository.saveLabels(any()) } returns Unit
-        coEvery { contactDao.insertNewContacts(newContactEmails, newJoins) } returns Unit
+        coEvery { contactDao.insertNewContacts(newContactEmails) } returns Unit
         every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
 
         // then
-        coVerify { contactDao.insertNewContacts(newContactEmails, newJoins) }
+        coVerify { contactDao.insertNewContacts(newContactEmails) }
     }
 
     @Test
@@ -174,7 +170,6 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             sticky = 0,
             notify = 0
         )
-        val contactLabelList = listOf(contactLabel)
         val apiResult = ApiResult.Success(LabelsResponse(labelList))
         val contactEmailId1 = "emailId1"
         val contactEmailId2 = "emailId2"
@@ -190,13 +185,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val newContactEmails1 = listOf(contactEmail1, contactEmail2)
         val newContactEmails2 = listOf(contactEmail3, contactEmail4)
         val newContactEmails3 = listOf(contactEmail5)
-        val join1 = ContactEmailContactLabelJoin(contactEmailId1, labelId1)
-        val join2 = ContactEmailContactLabelJoin(contactEmailId2, labelId1)
-        val join3 = ContactEmailContactLabelJoin(contactEmailId3, labelId1)
-        val join4 = ContactEmailContactLabelJoin(contactEmailId4, labelId1)
-        val join5 = ContactEmailContactLabelJoin(contactEmailId5, labelId1)
         val allContactEmails = listOf(contactEmail1, contactEmail2, contactEmail3, contactEmail4, contactEmail5)
-        val newJoins = listOf(join1, join2, join3, join4, join5)
         coEvery { api.fetchContactGroups(any()) } returns apiResult
         val emailsResponse1 = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails1
@@ -214,14 +203,14 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
         coEvery { labelRepository.saveLabels(any()) } returns Unit
-        coEvery { contactDao.insertNewContacts(allContactEmails, newJoins) } returns Unit
+        coEvery { contactDao.insertNewContacts(allContactEmails) } returns Unit
         every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
 
         // then
-        coVerify { contactDao.insertNewContacts(allContactEmails, newJoins) }
+        coVerify { contactDao.insertNewContacts(allContactEmails) }
     }
 
 }

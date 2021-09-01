@@ -125,72 +125,6 @@ interface ContactDao {
     )
     fun findAllContactsEmailsAsyncObservable(filter: String): Flowable<List<ContactEmail>>
 
-//    @Query(
-//        """
-//        SELECT $TABLE_CONTACT_EMAILS.*
-//        FROM $TABLE_CONTACT_EMAILS
-//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
-//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//    """
-//    )
-//    fun findAllContactsEmailsByContactGroupAsync(contactGroupId: String): LiveData<List<ContactEmail>>
-
-//    @Query(
-//        """
-//        SELECT $TABLE_CONTACT_EMAILS.*
-//        FROM $TABLE_CONTACT_EMAILS
-//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
-//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//    """
-//    )
-//    fun findAllContactsEmailsByContactGroup(contactGroupId: String): Flow<List<ContactEmail>>
-
-//    @Query(
-//        """
-//        SELECT $TABLE_CONTACT_EMAILS.*
-//        FROM $TABLE_CONTACT_EMAILS
-//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
-//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//    """
-//    )
-//    suspend fun findAllContactsEmailsByContactGroupOnce(contactGroupId: String): List<ContactEmail>
-
-//    @Query(
-//        """
-//        SELECT $TABLE_CONTACT_EMAILS.*
-//        FROM $TABLE_CONTACT_EMAILS
-//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
-//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//    """
-//    )
-//    fun findAllContactsEmailsByContactGroupAsyncObservable(
-//        contactGroupId: String
-//    ): Flowable<List<ContactEmail>>
-
-    /**
-     * Make sure you provide @param filter with included % or ?
-     */
-//    @Query(
-//        """
-//        SELECT $TABLE_CONTACT_EMAILS.*
-//        FROM $TABLE_CONTACT_EMAILS
-//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//          ON $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_ID =
-//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID
-//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//          AND $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_EMAIL LIKE :filter
-//      """
-//    )
-//    fun filterContactsEmailsByContactGroup(contactGroupId: String, filter: String): Flow<List<ContactEmail>>
-
     @Query(
         """
         SELECT 
@@ -261,30 +195,6 @@ interface ContactDao {
         """
     )
     suspend fun findAllContactGroupsLabels(): List<String>
-
-//    @Query(
-//        """
-//        SELECT $TABLE_LABELS.*
-//        FROM $TABLE_LABELS
-//        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//          ON $TABLE_LABELS.$COLUMN_LABEL_ID =
-//            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID
-//        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = :emailId
-//        ORDER BY $COLUMN_LABEL_NAME
-//    """
-//    )
-//    suspend fun getAllContactGroupsByContactEmail(emailId: String): List<LabelEntity>
-
-//    @Query("UPDATE $TABLE_LABELS SET $COLUMN_LABEL_NAME = :name")
-//    fun updateName(name: String)
-
-//    @Query("UPDATE $TABLE_LABELS SET $COLUMN_LABEL_ORDER = :order")
-//    fun updateOrder(order: Int)
-
-//    @Query("DELETE FROM $TABLE_LABELS")
-//    fun clearContactGroupsList()
-
-
     //endregion
 
     //region Full contact details
@@ -308,77 +218,12 @@ interface ContactDao {
 
     //endregion
 
-    //region contact emails contact label join
-//    @Query(
-//        """
-//        SELECT count(*)
-//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//    """
-//    )
-//    suspend fun countContactEmailsByLabelId(contactGroupId: String): Int
-
-//    @Query(
-//        """
-//        SELECT count(*)
-//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//    """
-//    )
-//    fun countContactEmailsByLabelIdBlocking(contactGroupId: String): Int
-
-//    @Query(
-//        """
-//        SELECT *
-//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//    """
-//    )
-//    suspend fun fetchJoins(contactGroupId: String): List<ContactEmailContactLabelJoin>
-
-//    @Query(
-//        """
-//        SELECT *
-//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = :contactGroupId
-//    """
-//    )
-//    fun fetchJoinsBlocking(contactGroupId: String): List<ContactEmailContactLabelJoin>
-
-//    @Query(
-//        """
-//        SELECT *
-//        FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN
-//        WHERE $COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = :contactEmailId
-//    """
-//    )
-//    fun fetchJoinsByEmail(contactEmailId: String): List<ContactEmailContactLabelJoin>
-
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun saveContactEmailContactLabel(
-//        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
-//    ): List<Long>
-
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    fun saveContactEmailContactLabelBlocking(
-//        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
-//    ): List<Long>
-
-//    @Delete
-//    fun deleteContactEmailContactLabel(
-//        contactEmailContactLabelJoin: Collection<ContactEmailContactLabelJoin>
-//    )
-
-
     @Transaction
     suspend fun insertNewContacts(
         allContactEmails: List<ContactEmail>,
-//        allJoins: List<ContactEmailContactLabelJoin>
     ) {
         clearContactEmailsCache()
-//        clearContactGroupsList()
         saveAllContactsEmails(allContactEmails)
-        //saveContactEmailContactLabel(allJoins)
     }
 
     //endregion

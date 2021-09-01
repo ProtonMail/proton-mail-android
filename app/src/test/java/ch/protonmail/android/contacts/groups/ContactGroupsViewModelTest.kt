@@ -26,7 +26,6 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
@@ -37,7 +36,6 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
@@ -116,7 +114,6 @@ class ContactGroupsViewModelTest : CoroutinesTest {
         )
         val contactListItems = listOf(listItem1, listItem2, listItem3)
         coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } returns flowOf(contactLabels)
-        val join1 = mockk<ContactEmailContactLabelJoin>()
 
         // when
         contactGroupsViewModel.setSearchPhrase(searchTerm)

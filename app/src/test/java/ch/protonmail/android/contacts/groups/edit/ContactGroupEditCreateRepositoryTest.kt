@@ -21,8 +21,7 @@ package ch.protonmail.android.contacts.groups.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
@@ -55,7 +54,7 @@ class ContactGroupEditCreateRepositoryTest {
 
     private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
 
-    private val contactDao: ContactDao = mockk(relaxed = true)
+    private val contactsRepository: ContactsRepository = mockk(relaxed = true)
 
     private val labelsMapper: LabelsMapper = LabelsMapper()
 
@@ -64,7 +63,7 @@ class ContactGroupEditCreateRepositoryTest {
     private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer = mockk(relaxed = true)
 
     private val repository = ContactGroupEditCreateRepository(
-        jobManager, workManager, apiManager, contactDao, labelsMapper, createContactGroupWorker, labelRepository
+        jobManager, workManager, apiManager, contactsRepository, labelsMapper, createContactGroupWorker, labelRepository
     )
 
     private val testPath = "a/bpath"
@@ -96,8 +95,6 @@ class ContactGroupEditCreateRepositoryTest {
         val labelResponse =
             LabelResponse(testLabel.copy(id = contactGroupId, type = LabelType.CONTACT_GROUP))
         coEvery { apiManager.updateLabel(any(), any(), any()) } returns ApiResult.Success(labelResponse)
-        val emailLabelJoinedList = listOf(ContactEmailContactLabelJoin("emailId", "labelId"))
-        coEvery { contactDao.fetchJoins(contactGroupId) } returns emailLabelJoinedList
         coEvery { labelRepository.saveLabel(contactLabel) } just Runs
         val updateLabelRequest = LabelRequestBody(
             name = "name",
@@ -116,9 +113,7 @@ class ContactGroupEditCreateRepositoryTest {
         assertNotNull(apiResult)
         coVerify { apiManager.updateLabel(testUserId, contactGroupId, updateLabelRequest) }
         coVerifyOrder {
-            contactDao.fetchJoins(contactGroupId)
             labelRepository.saveLabel(contactLabel)
-            contactDao.saveContactEmailContactLabel(emailLabelJoinedList)
         }
     }
 

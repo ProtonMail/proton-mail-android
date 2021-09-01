@@ -23,6 +23,7 @@ import androidx.work.WorkManager
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -58,6 +59,8 @@ class ContactDetailsRepositoryTest {
 
     private val labelsRepository: LabelRepository = mockk()
 
+    private val contactRepository: ContactsRepository = mockk()
+
     private val contactDao: ContactDao = mockk {
         every { deleteContactData(any()) } just Runs
         every { deleteAllContactsEmails(any()) } just Runs
@@ -67,6 +70,7 @@ class ContactDetailsRepositoryTest {
 
     private val repository = ContactDetailsRepository(
         jobManager, apiManager, contactDao, TestDispatcherProvider, labelsMapper, labelsRepository,
+        contactRepository
     )
 
     @Test

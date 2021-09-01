@@ -20,6 +20,7 @@ package ch.protonmail.android.contacts.details
 
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
@@ -60,6 +61,9 @@ class ContactGroupsRepositoryTest {
     @MockK
     private lateinit var accountManager: AccountManager
 
+    @MockK
+    private lateinit var contactRepository: ContactsRepository
+
     private val dispatcherProvider = TestDispatcherProvider
 
     @InjectMockKs
@@ -90,7 +94,7 @@ class ContactGroupsRepositoryTest {
         parentId = "parentId",
         expanded = 0,
         sticky = 0,
-        contactEmailsCount = 0
+        contactEmailsCount = 1
     )
 
     @BeforeTest
@@ -108,7 +112,7 @@ class ContactGroupsRepositoryTest {
             coEvery { labelRepository.observeSearchContactGroups(testUserId, searchTerm) } returns flowOf(
                 dbContactsList
             )
-            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
@@ -127,7 +131,7 @@ class ContactGroupsRepositoryTest {
             coEvery { labelRepository.observeSearchContactGroups(testUserId, searchTerm) } returns flowOf(
                 dbContactsList
             )
-            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
@@ -146,7 +150,7 @@ class ContactGroupsRepositoryTest {
             coEvery { labelRepository.observeSearchContactGroups(testUserId, searchTerm) } returns flowOf(
                 dbContactsList
             )
-            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
