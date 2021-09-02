@@ -666,10 +666,7 @@ internal class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
             delay(3.toDuration(TimeUnit.SECONDS))
-            // TODO: is this needed?
             mailboxViewModel.loadMore()
-            // TODO: remove, use loadMore only
-            loadMailboxItems()
         }
         mailboxViewModel.checkConnectivityDelayed()
     }
