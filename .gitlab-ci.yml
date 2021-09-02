@@ -330,10 +330,11 @@ release-publish-github:
     - small
 
 release-publish-github-tags:
+  stage: bot-release
+  when: 'manual'
   needs:
     - job: build prerelease
       artifacts: true
-  stage: bot-release
   variables:
     RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
     RELEASE_SYNC_TO_BRANCH: 'release'
