@@ -25,6 +25,7 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Label
@@ -101,33 +102,33 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     private val conversationsRemote = ConversationsResponse(
         total = 5,
         listOf(
-            getConversationApiModel(
+            buildConversationApiModel(
                 "conversation5", 0, "subject5",
                 listOf(
                     LabelContextApiModel("0", 0, 1, 0, 0, 0),
                     LabelContextApiModel("7", 0, 1, 3, 0, 0)
                 )
             ),
-            getConversationApiModel(
+            buildConversationApiModel(
                 "conversation4", 2, "subject4",
                 listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0)
                 )
             ),
-            getConversationApiModel(
+            buildConversationApiModel(
                 "conversation3", 3, "subject3",
                 listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0),
                     LabelContextApiModel("7", 0, 1, 1, 0, 0)
                 )
             ),
-            getConversationApiModel(
+            buildConversationApiModel(
                 "conversation2", 1, "subject2",
                 listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0)
                 )
             ),
-            getConversationApiModel(
+            buildConversationApiModel(
                 "conversation1", 4, "subject1",
                 listOf(
                     LabelContextApiModel("0", 0, 1, 4, 0, 0)
@@ -137,32 +138,32 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     )
 
     private val conversationsOrdered = listOf(
-        getConversation(
+        buildConversation(
             "conversation1", "subject1",
             listOf(
                 LabelContext("0", 0, 1, 4, 0, 0)
             )
         ),
-        getConversation(
+        buildConversation(
             "conversation3", "subject3",
             listOf(
                 LabelContext("0", 0, 1, 1, 0, 0),
                 LabelContext("7", 0, 1, 1, 0, 0)
             )
         ),
-        getConversation(
+        buildConversation(
             "conversation4", "subject4",
             listOf(
                 LabelContext("0", 0, 1, 1, 0, 0)
             )
         ),
-        getConversation(
+        buildConversation(
             "conversation2", "subject2",
             listOf(
                 LabelContext("0", 0, 1, 1, 0, 0)
             )
         ),
-        getConversation(
+        buildConversation(
             "conversation5", "subject5",
             listOf(
                 LabelContext("0", 0, 1, 0, 0, 0),
@@ -173,6 +174,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     private val conversationDao: ConversationDao = mockk {
         coEvery { updateLabels(any(), any()) } just Runs
+        coEvery { insertOrUpdate(*anyVararg()) } just Runs
     }
 
     private val messageDao: MessageDao = mockk {
@@ -180,7 +182,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { saveMessages(any()) } just Runs
     }
 
-    private val api: ProtonMailApiManager = mockk()
+    private val api: ProtonMailApiManager = mockk {
+        coEvery { fetchConversations(any()) } returns ConversationsResponse(0, emptyList())
+    }
 
     private val conversationApiModelToConversationMapper = ConversationApiModelToConversationMapper(
         CorrespondentApiModelToCorrespondentMapper(),
@@ -325,7 +329,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     @Test
     fun verifyGetConversationsReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
         // given
-        val labelId = Constants.MessageLocationType.INBOX.asLabelId()
+        val labelId = MessageLocationType.INBOX.asLabelId()
         val parameters = buildGetConversationsParameters(labelId = labelId)
         val errorMessage = "Api call failed"
 
@@ -668,7 +672,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     fun verifyGetConversationsReThrowsCancellationExceptionWithoutEmittingError() {
         runBlockingTest {
             // given
-            val parameters = buildGetConversationsParameters(oldestConversationTimestamp = null)
+            val parameters = buildGetConversationsParameters(end = null)
             coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(emptyList())
             coEvery { api.fetchConversations(parameters) } throws CancellationException("Cancelled")
 
@@ -716,7 +720,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val mailboxLocation = Constants.MessageLocationType.ARCHIVE
-            val locationId = Constants.MessageLocationType.ARCHIVE.asLabelId()
+            val locationId = MessageLocationType.ARCHIVE.asLabelId()
             val message = Message(
                 location = mailboxLocation.messageLocationTypeValue
             )
@@ -754,7 +758,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val mailboxLocation = Constants.MessageLocationType.ARCHIVE
-            val locationId = Constants.MessageLocationType.ARCHIVE.asLabelId()
+            val locationId = MessageLocationType.ARCHIVE.asLabelId()
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
@@ -1132,9 +1136,66 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
     }
 
-    private fun getConversation(
+    @Test
+    fun correctlyFiltersConversationsByRequestedLocationFromDatabase() = runBlockingTest {
+        // given
+        val archivedConversation = buildConversationDatabaseModel(
+            id = "conversation 1",
+            labels = listOf(inboxLabelContextDatabaseModel(), archiveLabelContextDatabaseModel())
+        )
+        val inboxConversation = buildConversationDatabaseModel(
+            id = "conversation 2",
+            labels = listOf(inboxLabelContextDatabaseModel())
+        )
+        val conversations = listOf(inboxConversation, archivedConversation)
+        coEvery { conversationDao.observeConversations(any()) } returns flowOf(conversations)
+
+        val expected = databaseModelToConversationMapper
+            .toDomainModels(listOf(archivedConversation))
+            .local()
+
+        // when
+        val params = GetAllConversationsParameters(userId, labelId = MessageLocationType.ARCHIVE.asLabelId())
+        conversationsRepository.observeConversations(params).test {
+
+            // then
+            assertEquals(expected, expectItem())
+            expectItem() // Ignored Remote data
+        }
+    }
+
+    @Test
+    fun correctlyFiltersConversationsByRequestedLabelFromDatabase() = runBlockingTest {
+        // given
+        val archivedConversation = buildConversationDatabaseModel(
+            id = "conversation 1",
+            labels = listOf(inboxLabelContextDatabaseModel(), archiveLabelContextDatabaseModel())
+        )
+        val customLabelId = "custom label id"
+        val customLabelConversation = buildConversationDatabaseModel(
+            id = "conversation 2",
+            labels = listOf(customContextDatabaseModel(customLabelId))
+        )
+        val conversations = listOf(customLabelConversation, archivedConversation)
+        coEvery { conversationDao.observeConversations(any()) } returns flowOf(conversations)
+
+        val expected = databaseModelToConversationMapper
+            .toDomainModels(listOf(customLabelConversation))
+            .local()
+
+        // when
+        val params = GetAllConversationsParameters(userId, labelId = customLabelId)
+        conversationsRepository.observeConversations(params).test {
+
+            // then
+            assertEquals(expected, expectItem())
+            expectItem() // Ignored Remote data
+        }
+    }
+
+    private fun buildConversation(
         id: String,
-        subject: String,
+        subject: String = "A subject",
         labels: List<LabelContext>
     ) = Conversation(
         id = id,
@@ -1149,10 +1210,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         messages = null
     )
 
-    private fun getConversationApiModel(
+    private fun buildConversationApiModel(
         id: String,
-        order: Long,
-        subject: String,
+        order: Long = 0,
+        subject: String = "A subject",
         labels: List<LabelContextApiModel>
     ) = ConversationApiModel(
         id = id,
@@ -1169,14 +1230,35 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         contextTime = 357
     )
 
+    private fun buildConversationDatabaseModel(
+        userId: UserId = testUserId,
+        id: String,
+        order: Long = 0,
+        subject: String = "A subject",
+        labels: List<LabelContextDatabaseModel>
+    ) = ConversationDatabaseModel(
+        userId = userId.id,
+        id = id,
+        order = order,
+        subject = subject,
+        senders = listOf(),
+        recipients = listOf(),
+        numMessages = 0,
+        numUnread = 0,
+        numAttachments = 0,
+        expirationTime = 0L,
+        size = 0,
+        labels = labels,
+    )
+
     private fun buildGetConversationsParameters(
-        labelId: String = Constants.MessageLocationType.INBOX.asLabelId(),
-        oldestConversationTimestamp: Long? = 1_616_496_670,
+        labelId: String = MessageLocationType.INBOX.asLabelId(),
+        end: Long? = 1_616_496_670,
         pageSize: Int? = 50
     ) = GetAllConversationsParameters(
         labelId = labelId,
         userId = testUserId,
-        end = oldestConversationTimestamp,
+        end = end,
         pageSize = pageSize!!
     )
 
@@ -1201,6 +1283,21 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             size = 1,
             labels = labels
         )
+
+    private fun customContextDatabaseModel(labelId: String) = LabelContextDatabaseModel(
+        id = labelId,
+        contextNumUnread = 0,
+        contextNumMessages = 0,
+        contextTime = 0L,
+        contextSize = 0,
+        contextNumAttachments = 0
+    )
+
+    private fun inboxLabelContextDatabaseModel(): LabelContextDatabaseModel =
+        customContextDatabaseModel(MessageLocationType.INBOX.asLabelId())
+
+    private fun archiveLabelContextDatabaseModel(): LabelContextDatabaseModel =
+        customContextDatabaseModel(MessageLocationType.ARCHIVE.asLabelId())
 
     private fun <T> T.local() = DataResult.Success(ResponseSource.Local, this)
     private fun <T> T.remote() = DataResult.Success(ResponseSource.Remote, this)
