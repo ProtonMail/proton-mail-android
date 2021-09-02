@@ -215,13 +215,14 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             Timber.v("Star conversation $conversationId")
             var lastMessageTime = 0L
-            getAllMessagesFromAConversation(conversationId).forEach { message ->
+            val starredMessages = getAllMessagesFromAConversation(conversationId).map { message ->
                 yield()
                 message.addLabels(listOf(starredLabelId))
                 message.isStarred = true
-                messageDao.saveMessage(message)
                 lastMessageTime = max(lastMessageTime, message.time)
+                return@map message
             }
+            messageDao.saveMessages(starredMessages)
 
             val result = addLabelsToConversation(conversationId, userId, listOf(starredLabelId), lastMessageTime)
             if (result is ConversationsActionResult.Error) {
@@ -242,12 +243,13 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             Timber.v("UnStar conversation $conversationId")
-            getAllMessagesFromAConversation(conversationId).forEach { message ->
+            val unstarredMessages = getAllMessagesFromAConversation(conversationId).map { message ->
                 yield()
                 message.removeLabels(listOf(starredLabelId))
                 message.isStarred = false
-                messageDao.saveMessage(message)
+                return@map message
             }
+            messageDao.saveMessages(unstarredMessages)
 
             val result = removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
             if (result is ConversationsActionResult.Error) {
@@ -350,12 +352,13 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.findAllMessagesInfoFromConversation(conversationId).forEach { message ->
+            val labeledMessages = messageDao.findAllMessagesInfoFromConversation(conversationId).map { message ->
                 yield()
                 message.addLabels(listOf(labelId))
-                messageDao.saveMessage(message)
                 lastMessageTime = max(lastMessageTime, message.time)
+                return@map message
             }
+            messageDao.saveMessages(labeledMessages)
 
             val result = addLabelsToConversation(conversationId, userId, listOf(labelId), lastMessageTime)
             if (result is ConversationsActionResult.Error) {
@@ -374,11 +377,12 @@ class ConversationsRepositoryImpl @Inject constructor(
         unlabelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
 
         conversationIds.forEach { conversationId ->
-            messageDao.findAllMessagesInfoFromConversation(conversationId).forEach { message ->
+            val unlabeledMessages = messageDao.findAllMessagesInfoFromConversation(conversationId).map { message ->
                 yield()
                 message.removeLabels(listOf(labelId))
-                messageDao.saveMessage(message)
+                return@map message
             }
+            messageDao.saveMessages(unlabeledMessages)
 
             val result = removeLabelsFromConversation(conversationId, userId, listOf(labelId))
             if (result is ConversationsActionResult.Error) {
