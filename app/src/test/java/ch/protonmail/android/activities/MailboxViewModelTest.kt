@@ -581,7 +581,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(location) } returns false
 
         viewModel.setNewMailboxLocation(location)
-        viewModel.loadMailboxItems()
+        viewModel.loadMore()
 
         verify(exactly = 0) { jobManager.addJobInBackground(any()) }
     }
@@ -594,7 +594,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(location) } returns false
 
         viewModel.setNewMailboxLocation(location)
-        viewModel.loadMailboxItems()
+        viewModel.loadMore()
 
         verify(exactly = 0) { messageDetailsRepository.reloadDependenciesForUser(userId) }
     }

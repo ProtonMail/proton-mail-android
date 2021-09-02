@@ -640,7 +640,7 @@ internal class MailboxActivity :
     }
 
     private fun loadMailboxItems() {
-        mailboxViewModel.loadMailboxItems()
+        mailboxViewModel.loadMore()
     }
 
     private fun setElevationOnToolbarAndStatusView(shouldIncreaseElevation: Boolean) {

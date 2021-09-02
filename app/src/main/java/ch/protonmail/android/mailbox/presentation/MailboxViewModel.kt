@@ -294,16 +294,12 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun loadMailboxItems() {
-        val location = mailboxLocation.value
-        Timber.v("loadMailboxItems location: $location")
-        loadMore()
-    }
-
     /**
      * Request to fetch more items from API
      */
     fun loadMore() {
+        val location = mailboxLocation.value
+        Timber.v("loadMailboxItems location: $location")
         mailboxStateFlow.loadMore()
     }
 
@@ -334,7 +330,7 @@ class MailboxViewModel @Inject constructor(
                         shouldResetPosition = shouldResetPosition
                     )
                 }
-                is GetConversationsResult.ApiRefresh -> {
+                is GetConversationsResult.DataRefresh -> {
                     if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
                     else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
