@@ -31,6 +31,7 @@ class MessageDetailsListItem : ExpandableRecyclerAdapter.ListItem {
     var messageFormattedHtml: String? = null
     var showLoadEmbeddedImagesButton: Boolean = false
     var showDecryptionError: Boolean = false
+    var embeddedImageIds: List<String> = emptyList()
 
     constructor(message: Message) : super(TYPE_HEADER) {
         this.message = message

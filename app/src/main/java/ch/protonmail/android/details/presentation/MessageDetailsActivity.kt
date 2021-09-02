@@ -182,7 +182,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 messageId,
                 false,
                 false,
-                message.attachments
+                message.attachments,
+                message.embeddedImageIds
             )
         }
 
@@ -229,7 +230,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     messageId,
                     showLoadEmbeddedImagesButton,
                     showDecryptionError,
-                    loadedMessage.attachments
+                    loadedMessage.attachments,
+                    loadedMessage.embeddedImageIds
                 )
             }.launchIn(lifecycleScope)
         }
@@ -849,11 +851,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private fun onLoadEmbeddedImagesClicked(message: Message) {
+    private fun onLoadEmbeddedImagesClicked(message: Message, embeddedImageIds: List<String>) {
         // this will ensure that the message has been loaded
         // and will protect from premature clicking on download attachments button
         if (viewModel.renderingPassed) {
-            viewModel.startDownloadEmbeddedImagesJob(message)
+            viewModel.startDownloadEmbeddedImagesJob(message, embeddedImageIds)
         }
     }
 

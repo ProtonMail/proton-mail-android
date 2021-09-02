@@ -434,7 +434,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun startDownloadEmbeddedImagesJob(message: Message) {
+    fun startDownloadEmbeddedImagesJob(message: Message, embeddedImageIds: List<String>) {
         hasEmbeddedImages = false
 
         viewModelScope.launch(dispatchers.Io) {
@@ -442,7 +442,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             val messageId = message.messageId ?: return@launch
             val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
             val embeddedImages = embeddedImagesAttachments.mapNotNull { embeddedImage ->
-                attachmentsHelper.fromAttachmentToEmbeddedImage(embeddedImage, message.embeddedImageIds.toList())
+                attachmentsHelper.fromAttachmentToEmbeddedImage(embeddedImage, embeddedImageIds)
             }
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
             embeddedImages.forEach { embeddedImage ->
@@ -583,7 +583,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun displayEmbeddedImages(message: Message) {
         areImagesDisplayed = true // this will be passed to edit intent
-        startDownloadEmbeddedImagesJob(message)
+        startDownloadEmbeddedImagesJob(message, message.embeddedImageIds)
     }
 
     fun isAutoShowEmbeddedImages(): Boolean {
