@@ -368,9 +368,11 @@ class MessageRepositoryTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.INBOX
         val initialDatabaseMessages = allMessages.take(2)
-        val apiMessages = allMessages
+        val apiMessages = allMessages.drop(2)
 
-        val apiResponse = buildMockMessageResponse()
+        val apiResponse = buildMockMessageResponse(
+            messages = apiMessages
+        )
         val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelId())
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 
@@ -378,12 +380,7 @@ class MessageRepositoryTest {
         every { messageDao.observeMessagesByLocation(mailboxLocation.messageLocationTypeValue) } returns
             databaseMessages
         coEvery { messageDao.saveMessages(apiMessages) } answers {
-            val oldMessages = databaseMessages.value
-            val newMessages = (firstArg<List<Message>>() + oldMessages).distinctBy { it.messageId }
-            // We just compare sized of the lists, as the messages are mock
-            if (newMessages.size > oldMessages.size) {
-                databaseMessages.tryEmit(newMessages)
-            }
+            databaseMessages.tryEmit(databaseMessages.value + firstArg<List<Message>>())
         }
 
         // when
@@ -401,7 +398,7 @@ class MessageRepositoryTest {
 
             // verify message from api
             assertEquals(apiMessages.remote(), expectItem())
-            assertEquals(apiMessages.local(), expectItem())
+            assertEquals(allMessages.local(), expectItem())
         }
     }
 
@@ -554,9 +551,11 @@ class MessageRepositoryTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.STARRED
         val initialDatabaseMessages = allMessages.take(2)
-        val apiMessages = allMessages
+        val apiMessages = allMessages.drop(2)
 
-        val apiResponse = buildMockMessageResponse()
+        val apiResponse = buildMockMessageResponse(
+            messages = apiMessages
+        )
         val params = GetAllMessagesParameters(
             testUserId,
             labelId = mailboxLocation.asLabelId()
@@ -566,12 +565,7 @@ class MessageRepositoryTest {
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
         every { messageDao.observeStarredMessages() } returns databaseMessages
         coEvery { messageDao.saveMessages(apiMessages) } answers {
-            val oldMessages = databaseMessages.value
-            val newMessages = (firstArg<List<Message>>() + oldMessages).distinctBy { it.messageId }
-            // We just compare sized of the lists, as the messages are mock
-            if (newMessages.size > oldMessages.size) {
-                databaseMessages.tryEmit(newMessages)
-            }
+            databaseMessages.tryEmit(databaseMessages.value + firstArg<List<Message>>())
         }
 
         // when
@@ -587,7 +581,7 @@ class MessageRepositoryTest {
 
             // verify message from api
             assertEquals(apiMessages.remote(), expectItem())
-            assertEquals(apiMessages.local(), expectItem())
+            assertEquals(allMessages.local(), expectItem())
         }
     }
 
