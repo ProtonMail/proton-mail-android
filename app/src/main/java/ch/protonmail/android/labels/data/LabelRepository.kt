@@ -37,6 +37,8 @@ interface LabelRepository {
 
     suspend fun findLabel(labelId: LabelId): LabelEntity?
 
+    fun observeLabel(labelId: LabelId): Flow<LabelEntity?>
+
     fun findLabelBlocking(labelId: LabelId): LabelEntity?
 
     fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>>

@@ -34,6 +34,9 @@ class ContactGroupDetailsRepository @Inject constructor(
     suspend fun findContactGroupDetails(id: String): LabelEntity? =
         labelRepository.findLabel(LabelId(id))
 
+    fun observeContactGroupDetails(id: String): Flow<LabelEntity?> =
+        labelRepository.observeLabel(LabelId(id))
+
     fun observeContactGroupEmails(groupLabelId: String): Flow<List<ContactEmail>> =
         contactRepository.observeAllContactEmailsByContactGroupId(groupLabelId)
 

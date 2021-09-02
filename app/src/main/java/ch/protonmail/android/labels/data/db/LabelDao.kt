@@ -58,6 +58,15 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
 
     @Query(
         """
+        SELECT * FROM $TABLE_LABELS 
+        WHERE $COLUMN_LABEL_ID=:labelId 
+        ORDER BY $COLUMN_LABEL_ORDER
+        """
+    )
+    abstract fun observeLabelById(labelId: LabelId): Flow<LabelEntity?>
+
+    @Query(
+        """
          SELECT * FROM $TABLE_LABELS 
         WHERE $COLUMN_LABEL_USER_ID=:userId
         AND $COLUMN_LABEL_TYPE = :labelType

@@ -69,6 +69,9 @@ internal class LabelRepositoryImpl @Inject constructor(
     override suspend fun findLabel(labelId: LabelId): LabelEntity? =
         labelDao.findLabelById(labelId)
 
+    override fun observeLabel(labelId: LabelId): Flow<LabelEntity?> =
+        labelDao.observeLabelById(labelId)
+
     override fun findLabelBlocking(labelId: LabelId): LabelEntity? {
         return runBlocking {
             findLabel(labelId)

@@ -23,7 +23,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
@@ -138,11 +137,8 @@ class ContactGroupDetailsActivity : BaseActivity() {
     }
 
     private fun initCollapsingToolbar(
-        color: Int,
-        name: String,
-        membersCount: Int
+        color: Int
     ) {
-
         groupColor.bind(
             isSelectedActive = false,
             isMultiselectActive = false,
@@ -171,11 +167,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
         contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this) { list ->
             Timber.v("New contacts emails list size: ${list.size}")
             contactGroupEmailsAdapter.setData(list ?: ArrayList())
-            if (list != null && TextUtils.isEmpty(filterView.text.toString())) {
-                setTitle(contactGroupDetailsViewModel.getData()?.name, list.size)
-            }
             groups = list
-            groupName = contactGroupDetailsViewModel.getData()?.name
         }
 
         contactGroupDetailsViewModel.contactGroupEmailsEmpty.observe(this) {
@@ -183,7 +175,9 @@ class ContactGroupDetailsActivity : BaseActivity() {
         }
 
         contactGroupDetailsViewModel.setupUIData.observe(this) { contactLabel ->
-            initCollapsingToolbar(contactLabel.color, contactLabel.name, contactLabel.contactEmailsCount)
+            groupName = contactLabel.name
+            initCollapsingToolbar(contactLabel.color)
+            setTitle(contactLabel.name, contactLabel.contactEmailsCount)
         }
 
         contactGroupDetailsViewModel.deleteGroupStatus.observe(this) {

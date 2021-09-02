@@ -43,6 +43,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -69,6 +70,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
     init {
         initFiltering()
         initGroupsObserving()
+        initGroupLabelObserving()
     }
 
     val contactGroupEmailsResult: LiveData<List<ContactEmail>>
@@ -110,31 +112,6 @@ class ContactGroupDetailsViewModel @Inject constructor(
 
     fun getData(): ContactGroupListItem = _contactLabel
 
-    private suspend fun updateContactGroup() {
-        runCatching {
-            val contactGroupDetails = contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.contactId)
-            val contactEmailsCount = contactRepository.countContactEmailsByLabelId(LabelId(_contactLabel.contactId))
-            contactGroupDetails to contactEmailsCount
-        }
-            .fold(
-                onSuccess = { contactPair ->
-                    val contactLabel = contactPair.first
-                    val contactEmailsCount = contactPair.second
-                    Timber.v("ContactLabel: $contactLabel retrieved")
-                    contactLabel?.let { label ->
-                        _contactLabel = contactsMapper.mapLabelEntityToContactGroup(label, contactEmailsCount)
-                        _setupUIData.value = contactsMapper.mapLabelEntityToContactGroup(label, contactEmailsCount)
-                    }
-                },
-                onFailure = { throwable ->
-                    if (throwable is SQLException) {
-                        _contactGroupEmailsEmpty.value = Event(throwable.message ?: ErrorEnum.DEFAULT_ERROR.name)
-                    } else
-                        throw throwable
-                }
-            )
-    }
-
     private fun initFiltering() {
         filteringChannel
             .debounce(300.toDuration(TimeUnit.MILLISECONDS))
@@ -155,13 +132,37 @@ class ContactGroupDetailsViewModel @Inject constructor(
             .filterNotNull()
             .flatMapLatest { contactGroupDetailsRepository.observeContactGroupEmails(it.contactId) }
             .onEach { list ->
-                updateContactGroup()
                 _contactGroupEmailsResult.postValue(list)
             }
             .catch { throwable ->
                 _contactGroupEmailsEmpty.value = Event(
                     throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
                 )
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun initGroupLabelObserving() {
+        _contactGroupItemFlow
+            .filterNotNull()
+            .flatMapLatest { contactGroupListItem ->
+                contactGroupDetailsRepository.observeContactGroupDetails(contactGroupListItem.contactId)
+                    .filterNotNull()
+                    .map { label ->
+                        contactsMapper.mapLabelEntityToContactGroup(
+                            label,
+                            contactRepository.countContactEmailsByLabelId(LabelId(contactGroupListItem.contactId))
+                        )
+                    }
+            }
+            .onEach { groupListItem ->
+                _contactLabel = groupListItem
+                _setupUIData.value = groupListItem
+            }
+            .catch { throwable ->
+                if (throwable is SQLException) {
+                    _contactGroupEmailsEmpty.value = Event(throwable.message ?: ErrorEnum.DEFAULT_ERROR.name)
+                }
             }
             .launchIn(viewModelScope)
     }
