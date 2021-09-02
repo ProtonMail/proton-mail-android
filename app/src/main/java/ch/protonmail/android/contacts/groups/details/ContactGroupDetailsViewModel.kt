@@ -35,18 +35,20 @@ import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.time.milliseconds
+import kotlin.time.toDuration
 
 @HiltViewModel
 class ContactGroupDetailsViewModel @Inject constructor(
@@ -57,14 +59,16 @@ class ContactGroupDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private lateinit var _contactLabel: ContactGroupListItem
+    private val _contactGroupItemFlow = MutableStateFlow<ContactGroupListItem?>(null)
     private val _contactGroupEmailsResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()
-    private val filteringChannel = BroadcastChannel<String>(1)
+    private val filteringChannel = MutableSharedFlow<String>(replay = 1)
     private val _contactGroupEmailsEmpty: MutableLiveData<Event<String>> = MutableLiveData()
     private val _setupUIData = MutableLiveData<ContactGroupListItem>()
     private val _deleteLabelIds: MutableLiveData<List<String>> = MutableLiveData()
 
     init {
         initFiltering()
+        initGroupsObserving()
     }
 
     val contactGroupEmailsResult: LiveData<List<ContactEmail>>
@@ -99,26 +103,12 @@ class ContactGroupDetailsViewModel @Inject constructor(
     fun setData(contactLabel: ContactGroupListItem?) {
         contactLabel?.let { newContact ->
             _contactLabel = newContact
-            getContactGroupEmails(newContact)
+            _contactGroupItemFlow.tryEmit(contactLabel)
             _setupUIData.value = newContact
         }
     }
 
     fun getData(): ContactGroupListItem = _contactLabel
-
-    private fun getContactGroupEmails(contactLabel: ContactGroupListItem) {
-        contactGroupDetailsRepository.getContactGroupEmails(contactLabel.contactId)
-            .onEach { list ->
-                updateContactGroup()
-                _contactGroupEmailsResult.postValue(list)
-            }
-            .catch { throwable ->
-                _contactGroupEmailsEmpty.value = Event(
-                    throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
-                )
-            }
-            .launchIn(viewModelScope)
-    }
 
     private suspend fun updateContactGroup() {
         runCatching {
@@ -147,8 +137,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
 
     private fun initFiltering() {
         filteringChannel
-            .asFlow()
-            .debounce(300.milliseconds)
+            .debounce(300.toDuration(TimeUnit.MILLISECONDS))
             .distinctUntilChanged()
             .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.contactId, it) }
             .catch {
@@ -161,9 +150,25 @@ class ContactGroupDetailsViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    private fun initGroupsObserving() {
+        _contactGroupItemFlow
+            .filterNotNull()
+            .flatMapLatest { contactGroupDetailsRepository.observeContactGroupEmails(it.contactId) }
+            .onEach { list ->
+                updateContactGroup()
+                _contactGroupEmailsResult.postValue(list)
+            }
+            .catch { throwable ->
+                _contactGroupEmailsEmpty.value = Event(
+                    throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
+                )
+            }
+            .launchIn(viewModelScope)
+    }
+
     fun doFilter(filter: String) {
         viewModelScope.launch {
-            filteringChannel.send(filter.trim())
+            filteringChannel.emit(filter.trim())
         }
     }
 

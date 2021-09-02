@@ -36,8 +36,11 @@ import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.model.LabelId
 import ch.protonmail.android.labels.data.model.LabelType
 import ch.protonmail.android.utils.Event
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -58,17 +61,18 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var contactGroupItem: ContactGroupListItem? = null
-    private lateinit var _data: List<ContactEmail>
-    private lateinit var _toBeDeleted: List<ContactEmail>
-    private lateinit var _toBeAdded: List<ContactEmail>
     private lateinit var mode: ContactGroupMode
     private var _changed: Boolean = false
+    private var _data = listOf<ContactEmail>()
+    private var _toBeDeleted = listOf<ContactEmail>()
+    private var _toBeAdded = listOf<ContactEmail>()
 
     private val _contactGroupSetupLayout: MutableLiveData<Event<ContactGroupMode>> = MutableLiveData()
     private val _contactGroupEmailsResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()
     private val _contactGroupEmailsError: MutableLiveData<Event<String>> = MutableLiveData()
     private val _contactGroupUpdateResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
+    private val _contactGroupItemFlow = MutableStateFlow<ContactGroupListItem?>(null)
 
     private val _apiError: (ResponseBody) -> Unit = {
         // todo show the error to the user
@@ -91,10 +95,23 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     init {
         RxEventBus.listen(ResponseBody::class.java).subscribe(_apiError)
+
+        _contactGroupItemFlow
+            .filterNotNull()
+            .flatMapLatest { contactGroupEditCreateRepository.observeContactGroupEmails(it.contactId) }
+            .onEach {
+                _data = it
+                _contactGroupEmailsResult.postValue(it)
+            }
+            .catch {
+                _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+            }
+            .launchIn(viewModelScope)
     }
 
     fun setData(contactLabel: ContactGroupListItem?) {
         this.contactGroupItem = contactLabel
+        _contactGroupItemFlow.tryEmit(contactLabel)
         mode = if (contactLabel == null) ContactGroupMode.CREATE else ContactGroupMode.EDIT
         _contactGroupSetupLayout.postValue(Event(mode))
     }
@@ -112,26 +129,6 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         }
     }
 
-    fun getContactGroupEmails() {
-        val label = contactGroupItem
-        if (label != null) {
-            contactGroupEditCreateRepository.getContactGroupEmails(label.contactId)
-                .onEach {
-                    _data = it
-                    _contactGroupEmailsResult.postValue(it)
-                }
-                .catch {
-                    _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                }
-                .launchIn(viewModelScope)
-        } else {
-            _data = ArrayList()
-            _contactGroupEmailsResult.postValue(ArrayList())
-        }
-        _toBeAdded = ArrayList()
-        _toBeDeleted = ArrayList()
-    }
-
     fun save(name: String) {
         viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryAccount().first()?.userId)
@@ -141,6 +138,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
                 return@launch
             }
 
+            Timber.v("Save contact mode: $mode")
             when (mode) {
                 ContactGroupMode.CREATE ->
                     createContactGroup(

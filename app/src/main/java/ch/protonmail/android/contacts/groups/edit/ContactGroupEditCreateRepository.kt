@@ -68,11 +68,11 @@ class ContactGroupEditCreateRepository @Inject constructor(
         return updateLabelResult
     }
 
-    fun getContactGroupEmails(id: String): Flow<List<ContactEmail>> =
+    fun observeContactGroupEmails(id: String): Flow<List<ContactEmail>> =
         contactRepository.observeAllContactEmailsByContactGroupId(id)
 
     suspend fun removeMembersFromContactGroup(
-        contactGroupId: String,
+        contactGroupLabelId: String,
         contactGroupName: String,
         membersList: List<String>
     ) {
@@ -80,24 +80,27 @@ class ContactGroupEditCreateRepository @Inject constructor(
             Timber.v("No group members to remove")
             return
         }
+        Timber.v("Remove contact Members contactLabelId: $contactGroupLabelId, contactGroupName: $contactGroupName")
         runCatching {
-            val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
+            val labelContactsBody = LabelContactsBody(contactGroupLabelId, membersList)
             apiManager.unlabelContactEmails(labelContactsBody)
         }.fold(
             onSuccess = {
-                val contactEmails = contactRepository.findAllContactEmailsByContactGroupId(contactGroupId)
+                val contactEmails = contactRepository.findAllContactEmailsByContactGroupId(contactGroupLabelId)
                 contactEmails.forEach { contactEmail ->
-                    val updatedList = contactEmail.labelIds?.toMutableList()
-                    if (updatedList != null) {
-                        updatedList.remove(contactGroupName)
-                        contactRepository.saveContactEmail(contactEmail.copy(labelIds = updatedList))
+                    if (contactEmail.contactEmailId in membersList) {
+                        val updatedList = contactEmail.labelIds?.toMutableList()
+                        if (updatedList != null) {
+                            updatedList.remove(contactGroupLabelId)
+                            contactRepository.saveContactEmail(contactEmail.copy(labelIds = updatedList))
+                        }
                     }
                 }
             },
             onFailure = { throwable ->
                 if (throwable is IOException) {
                     RemoveMembersFromContactGroupWorker.Enqueuer(workManager).enqueue(
-                        contactGroupId,
+                        contactGroupLabelId,
                         contactGroupName,
                         membersList
                     )
@@ -107,7 +110,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     }
 
     suspend fun setMembersForContactGroup(
-        contactGroupId: String,
+        contactGroupLabelId: String,
         contactGroupName: String,
         membersList: List<String>
     ) {
@@ -115,25 +118,32 @@ class ContactGroupEditCreateRepository @Inject constructor(
             Timber.v("No group members to update")
             return
         }
-        Timber.v("Set contact Members contactGroupId: $contactGroupId, contactGroupName: $contactGroupName")
+        Timber.v("Set contact Members contactGroupId: $contactGroupLabelId, contactGroupName: $contactGroupName")
         runCatching {
-            val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
+            val labelContactsBody = LabelContactsBody(contactGroupLabelId, membersList)
             apiManager.labelContacts(labelContactsBody)
         }.fold(
             onSuccess = {
-                val contactEmails = contactRepository.findAllContactEmailsByContactGroupId(contactGroupId)
-                contactEmails.forEach { contactEmail ->
-                    val updatedList = contactEmail.labelIds?.toMutableList()
-                    if (updatedList != null) {
-                        updatedList.add(contactGroupName)
-                        contactRepository.saveContactEmail(contactEmail.copy(labelIds = updatedList))
+                membersList.forEach { newMemberEmailId ->
+                    val contactEmail = contactRepository.findAllContactEmailsById(newMemberEmailId)
+                    if (contactEmail != null) {
+                        val updatedList = contactEmail.labelIds?.toMutableSet() ?: mutableSetOf()
+                        updatedList.add(contactGroupLabelId)
+                        contactRepository.saveContactEmail(contactEmail.copy(labelIds = updatedList.toList()))
+                    } else {
+                        Timber.i("Cannot add email with ID: $newMemberEmailId to a group!")
                     }
                 }
             },
             onFailure = { throwable ->
                 if (throwable is IOException) {
                     jobManager.addJobInBackground(
-                        SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList, labelRepository)
+                        SetMembersForContactGroupJob(
+                            contactGroupLabelId,
+                            contactGroupName,
+                            membersList,
+                            labelRepository
+                        )
                     )
                 }
             }

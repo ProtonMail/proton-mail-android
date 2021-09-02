@@ -129,10 +129,9 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                     this,
                     {
                         progress.visibility = View.GONE
-                        it?.getContentIfNotHandled()?.let {
-                            val status = it.status
-                            when (status) {
-                                Status.FAILED -> showToast(it.message ?: getString(R.string.error))
+                        it?.getContentIfNotHandled()?.let { postResult ->
+                            when (postResult.status) {
+                                Status.FAILED -> showToast(postResult.message ?: getString(R.string.error))
                                 Status.SUCCESS -> {
                                     showToast(R.string.contact_group_saved)
                                     saveLastInteraction()
@@ -224,8 +223,8 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         contactGroupEditCreateViewModel.cleanUpComplete.observe(
             this,
             {
-                it?.getContentIfNotHandled()?.let {
-                    if (!it) {
+                it?.getContentIfNotHandled()?.let { isHandled ->
+                    if (!isHandled) {
                         buildAndShowUnsavedEditDialog()
                     } else {
                         saveLastInteraction()
@@ -234,7 +233,6 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                 }
             }
         )
-        contactGroupEditCreateViewModel.getContactGroupEmails()
     }
 
     private fun refreshData(it: HashSet<ContactEmail>?) {

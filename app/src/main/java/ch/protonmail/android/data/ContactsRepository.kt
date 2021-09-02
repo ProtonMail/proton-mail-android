@@ -73,6 +73,9 @@ class ContactsRepository @Inject constructor(
         contactDao.observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
             .first()
 
+    suspend fun findAllContactEmailsById(emailId: String): ContactEmail? =
+        contactDao.findContactEmailById(emailId)
+
     fun observeAllContactEmailsByContactGroupId(groupLabelId: String): Flow<List<ContactEmail>> =
         contactDao.observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
 
@@ -81,20 +84,6 @@ class ContactsRepository @Inject constructor(
 
     suspend fun saveContactEmail(contactEmail: ContactEmail) =
         contactDao.saveContactEmail(contactEmail)
-
-    private suspend fun getUniqueContactGroupsIds(): Set<String> {
-        return contactDao.findAllContactGroupsLabels()
-            .map { input ->
-                input.split("[", "]", ",")
-                    .filter { it.isNotBlank() }
-                    .map {
-                        it.replace("\\u003d", "=")
-                    }
-
-            }
-            .flatten()
-            .toSet()
-    }
 
     companion object {
 

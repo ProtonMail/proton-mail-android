@@ -22,6 +22,7 @@ package ch.protonmail.android.contacts.groups.edit
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.db.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
@@ -68,7 +69,7 @@ class ContactGroupEditCreateRepositoryTest {
 
     private val testPath = "a/bpath"
     private val testParentId = "parentIdForTests"
-    private val testType =  LabelType.CONTACT_GROUP
+    private val testType = LabelType.CONTACT_GROUP
 
     private val testLabel = Label(
         id = "labelID",
@@ -219,5 +220,66 @@ class ContactGroupEditCreateRepositoryTest {
         assertNotNull(apiResult)
         assert(apiResult is ApiResult.Error)
         verify { createContactGroupWorker.enqueue("name", "color", 1, 0, false, "") }
+    }
+
+    @Test
+    fun verifyThatRemovingMembersEmailsFromGroupsWorks() = runBlocking {
+        // given
+        val testGroupName = "testGroupName"
+        val testMember1 = "one@member.com"
+        val testLabel1Id = "testLabel1Id"
+        val testLabel2Id = "testLabel2Id"
+        val testLabel3Id = "testLabel3Id"
+        val testGroupId = testLabel1Id
+        val membersToRemove = listOf(testMember1)
+        val inputContactEmail = ContactEmail(
+            contactEmailId = testMember1,
+            email = "firstsender@protonmail.com",
+            name = "firstContactName",
+            labelIds = listOf(testLabel1Id, testLabel2Id, testLabel3Id)
+        )
+        val inputContactEmails = listOf(inputContactEmail)
+        coEvery { contactsRepository.findAllContactEmailsByContactGroupId(testGroupId) } returns inputContactEmails
+
+        // when
+        repository.removeMembersFromContactGroup(
+            testGroupId,
+            testGroupName,
+            membersToRemove
+        )
+
+        // then
+        coVerify { apiManager.unlabelContactEmails(any()) }
+        coVerify {  contactsRepository.saveContactEmail(inputContactEmail.copy(labelIds = listOf(testLabel2Id, testLabel3Id))) }
+    }
+
+    @Test
+    fun verifyThatAddingMembersEmailsToGroupsWorks() = runBlocking {
+        // given
+        val testGroupName = "testGroupName"
+        val testMember1 = "one@member.com"
+        val testLabel1Id = "testLabel1Id"
+        val testLabel2Id = "testLabel2Id"
+        val testLabel3Id = "testLabel3Id"
+        val testGroupId = testLabel3Id
+        val membersToAdd = listOf(testMember1)
+        val existingContactEmail = ContactEmail(
+            contactEmailId = testMember1,
+            email = "firstsender@protonmail.com",
+            name = "firstContactName",
+            labelIds = listOf(testLabel1Id, testLabel2Id)
+        )
+        coEvery { contactsRepository.findAllContactEmailsById(testMember1) } returns existingContactEmail
+
+        // when
+        repository.setMembersForContactGroup(
+            testGroupId,
+            testGroupName,
+            membersToAdd
+        )
+
+        // then
+        coVerify { apiManager.labelContacts(any()) }
+        coVerify {  contactsRepository.saveContactEmail(existingContactEmail.copy(labelIds = listOf(testLabel1Id, testLabel2Id, testLabel3Id))) }
     }
 }
