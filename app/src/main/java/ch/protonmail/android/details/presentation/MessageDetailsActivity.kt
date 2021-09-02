@@ -58,7 +58,6 @@ import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -80,7 +79,6 @@ import kotlinx.coroutines.flow.mapLatest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.math.abs
@@ -139,6 +137,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             Constants.MessageLocationType.INVALID.messageLocationTypeValue
         )
         openedFolderLabelId = intent.getStringExtra(EXTRA_MAILBOX_LABEL_ID)
+        expandedToolbarTitleTextView.text = intent.getStringExtra(EXTRA_MESSAGE_SUBJECT) ?: ""
         val currentUser = mUserManager.requireCurrentUser()
         AppUtil.clearNotifications(this, currentUser.id)
         supportActionBar?.title = null
@@ -485,8 +484,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             setupToolbarOffsetListener(conversation.messages.count())
             displayToolbarData(conversation)
 
-            viewModel.renderedFromCache = AtomicBoolean(true)
-
             Timber.v("setMessage conversations size: ${conversation.messages.size}")
             messageExpandableAdapter.setMessageData(conversation)
             if (viewModel.refreshedKeys) {
@@ -500,18 +497,16 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             progress.visibility = View.GONE
             invalidateOptionsMenu()
-            if (viewModel.renderingPassed && shouldScrollToPosition) {
-                // Scroll to the last message on the second call of this observer and
-                // if there is more than one message, i.e. the item count is greater than 2 (header and body)
-                if (messageExpandableAdapter.itemCount > 2) {
-                    appBarLayout.setExpanded(false, true)
-                    // delay for better scrolling experience
-                    messageDetailsRecyclerView.postDelayed(
-                        { messageDetailsRecyclerView.smoothScrollToPosition(messageExpandableAdapter.itemCount - 1) },
-                        500
-                    )
-                    shouldScrollToPosition = false
-                }
+            if (shouldScrollToPosition && messageExpandableAdapter.itemCount > 2) {
+                // Scroll to the last message if there is more than one message,
+                // i.e. the item count is greater than 2 (header and body)
+                appBarLayout.setExpanded(false, true)
+                // delay for better scrolling experience
+                messageDetailsRecyclerView.postDelayed(
+                    { messageDetailsRecyclerView.smoothScrollToPosition(messageExpandableAdapter.itemCount - 1) },
+                    500
+                )
+                shouldScrollToPosition = false
             }
             viewModel.renderingPassed = true
         }
@@ -905,5 +900,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
         const val EXTRA_MESSAGE_RECIPIENT_USER_ID = "message_recipient_user_id"
         const val EXTRA_MESSAGE_RECIPIENT_USERNAME = "message_recipient_username"
+
+        const val EXTRA_MESSAGE_SUBJECT = "message_subject"
     }
 }

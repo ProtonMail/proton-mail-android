@@ -353,6 +353,7 @@ class NotificationServer @Inject constructor(
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID, message?.location)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.id)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
+            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, message?.subject)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MessageDetailsActivity::class.java)

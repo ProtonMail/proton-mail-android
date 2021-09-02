@@ -86,6 +86,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -166,7 +167,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     private var embeddedImagesAttachments: ArrayList<Attachment> = ArrayList()
     private var embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
-    var renderedFromCache = AtomicBoolean(false)
     var refreshedKeys: Boolean = true
 
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
@@ -243,9 +243,14 @@ internal class MessageDetailsViewModel @Inject constructor(
     private fun getConversationFlow(userId: UserId): Flow<ConversationUiModel?> =
         conversationRepository.getConversation(userId, messageOrConversationId)
             .distinctUntilChanged()
+            .filterOutIncompleteConversations()
             .map {
                 loadConversationDetails(it, userId)
             }
+
+    private fun Flow<DataResult<Conversation>>.filterOutIncompleteConversations() = filterNot {
+        it is DataResult.Success && !it.value.isComplete()
+    }
 
     private fun Flow<ConversationUiModel>.combineWithLabels() = flatMapLatest { conversation ->
         val nonExclusiveLabelsHashMap = hashMapOf<String, List<LabelChipUiModel>>()
@@ -632,7 +637,6 @@ internal class MessageDetailsViewModel @Inject constructor(
         refreshedKeys = false
 
         fetchingPubKeys = false
-        renderedFromCache = AtomicBoolean(false)
         // render with the new verification keys
         if (renderingPassed) {
             RegisterReloadTask(message).execute()
