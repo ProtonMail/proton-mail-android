@@ -42,11 +42,11 @@ import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
 import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -544,7 +544,7 @@ internal class EventHandler @AssistedInject constructor(
             val item = event.label
             when (ActionType.fromInt(event.type)) {
                 ActionType.CREATE -> {
-                    val labelType = item.type!!
+                    val labelType = item.type
                     val id = item.id
                     val name = item.name
                     val color = item.color
@@ -627,7 +627,7 @@ internal class EventHandler @AssistedInject constructor(
 
     private fun writeMessageLabel(
         currentLabel: LabelEntity?,
-        updatedLabel: Label
+        updatedLabel: LabelApiModel
     ) {
         if (currentLabel != null) {
             val labelFactory = LabelsMapper()
@@ -640,7 +640,7 @@ internal class EventHandler @AssistedInject constructor(
 
     private fun writeContactGroup(
         currentGroup: LabelEntity?,
-        updatedGroup: Label
+        updatedGroup: LabelApiModel
     ) {
         if (currentGroup != null) {
             val contactLabelFactory = LabelsMapper()

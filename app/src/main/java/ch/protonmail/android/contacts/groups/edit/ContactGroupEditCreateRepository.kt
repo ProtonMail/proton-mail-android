@@ -25,9 +25,9 @@ import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.LabelResponse
+import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager

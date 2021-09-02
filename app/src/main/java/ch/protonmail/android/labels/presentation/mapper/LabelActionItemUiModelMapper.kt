@@ -22,8 +22,8 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import timber.log.Timber
 import javax.inject.Inject

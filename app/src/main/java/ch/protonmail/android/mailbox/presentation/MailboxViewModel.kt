@@ -41,9 +41,9 @@ import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper

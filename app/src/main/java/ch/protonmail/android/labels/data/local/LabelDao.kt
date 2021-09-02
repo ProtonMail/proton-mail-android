@@ -17,16 +17,23 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.data.db
+package ch.protonmail.android.labels.data.local
 
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
-import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_CONTACT_GROUP
-import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_FOLDER
-import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_MESSAGE_LABEL
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.COLUMN_LABEL_ID
+import ch.protonmail.android.labels.data.local.model.COLUMN_LABEL_NAME
+import ch.protonmail.android.labels.data.local.model.COLUMN_LABEL_ORDER
+import ch.protonmail.android.labels.data.local.model.COLUMN_LABEL_TYPE
+import ch.protonmail.android.labels.data.local.model.COLUMN_LABEL_USER_ID
+import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_CONTACT_GROUP
+import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_FOLDER
+import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_MESSAGE_LABEL
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.data.local.model.TABLE_LABELS
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId

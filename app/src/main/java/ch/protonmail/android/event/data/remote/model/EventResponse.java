@@ -28,13 +28,13 @@ import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
-import ch.protonmail.android.labels.data.model.Label;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsFactory;
 import ch.protonmail.android.data.local.model.ServerFullContactDetails;
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel;
 import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel;
 
 public class EventResponse extends ResponseBody {
@@ -90,9 +90,13 @@ public class EventResponse extends ResponseBody {
         return conversations;
     }
 
-    public List<ContactEventBody> getContactUpdates() { return contacts; }
+    public List<ContactEventBody> getContactUpdates() {
+        return contacts;
+    }
 
-    public List<ContactEmailEventBody> getContactEmailsUpdates() { return contactEmails; }
+    public List<ContactEmailEventBody> getContactEmailsUpdates() {
+        return contactEmails;
+    }
 
     public List<CountsApiModel> getMessageCounts() {
         return messageCounts;
@@ -102,13 +106,21 @@ public class EventResponse extends ResponseBody {
         return conversationCounts;
     }
 
-    public List<LabelsEventBody> getLabelUpdates() { return labels; }
+    public List<LabelsEventBody> getLabelUpdates() {
+        return labels;
+    }
 
-    public User getUserUpdates(){ return user; }
+    public User getUserUpdates() {
+        return user;
+    }
 
-    public MailSettings getMailSettingsUpdates(){ return mailSettings; }
+    public MailSettings getMailSettingsUpdates() {
+        return mailSettings;
+    }
 
-    public String getEventID(){ return eventID;}
+    public String getEventID() {
+        return eventID;
+    }
 
     public boolean refreshContacts() {
         return (refresh & RefreshStatus.CONTACTS.getStatus()) == RefreshStatus.CONTACTS.getStatus();
@@ -117,7 +129,7 @@ public class EventResponse extends ResponseBody {
     public boolean refresh() {
         return
                 (refresh & RefreshStatus.MAIL.getStatus()) == RefreshStatus.MAIL.getStatus() ||
-                (refresh & RefreshStatus.ALL.getStatus()) == RefreshStatus.ALL.getStatus();
+                        (refresh & RefreshStatus.ALL.getStatus()) == RefreshStatus.ALL.getStatus();
     }
 
     public long getUsedSpace() {
@@ -187,7 +199,7 @@ public class EventResponse extends ResponseBody {
         }
 
         public FullContactDetails getContact() {
-            FullContactDetailsFactory fullContactDetailsFactory=new FullContactDetailsFactory();
+            FullContactDetailsFactory fullContactDetailsFactory = new FullContactDetailsFactory();
             return fullContactDetailsFactory.createFullContactDetails(contact);
         }
 
@@ -223,7 +235,7 @@ public class EventResponse extends ResponseBody {
         @SerializedName(Fields.Events.ACTION)
         private int action;
         @SerializedName(Fields.Events.LABEL)
-        private Label label;
+        private LabelApiModel label;
 
         public String getID() {
             return id;
@@ -233,7 +245,7 @@ public class EventResponse extends ResponseBody {
             return action;
         }
 
-        public Label getLabel() {
+        public LabelApiModel getLabel() {
             return label;
         }
     }

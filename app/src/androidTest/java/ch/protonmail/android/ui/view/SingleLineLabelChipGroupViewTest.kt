@@ -25,7 +25,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
-import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.testAndroidInstrumented.assertion.isGone
 import ch.protonmail.android.testAndroidInstrumented.assertion.isVisible

@@ -35,9 +35,9 @@ import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.labels.data.LabelRepository;
-import ch.protonmail.android.labels.data.db.LabelEntity;
-import ch.protonmail.android.labels.data.model.LabelId;
-import ch.protonmail.android.labels.data.model.LabelType;
+import ch.protonmail.android.labels.data.local.model.LabelEntity;
+import ch.protonmail.android.labels.data.local.model.LabelId;
+import ch.protonmail.android.labels.data.local.model.LabelType;
 import timber.log.Timber;
 
 public class MoveToFolderJob extends ProtonMailBaseJob {

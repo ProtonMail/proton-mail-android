@@ -25,8 +25,8 @@ import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.worker.DeleteLabelWorker
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery

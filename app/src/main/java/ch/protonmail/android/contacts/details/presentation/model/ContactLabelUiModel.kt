@@ -20,8 +20,8 @@
 package ch.protonmail.android.contacts.details.presentation.model
 
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 
 data class ContactLabelUiModel(
     val id: LabelId,

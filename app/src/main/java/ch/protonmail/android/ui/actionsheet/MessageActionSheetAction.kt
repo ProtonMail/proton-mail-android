@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.ui.actionsheet
 
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 
 /**

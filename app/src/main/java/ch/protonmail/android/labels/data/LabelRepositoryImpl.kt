@@ -22,11 +22,11 @@ package ch.protonmail.android.labels.data
 import androidx.paging.DataSource
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
-import ch.protonmail.android.labels.data.db.LabelDao
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.LabelDao
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow

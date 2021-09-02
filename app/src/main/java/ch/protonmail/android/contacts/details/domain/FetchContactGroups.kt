@@ -21,7 +21,7 @@ package ch.protonmail.android.contacts.details.domain
 
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map

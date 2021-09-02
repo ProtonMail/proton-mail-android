@@ -28,7 +28,7 @@ import ch.protonmail.android.api.segments.organization.OrganizationService
 import ch.protonmail.android.api.segments.payment.PaymentService
 import ch.protonmail.android.api.segments.report.ReportService
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsService
-import ch.protonmail.android.labels.data.api.LabelService
+import ch.protonmail.android.labels.data.remote.LabelService
 import ch.protonmail.android.mailbox.data.remote.ConversationService
 import retrofit2.Retrofit
 

@@ -25,13 +25,13 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelRequestBody
-import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
+import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -74,7 +74,7 @@ class CreateContactGroupWorkerTest {
     private lateinit var accountManager: AccountManager
 
     private val labelResponse = mockk<LabelResponse> {
-        every { label } returns Label(
+        every { label } returns LabelApiModel(
             id = "labelID",
             name = "name",
             color = "color",
@@ -253,7 +253,7 @@ class CreateContactGroupWorkerTest {
             val error = "Error, Label id is empty"
             val createContactGroupApiResponse = ApiResult.Success(
                 LabelResponse(
-                    Label(
+                    LabelApiModel(
                         id = "",
                         name = "name",
                         color = "color",

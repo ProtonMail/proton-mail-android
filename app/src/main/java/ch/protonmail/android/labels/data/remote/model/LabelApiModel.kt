@@ -17,8 +17,9 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.data.model
+package ch.protonmail.android.labels.data.remote.model
 
+import ch.protonmail.android.labels.data.local.model.LabelType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -34,7 +35,7 @@ internal const val STICKY = "Sticky"
 internal const val PARENT_ID = "ParentID"
 
 @Serializable
-data class Label(
+data class LabelApiModel(
     @SerialName(ID)
     val id: String,
 

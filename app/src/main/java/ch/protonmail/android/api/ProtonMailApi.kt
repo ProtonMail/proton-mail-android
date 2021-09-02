@@ -32,8 +32,8 @@ import ch.protonmail.android.api.segments.device.DeviceApi
 import ch.protonmail.android.api.segments.device.DeviceApiSpec
 import ch.protonmail.android.api.segments.key.KeyApi
 import ch.protonmail.android.api.segments.key.KeyApiSpec
-import ch.protonmail.android.labels.data.api.LabelApi
-import ch.protonmail.android.labels.data.api.LabelApiSpec
+import ch.protonmail.android.labels.data.remote.LabelApi
+import ch.protonmail.android.labels.data.remote.LabelApiSpec
 import ch.protonmail.android.api.segments.message.MessageApi
 import ch.protonmail.android.api.segments.message.MessageApiSpec
 import ch.protonmail.android.api.segments.organization.OrganizationApi

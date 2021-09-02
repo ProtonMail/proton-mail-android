@@ -17,25 +17,24 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.data.model
+package ch.protonmail.android.labels.data.local.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+const val LABEL_TYPE_ID_MESSAGE_LABEL = 1
+const val LABEL_TYPE_ID_CONTACT_GROUP = 2
+const val LABEL_TYPE_ID_FOLDER = 3
+
 @Serializable
-data class LabelRequestBody(
-    @SerialName(NAME)
-    val name: String,
-    @SerialName(COLOR)
-    val color: String,
-    @SerialName(TYPE)
-    val type: Int? = null, // only '1', '2', or '3
-    @SerialName(PARENT_ID)
-    val parentId: String? = null,
-    @SerialName(NOTIFY)
-    val notify: Int? = null,
-    @SerialName(EXPANDED) // v4
-    val expanded: Int? = null,
-    @SerialName(STICKY) // v4
-    val sticky: Int? = null
-)
+enum class LabelType(val typeInt: Int) {
+
+    @SerialName(LABEL_TYPE_ID_MESSAGE_LABEL.toString())
+    MESSAGE_LABEL(LABEL_TYPE_ID_MESSAGE_LABEL),
+
+    @SerialName(LABEL_TYPE_ID_CONTACT_GROUP.toString())
+    CONTACT_GROUP(LABEL_TYPE_ID_CONTACT_GROUP),
+
+    @SerialName(LABEL_TYPE_ID_FOLDER.toString())
+    FOLDER(LABEL_TYPE_ID_FOLDER)
+}

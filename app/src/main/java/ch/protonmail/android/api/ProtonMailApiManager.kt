@@ -63,10 +63,10 @@ import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
-import ch.protonmail.android.labels.data.api.LabelApiSpec
-import ch.protonmail.android.labels.data.model.LabelRequestBody
-import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.labels.data.model.LabelsResponse
+import ch.protonmail.android.labels.data.remote.LabelApiSpec
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
+import ch.protonmail.android.labels.data.remote.model.LabelResponse
+import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses

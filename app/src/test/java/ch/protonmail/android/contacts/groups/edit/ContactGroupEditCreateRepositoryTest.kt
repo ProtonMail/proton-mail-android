@@ -24,13 +24,13 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelRequestBody
-import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
+import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
@@ -71,7 +71,7 @@ class ContactGroupEditCreateRepositoryTest {
     private val testParentId = "parentIdForTests"
     private val testType = LabelType.CONTACT_GROUP
 
-    private val testLabel = Label(
+    private val testLabel = LabelApiModel(
         id = "labelID",
         name = "name",
         color = "color",

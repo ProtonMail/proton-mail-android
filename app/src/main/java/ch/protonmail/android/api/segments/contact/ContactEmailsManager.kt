@@ -23,10 +23,10 @@ import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelsResponse
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
@@ -68,7 +68,7 @@ class ContactEmailsManager @Inject constructor(
         }
     }
 
-    private fun mapToContactLabelsEntity(labels: List<Label>?, userId: UserId): List<LabelEntity> {
+    private fun mapToContactLabelsEntity(labels: List<LabelApiModel>?, userId: UserId): List<LabelEntity> {
         return labels?.map { label ->
             labelsMapper.mapLabelToLabelEntity(label, userId)
         } ?: emptyList()

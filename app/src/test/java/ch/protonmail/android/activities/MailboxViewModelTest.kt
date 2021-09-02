@@ -45,9 +45,9 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -1059,8 +1059,14 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     listOf(LabelId(ALL_DRAFT_LABEL_ID), LabelId(DRAFT_LABEL_ID))
                 )
             } returns listOf(
-                LabelEntity(LabelId(ALL_DRAFT_LABEL_ID), currentUserId, "label 1", "blue", 0,  LabelType.MESSAGE_LABEL, "", "", 0, 0, 0),
-                LabelEntity(LabelId(DRAFT_LABEL_ID), currentUserId, "label 8", "blue", 0,  LabelType.MESSAGE_LABEL, "", "", 0, 0, 0)
+                LabelEntity(
+                    LabelId(ALL_DRAFT_LABEL_ID), currentUserId, "label 1", "blue", 0, LabelType.MESSAGE_LABEL, "", "",
+                    0, 0, 0
+                ),
+                LabelEntity(
+                    LabelId(DRAFT_LABEL_ID), currentUserId, "label 8", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0,
+                    0
+                )
             )
 
             // Then

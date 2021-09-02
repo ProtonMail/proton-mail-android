@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.labels.data.api
+package ch.protonmail.android.labels.data.remote
 
-import ch.protonmail.android.labels.data.model.LabelRequestBody
-import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.labels.data.model.LabelsResponse
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
+import ch.protonmail.android.labels.data.remote.model.LabelResponse
+import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiResult

@@ -20,7 +20,7 @@
 package ch.protonmail.android.details.presentation.model
 
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.ui.model.LabelChipUiModel
 
 data class ConversationUiModel(

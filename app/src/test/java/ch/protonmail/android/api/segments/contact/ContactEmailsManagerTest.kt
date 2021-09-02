@@ -26,12 +26,12 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
-import ch.protonmail.android.labels.data.model.LabelsResponse
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -90,7 +90,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val labelId1 = "labelId1"
         val labelName1 = "labelName1"
         val labelColor = "labelColor11"
-        val label = Label(
+        val label = LabelApiModel(
             id = labelId1,
             name = labelName1,
             path = testPath,
@@ -145,7 +145,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val labelId1 = "labelId1"
         val labelName1 = "labelName1"
         val labelColor = "labelColor11"
-        val label = Label(
+        val label = LabelApiModel(
             id = labelId1,
             name = labelName1,
             path = "",

@@ -20,8 +20,8 @@ package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 

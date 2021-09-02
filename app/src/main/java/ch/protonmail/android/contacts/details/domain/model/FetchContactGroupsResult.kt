@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.contacts.details.domain.model
 
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 
 data class FetchContactGroupsResult(
     val groupsList: List<LabelEntity>

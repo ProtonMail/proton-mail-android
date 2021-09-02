@@ -19,11 +19,11 @@
 
 package ch.protonmail.android.api.models.contacts.receive
 
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import me.proton.core.domain.entity.UserId
 import org.junit.Assert.assertEquals
 import kotlin.test.BeforeTest
@@ -49,7 +49,7 @@ class LabelsMapperTest {
 
         val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
 
-        val expected = Label(
+        val expected = LabelApiModel(
             id = "ID",
             name = "name",
             color = "color",
@@ -70,7 +70,7 @@ class LabelsMapperTest {
 
         val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
 
-        val expected = Label(
+        val expected = LabelApiModel(
             id = "ID",
             name = "name",
             color = "color",
@@ -91,7 +91,7 @@ class LabelsMapperTest {
 
         val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
 
-        val expected = Label(
+        val expected = LabelApiModel(
             id = "",
             name = "name",
             color = "color",
@@ -108,7 +108,7 @@ class LabelsMapperTest {
 
     @Test
     fun mappingServerLabelToLabelEntitySucceedsWhenAllFieldsAreValid() {
-        val serverLabel = Label(
+        val serverLabel = LabelApiModel(
             id = "ID",
             name = "name",
             color = "color",

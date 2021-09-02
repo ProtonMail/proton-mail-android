@@ -25,11 +25,11 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelRequestBody
-import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
+import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -77,7 +77,7 @@ class PostLabelWorkerTest {
         every { accountManager.getPrimaryUserId() } returns flowOf(UserId("TestUserId"))
         coEvery { apiManager.createLabel(any(), any()) } returns ApiResult.Success(labelApiResponse)
         coEvery { apiManager.updateLabel(any(), any(), any()) } returns ApiResult.Success(labelApiResponse)
-        every { labelApiResponse.label } returns Label(
+        every { labelApiResponse.label } returns LabelApiModel(
             id = "labelID",
             name = "name",
             color = "color",
@@ -221,7 +221,7 @@ class PostLabelWorkerTest {
             val error = "Error, Label id is empty"
             val createContactGroupApiResponse = ApiResult.Success(
                 LabelResponse(
-                    Label(
+                    LabelApiModel(
                         id = "",
                         name = "name",
                         color = "color",

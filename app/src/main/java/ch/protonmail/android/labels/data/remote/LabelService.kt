@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.labels.data.api
+package ch.protonmail.android.labels.data.remote
 
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_CONTACT_GROUP
-import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_FOLDER
-import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_MESSAGE_LABEL
-import ch.protonmail.android.labels.data.model.LabelRequestBody
-import ch.protonmail.android.labels.data.model.LabelResponse
-import ch.protonmail.android.labels.data.model.LabelsResponse
+import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_CONTACT_GROUP
+import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_FOLDER
+import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_MESSAGE_LABEL
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
+import ch.protonmail.android.labels.data.remote.model.LabelResponse
+import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.DELETE

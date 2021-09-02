@@ -21,7 +21,7 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.labels.data.model
+package ch.protonmail.android.labels.data.remote.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -26,5 +26,5 @@ private const val FIELD_LABELS = "Labels"
 @Serializable
 data class LabelsResponse(
     @SerialName(FIELD_LABELS)
-    val labels: List<Label>
+    val labels: List<LabelApiModel>
 )

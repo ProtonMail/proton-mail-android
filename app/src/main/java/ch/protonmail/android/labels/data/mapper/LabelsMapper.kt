@@ -19,17 +19,17 @@
 package ch.protonmail.android.labels.data.mapper
 
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelRequestBody
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
 class LabelsMapper @Inject constructor() {
 
-    fun mapLabelToLabelEntity(serverLabel: Label, userId: UserId) = LabelEntity(
+    fun mapLabelToLabelEntity(serverLabel: LabelApiModel, userId: UserId) = LabelEntity(
         id = LabelId(serverLabel.id),
         userId = userId,
         name = serverLabel.name,
@@ -43,7 +43,7 @@ class LabelsMapper @Inject constructor() {
         notify = serverLabel.notify
     )
 
-    fun mapLabelEntityToServerLabel(labelEntity: LabelEntity) = Label(
+    fun mapLabelEntityToServerLabel(labelEntity: LabelEntity) = LabelApiModel(
         id = labelEntity.id.id,
         name = labelEntity.name,
         path = labelEntity.path,
@@ -66,7 +66,7 @@ class LabelsMapper @Inject constructor() {
         sticky = null
     )
 
-    fun mapLabelToContactLabelUiModel(serverLabel: Label, contactEmailsCount: Int) = ContactLabelUiModel(
+    fun mapLabelToContactLabelUiModel(serverLabel: LabelApiModel, contactEmailsCount: Int) = ContactLabelUiModel(
         id = LabelId(serverLabel.id),
         name = serverLabel.name,
         color = serverLabel.color,

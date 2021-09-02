@@ -23,8 +23,8 @@ import android.graphics.Color
 import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.model.LabelType
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.mapper.UiModelMapper
 import ch.protonmail.android.utils.UiUtil
 import timber.log.Timber

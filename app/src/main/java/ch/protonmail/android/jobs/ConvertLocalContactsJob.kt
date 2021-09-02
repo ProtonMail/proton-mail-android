@@ -45,9 +45,9 @@ import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_CONTACT_GROUP
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.LABEL_TYPE_ID_CONTACT_GROUP
-import ch.protonmail.android.labels.data.model.LabelRequestBody
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.views.models.LocalContact
 import ch.protonmail.android.views.models.LocalContactAddress

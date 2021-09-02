@@ -22,13 +22,13 @@ package ch.protonmail.android.labels.data
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
-import ch.protonmail.android.labels.data.db.LabelDao
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.LabelDao
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.Label
-import ch.protonmail.android.labels.data.model.LabelId
-import ch.protonmail.android.labels.data.model.LabelType
-import ch.protonmail.android.labels.data.model.LabelsResponse
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -137,7 +137,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
         private const val testParentId = "parentIdForTests"
         val testUserId = UserId("testUser")
 
-        val testLabel1 = Label(
+        val testLabel1 = LabelApiModel(
             id = labelId1,
             name = labelName1,
             path = testPath,
@@ -149,7 +149,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
             sticky = null,
             parentId = testParentId
         )
-        val testLabel2 = Label(
+        val testLabel2 = LabelApiModel(
             id = labelId2,
             name = labelName2,
             path = testPath,
@@ -161,7 +161,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
             sticky = null,
             parentId = testParentId
         )
-        val testLabel3 = Label(
+        val testLabel3 = LabelApiModel(
             id = labelId3,
             name = labelName3,
             path = testPath,

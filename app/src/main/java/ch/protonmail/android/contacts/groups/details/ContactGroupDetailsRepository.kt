@@ -21,8 +21,8 @@ package ch.protonmail.android.contacts.groups.details
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
-import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -30,9 +30,6 @@ class ContactGroupDetailsRepository @Inject constructor(
     private val labelRepository: LabelRepository,
     private val contactRepository: ContactsRepository
 ) {
-
-    suspend fun findContactGroupDetails(id: String): LabelEntity? =
-        labelRepository.findLabel(LabelId(id))
 
     fun observeContactGroupDetails(id: String): Flow<LabelEntity?> =
         labelRepository.observeLabel(LabelId(id))

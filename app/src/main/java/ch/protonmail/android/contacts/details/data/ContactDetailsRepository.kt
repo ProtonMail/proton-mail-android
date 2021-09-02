@@ -26,9 +26,9 @@ import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.db.LabelEntity
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.model.LabelId
+import ch.protonmail.android.labels.data.local.model.LabelId
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow

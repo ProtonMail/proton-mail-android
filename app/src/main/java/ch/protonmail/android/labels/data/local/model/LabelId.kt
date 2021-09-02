@@ -17,24 +17,9 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.data.model
+package ch.protonmail.android.labels.data.local.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-const val LABEL_TYPE_ID_MESSAGE_LABEL = 1
-const val LABEL_TYPE_ID_CONTACT_GROUP = 2
-const val LABEL_TYPE_ID_FOLDER = 3
-
-@Serializable
-enum class LabelType(val typeInt: Int) {
-
-    @SerialName(LABEL_TYPE_ID_MESSAGE_LABEL.toString())
-    MESSAGE_LABEL(LABEL_TYPE_ID_MESSAGE_LABEL),
-
-    @SerialName(LABEL_TYPE_ID_CONTACT_GROUP.toString())
-    CONTACT_GROUP(LABEL_TYPE_ID_CONTACT_GROUP),
-
-    @SerialName(LABEL_TYPE_ID_FOLDER.toString())
-    FOLDER(LABEL_TYPE_ID_FOLDER)
-}
+/**
+ * Entity representing a LabelId.
+ */
+data class LabelId(val id: String)
