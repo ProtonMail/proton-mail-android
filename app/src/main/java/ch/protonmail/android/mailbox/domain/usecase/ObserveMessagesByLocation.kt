@@ -73,7 +73,7 @@ class ObserveMessagesByLocation @Inject constructor(
                 ResponseSource.Local ->
                     GetMessagesResult.Success(value)
                 ResponseSource.Remote ->
-                    GetMessagesResult.ApiRefresh(value)
+                    GetMessagesResult.DataRefresh(value)
             }
 
         fun Error.Remote.remoteErrorToResult(): GetMessagesResult {

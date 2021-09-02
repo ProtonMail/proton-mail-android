@@ -334,7 +334,7 @@ class MailboxViewModel @Inject constructor(
                     if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
                     else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
-                    MailboxState.ApiRefresh(
+                    MailboxState.DataRefresh(
                         lastFetchedItemsIds = result.lastFetchedConversations.map { it.id }
                     )
                 }
@@ -378,11 +378,11 @@ class MailboxViewModel @Inject constructor(
                         shouldResetPosition = shouldResetPosition
                     )
                 }
-                is GetMessagesResult.ApiRefresh -> {
+                is GetMessagesResult.DataRefresh -> {
                     if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
                     else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
-                    MailboxState.ApiRefresh(
+                    MailboxState.DataRefresh(
                         lastFetchedItemsIds = result.lastFetchedMessages.mapNotNull { it.messageId }
                     )
                 }

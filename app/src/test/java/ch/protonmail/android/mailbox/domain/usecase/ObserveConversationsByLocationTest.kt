@@ -73,7 +73,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         val dataResult = DataResult.Success(ResponseSource.Remote, conversations)
         coEvery { conversationRepository.observeConversations(any()) } returns loadMoreFlowOf(dataResult)
 
-        val expected = GetConversationsResult.ApiRefresh(conversations)
+        val expected = GetConversationsResult.DataRefresh(conversations)
 
         // when
         observeConversationsByLocation(userId, MessageLocationType.INBOX.asLabelId()).test {

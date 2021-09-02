@@ -21,7 +21,7 @@ package ch.protonmail.android.mailbox.domain.model
 
 sealed class GetConversationsResult {
     data class Success(val conversations: List<Conversation>) : GetConversationsResult()
-    data class ApiRefresh(val lastFetchedConversations: List<Conversation>) : GetConversationsResult()
+    data class DataRefresh(val lastFetchedConversations: List<Conversation>) : GetConversationsResult()
     data class Error(val throwable: Throwable? = null, val isOffline: Boolean = false) : GetConversationsResult()
     object Loading : GetConversationsResult()
     object NoConversationsFound : GetConversationsResult()

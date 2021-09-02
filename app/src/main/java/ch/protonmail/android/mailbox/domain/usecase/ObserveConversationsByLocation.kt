@@ -66,7 +66,7 @@ class ObserveConversationsByLocation @Inject constructor(
                 ResponseSource.Local ->
                     GetConversationsResult.Success(value)
                 ResponseSource.Remote ->
-                    GetConversationsResult.ApiRefresh(value)
+                    GetConversationsResult.DataRefresh(value)
             }
 
         fun Error.Remote.remoteErrorToResult(): GetConversationsResult {
