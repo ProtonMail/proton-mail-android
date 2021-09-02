@@ -93,7 +93,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.toDuration
 
-private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
+private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723_478
 private const val STARRED_LABEL_ID = "10"
 
 @OptIn(FlowPreview::class)

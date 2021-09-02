@@ -44,7 +44,7 @@ class MessagesTypesConverter {
     fun parsedHeadersToString(parsedHeaders: ParsedHeaders?) = parsedHeaders?.serialize()
 
     @TypeConverter
-    fun stringToParsedHeaders(parsedHeadersString: String?) =
+    fun stringToParsedHeaders(parsedHeadersString: String?): ParsedHeaders? =
         parsedHeadersString?.deserialize(ParsedHeaders.serializer())
 
     @TypeConverter

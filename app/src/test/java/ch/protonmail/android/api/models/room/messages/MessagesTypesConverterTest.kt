@@ -41,7 +41,7 @@ class MessagesTypesConverterTest {
     }
 
     @Test
-    fun verifySerializationOfNUllParsedHeadersIsHandled() {
+    fun verifySerializationOfNullParsedHeadersIsHandled() {
         val expected = null
 
         val actual = messagesTypesConverter.parsedHeadersToString(null)
@@ -68,7 +68,7 @@ class MessagesTypesConverterTest {
 
         val actual = messagesTypesConverter.stringToParsedHeaders(parsedHeadersString)
 
-        assertEquals(actual, expected)
+        assertEquals(expected, actual)
     }
 
     @Test
