@@ -26,7 +26,8 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityRequestMapper
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
@@ -43,19 +44,20 @@ class ContactGroupEditCreateRepository @Inject constructor(
     val workManager: WorkManager,
     val apiManager: ProtonMailApiManager,
     private val contactRepository: ContactsRepository,
-    private val labelsMapper: LabelsMapper,
+    private val labelsMapper: LabelEntityApiMapper,
     private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val requestMapper: LabelEntityRequestMapper
 ) {
 
     suspend fun editContactGroup(contactLabel: LabelEntity, userId: UserId): ApiResult<LabelResponse> {
-        val labelBody = labelsMapper.mapLabelEntityToRequestLabel(contactLabel)
+        val labelBody = requestMapper.toRequest(contactLabel)
         val updateLabelResult = apiManager.updateLabel(userId, contactLabel.id.id, labelBody)
         when (updateLabelResult) {
             is ApiResult.Success -> {
                 val label = updateLabelResult.value.label
                 labelRepository.saveLabel(
-                    labelsMapper.mapLabelToLabelEntity(label, userId)
+                    labelsMapper.toEntity(label, userId)
                 )
             }
             is ApiResult.Error.Http -> {
@@ -151,13 +153,13 @@ class ContactGroupEditCreateRepository @Inject constructor(
     }
 
     suspend fun createContactGroup(contactLabel: LabelEntity, userId: UserId): ApiResult<LabelResponse> {
-        val labelRequestBody = labelsMapper.mapLabelEntityToRequestLabel(contactLabel)
+        val labelRequestBody = requestMapper.toRequest(contactLabel)
         val createLabelResult = apiManager.createLabel(userId, labelRequestBody)
         when (createLabelResult) {
             is ApiResult.Success -> {
                 val label = createLabelResult.value.label
                 labelRepository.saveLabel(
-                    labelsMapper.mapLabelToLabelEntity(label, userId)
+                    labelsMapper.toEntity(label, userId)
                 )
             }
             is ApiResult.Error.Http -> {

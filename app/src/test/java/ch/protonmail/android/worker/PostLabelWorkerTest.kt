@@ -26,7 +26,7 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelType
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
@@ -68,7 +68,7 @@ class PostLabelWorkerTest {
 
     private lateinit var worker: PostLabelWorker
 
-    private val labelMapper = LabelsMapper()
+    private val labelMapper = LabelEntityApiMapper()
 
 
     @BeforeTest

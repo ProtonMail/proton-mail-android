@@ -30,7 +30,8 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -55,7 +56,9 @@ class ContactDetailsRepositoryTest {
 
     private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
 
-    private val labelsMapper: LabelsMapper = mockk()
+    private val labelEntityDomainMapper: LabelEntityDomainMapper = mockk()
+
+    private val labelEntityApiMapper: LabelEntityApiMapper = mockk()
 
     private val labelsRepository: LabelRepository = mockk()
 
@@ -69,8 +72,8 @@ class ContactDetailsRepositoryTest {
     }
 
     private val repository = ContactDetailsRepository(
-        jobManager, apiManager, contactDao, TestDispatcherProvider, labelsMapper, labelsRepository,
-        contactRepository
+        jobManager, apiManager, contactDao, TestDispatcherProvider, labelsRepository,
+        contactRepository, labelEntityApiMapper, labelEntityDomainMapper
     )
 
     @Test

@@ -28,7 +28,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
@@ -68,7 +68,7 @@ class CreateContactGroupWorkerTest {
     private lateinit var repository: ContactGroupsRepository
 
     @MockK
-    private lateinit var labelsMapper: LabelsMapper
+    private lateinit var labelsMapper: LabelEntityApiMapper
 
     @MockK
     private lateinit var accountManager: AccountManager
@@ -112,7 +112,7 @@ class CreateContactGroupWorkerTest {
             sticky = 0,
             notify = 0
         )
-        every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns labelEntity
+        every { labelsMapper.toEntity(any(), testUserId) } returns labelEntity
     }
 
     @Test

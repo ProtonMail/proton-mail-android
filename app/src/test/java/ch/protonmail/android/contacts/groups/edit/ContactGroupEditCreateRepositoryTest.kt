@@ -27,7 +27,8 @@ import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityRequestMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
@@ -57,14 +58,17 @@ class ContactGroupEditCreateRepositoryTest {
 
     private val contactsRepository: ContactsRepository = mockk(relaxed = true)
 
-    private val labelsMapper: LabelsMapper = LabelsMapper()
+    private val labelsMapper: LabelEntityApiMapper = LabelEntityApiMapper()
+
+    private val requestMapper: LabelEntityRequestMapper = LabelEntityRequestMapper()
 
     private val labelRepository: LabelRepository = mockk()
 
     private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer = mockk(relaxed = true)
 
     private val repository = ContactGroupEditCreateRepository(
-        jobManager, workManager, apiManager, contactsRepository, labelsMapper, createContactGroupWorker, labelRepository
+        jobManager, workManager, apiManager, contactsRepository, labelsMapper, createContactGroupWorker,
+        labelRepository, requestMapper
     )
 
     private val testPath = "a/bpath"
@@ -163,7 +167,7 @@ class ContactGroupEditCreateRepositoryTest {
                 0,
                 0
             )
-            val updateLabelRequest = labelsMapper.mapLabelEntityToRequestLabel(contactLabel)
+            val updateLabelRequest = requestMapper.toRequest(contactLabel)
             val labelResponse = LabelResponse(testLabel)
             coEvery { apiManager.createLabel(testUserId, any()) } returns ApiResult.Success(labelResponse)
             coEvery { labelRepository.saveLabel(any()) } just Runs

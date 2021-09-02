@@ -26,7 +26,7 @@ import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import io.mockk.coEvery
@@ -47,7 +47,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
 
     private val labelDao = mockk<LabelDao>()
     private val api = mockk<ProtonMailApi>()
-    private val labelMapper = LabelsMapper()
+    private val labelMapper = LabelEntityApiMapper()
     private val networkConnectivityManager = mockk<NetworkConnectivityManager>()
 
     private val repository = LabelRepositoryImpl(labelDao, api, labelMapper, networkConnectivityManager)

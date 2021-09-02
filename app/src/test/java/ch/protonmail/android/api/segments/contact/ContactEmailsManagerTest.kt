@@ -27,10 +27,10 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -65,7 +65,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
     private lateinit var contactDao: ContactDao
 
     @MockK
-    private lateinit var labelsMapper: LabelsMapper
+    private lateinit var labelsMapper: LabelEntityApiMapper
 
     @MockK
     private lateinit var labelRepository: LabelRepository
@@ -129,7 +129,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
         coEvery { labelRepository.saveLabels(any()) } returns Unit
         coEvery { contactDao.insertNewContacts(newContactEmails) } returns Unit
-        every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns contactLabel
+        every { labelsMapper.toEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
@@ -204,7 +204,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
         coEvery { labelRepository.saveLabels(any()) } returns Unit
         coEvery { contactDao.insertNewContacts(allContactEmails) } returns Unit
-        every { labelsMapper.mapLabelToLabelEntity(any(), testUserId) } returns contactLabel
+        every { labelsMapper.toEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)

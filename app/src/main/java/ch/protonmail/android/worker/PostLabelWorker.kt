@@ -31,7 +31,7 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelType
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import dagger.assisted.Assisted
@@ -54,7 +54,7 @@ class PostLabelWorker @AssistedInject constructor(
     @Assisted val workerParams: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
     private val labelRepository: LabelRepository,
-    private val labelsMapper: LabelsMapper,
+    private val labelsMapper: LabelEntityApiMapper,
     private val accountManager: AccountManager
 ) : CoroutineWorker(context, workerParams) {
 
@@ -71,7 +71,7 @@ class PostLabelWorker @AssistedInject constructor(
                     return failureResultWithError("Error, Label id is empty")
                 }
                 val userId = requireNotNull(accountManager.getPrimaryUserId().first())
-                val contactLabelEntity = labelsMapper.mapLabelToLabelEntity(labelResponse.label, userId)
+                val contactLabelEntity = labelsMapper.toEntity(labelResponse.label, userId)
                 labelRepository.saveLabel(contactLabelEntity)
                 return Result.success()
             }

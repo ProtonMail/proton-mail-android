@@ -38,6 +38,7 @@ import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -179,7 +180,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         )
                     }
                 },
-            { groups: List<ContactLabelUiModel>,
+            { groups: List<Label>,
                 emails: List<ContactEmail> ->
                 allContactGroups = groups.map { entity ->
                     ContactLabelUiModel(

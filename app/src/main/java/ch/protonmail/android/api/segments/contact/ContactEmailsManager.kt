@@ -24,7 +24,7 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import kotlinx.coroutines.flow.filterNotNull
@@ -38,7 +38,7 @@ class ContactEmailsManager @Inject constructor(
     private var api: ProtonMailApiManager,
     private val databaseProvider: DatabaseProvider,
     private val accountManager: AccountManager,
-    private val labelsMapper: LabelsMapper,
+    private val labelsMapper: LabelEntityApiMapper,
     private val labelRepository: LabelRepository
 ) {
 
@@ -70,7 +70,7 @@ class ContactEmailsManager @Inject constructor(
 
     private fun mapToContactLabelsEntity(labels: List<LabelApiModel>?, userId: UserId): List<LabelEntity> {
         return labels?.map { label ->
-            labelsMapper.mapLabelToLabelEntity(label, userId)
+            labelsMapper.toEntity(label, userId)
         } ?: emptyList()
     }
 

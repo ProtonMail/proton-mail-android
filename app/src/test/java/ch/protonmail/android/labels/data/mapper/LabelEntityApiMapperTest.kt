@@ -17,37 +17,53 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.api.models.contacts.receive
+package ch.protonmail.android.labels.data.mapper
 
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
-import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import me.proton.core.domain.entity.UserId
 import org.junit.Assert.assertEquals
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class LabelsMapperTest {
+class LabelEntityApiMapperTest {
 
-    private lateinit var labelsMapper: LabelsMapper
-
-    private val testPath = "a/bpath"
-    private val testParentId = "parentIdForTests"
+    private val testPath = "ParentFolder/MyFolder"
     private val testType = LabelType.FOLDER
+    private val testParentId = "parentIdForTests"
     private val testUserId = UserId("TestUserId")
+    private val labelsMapper = LabelEntityApiMapper()
 
-    @BeforeTest
-    fun setUp() {
-        labelsMapper = LabelsMapper()
+    @Test
+    fun mappingLabelApiModelToLabelEntitySucceedsWhenAllFieldsAreValid() {
+        val serverLabel = LabelApiModel(
+            id = "ID",
+            name = "name",
+            color = "color",
+            order = 1,
+            type = LabelType.FOLDER,
+            path = testPath,
+            notify = 0,
+            expanded = null,
+            sticky = null,
+            parentId = testParentId
+        )
+
+        val actual = labelsMapper.toEntity(serverLabel, testUserId)
+
+        val expected = LabelEntity(
+            LabelId("ID"), testUserId, "name", "color", 1, LabelType.FOLDER, testPath,
+            testParentId, 0, 0, 0
+        )
+        assertEquals(expected, actual)
     }
 
     @Test
     fun mappingLabelEntityToServerLabelSucceedsWhenAllFieldsAreValid() {
         val contactLabel = LabelEntity(LabelId("ID"), testUserId, "name", "color", 1, testType, testPath,  testParentId, 0, 0, 0)
 
-        val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
+        val actual = labelsMapper.toApiModel(contactLabel)
 
         val expected = LabelApiModel(
             id = "ID",
@@ -68,7 +84,7 @@ class LabelsMapperTest {
     fun mappingLabelEntityToServerLabelSucceedsWhenSomeFieldsAreNotPassedExplicitly() {
         val contactLabel = LabelEntity(LabelId("ID"), testUserId, "name", "color", 1, testType, testPath,  testParentId, 0, 0, 0)
 
-        val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
+        val actual = labelsMapper.toApiModel(contactLabel)
 
         val expected = LabelApiModel(
             id = "ID",
@@ -89,7 +105,7 @@ class LabelsMapperTest {
     fun mappingLabelEntityToServerLabelSucceedsWhenIdIsEmpty() {
         val contactLabel = LabelEntity(LabelId(""), testUserId, "name", "color", 1, testType, testPath,  testParentId, 0, 0, 0)
 
-        val actual = labelsMapper.mapLabelEntityToServerLabel(contactLabel)
+        val actual = labelsMapper.toApiModel(contactLabel)
 
         val expected = LabelApiModel(
             id = "",
@@ -105,30 +121,4 @@ class LabelsMapperTest {
         )
         assertEquals(expected, actual)
     }
-
-    @Test
-    fun mappingServerLabelToLabelEntitySucceedsWhenAllFieldsAreValid() {
-        val serverLabel = LabelApiModel(
-            id = "ID",
-            name = "name",
-            color = "color",
-            order = 1,
-            type = LabelType.FOLDER,
-            path = testPath,
-            notify = 0,
-            expanded = null,
-            sticky = null,
-            parentId = testParentId
-        )
-
-        val actual = labelsMapper.mapLabelToLabelEntity(serverLabel, testUserId)
-
-        val expected = LabelEntity(
-            LabelId("ID"), testUserId, "name", "color", 1, LabelType.FOLDER, testPath,
-            testParentId, 0, 0, 0
-        )
-        assertEquals(expected, actual)
-    }
-
-
 }

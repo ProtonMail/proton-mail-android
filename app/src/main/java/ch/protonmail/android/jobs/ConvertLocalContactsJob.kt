@@ -46,7 +46,7 @@ import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_CONTACT_GROUP
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.views.models.LocalContact
@@ -300,8 +300,8 @@ class ConvertLocalContactsJob(
                     val serverLabel = response.valueOrThrow.label
                     result[it.value] = serverLabel.id
                     val userId = userId ?: getUserManager().requireCurrentUserId()
-                    val contactLabelFactory = LabelsMapper()
-                    labelRepository.saveLabel(contactLabelFactory.mapLabelToLabelEntity(serverLabel, userId))
+                    val mapper = LabelEntityApiMapper()
+                    labelRepository.saveLabel(mapper.toEntity(serverLabel, userId))
                 }
             }
         }

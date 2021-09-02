@@ -19,7 +19,6 @@
 package ch.protonmail.android.contacts.details.data
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
@@ -27,8 +26,10 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
 import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.domain.model.Label
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
@@ -47,9 +48,10 @@ open class ContactDetailsRepository @Inject constructor(
     protected val api: ProtonMailApiManager,
     protected val contactDao: ContactDao,
     private val dispatcherProvider: DispatcherProvider,
-    private val labelsMapper: LabelsMapper,
     private val labelRepository: LabelRepository,
-    private val contactRepository: ContactsRepository
+    private val contactRepository: ContactsRepository,
+    private val labelEntityApiMapper: LabelEntityApiMapper,
+    private val labelEntityDomainMapper: LabelEntityDomainMapper
 ) {
 
     suspend fun getContactGroupsLabelForId(emailId: String): List<LabelEntity> =
@@ -63,7 +65,7 @@ open class ContactDetailsRepository @Inject constructor(
     fun observeContactEmails(contactId: String): Flow<List<ContactEmail>> =
         contactDao.observeContactEmailsByContactId(contactId)
 
-    fun getContactGroups(userId: UserId): Observable<List<ContactLabelUiModel>> {
+    fun getContactGroups(userId: UserId): Observable<List<Label>> {
         return Observable.fromCallable {
             runBlocking {
                 val dbContacts = getContactGroupsFromDb(userId)
@@ -76,26 +78,26 @@ open class ContactDetailsRepository @Inject constructor(
     suspend fun getContactEmailsCount(contactGroupId: LabelId) =
         contactRepository.countContactEmailsByLabelId(contactGroupId)
 
-    private suspend fun getContactGroupsFromApi(userId: UserId): List<ContactLabelUiModel> {
+    private suspend fun getContactGroupsFromApi(userId: UserId): List<Label> {
         val contactGroupsResponse = api.fetchContactGroups(userId).valueOrNull?.labels
 
         return contactGroupsResponse?.let { labels ->
             val entities = labels.map {
-                labelsMapper.mapLabelToLabelEntity(it, userId)
+                labelEntityApiMapper.toEntity(it, userId)
             }
             labelRepository.deleteContactGroups(userId)
             labelRepository.saveLabels(entities)
-            labels.map {
-                labelsMapper.mapLabelToContactLabelUiModel(it, getContactEmailsCount(LabelId(it.id)))
+            entities.map {
+                labelEntityDomainMapper.toLabel(it, getContactEmailsCount(it.id))
             }
 
         } ?: emptyList()
     }
 
-    private suspend fun getContactGroupsFromDb(userId: UserId): List<ContactLabelUiModel> {
+    private suspend fun getContactGroupsFromDb(userId: UserId): List<Label> {
         return labelRepository.findContactGroups(userId)
             .map { entity ->
-                labelsMapper.mapLabelEntityToContactLabelUiModel(entity, getContactEmailsCount(entity.id))
+                labelEntityDomainMapper.toLabel(entity, getContactEmailsCount(entity.id))
             }
     }
 

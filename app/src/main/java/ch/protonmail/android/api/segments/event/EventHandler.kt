@@ -45,7 +45,7 @@ import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
-import ch.protonmail.android.labels.data.mapper.LabelsMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
@@ -630,8 +630,8 @@ internal class EventHandler @AssistedInject constructor(
         updatedLabel: LabelApiModel
     ) {
         if (currentLabel != null) {
-            val labelFactory = LabelsMapper()
-            val labelToSave = labelFactory.mapLabelToLabelEntity(updatedLabel, userId)
+            val mapper = LabelEntityApiMapper()
+            val labelToSave = mapper.toEntity(updatedLabel, userId)
             externalScope.launch {
                 labelRepository.saveLabel(labelToSave)
             }
@@ -643,8 +643,8 @@ internal class EventHandler @AssistedInject constructor(
         updatedGroup: LabelApiModel
     ) {
         if (currentGroup != null) {
-            val contactLabelFactory = LabelsMapper()
-            val labelToSave = contactLabelFactory.mapLabelToLabelEntity(updatedGroup, userId)
+            val mapper = LabelEntityApiMapper()
+            val labelToSave = mapper.toEntity(updatedGroup, userId)
             externalScope.launch {
                 labelRepository.saveLabel(labelToSave)
             }
