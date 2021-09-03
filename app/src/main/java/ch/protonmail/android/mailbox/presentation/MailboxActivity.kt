@@ -573,6 +573,8 @@ internal class MailboxActivity :
             is MailboxState.DataRefresh -> {
                 lastFetchedMailboxItemsIds = state.lastFetchedItemsIds
                 setRefreshing(false)
+                include_mailbox_no_messages.isVisible =
+                    state.lastFetchedItemsIds.isEmpty() && mailboxAdapter.itemCount == 0
             }
             is MailboxState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
