@@ -38,16 +38,19 @@ import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.events.NoResultsEvent
 import ch.protonmail.android.events.SearchResultEvent
 import ch.protonmail.android.jobs.SearchMessagesJob
+import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.AppUtil
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -65,6 +68,9 @@ internal class SearchActivity : BaseActivity() {
 
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
+
+    @Inject
+    lateinit var accountManager: AccountManager
 
     @Inject
     lateinit var mailboxViewModelProvider: Provider<MailboxViewModel>
@@ -126,9 +132,12 @@ internal class SearchActivity : BaseActivity() {
                 startActivity(intent)
             }
         }
-        messageDetailsRepository.getAllLabelsLiveData().observe(
+        val userId = runBlocking {
+            requireNotNull(accountManager.getPrimaryUserId().first())
+        }
+        messageDetailsRepository.getAllLabelsLiveData(userId).observe(
             this
-        ) { labels: List<Label>? ->
+        ) { labels: List<LabelEntity>? ->
             if (labels != null) {
                 adapter.setLabels(labels)
             }
