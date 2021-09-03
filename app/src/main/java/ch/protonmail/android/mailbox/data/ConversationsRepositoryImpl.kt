@@ -60,6 +60,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
@@ -158,10 +159,12 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     override fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> {
         val countersFlow = unreadCounterDao.observeConversationsUnreadCounters(userId).map { list ->
             val domainModels = list.map(databaseToDomainUnreadCounterMapper) { it.toDomainModel() }
-            Success(ResponseSource.Local, domainModels)
+            // Cast is needed, in order to emit Error.Remote
+            Success(ResponseSource.Local, domainModels) as DataResult<List<UnreadCounter>>
         }.onStart {
             fetchAndSaveUnreadCounters(userId)
-        }
+        }.catch { emit(Error.Remote(it.message, it)) }
+
         return refreshUnreadCountersTrigger.flatMapLatest { countersFlow }
             .onStart { refreshUnreadCounters() }
     }
