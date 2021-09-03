@@ -62,6 +62,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transformLatest
@@ -153,12 +156,14 @@ internal class ConversationsRepositoryImpl @Inject constructor(
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
     override fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> {
-        return unreadCounterDao.observeConversationsUnreadCounters(userId).map { list ->
+        val countersFlow = unreadCounterDao.observeConversationsUnreadCounters(userId).map { list ->
             val domainModels = list.map(databaseToDomainUnreadCounterMapper) { it.toDomainModel() }
             Success(ResponseSource.Local, domainModels)
         }.onStart {
             fetchAndSaveUnreadCounters(userId)
         }
+        return refreshUnreadCountersTrigger.flatMapLatest { countersFlow }
+            .onStart { refreshUnreadCounters() }
     }
 
     override fun refreshUnreadCounters() {

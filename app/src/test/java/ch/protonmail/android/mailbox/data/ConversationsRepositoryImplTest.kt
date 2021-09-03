@@ -1267,6 +1267,54 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
     }
 
+    @Test
+    fun unreadCountersAreRefreshedFromApi() = coroutinesTest {
+        // given
+        val labelId = "inbox"
+        val firstUnreadCount = 15
+        val secondUnreadCount = 20
+        val thirdUnreadCount = 25
+
+        val firstApiModel = ConversationCountsApiModel(
+            labelId = labelId,
+            total = 0,
+            unread = firstUnreadCount
+        )
+        val secondApiModel = firstApiModel.copy(
+            unread = secondUnreadCount
+        )
+        val thirdApiModel = secondApiModel.copy(
+            unread = thirdUnreadCount
+        )
+
+        val firstApiResponse = ConversationsCountsResponse(listOf(firstApiModel))
+        val secondApiResponse = ConversationsCountsResponse(listOf(secondApiModel))
+        val thirdApiResponse = ConversationsCountsResponse(listOf(thirdApiModel))
+        val allApiResponses = listOf(firstApiResponse, secondApiResponse, thirdApiResponse)
+
+        var apiCounter = 0
+        coEvery { api.fetchConversationsCounts(testUserId) } answers {
+            allApiResponses[apiCounter++]
+        }
+
+        val firstExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, firstUnreadCount)))
+        val secondExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, secondUnreadCount)))
+        val thirdExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, thirdUnreadCount)))
+
+        // when
+        conversationsRepository.getUnreadCounters(testUserId).test {
+
+            // then
+            assertEquals(firstExpected, expectItem())
+
+            conversationsRepository.refreshUnreadCounters()
+            assertEquals(secondExpected, expectItem())
+
+            conversationsRepository.refreshUnreadCounters()
+            assertEquals(thirdExpected, expectItem())
+        }
+    }
+
     private fun buildConversation(
         id: String,
         subject: String = "A subject",
