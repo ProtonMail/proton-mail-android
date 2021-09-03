@@ -22,9 +22,10 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
+import me.proton.core.domain.arch.Mapper
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -34,15 +35,16 @@ import javax.inject.Inject
  * @property useFolderColor whether the user enabled the settings for use Colors for Folders.
  *  TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`
  */
-class LabelActionItemUiModelMapper @Inject constructor(
+class LabelDomainActionItemUiMapper @Inject constructor(
     context: Context
-) {
+) : Mapper<Label, LabelActonItemUiModel> {
+
     private val useFolderColor: Boolean = true
 
     private val defaultIconColor = context.getColor(R.color.icon_norm)
 
-    fun mapLabelToUi(
-        label: LabelEntity,
+    fun toActionItemUi(
+        label: Label,
         currentLabelsSelection: List<String>,
         labelType: LabelType
     ): LabelActonItemUiModel {
@@ -73,7 +75,7 @@ class LabelActionItemUiModelMapper @Inject constructor(
         )
     }
 
-    private fun String.toColorIntOrDefault(): Int =try {
+    private fun String.toColorIntOrDefault(): Int = try {
         toColorInt()
     } catch (exc: IllegalArgumentException) {
         Timber.e(exc, "Unknown label color: $this")

@@ -23,16 +23,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
-import ch.protonmail.android.core.Constants.MessageLocationType.INVALID
-import ch.protonmail.android.core.Constants.MessageLocationType.TRASH
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
+import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
+import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
@@ -65,7 +64,8 @@ internal class LabelsActionSheetViewModel @Inject constructor(
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val conversationModeEnabled: ConversationModeEnabled,
     private val messageRepository: MessageRepository,
-    private val conversationsRepository: ConversationsRepository
+    private val conversationsRepository: ConversationsRepository,
+    private val labelDomainUiMapper: LabelDomainActionItemUiMapper
 ) : ViewModel() {
 
     private val labelsSheetType = savedStateHandle.get<LabelType>(
@@ -94,16 +94,67 @@ internal class LabelsActionSheetViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            labelsMutableFlow.value = getAllLabels(
-                getCheckedLabelsForAllMailboxItems(messageIds),
-                labelsSheetType,
+            val allLabels = getAllLabels(labelsSheetType)
+
+            val savedModels = allLabels.map { label ->
+                labelDomainUiMapper.toActionItemUi(
+                    label,
+                    getCheckedLabelsForAllMailboxItems(messageIds),
+                    labelsSheetType
+                )
+            }
+
+            labelsMutableFlow.value = getAllModels(
                 if (actionSheetTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN ||
-                    currentMessageFolder == TRASH
+                    currentMessageFolder == Constants.MessageLocationType.TRASH
                 ) currentMessageFolder
-                else INVALID
+                else Constants.MessageLocationType.INVALID,
+                labelsSheetType,
+                savedModels
             )
+
         }
     }
+
+    private fun getAllModels(
+        currentMessageFolder: Constants.MessageLocationType?,
+        labelsSheetType: LabelType,
+        uiLabelsFromDb: List<LabelActonItemUiModel>
+    ): List<LabelActonItemUiModel> {
+        return if (labelsSheetType == LabelType.FOLDER) {
+            requireNotNull(currentMessageFolder)
+            uiLabelsFromDb + getStandardFolders(currentMessageFolder)
+        } else
+            uiLabelsFromDb
+    }
+
+
+    private fun getStandardFolders(
+        currentMessageFolder: Constants.MessageLocationType
+    ): List<LabelActonItemUiModel> {
+        return when (currentMessageFolder) {
+            Constants.MessageLocationType.INBOX,
+            Constants.MessageLocationType.ARCHIVE,
+            Constants.MessageLocationType.SPAM,
+            Constants.MessageLocationType.TRASH -> getListWithoutType(currentMessageFolder)
+            else -> getListWithoutType()
+        }
+    }
+
+    private fun getListWithoutType(
+        currentMessageFolder: Constants.MessageLocationType = Constants.MessageLocationType.INVALID
+    ) = StandardFolderLocation.values()
+        .filter {
+            it.id != currentMessageFolder.messageLocationTypeValue.toString()
+        }
+        .map { location ->
+            LabelActonItemUiModel(
+                labelId = location.id,
+                iconRes = location.iconRes,
+                titleRes = location.title,
+                labelType = LabelType.FOLDER.typeInt
+            )
+        }
 
     fun onLabelClicked(model: LabelActonItemUiModel) {
 
@@ -170,7 +221,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                         val result = moveConversationsToFolder(
                             ids,
                             UserId(userManager.requireCurrentUserId().id),
-                            ARCHIVE.messageLocationTypeValue.toString(),
+                            Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
                         )
                         if (result is ConversationsActionResult.Error) {
                             cancel("Could not complete the action")
@@ -178,7 +229,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                     } else {
                         moveMessagesToFolder(
                             ids,
-                            ARCHIVE.messageLocationTypeValue.toString(),
+                            Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
                             currentMessageFolder.messageLocationTypeValue.toString()
                         )
                     }

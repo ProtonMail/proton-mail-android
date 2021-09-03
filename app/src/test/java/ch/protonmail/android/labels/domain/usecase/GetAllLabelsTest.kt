@@ -19,22 +19,20 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.R
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
-import ch.protonmail.android.labels.presentation.mapper.LabelActionItemUiModelMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
@@ -43,8 +41,7 @@ import kotlin.test.assertEquals
 
 class GetAllLabelsTest {
 
-    @MockK
-    private lateinit var labelsMapper: LabelActionItemUiModelMapper
+    private val labelsMapper = LabelEntityDomainMapper()
 
     @MockK
     private lateinit var accountManager: AccountManager
@@ -56,6 +53,36 @@ class GetAllLabelsTest {
 
     private val testUserId = UserId("TestUser")
 
+    private val testColor = "blue"
+    private val testPath = "testPath"
+    private val testParentId = "testParentId"
+    private val sheetType = LabelType.MESSAGE_LABEL
+    private val emailsCount = 0
+    private val testLabelId1 = LabelId("labelId1")
+    private val testLabelId2 = LabelId("labelId2")
+
+    private val testLabelName1 = "labelName1"
+    private val testLabelName2 = "labelName2"
+
+    private val label1 = Label(
+        testLabelId1,
+        testLabelName1,
+        testColor,
+        sheetType,
+        testPath,
+        testParentId,
+        contactEmailsCount = emailsCount
+    )
+    private val label2 = Label(
+        testLabelId2,
+        testLabelName2,
+        testColor,
+        sheetType,
+        testPath,
+        testParentId,
+        contactEmailsCount = emailsCount
+    )
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
@@ -64,152 +91,40 @@ class GetAllLabelsTest {
     }
 
     @Test
-    fun verifyThatLabelsTypeAreReceivedAndProcessedCorrectly() = runBlockingTest {
+    fun verifyThatLabelsTypeAreReceivedAndProcessedCorrectly() = runBlocking {
         // given
-        val testLabelId1 = LabelId("labelId1")
-        val testLabelId2 = LabelId("labelId2")
-        val testColorInt = 123
-        val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
-        val sheetType = LabelType.MESSAGE_LABEL
-        val label1 = mockk<LabelEntity> {
-            every { id } returns testLabelId1
-            every { type } returns LabelType.MESSAGE_LABEL
-        }
-        val label2 = mockk<LabelEntity> {
-            every { id } returns testLabelId2
-            every { type } returns LabelType.MESSAGE_LABEL
-        }
-        val uiLabel1 = LabelActonItemUiModel(
-            testLabelId1.id,
-            R.drawable.circle_labels_selection,
-            "labelName1",
-            null,
-            testColorInt,
-            true,
-            LabelType.MESSAGE_LABEL.typeInt
+        val labelEntity1 = LabelEntity(
+            testLabelId1,
+            testUserId,
+            testLabelName1,
+            testColor,
+            1,
+            LabelType.MESSAGE_LABEL,
+            testPath,
+            testParentId,
+            0,
+            0,
+            0
         )
-        val uiLabel2 = LabelActonItemUiModel(
-            testLabelId2.id,
-            R.drawable.circle_labels_selection,
-            "labelName2",
-            null,
-            testColorInt,
-            true,
-            LabelType.MESSAGE_LABEL.typeInt
+        val labelEntity2 = LabelEntity(
+            testLabelId2,
+            testUserId,
+            testLabelName2,
+            testColor,
+            1,
+            LabelType.MESSAGE_LABEL,
+            testPath,
+            testParentId,
+            0,
+            0,
+            0
         )
-        val expected = listOf(uiLabel1, uiLabel2)
-        coEvery { repository.findAllLabels(testUserId,) } returns listOf(label1, label2)
-        every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
-        every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
 
+        val expected = listOf(label1, label2)
+        coEvery { repository.findAllLabels(testUserId, false) } returns listOf(labelEntity1, labelEntity2)
 
         // when
-        val result = useCase.invoke(
-            currentLabelsSelection
-        )
-
-        // then
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun verifyThatFolderTypeAreReceivedAndProcessedCorrectly() = runBlockingTest {
-        // given
-        val testLabelId1 = LabelId("labelId1")
-        val testLabelId2 = LabelId("labelId2")
-        val testColorInt = 123
-        val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
-        val sheetType = LabelType.FOLDER
-        val label1 = mockk<LabelEntity> {
-            every { id } returns testLabelId1
-            every { type } returns LabelType.FOLDER
-        }
-        val label2 = mockk<LabelEntity> {
-            every { id } returns testLabelId2
-            every { type } returns LabelType.FOLDER
-        }
-        val uiLabel1 = LabelActonItemUiModel(
-            testLabelId1.id,
-            R.drawable.circle_labels_selection,
-            "labelName1",
-            null,
-            testColorInt,
-            true,
-            LabelType.FOLDER.typeInt
-        )
-        val uiLabel2 = LabelActonItemUiModel(
-            testLabelId2.id,
-            R.drawable.circle_labels_selection,
-            "labelName2",
-            null,
-            testColorInt,
-            true,
-            LabelType.FOLDER.typeInt
-        )
-        val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
-        coEvery { repository.findAllLabels(testUserId,) } returns listOf(label1, label2)
-        every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
-        every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
-
-
-        // when
-        val result = useCase.invoke(
-            currentLabelsSelection,
-            LabelType.FOLDER,
-            Constants.MessageLocationType.INVALID
-        )
-
-        // then
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun verifyThatFolderTypeAreReceivedAndProcessedCorrectlyAndCurrentInboxFolderIsOmitted() = runBlockingTest {
-        // given
-        val testLabelId1 = LabelId("labelId1")
-        val testLabelId2 = LabelId("labelId2")
-        val testColorInt = 123
-        val currentLabelsSelection = listOf(testLabelId1.id, testLabelId2.id)
-        val sheetType = LabelType.FOLDER
-        val label1 = mockk<LabelEntity> {
-            every { id } returns testLabelId1
-            every { type } returns LabelType.FOLDER
-        }
-        val label2 = mockk<LabelEntity> {
-            every { id } returns testLabelId2
-            every { type } returns LabelType.FOLDER
-        }
-        val uiLabel1 = LabelActonItemUiModel(
-            testLabelId1.id,
-            R.drawable.circle_labels_selection,
-            "labelName1",
-            null,
-            testColorInt,
-            true,
-            LabelType.FOLDER.typeInt
-        )
-        val uiLabel2 = LabelActonItemUiModel(
-            testLabelId2.id,
-            R.drawable.circle_labels_selection,
-            "labelName2",
-            null,
-            testColorInt,
-            true,
-            LabelType.FOLDER.typeInt
-        )
-        val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
-            .filter { it.labelId != Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() }
-        coEvery { repository.findAllLabels(testUserId,) } returns listOf(label1, label2)
-        every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
-        every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2
-
-
-        // when
-        val result = useCase.invoke(
-            currentLabelsSelection,
-            LabelType.FOLDER,
-            Constants.MessageLocationType.INBOX
-        )
+        val result = useCase.invoke()
 
         // then
         assertEquals(expected, result)

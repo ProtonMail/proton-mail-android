@@ -22,9 +22,9 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import android.graphics.Color
 import ch.protonmail.android.R
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import io.mockk.every
 import io.mockk.mockk
@@ -36,7 +36,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class LabelActionItemUiModelMapperTest {
+class LabelDomainActionItemUiMapperTest {
 
     private val defaultColorInt = 890
     private val testColorInt = 123
@@ -44,7 +44,7 @@ class LabelActionItemUiModelMapperTest {
     private val context: Context = mockk {
         every { getColor(any()) } returns defaultColorInt
     }
-    private val mapper = LabelActionItemUiModelMapper(context)
+    private val mapper = LabelDomainActionItemUiMapper(context)
 
     private val testUserId = UserId("testUserId")
 
@@ -66,18 +66,15 @@ class LabelActionItemUiModelMapperTest {
         val labelId1 = LabelId("asdasdad")
         val labelName1 = "name1"
         val labelColor1 = "olive"
-        val label = LabelEntity(
-            labelId1,
-            testUserId,
-            labelName1,
-            labelColor1,
-            order = 0,
+        val label = Label(
+            id = labelId1,
+            name = labelName1,
+            color = labelColor1,
             type = LabelType.MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
             expanded = 0,
             sticky = 0,
-            notify = 0
         )
         val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelType.MESSAGE_LABEL
@@ -92,7 +89,7 @@ class LabelActionItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.mapLabelToUi(label, currentLabelsIds, sheetType)
+        val result = mapper.toActionItemUi(label, currentLabelsIds, sheetType)
 
         // then
         assertEquals(expected, result)
@@ -105,18 +102,15 @@ class LabelActionItemUiModelMapperTest {
         val labelId1 = LabelId("asdasdad")
         val labelName1 = "name1"
         val labelColor1 = "olive"
-        val label = LabelEntity(
-            labelId1,
-            testUserId,
-            labelName1,
-            labelColor1,
-            order = 0,
+        val label = Label(
+            id = labelId1,
+            name = labelName1,
+            color = labelColor1,
             type = LabelType.MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
             expanded = 0,
             sticky = 0,
-            notify = 0
         )
         val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelType.FOLDER
@@ -131,7 +125,7 @@ class LabelActionItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.mapLabelToUi(label, currentLabelsIds, sheetType)
+        val result = mapper.toActionItemUi(label, currentLabelsIds, sheetType)
 
         // then
         assertEquals(expected, result)
