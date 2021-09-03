@@ -26,6 +26,7 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
@@ -47,6 +48,10 @@ interface ConversationsRepository {
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
     fun getConversation(userId: UserId, conversationId: String): Flow<DataResult<Conversation>>
+
+    fun getUnreadCounters(userId: UserId): Flow<DataResult<UnreadCounter>>
+
+    fun refreshUnreadCounters()
 
     /**
      * @throws Exception when the repository fails to insert conversations for any unhandled reasons into local storage

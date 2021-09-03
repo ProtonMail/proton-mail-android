@@ -47,11 +47,13 @@ import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -83,6 +85,8 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer,
     connectivityManager: NetworkConnectivityManager
 ) : ConversationsRepository {
+
+    private val refreshUnreadCountersTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     private val allConversationsStore by lazy {
         ProtonStore(
@@ -132,11 +136,18 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
+    override fun getUnreadCounters(userId: UserId): Flow<DataResult<UnreadCounter>> {
+        TODO("Not yet implemented")
+    }
 
-    override suspend fun saveConversations(
-        conversations: List<ConversationDatabaseModel>,
-        userId: Id
-    ) =
+    override fun refreshUnreadCounters() {
+        refreshUnreadCountersTrigger.tryEmit(Unit)
+    }
+
+    override suspend fun saveConversationsDatabaseModels(
+        userId: UserId,
+        conversations: List<ConversationDatabaseModel>
+    ) {
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
     }
 
