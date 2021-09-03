@@ -51,6 +51,9 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
+import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -66,11 +69,14 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -79,6 +85,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.arch.mapSuccess
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -105,10 +114,12 @@ class MailboxViewModel @Inject constructor(
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
     private val conversationModeEnabled: ConversationModeEnabled,
+    private val observeConversationModeEnabled: ObserveConversationModeEnabled,
     private val observeMessagesByLocation: ObserveMessagesByLocation,
     private val observeConversationsByLocation: ObserveConversationsByLocation,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
+    private val observeAllUnreadCounters: ObserveAllUnreadCounters,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val deleteConversations: DeleteConversations,
@@ -148,8 +159,35 @@ class MailboxViewModel @Inject constructor(
         get() = _hasSuccessfullyDeletedMessages
 
     val mailboxState = mutableMailboxState.asStateFlow()
-
     val mailboxLocation = mutableMailboxLocation.asStateFlow()
+
+    val unreadCounters: Flow<List<UnreadCounter>> = combine(
+        mutableUserId,
+        mutableRefreshFlow.onStart { emit(false) }
+    ) { userId, _ -> userId }
+        .flatMapLatest { userId ->
+            combineTransform(
+                observeAllUnreadCounters(userId),
+                observeConversationModeEnabled(userId)
+            ) { allCountersResult, isConversationsModeEnabled ->
+
+                if (allCountersResult is DataResult.Error) {
+                    Timber.e(allCountersResult.cause, allCountersResult.message)
+                }
+
+                if (allCountersResult is DataResult.Success) {
+                    val value = if (isConversationsModeEnabled) {
+                        allCountersResult.value.conversationsCounters
+                    } else {
+                        allCountersResult.value.messagesCounters
+                    }
+                    emit(value)
+                }
+            }
+        }
+        // TODO: Filter empty list because Messages Unreads are not implemented yet, so the empty list will override
+        //  pre-existent badges
+        .filterNot { it.isEmpty() }
 
     private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxState>
 

@@ -39,6 +39,8 @@ import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
+import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -99,9 +101,11 @@ internal class ViewModelModule {
         networkConfigurator: NetworkConfigurator,
         conversationModeEnabled: ConversationModeEnabled,
         observeConversationsByLocation: ObserveConversationsByLocation,
+        observeConversationModeEnabled: ObserveConversationModeEnabled,
         changeConversationsReadStatus: ChangeConversationsReadStatus,
         changeConversationsStarredStatus: ChangeConversationsStarredStatus,
         observeMessagesByLocation: ObserveMessagesByLocation,
+        observeAllUnreadCounters: ObserveAllUnreadCounters,
         moveConversationsToFolder: MoveConversationsToFolder,
         moveMessagesToFolder: MoveMessagesToFolder,
         deleteConversations: DeleteConversations,
@@ -119,8 +123,10 @@ internal class ViewModelModule {
         conversationModeEnabled = conversationModeEnabled,
         observeMessagesByLocation = observeMessagesByLocation,
         observeConversationsByLocation = observeConversationsByLocation,
+        observeConversationModeEnabled = observeConversationModeEnabled,
         changeConversationsReadStatus = changeConversationsReadStatus,
         changeConversationsStarredStatus = changeConversationsStarredStatus,
+        observeAllUnreadCounters = observeAllUnreadCounters,
         moveConversationsToFolder = moveConversationsToFolder,
         moveMessagesToFolder = moveMessagesToFolder,
         deleteConversations = deleteConversations,
