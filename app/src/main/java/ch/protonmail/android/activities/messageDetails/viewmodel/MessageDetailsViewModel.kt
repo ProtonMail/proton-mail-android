@@ -248,8 +248,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                 loadConversationDetails(it, userId)
             }
 
-    private fun Flow<DataResult<Conversation>>.filterOutIncompleteConversations() = filterNot {
-        it is DataResult.Success && !it.value.isComplete()
+    private fun Flow<DataResult<Conversation>>.filterOutIncompleteConversations() = filterNot { result ->
+        result is DataResult.Success && !result.value.isComplete()
     }
 
     private fun Flow<ConversationUiModel>.combineWithLabels() = flatMapLatest { conversation ->
