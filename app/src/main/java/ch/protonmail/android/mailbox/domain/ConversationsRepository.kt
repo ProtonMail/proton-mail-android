@@ -49,17 +49,6 @@ interface ConversationsRepository {
     fun getConversation(userId: UserId, conversationId: String): Flow<DataResult<Conversation>>
 
     /**
-     * @param conversationId the encrypted id of the conversation to find
-     * @param userId the id of the user the conversation to find belongs to
-     *
-     * @return a ConversationDatabaseModel object representing the needed conversation when the
-     * repository could successfully get it from some data source.
-     * @return an empty optional when the repository encounters a handled failure getting the given conversation
-     * @throws exception when the repository fails getting this conversation for any unhandled reasons
-     */
-    suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel?
-
-    /**
      * @throws Exception when the repository fails to insert conversations for any unhandled reasons into local storage
      */
     suspend fun saveConversationsDatabaseModels(

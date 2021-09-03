@@ -132,13 +132,11 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
-    override suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel? =
-        conversationDao.findConversation(userId.id, conversationId)
 
-    override suspend fun saveConversationsDatabaseModels(
-        userId: UserId,
-        conversations: List<ConversationDatabaseModel>
-    ) {
+    override suspend fun saveConversations(
+        conversations: List<ConversationDatabaseModel>,
+        userId: Id
+    ) =
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
     }
 
