@@ -725,7 +725,8 @@ internal class MailboxViewModel @Inject constructor(
                 moveMessagesToFolder(
                     ids,
                     destinationFolderId,
-                    currentLocation.messageLocationTypeValue.toString()
+                    currentLocation.messageLocationTypeValue.toString(),
+                    userId
                 )
             }
         }

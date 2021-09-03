@@ -34,6 +34,7 @@ import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import timber.log.Timber;
 
+@Deprecated // replaced with PostToLocationWorker
 public class PostArchiveJob extends ProtonMailCounterJob {
 
     private final List<String> mMessageIds;
@@ -67,22 +68,22 @@ public class PostArchiveJob extends ProtonMailCounterJob {
             }
         }
 
-        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.increment(totalUnread);
-        counterDao.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
     }
 
     private boolean updateMessageLocally(CounterDao counterDao,
                                          Message message) {
         boolean unreadIncrease = false;
         if (!message.isRead()) {
-            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
+            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(message.getLocation());
             if (unreadLocationCounter != null) {
                 unreadLocationCounter.decrement();
-                counterDao.insertUnreadLocation(unreadLocationCounter);
+                counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
             }
             unreadIncrease = true;
         }

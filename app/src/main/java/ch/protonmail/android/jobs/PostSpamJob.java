@@ -69,21 +69,21 @@ public class PostSpamJob extends ProtonMailCounterJob {
             }
         }
 
-        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.increment(totalUnread);
-        counterDao.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
     }
 
     private boolean markMessageLocally(CounterDao counterDao, Message message) {
         boolean unreadIncrease = false;
         if (!message.isRead()) {
-            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
+            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(message.getLocation());
             if (unreadLocationCounter != null) {
                 unreadLocationCounter.decrement();
-                counterDao.insertUnreadLocation(unreadLocationCounter);
+                counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
             }
             unreadIncrease = true;
         }

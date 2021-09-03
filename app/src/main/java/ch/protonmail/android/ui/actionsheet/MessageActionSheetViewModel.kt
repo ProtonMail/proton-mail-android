@@ -311,9 +311,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
         currentFolder: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
+            val primaryUserId = accountManager.getPrimaryUserId().first()
             if (isActionAppliedToConversation(currentFolder, true)) {
                 Timber.v("Move conversation to folder: $newFolderLocationId")
-                val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     val result = moveConversationsToFolder(
                         ids,
@@ -331,7 +331,8 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 moveMessagesToFolder(
                     ids,
                     newFolderLocationId.messageLocationTypeValue.toString(),
-                    currentFolder.messageLocationTypeValue.toString()
+                    currentFolder.messageLocationTypeValue.toString(),
+                    requireNotNull(primaryUserId)
                 )
             }
         }.invokeOnCompletion { cancellationException ->

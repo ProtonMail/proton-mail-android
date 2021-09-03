@@ -204,7 +204,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                 if (isActionAppliedToConversation(currentMessageFolder)) {
                     updateConversationsLabels.enqueue(
                         ids,
-                        UserId(userManager.requireCurrentUserId().id),
+                        userManager.requireCurrentUserId(),
                         selectedLabels
                     )
                 } else {
@@ -230,7 +230,8 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                         moveMessagesToFolder(
                             ids,
                             Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
-                            currentMessageFolder.messageLocationTypeValue.toString()
+                            currentMessageFolder.messageLocationTypeValue.toString(),
+                            userManager.requireCurrentUserId()
                         )
                     }
                 }
@@ -258,7 +259,10 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                 }
             } else {
                 moveMessagesToFolder(
-                    messageIds, selectedFolderId, currentMessageFolder.messageLocationTypeValue.toString()
+                    messageIds,
+                    selectedFolderId,
+                    currentMessageFolder.messageLocationTypeValue.toString(),
+                    userManager.requireCurrentUserId()
                 )
             }
         }.invokeOnCompletion { cancellationException ->

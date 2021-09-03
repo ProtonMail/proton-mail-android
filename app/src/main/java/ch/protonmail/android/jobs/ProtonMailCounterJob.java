@@ -52,21 +52,21 @@ public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if (!message.isRead()) {
-                    UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
+                    UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(message.getLocation());
                     if (unreadLocationCounter != null) {
                         unreadLocationCounter.increment();
-                        counterDao.insertUnreadLocation(unreadLocationCounter);
+                        counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
                     }
                     totalUnread++;
                 }
             }
         }
-        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(getMessageLocation().getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(getMessageLocation().getMessageLocationTypeValue());
 
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.decrement(totalUnread);
-        counterDao.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
     }
 }

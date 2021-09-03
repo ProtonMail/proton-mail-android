@@ -70,10 +70,10 @@ public class PostInboxJob extends ProtonMailCounterJob {
             if (message != null) {
                 Timber.d("Post to INBOX message: %s", message.getMessageId());
                 if (!message.isRead()) {
-                    UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
+                    UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(message.getLocation());
                     if (unreadLocationCounter != null) {
                         unreadLocationCounter.decrement();
-                        counterDao.insertUnreadLocation(unreadLocationCounter);
+                        counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
                     }
                     totalUnread++;
                 }
@@ -90,12 +90,12 @@ public class PostInboxJob extends ProtonMailCounterJob {
             }
         }
 
-        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue());
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.increment(totalUnread);
-        counterDao.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
     }
 
     private void removeOldFolderIds(Message message) {

@@ -21,6 +21,7 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.repository.MessageRepository
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,23 +30,24 @@ internal class MoveMessagesToFolder @Inject constructor(
     private val messagesRepository: MessageRepository
 ) {
 
-    operator fun invoke(
+    suspend operator fun invoke(
         messageIds: List<String>,
         newFolderLocationId: String,
         currentFolderLabelId: String = EMPTY_STRING,
+        userId: UserId,
     ) {
         Timber.v("Move to folder: $newFolderLocationId")
         when (newFolderLocationId) {
             Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() ->
-                messagesRepository.moveToTrash(messageIds, currentFolderLabelId)
+                messagesRepository.moveToTrash(messageIds, currentFolderLabelId, userId)
             Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString() ->
-                messagesRepository.moveToArchive(messageIds, currentFolderLabelId)
+                messagesRepository.moveToArchive(messageIds, currentFolderLabelId, userId)
             Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() ->
-                messagesRepository.moveToInbox(messageIds, currentFolderLabelId)
+                messagesRepository.moveToInbox(messageIds, currentFolderLabelId, userId)
             Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString() ->
-                messagesRepository.moveToSpam(messageIds)
+                messagesRepository.moveToSpam(messageIds, currentFolderLabelId, userId)
             else ->
-                messagesRepository.moveToCustomFolderLocation(messageIds, newFolderLocationId)
+                messagesRepository.moveToCustomFolderLocation(messageIds, newFolderLocationId, userId)
         }
     }
 }

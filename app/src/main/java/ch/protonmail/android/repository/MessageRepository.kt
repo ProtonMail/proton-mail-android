@@ -27,15 +27,13 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.NoProtonStoreMapper
 import ch.protonmail.android.data.ProtonStore
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.jobs.MoveToFolderJob
-import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostReadJob
-import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostStarJob
-import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.labels.data.LabelRepository
@@ -44,6 +42,7 @@ import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
+import ch.protonmail.android.mailbox.data.remote.worker.PostToLocationWorker
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
@@ -58,6 +57,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.map
@@ -84,7 +84,8 @@ internal class MessageRepository @Inject constructor(
     private val userManager: UserManager,
     private val jobManager: JobManager,
     connectivityManager: NetworkConnectivityManager,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private var postToLocationWorker: PostToLocationWorker.Enqueuer
 ) {
 
     private val allMessagesStore by lazy {
@@ -225,36 +226,51 @@ internal class MessageRepository @Inject constructor(
         refreshUnreadCountersTrigger.tryEmit(Unit)
     }
 
-    fun moveToTrash(messageIds: List<String>, currentFolderLabelId: String) {
-        jobManager.addJobInBackground(
-            PostTrashJobV2(
-                messageIds,
-                listOf(currentFolderLabelId),
-                currentFolderLabelId,
-                labelRepository
-            )
-        )
+    suspend fun moveToTrash(
+        messageIds: List<String>,
+        currentFolderLabelId: String,
+        userId: UserId
+    ) {
+        val newLocation = MessageLocationType.TRASH
+        postToLocationWorker.enqueue(messageIds, newLocation)
+        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
     }
 
-    fun moveToArchive(messageIds: List<String>, currentFolderLabelId: String) {
-        jobManager.addJobInBackground(
-            PostArchiveJob(messageIds, listOf(currentFolderLabelId))
-        )
+    suspend fun moveToArchive(
+        messageIds: List<String>,
+        currentFolderLabelId: String,
+        userId: UserId
+    ) {
+        val newLocation = MessageLocationType.ARCHIVE
+        postToLocationWorker.enqueue(messageIds, newLocation)
+        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
     }
 
-    fun moveToInbox(messageIds: List<String>, currentFolderLabelId: String) {
-        jobManager.addJobInBackground(
-            PostInboxJob(messageIds, listOf(currentFolderLabelId), labelRepository)
-        )
+    suspend fun moveToInbox(
+        messageIds: List<String>,
+        currentFolderLabelId: String,
+        userId: UserId
+    ) {
+        val newLocation = MessageLocationType.INBOX
+        postToLocationWorker.enqueue(messageIds, newLocation)
+        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
     }
 
-    fun moveToSpam(messageIds: List<String>) {
-        jobManager.addJobInBackground(
-            PostSpamJob(messageIds)
-        )
+    suspend fun moveToSpam(
+        messageIds: List<String>,
+        currentFolderLabelId: String,
+        userId: UserId
+    ) {
+        val newLocation = MessageLocationType.SPAM
+        postToLocationWorker.enqueue(messageIds, newLocation)
+        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
     }
 
-    fun moveToCustomFolderLocation(messageIds: List<String>, newFolderLocationId: String) {
+    fun moveToCustomFolderLocation(
+        messageIds: List<String>,
+        newFolderLocationId: String,
+        userId: UserId
+    ) {
         jobManager.addJobInBackground(
             MoveToFolderJob(messageIds, newFolderLocationId, labelRepository)
         )
@@ -343,4 +359,74 @@ internal class MessageRepository @Inject constructor(
             val domainModels = databaseToDomainUnreadCounterMapper.toDomainModels(list)
             DataResult.Success(ResponseSource.Local, domainModels)
         }
+
+    private suspend fun moveMessageInDb(
+        messageIds: List<String>,
+        newLocation: MessageLocationType,
+        currentFolderLabelId: String,
+        userId: UserId
+    ) {
+        val counterDao = databaseProvider.provideCounterDao(userId)
+        val messagesDao = databaseProvider.provideMessageDao(userId)
+        var totalUnread = 0
+        for (id in messageIds) {
+            yield()
+            val message: Message? = messagesDao.findMessageByIdOnce(id)
+            if (message != null) {
+                Timber.d("Move to $newLocation, message: %s", message.messageId)
+                if (updateMessageLocally(
+                        counterDao,
+                        messagesDao,
+                        message,
+                        currentFolderLabelId,
+                        newLocation
+                    )
+                ) {
+                    totalUnread++
+                }
+            }
+        }
+
+        val unreadLocationCounter = counterDao.findUnreadLocationById(newLocation.messageLocationTypeValue) ?: return
+        unreadLocationCounter.increment(totalUnread)
+        counterDao.insertUnreadLocation(unreadLocationCounter)
+    }
+
+    private suspend fun updateMessageLocally(
+        counterDao: CounterDao,
+        messagesDao: MessageDao,
+        message: Message,
+        currentFolderLabelId: String,
+        newLocation: MessageLocationType
+    ): Boolean {
+        var unreadIncrease = false
+        if (!message.isRead) {
+            val unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(message.location)
+            if (unreadLocationCounter != null) {
+                unreadLocationCounter.decrement()
+                counterDao.insertUnreadLocationBlocking(unreadLocationCounter)
+            }
+            unreadIncrease = true
+        }
+        if (MessageLocationType.fromInt(message.location) === MessageLocationType.SENT) {
+            message.removeLabels(listOf(MessageLocationType.SENT.messageLocationTypeValue.toString()))
+            message.addLabels(listOf(MessageLocationType.ALL_SENT.messageLocationTypeValue.toString()))
+        }
+        if (currentFolderLabelId.isNotEmpty()) {
+            message.removeLabels(listOf(currentFolderLabelId))
+        }
+        message.location = newLocation.messageLocationTypeValue
+        message.setLabelIDs(
+            listOf(
+                newLocation.messageLocationTypeValue.toString(),
+                MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString()
+            )
+        )
+        Timber.d(
+            "Archive message id: %s, location: %s, labels: %s", message.messageId, message.location, message.allLabelIDs
+        )
+
+        messagesDao.saveMessage(message)
+        return unreadIncrease
+    }
 }

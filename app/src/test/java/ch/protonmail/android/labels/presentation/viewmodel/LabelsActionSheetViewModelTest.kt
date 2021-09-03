@@ -101,6 +101,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private val context: Context = mockk {
         every { getColor(any()) } returns defaultColorInt
     }
+    val userId = UserId("userId")
 
     private val labelDomainUiMapper = LabelDomainActionItemUiMapper(context)
 
@@ -180,7 +181,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         coEvery { getAllLabels.invoke(any()) } returns listOf(label1)
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
-
+        every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(any()) } returns false
 
         viewModel = LabelsActionSheetViewModel(
@@ -214,7 +215,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coEvery {
             moveMessagesToFolder(
                 listOf(messageId1), Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
-                Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+                Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                userId
             )
         } just Runs
 
@@ -227,7 +229,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder(
                 listOf(messageId1),
                 archiveLocationId,
-                inboxLocationId
+                inboxLocationId,
+                userId
             )
         }
         assertEquals(ManageLabelActionResult.LabelsSuccessfullySaved, viewModel.actionsResult.value)
@@ -313,7 +316,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // given
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
-        coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+        coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
         coEvery { conversationModeEnabled(any()) } returns false
         every {
             savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
@@ -323,7 +326,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         viewModel.onLabelClicked(model2UiFolder)
 
         // then
-        coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
+        coVerify { moveMessagesToFolder.invoke(any(), any(), any(), any()) }
         assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(true), viewModel.actionsResult.value)
     }
 
@@ -332,8 +335,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
 
             // given
-            coEvery { userManager.currentUserId } returns UserId("userId")
-            coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+            coEvery { userManager.currentUserId } returns userId
+            coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
             coEvery { conversationModeEnabled(any()) } returns true
             every {
                 savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
@@ -353,7 +356,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyThatWhenLabelIsClickedForFolderTypeWithConversationModeEnabledAndMoveConversationsToFolderReturnsErrorResultErrorMovingToFolderIsEmitted() =
         runBlockingTest {
             // given
-            coEvery { userManager.currentUserId } returns UserId("userId")
+            coEvery { userManager.currentUserId } returns userId
             coEvery { conversationModeEnabled(any()) } returns true
             coEvery {
                 moveConversationsToFolder.invoke(any(), any(), any())
@@ -371,8 +374,9 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
 
             // given
-            coEvery { userManager.currentUserId } returns UserId("userId")
-            coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+
+            coEvery { userManager.currentUserId } returns userId
+            coEvery { moveMessagesToFolder.invoke(any(), any(), any(), userId) } just Runs
             coEvery { conversationModeEnabled(any()) } returns true
             every {
                 savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
@@ -382,7 +386,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             viewModel.onLabelClicked(model2UiFolder)
 
             // then
-            coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
+            coVerify { moveMessagesToFolder.invoke(any(), any(), any(), any()) }
             coVerify { moveConversationsToFolder wasNot Called }
             assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(false), viewModel.actionsResult.value)
         }

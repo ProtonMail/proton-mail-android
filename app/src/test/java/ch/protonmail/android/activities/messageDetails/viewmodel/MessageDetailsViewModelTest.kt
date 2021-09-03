@@ -719,7 +719,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder.invoke(
                 listOf(inputConversationId),
                 Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
-                message.folderLocation ?: EMPTY_STRING
+                message.folderLocation ?: EMPTY_STRING,
+                testUserId1
             )
         }
         coVerify(exactly = 0) {
@@ -759,7 +760,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder.invoke(
                 any(),
                 any(),
-                any()
+                any(),
+                userId
             )
         }
     }
@@ -796,7 +798,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder.invoke(
                 any(),
                 any(),
-                any()
+                any(),
+                userId
             )
         }
 
@@ -813,6 +816,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             inputMessageLocation.messageLocationTypeValue
         every { userManager.requireCurrentUserId() } returns testId1
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
+
         val message = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
             folderLocation = inputMessageLocation.name

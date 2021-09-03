@@ -39,6 +39,7 @@ import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMa
 import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
 import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
+import ch.protonmail.android.mailbox.data.remote.worker.PostToLocationWorker
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.utils.MessageBodyFileManager
@@ -105,6 +106,8 @@ class MessageRepositoryTest {
 
     private val labelRepository = mockk<LabelRepository>()
 
+    private val postToLocationWorker = mockk<PostToLocationWorker.Enqueuer>()
+
     private val testUserName = "userName1"
     private val testUserId = UserId(testUserName)
     private val message1 = Message(messageId = "1")
@@ -130,7 +133,8 @@ class MessageRepositoryTest {
         userManager = userManager,
         jobManager = jobManager,
         connectivityManager = networkConnectivityManager,
-        labelRepository
+        labelRepository,
+        postToLocationWorker
     )
 
     @Test

@@ -61,7 +61,7 @@ public class PostReadJob extends ProtonMailEndlessJob {
         }
 
         if (messageLocation != Constants.MessageLocationType.INVALID) {
-            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(messageLocation.getMessageLocationTypeValue());
+            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(messageLocation.getMessageLocationTypeValue());
             if (unreadLocationCounter == null) {
                 return;
             }
@@ -69,7 +69,7 @@ public class PostReadJob extends ProtonMailEndlessJob {
             List<UnreadLocationCounter> countersToUpdate = new ArrayList<>();
             countersToUpdate.add(unreadLocationCounter);
             if (starred) {
-                UnreadLocationCounter starredUnread = counterDao.findUnreadLocationById(Constants.MessageLocationType.STARRED.getMessageLocationTypeValue());
+                UnreadLocationCounter starredUnread = counterDao.findUnreadLocationByIdBlocking(Constants.MessageLocationType.STARRED.getMessageLocationTypeValue());
                 if (starredUnread != null) {
                     starredUnread.decrement();
                     countersToUpdate.add(starredUnread);

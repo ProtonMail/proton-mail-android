@@ -23,10 +23,12 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
-import io.mockk.verify
+import kotlinx.coroutines.runBlocking
+import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -37,6 +39,8 @@ class MoveMessagesToFolderTest {
 
     private lateinit var useCase: MoveMessagesToFolder
 
+    private val userId = UserId("TestUser")
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
@@ -44,82 +48,82 @@ class MoveMessagesToFolderTest {
     }
 
     @Test
-    fun verifyMoveToTrashWorksAsExpected() {
+    fun verifyMoveToTrashWorksAsExpected() = runBlocking {
 
         // given
         val messageIds = listOf("id1", "id2")
         val newFolderLocation = Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
         val currentFolderLabelId = "currentFolderId"
-        every { repository.moveToTrash(messageIds, currentFolderLabelId) } just Runs
+        coEvery { repository.moveToTrash(messageIds, currentFolderLabelId, userId) } just Runs
 
         // when
-        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
+        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
-        verify { repository.moveToTrash(messageIds, currentFolderLabelId) }
+        coVerify { repository.moveToTrash(messageIds, currentFolderLabelId, userId) }
     }
 
     @Test
-    fun verifyMoveToArchieWorksAsExpected() {
+    fun verifyMoveToArchieWorksAsExpected() = runBlocking {
 
         // given
         val messageIds = listOf("id1", "id2")
         val newFolderLocation = Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
         val currentFolderLabelId = "currentFolderId"
-        every { repository.moveToArchive(messageIds, currentFolderLabelId) } just Runs
+        coEvery { repository.moveToArchive(messageIds, currentFolderLabelId, userId) } just Runs
 
         // when
-        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
+        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
-        verify { repository.moveToArchive(messageIds, currentFolderLabelId) }
+        coVerify { repository.moveToArchive(messageIds, currentFolderLabelId, userId) }
     }
 
     @Test
-    fun verifyMoveToInboxWorksAsExpected() {
+    fun verifyMoveToInboxWorksAsExpected() = runBlocking {
 
         // given
         val messageIds = listOf("id1", "id2")
         val newFolderLocation = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
         val currentFolderLabelId = "currentFolderId"
-        every { repository.moveToInbox(messageIds, currentFolderLabelId) } just Runs
+        coEvery { repository.moveToInbox(messageIds, currentFolderLabelId, userId) } just Runs
 
         // when
-        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
+        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
-        verify { repository.moveToInbox(messageIds, currentFolderLabelId) }
+        coVerify { repository.moveToInbox(messageIds, currentFolderLabelId, userId) }
     }
 
     @Test
-    fun verifyMoveToSpamWorksAsExpected() {
+    fun verifyMoveToSpamWorksAsExpected() = runBlocking {
 
         // given
         val messageIds = listOf("id1", "id2")
         val newFolderLocation = Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()
         val currentFolderLabelId = "currentFolderId"
-        every { repository.moveToSpam(messageIds) } just Runs
+        coEvery { repository.moveToSpam(messageIds, currentFolderLabelId, userId) } just Runs
 
         // when
-        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
+        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
-        verify { repository.moveToSpam(messageIds) }
+        coVerify { repository.moveToSpam(messageIds, currentFolderLabelId, userId) }
     }
 
     @Test
-    fun verifyMoveToCustomFolderWorksAsExpected() {
+    fun verifyMoveToCustomFolderWorksAsExpected() = runBlocking {
 
         // given
         val messageIds = listOf("id1", "id2")
         val newFolderLocation = "newFolderCustomId"
         val currentFolderLabelId = "currentFolderId"
-        every { repository.moveToCustomFolderLocation(messageIds, newFolderLocation) } just Runs
+        coEvery { repository.moveToCustomFolderLocation(messageIds, newFolderLocation, userId) } just Runs
 
         // when
-        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
+        useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
-        verify { repository.moveToCustomFolderLocation(messageIds, newFolderLocation) }
+        coVerify { repository.moveToCustomFolderLocation(messageIds, newFolderLocation, userId) }
     }
 }

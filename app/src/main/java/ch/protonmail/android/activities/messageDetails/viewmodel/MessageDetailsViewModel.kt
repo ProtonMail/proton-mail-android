@@ -723,8 +723,8 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun moveLastMessageToTrash() {
         viewModelScope.launch {
+            val primaryUserId = userManager.requireCurrentUserId()
             if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
-                val primaryUserId = userManager.requireCurrentUserId()
                 moveConversationsToFolder(
                     listOf(messageOrConversationId),
                     primaryUserId,
@@ -735,7 +735,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                     moveMessagesToFolder(
                         listOf(requireNotNull(message.messageId)),
                         Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
-                        message.folderLocation ?: EMPTY_STRING
+                        message.folderLocation ?: EMPTY_STRING,
+                        primaryUserId
                     )
                 }
             }
