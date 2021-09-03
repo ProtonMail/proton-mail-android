@@ -603,7 +603,8 @@ internal class MailboxViewModel @Inject constructor(
             val labelId = it.id
             if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(
                     labelId
-                ) && it.type == LabelType.MESSAGE_LABEL) {
+                ) && it.type == LabelType.MESSAGE_LABEL
+            ) {
                 labelsToRemove.add(labelId.id)
             } else if (checkedLabelIds.contains(labelId)) {
                 checkedLabelIds.remove(labelId)

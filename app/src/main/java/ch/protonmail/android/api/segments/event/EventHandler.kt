@@ -230,7 +230,7 @@ internal class EventHandler @AssistedInject constructor(
         val addresses = response.addresses
 
         if (labels != null) {
-            writeLabelsUpdates(contactDao, labels)
+            writeLabelsUpdates(labels)
         }
         if (messages != null) {
             messages.sortByDescending { eventMessageSortSelector(it) }
@@ -537,7 +537,6 @@ internal class EventHandler @AssistedInject constructor(
     }
 
     private fun writeLabelsUpdates(
-        contactDao: ContactDao,
         events: List<EventResponse.LabelsEventBody>
     ) {
         for (event in events) {
@@ -548,11 +547,11 @@ internal class EventHandler @AssistedInject constructor(
                     val id = item.id
                     val name = item.name
                     val color = item.color
-                    val order = item.order!!
+                    val order = item.order ?: 0
                     val path = item.path
                     val parentId = item.parentId
-                    val expanded = item.expanded!!
-                    val sticky = item.sticky!!
+                    val expanded = item.expanded ?: 0
+                    val sticky = item.sticky ?: 0
                     val notify = item.notify
                     if (labelType == LabelType.MESSAGE_LABEL) {
                         val label = LabelEntity(

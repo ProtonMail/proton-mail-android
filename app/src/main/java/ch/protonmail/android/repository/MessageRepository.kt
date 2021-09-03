@@ -38,6 +38,7 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
+import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -46,7 +47,6 @@ import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMappe
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
-import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CancellationException
