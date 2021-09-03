@@ -70,15 +70,15 @@ class HandleEmbeddedImageAttachments @Inject constructor(
 
         Timber.v("handleEmbeddedImages images:${embeddedImages.size} directory:$attachmentsDirectoryFile")
         // short-circuit if all attachments are already downloaded
-        if (areAllAttachmentsAlreadyDownloaded(
-                attachmentsDirectoryFile,
-                messageId,
-                embeddedImages,
-                attachmentMetadataDao
-            )
-        ) {
+        val attachmentsAlreadyDownloaded = getAllAttachmentsAlreadyDownloaded(
+            attachmentsDirectoryFile,
+            messageId,
+            embeddedImages,
+            attachmentMetadataDao
+        )
+        if (attachmentsAlreadyDownloaded.isNotEmpty()) {
             Timber.v("All attachments already downloaded")
-            AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImages))
+            AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, attachmentsAlreadyDownloaded))
             return ListenableWorker.Result.success()
         }
 
@@ -155,12 +155,12 @@ class HandleEmbeddedImageAttachments @Inject constructor(
         false
     }
 
-    private fun areAllAttachmentsAlreadyDownloaded(
+    private fun getAllAttachmentsAlreadyDownloaded(
         attachmentsDirectoryFile: File,
         messageId: String,
         embeddedImages: List<EmbeddedImage>,
         attachmentMetadataDao: AttachmentMetadataDao
-    ): Boolean {
+    ): List<EmbeddedImage> {
 
         if (attachmentsDirectoryFile.exists()) {
 
@@ -172,16 +172,16 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                     embeddedImagesWithLocalFiles.add(
                         embeddedImage.copy(localFileName = it.localLocation.substringAfterLast("/"))
                     )
-                } ?: return false // a file is not downloaded
+                } ?: return emptyList() // a file is not downloaded
             }
 
             if (
                 embeddedImagesWithLocalFiles.isNotEmpty() &&
                 embeddedImagesWithLocalFiles.all { it.localFileName != null }
-            ) return true // all embedded images are in the local file storage already
+            ) return embeddedImagesWithLocalFiles // all embedded images are in the local file storage already
         }
 
-        return false
+        return emptyList()
     }
 
     private fun calculateFilename(originalFilename: String, position: Int): String {

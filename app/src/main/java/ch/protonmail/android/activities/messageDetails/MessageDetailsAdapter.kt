@@ -83,7 +83,7 @@ internal class MessageDetailsAdapter(
     private val messageDetailsRecyclerView: RecyclerView,
     private val messageBodyParser: MessageBodyParser,
     private val userManager: UserManager,
-    private val onLoadEmbeddedImagesClicked: (Message) -> Unit,
+    private val onLoadEmbeddedImagesClicked: (Message, List<String>) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
@@ -362,7 +362,7 @@ internal class MessageDetailsAdapter(
                     it.messageFormattedHtml = null
                 }
                 val item = visibleItems!![position]
-                onLoadEmbeddedImagesClicked(item.message)
+                onLoadEmbeddedImagesClicked(item.message, item.embeddedImageIds)
             }
 
             displayRemoteContentButton.setOnClickListener {
@@ -400,7 +400,8 @@ internal class MessageDetailsAdapter(
         messageId: String,
         showLoadEmbeddedImagesButton: Boolean,
         showDecryptionError: Boolean,
-        attachments: List<Attachment>
+        attachments: List<Attachment>,
+        embeddedImageIds: List<String>
     ) {
         val item: MessageDetailsListItem? = visibleItems?.firstOrNull {
             it.itemType == TYPE_ITEM && it.message.messageId == messageId
@@ -419,6 +420,7 @@ internal class MessageDetailsAdapter(
         item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
         item.showDecryptionError = showDecryptionError
         item.message.setAttachmentList(attachments)
+        item.embeddedImageIds = embeddedImageIds
         // Mark the message as read optimistically to reflect the change on the UI right away.
         // Note that this message is being referenced to from both the header and the item.
         item.message.Unread = false
