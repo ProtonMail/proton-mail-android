@@ -62,7 +62,7 @@ const val KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR = "ProcessPushNotificationDat
  * A worker that is responsible for processing the data payload of the received FCM push notifications.
  */
 @HiltWorker
-class ProcessPushNotificationDataWorker @AssistedInject constructor(
+internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val notificationServer: NotificationServer,

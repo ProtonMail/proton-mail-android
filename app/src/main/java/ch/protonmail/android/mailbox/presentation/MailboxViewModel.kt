@@ -100,7 +100,7 @@ private const val STARRED_LABEL_ID = "10"
 private const val MIN_MESSAGES_TO_SHOW_COUNT = 2
 
 @HiltViewModel
-class MailboxViewModel @Inject constructor(
+internal class MailboxViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
     private val jobManager: JobManager,

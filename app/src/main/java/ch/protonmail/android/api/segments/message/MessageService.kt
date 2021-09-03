@@ -31,6 +31,7 @@ import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -47,6 +48,16 @@ import retrofit2.http.Tag
 @Suppress("LongParameterList")
 interface MessageService {
 
+    @GET("mail/v4/messages/count")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun fetchMessagesCounts(
+        @Tag userIdTag: UserIdTag
+    ): CountsResponse
+
+    @Deprecated(
+        "Use new fetchMessagesCounts",
+        ReplaceWith("fetchMessagesCounts(userIdTag)", "me.proton.core.domain.entity.UserId")
+    )
     @GET("mail/v4/messages/count")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun fetchMessagesCount(@Tag userIdTag: UserIdTag): Call<UnreadTotalMessagesResponse>

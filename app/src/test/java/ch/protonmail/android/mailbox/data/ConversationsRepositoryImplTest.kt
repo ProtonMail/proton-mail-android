@@ -53,10 +53,10 @@ import ch.protonmail.android.mailbox.data.mapper.LabelContextDatabaseModelToLabe
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.data.mapper.MessageSenderToCorrespondentMapper
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
-import ch.protonmail.android.mailbox.data.remote.model.ConversationCountsApiModel
-import ch.protonmail.android.mailbox.data.remote.model.ConversationsCountsResponse
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
+import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
@@ -211,7 +211,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     private val api: ProtonMailApiManager = mockk {
-        coEvery { fetchConversationsCounts(testUserId) } returns ConversationsCountsResponse(emptyList())
+        coEvery { fetchConversationsCounts(testUserId) } returns CountsResponse(emptyList())
     }
 
     private val conversationApiModelToConversationMapper = ConversationApiModelToConversationMapper(
@@ -1250,12 +1250,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         // given
         val labelId = "inbox"
         val unreadCount = 15
-        val apiModel = ConversationCountsApiModel(
+        val apiModel = CountsApiModel(
             labelId = labelId,
             total = 0,
             unread = unreadCount
         )
-        val apiResponse = ConversationsCountsResponse(listOf(apiModel))
+        val apiResponse = CountsResponse(listOf(apiModel))
         coEvery { api.fetchConversationsCounts(testUserId) } returns apiResponse
         val expectedList = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, unreadCount)))
 
@@ -1275,7 +1275,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         val secondUnreadCount = 20
         val thirdUnreadCount = 25
 
-        val firstApiModel = ConversationCountsApiModel(
+        val firstApiModel = CountsApiModel(
             labelId = labelId,
             total = 0,
             unread = firstUnreadCount
@@ -1287,9 +1287,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             unread = thirdUnreadCount
         )
 
-        val firstApiResponse = ConversationsCountsResponse(listOf(firstApiModel))
-        val secondApiResponse = ConversationsCountsResponse(listOf(secondApiModel))
-        val thirdApiResponse = ConversationsCountsResponse(listOf(thirdApiModel))
+        val firstApiResponse = CountsResponse(listOf(firstApiModel))
+        val secondApiResponse = CountsResponse(listOf(secondApiModel))
+        val thirdApiResponse = CountsResponse(listOf(thirdApiModel))
         val allApiResponses = listOf(firstApiResponse, secondApiResponse, thirdApiResponse)
 
         var apiCounter = 0

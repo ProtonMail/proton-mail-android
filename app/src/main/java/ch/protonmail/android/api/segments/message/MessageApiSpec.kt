@@ -31,12 +31,19 @@ import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import io.reactivex.Observable
+import me.proton.core.domain.entity.UserId
 import java.io.IOException
 
 interface MessageApiSpec {
 
-    @Throws(IOException::class)
+    suspend fun fetchMessagesCounts(userId: UserId): CountsResponse
+
+    @Deprecated(
+        "Use new fetchMessagesCounts",
+        ReplaceWith("fetchMessagesCounts(UserId(userIdTag.s))", "me.proton.core.domain.entity.UserId")
+    )
     fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse
 
     suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse

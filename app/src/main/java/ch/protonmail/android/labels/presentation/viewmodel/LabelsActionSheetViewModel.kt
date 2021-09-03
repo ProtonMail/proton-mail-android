@@ -54,7 +54,7 @@ import javax.inject.Inject
 private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
 
 @HiltViewModel
-class LabelsActionSheetViewModel @Inject constructor(
+internal class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getAllLabels: GetAllLabels,
     private val userManager: UserManager,

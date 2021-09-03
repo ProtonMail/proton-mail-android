@@ -24,8 +24,8 @@ import ch.protonmail.android.api.segments.RetrofitConstants
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
-import ch.protonmail.android.mailbox.data.remote.model.ConversationsCountsResponse
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -63,7 +63,7 @@ interface ConversationService {
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     suspend fun fetchConversationsCounts(
         @Tag userIdTag: UserIdTag
-    ): ConversationsCountsResponse
+    ): CountsResponse
 
     @PUT("mail/v4/conversations/read")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)

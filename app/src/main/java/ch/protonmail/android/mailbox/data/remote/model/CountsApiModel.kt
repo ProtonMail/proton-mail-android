@@ -21,14 +21,22 @@ package ch.protonmail.android.mailbox.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ConversationsCountsResponse(
+data class CountsApiModel(
 
-    @SerializedName(COUNTS)
-    val counts: List<ConversationCountsApiModel>
+    @SerializedName(LABEL_ID)
+    val labelId: String,
+
+    @SerializedName(TOTAL)
+    val total: Int,
+
+    @SerializedName(UNREAD)
+    val unread: Int
 ) {
 
     private companion object {
 
-        const val COUNTS = "Counts"
+        const val LABEL_ID = "LabelID"
+        const val TOTAL = "Total"
+        const val UNREAD = "Unread"
     }
 }

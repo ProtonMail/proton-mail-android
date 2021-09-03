@@ -73,11 +73,11 @@ import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
-import ch.protonmail.android.mailbox.data.remote.model.ConversationsCountsResponse
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -234,6 +234,13 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun deleteLabel(labelId: String): ResponseBody = api.deleteLabel(labelId)
 
+    override suspend fun fetchMessagesCounts(userId: UserId): CountsResponse =
+        api.fetchMessagesCounts(userId)
+
+    @Deprecated(
+        "Use new fetchMessagesCounts",
+        ReplaceWith("fetchMessagesCounts(UserId(userIdTag.s))", "me.proton.core.domain.entity.UserId")
+    )
     override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
         api.fetchMessagesCount(userIdTag)
 
@@ -347,7 +354,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun fetchConversation(params: GetOneConversationParameters): ConversationResponse =
         api.fetchConversation(params)
 
-    override suspend fun fetchConversationsCounts(userId: UserId): ConversationsCountsResponse =
+    override suspend fun fetchConversationsCounts(userId: UserId): CountsResponse =
         api.fetchConversationsCounts(userId)
 
     override suspend fun markConversationsRead(

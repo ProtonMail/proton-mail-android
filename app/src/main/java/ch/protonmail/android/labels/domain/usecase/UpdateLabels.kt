@@ -24,7 +24,7 @@ import ch.protonmail.android.repository.MessageRepository
 import timber.log.Timber
 import javax.inject.Inject
 
-class UpdateLabels @Inject constructor(
+internal class UpdateLabels @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository, // TODO: Replace it with future LabelsRepository
     private val messageRepository: MessageRepository
 ) {

@@ -46,7 +46,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class MessageActionSheetViewModel @Inject constructor(
+internal class MessageActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val deleteMessage: DeleteMessage,
     private val deleteConversations: DeleteConversations,

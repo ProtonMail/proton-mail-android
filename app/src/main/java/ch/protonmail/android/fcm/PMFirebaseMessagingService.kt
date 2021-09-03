@@ -34,7 +34,7 @@ import javax.inject.Inject
  * An extension of FirebaseMessagingService, handling token refreshing and receiving messages.
  */
 @AndroidEntryPoint
-public class PMFirebaseMessagingService : FirebaseMessagingService() {
+internal class PMFirebaseMessagingService : FirebaseMessagingService() {
 
     @Inject
     lateinit var userManager: UserManager

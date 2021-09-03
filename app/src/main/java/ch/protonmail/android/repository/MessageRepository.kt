@@ -41,12 +41,24 @@ import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
+import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
+import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -58,10 +70,13 @@ private const val FILE_PREFIX = "file://"
 /**
  * A repository for getting and saving messages.
  */
-class MessageRepository @Inject constructor(
+internal class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
+    private val unreadCounterDao: UnreadCounterDao,
     private val databaseProvider: DatabaseProvider,
     private val protonMailApiManager: ProtonMailApiManager,
+    private val databaseToDomainUnreadCounterMapper: DatabaseToDomainUnreadCounterMapper,
+    private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
     messagesResponseToMessagesMapper: MessagesResponseToMessagesMapper,
     private val messageBodyFileManager: MessageBodyFileManager,
     private val userManager: UserManager,
@@ -87,6 +102,8 @@ class MessageRepository @Inject constructor(
         refreshAtStart: Boolean = true
     ): LoadMoreFlow<DataResult<List<Message>>> =
         allMessagesStore.loadMoreFlow(params, refreshAtStart)
+
+    private val refreshUnreadCountersTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {
         val messageDao = databaseProvider.provideMessageDao(userId)
@@ -178,6 +195,29 @@ class MessageRepository @Inject constructor(
                 }
             }.getOrNull()
         }
+
+    fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> {
+        val countersFlow = unreadCounterDao.observeMessagesUnreadCounters(userId).map { list ->
+            val domainModels = list.map(databaseToDomainUnreadCounterMapper) { it.toDomainModel() }
+            // Cast is needed, in order to emit Error.Remote
+            DataResult.Success(ResponseSource.Local, domainModels) as DataResult<List<UnreadCounter>>
+        }.onStart {
+            fetchAndSaveUnreadCounters(userId)
+        }.catch { emit(DataResult.Error.Remote(it.message, it)) }
+
+        return refreshUnreadCountersTrigger.flatMapLatest { countersFlow }
+            .onStart { refreshUnreadCounters() }
+    }
+
+    private suspend fun fetchAndSaveUnreadCounters(userId: UserId) {
+        val counts = protonMailApiManager.fetchMessagesCounts(userId).counts
+            .map(apiToDatabaseUnreadCounterMapper) { it.toDatabaseModel(userId) }
+        unreadCounterDao.insertOrUpdate(counts)
+    }
+
+    fun refreshUnreadCounters() {
+        refreshUnreadCountersTrigger.tryEmit(Unit)
+    }
 
     fun moveToTrash(messageIds: List<String>, currentFolderLabelId: String) {
         jobManager.addJobInBackground(

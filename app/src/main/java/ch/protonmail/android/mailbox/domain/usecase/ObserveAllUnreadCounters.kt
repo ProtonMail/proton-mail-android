@@ -41,7 +41,7 @@ import kotlin.time.toDuration
 /**
  * Emit [AllUnreadCounters]
  */
-class ObserveAllUnreadCounters @Inject constructor(
+internal class ObserveAllUnreadCounters @Inject constructor(
     private val messagesRepository: MessageRepository,
     private val conversationsRepository: ConversationsRepository
 ) {
@@ -54,18 +54,18 @@ class ObserveAllUnreadCounters @Inject constructor(
             emit(Unit)
             while (currentCoroutineContext().isActive) {
                 delay(refreshInterval)
-                // messagesRepository.refreshUnreadCounters()
+                messagesRepository.refreshUnreadCounters()
                 conversationsRepository.refreshUnreadCounters()
             }
         }
 
         return combineTransform(
             refreshFlow,
-            // messagesRepository.getUnreadCounters(userId)
+            messagesRepository.getUnreadCounters(userId),
             conversationsRepository.getUnreadCounters(userId)
-        ) { _, /* messagesCounters, */ conversationsCounters ->
+        ) { _, messagesCounters, conversationsCounters ->
             emitAllUnreadCounters(
-                messagesCounters = DataResult.Success(ResponseSource.Local, emptyList()),
+                messagesCounters = messagesCounters,
                 conversationsCounters = conversationsCounters
             )
         }

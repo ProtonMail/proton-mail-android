@@ -42,12 +42,57 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
 
     private val testUserId = UserId("one")
 
-    private val messagesRepository: MessageRepository = mockk()
-    private val conversationsRepository: ConversationsRepository = mockk()
+    private val messagesRepository: MessageRepository = mockk {
+        every { getUnreadCounters(testUserId) } returns flowOf(DataResult.Success(ResponseSource.Local, emptyList()))
+    }
+    private val conversationsRepository: ConversationsRepository = mockk {
+        every { getUnreadCounters(testUserId) } returns flowOf(DataResult.Success(ResponseSource.Local, emptyList()))
+    }
     private val observeAllUnreadCounters = ObserveAllUnreadCounters(
         messagesRepository = messagesRepository,
         conversationsRepository = conversationsRepository
     )
+
+    @Test
+    fun emitsDataFromMessagesRepository() = runBlockingTest {
+        // given
+        val messagesCounters = listOf(
+            UnreadCounter("inbox", 15),
+            UnreadCounter("sent", 3)
+        )
+        every { messagesRepository.getUnreadCounters(testUserId) } returns
+            flowOf(DataResult.Success(ResponseSource.Local, messagesCounters))
+
+        val allCounters = AllUnreadCounters(
+            messagesCounters = messagesCounters,
+            conversationsCounters = emptyList()
+        )
+        val expected = DataResult.Success(ResponseSource.Local, allCounters)
+
+        // when
+        observeAllUnreadCounters(testUserId).test {
+
+            // then
+            assertEquals(expected, expectItem())
+        }
+    }
+
+    @Test
+    fun emitsErrorsFromMessagesRepository() = runBlockingTest {
+        // given
+        val expectedMessage = "Some wrong happened"
+        val expectedException = IllegalStateException(expectedMessage)
+        val expectedError = DataResult.Error.Remote(expectedMessage, expectedException)
+        every { messagesRepository.getUnreadCounters(testUserId) } returns flowOf(expectedError)
+
+        // when
+        observeAllUnreadCounters(testUserId).test {
+
+            // then
+            expectItem() // Success with messages Unreads
+            assertEquals(expectedError, expectItem())
+        }
+    }
 
     @Test
     fun emitsDataFromConversationsRepository() = runBlockingTest {
@@ -87,6 +132,36 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
             // then
             expectItem() // Success with messages Unreads
             assertEquals(expectedError, expectItem())
+        }
+    }
+
+    @Test
+    fun emitsDataFromMessagesAndConversationsRepositories() = runBlockingTest {
+        // given
+        val messagesCounters = listOf(
+            UnreadCounter("inbox", 15),
+            UnreadCounter("sent", 3)
+        )
+        val conversationsCounters = listOf(
+            UnreadCounter("inbox", 3),
+            UnreadCounter("sent", 2)
+        )
+        every { messagesRepository.getUnreadCounters(testUserId) } returns
+            flowOf(DataResult.Success(ResponseSource.Local, messagesCounters))
+        every { conversationsRepository.getUnreadCounters(testUserId) } returns
+            flowOf(DataResult.Success(ResponseSource.Local, conversationsCounters))
+
+        val allCounters = AllUnreadCounters(
+            messagesCounters = messagesCounters,
+            conversationsCounters = conversationsCounters
+        )
+        val expected = DataResult.Success(ResponseSource.Local, allCounters)
+
+        // when
+        observeAllUnreadCounters(testUserId).test {
+
+            // then
+            assertEquals(expected, expectItem())
         }
     }
 }
