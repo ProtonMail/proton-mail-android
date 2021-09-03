@@ -40,9 +40,12 @@ sealed class MailboxState {
     /**
      * @property shouldResetPosition if `true` the list should be scrolled to its top, for example if the location has
      *  changed
+     *
+     * @property isFreshData if `true` we already refreshed from remote, otherwise we're relying on cache
      */
     data class Data(
         val items: List<MailboxUiItem>,
+        val isFreshData: Boolean,
         val shouldResetPosition: Boolean = false
     ) : MailboxState()
 

@@ -577,7 +577,7 @@ internal class MailboxActivity :
             is MailboxState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
                 include_mailbox_error.isVisible = false
-                include_mailbox_no_messages.isVisible = state.items.isEmpty()
+                include_mailbox_no_messages.isVisible = state.isFreshData && state.items.isEmpty()
                 mailboxRecyclerView.isVisible != state.items.isEmpty()
 
                 mailboxAdapter.submitList(state.items) {

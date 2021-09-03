@@ -327,6 +327,7 @@ class MailboxViewModel @Inject constructor(
 
                     MailboxState.Data(
                         conversationsToMailboxItems(result.conversations, locationId),
+                        isFreshData = hasReceivedFirstApiRefresh != null,
                         shouldResetPosition = shouldResetPosition
                     )
                 }
@@ -375,6 +376,7 @@ class MailboxViewModel @Inject constructor(
 
                     MailboxState.Data(
                         items = messagesToMailboxItems(result.messages),
+                        isFreshData = hasReceivedFirstApiRefresh != null,
                         shouldResetPosition = shouldResetPosition
                     )
                 }
