@@ -28,7 +28,6 @@ import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.repository.NO_MORE_MESSAGES_ERROR_CODE
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Processing
@@ -78,11 +77,7 @@ class ObserveMessagesByLocation @Inject constructor(
 
         fun Error.Remote.remoteErrorToResult(): GetMessagesResult {
             Timber.e(cause, "Messages couldn't be fetched")
-            return if (protonCode == NO_MORE_MESSAGES_ERROR_CODE) {
-                GetMessagesResult.NoMessagesFound
-            } else {
-                GetMessagesResult.Error(cause, isOffline = this == OfflineDataResult)
-            }
+            return GetMessagesResult.Error(cause, isOffline = this == OfflineDataResult)
         }
 
         return loadMoreMap { result ->

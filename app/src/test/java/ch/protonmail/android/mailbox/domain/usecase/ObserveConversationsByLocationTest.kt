@@ -21,7 +21,6 @@ package ch.protonmail.android.mailbox.domain.usecase
 
 import app.cash.turbine.test
 import ch.protonmail.android.core.Constants.MessageLocationType
-import ch.protonmail.android.data.remote.NoMoreItemsDataResult
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.Conversation
@@ -113,23 +112,6 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
             labelId = location
         )
         coVerify { conversationRepository.observeConversations(params,) }
-    }
-
-    @Test
-    fun getConversationsReturnsNoConversationsFoundWhenRepositoryReturnsNoConversations() = runBlockingTest {
-        // given
-        coEvery { conversationRepository.observeConversations(any()) } returns
-            loadMoreFlowOf(NoMoreItemsDataResult)
-
-        val expected = GetConversationsResult.NoConversationsFound
-
-        // when
-        observeConversationsByLocation(userId, MessageLocationType.INBOX.asLabelId()).test {
-
-            // then
-            assertEquals(expected, expectItem())
-            expectComplete()
-        }
     }
 
     private fun inboxLabelContext() = LabelContext(

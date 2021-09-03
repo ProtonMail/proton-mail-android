@@ -567,9 +567,6 @@ internal class MailboxActivity :
 
         when (state) {
             is MailboxState.Loading -> setRefreshing(true)
-            is MailboxState.NoMoreItems -> {
-                if (isLoadingMore.get()) setLoadingMore(false)
-            }
             is MailboxState.DataRefresh -> {
                 lastFetchedMailboxItemsIds = state.lastFetchedItemsIds
                 setRefreshing(false)

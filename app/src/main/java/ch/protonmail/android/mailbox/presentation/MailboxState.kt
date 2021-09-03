@@ -26,11 +26,6 @@ sealed class MailboxState {
 
     object Loading : MailboxState()
 
-    /**
-     * Emitted when we fetched all the messages from server
-     */
-    object NoMoreItems : MailboxState()
-
     data class Error(
         val error: String = EMPTY_STRING,
         val throwable: Throwable? = null,

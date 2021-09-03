@@ -53,7 +53,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
-const val NO_MORE_MESSAGES_ERROR_CODE = 235_894
 private const val FILE_PREFIX = "file://"
 
 /**
