@@ -38,14 +38,14 @@ class MessageFactory @Inject constructor(
 
     fun createMessage(serverMessage: ServerMessage): Message {
         return Message(
-            messageId = serverMessage.ID,
+            messageId = serverMessage.id,
             conversationId = serverMessage.ConversationID,
             subject = serverMessage.Subject,
             Unread = serverMessage.Unread.parseBoolean("Unread"),
             Type = MessageUtils.calculateType(serverMessage.Flags),
 
             sender = messageSenderFactory.createMessageSender(requireNotNull(serverMessage.Sender)),
-            time = serverMessage.Time.checkIfSet("Time"),
+            time = serverMessage.time.checkIfSet("Time"),
             totalSize = serverMessage.Size.checkIfSet("Size"),
             location = messageLocationResolver.resolveLocationFromLabels(
                 serverMessage.LabelIDs ?: emptyList()
@@ -85,7 +85,7 @@ class MessageFactory @Inject constructor(
                 )
             }
             Timber.v(
-                "created Message id: ${serverMessage.ID?.take(
+                "created Message id: ${serverMessage.id?.take(
                     6
                 )}, body size: ${serverMessage.Body?.length}, location: $location, isDownloaded: $isDownloaded"
             )

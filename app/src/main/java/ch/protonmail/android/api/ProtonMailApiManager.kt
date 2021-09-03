@@ -74,7 +74,9 @@ import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -234,14 +236,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
         api.fetchMessagesCount(userIdTag)
 
-    override fun messages(location: Int): MessagesResponse? = api.messages(location)
-
-    override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse? = api.messages(location, userIdTag)
-
-    override suspend fun getMessages(location: Int, userIdTag: UserIdTag): MessagesResponse =
-        api.getMessages(location, userIdTag)
-
-    override fun fetchMessages(location: Int, time: Long): MessagesResponse? = api.fetchMessages(location, time)
+    override suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse =
+        api.getMessages(params)
 
     override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =
         api.fetchMessageMetadata(messageId, userIdTag)
@@ -273,23 +269,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun messageDetailObservable(
         messageId: String
     ): Observable<MessageResponse> = api.messageDetailObservable(messageId)
-
-    override fun search(query: String, page: Int): MessagesResponse = api.search(query, page)
-
-    override fun searchByLabelAndPageBlocking(
-        query: String,
-        page: Int
-    ): MessagesResponse = api.searchByLabelAndPageBlocking(query, page)
-
-    override suspend fun searchByLabelAndPage(
-        query: String,
-        page: Int
-    ): MessagesResponse = api.searchByLabelAndPage(query, page)
-
-    override fun searchByLabelAndTime(
-        query: String,
-        unixTime: Long
-    ): MessagesResponse = api.searchByLabelAndTime(query, unixTime)
 
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
 
@@ -361,13 +340,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateAutoShowImages(autoShowImages: Int): ResponseBody? = api.updateAutoShowImages(autoShowImages)
 
-    override suspend fun fetchConversations(params: GetConversationsParameters): ConversationsResponse =
+    override suspend fun fetchConversations(params: GetAllConversationsParameters): ConversationsResponse =
         api.fetchConversations(params)
 
-    override suspend fun fetchConversation(
-        conversationId: String,
-        userId: UserId
-    ): ConversationResponse = api.fetchConversation(conversationId, userId)
+    override suspend fun fetchConversation(params: GetOneConversationParameters): ConversationResponse =
+        api.fetchConversation(params)
 
     override suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,

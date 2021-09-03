@@ -25,7 +25,7 @@ data class ConversationsResponse(
     @SerializedName(TOTAL)
     val total: Int,
     @SerializedName(CONVERSATIONS)
-    val conversationResponse: List<ConversationApiModel>
+    val conversations: List<ConversationApiModel>
 ) {
     companion object {
 

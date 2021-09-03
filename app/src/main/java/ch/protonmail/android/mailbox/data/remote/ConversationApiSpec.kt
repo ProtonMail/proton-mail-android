@@ -24,17 +24,17 @@ import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 
 interface ConversationApiSpec {
 
     suspend fun fetchConversations(
-        params: GetConversationsParameters
+        params: GetAllConversationsParameters
     ): ConversationsResponse
 
     suspend fun fetchConversation(
-        conversationId: String,
-        userId: UserId
+        params: GetOneConversationParameters
     ): ConversationResponse
 
     suspend fun markConversationsRead(

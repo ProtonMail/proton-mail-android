@@ -37,7 +37,6 @@ import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
@@ -55,6 +54,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.equalsNoCase
 import timber.log.Timber
 import java.io.File
@@ -156,10 +156,11 @@ class MessageDetailsRepository @Inject constructor(
         }
     }
 
-    fun getAllMessages(): LiveData<List<Message>> = messagesDao.getAllMessages()
-
     fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message> =
-        messagesDao.searchMessages(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+        runBlocking {
+            messagesDao.searchMessages(subject, senderName, senderEmail).first()
+                .mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+        }
 
     suspend fun findAttachmentsByMessageId(messageId: String): List<Attachment> =
         messagesDao.findAttachmentsByMessageId(messageId).first()

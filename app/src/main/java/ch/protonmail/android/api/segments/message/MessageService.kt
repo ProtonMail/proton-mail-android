@@ -44,6 +44,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Tag
 
+@Suppress("LongParameterList")
 interface MessageService {
 
     @GET("mail/v4/messages/count")
@@ -64,67 +65,19 @@ interface MessageService {
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun messages(
-        @Query("LabelID") location: Int,
-        @Query("Order") order: String,
-        @Query("Begin") begin: String,
-        @Query("End") end: String
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun messages(
-        @Query("LabelID") location: Int,
-        @Query("Order") order: String,
-        @Query("Begin") begin: String,
-        @Query("End") end: String,
-        @Tag userIdTag: UserIdTag
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun getMessages(
-        @Query("LabelID") location: Int,
-        @Query("Order") order: String,
-        @Query("Begin") begin: String,
-        @Query("End") end: String,
-        @Tag userIdTag: UserIdTag
+        @Tag userIdTag: UserIdTag,
+        @Query("Page") page: Int?,
+        @Query("PageSize") pageSize: Int,
+        @Query("LabelID") labelId: String?,
+        @Query("Sort") sort: String,
+        @Query("Desc") desc: Int,
+        @Query("Begin") begin: Long?,
+        @Query("End") end: Long?,
+        @Query("BeginID") beginId: String?,
+        @Query("EndID") endId: String?,
+        @Query("Keyword") keyword: String?
     ): MessagesResponse
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchMessages(
-        @Query("LabelID") location: Int,
-        @Query("End") unixTime: Long
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun search(
-        @Query("Keyword") query: String,
-        @Query("Page") page: Int
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun searchByLabel(
-        @Query("LabelID") query: String,
-        @Query("Page") page: Int
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun getMessagesByLabel(
-        @Query("LabelID") query: String,
-        @Query("Page") page: Int
-    ): MessagesResponse
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun searchByLabel(
-        @Query("LabelID") query: String,
-        @Query("End") unixTime: Long
-    ): Call<MessagesResponse>
 
     @POST("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

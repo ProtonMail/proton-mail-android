@@ -20,7 +20,7 @@ package ch.protonmail.android.adapters.messages
 
 import android.content.Context
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.PendingSend
@@ -35,12 +35,12 @@ import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 class MailboxRecyclerViewAdapter(
     private val context: Context,
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
-) : RecyclerView.Adapter<MailboxItemViewHolder>() {
+) : ListAdapter<MailboxUiItem, MailboxItemViewHolder>(MailboxUiItem.DiffCallback()) {
 
     private var mailboxLocation = Constants.MessageLocationType.INVALID
 
     private var labels = mapOf<String, Label>()
-    private val mailboxItems = mutableListOf<MailboxUiItem>()
+    private var mailboxItems = listOf<MailboxUiItem>()
     private val selectedMailboxItemsIds: MutableSet<String> = mutableSetOf()
 
     private var pendingUploadList: List<PendingUpload>? = null
@@ -49,36 +49,19 @@ class MailboxRecyclerViewAdapter(
     private var onItemClick: ((MailboxUiItem) -> Unit)? = null
     private var onItemSelectionChangedListener: (() -> Unit)? = null
 
-    var includeFooter: Boolean = false
-        set(value) {
-            if (field == value) {
-                return
-            }
-            field = value
-            if (value) {
-                notifyItemInserted(mailboxItems.size)
-            } else {
-                notifyItemRemoved(mailboxItems.size)
-            }
-        }
-
     val checkedMailboxItems get() =
         selectedMailboxItemsIds.mapNotNull { mailboxItems.find { message -> message.itemId == it } }
 
-    fun getItem(position: Int) = mailboxItems[position]
+    public fun getMailboxItem(position: Int) = mailboxItems[position]
 
-    fun addAll(items: List<MailboxUiItem>) {
-        this.mailboxItems.addAll(
-            items.filter {
-                !it.isDeleted
-            }
-        )
-        notifyDataSetChanged()
+    override fun submitList(list: List<MailboxUiItem>?) {
+        mailboxItems = list ?: emptyList()
+        super.submitList(list)
     }
 
-    fun clear() {
-        mailboxItems.clear()
-        notifyDataSetChanged()
+    override fun submitList(list: List<MailboxUiItem>?, commitCallback: Runnable?) {
+        mailboxItems = list ?: emptyList()
+        super.submitList(list, commitCallback)
     }
 
     fun setItemClick(onItemClick: ((MailboxUiItem) -> Unit)?) {
@@ -104,8 +87,6 @@ class MailboxRecyclerViewAdapter(
             ElementType.FOOTER -> MailboxItemViewHolder.FooterViewHolder(MailboxItemFooterView(context))
         }
     }
-
-    override fun getItemCount(): Int = mailboxItems.size + if (includeFooter) 1 else 0
 
     override fun onBindViewHolder(holder: MailboxItemViewHolder, position: Int) {
         when (ElementType.values()[getItemViewType(position)]) {
@@ -216,13 +197,15 @@ class MailboxRecyclerViewAdapter(
         mailboxLocation = locationType
     }
 
-    fun getOldestMailboxItemTimestamp(): Long {
-        val lastItemTimeMs = if (mailboxItems.isNotEmpty()) {
-            mailboxItems.minOf { it.lastMessageTimeMs }
-        } else {
-            System.currentTimeMillis()
-        }
-        return lastItemTimeMs / 1000
-    }
+    /**
+     * @return `true` if any items withing the given positions' range has an [MailboxUiItem.itemId] that matches one
+     *  from [mailboxItemsIds]
+     */
+    fun isAnyMailboxItemWithinPositions(
+        mailboxItemsIds: List<String>,
+        startPosition: Int,
+        endPosition: Int
+    ) = mailboxItems.subList(startPosition, endPosition + 1)
+        .any { it.itemId in mailboxItemsIds }
 
 }

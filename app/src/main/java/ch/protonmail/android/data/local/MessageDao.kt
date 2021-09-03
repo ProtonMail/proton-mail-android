@@ -32,6 +32,7 @@ import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
 import ch.protonmail.android.data.local.model.COLUMN_LABEL_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_DELETED
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_IS_STARRED
@@ -53,44 +54,50 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
+import me.proton.core.data.room.db.BaseDao
 import timber.log.Timber
 
 @Dao
-interface MessageDao {
+abstract class MessageDao : BaseDao<Message>() {
+
+    fun searchMessages(keyword: String): Flow<List<Message>> =
+        searchMessages(keyword, keyword, keyword)
 
     @Query(
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
+        WHERE $COLUMN_MESSAGE_DELETED = 0
+          AND $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
           OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
           OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
-            ORDER BY $COLUMN_MESSAGE_TIME DESC
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message>
+    abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): Flow<List<Message>>
 
     @Query("SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location ")
-    fun getMessagesCountByLocation(location: Int): Int
-
-    @Query(
-        """
-            SELECT * FROM $TABLE_MESSAGES 
-            WHERE $COLUMN_MESSAGE_LOCATION = :location  
-            ORDER BY $COLUMN_MESSAGE_TIME DESC
-            """
-    )
-    fun observeMessagesByLocation(location: Int): Flow<List<Message>>
+    abstract fun getMessagesCountByLocation(location: Int): Int
 
     @Query(
         """
         SELECT * FROM $TABLE_MESSAGES 
-        WHERE $COLUMN_MESSAGE_IS_STARRED=1
+        WHERE $COLUMN_MESSAGE_LOCATION = :location 
+          AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
     )
-    fun observeStarredMessages(): Flow<List<Message>>
+    abstract fun observeMessagesByLocation(location: Int): Flow<List<Message>>
+
+    @Query(
+        """
+        SELECT * FROM $TABLE_MESSAGES 
+        WHERE $COLUMN_MESSAGE_IS_STARRED = 1
+          AND $COLUMN_MESSAGE_DELETED = 0
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+        """
+    )
+    abstract fun observeStarredMessages(): Flow<List<Message>>
 
     @Query(
         """
@@ -99,13 +106,16 @@ interface MessageDao {
         WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  
     """
     )
-    fun getMessagesCountByByLabelId(labelId: String): Int
+    abstract fun getMessagesCountByByLabelId(labelId: String): Int
 
-    @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
-    fun getAllMessages(): LiveData<List<Message>>
-
-    @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
-    fun observeAllMessages(): Flow<List<Message>>
+    @Query(
+        """
+        SELECT * FROM $TABLE_MESSAGES 
+        WHERE $COLUMN_MESSAGE_DELETED = 0
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+        """
+    )
+    abstract fun observeAllMessages(): Flow<List<Message>>
 
     @Query(
         """
@@ -115,7 +125,7 @@ interface MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    fun getMessagesByLabelId(label: String): List<Message>
+    abstract fun getMessagesByLabelId(label: String): List<Message>
 
     /** Since we have decided to use this query to also retrieve messages that are SENT
     now the query looks for the :label at the beginning, middle or end of the $COLUMN_MESSAGE_LABELS string.
@@ -127,13 +137,14 @@ interface MessageDao {
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
-        OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
-        OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%'
+        WHERE $COLUMN_MESSAGE_DELETED = 0
+          AND $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%'
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    fun observeMessagesByLabelId(label: String): Flow<List<Message>>
+    abstract fun observeMessagesByLabelId(label: String): Flow<List<Message>>
 
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
         .onEach { message ->
@@ -161,18 +172,6 @@ interface MessageDao {
             message.attachments = message.attachmentsBlocking(this)
         }
 
-    fun findMessageByDatabaseIdBlocking(messageDbId: Long): Message? = runBlocking {
-        findMessageByDatabaseId(messageDbId).first()
-    }
-
-    fun findMessageByDbId(dbId: Long): Flow<Message?> =
-        findMessageInfoByDbId(dbId).map { message ->
-            return@map message?.let {
-                it.attachments = it.attachmentsBlocking(this)
-                it
-            }
-        }
-
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
         observeAllMessagesInfoByLastMessageAccessTime(laterThan)
             .map { messages ->
@@ -182,23 +181,23 @@ interface MessageDao {
             }
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    fun findMessageInfoById(messageId: String): Flow<Message?>
+    abstract fun findMessageInfoById(messageId: String): Flow<Message?>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    suspend fun findMessageInfoByIdOnce(messageId: String): Message?
+    abstract suspend fun findMessageInfoByIdOnce(messageId: String): Message?
 
     @Deprecated("Use Flow variant", ReplaceWith("findMessageInfoById(messageId).first()"))
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    fun findMessageInfoByIdBlocking(messageId: String): Message?
+    abstract fun findMessageInfoByIdBlocking(messageId: String): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    fun findMessageInfoByIdSingle(messageId: String): Single<Message>
+    abstract fun findMessageInfoByIdSingle(messageId: String): Single<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    fun findMessageInfoByIdObservable(messageId: String): Flowable<Message>
+    abstract fun findMessageInfoByIdObservable(messageId: String): Flowable<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
-    fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
+    abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
 
     @Query(
         """
@@ -208,7 +207,7 @@ interface MessageDao {
         ORDER BY $COLUMN_MESSAGE_ACCESS_TIME
     """
     )
-    fun observeAllMessagesInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
+    abstract fun observeAllMessagesInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
 
     @Query(
         """
@@ -218,17 +217,18 @@ interface MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    fun observeAllMessagesInfoFromConversation(conversationId: String): Flow<List<Message>>
+    abstract fun observeAllMessagesInfoFromConversation(conversationId: String): Flow<List<Message>>
 
     @Query(
         """
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_CONVERSATION_ID = :conversationId
+          AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """
+        """
     )
-    suspend fun findAllMessagesInfoFromConversation(conversationId: String): List<Message>
+    abstract suspend fun findAllMessagesInfoFromConversation(conversationId: String): List<Message>
 
     suspend fun saveMessage(message: Message): Long {
         Timber.d(
@@ -314,10 +314,10 @@ interface MessageDao {
     }
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location")
-    fun deleteMessagesByLocation(location: Int)
+    abstract fun deleteMessagesByLocation(location: Int)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
-    fun deleteMessagesByLabel(labelId: String)
+    abstract fun deleteMessagesByLabel(labelId: String)
 
     @Query(
         """
@@ -327,19 +327,19 @@ interface MessageDao {
           AND $COLUMN_MESSAGE_EXPIRATION_TIME < :currentTime
     """
     )
-    fun deleteExpiredMessages(currentTime: Long)
+    abstract fun deleteExpiredMessages(currentTime: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveMessageInfo(message: Message): Long
+    abstract suspend fun saveMessageInfo(message: Message): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveMessagesInfo(messages: List<Message>)
+    abstract suspend fun saveMessagesInfo(messages: List<Message>)
 
     @Query("DELETE FROM $TABLE_MESSAGES")
-    fun clearMessagesCache()
+    abstract fun clearMessagesCache()
 
     @Delete
-    fun deleteMessage(message: Message)
+    abstract fun deleteMessage(message: Message)
 
     @Query(
         """
@@ -348,35 +348,35 @@ interface MessageDao {
         WHERE $COLUMN_MESSAGE_ID = :messageId
     """
     )
-    suspend fun updateStarred(messageId: String, starred: Boolean)
+    abstract suspend fun updateStarred(messageId: String, starred: Boolean)
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
-    fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
+    abstract fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
-    fun findAttachmentsByMessageId(messageId: String): Flow<List<Attachment>>
+    abstract fun findAttachmentsByMessageId(messageId: String): Flow<List<Attachment>>
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
-    suspend fun findAttachmentByMessageId(messageId: String): List<Attachment>
+    abstract suspend fun findAttachmentByMessageId(messageId: String): List<Attachment>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveAttachment(attachment: Attachment): Long
+    abstract suspend fun saveAttachment(attachment: Attachment): Long
 
-    @Deprecated("Use suspend function", ReplaceWith("saveAttachment(attachment)"))
+    @Deprecated("Use suspend abstract function", ReplaceWith("saveAttachment(attachment)"))
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAttachmentBlocking(attachment: Attachment): Long
+    abstract fun saveAttachmentBlocking(attachment: Attachment): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveAllAttachments(attachments: List<Attachment>): List<Long>
+    abstract suspend fun saveAllAttachments(attachments: List<Attachment>): List<Long>
 
     @Delete
-    suspend fun deleteAllAttachments(attachments: List<Attachment>)
+    abstract suspend fun deleteAllAttachments(attachments: List<Attachment>)
 
     @Delete
-    fun deleteAttachment(vararg attachment: Attachment)
+    abstract fun deleteAttachment(vararg attachment: Attachment)
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_ID=:correctId ")
-    fun findAttachmentByIdCorrectId(correctId: String): Attachment?
+    abstract fun findAttachmentByIdCorrectId(correctId: String): Attachment?
 
     fun findAttachmentById(attachmentId: String): Attachment? {
         if (attachmentId.startsWith("PGPAttachment")) {
@@ -390,45 +390,45 @@ interface MessageDao {
     }
 
     @Query("DELETE FROM $TABLE_ATTACHMENTS")
-    fun clearAttachmentsCache()
+    abstract fun clearAttachmentsCache()
 
 
     @Query("SELECT * FROM $TABLE_LABELS")
     @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
-    fun getAllLabelsLiveData(): LiveData<List<Label>>
+    abstract fun getAllLabelsLiveData(): LiveData<List<Label>>
 
     @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
-    fun getAllLabels(): Flow<List<Label>>
+    abstract fun getAllLabels(): Flow<List<Label>>
 
     // Folders
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 1 ORDER BY `LabelOrder`")
-    fun getAllLabelsExclusivePaged(): DataSource.Factory<Int, Label>
+    abstract fun getAllLabelsExclusivePaged(): DataSource.Factory<Int, Label>
 
     // Labels
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 0 ORDER BY `LabelOrder`")
-    fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, Label>
+    abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, Label>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY LabelOrder")
-    fun findLabelsById(labelIds: List<String>): Flow<List<Label>>
+    abstract fun findLabelsById(labelIds: List<String>): Flow<List<Label>>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
+    abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    fun findLabelByIdBlocking(labelId: String): Label?
+    abstract fun findLabelByIdBlocking(labelId: String): Label?
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    suspend fun findLabelById(labelId: String): Label?
+    abstract suspend fun findLabelById(labelId: String): Label?
 
     @Query("DELETE FROM $TABLE_LABELS")
-    fun clearLabelsCache()
+    abstract fun clearLabelsCache()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveLabel(label: Label): Long
+    abstract fun saveLabel(label: Label): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAllLabels(labels: List<Label>): List<Long>
+    abstract fun saveAllLabels(labels: List<Label>): List<Long>
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    fun deleteLabelById(labelId: String)
+    abstract fun deleteLabelById(labelId: String)
 }

@@ -28,32 +28,30 @@ import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDatabase
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
 private const val ACTION_FETCH_MESSAGE_LABELS = "ACTION_FETCH_MESSAGE_LABELS"
 private const val ACTION_FETCH_CONTACT_GROUPS_LABELS = "ACTION_FETCH_CONTACT_GROUPS_LABELS"
 private const val ACTION_FETCH_MESSAGES_BY_PAGE = "ACTION_FETCH_MESSAGES_BY_PAGE"
-private const val ACTION_FETCH_MESSAGES_BY_TIME = "ACTION_FETCH_MESSAGES_BY_TIME_MESSAGE_ID"
 
 private const val EXTRA_USER_ID = "extra.user.id"
 private const val EXTRA_LABEL_ID = "label"
 private const val EXTRA_MESSAGE_LOCATION = "location"
 private const val EXTRA_REFRESH_DETAILS = "refreshDetails"
-private const val EXTRA_TIME = "time"
 private const val EXTRA_UUID = "uuid"
 private const val EXTRA_REFRESH_MESSAGES = "refreshMessages"
 
@@ -112,25 +110,6 @@ class MessagesService : JobIntentService() {
                     )
                 }
             }
-            ACTION_FETCH_MESSAGES_BY_TIME -> {
-                val location = intent.getIntExtra(EXTRA_MESSAGE_LOCATION, 0)
-                val extraTime = intent.getLongExtra(EXTRA_TIME, 0)
-                if (Constants.MessageLocationType.fromInt(location) in listOf(
-                        Constants.MessageLocationType.LABEL,
-                        Constants.MessageLocationType.LABEL_FOLDER
-                    )
-                ) {
-                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
-                    handleFetchMessagesByLabel(
-                        Constants.MessageLocationType.fromInt(location),
-                        extraTime,
-                        labelId,
-                        userId
-                    )
-                } else {
-                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), extraTime, userId)
-                }
-            }
             ACTION_FETCH_MESSAGE_LABELS -> handleFetchLabels()
             ACTION_FETCH_CONTACT_GROUPS_LABELS -> handleFetchContactGroups()
         }
@@ -144,11 +123,13 @@ class MessagesService : JobIntentService() {
         refreshMessages: Boolean
     ) {
         try {
-            val messages = mApi.messages(location.messageLocationTypeValue, UserIdTag(currentUserId))
-            if (messages?.code == Constants.RESPONSE_CODE_OK)
+            val messages = runBlocking {
+                mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = location.asLabelId()))
+            }
+            if (messages.code == Constants.RESPONSE_CODE_OK)
                 handleResult(messages, location, refreshDetails, uuid, currentUserId, refreshMessages)
             else {
-                val errorMessage = messages?.error ?: ""
+                val errorMessage = messages.error ?: ""
                 val event = MailboxLoadedEvent(Status.FAILED, uuid, errorMessage)
                 AppUtil.postEventOnUi(event)
                 mNetworkResults.setMailboxLoaded(event)
@@ -162,21 +143,6 @@ class MessagesService : JobIntentService() {
         }
     }
 
-    private fun handleFetchMessages(
-        location: Constants.MessageLocationType,
-        time: Long,
-        currentUserId: UserId
-    ) {
-        try {
-            val messages = mApi.fetchMessages(location.messageLocationTypeValue, time)
-            Timber.v("handleFetchMessages location: $location, time: $time")
-            handleResult(messages, location, false, null, currentUserId)
-        } catch (error: Exception) {
-            AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Timber.e(error, "Error while fetching messages")
-        }
-    }
-
     private fun handleFetchFirstLabelPage(
         location: Constants.MessageLocationType,
         labelId: String,
@@ -184,23 +150,10 @@ class MessagesService : JobIntentService() {
         refreshMessages: Boolean
     ) {
         try {
-            val messagesResponse = mApi.searchByLabelAndPageBlocking(labelId, 0)
+            val messagesResponse = runBlocking {
+                mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = labelId))
+            }
             handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
-        } catch (error: Exception) {
-            AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Timber.e(error, "Error while fetching messages")
-        }
-    }
-
-    private fun handleFetchMessagesByLabel(
-        location: Constants.MessageLocationType,
-        unixTime: Long,
-        labelId: String,
-        currentUserId: UserId
-    ) {
-        try {
-            val messages = mApi.searchByLabelAndTime(labelId, unixTime)
-            handleResult(messages, location, labelId, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
             Timber.e(error, "Error while fetching messages")
@@ -438,40 +391,6 @@ class MessagesService : JobIntentService() {
                 .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
                 .putExtra(EXTRA_LABEL_ID, labelId)
                 .putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-    }
-
-    class Scheduler @Inject constructor() {
-
-        fun fetchMessagesOlderThanTime(
-            location: Constants.MessageLocationType,
-            userId: UserId,
-            time: Long
-        ) {
-            Timber.v("fetchMessagesOlderThanTime location: $location, time: $time")
-            val context = ProtonMailApplication.getApplication()
-            val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_MESSAGES_BY_TIME
-            intent.putExtra(EXTRA_USER_ID, userId.id)
-            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-            intent.putExtra(EXTRA_TIME, time)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
-        fun fetchMessagesOlderThanTimeByLabel(
-            location: Constants.MessageLocationType,
-            userId: UserId,
-            time: Long,
-            labelId: String
-        ) {
-            val context = ProtonMailApplication.getApplication()
-            val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_MESSAGES_BY_TIME
-            intent.putExtra(EXTRA_USER_ID, userId.id)
-            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-            intent.putExtra(EXTRA_TIME, time)
-            intent.putExtra(EXTRA_LABEL_ID, labelId)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
     }

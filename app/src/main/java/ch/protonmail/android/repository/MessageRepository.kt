@@ -22,11 +22,13 @@ package ch.protonmail.android.repository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.NoProtonStoreMapper
+import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
@@ -36,19 +38,22 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
+import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
 const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
+const val NO_MORE_MESSAGES_ERROR_CODE = 235_894
 private const val FILE_PREFIX = "file://"
 
 /**
@@ -58,11 +63,31 @@ class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val databaseProvider: DatabaseProvider,
     private val protonMailApiManager: ProtonMailApiManager,
+    messagesResponseToMessagesMapper: MessagesResponseToMessagesMapper,
     private val messageBodyFileManager: MessageBodyFileManager,
     private val userManager: UserManager,
     private val jobManager: JobManager,
-    private val connectivityManager: NetworkConnectivityManager
+    connectivityManager: NetworkConnectivityManager
 ) {
+
+    private val allMessagesStore by lazy {
+        ProtonStore(
+            fetcher = protonMailApiManager::getMessages,
+            reader = ::observeAllMessagesFromDatabase,
+            writer = { params, messages -> saveMessages(params.userId, messages) },
+            createBookmarkKey = { currentKey, data -> data.createBookmarkParametersOr(currentKey) },
+            apiToDomainMapper = messagesResponseToMessagesMapper,
+            databaseToDomainMapper = NoProtonStoreMapper(),
+            apiToDatabaseMapper = messagesResponseToMessagesMapper,
+            connectivityManager = connectivityManager
+        )
+    }
+
+    fun observeMessages(
+        params: GetAllMessagesParameters,
+        refreshAtStart: Boolean = true
+    ): LoadMoreFlow<DataResult<List<Message>>> =
+        allMessagesStore.loadMoreFlow(params, refreshAtStart)
 
     fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {
         val messageDao = databaseProvider.provideMessageDao(userId)
@@ -103,7 +128,7 @@ class MessageRepository @Inject constructor(
      * if it exists there. Otherwise, fetches it.
      *
      * @param messageId A message id that should be used to get a message
-     * @param username Username for which the message is being retrieved. It is used to check whether the
+     * @param userId User id for which the message is being retrieved. It is used to check whether the
      *        auto-download-messages setting is turned on or not.
      * @param shouldFetchMessageDetails An optional parameter that should indicate whether message details
      *        should be fetched, even if the user settings say otherwise. Example: When a message is being open.
@@ -153,22 +178,6 @@ class MessageRepository @Inject constructor(
                     return@let saveMessage(userId, message)
                 }
             }.getOrNull()
-        }
-
-    private suspend fun saveMessage(userId: UserId, message: Message): Message =
-        withContext(dispatcherProvider.Io) {
-            message.apply {
-                messageBody = messageBody?.let {
-                    return@let if (it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
-                        messageBodyFileManager.saveMessageBodyToFile(this)
-                    } else {
-                        it
-                    }
-                }
-            }
-            val messageDao = databaseProvider.provideMessageDao(userId)
-            messageDao.saveMessage(message)
-            return@withContext message
         }
 
     fun moveToTrash(messageIds: List<String>, currentFolderLabelId: String) {
@@ -223,119 +232,63 @@ class MessageRepository @Inject constructor(
         jobManager.addJobInBackground(PostUnreadJob(messageIds))
     }
 
-    fun observeMessagesByLocation(
-        location: Constants.MessageLocationType,
-        userId: UserId
-    ): Flow<List<Message>> {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        return observeLocationDbDataFlow(location, messagesDao)
-            .onStart {
-                if (!connectivityManager.isInternetConnectionPossible()) {
-                    Timber.d("Skipping network refresh as connectivity is not available")
-                    return@onStart
-                }
+    private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {
+        val dao = databaseProvider.provideMessageDao(params.userId)
 
-                Timber.v("location: $location, trying fetching from remote")
-                runCatching { protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId)) }
-                    .fold(
-                        onSuccess = { messagesResponse ->
-                            if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                                persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
-                            }
-                        },
-                        onFailure = { exception ->
-                            val dbData = observeLocationDbDataFlow(location, messagesDao).first()
-                            emit(dbData)
-                            throw exception
-                        }
-                    )
+        // We threat Sent as a Label, since when we send a message to ourself it should be in both Sent and Inbox, but
+        //  it can have only one location, which is Inbox
+        fun sentAsLabelId() =
+            MessageLocationType.SENT.asLabelId()
+
+        fun starredAsLabelId() =
+            MessageLocationType.STARRED.asLabelId()
+
+        fun allMailAsLabelId() =
+            MessageLocationType.ALL_MAIL.asLabelId()
+
+        fun locationTypesAlLabelId() =
+            MessageLocationType.values().map { it.asLabelId() }
+
+        return if (params.keyword != null) {
+            dao.searchMessages(params.keyword)
+        } else {
+            when (requireNotNull(params.labelId) { "Label Id is required" }) {
+                sentAsLabelId() -> dao.observeMessagesByLabelId(params.labelId)
+                allMailAsLabelId() -> dao.observeAllMessages()
+                starredAsLabelId() -> dao.observeStarredMessages()
+                in locationTypesAlLabelId() -> dao.observeMessagesByLocation(params.labelId.toInt())
+                else -> dao.observeMessagesByLabelId(params.labelId)
             }
-    }
-
-    private fun observeLocationDbDataFlow(
-        location: Constants.MessageLocationType,
-        messagesDao: MessageDao
-    ) = if (location != Constants.MessageLocationType.STARRED) {
-        messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
-    } else {
-        messagesDao.observeStarredMessages()
-    }
-
-    fun observeMessagesByLabelId(
-        labelId: String,
-        userId: UserId
-    ): Flow<List<Message>> {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        return messagesDao.observeMessagesByLabelId(labelId)
-            .onStart {
-                if (!connectivityManager.isInternetConnectionPossible()) {
-                    Timber.d("Skipping network refresh as connectivity is not available")
-                    return@onStart
-                }
-
-                Timber.v("labelId: $labelId, trying fetching from remote")
-                runCatching { protonMailApiManager.searchByLabelAndPage(labelId, 0) }
-                    .fold(
-                        onSuccess = { labelsResponse ->
-                            if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
-                                persistMessages(labelsResponse.messages, userId)
-                            }
-                        },
-                        onFailure = { exception ->
-                            val dbData = messagesDao.observeMessagesByLabelId(labelId).first()
-                            emit(dbData)
-                            throw exception
-                        }
-                    )
-            }
-    }
-
-    fun observeAllMessages(
-        userId: UserId
-    ): Flow<List<Message>> {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        return messagesDao.observeAllMessages()
-            .onStart {
-                // only continue when we have connectivity available
-                if (!connectivityManager.isInternetConnectionPossible()) {
-                    Timber.d("Skipping network refresh as connectivity is not available")
-                    return@onStart
-                }
-
-                Timber.v("re-fetching messages all from remote")
-                runCatching {
-                    protonMailApiManager.getMessages(
-                        Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                        UserIdTag(userId)
-                    )
-                }
-                    .fold(
-                        onSuccess = { messagesResponse ->
-                            if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                                persistMessages(messagesResponse.messages, userId)
-                            }
-                        },
-                        onFailure = { exception ->
-                            val dbData = messagesDao.observeAllMessages().first()
-                            emit(dbData)
-                            throw exception
-                        }
-                    )
-            }
-    }
-
-    private suspend fun persistMessages(
-        messages: List<Message>,
-        userId: UserId,
-        messageLocationTypeValue: Int? = null
-    ) = withContext(dispatcherProvider.Io) {
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        messages.forEach { message ->
-            if (messageLocationTypeValue != null && messageLocationTypeValue > 0) {
-                message.location = messageLocationTypeValue
-            }
-            message.setFolderLocation(messagesDao)
         }
-        messagesDao.saveMessages(messages)
+    }
+
+    private suspend fun saveMessages(userId: UserId, messages: List<Message>) {
+        withContext(dispatcherProvider.Io) {
+            val messagesDao = databaseProvider.provideMessageDao(userId)
+            messages.forEach { message ->
+                message.saveBodyToFileIfNeeded()
+                message.setFolderLocation(messagesDao)
+            }
+            messagesDao.saveMessages(messages)
+        }
+    }
+
+    private suspend fun saveMessage(userId: UserId, message: Message): Message {
+        message.saveBodyToFileIfNeeded()
+        val messageDao = databaseProvider.provideMessageDao(userId)
+        messageDao.saveMessage(message)
+        return message
+    }
+
+    private suspend fun Message.saveBodyToFileIfNeeded() {
+        withContext(dispatcherProvider.Io) {
+            messageBody = messageBody?.let {
+                return@let if (it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
+                    messageBodyFileManager.saveMessageBodyToFile(this@saveBodyToFileIfNeeded)
+                } else {
+                    it
+                }
+            }
+        }
     }
 }

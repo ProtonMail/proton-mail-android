@@ -23,7 +23,6 @@ import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
@@ -42,19 +41,21 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.loadMoreFlowOf
+import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
-import ch.protonmail.android.mailbox.domain.GetConversations
-import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
+import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
@@ -80,7 +81,6 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.mockk.verifySequence
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -125,17 +125,14 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @RelaxedMockK
     private lateinit var networkConfigurator: NetworkConfigurator
 
-    @RelaxedMockK
-    private lateinit var messageServiceScheduler: MessagesService.Scheduler
-
     @MockK
     private lateinit var conversationModeEnabled: ConversationModeEnabled
 
     @RelaxedMockK
-    private lateinit var getConversations: GetConversations
+    private lateinit var observeConversationsByLocation: ObserveConversationsByLocation
 
     @RelaxedMockK
-    private lateinit var getMessagesByLocation: GetMessagesByLocation
+    private lateinit var observeMessagesByLocation: ObserveMessagesByLocation
 
     @RelaxedMockK
     private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
@@ -152,8 +149,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @RelaxedMockK
     private lateinit var deleteConversations: DeleteConversations
 
-    @RelaxedMockK
-    private lateinit var getMailSettings: GetMailSettings
+    private val getMailSettings: GetMailSettings = mockk(relaxed = true)
 
     private lateinit var viewModel: MailboxViewModel
 
@@ -174,28 +170,29 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(LABEL_FOLDER) } returns true // LABEL_FOLDER type to use with conversations
         every { conversationModeEnabled(ALL_MAIL) } returns true // ALL_MAIL type to use with conversations
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
-        coEvery { getConversations(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
-        coEvery { getMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
+        coEvery { observeMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
+            .withLoadMore(loadMoreFlowOf<GetMessagesResult>()) {}
+        every { observeConversationsByLocation(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
+            .withLoadMore(loadMoreFlowOf<GetConversationsResult>()) {}
         viewModel = MailboxViewModel(
-            messageDetailsRepository,
-            userManager,
-            jobManager,
-            deleteMessage,
-            dispatchers,
-            contactsRepository,
-            labelRepository,
-            verifyConnection,
-            networkConfigurator,
-            messageServiceScheduler,
-            conversationModeEnabled,
-            getConversations,
-            changeConversationsReadStatus,
-            changeConversationsStarredStatus,
-            getMessagesByLocation,
-            moveConversationsToFolder,
-            moveMessagesToFolder,
-            deleteConversations,
-            getMailSettings
+            messageDetailsRepository = messageDetailsRepository,
+            userManager = userManager,
+            jobManager = jobManager,
+            deleteMessage = deleteMessage,
+            dispatchers = dispatchers,
+            contactsRepository = contactsRepository,
+            labelRepository = labelRepository,
+            verifyConnection = verifyConnection,
+            networkConfigurator = networkConfigurator,
+            conversationModeEnabled = conversationModeEnabled,
+            observeMessagesByLocation = observeMessagesByLocation,
+            observeConversationsByLocation = observeConversationsByLocation,
+            changeConversationsReadStatus = changeConversationsReadStatus,
+            changeConversationsStarredStatus = changeConversationsStarredStatus,
+            moveConversationsToFolder = moveConversationsToFolder,
+            moveMessagesToFolder = moveMessagesToFolder,
+            deleteConversations = deleteConversations,
+            getMailSettings = getMailSettings
         )
 
         val jobEntryPoint = mockk<JobEntryPoint>()
@@ -228,7 +225,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     fun verifyBasicInitFlowWithEmptyMessages() = runBlockingTest {
         // Given
         val messages = emptyList<Message>()
-        val expected = MailboxState.Data()
+        val expected = MailboxState.Data(emptyList(), shouldResetPosition = true)
 
         // When
         viewModel.mailboxState.test {
@@ -298,7 +295,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         recipients = "",
                         isDraft = false
                     )
-                )
+                ),
+                shouldResetPosition = true
             )
 
             // When
@@ -356,7 +354,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     recipients = "",
                     isDraft = false
                 )
-            )
+            ),
+            shouldResetPosition = true
         )
 
         // When
@@ -410,7 +409,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         recipients = "",
                         isDraft = false
                     )
-                )
+                ),
+                shouldResetPosition = true
             )
 
             // When
@@ -464,7 +464,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         recipients = "",
                         isDraft = false
                     )
-                )
+                ),
+                shouldResetPosition = true
             )
             // When
             viewModel.mailboxState.test {
@@ -533,7 +534,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     ),
                     isDraft = false
                 )
-            )
+            ),
+            shouldResetPosition = true
         )
 
         // When
@@ -559,7 +561,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val expected = listOf(
                 fakeMailboxUiData("messageId9238482", "senderName", "subject1283")
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -573,80 +575,28 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun getMailboxItemsCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabelOrFolder() {
         val location = ARCHIVE
-        val labelId = "labelId92323"
-        val includeLabels = false
-        val uuid = "9238423bbe2h3283742h3hh2bjsd"
-        val refreshMessages = true
         // Represents pagination. Only messages older than the given timestamp will be returned
-        val timestamp = 123L
         val userId = UserId("userId")
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns false
 
         viewModel.setNewMailboxLocation(location)
-        viewModel.loadMailboxItems(
-            labelId,
-            includeLabels,
-            uuid,
-            refreshMessages,
-            timestamp
-        )
+        viewModel.loadMore()
 
-        verifySequence { messageServiceScheduler.fetchMessagesOlderThanTime(location, userId, timestamp) }
         verify(exactly = 0) { jobManager.addJobInBackground(any()) }
     }
 
     @Test
     fun getMailboxItemsCallsMessageServiceStartFetchMessagesByLabelWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsALabelOrFolder() {
         val location = LABEL_FOLDER
-        val labelId = "folderIdi2384"
-        val includeLabels = false
-        val uuid = "9238h82388sdfa8sdf8asd3hh2bjsd"
-        val refreshMessages = false
-        // Represents pagination. Only messages older than the given timestamp will be returned
-        val oldestMessageTimestamp = 1323L
         val userId = UserId("userId1")
         every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns false
 
         viewModel.setNewMailboxLocation(location)
-        viewModel.loadMailboxItems(
-            labelId,
-            includeLabels,
-            uuid,
-            refreshMessages,
-            oldestMessageTimestamp
-        )
+        viewModel.loadMore()
 
-        verifySequence {
-            messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(
-                location, userId, oldestMessageTimestamp, labelId
-            )
-        }
         verify(exactly = 0) { messageDetailsRepository.reloadDependenciesForUser(userId) }
-    }
-
-    @Test
-    fun getMailboxItemsCallsGetConversationsWithTheCorrectLocationIdWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirst() {
-        val location = LABEL
-        val labelId = "customLabelIdi2386"
-        val uuid = "9238h82388sdfa8sdf8asd3234"
-        // Represents pagination. Only messages older than the given timestamp will be returned
-        val oldestMessageTimestamp = 1323L
-        val userId = UserId("userId1")
-        every { userManager.currentUserId } returns userId
-        every { conversationModeEnabled(location) } returns true
-
-        viewModel.setNewMailboxLocation(location)
-        viewModel.loadMailboxItems(
-            labelId,
-            false,
-            uuid,
-            false,
-            oldestMessageTimestamp
-        )
-
-        verify { getConversations.loadMore(userId, labelId, oldestMessageTimestamp) }
     }
 
     @Test
@@ -681,7 +631,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     hasAttachments = true,
                     isStarred = false,
                     isRead = true,
-                    expirationTime = 823764623,
+                    expirationTime = 823_764_623,
                     messagesCount = 4,
                     messageData = null,
                     isDeleted = false,
@@ -690,7 +640,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expectedItems, false)
+            val expectedState = MailboxState.Data(expectedItems, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -750,7 +700,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -805,7 +755,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -856,7 +806,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -915,7 +865,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -972,7 +922,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -1029,7 +979,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     true
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -1086,7 +1036,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
 
             // When
             viewModel.mailboxState.test {
@@ -1143,7 +1093,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                         recipients = "",
                         isDraft = true
                     )
-                )
+                ),
+                shouldResetPosition = true
             )
             // When
             viewModel.mailboxState.test {

@@ -210,6 +210,7 @@ internal class MailboxActivity :
             setNewLabel(value ?: EMPTY_STRING)
         }
     private var mailboxLabelName: String? = null
+    private var lastFetchedMailboxItemsIds = emptyList<String>()
     private var refreshMailboxJobRunning = false
     private lateinit var syncUUID: String
     private var customizeSwipeSnackShown = false
@@ -218,7 +219,6 @@ internal class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
-
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -567,15 +567,22 @@ internal class MailboxActivity :
 
         when (state) {
             is MailboxState.Loading -> setRefreshing(true)
-            is MailboxState.Data -> {
+            is MailboxState.NoMoreItems -> {
+                if (isLoadingMore.get()) setLoadingMore(false)
+            }
+            is MailboxState.DataRefresh -> {
+                lastFetchedMailboxItemsIds = state.lastFetchedItemsIds
                 setRefreshing(false)
+            }
+            is MailboxState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
                 include_mailbox_error.isVisible = false
                 include_mailbox_no_messages.isVisible = state.items.isEmpty()
                 mailboxRecyclerView.isVisible != state.items.isEmpty()
 
-                mailboxAdapter.clear()
-                mailboxAdapter.addAll(state.items)
+                mailboxAdapter.submitList(state.items) {
+                    if (state.shouldResetPosition) mailboxRecyclerView.scrollToPosition(0)
+                }
             }
             is MailboxState.Error -> {
                 setRefreshing(false)
@@ -584,10 +591,7 @@ internal class MailboxActivity :
 
                 if (mailboxAdapter.itemCount > 0) {
                     include_mailbox_error.isVisible = false
-                    Toast.makeText(
-                        this, getString(R.string.inbox_could_not_retrieve_messages), Toast.LENGTH_LONG
-                    )
-                        .show()
+                    if (state.isOffline.not()) showToast(R.string.inbox_could_not_retrieve_messages)
                 } else {
                     include_mailbox_error.isVisible = true
                 }
@@ -605,17 +609,29 @@ internal class MailboxActivity :
             if (!scrollStateChanged) {
                 return
             }
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager?
-            val adapter = recyclerView.adapter
-            val lastVisibleItem = layoutManager!!.findLastVisibleItemPosition()
-            val lastPosition = adapter!!.itemCount - 1
-            if (lastVisibleItem == lastPosition && dy > 0 && !setLoadingMore(true)) {
-                loadMailboxItems(oldestItemTimestamp = mailboxAdapter.getOldestMailboxItemTimestamp())
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+
+            val firstCompletelyVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+
+            // Load more when showing last fetched messages or at the end of the list
+            if (dy > 0 && isLoadingMore.get().not()) {
+                val lastCompletelyVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                val isAtBottomOfTheList = lastCompletelyVisibleItemPosition == mailboxAdapter.itemCount - 1
+                fun inAnyLastFetchedMailboxItemVisible() =
+                    mailboxAdapter.isAnyMailboxItemWithinPositions(
+                        mailboxItemsIds = lastFetchedMailboxItemsIds,
+                        startPosition = firstCompletelyVisibleItemPosition,
+                        endPosition = lastCompletelyVisibleItemPosition
+                    )
+                if (isAtBottomOfTheList || inAnyLastFetchedMailboxItemVisible()) {
+                    setLoadingMore(true)
+                    mailboxViewModel.loadMore()
+                    lastFetchedMailboxItemsIds = emptyList()
+                }
             }
 
             // Increase the elevation if the list is scrolled down and decrease if it is scrolled to the top
-            val firstVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition()
-            if (firstVisibleItem == 0) {
+            if (firstCompletelyVisibleItemPosition == 0) {
                 setElevationOnToolbarAndStatusView(false)
             } else {
                 setElevationOnToolbarAndStatusView(true)
@@ -623,20 +639,8 @@ internal class MailboxActivity :
         }
     }
 
-    private fun loadMailboxItems(
-        includeLabels: Boolean = false,
-        refreshMessages: Boolean = false,
-        oldestItemTimestamp: Long = now()
-    ) {
-
-        Timber.v("loadMailboxItems last: $oldestItemTimestamp")
-        mailboxViewModel.loadMailboxItems(
-            mailboxLabelId,
-            includeLabels,
-            syncUUID,
-            refreshMessages,
-            oldestItemTimestamp
-        )
+    private fun loadMailboxItems() {
+        mailboxViewModel.loadMore()
     }
 
     private fun setElevationOnToolbarAndStatusView(shouldIncreaseElevation: Boolean) {
@@ -662,7 +666,7 @@ internal class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
             delay(3.toDuration(TimeUnit.SECONDS))
-            loadMailboxItems(includeLabels = true)
+            mailboxViewModel.loadMore()
         }
         mailboxViewModel.checkConnectivityDelayed()
     }
@@ -710,6 +714,7 @@ internal class MailboxActivity :
             firstLogin = false
             refreshMailboxJobRunning = true
             app.updateDone()
+            // TODO: remove?
             loadMailboxItems()
             true
         }
@@ -866,15 +871,12 @@ internal class MailboxActivity :
     }
 
     private fun setRefreshing(shouldRefresh: Boolean) {
-        Timber.v("setRefreshing shouldRefresh:$shouldRefresh")
+        Timber.v("setRefreshing shouldRefresh: $shouldRefresh")
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
 
-    private fun setLoadingMore(loadingMore: Boolean): Boolean {
-        val previousValue = isLoadingMore.getAndSet(loadingMore)
-        mailboxRecyclerView.post { mailboxAdapter.includeFooter = isLoadingMore.get() }
-        return previousValue
-    }
+    private fun setLoadingMore(loadingMore: Boolean): Boolean =
+        isLoadingMore.getAndSet(loadingMore)
 
     override fun onInbox(type: DrawerOptionType) {
         AppUtil.clearNotifications(applicationContext, userManager.requireCurrentUserId())
@@ -1514,7 +1516,7 @@ internal class MailboxActivity :
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
-            val mailboxItem = mailboxAdapter.getItem(position)
+            val mailboxItem = mailboxAdapter.getMailboxItem(position)
             val messageSwiped = SimpleMessage(mailboxItem)
             val mailboxLocation = currentMailboxLocation
             val settings = mailSettings ?: return

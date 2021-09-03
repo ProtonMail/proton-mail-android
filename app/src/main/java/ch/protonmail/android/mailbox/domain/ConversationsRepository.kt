@@ -20,24 +20,22 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
-import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.domain.model.Conversation
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 
 interface ConversationsRepository {
 
-    /**
-     * @param params a model representing the params needed to define which conversations to get
-     *
-     * @return a List<Conversation> when the repository could successfully get conversations from some data source.
-     * @return an empty optional when the repository encounters a handled failure getting conversations
-     * @throws exception when the repository fails getting conversations for any unhandled reasons
-     */
-    fun getConversations(params: GetConversationsParameters): Flow<DataResult<List<Conversation>>>
+    fun observeConversations(
+        params: GetAllConversationsParameters,
+        refreshAtStart: Boolean = true
+    ): LoadMoreFlow<DataResult<List<Conversation>>>
 
     /**
      * @param conversationId the encrypted id of the conversation to get
@@ -48,7 +46,7 @@ interface ConversationsRepository {
      * @return an empty optional when the repository encounters a handled failure getting the given conversation
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
-    fun getConversation(conversationId: String, userId: UserId): Flow<DataResult<Conversation>>
+    fun getConversation(userId: UserId, conversationId: String): Flow<DataResult<Conversation>>
 
     /**
      * @param conversationId the encrypted id of the conversation to find
@@ -62,11 +60,20 @@ interface ConversationsRepository {
     suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel?
 
     /**
-     * @param conversations a list representing the conversations we want to save to the local data source
-     *
-     * @throws exception when the repository fails to insert conversations for any unhandled reasons into local storage
+     * @throws Exception when the repository fails to insert conversations for any unhandled reasons into local storage
      */
-    suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: UserId)
+    suspend fun saveConversationsDatabaseModels(
+        userId: UserId,
+        conversations: List<ConversationDatabaseModel>
+    )
+
+    /**
+     * @throws Exception when the repository fails to insert conversations for any unhandled reasons into local storage
+     */
+    suspend fun saveConversationsApiModels(
+        userId: UserId,
+        conversations: List<ConversationApiModel>
+    )
 
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage
@@ -77,8 +84,6 @@ interface ConversationsRepository {
      * Deletes a list of conversations from the [TABLE_CONVERSATIONS] inside the local storage
      */
     suspend fun deleteConversations(conversationIds: List<String>, userId: UserId)
-
-    fun loadMore(params: GetConversationsParameters)
 
     suspend fun markRead(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 

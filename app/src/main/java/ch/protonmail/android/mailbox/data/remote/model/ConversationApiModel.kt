@@ -54,7 +54,10 @@ data class ConversationApiModel(
     val size: Long,
 
     @SerializedName(LABELS)
-    val labels: List<LabelContextApiModel>
+    val labels: List<LabelContextApiModel>,
+
+    @SerializedName(CONTEXT_TIME)
+    val contextTime: Long
 ) {
     companion object {
 
@@ -69,5 +72,6 @@ data class ConversationApiModel(
         private const val EXPIRATION_TIME = "ExpirationTime"
         private const val SIZE = "Size"
         private const val LABELS = "Labels"
+        private const val CONTEXT_TIME = "ContextTime"
     }
 }

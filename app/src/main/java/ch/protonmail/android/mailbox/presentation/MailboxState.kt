@@ -23,14 +23,28 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 sealed class MailboxState {
+
     object Loading : MailboxState()
+
+    /**
+     * Emitted when we fetched all the messages from server
+     */
+    object NoMoreItems : MailboxState()
+
     data class Error(
         val error: String = EMPTY_STRING,
-        val throwable: Throwable?
+        val throwable: Throwable? = null,
+        val isOffline: Boolean = false
     ) : MailboxState()
 
+    /**
+     * @property shouldResetPosition if `true` the list should be scrolled to its top, for example if the location has
+     *  changed
+     */
     data class Data(
-        val items: List<MailboxUiItem> = emptyList(),
-        val noMoreItems: Boolean = false
+        val items: List<MailboxUiItem>,
+        val shouldResetPosition: Boolean = false
     ) : MailboxState()
+
+    data class DataRefresh(val lastFetchedItemsIds: List<String>) : MailboxState()
 }

@@ -38,7 +38,6 @@
 object Module {
     // Layers
     const val domain = ":domain"
-    const val credentials = ":credentials"
 
     // Libs
     const val tokenAutoComplete = ":tokenAutoComplete:tokenAutoComplete-lib"

@@ -33,17 +33,22 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Tag
 
+@Suppress("LongParameterList")
 interface ConversationService {
 
     @GET("mail/v4/conversations")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     suspend fun fetchConversations(
-        @Query("End") end: Long?,
+        @Tag userIdTag: UserIdTag,
+        @Query("Page") page: Int?,
         @Query("PageSize") pageSize: Int?,
         @Query("LabelID") labelId: String?,
-        @Query("Sort") sort: String = "Time",
-        @Query("Desc") desc: Int = 1,
-        @Tag userIdTag: UserIdTag? = null
+        @Query("Sort") sort: String?,
+        @Query("Desc") desc: Int?,
+        @Query("Begin") begin: Long?,
+        @Query("End") end: Long?,
+        @Query("BeginID") beginId: String?,
+        @Query("EndID") endId: String?,
     ): ConversationsResponse
 
     @GET("mail/v4/conversations/{conversationId}")

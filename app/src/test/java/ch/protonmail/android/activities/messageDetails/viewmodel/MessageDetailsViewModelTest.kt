@@ -41,8 +41,8 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_LOCATION_ID
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.details.presentation.model.MessageBodyState
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -433,7 +433,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         viewModel.conversationUiModel.test {
             userIdFlow.emit(testUserId2)
             // Then
-            coVerify { conversationRepository.getConversation(INPUT_ITEM_DETAIL_ID, testId2) }
+            coVerify { conversationRepository.getConversation(testId2, INPUT_ITEM_DETAIL_ID) }
             observeConversationFlow.emit(testConversationResult)
             coVerify { contactsRepository.findContactEmailByEmail(any()) }
             val actualItem = expectItem()
