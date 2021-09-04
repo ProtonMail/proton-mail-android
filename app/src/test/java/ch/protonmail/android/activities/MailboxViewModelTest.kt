@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.activities
 
+import androidx.lifecycle.liveData
 import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
@@ -38,6 +39,8 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
@@ -70,12 +73,11 @@ import ch.protonmail.android.utils.MessageUtils.toContactsAndGroupsString
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.EntryPoints
 import io.mockk.Called
-import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
@@ -101,55 +103,49 @@ private const val DRAFT_LABEL_ID = "8"
 
 class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
-    @RelaxedMockK
-    private lateinit var contactsRepository: ContactsRepository
+    private val testUserId = UserId("8237462347237428")
 
-    @RelaxedMockK
-    private lateinit var messageDetailsRepository: MessageDetailsRepository
+    private val contactsRepository: ContactsRepository = mockk()
 
-    @MockK
-    private lateinit var labelRepository: LabelRepository
+    @Suppress("RemoveExplicitTypeArguments") // Explicit arguments are required for lists. IDE bug?
+    private val messageDetailsRepository: MessageDetailsRepository = mockk {
+        every { findAllPendingSendsAsync() } returns liveData { emit(emptyList<PendingSend>()) }
+        every { findAllPendingUploadsAsync() } returns liveData { emit(emptyList<PendingUpload>()) }
+    }
 
-    @MockK
-    private lateinit var userManager: UserManager
+    private val labelRepository: LabelRepository = mockk()
 
-    @RelaxedMockK
-    private lateinit var jobManager: JobManager
+    private val userManager: UserManager = mockk {
+        every { currentUserId } returns testUserId
+    }
 
-    @RelaxedMockK
-    private lateinit var deleteMessage: DeleteMessage
+    private val jobManager: JobManager = mockk {
+        every { addJobInBackground(any()) } just Runs
+    }
 
-    @MockK
-    private lateinit var verifyConnection: VerifyConnection
+    private val deleteMessage: DeleteMessage = mockk()
 
-    @RelaxedMockK
-    private lateinit var networkConfigurator: NetworkConfigurator
+    private val verifyConnection: VerifyConnection = mockk()
 
-    @MockK
-    private lateinit var conversationModeEnabled: ConversationModeEnabled
+    private val networkConfigurator: NetworkConfigurator = mockk()
 
-    @RelaxedMockK
-    private lateinit var observeConversationsByLocation: ObserveConversationsByLocation
+    private val conversationModeEnabled: ConversationModeEnabled = mockk()
 
-    @RelaxedMockK
-    private lateinit var observeMessagesByLocation: ObserveMessagesByLocation
+    private val observeConversationsByLocation: ObserveConversationsByLocation = mockk()
 
-    @RelaxedMockK
-    private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
+    private val observeMessagesByLocation: ObserveMessagesByLocation = mockk()
 
-    @RelaxedMockK
-    private lateinit var changeConversationsStarredStatus: ChangeConversationsStarredStatus
+    private val changeConversationsReadStatus: ChangeConversationsReadStatus = mockk()
 
-    @RelaxedMockK
-    private lateinit var moveConversationsToFolder: MoveConversationsToFolder
+    private val changeConversationsStarredStatus: ChangeConversationsStarredStatus = mockk()
 
-    @RelaxedMockK
-    private lateinit var moveMessagesToFolder: MoveMessagesToFolder
+    private val moveConversationsToFolder: MoveConversationsToFolder = mockk()
 
-    @RelaxedMockK
-    private lateinit var deleteConversations: DeleteConversations
+    private val moveMessagesToFolder: MoveMessagesToFolder = mockk()
 
-    private val getMailSettings: GetMailSettings = mockk(relaxed = true)
+    private val deleteConversations: DeleteConversations = mockk()
+
+    private val getMailSettings: GetMailSettings = mockk()
 
     private lateinit var viewModel: MailboxViewModel
 
@@ -157,13 +153,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val messagesResponseChannel = Channel<GetMessagesResult>()
     private val conversationsResponseFlow = Channel<GetConversationsResult>()
 
-    private val currentUserId = UserId("8237462347237428")
-
     @BeforeTest
     fun setUp() {
-        MockKAnnotations.init(this)
-        val userId = UserId("testUserId1")
-        every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(INBOX) } returns false // INBOX type to use with messages
         every { conversationModeEnabled(ARCHIVE) } returns true // ARCHIVE type to use with conversations
         every { conversationModeEnabled(LABEL) } returns true // LABEL type to use with conversations
@@ -174,6 +165,25 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             .withLoadMore(loadMoreFlowOf<GetMessagesResult>()) {}
         every { observeConversationsByLocation(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
             .withLoadMore(loadMoreFlowOf<GetConversationsResult>()) {}
+
+        val jobEntryPoint = mockk<JobEntryPoint>()
+        mockkStatic(EntryPoints::class)
+
+        every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
+        every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
+
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+        coEvery { contactsRepository.findContactsByEmail(any()) } returns flowOf(emptyList())
+
+        val allLabels = (0..11).map {
+            Label(id = "$it", name = "label $it", color = EMPTY_STRING)
+        }
+        every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
+        every { labelRepository.findLabels(any(), any()) } answers {
+            val labelIds = arg<List<LabelId>>(1)
+            flowOf(allLabels.filter { label -> LabelId(label.id) in labelIds })
+        }
+
         viewModel = MailboxViewModel(
             messageDetailsRepository = messageDetailsRepository,
             userManager = userManager,
@@ -194,26 +204,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             deleteConversations = deleteConversations,
             getMailSettings = getMailSettings
         )
-
-        val jobEntryPoint = mockk<JobEntryPoint>()
-        mockkStatic(EntryPoints::class)
-
-        every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
-        every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
-
-        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
-        coEvery { contactsRepository.findContactsByEmail(any()) } returns flowOf(emptyList())
-
-        val allLabels = (0..11).map {
-            Label(id = "$it", name = "label $it", color = EMPTY_STRING)
-        }
-        every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
-        every { labelRepository.findLabels(any(), any()) } answers {
-            val labelIds = arg<List<LabelId>>(1)
-            flowOf(allLabels.filter { label -> LabelId(label.id) in labelIds })
-        }
-
-        every { userManager.currentUserId } returns currentUserId
     }
 
     @After
@@ -225,7 +215,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     fun verifyBasicInitFlowWithEmptyMessages() = runBlockingTest {
         // Given
         val messages = emptyList<Message>()
-        val expected = MailboxState.Data(emptyList(), shouldResetPosition = true)
+        val expected = emptyList<MailboxUiItem>().toMailboxState()
 
         // When
         viewModel.mailboxState.test {
@@ -271,33 +261,28 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 every { toContactsAndGroupsString(recipients) } returns "recipientName"
             }
 
-            val expected = MailboxState.Data(
-                listOf(
-                    MailboxUiItem(
-                        itemId = "messageId",
-                        senderName = "senderName9238",
-                        subject = "subject",
-                        lastMessageTimeMs = 0,
-                        hasAttachments = false,
-                        isStarred = false,
-                        isRead = true,
-                        expirationTime = 0,
-                        messagesCount = null,
-                        messageData = MessageData(
-                            location = INVALID.messageLocationTypeValue,
-                            isReplied = false,
-                            isRepliedAll = false,
-                            isForwarded = false,
-                            isInline = false
-                        ),
-                        isDeleted = false,
-                        labels = emptyList(),
-                        recipients = "",
-                        isDraft = false
-                    )
+            val expected = MailboxUiItem(
+                itemId = "messageId",
+                senderName = "senderName9238",
+                subject = "subject",
+                lastMessageTimeMs = 0,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = true,
+                expirationTime = 0,
+                messagesCount = null,
+                messageData = MessageData(
+                    location = INVALID.messageLocationTypeValue,
+                    isReplied = false,
+                    isRepliedAll = false,
+                    isForwarded = false,
+                    isInline = false
                 ),
-                shouldResetPosition = true
-            )
+                isDeleted = false,
+                labels = emptyList(),
+                recipients = "",
+                isDraft = false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
@@ -330,33 +315,28 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             every { toContactsAndGroupsString(recipients) } returns "recipientName"
         }
         every { conversationModeEnabled(any()) } returns false
-        val expected = MailboxState.Data(
-            listOf(
-                MailboxUiItem(
-                    itemId = "messageId",
-                    senderName = contactName,
-                    subject = "subject",
-                    lastMessageTimeMs = 0,
-                    hasAttachments = false,
-                    isStarred = false,
-                    isRead = true,
-                    expirationTime = 0,
-                    messagesCount = null,
-                    messageData = MessageData(
-                        location = INVALID.messageLocationTypeValue,
-                        isReplied = false,
-                        isRepliedAll = false,
-                        isForwarded = false,
-                        isInline = false
-                    ),
-                    isDeleted = false,
-                    labels = emptyList(),
-                    recipients = "",
-                    isDraft = false
-                )
+        val expected = MailboxUiItem(
+            itemId = "messageId",
+            senderName = contactName,
+            subject = "subject",
+            lastMessageTimeMs = 0,
+            hasAttachments = false,
+            isStarred = false,
+            isRead = true,
+            expirationTime = 0,
+            messagesCount = null,
+            messageData = MessageData(
+                location = INVALID.messageLocationTypeValue,
+                isReplied = false,
+                isRepliedAll = false,
+                isForwarded = false,
+                isInline = false
             ),
-            shouldResetPosition = true
-        )
+            isDeleted = false,
+            labels = emptyList(),
+            recipients = "",
+            isDraft = false
+        ).toMailboxState()
 
         // When
         viewModel.mailboxState.test {
@@ -385,33 +365,28 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             }
             every { conversationModeEnabled(any()) } returns false
 
-            val expected = MailboxState.Data(
-                listOf(
-                    MailboxUiItem(
-                        itemId = "messageId",
-                        senderName = "anySenderEmail@protonmail.ch",
-                        subject = "subject",
-                        lastMessageTimeMs = 0,
-                        hasAttachments = false,
-                        isStarred = false,
-                        isRead = true,
-                        expirationTime = 0,
-                        messagesCount = null,
-                        messageData = MessageData(
-                            location = INVALID.messageLocationTypeValue,
-                            isReplied = false,
-                            isRepliedAll = false,
-                            isForwarded = false,
-                            isInline = false
-                        ),
-                        isDeleted = false,
-                        labels = emptyList(),
-                        recipients = "",
-                        isDraft = false
-                    )
+            val expected = MailboxUiItem(
+                itemId = "messageId",
+                senderName = "anySenderEmail@protonmail.ch",
+                subject = "subject",
+                lastMessageTimeMs = 0,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = true,
+                expirationTime = 0,
+                messagesCount = null,
+                messageData = MessageData(
+                    location = INVALID.messageLocationTypeValue,
+                    isReplied = false,
+                    isRepliedAll = false,
+                    isForwarded = false,
+                    isInline = false
                 ),
-                shouldResetPosition = true
-            )
+                isDeleted = false,
+                labels = emptyList(),
+                recipients = "",
+                isDraft = false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
@@ -440,33 +415,28 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             every { conversationModeEnabled(any()) } returns false
 
             // Then
-            val expected = MailboxState.Data(
-                listOf(
-                    MailboxUiItem(
-                        itemId = "messageId",
-                        senderName = "anySenderEmail8437@protonmail.ch",
-                        subject = "subject",
-                        lastMessageTimeMs = 0,
-                        hasAttachments = false,
-                        isStarred = false,
-                        isRead = true,
-                        expirationTime = 0,
-                        messagesCount = null,
-                        messageData = MessageData(
-                            location = INVALID.messageLocationTypeValue,
-                            isReplied = false,
-                            isRepliedAll = false,
-                            isForwarded = false,
-                            isInline = false
-                        ),
-                        isDeleted = false,
-                        labels = emptyList(),
-                        recipients = "",
-                        isDraft = false
-                    )
+            val expected = MailboxUiItem(
+                itemId = "messageId",
+                senderName = "anySenderEmail8437@protonmail.ch",
+                subject = "subject",
+                lastMessageTimeMs = 0,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = true,
+                expirationTime = 0,
+                messagesCount = null,
+                messageData = MessageData(
+                    location = INVALID.messageLocationTypeValue,
+                    isReplied = false,
+                    isRepliedAll = false,
+                    isForwarded = false,
+                    isInline = false
                 ),
-                shouldResetPosition = true
-            )
+                isDeleted = false,
+                labels = emptyList(),
+                recipients = "",
+                isDraft = false
+            ).toMailboxState()
             // When
             viewModel.mailboxState.test {
                 // Then
@@ -505,38 +475,33 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         }
         every { conversationModeEnabled(any()) } returns false
 
-        val expected = MailboxState.Data(
-            listOf(
-                MailboxUiItem(
-                    itemId = "messageId",
-                    senderName = "senderName",
-                    subject = "subject",
-                    lastMessageTimeMs = 1617205075000, // Wednesday, March 31, 2021 5:37:55 PM GMT+02:00 in millis
-                    hasAttachments = true,
-                    isStarred = true,
-                    isRead = false,
-                    expirationTime = 82334L,
-                    messagesCount = null,
-                    messageData = MessageData(
-                        location = SENT.messageLocationTypeValue,
-                        isReplied = true,
-                        isRepliedAll = false,
-                        isForwarded = false,
-                        isInline = false
-                    ),
-                    isDeleted = false,
-                    labels = listOf(
-                        LabelChipUiModel(LabelId("0"), Name("label 0"), null),
-                        LabelChipUiModel(LabelId("2"), Name("label 2"), null)
-                    ),
-                    recipients = toContactsAndGroupsString(
-                        recipients
-                    ),
-                    isDraft = false
-                )
+        val expected = MailboxUiItem(
+            itemId = "messageId",
+            senderName = "senderName",
+            subject = "subject",
+            lastMessageTimeMs = 1617205075000, // Wednesday, March 31, 2021 5:37:55 PM GMT+02:00 in millis
+            hasAttachments = true,
+            isStarred = true,
+            isRead = false,
+            expirationTime = 82334L,
+            messagesCount = null,
+            messageData = MessageData(
+                location = SENT.messageLocationTypeValue,
+                isReplied = true,
+                isRepliedAll = false,
+                isForwarded = false,
+                isInline = false
             ),
-            shouldResetPosition = true
-        )
+            isDeleted = false,
+            labels = listOf(
+                LabelChipUiModel(LabelId("0"), Name("label 0"), null),
+                LabelChipUiModel(LabelId("2"), Name("label 2"), null)
+            ),
+            recipients = toContactsAndGroupsString(
+                recipients
+            ),
+            isDraft = false
+        ).toMailboxState()
 
         // When
         viewModel.mailboxState.test {
@@ -561,7 +526,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val expected = listOf(
                 fakeMailboxUiData("messageId9238482", "senderName", "subject1283")
             )
-            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
+            val expectedState = expected.toMailboxState()
 
             // When
             viewModel.mailboxState.test {
@@ -622,32 +587,29 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             viewModel.setNewMailboxLocation(location)
             val successResult = GetConversationsResult.Success(listOf(conversation))
 
-            val expectedItems = listOf(
-                MailboxUiItem(
-                    "conversationId124",
-                    "firstSender",
-                    "subject2345",
-                    lastMessageTimeMs = 0,
-                    hasAttachments = true,
-                    isStarred = false,
-                    isRead = true,
-                    expirationTime = 823_764_623,
-                    messagesCount = 4,
-                    messageData = null,
-                    isDeleted = false,
-                    labels = emptyList(),
-                    recipients = "",
-                    isDraft = false
-                )
-            )
-            val expectedState = MailboxState.Data(expectedItems, shouldResetPosition = true)
+            val expected = MailboxUiItem(
+                "conversationId124",
+                "firstSender",
+                "subject2345",
+                lastMessageTimeMs = 0,
+                hasAttachments = true,
+                isStarred = false,
+                isRead = true,
+                expirationTime = 823_764_623,
+                messagesCount = 4,
+                messageData = null,
+                isDeleted = false,
+                labels = emptyList(),
+                recipients = "",
+                isDraft = false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expectedState, expectItem())
+                assertEquals(expected, expectItem())
             }
         }
 
@@ -682,32 +644,29 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             viewModel.setNewMailboxLocation(location)
 
-            val expected = listOf(
-                MailboxUiItem(
-                    "conversationId",
-                    "firstContactName, secondSender, thirdsender@pm.me",
-                    "subject",
-                    lastMessageTimeMs = 0,
-                    hasAttachments = true,
-                    isStarred = false,
-                    isRead = false,
-                    expirationTime = 123423423,
-                    messagesCount = 2,
-                    messageData = null,
-                    isDeleted = false,
-                    labels = emptyList(),
-                    recipients = "recipient, recipient1",
-                    isDraft = false
-                )
-            )
-            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
+            val expected = MailboxUiItem(
+                "conversationId",
+                "firstContactName, secondSender, thirdsender@pm.me",
+                "subject",
+                lastMessageTimeMs = 0,
+                hasAttachments = true,
+                isStarred = false,
+                isRead = false,
+                expirationTime = 123423423,
+                messagesCount = 2,
+                messageData = null,
+                isDeleted = false,
+                labels = emptyList(),
+                recipients = "recipient, recipient1",
+                isDraft = false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expectedState, expectItem())
+                assertEquals(expected, expectItem())
             }
         }
 
@@ -737,32 +696,29 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             viewModel.setNewMailboxLocation(location)
 
-            val expected = listOf(
-                MailboxUiItem(
-                    "conversationId9238",
-                    "",
-                    "subject9237472",
-                    lastMessageTimeMs = 0,
-                    hasAttachments = false,
-                    isStarred = true,
-                    isRead = false,
-                    expirationTime = 0,
-                    messagesCount = 2,
-                    messageData = null,
-                    isDeleted = false,
-                    labels = listOf(LabelChipUiModel(LabelId("10"), Name("label 10"), null)),
-                    recipients = "",
-                    isDraft = false
-                )
-            )
-            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
+            val expected = MailboxUiItem(
+                "conversationId9238",
+                "",
+                "subject9237472",
+                lastMessageTimeMs = 0,
+                hasAttachments = false,
+                isStarred = true,
+                isRead = false,
+                expirationTime = 0,
+                messagesCount = 2,
+                messageData = null,
+                isDeleted = false,
+                labels = listOf(LabelChipUiModel(LabelId("10"), Name("label 10"), null)),
+                recipients = "",
+                isDraft = false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expectedState, expectItem())
+                assertEquals(expected, expectItem())
             }
         }
 
@@ -788,32 +744,29 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             viewModel.setNewMailboxLocation(location)
 
-            val expected = listOf(
-                MailboxUiItem(
-                    "conversationId9239",
-                    "",
-                    "subject9237473",
-                    lastMessageTimeMs = 0,
-                    hasAttachments = false,
-                    isStarred = false,
-                    isRead = false,
-                    expirationTime = 0,
-                    messagesCount = null,
-                    messageData = null,
-                    isDeleted = false,
-                    labels = emptyList(),
-                    recipients = "",
-                    isDraft = false
-                )
-            )
-            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
+            val expected = MailboxUiItem(
+                "conversationId9239",
+                "",
+                "subject9237473",
+                lastMessageTimeMs = 0,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = false,
+                expirationTime = 0,
+                messagesCount = null,
+                messageData = null,
+                isDeleted = false,
+                labels = emptyList(),
+                recipients = "",
+                isDraft = false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expectedState, expectItem())
+                assertEquals(expected, expectItem())
             }
         }
 
@@ -844,35 +797,32 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             viewModel.setNewMailboxLocation(location)
 
-            val expected = listOf(
-                MailboxUiItem(
-                    "conversationId9240",
-                    "",
-                    "subject9237474",
-                    lastMessageTimeMs = 1617982194000,
-                    hasAttachments = false,
-                    isStarred = false,
-                    isRead = false,
-                    expirationTime = 0,
-                    messagesCount = 2,
-                    messageData = null,
-                    isDeleted = false,
-                    labels = listOf(
-                        LabelChipUiModel(LabelId("0"), Name("label 0"), null),
-                        LabelChipUiModel(LabelId("6"), Name("label 6"), null)
-                    ),
-                    recipients = "",
-                    isDraft = false
-                )
-            )
-            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
+            val expected = MailboxUiItem(
+                "conversationId9240",
+                "",
+                "subject9237474",
+                lastMessageTimeMs = 1617982194000,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = false,
+                expirationTime = 0,
+                messagesCount = 2,
+                messageData = null,
+                isDeleted = false,
+                labels = listOf(
+                    LabelChipUiModel(LabelId("0"), Name("label 0"), null),
+                    LabelChipUiModel(LabelId("6"), Name("label 6"), null)
+                ),
+                recipients = "",
+                isDraft = false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expectedState, expectItem())
+                assertEquals(expected, expectItem())
             }
         }
 
@@ -904,32 +854,29 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
             viewModel.setNewMailboxLabel(customLabelId)
             viewModel.setNewMailboxLocation(location)
-            val expected = listOf(
-                MailboxUiItem(
-                    "conversationId9241",
-                    "",
-                    "subject9237475",
-                    lastMessageTimeMs = 1417982244000,
-                    hasAttachments = false,
-                    isStarred = false,
-                    isRead = false,
-                    expirationTime = 0,
-                    messagesCount = 2,
-                    messageData = null,
-                    isDeleted = false,
-                    labels = listOf(LabelChipUiModel(LabelId("6"), Name("label 6"), null)),
-                    recipients = "",
-                    isDraft = false
-                )
-            )
-            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
+            val expected = MailboxUiItem(
+                "conversationId9241",
+                "",
+                "subject9237475",
+                lastMessageTimeMs = 1417982244000,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = false,
+                expirationTime = 0,
+                messagesCount = 2,
+                messageData = null,
+                isDeleted = false,
+                labels = listOf(LabelChipUiModel(LabelId("6"), Name("label 6"), null)),
+                recipients = "",
+                isDraft = false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expectedState, expectItem())
+                assertEquals(expected, expectItem())
             }
         }
 
@@ -958,35 +905,31 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             viewModel.setNewMailboxLocation(location)
 
-            val expected = listOf(
-                MailboxUiItem(
-                    "conversationId9253",
-                    "",
-                    "subject9237482",
-                    lastMessageTimeMs = 0,
-                    hasAttachments = false,
-                    isStarred = false,
-                    isRead = false,
-                    expirationTime = 0,
-                    messagesCount = null,
-                    messageData = null,
-                    isDeleted = false,
-                    labels = listOf(
-                        LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                        LabelChipUiModel(LabelId("8"), Name("label 8"), null)
-                    ),
-                    recipients = "",
-                    true
-                )
-            )
-            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
-
+            val expected = MailboxUiItem(
+                "conversationId9253",
+                "",
+                "subject9237482",
+                lastMessageTimeMs = 0,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = false,
+                expirationTime = 0,
+                messagesCount = null,
+                messageData = null,
+                isDeleted = false,
+                labels = listOf(
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                ),
+                recipients = "",
+                true
+            ).toMailboxState()
             // When
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expectedState, expectItem())
+                assertEquals(expected, expectItem())
             }
         }
 
@@ -1015,35 +958,32 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             viewModel.setNewMailboxLocation(location)
 
-            val expected = listOf(
-                MailboxUiItem(
-                    "conversationId9254",
-                    "",
-                    "subject9237483",
-                    lastMessageTimeMs = 0,
-                    hasAttachments = false,
-                    isStarred = false,
-                    isRead = false,
-                    expirationTime = 0,
-                    messagesCount = 2,
-                    messageData = null,
-                    isDeleted = false,
-                    labels = listOf(
-                        LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                        LabelChipUiModel(LabelId("8"), Name("label 8"), null)
-                    ),
-                    recipients = "",
-                    false
-                )
-            )
-            val expectedState = MailboxState.Data(expected, shouldResetPosition = true)
+            val expected = MailboxUiItem(
+                "conversationId9254",
+                "",
+                "subject9237483",
+                lastMessageTimeMs = 0,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = false,
+                expirationTime = 0,
+                messagesCount = 2,
+                messageData = null,
+                isDeleted = false,
+                labels = listOf(
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                ),
+                recipients = "",
+                false
+            ).toMailboxState()
 
             // When
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expectedState, expectItem())
+                assertEquals(expected, expectItem())
             }
         }
 
@@ -1066,36 +1006,31 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             every { conversationModeEnabled(any()) } returns false
 
             // Then
-            val expected = MailboxState.Data(
-                listOf(
-                    MailboxUiItem(
-                        itemId = "messageId",
-                        senderName = "anySenderEmail8438@protonmail.ch",
-                        subject = "subject",
-                        lastMessageTimeMs = 0,
-                        hasAttachments = false,
-                        isStarred = false,
-                        isRead = true,
-                        expirationTime = 0,
-                        messagesCount = null,
-                        messageData = MessageData(
-                            location = INVALID.messageLocationTypeValue,
-                            isReplied = false,
-                            isRepliedAll = false,
-                            isForwarded = false,
-                            isInline = false
-                        ),
-                        isDeleted = false,
-                        labels = listOf(
-                            LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                            LabelChipUiModel(LabelId("8"), Name("label 8"), null)
-                        ),
-                        recipients = "",
-                        isDraft = true
-                    )
+            val expected = MailboxUiItem(
+                itemId = "messageId",
+                senderName = "anySenderEmail8438@protonmail.ch",
+                subject = "subject",
+                lastMessageTimeMs = 0,
+                hasAttachments = false,
+                isStarred = false,
+                isRead = true,
+                expirationTime = 0,
+                messagesCount = null,
+                messageData = MessageData(
+                    location = INVALID.messageLocationTypeValue,
+                    isReplied = false,
+                    isRepliedAll = false,
+                    isForwarded = false,
+                    isInline = false
                 ),
-                shouldResetPosition = true
-            )
+                isDeleted = false,
+                labels = listOf(
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                ),
+                recipients = "",
+                isDraft = true
+            ).toMailboxState()
             // When
             viewModel.mailboxState.test {
                 // Then
@@ -1143,6 +1078,37 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
         verify { jobManager wasNot Called }
     }
+
+    @Test
+    fun isFreshDataIsFalseBeforeDataRefreshAndTrueAfter() = runBlockingTest {
+        // given
+        val firstExpected = MailboxState.Data(emptyList(), isFreshData = false, shouldResetPosition = true)
+        val secondExpected = MailboxState.Data(emptyList(), isFreshData = true, shouldResetPosition = true)
+
+        // when
+        viewModel.mailboxState.test {
+
+            // then
+            assertEquals(loadingState, expectItem())
+
+            // first emission from database
+            messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
+            assertEquals(firstExpected, expectItem())
+
+            // emission api refresh
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+            expectItem()
+
+            // emission from database after api refresh
+            messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
+            assertEquals(secondExpected, expectItem())
+        }
+    }
+
+    private fun MailboxUiItem.toMailboxState() = listOf(this).toMailboxState()
+
+    private fun List<MailboxUiItem>.toMailboxState(): MailboxState.Data =
+        MailboxState.Data(this, isFreshData = false, shouldResetPosition = true)
 
     private fun fakeMailboxUiData(
         itemId: String,

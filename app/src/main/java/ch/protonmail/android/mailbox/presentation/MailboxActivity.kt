@@ -567,17 +567,16 @@ internal class MailboxActivity :
 
         when (state) {
             is MailboxState.Loading -> setRefreshing(true)
-            is MailboxState.NoMoreItems -> {
-                if (isLoadingMore.get()) setLoadingMore(false)
-            }
             is MailboxState.DataRefresh -> {
                 lastFetchedMailboxItemsIds = state.lastFetchedItemsIds
                 setRefreshing(false)
+                include_mailbox_no_messages.isVisible =
+                    state.lastFetchedItemsIds.isEmpty() && mailboxAdapter.itemCount == 0
             }
             is MailboxState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
                 include_mailbox_error.isVisible = false
-                include_mailbox_no_messages.isVisible = state.items.isEmpty()
+                include_mailbox_no_messages.isVisible = state.isFreshData && state.items.isEmpty()
                 mailboxRecyclerView.isVisible != state.items.isEmpty()
 
                 mailboxAdapter.submitList(state.items) {

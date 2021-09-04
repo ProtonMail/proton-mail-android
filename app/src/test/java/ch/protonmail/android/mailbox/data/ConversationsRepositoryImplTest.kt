@@ -31,7 +31,6 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.data.remote.NoMoreItemsDataResult
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
@@ -360,31 +359,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val actualError = expectItem() as DataResult.Error
             assertEquals(ResponseSource.Remote, actualError.source)
             assertEquals("Api call failed", actualError.message)
-        }
-    }
-
-    @Test
-    fun verifyGetConversationsEmitNoMoreConversationsErrorWhenRemoteReturnsEmptyList() = runBlockingTest {
-        // given
-        val parameters = buildGetConversationsParameters()
-        val conversationsEntity = apiToDatabaseConversationMapper
-            .toDatabaseModels(conversationsRemote.conversations, userId)
-
-        val emptyConversationsResponse = ConversationsResponse(0, emptyList())
-        coEvery { conversationDao.observeConversations(testUserId.id) } returns flowOf(conversationsEntity)
-        coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
-        coEvery { api.fetchConversations(any()) } returns emptyConversationsResponse
-
-        // when
-        conversationsRepository.observeConversations(parameters).test {
-
-            // then
-            val first = expectItem() as DataResult.Success
-            assertEquals(ResponseSource.Local, first.source)
-
-            assertEquals(NoMoreItemsDataResult, expectItem())
-
-            expectNoEvents()
         }
     }
 

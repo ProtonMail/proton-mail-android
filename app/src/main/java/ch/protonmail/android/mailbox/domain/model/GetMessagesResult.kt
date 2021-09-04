@@ -26,5 +26,4 @@ sealed class GetMessagesResult {
     data class DataRefresh(val lastFetchedMessages: List<Message>) : GetMessagesResult()
     data class Error(val throwable: Throwable? = null, val isOffline: Boolean = false) : GetMessagesResult()
     object Loading : GetMessagesResult()
-    object NoMessagesFound : GetMessagesResult()
 }

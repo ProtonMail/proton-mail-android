@@ -327,6 +327,7 @@ class MailboxViewModel @Inject constructor(
 
                     MailboxState.Data(
                         conversationsToMailboxItems(result.conversations, locationId),
+                        isFreshData = hasReceivedFirstApiRefresh != null,
                         shouldResetPosition = shouldResetPosition
                     )
                 }
@@ -347,8 +348,6 @@ class MailboxViewModel @Inject constructor(
                         isOffline = result.isOffline
                     )
                 }
-                is GetConversationsResult.NoConversationsFound ->
-                    MailboxState.NoMoreItems
                 is GetConversationsResult.Loading ->
                     MailboxState.Loading
             }
@@ -375,6 +374,7 @@ class MailboxViewModel @Inject constructor(
 
                     MailboxState.Data(
                         items = messagesToMailboxItems(result.messages),
+                        isFreshData = hasReceivedFirstApiRefresh != null,
                         shouldResetPosition = shouldResetPosition
                     )
                 }
@@ -395,8 +395,6 @@ class MailboxViewModel @Inject constructor(
                         isOffline = result.isOffline
                     )
                 }
-                is GetMessagesResult.NoMessagesFound ->
-                    MailboxState.NoMoreItems
                 is GetMessagesResult.Loading ->
                     MailboxState.Loading
             }
