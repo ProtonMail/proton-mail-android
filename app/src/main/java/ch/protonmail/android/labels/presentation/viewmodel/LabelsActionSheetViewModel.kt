@@ -227,7 +227,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
         val checkedLabels = mutableListOf<String>()
         ids.forEach { id ->
             if (isActionAppliedToConversation(currentMessageFolder)) {
-                conversationsRepository.getConversation(id, userManager.requireCurrentUserId())
+                conversationsRepository.getConversation(userManager.requireCurrentUserId(), id)
                     .first()
                     .onSuccess { conversation ->
                         checkedLabels.addAll(conversation.labels.map { label -> label.id })

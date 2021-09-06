@@ -37,11 +37,10 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
-import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.jobs.ApplyLabelJob
-import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
