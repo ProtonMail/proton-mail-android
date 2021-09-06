@@ -102,7 +102,7 @@ class LabelsActionSheetViewModel @Inject constructor(
         }
     }
 
-    fun onLabelClicked(model: LabelActonItemUiModel, currentFolderLocationId: Int) {
+    fun onLabelClicked(model: LabelActonItemUiModel) {
 
         if (model.labelType == LabelsActionSheet.Type.FOLDER.typeInt) {
             onFolderClicked(model.labelId)
