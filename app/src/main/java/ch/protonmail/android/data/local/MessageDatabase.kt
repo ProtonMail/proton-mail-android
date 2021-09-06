@@ -31,7 +31,7 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 
 @Database(
     entities = [
@@ -39,7 +39,7 @@ import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
         ConversationDatabaseModel::class,
         Message::class,
         Label::class,
-        UnreadCounterDatabaseModel::class
+        UnreadCounterEntity::class
     ],
     version = 10
 )

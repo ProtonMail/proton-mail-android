@@ -21,9 +21,9 @@ package ch.protonmail.android.mailbox.data.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.COLUMN_LABEL_ID
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.COLUMN_TYPE
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.COLUMN_USER_ID
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_LABEL_ID
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_TYPE
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_USER_ID
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import me.proton.core.domain.entity.UserId
 
@@ -31,10 +31,10 @@ import me.proton.core.domain.entity.UserId
  * Database model for [UnreadCounter]
  */
 @Entity(
-    tableName = UnreadCounterDatabaseModel.TABLE_NAME,
+    tableName = UnreadCounterEntity.TABLE_NAME,
     primaryKeys = [COLUMN_USER_ID, COLUMN_LABEL_ID, COLUMN_TYPE]
 )
-internal data class UnreadCounterDatabaseModel(
+internal data class UnreadCounterEntity(
 
     @ColumnInfo(name = COLUMN_USER_ID)
     val userId: UserId,

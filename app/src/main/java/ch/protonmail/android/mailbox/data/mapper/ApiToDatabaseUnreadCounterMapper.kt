@@ -19,22 +19,22 @@
 
 package ch.protonmail.android.mailbox.data.mapper
 
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
 import me.proton.core.domain.arch.Mapper
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 /**
- * Maps [CountsApiModel] to [UnreadCounterDatabaseModel]
+ * Maps [CountsApiModel] to [UnreadCounterEntity]
  */
 internal class ApiToDatabaseUnreadCounterMapper @Inject constructor() :
-    Mapper<CountsApiModel, UnreadCounterDatabaseModel> {
+    Mapper<CountsApiModel, UnreadCounterEntity> {
 
     fun CountsApiModel.toDatabaseModel(
         userId: UserId,
-        type: UnreadCounterDatabaseModel.Type
-    ) = UnreadCounterDatabaseModel(
+        type: UnreadCounterEntity.Type
+    ) = UnreadCounterEntity(
         userId = userId,
         type = type,
         labelId = labelId,

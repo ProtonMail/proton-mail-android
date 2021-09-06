@@ -36,7 +36,7 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationMapper
@@ -193,7 +193,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     private val unreadCounterDao: UnreadCounterDao = mockk {
         every { observeConversationsUnreadCounters(any()) } returns flowOf(emptyList())
-        coEvery { insertOrUpdate(any<Collection<UnreadCounterDatabaseModel>>()) } just Runs
+        coEvery { insertOrUpdate(any<Collection<UnreadCounterEntity>>()) } just Runs
     }
 
     private val api: ProtonMailApiManager = mockk {
@@ -1213,9 +1213,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         // given
         val labelId = "inbox"
         val unreadCount = 15
-        val databaseModel = UnreadCounterDatabaseModel(
+        val databaseModel = UnreadCounterEntity(
             userId = testUserId,
-            type = UnreadCounterDatabaseModel.Type.CONVERSATIONS,
+            type = UnreadCounterEntity.Type.CONVERSATIONS,
             labelId = labelId,
             unreadCount = unreadCount
         )
@@ -1326,11 +1326,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     private fun setupUnreadCounterDaoToSimulateReplace() {
 
-        val counters = MutableStateFlow(emptyList<UnreadCounterDatabaseModel>())
+        val counters = MutableStateFlow(emptyList<UnreadCounterEntity>())
 
         every { unreadCounterDao.observeConversationsUnreadCounters(testUserId) } returns counters
-        coEvery { unreadCounterDao.insertOrUpdate(any<Collection<UnreadCounterDatabaseModel>>()) } answers {
-            counters.value = firstArg<Collection<UnreadCounterDatabaseModel>>().toList()
+        coEvery { unreadCounterDao.insertOrUpdate(any<Collection<UnreadCounterEntity>>()) } answers {
+            counters.value = firstArg<Collection<UnreadCounterEntity>>().toList()
         }
     }
 

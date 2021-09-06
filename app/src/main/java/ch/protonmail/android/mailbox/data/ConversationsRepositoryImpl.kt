@@ -32,7 +32,7 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationDatabaseModelToConversationMapper
@@ -501,7 +501,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
 
     private suspend fun fetchAndSaveUnreadCounters(userId: UserId) {
         val counts = api.fetchConversationsCounts(userId).counts
-            .map(apiToDatabaseUnreadCounterMapper) { it.toDatabaseModel(userId, UnreadCounterDatabaseModel.Type.CONVERSATIONS) }
+            .map(apiToDatabaseUnreadCounterMapper) { it.toDatabaseModel(userId, UnreadCounterEntity.Type.CONVERSATIONS) }
         unreadCounterDao.insertOrUpdate(counts)
     }
 

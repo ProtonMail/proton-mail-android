@@ -21,22 +21,22 @@ package ch.protonmail.android.mailbox.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.COLUMN_TYPE
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.COLUMN_USER_ID
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Companion.TABLE_NAME
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_TYPE
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_USER_ID
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.TABLE_NAME
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 
 @Dao
-internal abstract class UnreadCounterDao : BaseDao<UnreadCounterDatabaseModel>() {
+internal abstract class UnreadCounterDao : BaseDao<UnreadCounterEntity>() {
 
-    fun observeMessagesUnreadCounters(userId: UserId): Flow<List<UnreadCounterDatabaseModel>> =
-        observeUnreadCounters(userId, UnreadCounterDatabaseModel.Type.MESSAGES)
+    fun observeMessagesUnreadCounters(userId: UserId): Flow<List<UnreadCounterEntity>> =
+        observeUnreadCounters(userId, UnreadCounterEntity.Type.MESSAGES)
 
-    fun observeConversationsUnreadCounters(userId: UserId): Flow<List<UnreadCounterDatabaseModel>> =
-        observeUnreadCounters(userId, UnreadCounterDatabaseModel.Type.CONVERSATIONS)
+    fun observeConversationsUnreadCounters(userId: UserId): Flow<List<UnreadCounterEntity>> =
+        observeUnreadCounters(userId, UnreadCounterEntity.Type.CONVERSATIONS)
 
     @Query(
         """
@@ -48,10 +48,10 @@ internal abstract class UnreadCounterDao : BaseDao<UnreadCounterDatabaseModel>()
     )
     abstract fun observeUnreadCounters(
         userId: UserId,
-        type: UnreadCounterDatabaseModel.Type
-    ): Flow<List<UnreadCounterDatabaseModel>>
+        type: UnreadCounterEntity.Type
+    ): Flow<List<UnreadCounterEntity>>
 
-    suspend fun insertOrUpdate(counters: Collection<UnreadCounterDatabaseModel>) {
+    suspend fun insertOrUpdate(counters: Collection<UnreadCounterEntity>) {
         insertOrUpdate(*counters.toTypedArray())
     }
 }

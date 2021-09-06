@@ -22,7 +22,7 @@ package ch.protonmail.android.mailbox.data.local
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.runBlockingWithTimeout
@@ -45,27 +45,27 @@ class UnreadCounterDaoTest {
     private val inboxLabelId = "inbox"
     private val sentLabelId = "sent"
 
-    private val oneMessagesInboxCounter = UnreadCounterDatabaseModel(
+    private val oneMessagesInboxCounter = UnreadCounterEntity(
         userId = oneUserId,
-        type = UnreadCounterDatabaseModel.Type.MESSAGES,
+        type = UnreadCounterEntity.Type.MESSAGES,
         labelId = inboxLabelId,
         unreadCount = Random.nextInt()
     )
-    private val oneMessagesSendCounter = UnreadCounterDatabaseModel(
+    private val oneMessagesSendCounter = UnreadCounterEntity(
         userId = oneUserId,
-        type = UnreadCounterDatabaseModel.Type.MESSAGES,
+        type = UnreadCounterEntity.Type.MESSAGES,
         labelId = sentLabelId,
         unreadCount = Random.nextInt()
     )
-    private val oneConversationsInboxCounter = UnreadCounterDatabaseModel(
+    private val oneConversationsInboxCounter = UnreadCounterEntity(
         userId = oneUserId,
-        type = UnreadCounterDatabaseModel.Type.CONVERSATIONS,
+        type = UnreadCounterEntity.Type.CONVERSATIONS,
         labelId = inboxLabelId,
         unreadCount = Random.nextInt()
     )
-    private val twoMessagesInboxCounter = UnreadCounterDatabaseModel(
+    private val twoMessagesInboxCounter = UnreadCounterEntity(
         userId = twoUserId,
-        type = UnreadCounterDatabaseModel.Type.MESSAGES,
+        type = UnreadCounterEntity.Type.MESSAGES,
         labelId = inboxLabelId,
         unreadCount = Random.nextInt()
     )

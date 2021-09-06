@@ -47,7 +47,7 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Type
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
 import ch.protonmail.android.mailbox.domain.HandleChangeToConversations
