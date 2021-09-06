@@ -37,8 +37,6 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.local.model.LabelId
-import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -66,7 +64,6 @@ import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import java.util.ArrayList
 import javax.inject.Inject
 
 const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
@@ -271,84 +268,13 @@ internal class MessageRepository @Inject constructor(
 
     suspend fun moveToCustomFolderLocation(
         messageIds: List<String>,
-        newFolderLocationId: String,
+        newCustomLocationId: String,
         currentFolderLabelId: String,
         userId: UserId
     ) {
         val newLocation = MessageLocationType.LABEL
-        postToLocationWorker.enqueue(messageIds, newCustomLocation = newFolderLocationId)
-        moveCustomMessageInDb(messageIds, newFolderLocationId, currentFolderLabelId, userId)
-    }
-
-    private suspend fun moveCustomMessageInDb(
-        messageIds: List<String>,
-        newLocation: String,
-        currentFolderLabelId: String,
-        userId: UserId
-    ) {
-        val counterDao = databaseProvider.provideCounterDao(userId)
-        val messagesDao = databaseProvider.provideMessageDao(userId)
-        var totalUnread = 0
-        for (id in messageIds) {
-            val message: Message? = messagesDao.findMessageByIdOnce(id)
-            if (message != null) {
-                Timber.d("Move to $newLocation, message: %s", message.messageId)
-                if (markMessageLocally(counterDao, messagesDao, message, newLocation)) {
-                    totalUnread++
-                }
-            }
-        }
-
-        val unreadLocationCounter =
-            counterDao.findUnreadLocationById(MessageLocationType.SPAM.messageLocationTypeValue)
-                ?: return
-        unreadLocationCounter.increment(totalUnread)
-        counterDao.insertUnreadLocation(unreadLocationCounter)
-    }
-
-    private suspend fun markMessageLocally(
-        counterDao: CounterDao,
-        messagesDao: MessageDao,
-        message: Message,
-        newLocation: String
-    ): Boolean {
-        var unreadIncrease = false
-        if (newLocation.isNotEmpty()) {
-            message.addLabels(listOf(newLocation))
-            removeOldFolderIds(message, newLocation)
-        }
-        if (!message.isRead) {
-            val unreadLocationCounter = counterDao.findUnreadLocationById(message.location)
-            if (unreadLocationCounter != null) {
-                unreadLocationCounter.decrement()
-                counterDao.insertUnreadLocation(unreadLocationCounter)
-            }
-            unreadIncrease = true
-        }
-        if (fromInt(message.location) === MessageLocationType.SENT) {
-            message.addLabels(listOf(newLocation))
-        } else {
-            message.location = MessageLocationType.LABEL.messageLocationTypeValue
-        }
-        message.setFolderLocation(labelRepository)
-        Timber.d(
-            "Move message id: %s, location: %s, labels: %s", message.messageId, message.location, message.allLabelIDs
-        )
-        messagesDao.saveMessage(message)
-        return unreadIncrease
-    }
-
-    private fun removeOldFolderIds(message: Message, newLocation: String) {
-        val oldLabels = message.allLabelIDs
-        val labelsToRemove = ArrayList<String>()
-        for (labelId in oldLabels) {
-            val label = labelRepository.findLabelBlocking(LabelId(labelId))
-            // find folders
-            if (label != null && label.type === LabelType.FOLDER && label.id.id != newLocation) {
-                labelsToRemove.add(labelId)
-            }
-        }
-        message.removeLabels(labelsToRemove)
+        postToLocationWorker.enqueue(messageIds, newCustomLocation = newCustomLocationId)
+        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId, newCustomLocationId)
     }
 
     fun starMessages(messageIds: List<String>) {
@@ -439,7 +365,8 @@ internal class MessageRepository @Inject constructor(
         messageIds: List<String>,
         newLocation: MessageLocationType,
         currentFolderLabelId: String,
-        userId: UserId
+        userId: UserId,
+        newCustomLocationId: String? = null // for custom folder locations
     ) {
         val counterDao = databaseProvider.provideCounterDao(userId)
         val messagesDao = databaseProvider.provideMessageDao(userId)
@@ -454,7 +381,8 @@ internal class MessageRepository @Inject constructor(
                         messagesDao,
                         message,
                         currentFolderLabelId,
-                        newLocation
+                        newLocation,
+                        newCustomLocationId
                     )
                 ) {
                     totalUnread++
@@ -472,7 +400,8 @@ internal class MessageRepository @Inject constructor(
         messagesDao: MessageDao,
         message: Message,
         currentFolderLabelId: String,
-        newLocation: MessageLocationType
+        newLocation: MessageLocationType,
+        newCustomLocationId: String? = null
     ): Boolean {
         var unreadIncrease = false
         if (!message.isRead) {
@@ -487,10 +416,14 @@ internal class MessageRepository @Inject constructor(
             message.removeLabels(listOf(MessageLocationType.SENT.messageLocationTypeValue.toString()))
             message.addLabels(listOf(MessageLocationType.ALL_SENT.messageLocationTypeValue.toString()))
         }
-//        message.location = newLocation.messageLocationTypeValue
+        val newLocationString = if (!newCustomLocationId.isNullOrEmpty()) {
+            newCustomLocationId
+        } else {
+            newLocation.messageLocationTypeValue.toString()
+        }
         message.setLabelIDs(
             listOf(
-                newLocation.messageLocationTypeValue.toString(),
+                newLocationString,
                 MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString()
             )
         )

@@ -61,13 +61,13 @@ class PostToLocationWorker @AssistedInject constructor(
             )
         }
 
-        Timber.v("PostToLocationWorker location: $locationId, ids: $ids")
-
         val locationIdString = if (!customLocationId.isNullOrEmpty()) {
             customLocationId
         } else {
             locationId.toString()
         }
+
+        Timber.v("PostToLocationWorker location: $locationIdString, ids: $ids")
 
         return runCatching {
             protonMailApiManager.labelMessages(
