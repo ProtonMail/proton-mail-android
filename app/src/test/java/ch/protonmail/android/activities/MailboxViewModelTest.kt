@@ -88,7 +88,6 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.util.kotlin.EMPTY_STRING
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -170,6 +169,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
         val jobEntryPoint = mockk<JobEntryPoint>()
         mockkStatic(EntryPoints::class)
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
+
 
         every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
         every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
@@ -178,13 +180,25 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery { contactsRepository.findContactsByEmail(any()) } returns flowOf(emptyList())
 
         val allLabels = (0..11).map {
-            LabelEntity(id = "$it", name = "label $it", color = EMPTY_STRING)
+            LabelEntity(
+                id = LabelId("$it"),
+                userId = currentUserId,
+                name = "label $it",
+                color = testColorInt.toString(),
+                type = LabelType.MESSAGE_LABEL,
+                order = 0,
+                path = "a/b",
+                parentId = "parentId",
+                expanded = 0,
+                sticky = 0,
+                notify = 0
+            )
 
         }
-        every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
-        every { labelRepository.findLabels(any(), any()) } answers {
+        coEvery { labelRepository.findAllLabels(any()) } returns allLabels
+        coEvery { labelRepository.findLabels(currentUserId, any()) } answers {
             val labelIds = arg<List<LabelId>>(1)
-            flowOf(allLabels.filter { label -> LabelId(label.id) in labelIds })
+            allLabels.filter { label -> label.id in labelIds }
         }
 
         viewModel = MailboxViewModel(
