@@ -33,6 +33,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
@@ -64,6 +65,7 @@ import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
+import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -93,7 +95,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.toDuration
 
-private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723_478
 private const val STARRED_LABEL_ID = "10"
 
 @OptIn(FlowPreview::class)
@@ -215,7 +216,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     private val conversationId = "conversationId"
     private val conversationId1 = "conversationId1"
-    private val userId = UserId("userId")
 
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
@@ -388,7 +388,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { messageDao.observeAllMessagesInfoFromConversation(conversationId) } returns flowOf(
                 listOf(message)
             )
-            coEvery { conversationDao.observeConversation(userId.id, conversationId) } returns flowOf(
+            coEvery { conversationDao.observeConversation(testUserId.id, conversationId) } returns flowOf(
                 conversationDbModel
             )
 
@@ -429,7 +429,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
 
             // when
-            conversationsRepository.getConversation(userId, conversationId).test {
+            conversationsRepository.getConversation(testUserId, conversationId).test {
 
                 // then
                 assertEquals(expectedConversation.local(), expectItem())
@@ -466,12 +466,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 listOf(message), listOf(starredMessage)
             )
             coEvery { messageDao.findAttachmentsByMessageId(any()) } returns flowOf(emptyList())
-            coEvery { conversationDao.observeConversation(userId.id, conversationId) } returns flowOf(
+            coEvery { conversationDao.observeConversation(testUserId.id, conversationId) } returns flowOf(
                 conversationDbModel
             )
 
             // when
-            val result = conversationsRepository.getConversation(userId, conversationId).take(2).toList()
+            val result = conversationsRepository.getConversation(testUserId, conversationId).take(2).toList()
 
             // then
             val expectedMessage = MessageDomainModel(
@@ -537,7 +537,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 listOf(message), listOf(message)
             )
             coEvery { messageDao.findAttachmentsByMessageId(any()) } returns flowOf(emptyList())
-            coEvery { conversationDao.observeConversation(userId.id, conversationId) } returns flowOf(
+            coEvery { conversationDao.observeConversation(testUserId.id, conversationId) } returns flowOf(
                 conversationDbModel
             )
 
@@ -578,7 +578,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
 
             // when
-            conversationsRepository.getConversation(userId, conversationId).test {
+            conversationsRepository.getConversation(testUserId, conversationId).test {
 
                 // then
                 assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), expectItem())
@@ -618,10 +618,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedMessage = Message(messageId = "messageId23842737", conversationId)
             val dbFlow =
                 MutableSharedFlow<ConversationDatabaseModel?>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-            val params = GetOneConversationParameters(userId, conversationId)
+            val params = GetOneConversationParameters(testUserId, conversationId)
             coEvery { api.fetchConversation(params) } returns conversationResponse
             coEvery { messageDao.observeAllMessagesInfoFromConversation(conversationId) } returns flowOf(emptyList())
-            coEvery { conversationDao.observeConversation(userId.id, conversationId) } returns dbFlow
+            coEvery { conversationDao.observeConversation(testUserId.id, conversationId) } returns dbFlow
             every { messageFactory.createMessage(apiMessage) } returns expectedMessage
             val expectedConversationDbModel = buildConversationDatabaseModel()
             coEvery { conversationDao.insertOrUpdate(expectedConversationDbModel) } coAnswers {
@@ -631,7 +631,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
 
             // when
-            conversationsRepository.getConversation(userId, conversationId)
+            conversationsRepository.getConversation(testUserId, conversationId)
                 .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
                     dbFlow.emit(null)
 
@@ -677,7 +677,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Success
 
             // when
-            val result = conversationsRepository.markRead(conversationIds, userId)
+            val result = conversationsRepository.markRead(conversationIds, testUserId)
 
             // then
             coVerify {
@@ -776,7 +776,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Success
 
             // when
-            val result = conversationsRepository.star(conversationIds, userId)
+            val result = conversationsRepository.star(conversationIds, testUserId)
 
             // then
             val expected = Message(
@@ -812,7 +812,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Error
 
             // when
-            val result = conversationsRepository.star(conversationIds, userId)
+            val result = conversationsRepository.star(conversationIds, testUserId)
 
             // then
             assertEquals(expectedResult, result)
@@ -849,7 +849,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Success
 
             // when
-            val result = conversationsRepository.unstar(conversationIds, userId)
+            val result = conversationsRepository.unstar(conversationIds, testUserId)
 
             // then
             val expected = Message(
@@ -879,7 +879,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Error
 
             // when
-            val result = conversationsRepository.unstar(conversationIds, userId)
+            val result = conversationsRepository.unstar(conversationIds, testUserId)
 
             // then
             assertEquals(expectedResult, result)
@@ -921,7 +921,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Success
 
             // when
-            val result = conversationsRepository.moveToFolder(conversationIds, userId, folderId)
+            val result = conversationsRepository.moveToFolder(conversationIds, testUserId, folderId)
 
             // then
             coVerify(exactly = 2) {
@@ -958,7 +958,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Error
 
             // when
-            val result = conversationsRepository.moveToFolder(conversationIds, userId, folderId)
+            val result = conversationsRepository.moveToFolder(conversationIds, testUserId, folderId)
 
             // then
             assertEquals(expectedResult, result)
@@ -983,7 +983,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("3", 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel("5", 0, 2, 123, 123, 0)
             )
-            coEvery { conversationDao.deleteConversation(userId.id, any()) } just runs
+            coEvery { conversationDao.deleteConversation(testUserId.id, any()) } just runs
             coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
@@ -992,7 +992,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { messageDao.saveMessages(listOfMessages) } just runs
 
             // when
-            conversationsRepository.delete(conversationIds, userId, currentFolderId)
+            conversationsRepository.delete(conversationIds, testUserId, currentFolderId)
 
             // then
             coVerify { conversationDao.updateLabels(conversationId1, any()) }
@@ -1016,7 +1016,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("0", 0, 2, 123, 123, 0)
             )
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
-            coEvery { conversationDao.findConversation(userId.id, any()) } returns
+            coEvery { conversationDao.findConversation(testUserId.id, any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
                     every { numUnread } returns 0
@@ -1029,7 +1029,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Success
 
             // when
-            val result = conversationsRepository.label(conversationIds, userId, labelId)
+            val result = conversationsRepository.label(conversationIds, testUserId, labelId)
 
             // then
             val expected = Message(
@@ -1056,11 +1056,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
             val listOfMessages = listOf(message, message)
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
-            coEvery { conversationDao.findConversation(userId.id, any()) } returns null
+            coEvery { conversationDao.findConversation(testUserId.id, any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
             // when
-            val result = conversationsRepository.label(conversationIds, userId, labelId)
+            val result = conversationsRepository.label(conversationIds, testUserId, labelId)
 
             // then
             assertEquals(expectedResult, result)
@@ -1083,7 +1083,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("labelId", 0, 2, 123, 123, 0)
             )
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
-            coEvery { conversationDao.findConversation(userId.id, any()) } returns
+            coEvery { conversationDao.findConversation(testUserId.id, any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
                 }
@@ -1092,7 +1092,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedResult = ConversationsActionResult.Success
 
             // when
-            val result = conversationsRepository.unlabel(conversationIds, userId, labelId)
+            val result = conversationsRepository.unlabel(conversationIds, testUserId, labelId)
 
             // then
             val expected = Message(
@@ -1124,11 +1124,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
             val listOfMessages = listOf(message, message)
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
-            coEvery { conversationDao.findConversation(userId.id, any()) } returns null
+            coEvery { conversationDao.findConversation(testUserId.id, any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
             // when
-            val result = conversationsRepository.unlabel(conversationIds, userId, labelId)
+            val result = conversationsRepository.unlabel(conversationIds, testUserId, labelId)
 
             // then
             assertEquals(expectedResult, result)
@@ -1154,7 +1154,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             .local()
 
         // when
-        val params = GetAllConversationsParameters(userId, labelId = MessageLocationType.ARCHIVE.asLabelId())
+        val params = GetAllConversationsParameters(testUserId, labelId = MessageLocationType.ARCHIVE.asLabelId())
         conversationsRepository.observeConversations(params).test {
 
             // then
@@ -1183,7 +1183,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             .local()
 
         // when
-        val params = GetAllConversationsParameters(userId, labelId = customLabelId)
+        val params = GetAllConversationsParameters(testUserId, labelId = customLabelId)
         conversationsRepository.observeConversations(params).test {
 
             // then
@@ -1267,7 +1267,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         ConversationDatabaseModel(
             id = conversationId,
             order = 0L,
-            userId = userId.id,
+            userId = testUserId.id,
             subject = "subject",
             senders = listOf(
                 MessageSender("sender-name", "email@proton.com")
