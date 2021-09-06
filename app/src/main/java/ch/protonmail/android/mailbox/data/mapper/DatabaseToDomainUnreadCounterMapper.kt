@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data
+package ch.protonmail.android.mailbox.data.mapper
 
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
@@ -27,7 +27,8 @@ import javax.inject.Inject
 /**
  * Maps [UnreadCounterDatabaseModel] to [UnreadCounter] domain model
  */
-internal class UnreadCounterMapper @Inject constructor() : Mapper<UnreadCounterDatabaseModel, UnreadCounter> {
+internal class DatabaseToDomainUnreadCounterMapper @Inject constructor() :
+    Mapper<UnreadCounterDatabaseModel, UnreadCounter> {
 
     fun UnreadCounterDatabaseModel.toDomainModel() = UnreadCounter(labelId, unreadCount)
 }

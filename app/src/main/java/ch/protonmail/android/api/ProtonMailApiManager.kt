@@ -73,6 +73,7 @@ import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
+import ch.protonmail.android.mailbox.data.remote.model.ConversationsCountsResponse
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
@@ -345,6 +346,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchConversation(params: GetOneConversationParameters): ConversationResponse =
         api.fetchConversation(params)
+
+    override suspend fun fetchConversationsCounts(userId: UserId): ConversationsCountsResponse =
+        api.fetchConversationsCounts(userId)
 
     override suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,

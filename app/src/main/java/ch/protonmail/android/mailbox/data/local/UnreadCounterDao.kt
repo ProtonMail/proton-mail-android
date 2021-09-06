@@ -50,4 +50,8 @@ internal abstract class UnreadCounterDao : BaseDao<UnreadCounterDatabaseModel>()
         userId: UserId,
         type: UnreadCounterDatabaseModel.Type
     ): Flow<List<UnreadCounterDatabaseModel>>
+
+    suspend fun insertOrUpdate(counters: Collection<UnreadCounterDatabaseModel>) {
+        insertOrUpdate(*counters.toTypedArray())
+    }
 }
