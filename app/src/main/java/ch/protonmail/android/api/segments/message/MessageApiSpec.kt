@@ -24,7 +24,6 @@ import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -39,12 +38,6 @@ import java.io.IOException
 interface MessageApiSpec {
 
     suspend fun fetchMessagesCounts(userId: UserId): CountsResponse
-
-    @Deprecated(
-        "Use new fetchMessagesCounts",
-        ReplaceWith("fetchMessagesCounts(UserId(userIdTag.s))", "me.proton.core.domain.entity.UserId")
-    )
-    fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse
 
     suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse
 

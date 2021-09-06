@@ -39,7 +39,7 @@ import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.jobs.ApplyLabelJob
-import ch.protonmail.android.jobs.FetchMessageCountsJob
+import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -622,14 +622,6 @@ internal class MailboxViewModel @Inject constructor(
                 _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
             }
         }
-    }
-
-    fun refreshMailboxCount(location: Constants.MessageLocationType) {
-        if (conversationModeEnabled(location)) {
-            return
-        }
-
-        jobManager.addJobInBackground(FetchMessageCountsJob(null))
     }
 
     private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =

@@ -42,6 +42,7 @@ import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMappe
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
@@ -210,8 +211,10 @@ internal class MessageRepository @Inject constructor(
     }
 
     private suspend fun fetchAndSaveUnreadCounters(userId: UserId) {
-        val counts = protonMailApiManager.fetchMessagesCounts(userId).counts
-            .map(apiToDatabaseUnreadCounterMapper) { it.toDatabaseModel(userId) }
+        val response = protonMailApiManager.fetchMessagesCounts(userId)
+        Timber.v("Fetch Messages Unread response: $response")
+        val counts = response.counts
+            .map(apiToDatabaseUnreadCounterMapper) { it.toDatabaseModel(userId, Type.MESSAGES) }
         unreadCounterDao.insertOrUpdate(counts)
     }
 

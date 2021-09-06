@@ -42,7 +42,6 @@ import ch.protonmail.android.api.models.PaymentsStatusResponse
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.UnregisterDeviceRequestBody
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
@@ -236,13 +235,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchMessagesCounts(userId: UserId): CountsResponse =
         api.fetchMessagesCounts(userId)
-
-    @Deprecated(
-        "Use new fetchMessagesCounts",
-        ReplaceWith("fetchMessagesCounts(UserId(userIdTag.s))", "me.proton.core.domain.entity.UserId")
-    )
-    override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
-        api.fetchMessagesCount(userIdTag)
 
     override suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse =
         api.getMessages(params)
