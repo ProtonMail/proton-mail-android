@@ -49,6 +49,8 @@ import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
+private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
+
 @HiltViewModel
 class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -123,6 +125,9 @@ class LabelsActionSheetViewModel @Inject constructor(
             ) {
                 actionsResultMutableFlow.value =
                     ManageLabelActionResult.ErrorLabelsThresholdReached(userManager.getMaxLabelsAllowed())
+            } else if (selectedLabelsCount.size > MAX_NUMBER_OF_SELECTED_LABELS) {
+                actionsResultMutableFlow.value =
+                    ManageLabelActionResult.ErrorLabelsThresholdReached(MAX_NUMBER_OF_SELECTED_LABELS)
             } else {
                 labelsMutableFlow.value = updatedLabels
                 actionsResultMutableFlow.value = ManageLabelActionResult.Default

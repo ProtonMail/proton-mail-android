@@ -38,6 +38,7 @@ import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionAdapter
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -152,10 +153,12 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun showApplicableLabelsThresholdError(maxLabelsAllowed: Int) {
-        Toast.makeText(
-            context, getString(R.string.max_labels_selected, maxLabelsAllowed),
-            Toast.LENGTH_SHORT
-        ).show()
+        DialogUtils.showInfoDialog(
+            context = requireNotNull(context),
+            title = requireNotNull(context?.getString(R.string.labels_selected_limit_reached)),
+            message = requireNotNull(context?.getString(R.string.max_labels_selected, maxLabelsAllowed)),
+            okListener = { }
+        )
     }
 
     private fun showCouldNotCompleteActionError() {
