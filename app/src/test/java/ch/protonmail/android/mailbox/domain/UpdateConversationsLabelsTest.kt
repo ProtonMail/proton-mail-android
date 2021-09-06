@@ -21,7 +21,6 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.coVerify

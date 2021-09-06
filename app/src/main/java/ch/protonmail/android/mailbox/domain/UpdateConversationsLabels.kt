@@ -36,22 +36,22 @@ class UpdateConversationsLabels @Inject constructor(
     suspend operator fun invoke(
         conversationIds: List<String>,
         userId: UserId,
-        selectedLabels: List<String>
+        selectedLabelIds: List<String>
     ): ConversationsActionResult {
 
-        selectedLabels.forEach {
+        selectedLabelIds.forEach {
             val result = conversationsRepository.label(conversationIds, userId, it)
             if (result is ConversationsActionResult.Error) {
                 return result
             }
         }
 
-        val allLabels = labelRepository.findAllLabels(userId).first().toMutableList()
-        val unselectedLabels = mutableListOf<String>()
-        allLabels.forEach { if(it.id !in selectedLabels) unselectedLabels.add(it.id) }
+        val unselectedLabelIds = labelRepository.findAllLabels(userId)
+            .first()
+            .map { it.id }
+            .filter { it !in selectedLabelIds }
 
-
-        unselectedLabels.forEach {
+        unselectedLabelIds.forEach {
             val result = conversationsRepository.unlabel(conversationIds, userId, it)
             if (result is ConversationsActionResult.Error) {
                 return result
