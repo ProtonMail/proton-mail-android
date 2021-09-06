@@ -74,21 +74,8 @@ class MessageRepositoryTest {
     private val messageDao: MessageDao = mockk()
 
     private val unreadCounterDao: UnreadCounterDao = mockk {
-
-        val counters = MutableStateFlow(emptyList<UnreadCounterDatabaseModel>())
-
-        infix fun UnreadCounterDatabaseModel.isSameAs(other: UnreadCounterDatabaseModel): Boolean =
-            userId == other.userId && type == other.type && labelId == other.labelId
-
-        infix fun Collection<UnreadCounterDatabaseModel>.containsSame(element: UnreadCounterDatabaseModel): Boolean =
-            any { it.isSameAs(element) }
-
-        every { observeMessagesUnreadCounters(any()) } returns counters
-        coEvery { insertOrUpdate(any<Collection<UnreadCounterDatabaseModel>>()) } answers {
-            val collection = firstArg<Collection<UnreadCounterDatabaseModel>>()
-            val newCounters = counters.value.filterNot { collection containsSame it } + collection
-            counters.value = newCounters
-        }
+        every { observeMessagesUnreadCounters(any()) } returns flowOf(emptyList())
+        coEvery { insertOrUpdate(any<Collection<UnreadCounterDatabaseModel>>()) } just Runs
     }
 
     private val databaseProvider: DatabaseProvider = mockk {
@@ -616,19 +603,6 @@ class MessageRepositoryTest {
         }
     }
 
-    private fun <T> List<T>.local() = DataResult.Success(ResponseSource.Local, this)
-    private fun <T> List<T>.remote() = DataResult.Success(ResponseSource.Remote, this)
-
-    private fun buildMockMessageResponse(
-        messages: List<Message> = allMessages,
-        serverMessages: List<ServerMessage> = allServerMessages,
-        code: Int = Constants.RESPONSE_CODE_OK
-    ): MessagesResponse = mockk {
-        every { this@mockk.messages } returns messages
-        every { this@mockk.serverMessages } returns serverMessages
-        every { this@mockk.code } returns code
-    }
-
     @Test
     fun unreadCountersAreCorrectlyFetchedFromDatabase() = runBlockingTest {
         // given
@@ -661,8 +635,12 @@ class MessageRepositoryTest {
             total = 0,
             unread = unreadCount
         )
+
+        setupUnreadCounterDaoToSimulateReplace()
+
         val apiResponse = CountsResponse(listOf(apiModel))
         coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } returns apiResponse
+
         val expectedList = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, unreadCount)))
 
         // when
@@ -680,6 +658,8 @@ class MessageRepositoryTest {
         val firstUnreadCount = 15
         val secondUnreadCount = 20
         val thirdUnreadCount = 25
+
+        setupUnreadCounterDaoToSimulateReplace()
 
         val firstApiModel = CountsApiModel(
             labelId = labelId,
@@ -737,5 +717,28 @@ class MessageRepositoryTest {
             // then
             assertEquals(expectedError, expectItem())
         }
+    }
+
+    private fun setupUnreadCounterDaoToSimulateReplace() {
+
+        val counters = MutableStateFlow(emptyList<UnreadCounterDatabaseModel>())
+
+        every { unreadCounterDao.observeMessagesUnreadCounters(testUserId) } returns counters
+        coEvery { unreadCounterDao.insertOrUpdate(any<Collection<UnreadCounterDatabaseModel>>()) } answers {
+            counters.value = firstArg<Collection<UnreadCounterDatabaseModel>>().toList()
+        }
+    }
+
+    private fun <T> List<T>.local() = DataResult.Success(ResponseSource.Local, this)
+    private fun <T> List<T>.remote() = DataResult.Success(ResponseSource.Remote, this)
+
+    private fun buildMockMessageResponse(
+        messages: List<Message> = allMessages,
+        serverMessages: List<ServerMessage> = allServerMessages,
+        code: Int = Constants.RESPONSE_CODE_OK
+    ): MessagesResponse = mockk {
+        every { this@mockk.messages } returns messages
+        every { this@mockk.serverMessages } returns serverMessages
+        every { this@mockk.code } returns code
     }
 }

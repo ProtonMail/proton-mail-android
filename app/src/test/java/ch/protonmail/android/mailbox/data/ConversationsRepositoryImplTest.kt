@@ -38,7 +38,6 @@ import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
-import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationDatabaseModelToConversationMapper
@@ -47,6 +46,7 @@ import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversa
 import ch.protonmail.android.mailbox.data.mapper.CorrespondentApiModelToCorrespondentMapper
 import ch.protonmail.android.mailbox.data.mapper.CorrespondentApiModelToMessageRecipientMapper
 import ch.protonmail.android.mailbox.data.mapper.CorrespondentApiModelToMessageSenderMapper
+import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.LabelContextApiModelToLabelContextDatabaseModelMapper
 import ch.protonmail.android.mailbox.data.mapper.LabelContextApiModelToLabelContextMapper
 import ch.protonmail.android.mailbox.data.mapper.LabelContextDatabaseModelToLabelContextMapper
@@ -71,7 +71,6 @@ import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
-import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -193,21 +192,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     private val unreadCounterDao: UnreadCounterDao = mockk {
-
-        val counters = MutableStateFlow(emptyList<UnreadCounterDatabaseModel>())
-
-        infix fun UnreadCounterDatabaseModel.isSameAs(other: UnreadCounterDatabaseModel): Boolean =
-            userId == other.userId && type == other.type && labelId == other.labelId
-
-        infix fun Collection<UnreadCounterDatabaseModel>.containsSame(element: UnreadCounterDatabaseModel): Boolean =
-            any { it.isSameAs(element) }
-
-        every { observeConversationsUnreadCounters(testUserId) } returns counters
-        coEvery { insertOrUpdate(any<Collection<UnreadCounterDatabaseModel>>()) } answers {
-            val collection = firstArg<Collection<UnreadCounterDatabaseModel>>()
-            val newCounters = counters.value.filterNot { collection containsSame it } + collection
-            counters.value = newCounters
-        }
+        every { observeConversationsUnreadCounters(any()) } returns flowOf(emptyList())
+        coEvery { insertOrUpdate(any<Collection<UnreadCounterDatabaseModel>>()) } just Runs
     }
 
     private val api: ProtonMailApiManager = mockk {
@@ -1254,8 +1240,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             total = 0,
             unread = unreadCount
         )
+
+        setupUnreadCounterDaoToSimulateReplace()
+
         val apiResponse = CountsResponse(listOf(apiModel))
         coEvery { api.fetchConversationsCounts(testUserId) } returns apiResponse
+
         val expectedList = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, unreadCount)))
 
         // when
@@ -1291,14 +1281,16 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         val thirdApiResponse = CountsResponse(listOf(thirdApiModel))
         val allApiResponses = listOf(firstApiResponse, secondApiResponse, thirdApiResponse)
 
+        setupUnreadCounterDaoToSimulateReplace()
+
         var apiCounter = 0
         coEvery { api.fetchConversationsCounts(testUserId) } answers {
             allApiResponses[apiCounter++]
         }
 
-        val firstExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, firstUnreadCount)))
-        val secondExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, secondUnreadCount)))
-        val thirdExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, thirdUnreadCount)))
+        val firstExpected = listOf(UnreadCounter(labelId, firstUnreadCount)).local()
+        val secondExpected = listOf(UnreadCounter(labelId, secondUnreadCount)).local()
+        val thirdExpected = listOf(UnreadCounter(labelId, thirdUnreadCount)).local()
 
         // when
         conversationsRepository.getUnreadCounters(testUserId).test {
@@ -1329,6 +1321,16 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
             // then
             assertEquals(expectedError, expectItem())
+        }
+    }
+
+    private fun setupUnreadCounterDaoToSimulateReplace() {
+
+        val counters = MutableStateFlow(emptyList<UnreadCounterDatabaseModel>())
+
+        every { unreadCounterDao.observeConversationsUnreadCounters(testUserId) } returns counters
+        coEvery { unreadCounterDao.insertOrUpdate(any<Collection<UnreadCounterDatabaseModel>>()) } answers {
+            counters.value = firstArg<Collection<UnreadCounterDatabaseModel>>().toList()
         }
     }
 
