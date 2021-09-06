@@ -28,18 +28,17 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
-import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationDatabaseModelToConversationMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsDatabaseModelsMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsMapper
+import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
@@ -51,25 +50,21 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
-import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
+import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
@@ -79,10 +74,8 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.max
-import kotlin.time.toDuration
 
 // For non-custom locations such as: Inbox, Sent, Archive etc.
 private const val MAX_LOCATION_ID_LENGTH = 2
@@ -164,7 +157,13 @@ internal class ConversationsRepositoryImpl @Inject constructor(
             Success(ResponseSource.Local, domainModels) as DataResult<List<UnreadCounter>>
         }.onStart {
             fetchAndSaveUnreadCounters(userId)
-        }.catch { emit(Error.Remote(it.message, it)) }
+        }.catch { exception ->
+            if (exception is CancellationException) {
+                throw exception
+            } else {
+                emit(Error.Remote(exception.message, exception))
+            }
+        }
 
         return refreshUnreadCountersTrigger.flatMapLatest { countersFlow }
             .onStart { refreshUnreadCounters() }
