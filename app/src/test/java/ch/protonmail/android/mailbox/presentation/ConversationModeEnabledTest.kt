@@ -21,13 +21,15 @@ package ch.protonmail.android.mailbox.presentation
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.featureflags.FeatureFlagsManager
-import io.mockk.MockKAnnotations
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.domain.type.IntEnum
 import me.proton.core.domain.type.StringEnum
@@ -43,44 +45,37 @@ import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.entity.ViewLayout
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
-import me.proton.core.test.kotlin.TestDispatcherProvider
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ConversationModeEnabledTest {
 
-    @RelaxedMockK
-    private lateinit var accountManager: AccountManager
+    private val accountManager: AccountManager = mockk()
 
-    @RelaxedMockK
-    private lateinit var featureFlagsManager: FeatureFlagsManager
+    private val featureFlagsManager: FeatureFlagsManager = mockk()
 
-    @RelaxedMockK
-    private lateinit var mailSettingsRepository: MailSettingsRepository
+    private val mailSettingsRepository: MailSettingsRepository = mockk()
 
-    private lateinit var conversationModeEnabled: ConversationModeEnabled
+    private val observerConversationModeEnabled = ObserveConversationModeEnabled(
+        featureFlagsManager = featureFlagsManager,
+        mailSettingsRepository = mailSettingsRepository
+    )
+
+    private val conversationModeEnabled = ConversationModeEnabled(
+        observeConversationModeEnabled = observerConversationModeEnabled,
+        accountManager = accountManager
+    )
 
     private val userId = UserId("userId")
     private val secondaryUserId = UserId("secondaryUserId")
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        conversationModeEnabled = ConversationModeEnabled(
-            featureFlagsManager,
-            accountManager,
-            mailSettingsRepository,
-            TestDispatcherProvider
-        )
-    }
 
     @Test
     fun conversationModeIsEnabledWhenFeatureFlagIsEnabledAndUserViewModeIsConversationMode() = runBlockingTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(userId) } returns mailSettingsWithConversationViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
+            mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(Constants.MessageLocationType.INBOX)
@@ -94,7 +89,8 @@ class ConversationModeEnabledTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns false
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(userId) } returns mailSettingsWithMessagesViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
+            mailSettingsWithMessagesViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(Constants.MessageLocationType.INBOX)
@@ -108,7 +104,8 @@ class ConversationModeEnabledTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(userId) } returns mailSettingsWithMessagesViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
+            mailSettingsWithMessagesViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(Constants.MessageLocationType.INBOX)
@@ -122,7 +119,8 @@ class ConversationModeEnabledTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(userId) } returns mailSettingsWithConversationViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
+            mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(Constants.MessageLocationType.DRAFT)
@@ -136,7 +134,8 @@ class ConversationModeEnabledTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(userId) } returns mailSettingsWithConversationViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
+            mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(Constants.MessageLocationType.ALL_SENT)
@@ -150,7 +149,8 @@ class ConversationModeEnabledTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(userId) } returns mailSettingsWithConversationViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
+            mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(Constants.MessageLocationType.SEARCH)
@@ -164,7 +164,8 @@ class ConversationModeEnabledTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(userId) } returns mailSettingsWithConversationViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
+            mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(Constants.MessageLocationType.ARCHIVE)
@@ -178,7 +179,8 @@ class ConversationModeEnabledTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(userId) } returns mailSettingsWithConversationViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
+            mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(null)
@@ -192,7 +194,8 @@ class ConversationModeEnabledTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { mailSettingsRepository.getMailSettings(secondaryUserId) } returns mailSettingsWithConversationViewMode()
+        coEvery { mailSettingsRepository.getMailSettingsFlow(secondaryUserId) } returns
+            mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
         // when
         val actual = conversationModeEnabled(null, secondaryUserId)
@@ -260,5 +263,8 @@ class ConversationModeEnabledTest {
         stickyLabels = true,
         confirmLink = true
     )
+
+    private fun MailSettings.toFlowOfDataResult() =
+        flowOf(DataResult.Success(ResponseSource.Local, this))
 
 }

@@ -35,9 +35,6 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Test suite for [ObserveAllUnreadCounters]
- */
 class ObserveAllUnreadCountersTest : CoroutinesTest {
 
     private val testUserId = UserId("one")
