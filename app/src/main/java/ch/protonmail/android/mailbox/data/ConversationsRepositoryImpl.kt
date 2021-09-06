@@ -28,7 +28,9 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
@@ -61,6 +63,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.DataResult.Success
+import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
@@ -69,15 +74,17 @@ import kotlin.math.max
 // For non-custom locations such as: Inbox, Sent, Archive etc.
 private const val MAX_LOCATION_ID_LENGTH = 2
 
-class ConversationsRepositoryImpl @Inject constructor(
+internal class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
+    private val unreadCounterDao: UnreadCounterDao,
     private val api: ProtonMailApiManager,
     responseToConversationsMapper: ConversationsResponseToConversationsMapper,
     private val databaseToConversationMapper: ConversationDatabaseModelToConversationMapper,
     private val apiToDatabaseConversationMapper: ConversationApiModelToConversationDatabaseModelMapper,
     responseToDatabaseConversationsMapper: ConversationsResponseToConversationsDatabaseModelsMapper,
     private val messageFactory: MessageFactory,
+    private val unreadCounterMapper: UnreadCounterMapper,
     private val markConversationsReadWorker: MarkConversationsReadRemoteWorker.Enqueuer,
     private val markConversationsUnreadWorker: MarkConversationsUnreadRemoteWorker.Enqueuer,
     private val labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer,
@@ -136,8 +143,11 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
-    override fun getUnreadCounters(userId: UserId): Flow<DataResult<UnreadCounter>> {
-        TODO("Not yet implemented")
+    override fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> {
+        return unreadCounterDao.observeConversationsUnreadCounters(userId).map { list ->
+            val domainModels = list.map(unreadCounterMapper) { it.toDomainModel() }
+            Success(ResponseSource.Local, domainModels)
+        }
     }
 
     override fun refreshUnreadCounters() {

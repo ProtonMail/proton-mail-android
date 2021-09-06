@@ -49,7 +49,7 @@ interface ConversationsRepository {
      */
     fun getConversation(userId: UserId, conversationId: String): Flow<DataResult<Conversation>>
 
-    fun getUnreadCounters(userId: UserId): Flow<DataResult<UnreadCounter>>
+    fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>>
 
     fun refreshUnreadCounters()
 

@@ -36,6 +36,7 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterDatabaseModel
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationDatabaseModelToConversationMapper
@@ -65,6 +66,7 @@ import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -185,6 +187,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { saveMessages(any()) } just Runs
     }
 
+    private val unreadCounterDao: UnreadCounterDao = mockk()
+
     private val api: ProtonMailApiManager = mockk {
         coEvery { fetchConversations(any()) } returns ConversationsResponse(0, emptyList())
     }
@@ -225,6 +229,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     private val conversationsRepository = ConversationsRepositoryImpl(
         conversationDao = conversationDao,
         messageDao = messageDao,
+        unreadCounterDao = unreadCounterDao,
         api = api,
         responseToConversationsMapper = ConversationsResponseToConversationsMapper(
             conversationApiModelToConversationMapper
@@ -235,6 +240,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             apiToDatabaseConversationMapper
         ),
         messageFactory = messageFactory,
+        unreadCounterMapper = UnreadCounterMapper(),
         markConversationsReadWorker = markConversationsReadRemoteWorker,
         markConversationsUnreadWorker = markConversationsUnreadRemoteWorker,
         labelConversationsRemoteWorker = labelConversationsRemoteWorker,
@@ -1189,6 +1195,29 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // then
             assertEquals(expected, expectItem())
             expectItem() // Ignored Remote data
+        }
+    }
+
+    @Test
+    fun unreadCountersAreCorrectlyFetchedFromDatabase() = coroutinesTest {
+        // given
+        val labelId = "inbox"
+        val unreadCount = 15
+        val databaseModel = UnreadCounterDatabaseModel(
+            userId = testUserId,
+            type = UnreadCounterDatabaseModel.Type.CONVERSATIONS,
+            labelId = labelId,
+            unreadCount = unreadCount
+        )
+        every { unreadCounterDao.observeConversationsUnreadCounters(testUserId) } returns flowOf(listOf(databaseModel))
+        val expected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, unreadCount)))
+
+        // when
+        conversationsRepository.getUnreadCounters(testUserId).test {
+
+            // then
+            assertEquals(expected, expectItem())
+            expectComplete()
         }
     }
 
