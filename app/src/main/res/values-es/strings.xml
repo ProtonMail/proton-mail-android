@@ -315,7 +315,7 @@
     <string name="empty_message">Mensaje vacío</string>
     <string name="dismiss">Descartar</string>
     <string name="new_message_arrived">¡Mensaje nuevo!</string>
-    <string name="please_choose_color">Por favor elija un color</string>
+    <string name="please_choose_color">Elige un color</string>
     <string name="display_images">Mostrar imágenes</string>
     <string name="retry">Reintentar</string>
     <string name="saving_failed_no_conn">Error al guardar, no hay conexión</string>
@@ -522,7 +522,7 @@
     <string name="error_message_zip_code_invalid">Error: código postal inválido</string>
     <string name="error_message_cvc_invalid">Error: Número CVC no válido</string>
     <string name="error_message_card_name_invalid">Error: Nombre de la tarjeta inválido</string>
-    <string name="error_message_select_country">Seleccione un país</string>
+    <string name="error_message_select_country">Selecciona un país</string>
     <string name="error_message_exp_date_invalid">Error: Fecha de vencimiento inválida</string>
     <string name="error_message_exp_date_past">Error: fecha de vencimiento inválida</string>
     <string name="error_message_card_number_invalid">Error: Número de tarjeta no válido</string>
@@ -722,7 +722,7 @@
     <string name="contacts_add_photo_title">Añadir imagen</string>
     <string name="contacts_add_photo_select_gallery">Desde la galería</string>
     <string name="contacts_add_photo_select_camera">Capturar desde la cámara</string>
-    <string name="save_group_validation_error">Debe indicar un nombre para el grupo</string>
+    <string name="save_group_validation_error">Proporciona un nombre de grupo</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Se alcanzó el límite de almacenamiento. No se pueden enviar y recibir mensajes.
         Pulse para más información.</string>

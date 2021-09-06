@@ -45,7 +45,7 @@
     <string name="composer_subject">Betreff:</string>
     <string name="composer_to">An:</string>
     <string name="set_msg_password_title">Passwort festlegen</string>
-    <string name="set_msg_password_info">Legen Sie ein Passwort fest, um diese Nachricht für Nicht-Protonmail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Mehr erfahren</a></string>
+    <string name="set_msg_password_info">Legen Sie ein Passwort fest, um diese Nachricht für Nicht-ProtonMail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Mehr erfahren</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Nachrichtenpasswort</string>
     <string name="set_msg_password_msg_password_hint">4-21 Zeichen lang</string>
