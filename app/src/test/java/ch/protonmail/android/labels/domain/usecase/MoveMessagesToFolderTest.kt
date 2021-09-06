@@ -118,12 +118,12 @@ class MoveMessagesToFolderTest {
         val messageIds = listOf("id1", "id2")
         val newFolderLocation = "newFolderCustomId"
         val currentFolderLabelId = "currentFolderId"
-        coEvery { repository.moveToCustomFolderLocation(messageIds, newFolderLocation, userId) } just Runs
+        coEvery { repository.moveToCustomFolderLocation(messageIds, newFolderLocation, currentFolderLabelId, userId) } just Runs
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
-        coVerify { repository.moveToCustomFolderLocation(messageIds, newFolderLocation, userId) }
+        coVerify { repository.moveToCustomFolderLocation(messageIds, newFolderLocation, currentFolderLabelId, userId) }
     }
 }

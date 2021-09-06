@@ -47,7 +47,12 @@ internal class MoveMessagesToFolder @Inject constructor(
             Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString() ->
                 messagesRepository.moveToSpam(messageIds, currentFolderLabelId, userId)
             else ->
-                messagesRepository.moveToCustomFolderLocation(messageIds, newFolderLocationId, userId)
+                messagesRepository.moveToCustomFolderLocation(
+                    messageIds,
+                    newFolderLocationId,
+                    currentFolderLabelId,
+                    userId
+                )
         }
     }
 }

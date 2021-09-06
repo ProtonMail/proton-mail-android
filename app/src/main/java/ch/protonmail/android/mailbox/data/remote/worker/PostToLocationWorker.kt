@@ -38,8 +38,9 @@ import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 import javax.inject.Inject
 
-const val KEY_POST_WORKER_MESSAGE_ID = "key_post_worker_message_id"
-const val KEY_POST_WORKER_LOCATION_ID = "key_post_worker_location_id"
+const val KEY_POST_WORKER_MESSAGE_ID = "KeyPostWorkerMessageId"
+const val KEY_POST_WORKER_LOCATION_ID = "KeyPostWorkerLocationId"
+const val KEY_POST_WORKER_CUSTOM_LOCATION_ID = "KeyPostWorkerCustomLocationId"
 private const val MAX_RUN_ATTEMPTS = 3
 
 @HiltWorker
@@ -52,8 +53,9 @@ class PostToLocationWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val ids = inputData.getStringArray(KEY_POST_WORKER_MESSAGE_ID)
         val locationId = inputData.getInt(KEY_POST_WORKER_LOCATION_ID, -1)
+        val customLocationId = inputData.getString(KEY_POST_WORKER_CUSTOM_LOCATION_ID)
 
-        if (ids.isNullOrEmpty() || locationId < 0) {
+        if (ids.isNullOrEmpty() || locationId < 0 && customLocationId.isNullOrEmpty()) {
             return Result.failure(
                 workDataOf(KEY_LABEL_WORKER_ERROR_DESCRIPTION to "Input data is not complete")
             )
@@ -61,10 +63,16 @@ class PostToLocationWorker @AssistedInject constructor(
 
         Timber.v("PostToLocationWorker location: $locationId, ids: $ids")
 
+        val locationIdString = if (!customLocationId.isNullOrEmpty()) {
+            customLocationId
+        } else {
+            locationId.toString()
+        }
+
         return runCatching {
             protonMailApiManager.labelMessages(
                 IDList(
-                    locationId.toString(),
+                    locationIdString,
                     ids.asList()
                 )
             )
@@ -91,7 +99,8 @@ class PostToLocationWorker @AssistedInject constructor(
 
         fun enqueue(
             ids: List<String>,
-            newLocation: Constants.MessageLocationType
+            newLocation: Constants.MessageLocationType? = null,
+            newCustomLocation: String? = null
         ): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -99,10 +108,11 @@ class PostToLocationWorker @AssistedInject constructor(
 
             val data = workDataOf(
                 KEY_POST_WORKER_MESSAGE_ID to ids.toTypedArray(),
-                KEY_POST_WORKER_LOCATION_ID to newLocation.messageLocationTypeValue,
+                KEY_POST_WORKER_LOCATION_ID to newLocation?.messageLocationTypeValue,
+                KEY_POST_WORKER_CUSTOM_LOCATION_ID to newCustomLocation,
             )
 
-            val request = OneTimeWorkRequestBuilder<UnlabelConversationsRemoteWorker>()
+            val request = OneTimeWorkRequestBuilder<PostToLocationWorker>()
                 .setConstraints(constraints)
                 .setInputData(data)
                 .build()

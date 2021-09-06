@@ -30,8 +30,6 @@ import ch.protonmail.android.api.models.IDList;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
-import ch.protonmail.android.data.local.MessageDao;
-import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.labels.data.LabelRepository;
@@ -40,6 +38,7 @@ import ch.protonmail.android.labels.data.local.model.LabelId;
 import ch.protonmail.android.labels.data.local.model.LabelType;
 import timber.log.Timber;
 
+@Deprecated // replaced with [PostToLocationWorker]
 public class MoveToFolderJob extends ProtonMailBaseJob {
     private List<String> mMessageIds;
     private String mLabelId;
@@ -78,9 +77,6 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
     private boolean markMessageLocally(CounterDao counterDao, Message message) {
         boolean unreadIncrease = false;
 
-        MessageDao messageDao = MessageDatabase.Factory
-                .getInstance(getApplicationContext(), getUserId())
-                .getDao();
 
         if (!TextUtils.isEmpty(mLabelId)) {
             message.addLabels(Collections.singletonList(mLabelId));
