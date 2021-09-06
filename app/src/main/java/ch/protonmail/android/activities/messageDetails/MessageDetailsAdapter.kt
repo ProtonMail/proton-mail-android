@@ -57,6 +57,7 @@ import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.ui.model.LabelChipUiModel
+import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER
@@ -87,6 +88,7 @@ internal class MessageDetailsAdapter(
     private val userManager: UserManager,
     private val messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper,
     private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
+    private val protonCalendarUtil: ProtonCalendarUtil,
     private val onLoadEmbeddedImagesClicked: (Message, List<String>) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
@@ -311,8 +313,8 @@ internal class MessageDetailsAdapter(
             val expirationInfoView = itemView.expirationInfoView
             val decryptionErrorView = itemView.decryptionErrorView
             val displayRemoteContentButton = itemView.displayRemoteContentButton
-            val openInProtonCalendarView = itemView.include_open_in_proton_calendar
             val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
+            val openInProtonCalendarView = itemView.include_open_in_proton_calendar
             val editDraftButton = itemView.editDraftButton
             val webView = itemView.messageWebViewContainer
                 .findViewById<WebView>(R.id.item_message_body_web_view_id) ?: return
@@ -322,6 +324,7 @@ internal class MessageDetailsAdapter(
             messageBodyProgress.isVisible = listItem.messageFormattedHtml.isNullOrEmpty()
             displayRemoteContentButton.isVisible = false
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
+            openInProtonCalendarView.isVisible = listItem.showOpenInProtonCalendar
             editDraftButton.isVisible = message.isDraft()
             decryptionErrorView.bind(listItem.showDecryptionError)
             expirationInfoView.bind(message.expirationTime)
@@ -529,8 +532,15 @@ internal class MessageDetailsAdapter(
         nonExclusiveLabelsPerMessage = conversation.nonExclusiveLabels
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
-            items.add(MessageDetailsListItem(message))
-            items.add(MessageDetailsListItem(message, message.decryptedHTML, message.decryptedHTML))
+            val header = MessageDetailsListItem(message)
+            val body = MessageDetailsListItem(
+                message = message,
+                messageContent = message.decryptedHTML,
+                originalMessageContent = message.decryptedHTML,
+                showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message)
+            )
+            items.add(header)
+            items.add(body)
         }
 
         setItems(items)

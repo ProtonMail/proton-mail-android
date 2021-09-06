@@ -24,6 +24,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.EmailAddress
 import javax.inject.Inject
 
@@ -76,6 +77,16 @@ class ProtonCalendarUtil @Inject constructor(private val context: Context) {
 
         context.startActivity(playStoreIntent)
     }
+
+    /**
+     * @return `true` is [message] has any attachments that can be opened with Proton Calendar
+     */
+    fun hasCalendarAttachment(message: Message): Boolean =
+        message.attachments.any {
+            val allMimeType = it.mimeType?.toLowerCase()?.split(";")
+                ?: return@any false
+            CALENDAR_MIME_TYPE in allMimeType
+        }
 
     /**
      * @return original recipient email extracted from message headers if any, `null` otherwise

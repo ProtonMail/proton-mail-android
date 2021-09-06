@@ -30,20 +30,28 @@ class MessageDetailsListItem : ExpandableRecyclerAdapter.ListItem {
     var messageFormattedHtmlWithQuotedHistory: String? = null
     var messageFormattedHtml: String? = null
     var showLoadEmbeddedImagesButton: Boolean = false
+    val showOpenInProtonCalendar: Boolean
     var showDecryptionError: Boolean = false
     var embeddedImageIds: List<String> = emptyList()
 
     constructor(message: Message) : super(TYPE_HEADER) {
         this.message = message
+        this.showOpenInProtonCalendar = false
     }
 
     /**
      * @param messageContent the content of this message, in formatted HTML and without the "QUOTED" message
      * @param originalMessageContent the original full content of this message (with QUOTE), formatted in HTML
      */
-    constructor(message: Message, messageContent: String?, originalMessageContent: String?) : super(TYPE_ITEM) {
+    constructor(
+        message: Message,
+        messageContent: String?,
+        originalMessageContent: String?,
+        showOpenInProtonCalendar: Boolean
+    ) : super(TYPE_ITEM) {
         this.message = message
         this.messageFormattedHtml = messageContent
         this.messageFormattedHtmlWithQuotedHistory = originalMessageContent
+        this.showOpenInProtonCalendar = showOpenInProtonCalendar
     }
 }

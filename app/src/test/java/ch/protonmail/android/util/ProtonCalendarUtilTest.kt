@@ -23,6 +23,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.EmailAddress
 import io.mockk.CapturingSlot
 import io.mockk.Runs
@@ -119,6 +121,57 @@ class ProtonCalendarUtilTest {
             assertEquals(senderEmail, senderEmailSlot.captured)
             assertEquals(recipientEmail, recipientEmailSlot.captured)
         }
+    }
+
+    @Test
+    fun hasCalendarAttachmentReturnsTrueIfAnyAttachmentHasCalendarAsOnlyMimetype() {
+        // given
+        val message = Message().apply {
+            attachments = listOf(
+                Attachment(mimeType = "image/jpeg"),
+                Attachment(mimeType = "text/calendar"),
+                Attachment(mimeType = "video/mp4")
+            )
+        }
+
+        // when
+        val result = util.hasCalendarAttachment(message)
+
+        // then
+        assertTrue(result)
+    }
+
+    @Test
+    fun hasCalendarAttachmentReturnsTrueIfAnyAttachmentHasCalendarAsOneOfManyMimetypes() {
+        // given
+        val message = Message().apply {
+            attachments = listOf(
+                Attachment(mimeType = "image/jpeg;text/calendar;video/mp4")
+            )
+        }
+
+        // when
+        val result = util.hasCalendarAttachment(message)
+
+        // then
+        assertTrue(result)
+    }
+
+    @Test
+    fun hasCalendarAttachmentReturnsFalseIfNoIcsAttachment() {
+        // given
+        val message = Message().apply {
+            attachments = listOf(
+                Attachment(mimeType = "image/jpeg"),
+                Attachment(mimeType = "video/mp4")
+            )
+        }
+
+        // when
+        val result = util.hasCalendarAttachment(message)
+
+        // then
+        assertFalse(result)
     }
 
     @Test

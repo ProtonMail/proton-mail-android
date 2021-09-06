@@ -66,6 +66,7 @@ import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
+import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -110,6 +111,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     @Inject
     lateinit var setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported
 
+
+    @Inject
+    lateinit var protonCalendarUtil: ProtonCalendarUtil
 
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
@@ -217,20 +221,21 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private fun initAdapters() {
         messageExpandableAdapter = MessageDetailsAdapter(
-            this,
-            emptyList(),
-            messageDetailsRecyclerView,
-            messageToMessageDetailsListItemMapper,
-            mUserManager,
-            messageEncryptionUiModelMapper,
-            setUpWebViewDarkModeHandlingIfSupported,
-            ::onLoadEmbeddedImagesClicked,
-            ::onDisplayRemoteContentClicked,
-            ::onLoadMessageBody,
-            ::onDownloadAttachment,
-            ::onEditDraftClicked,
-            ::onReplyMessageClicked,
-            ::onShowMessageActionSheet
+            context = this,
+            messages = emptyList(),
+            messageDetailsRecyclerView = messageDetailsRecyclerView,
+            messageToMessageDetailsListItemMapper = messageToMessageDetailsListItemMapper,
+            userManager = mUserManager,
+            messageEncryptionUiModelMapper = messageEncryptionUiModelMapper,
+            setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported,
+            protonCalendarUtil = protonCalendarUtil,
+            onLoadEmbeddedImagesClicked = ::onLoadEmbeddedImagesClicked,
+            onDisplayRemoteContentClicked = ::onDisplayRemoteContentClicked,
+            onLoadMessageBody = ::onLoadMessageBody,
+            onAttachmentDownloadCallback = ::onDownloadAttachment,
+            onEditDraftClicked = ::onEditDraftClicked,
+            onReplyMessageClicked = ::onReplyMessageClicked,
+            onMoreMessageActionsClicked = ::onShowMessageActionSheet
         )
     }
 
