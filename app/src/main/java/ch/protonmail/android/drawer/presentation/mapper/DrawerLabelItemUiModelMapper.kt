@@ -20,6 +20,7 @@ package ch.protonmail.android.drawer.presentation.mapper
 
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
 import ch.protonmail.android.labels.data.model.Label
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.mapper.UiModelMapper
 import javax.inject.Inject
 

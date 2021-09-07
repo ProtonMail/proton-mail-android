@@ -365,7 +365,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private suspend fun loadConversationDetails(
-        result: DataResult<Conversation>, userId: UserId
+        result: DataResult<Conversation>,
+        userId: UserId
     ): ConversationUiModel? {
         return when (result) {
             is DataResult.Success -> {

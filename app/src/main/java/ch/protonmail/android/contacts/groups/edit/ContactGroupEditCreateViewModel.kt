@@ -121,7 +121,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         if (contactGroupItem == null) {
             _contactGroupItemFlow.tryEmit(ContactGroupListItem("", "", 0, color))
         } else {
-            _contactGroupItemFlow.tryEmit(contactGroupItem?.copy(color = color))
+            _contactGroupItemFlow.tryEmit(contactGroupItem.copy(color = color))
         }
     }
 
@@ -171,7 +171,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             id = LabelId(contactGroupItem!!.contactId),
             userId = userId,
             name = name,
-            color = String.format(Locale.getDefault(), "#%06X", 0xFFFFFF and (contactGroupItem?.color ?: 0)),
+            color = String.format(Locale.getDefault(), "#%06X", 0xFFFFFF and contactGroupItem.color),
             type = LabelType.CONTACT_GROUP,
             path = "",
             expanded = 0,

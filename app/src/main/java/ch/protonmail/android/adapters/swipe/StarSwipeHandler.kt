@@ -28,7 +28,8 @@ import com.birbit.android.jobqueue.Job
 class StarSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(
-        message: SimpleMessage, currentLocation: String,
+        message: SimpleMessage,
+        currentLocation: String,
         labelRepository: LabelRepository
     ): Job? {
         return if (!message.isStarred) {

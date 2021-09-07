@@ -39,7 +39,7 @@ data class LabelApiModel(
     @SerialName(ID)
     val id: String,
 
-    //required, cannot be same as an existing label of this Type. Max length is 100 characters
+    // required, cannot be same as an existing label of this Type. Max length is 100 characters
     @SerialName(NAME)
     val name: String,
 

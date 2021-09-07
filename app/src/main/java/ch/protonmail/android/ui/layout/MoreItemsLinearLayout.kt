@@ -34,7 +34,7 @@ import ch.protonmail.android.R
  * A [LinearLayout] that will show items as much as they can fit, then show a "+N" text
  */
 @SuppressWarnings("TooManyFunctions") // Android's View overrides
-open class MoreItemsLinearLayout @JvmOverloads constructor (
+open class MoreItemsLinearLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -53,16 +53,19 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
 
     open val maxVisibleChildrenCount = MAX_NUMBER_OF_VISIBLE_CHILDREN_UNDEFINED
 
-    val allChildren: Sequence<View> get() = object : Sequence<View> {
-        override fun iterator() = this@MoreItemsLinearLayout.iterator()
-    }
+    val allChildren: Sequence<View>
+        get() = object : Sequence<View> {
+            override fun iterator() = this@MoreItemsLinearLayout.iterator()
+        }
 
     // Created for shadow the homonymous extension function in ViewGroup.kt
     @Deprecated("Use allChildren", ReplaceWith("allChildren"))
-    val children: Sequence<View> get() = allChildren
+    val children: Sequence<View>
+        get() = allChildren
 
     @Suppress("DEPRECATION")
-    val allChildCount get() = childCount - 1
+    val allChildCount
+        get() = childCount - 1
     val visibleChildCount get() = allChildren.filter { it.isVisible }.toList().size
     val hiddenChildCount get() = allChildren.filterNot { it.isVisible }.toList().size
 
@@ -122,8 +125,8 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
                 getChildHeightMeasureSpec(effectiveAvailableSize, heightMeasureSpec)
             )
             val relevantSize = getRelevantSizeFor(child)
-            val maxNumberOfChildrenReached = maxVisibleChildrenCount != MAX_NUMBER_OF_VISIBLE_CHILDREN_UNDEFINED
-                && childrenAddedInThisPass >= maxVisibleChildrenCount
+            val maxNumberOfChildrenReached = maxVisibleChildrenCount != MAX_NUMBER_OF_VISIBLE_CHILDREN_UNDEFINED &&
+                childrenAddedInThisPass >= maxVisibleChildrenCount
 
             child.isVisible = relevantSize <= effectiveAvailableSize && !maxNumberOfChildrenReached
             limitReached = relevantSize > effectiveAvailableSize || maxNumberOfChildrenReached
@@ -259,6 +262,7 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
     }
 
     private companion object {
+
         const val MAX_NUMBER_OF_VISIBLE_CHILDREN_UNDEFINED = -1
     }
 }

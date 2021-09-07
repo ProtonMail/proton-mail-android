@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.databinding.GroupRecipientListItemBinding
 
-class GroupRecipientViewHolder(binding: GroupRecipientListItemBinding):
+class GroupRecipientViewHolder(binding: GroupRecipientListItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     private val checkbox = binding.groupRecipientListItemCheckbox

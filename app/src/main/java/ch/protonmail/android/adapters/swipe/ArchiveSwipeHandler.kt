@@ -29,11 +29,10 @@ import com.birbit.android.jobqueue.Job
 class ArchiveSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(
-        message: SimpleMessage, currentLocation: String,
+        message: SimpleMessage,
+        currentLocation: String,
         labelRepository: LabelRepository
-    ): Job? {
-        return PostArchiveJob(listOf(message.messageId), listOf(currentLocation))
-    }
+    ): Job = PostArchiveJob(listOf(message.messageId), listOf(currentLocation))
 
     override fun handleUndo(
         message: SimpleMessage,

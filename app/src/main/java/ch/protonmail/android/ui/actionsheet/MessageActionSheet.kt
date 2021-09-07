@@ -144,7 +144,10 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         super.onDestroyView()
     }
 
-    private fun updateViewState(state: MessageActionSheetState, binding: FragmentMessageActionSheetBinding) {
+    private fun updateViewState(
+        state: MessageActionSheetState,
+        binding: FragmentMessageActionSheetBinding
+    ) {
         when (state) {
             is MessageActionSheetState.Data -> {
                 setupMoveSectionState(binding, state.moveSectionState)
