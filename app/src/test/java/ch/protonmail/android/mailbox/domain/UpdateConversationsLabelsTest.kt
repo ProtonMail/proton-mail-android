@@ -19,10 +19,13 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.data.LabelRepository
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.Test
@@ -34,9 +37,11 @@ import kotlin.test.assertEquals
 class UpdateConversationsLabelsTest {
 
     private val conversationsRepository = mockk<ConversationsRepository>()
+    private val labelRepository = mockk<LabelRepository>()
 
     private val updateConversationsLabels = UpdateConversationsLabels(
-        conversationsRepository
+        conversationsRepository,
+        labelRepository
     )
 
     @Test
@@ -48,13 +53,16 @@ class UpdateConversationsLabelsTest {
             val label1 = "label1"
             val label2 = "label2"
             val label3 = "label3"
+            val allLabels = (1..3).map { Label(id = "label$it", name = "name$it", color = "", exclusive = it > 2) }
             val selectedLabels = listOf(label1, label2)
-            val unselectedLabels = listOf(label3)
+            coEvery {
+                labelRepository.findAllLabels(userId)
+            } returns flowOf(allLabels)
             coEvery { conversationsRepository.label(conversationIds, userId, any()) } returns ConversationsActionResult.Success
             coEvery { conversationsRepository.unlabel(conversationIds, userId, any()) } returns ConversationsActionResult.Success
 
             // when
-            updateConversationsLabels.invoke(conversationIds, userId, selectedLabels, unselectedLabels)
+            updateConversationsLabels.invoke(conversationIds, userId, selectedLabels)
 
             // then
             coVerify {
@@ -77,10 +85,12 @@ class UpdateConversationsLabelsTest {
             val userId = UserId("userId")
             val label1 = "label1"
             val label2 = "label2"
-            val label3 = "label3"
+            val allLabels = (1..3).map { Label(id = "label$it", name = "name$it", color = "", exclusive = it > 2) }
             val selectedLabels = listOf(label1, label2)
-            val unselectedLabels = listOf(label3)
             val expectedResult = ConversationsActionResult.Error
+            coEvery {
+                labelRepository.findAllLabels(userId)
+            } returns flowOf(allLabels)
             coEvery {
                 conversationsRepository.label(conversationIds, userId, any())
             } returns ConversationsActionResult.Success
@@ -89,7 +99,7 @@ class UpdateConversationsLabelsTest {
             } returns ConversationsActionResult.Error
 
             // when
-            val result = updateConversationsLabels.invoke(conversationIds, userId, selectedLabels, unselectedLabels)
+            val result = updateConversationsLabels.invoke(conversationIds, userId, selectedLabels)
 
             // then
             assertEquals(expectedResult, result)

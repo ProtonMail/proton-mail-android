@@ -77,8 +77,7 @@ class UpdateConversationsLabelsWorkerTest {
         val operationResult = updateConversationsLabelsWorkerEnqueuer.enqueue(
             conversationIds,
             userId,
-            selectedLabels,
-            unselectedLabels
+            selectedLabels
         )
 
         // then
@@ -109,8 +108,7 @@ class UpdateConversationsLabelsWorkerTest {
                 updateConversationsLabels(
                     conversationIds.toList(),
                     UserId(userId),
-                    selectedLabels.toList(),
-                    unselectedLabels.toList()
+                    selectedLabels.toList()
                 )
             } returns ConversationsActionResult.Success
 
@@ -148,8 +146,7 @@ class UpdateConversationsLabelsWorkerTest {
                 updateConversationsLabels(
                     conversationIds.toList(),
                     UserId(userId),
-                    selectedLabels.toList(),
-                    unselectedLabels.toList()
+                    selectedLabels.toList()
                 )
             } returns ConversationsActionResult.Error
 

@@ -30,7 +30,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
@@ -38,6 +37,7 @@ import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionAdapter
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -146,16 +146,16 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun onLabelClicked(model: LabelActonItemUiModel) {
-        val currentFolderLocationId = arguments?.getInt(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
-            ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
-        viewModel.onLabelClicked(model, currentFolderLocationId)
+        viewModel.onLabelClicked(model)
     }
 
     private fun showApplicableLabelsThresholdError(maxLabelsAllowed: Int) {
-        Toast.makeText(
-            context, getString(R.string.max_labels_selected, maxLabelsAllowed),
-            Toast.LENGTH_SHORT
-        ).show()
+        DialogUtils.showInfoDialog(
+            context = requireNotNull(context),
+            title = requireNotNull(context?.getString(R.string.labels_selected_limit_reached)),
+            message = requireNotNull(context?.getString(R.string.max_labels_selected, maxLabelsAllowed)),
+            okListener = { }
+        )
     }
 
     private fun showCouldNotCompleteActionError() {

@@ -191,7 +191,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyThatAfterDoneIsClickedErrorUpdatingLabelsIsEmittedWhenAConversationActionReturnsErrorResult() {
         // given
         val shallMoveToArchive = true
-        every { updateConversationsLabels.enqueue(any(), any(), any(), any()) } returns mockk()
+        every { updateConversationsLabels.enqueue(any(), any(), any()) } returns mockk()
         coEvery {
             moveConversationsToFolder.invoke(
                 any(), any(),
@@ -213,7 +213,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
 
         // when
-        viewModel.onLabelClicked(model1label, 0)
+        viewModel.onLabelClicked(model1label)
 
         // then
         assertEquals(listOf(model1label.copy(isChecked = false)), viewModel.labels.value)
@@ -232,7 +232,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
         // when
-        viewModel.onLabelClicked(model2folder, 0)
+        viewModel.onLabelClicked(model2folder)
 
         // then
         coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
@@ -253,7 +253,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             coEvery { moveConversationsToFolder.invoke(any(), any(), any()) } returns ConversationsActionResult.Success
 
             // when
-            viewModel.onLabelClicked(model2folder, 0)
+            viewModel.onLabelClicked(model2folder)
 
             // then
             coVerify { moveConversationsToFolder(any(), any(), any()) }
@@ -272,7 +272,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             } returns ConversationsActionResult.Error
 
             // when
-            viewModel.onLabelClicked(model2folder, 0)
+            viewModel.onLabelClicked(model2folder)
 
             // then
             assertEquals(ManageLabelActionResult.ErrorMovingToFolder, viewModel.actionsResult.value)
@@ -291,7 +291,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
             // when
-            viewModel.onLabelClicked(model2folder, 0)
+            viewModel.onLabelClicked(model2folder)
 
             // then
             coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }

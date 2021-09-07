@@ -1079,4 +1079,6 @@
     <string name="could_not_complete_action">Could not complete the action</string>
 
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
+
+    <string name="labels_selected_limit_reached">Limit reached</string>
 </resources>

@@ -49,6 +49,8 @@ import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
+private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
+
 @HiltViewModel
 class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -100,7 +102,7 @@ class LabelsActionSheetViewModel @Inject constructor(
         }
     }
 
-    fun onLabelClicked(model: LabelActonItemUiModel, currentFolderLocationId: Int) {
+    fun onLabelClicked(model: LabelActonItemUiModel) {
 
         if (model.labelType == LabelsActionSheet.Type.FOLDER.typeInt) {
             onFolderClicked(model.labelId)
@@ -123,6 +125,9 @@ class LabelsActionSheetViewModel @Inject constructor(
             ) {
                 actionsResultMutableFlow.value =
                     ManageLabelActionResult.ErrorLabelsThresholdReached(userManager.getMaxLabelsAllowed())
+            } else if (selectedLabelsCount.size > MAX_NUMBER_OF_SELECTED_LABELS) {
+                actionsResultMutableFlow.value =
+                    ManageLabelActionResult.ErrorLabelsThresholdReached(MAX_NUMBER_OF_SELECTED_LABELS)
             } else {
                 labelsMutableFlow.value = updatedLabels
                 actionsResultMutableFlow.value = ManageLabelActionResult.Default
@@ -144,16 +149,12 @@ class LabelsActionSheetViewModel @Inject constructor(
                 val selectedLabels = labels.value
                     .filter { it.isChecked == true }
                     .map { it.labelId }
-                val unselectedLabels = labels.value
-                    .filter { it.isChecked == false }
-                    .map { it.labelId }
                 Timber.v("Selected labels: $selectedLabels messageId: $ids")
                 if (isActionAppliedToConversation(currentMessageFolder)) {
                     updateConversationsLabels.enqueue(
                         ids,
                         UserId(userManager.requireCurrentUserId().id),
-                        selectedLabels,
-                        unselectedLabels
+                        selectedLabels
                     )
                 } else {
                     ids.forEach { id ->

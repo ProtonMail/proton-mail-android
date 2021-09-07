@@ -56,10 +56,9 @@ class UpdateConversationsLabelsWorker @AssistedInject constructor(
         val conversationIds = inputData.getStringArray(KEY_UPDATE_LABELS_CONVERSATION_IDS)?.toList()
         val userId = inputData.getString(KEY_UPDATE_LABELS_USER_ID)
         val selectedLabels = inputData.getStringArray(KEY_UPDATE_LABELS_SELECTED_LABELS)?.toList()
-        val unselectedLabels = inputData.getStringArray(KEY_UPDATE_LABELS_UNSELECTED_LABELS)?.toList()
 
         if (conversationIds.isNullOrEmpty() || userId.isNullOrEmpty() ||
-            selectedLabels == null || unselectedLabels == null
+            selectedLabels == null
         ) {
             return Result.failure(
                 workDataOf(
@@ -71,8 +70,7 @@ class UpdateConversationsLabelsWorker @AssistedInject constructor(
         val result = updateConversationsLabels(
             conversationIds,
             UserId(userId),
-            selectedLabels,
-            unselectedLabels
+            selectedLabels
         )
         if (result is ConversationsActionResult.Error) {
             return Result.failure(
@@ -90,7 +88,6 @@ class UpdateConversationsLabelsWorker @AssistedInject constructor(
             conversationIds: List<String>,
             userId: UserId,
             selectedLabels: List<String>,
-            unselectedLabels: List<String>
         ): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -100,7 +97,6 @@ class UpdateConversationsLabelsWorker @AssistedInject constructor(
                 KEY_UPDATE_LABELS_CONVERSATION_IDS to conversationIds.toTypedArray(),
                 KEY_UPDATE_LABELS_USER_ID to userId.id,
                 KEY_UPDATE_LABELS_SELECTED_LABELS to selectedLabels.toTypedArray(),
-                KEY_UPDATE_LABELS_UNSELECTED_LABELS to unselectedLabels.toTypedArray()
             )
 
             val request = OneTimeWorkRequestBuilder<UpdateConversationsLabelsWorker>()
