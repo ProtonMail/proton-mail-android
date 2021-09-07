@@ -353,6 +353,10 @@ internal class MailboxActivity :
                 .onEach { mailboxAdapter.setNewLocation(it) }
                 .launchIn(lifecycleScope)
 
+            drawerLabels
+                .onEach { sideDrawer.setFoldersAndLabelsSection(it) }
+                .launchIn(lifecycleScope)
+
             unreadCounters
                 .onEach { sideDrawer.setUnreadCounters(it) }
                 .launchIn(lifecycleScope)

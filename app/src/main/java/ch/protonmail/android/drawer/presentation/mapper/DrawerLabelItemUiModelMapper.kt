@@ -18,23 +18,20 @@
  */
 package ch.protonmail.android.drawer.presentation.mapper
 
-import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
 import ch.protonmail.android.mapper.UiModelMapper
 import me.proton.core.util.kotlin.invoke
 import javax.inject.Inject
 
 /**
- * Map from [LabelWithUnreadCounter] to [DrawerItemUiModel.Primary.Label]
+ * Map from [Label] to [DrawerItemUiModel.Primary.Label]
  * Inherit from [UiModelMapper]
- *
- * @author Davide Farella
  */
-internal class LabelWithUnreadCounterToDrawerLabelItemUiModelMapper @Inject constructor(
+internal class DrawerLabelItemUiModelMapper @Inject constructor(
     private val drawerLabelMapper: DrawerLabelUiModelMapper
-) : UiModelMapper<LabelWithUnreadCounter, DrawerItemUiModel.Primary.Label> {
+) : UiModelMapper<Label, DrawerItemUiModel.Primary.Label> {
 
-    override fun LabelWithUnreadCounter.toUiModel(): DrawerItemUiModel.Primary.Label =
-        DrawerItemUiModel.Primary.Label(drawerLabelMapper { label.toUiModel() }, unreadCount)
-
+    override fun Label.toUiModel(): DrawerItemUiModel.Primary.Label =
+        DrawerItemUiModel.Primary.Label(drawerLabelMapper { toUiModel() })
 }

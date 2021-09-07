@@ -200,6 +200,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             moveConversationsToFolder = moveConversationsToFolder,
             moveMessagesToFolder = moveMessagesToFolder,
             deleteConversations = deleteConversations,
+            observeLabels = mockk(),
+            drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings
         )
     }
