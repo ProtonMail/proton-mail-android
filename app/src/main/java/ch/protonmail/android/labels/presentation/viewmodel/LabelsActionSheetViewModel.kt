@@ -121,11 +121,8 @@ class LabelsActionSheetViewModel @Inject constructor(
 
             val selectedLabelsCount = updatedLabels.filter { it.isChecked == true }
             if (selectedLabelsCount.isNotEmpty() &&
-                userManager.didReachLabelsThreshold(selectedLabelsCount.size)
+                selectedLabelsCount.size > MAX_NUMBER_OF_SELECTED_LABELS
             ) {
-                actionsResultMutableFlow.value =
-                    ManageLabelActionResult.ErrorLabelsThresholdReached(userManager.getMaxLabelsAllowed())
-            } else if (selectedLabelsCount.size > MAX_NUMBER_OF_SELECTED_LABELS) {
                 actionsResultMutableFlow.value =
                     ManageLabelActionResult.ErrorLabelsThresholdReached(MAX_NUMBER_OF_SELECTED_LABELS)
             } else {

@@ -21,6 +21,7 @@ package ch.protonmail.android.labels.presentation.viewmodel
 
 import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
+import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
@@ -207,7 +208,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyThatAfterOnLabelIsClickedForLabelType() = runBlockingTest {
+    fun verifyThatWhenOnLabelClickedIsCalledForLabelTypeAndNumberOfSelectedLabelsIsLessThanThresholdDefaultIsEmitted() = runBlockingTest {
 
         // given
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
@@ -218,6 +219,34 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // then
         assertEquals(listOf(model1label.copy(isChecked = false)), viewModel.labels.value)
         assertEquals(ManageLabelActionResult.Default, viewModel.actionsResult.value)
+    }
+
+    @Test
+    fun verifyThatWhenOnLabelClickedIsCalledForLabelTypeAndNumberOfSelectedLabelsIsGreaterThanThresholdErrorLabelsThresholdReachedIsEmitted() {
+        runBlockingTest {
+            // given
+            val maximumLabelsSelectedThreshold = 100
+            val expectedResult = ManageLabelActionResult.ErrorLabelsThresholdReached(maximumLabelsSelectedThreshold)
+            coEvery { getAllLabels.invoke(any(), any(), any()) } returns buildAListOfMoreThanOneHundredSelectedLabels()
+            val labelsActionSheetViewModel = LabelsActionSheetViewModel(
+                savedStateHandle,
+                getAllLabels,
+                userManager,
+                updateLabels,
+                updateConversationsLabels,
+                moveMessagesToFolder,
+                moveConversationsToFolder,
+                conversationModeEnabled,
+                messageRepository,
+                conversationsRepository
+            )
+
+            // when
+            labelsActionSheetViewModel.onLabelClicked(model1label)
+
+            // then
+            assertEquals(expectedResult, labelsActionSheetViewModel.actionsResult.value)
+        }
     }
 
     @Test
@@ -298,4 +327,21 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             coVerify { moveConversationsToFolder wasNot Called }
             assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(false), viewModel.actionsResult.value)
         }
+
+    private fun buildAListOfMoreThanOneHundredSelectedLabels(): List<LabelActonItemUiModel> {
+        val labels = mutableListOf<LabelActonItemUiModel>()
+        for (index in 0..100) {
+            labels.add(
+                LabelActonItemUiModel(
+                    labelId = "$index",
+                    iconRes = R.drawable.circle_labels_selection,
+                    title = "title $index",
+                    titleRes = null,
+                    isChecked = true,
+                    labelType = LabelsActionSheet.Type.LABEL.typeInt
+                )
+            )
+        }
+        return labels
+    }
 }
