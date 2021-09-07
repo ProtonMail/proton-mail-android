@@ -94,7 +94,6 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
-import me.proton.core.test.kotlin.CoroutinesTest
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
@@ -104,7 +103,7 @@ import kotlin.time.toDuration
 private const val STARRED_LABEL_ID = "10"
 
 @OptIn(FlowPreview::class)
-class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
+class ConversationsRepositoryImplTest : ArchTest {
 
     private val testUserId = UserId("id")
 
@@ -1209,7 +1208,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun unreadCountersAreCorrectlyFetchedFromDatabase() = coroutinesTest {
+    fun unreadCountersAreCorrectlyFetchedFromDatabase() = runBlockingTest {
         // given
         val labelId = "inbox"
         val unreadCount = 15
@@ -1231,7 +1230,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun unreadCountersAreCorrectlyFetchedFromApi() = coroutinesTest {
+    fun unreadCountersAreCorrectlyFetchedFromApi() = runBlockingTest {
         // given
         val labelId = "inbox"
         val unreadCount = 15
@@ -1257,7 +1256,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun unreadCountersAreRefreshedFromApi() = coroutinesTest {
+    fun unreadCountersAreRefreshedFromApi() = runBlockingTest {
         // given
         val labelId = "inbox"
         val firstUnreadCount = 15
@@ -1307,7 +1306,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun handlesExceptionDuringUnreadCountersRefresh() = coroutinesTest {
+    fun handlesExceptionDuringUnreadCountersRefresh() = runBlockingTest {
         // given
         val expectedMessage = "Invalid username!"
         val expectedException = IllegalArgumentException(expectedMessage)
