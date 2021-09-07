@@ -19,23 +19,20 @@
 
 package ch.protonmail.android.attachments
 
+import android.content.Context
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.AttachmentHeaders
 import ch.protonmail.android.jobs.helper.EmbeddedImage
-import io.mockk.MockKAnnotations
-import kotlin.test.BeforeTest
+import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AttachmentsHelperTest {
 
-    private lateinit var helper: AttachmentsHelper
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        helper = AttachmentsHelper()
-    }
+    private val context: Context = mockk()
+    private val helper = AttachmentsHelper(
+        context = context
+    )
 
     @Test
     fun verifyOrdinaryMappingToEmbeddedImages() {

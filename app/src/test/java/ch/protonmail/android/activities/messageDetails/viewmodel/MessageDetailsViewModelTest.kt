@@ -66,6 +66,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
+import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.DownloadUtils
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -145,6 +146,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val attachmentsHelper: AttachmentsHelper = mockk(relaxed = true)
 
+    private val downloadUtils: DownloadUtils = mockk()
+
     private val attachmentMetadataDao: AttachmentMetadataDao = mockk(relaxed = true)
 
     private val moveMessagesToFolder: MoveMessagesToFolder = mockk(relaxed = true)
@@ -156,6 +159,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val verifyConnection: VerifyConnection = mockk(relaxed = true)
 
     private val networkConfigurator: NetworkConfigurator = mockk(relaxed = true)
+
+    private val protonCalendarUtil: ProtonCalendarUtil = mockk()
 
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer = mockk(relaxed = true)
 
@@ -202,31 +207,32 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         mockkStatic(Color::class)
         every { Color.parseColor(any()) } returns testColorInt
         viewModel = MessageDetailsViewModel(
-            messageDetailsRepository,
-            messageRepository,
-            userManager,
-            contactsRepository,
-            labelRepository,
-            attachmentMetadataDao,
-            fetchVerificationKeys,
-            attachmentsWorker,
-            dispatchers,
-            attachmentsHelper,
-            DownloadUtils(),
-            moveMessagesToFolder,
-            moveConversationsToFolder,
-            conversationModeEnabled,
-            conversationRepository,
-            changeMessagesReadStatus,
-            changeConversationsReadStatus,
-            changeMessagesStarredStatus,
-            changeConversationsStarredStatus,
-            deleteMessage,
-            deleteConversations,
-            savedStateHandle,
-            messageRendererFactory,
-            verifyConnection,
-            networkConfigurator,
+            messageDetailsRepository = messageDetailsRepository,
+            messageRepository = messageRepository,
+            userManager = userManager,
+            contactsRepository = contactsRepository,
+            labelRepository = labelRepository,
+            attachmentMetadataDao = attachmentMetadataDao,
+            fetchVerificationKeys = fetchVerificationKeys,
+            attachmentsWorker = attachmentsWorker,
+            dispatchers = dispatchers,
+            attachmentsHelper = attachmentsHelper,
+            downloadUtils = downloadUtils,
+            moveMessagesToFolder = moveMessagesToFolder,
+            moveConversationsToFolder = moveConversationsToFolder,
+            conversationModeEnabled = conversationModeEnabled,
+            conversationRepository = conversationRepository,
+            changeMessagesReadStatus = changeMessagesReadStatus,
+            changeConversationsReadStatus = changeConversationsReadStatus,
+            changeMessagesStarredStatus = changeMessagesStarredStatus,
+            changeConversationsStarredStatus = changeConversationsStarredStatus,
+            deleteMessage = deleteMessage,
+            deleteConversations = deleteConversations,
+            savedStateHandle = savedStateHandle,
+            messageRendererFactory = messageRendererFactory,
+            verifyConnection = verifyConnection,
+            networkConfigurator = networkConfigurator,
+            protonCalendarUtil = protonCalendarUtil
         )
     }
 
@@ -269,7 +275,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val darkCssContent = "darkCss"
         val expected =
             "<html>\n <head>\n  <style>$cssContent$darkCssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessageContent  \n  </div>\n </body>\n</html>"
-        
+
         // when
         val parsedMessage =
             viewModel.formatMessageHtmlBody(
