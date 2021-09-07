@@ -42,15 +42,15 @@ interface LabelService : BaseRetrofitApi {
     // TODO: rename fetch -> get
     @GET("v4/labels?Type=$LABEL_TYPE_ID_MESSAGE_LABEL")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun fetchLabels(): LabelsResponse
+    suspend fun getLabels(): LabelsResponse
 
     // this is coded here and not passed as a param because there is no point when it is a constant always
     @GET("v4/labels?Type=$LABEL_TYPE_ID_CONTACT_GROUP")
-    suspend fun fetchContactGroups(): LabelsResponse
+    suspend fun getContactGroups(): LabelsResponse
 
     @GET("v4/labels?Type=$LABEL_TYPE_ID_FOLDER")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun fetchFolders(): LabelsResponse
+    suspend fun getFolders(): LabelsResponse
 
     @POST("v4/labels")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

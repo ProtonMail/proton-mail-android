@@ -26,11 +26,11 @@ import me.proton.core.network.domain.ApiResult
 
 interface LabelApiSpec {
 
-    suspend fun fetchLabels(userId: UserId): ApiResult<LabelsResponse>
+    suspend fun getLabels(userId: UserId): ApiResult<LabelsResponse>
 
-    suspend fun fetchContactGroups(userId: UserId): ApiResult<LabelsResponse>
+    suspend fun getContactGroups(userId: UserId): ApiResult<LabelsResponse>
 
-    suspend fun fetchFolders(userId: UserId): ApiResult<LabelsResponse>
+    suspend fun getFolders(userId: UserId): ApiResult<LabelsResponse>
 
     suspend fun createLabel(userId: UserId, label: LabelRequestBody): ApiResult<LabelResponse>
 

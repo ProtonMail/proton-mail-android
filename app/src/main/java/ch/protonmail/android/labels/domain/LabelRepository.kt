@@ -53,7 +53,7 @@ interface LabelRepository {
 
     fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
-    suspend fun saveLabel(label: LabelEntity) // TODO: maybe Label?
+    suspend fun saveLabel(label: LabelEntity)
 
     suspend fun saveLabels(labels: List<LabelEntity>)
 

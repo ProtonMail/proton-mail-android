@@ -66,9 +66,9 @@ class LabelRepositoryImplTest : CoroutinesTest {
     @Test
     fun verifyThatObserveAllLabelsStartsWithFetchingDataFromRemoteApiAndSavingInDb() = runBlockingTest {
         // given
-        coEvery { api.fetchLabels(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel1)))
-        coEvery { api.fetchContactGroups(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel2)))
-        coEvery { api.fetchFolders(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel3)))
+        coEvery { api.getLabels(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel1)))
+        coEvery { api.getContactGroups(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel2)))
+        coEvery { api.getFolders(testUserId) } returns ApiResult.Success(LabelsResponse(listOf(testLabel3)))
         coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns true
 
         val dataToSaveInDb = listOf(testLabelEntity1, testLabelEntity2, testLabelEntity3)

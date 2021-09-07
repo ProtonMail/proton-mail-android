@@ -24,10 +24,10 @@ import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -120,9 +120,9 @@ internal class LabelRepositoryImpl @Inject constructor(
     private suspend fun fetchAndSaveAllLabels(
         userId: UserId
     ): List<LabelEntity> = coroutineScope {
-        val serverLabels = async { api.fetchLabels(userId).valueOrThrow.labels }
-        val serverFolders = async { api.fetchFolders(userId).valueOrThrow.labels }
-        val serverContactGroups = async { api.fetchContactGroups(userId).valueOrThrow.labels }
+        val serverLabels = async { api.getLabels(userId).valueOrThrow.labels }
+        val serverFolders = async { api.getFolders(userId).valueOrThrow.labels }
+        val serverContactGroups = async { api.getContactGroups(userId).valueOrThrow.labels }
         val allLabels = serverLabels.await() + serverFolders.await() + serverContactGroups.await()
         val allLabelsEntities = allLabels.map { labelMapper.toEntity(it, userId) }
         Timber.v("fetchAndSaveAllLabels size: ${allLabelsEntities.size} user: $userId")

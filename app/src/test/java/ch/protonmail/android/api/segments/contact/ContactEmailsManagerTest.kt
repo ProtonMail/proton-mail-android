@@ -121,7 +121,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val labelIds = listOf(labelId1)
         val contactEmail = ContactEmail(contactEmailId, "test1@abc.com", "name1", labelIds = labelIds)
         val newContactEmails = listOf(contactEmail)
-        coEvery { api.fetchContactGroups(testUserId) } returns apiResult
+        coEvery { api.getContactGroups(testUserId) } returns apiResult
         val emailsResponse = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails
             every { total } returns 0
@@ -186,7 +186,7 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val newContactEmails2 = listOf(contactEmail3, contactEmail4)
         val newContactEmails3 = listOf(contactEmail5)
         val allContactEmails = listOf(contactEmail1, contactEmail2, contactEmail3, contactEmail4, contactEmail5)
-        coEvery { api.fetchContactGroups(any()) } returns apiResult
+        coEvery { api.getContactGroups(any()) } returns apiResult
         val emailsResponse1 = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails1
             every { total } returns allContactEmails.size

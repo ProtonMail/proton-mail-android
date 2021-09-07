@@ -308,7 +308,7 @@ class ConvertLocalContactsJob(
 
         if (someGroupsAlreadyExist) { // at least one local group already exist on server, we fetch all of them to get IDs
             runBlocking {
-                val serverGroups = getApi().fetchContactGroups(currentUser).valueOrThrow.labels
+                val serverGroups = getApi().getContactGroups(currentUser).valueOrThrow.labels
                 localGroups.filterNot { result.containsKey(it.value) }.forEach { localGroupEntry ->
                     serverGroups.find { it.name == localGroupEntry.value }?.run {
                         result[localGroupEntry.value] = this.id

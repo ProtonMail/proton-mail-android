@@ -45,7 +45,7 @@ class ContactEmailsManager @Inject constructor(
     suspend fun refresh(pageSize: Int = Constants.CONTACTS_PAGE_SIZE) {
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
         val contactGroupsResponse: LabelsResponse? =
-            api.fetchContactGroups(userId).valueOrNull
+            api.getContactGroups(userId).valueOrNull
 
         var currentPage = 0
         var hasMorePages = true

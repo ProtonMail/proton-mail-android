@@ -27,19 +27,19 @@ import me.proton.core.network.domain.ApiResult
 
 class LabelApi(private val apiProvider: ApiProvider) : LabelApiSpec {
 
-    override suspend fun fetchLabels(userId: UserId): ApiResult<LabelsResponse> =
+    override suspend fun getLabels(userId: UserId): ApiResult<LabelsResponse> =
         apiProvider.get<LabelService>(userId).invoke {
-            fetchLabels()
+            getLabels()
         }
 
-    override suspend fun fetchContactGroups(userId: UserId): ApiResult<LabelsResponse> =
+    override suspend fun getContactGroups(userId: UserId): ApiResult<LabelsResponse> =
         apiProvider.get<LabelService>(userId).invoke {
-            fetchContactGroups()
+            getContactGroups()
         }
 
-    override suspend fun fetchFolders(userId: UserId): ApiResult<LabelsResponse> =
+    override suspend fun getFolders(userId: UserId): ApiResult<LabelsResponse> =
         apiProvider.get<LabelService>(userId).invoke {
-            fetchFolders()
+            getFolders()
         }
 
     override suspend fun createLabel(userId: UserId, label: LabelRequestBody): ApiResult<LabelResponse> =

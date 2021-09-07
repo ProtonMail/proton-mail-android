@@ -211,12 +211,12 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         keyId: String
     ): ResponseBody = api.activateKeyLegacy(keyActivationBody, keyId)
 
-    override suspend fun fetchLabels(userId: UserId): ApiResult<LabelsResponse> = api.fetchLabels(userId)
+    override suspend fun getLabels(userId: UserId): ApiResult<LabelsResponse> = api.getLabels(userId)
 
-    override suspend fun fetchContactGroups(userId: UserId): ApiResult<LabelsResponse> =
-        api.fetchContactGroups(userId)
+    override suspend fun getContactGroups(userId: UserId): ApiResult<LabelsResponse> =
+        api.getContactGroups(userId)
 
-    override suspend fun fetchFolders(userId: UserId): ApiResult<LabelsResponse> = api.fetchFolders(userId)
+    override suspend fun getFolders(userId: UserId): ApiResult<LabelsResponse> = api.getFolders(userId)
 
     override suspend fun createLabel(userId: UserId, label: LabelRequestBody): ApiResult<LabelResponse> =
         api.createLabel(userId, label)

@@ -79,7 +79,7 @@ open class ContactDetailsRepository @Inject constructor(
         contactRepository.countContactEmailsByLabelId(contactGroupId)
 
     private suspend fun getContactGroupsFromApi(userId: UserId): List<Label> {
-        val contactGroupsResponse = api.fetchContactGroups(userId).valueOrNull?.labels
+        val contactGroupsResponse = api.getContactGroups(userId).valueOrNull?.labels
 
         return contactGroupsResponse?.let { labels ->
             val entities = labels.map {
