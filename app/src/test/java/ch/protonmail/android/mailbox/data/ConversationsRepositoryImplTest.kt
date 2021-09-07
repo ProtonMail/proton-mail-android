@@ -1323,6 +1323,19 @@ class ConversationsRepositoryImplTest : ArchTest {
         }
     }
 
+    @Test(expected = ClosedReceiveChannelException::class)
+    fun getCountersIsCancellerWhenApiCallIsCancelled() = runBlockingTest {
+        // given
+        coEvery { api.fetchConversationsCounts(testUserId) } answers {
+            throw CancellationException("Cancelled")
+        }
+
+        // when
+        conversationsRepository.getUnreadCounters(testUserId).test {
+            expectItem()
+        }
+    }
+
     private fun setupUnreadCounterDaoToSimulateReplace() {
 
         val counters = MutableStateFlow(emptyList<UnreadCounterEntity>())

@@ -51,7 +51,9 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -716,6 +718,19 @@ class MessageRepositoryTest {
 
             // then
             assertEquals(expectedError, expectItem())
+        }
+    }
+
+    @Test(expected = ClosedReceiveChannelException::class)
+    fun getCountersIsCancellerWhenApiCallIsCancelled() = runBlockingTest {
+        // given
+        coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } answers {
+            throw CancellationException("Cancelled")
+        }
+
+        // when
+        messageRepository.getUnreadCounters(testUserId).test {
+            expectItem()
         }
     }
 

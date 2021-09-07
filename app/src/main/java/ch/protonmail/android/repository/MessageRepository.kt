@@ -48,6 +48,7 @@ import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
@@ -203,7 +204,13 @@ internal class MessageRepository @Inject constructor(
             DataResult.Success(ResponseSource.Local, domainModels) as DataResult<List<UnreadCounter>>
         }.onStart {
             fetchAndSaveUnreadCounters(userId)
-        }.catch { emit(DataResult.Error.Remote(it.message, it)) }
+        }.catch { exception ->
+            if (exception is CancellationException) {
+                throw exception
+            } else {
+                emit(DataResult.Error.Remote(exception.message, exception))
+            }
+        }
 
         return refreshUnreadCountersTrigger.flatMapLatest { countersFlow }
             .onStart { refreshUnreadCounters() }
