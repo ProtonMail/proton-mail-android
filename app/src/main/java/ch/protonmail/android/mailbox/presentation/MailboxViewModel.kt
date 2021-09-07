@@ -40,9 +40,9 @@ import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSec
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels

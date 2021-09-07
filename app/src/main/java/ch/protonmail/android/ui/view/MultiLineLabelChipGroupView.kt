@@ -29,7 +29,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.extensions.isInPreviewMode

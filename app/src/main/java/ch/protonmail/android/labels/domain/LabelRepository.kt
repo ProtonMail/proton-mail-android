@@ -17,11 +17,11 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.data
+package ch.protonmail.android.labels.domain
 
 import androidx.paging.DataSource
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 
@@ -53,7 +53,7 @@ interface LabelRepository {
 
     fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
-    suspend fun saveLabel(label: LabelEntity)
+    suspend fun saveLabel(label: LabelEntity) // TODO: maybe Label?
 
     suspend fun saveLabels(labels: List<LabelEntity>)
 

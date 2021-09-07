@@ -102,7 +102,7 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet

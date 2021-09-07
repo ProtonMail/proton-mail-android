@@ -25,7 +25,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager

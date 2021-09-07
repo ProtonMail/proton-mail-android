@@ -22,7 +22,7 @@ import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Params
 import kotlinx.coroutines.runBlocking
 

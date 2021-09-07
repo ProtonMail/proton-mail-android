@@ -22,7 +22,7 @@ package ch.protonmail.android.usecase.delete
 import android.content.Context
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.storage.MessageBodyClearingService
 import ch.protonmail.android.utils.AppUtil

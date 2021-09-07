@@ -22,7 +22,7 @@ import com.birbit.android.jobqueue.Job;
 
 import ch.protonmail.android.api.models.SimpleMessage;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.labels.data.LabelRepository;
+import ch.protonmail.android.labels.domain.LabelRepository;
 
 public interface ISwipeHandler {
 

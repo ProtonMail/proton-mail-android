@@ -22,8 +22,8 @@ package ch.protonmail.android.usecase.delete
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
-import ch.protonmail.android.labels.data.LabelRepository
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.DeleteLabelWorker
 import kotlinx.coroutines.ensureActive

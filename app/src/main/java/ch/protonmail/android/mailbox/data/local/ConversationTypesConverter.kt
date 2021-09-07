@@ -17,10 +17,11 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data.local.model
+package ch.protonmail.android.mailbox.data.local
 
 import androidx.room.TypeConverter
 import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import com.google.gson.Gson
 
 class ConversationTypesConverter {

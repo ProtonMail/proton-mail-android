@@ -26,7 +26,7 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel

@@ -22,7 +22,7 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiM
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull

@@ -24,7 +24,7 @@ import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel

@@ -34,7 +34,7 @@ import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.events.ContactEvent
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 import ezvcard.Ezvcard

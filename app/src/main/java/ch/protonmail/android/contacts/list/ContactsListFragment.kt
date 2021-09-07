@@ -58,7 +58,7 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils

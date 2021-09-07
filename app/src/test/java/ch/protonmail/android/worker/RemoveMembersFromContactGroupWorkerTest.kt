@@ -24,7 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every

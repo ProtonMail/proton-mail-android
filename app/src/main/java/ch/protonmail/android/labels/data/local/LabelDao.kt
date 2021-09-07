@@ -31,7 +31,7 @@ import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_CONTACT_GROUP
 import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_FOLDER
 import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_MESSAGE_LABEL
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.local.model.TABLE_LABELS
 import kotlinx.coroutines.flow.Flow

@@ -23,7 +23,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Job
 
 class SpamSwipeHandler : ISwipeHandler {

@@ -31,7 +31,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper

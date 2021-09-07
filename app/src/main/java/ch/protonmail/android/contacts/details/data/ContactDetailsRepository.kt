@@ -24,9 +24,9 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.model.Label

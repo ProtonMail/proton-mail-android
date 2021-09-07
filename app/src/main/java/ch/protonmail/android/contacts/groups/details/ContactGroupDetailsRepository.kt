@@ -20,9 +20,9 @@ package ch.protonmail.android.contacts.groups.details
 
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

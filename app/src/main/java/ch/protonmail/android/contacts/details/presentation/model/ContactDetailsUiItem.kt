@@ -20,7 +20,7 @@
 package ch.protonmail.android.contacts.details.presentation.model
 
 import androidx.annotation.ColorInt
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 
 sealed class ContactDetailsUiItem {
 

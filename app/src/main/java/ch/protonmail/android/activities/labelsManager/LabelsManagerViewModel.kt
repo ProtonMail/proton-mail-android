@@ -31,8 +31,8 @@ import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel

@@ -22,6 +22,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import ch.protonmail.android.labels.domain.model.LabelId
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.data.entity.UserEntity
 

@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.labels.domain.model
 
-import ch.protonmail.android.labels.data.local.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 
 data class Label(
@@ -29,8 +28,8 @@ data class Label(
     val type: LabelType,
     val path: String,
     val parentId: String,
-    val expanded: Int = 0,
-    val sticky: Int = 0,
+    val expanded: Int = 0, // TODO: remove
+    val sticky: Int = 0, // TODO: remove
     val contactEmailsCount: Int = 0,
     val contactDataCount: Int = 0,
 )

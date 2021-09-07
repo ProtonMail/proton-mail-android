@@ -22,9 +22,9 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiM
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations

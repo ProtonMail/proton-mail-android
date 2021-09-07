@@ -22,11 +22,11 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
+import ch.protonmail.android.labels.domain.LabelRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager

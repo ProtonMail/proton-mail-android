@@ -39,6 +39,7 @@ private const val PATH_LABEL_ID = "label_id"
 
 interface LabelService : BaseRetrofitApi {
 
+    // TODO: rename fetch -> get
     @GET("v4/labels?Type=$LABEL_TYPE_ID_MESSAGE_LABEL")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun fetchLabels(): LabelsResponse

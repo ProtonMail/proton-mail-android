@@ -29,7 +29,7 @@ import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
-import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
+import ch.protonmail.android.mailbox.data.local.ConversationTypesConverter
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import me.proton.core.data.room.db.CommonConverters
 

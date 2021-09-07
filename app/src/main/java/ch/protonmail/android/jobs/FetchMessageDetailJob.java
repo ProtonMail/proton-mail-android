@@ -26,7 +26,7 @@ import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
-import ch.protonmail.android.labels.data.LabelRepository;
+import ch.protonmail.android.labels.domain.LabelRepository;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
 

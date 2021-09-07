@@ -21,7 +21,7 @@ package ch.protonmail.android.contacts.list
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.list.viewModel.IContactsListViewModel
 import ch.protonmail.android.jobs.ConvertLocalContactsJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.JobManager
 
 class LocalContactsConverter(

@@ -25,7 +25,7 @@ import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostDraftJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Job
 
 class TrashSwipeHandler : ISwipeHandler {

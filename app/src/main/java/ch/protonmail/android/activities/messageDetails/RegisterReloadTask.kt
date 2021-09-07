@@ -23,7 +23,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.jobs.FetchMessageDetailJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 
 internal class RegisterReloadTask(
     private val message: Message,

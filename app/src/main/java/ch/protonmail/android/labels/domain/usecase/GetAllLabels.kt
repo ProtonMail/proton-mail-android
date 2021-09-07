@@ -19,9 +19,9 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.labels.data.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first

@@ -36,7 +36,7 @@ import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper

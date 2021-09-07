@@ -22,7 +22,7 @@ import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostUnstarJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Job
 
 class StarSwipeHandler : ISwipeHandler {

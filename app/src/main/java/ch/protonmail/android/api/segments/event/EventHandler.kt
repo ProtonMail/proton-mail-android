@@ -41,9 +41,9 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
 import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel

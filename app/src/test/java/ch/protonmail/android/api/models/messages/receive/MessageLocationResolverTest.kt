@@ -20,9 +20,9 @@
 package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import io.mockk.coEvery
 import io.mockk.mockk

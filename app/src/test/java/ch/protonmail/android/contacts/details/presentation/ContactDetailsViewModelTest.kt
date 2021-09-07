@@ -32,7 +32,7 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsRes
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.utils.FileHelper
 import io.mockk.coEvery

@@ -39,9 +39,9 @@ import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
-import ch.protonmail.android.labels.data.LabelRepository
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.utils.MessageUtils
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.Assisted

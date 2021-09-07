@@ -32,7 +32,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.local.model.LabelType
 import ch.protonmail.android.utils.Event
 import kotlinx.coroutines.flow.MutableStateFlow
