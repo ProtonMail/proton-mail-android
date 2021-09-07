@@ -401,17 +401,19 @@ class ComposeMessageViewModel @Inject constructor(
     @Subscribe
     fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent) {
         if (event.success) {
-            val message = event.message
-            message!!.decrypt(userManager, userManager.requireCurrentUserId())
-            val decryptedMessage = message.decryptedHTML // todo check if any var should be set
-            val messageId = event.messageId
-            composeMessageRepository.markMessageRead(messageId)
-            MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .message(message)
-                .decryptedMessage(decryptedMessage!!)
-                .build()
-            _actionType = UserAction.SAVE_DRAFT
+            viewModelScope.launch {
+                val message = event.message
+                message!!.decrypt(userManager, userManager.requireCurrentUserId())
+                val decryptedMessage = message.decryptedHTML // todo check if any var should be set
+                val messageId = event.messageId
+                composeMessageRepository.markMessageRead(messageId)
+                MessageBuilderData.Builder()
+                    .fromOld(_messageDataResult)
+                    .message(message)
+                    .decryptedMessage(decryptedMessage!!)
+                    .build()
+                _actionType = UserAction.SAVE_DRAFT
+            }
         }
     }
 

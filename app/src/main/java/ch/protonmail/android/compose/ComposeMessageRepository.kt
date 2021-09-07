@@ -46,12 +46,9 @@ import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
@@ -120,7 +117,7 @@ class ComposeMessageRepository @Inject constructor(
         labelRepository.findLabelByName(userId, groupName)
 
     suspend fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> =
-        emptyList() //contactDao.findAllContactsEmailsByContactGroupOnce(groupId)
+        contactDao.observeAllContactsEmailsByContactGroup(groupId).first()
 
     suspend fun getAttachments(message: Message, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {
@@ -194,13 +191,11 @@ class ComposeMessageRepository @Inject constructor(
 
     fun findAllMessageRecipients(userId: UserId) = contactDaos[userId]!!.findAllMessageRecipients()
 
-    fun markMessageRead(messageId: String) {
-        GlobalScope.launch(Dispatchers.IO) {
-            messageDetailsRepository.findMessageByIdBlocking(messageId)?.let { savedMessage ->
-                val read = savedMessage.isRead
-                if (!read) {
-                    jobManager.addJobInBackground(PostReadJob(listOf(savedMessage.messageId)))
-                }
+    suspend fun markMessageRead(messageId: String) {
+        messageDetailsRepository.findMessageById(messageId).first()?.let { savedMessage ->
+            val read = savedMessage.isRead
+            if (!read) {
+                jobManager.addJobInBackground(PostReadJob(listOf(savedMessage.messageId)))
             }
         }
     }
