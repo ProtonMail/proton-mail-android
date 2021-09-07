@@ -138,6 +138,9 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
+import kotlinx.android.synthetic.main.activity_message_details.*
+import kotlinx.android.synthetic.main.navigation_drawer.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -348,14 +351,20 @@ internal class MailboxActivity :
 
         fetchOrganizationData()
 
-        mailboxViewModel.mailboxState
-            .onEach { renderState(it) }
-            .launchIn(lifecycleScope)
+        with(mailboxViewModel) {
 
-        mailboxViewModel.mailboxLocation
-            .onEach { mailboxAdapter.setNewLocation(it) }
-            .launchIn(lifecycleScope)
+            mailboxState
+                .onEach { renderState(it) }
+                .launchIn(lifecycleScope)
 
+            mailboxLocation
+                .onEach { mailboxAdapter.setNewLocation(it) }
+                .launchIn(lifecycleScope)
+
+            unreadCounters
+                .onEach { sideDrawer.setUnreadCounters(it) }
+                .launchIn(lifecycleScope)
+        }
 
         setUpMailboxActionsView()
 
