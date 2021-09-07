@@ -92,8 +92,6 @@ class ContactGroupsRepositoryTest {
         type = LabelType.MESSAGE_LABEL,
         path = "a/b",
         parentId = "parentId",
-        expanded = 0,
-        sticky = 0,
         contactEmailsCount = 1
     )
 

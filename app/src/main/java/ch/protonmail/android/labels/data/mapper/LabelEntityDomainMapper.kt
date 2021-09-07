@@ -34,8 +34,6 @@ class LabelEntityDomainMapper @Inject constructor() : Mapper<LabelEntity, Label>
         type = model.type,
         path = model.path,
         parentId = model.parentId,
-        expanded = model.expanded,
-        sticky = model.sticky,
         contactEmailsCount = contactEmailsCount
     )
 
@@ -48,8 +46,8 @@ class LabelEntityDomainMapper @Inject constructor() : Mapper<LabelEntity, Label>
         type = model.type,
         path = model.path,
         parentId = model.parentId,
-        expanded = model.expanded,
-        sticky = model.sticky,
+        expanded = 0,
+        sticky = 0,
         notify = 0
     )
 }

@@ -68,11 +68,11 @@ class ContactGroupsViewModelTest : CoroutinesTest {
 
     private val testPath = "test/path1234"
     private val label1 =
-        ContactLabelUiModel(LabelId("a"), "aa", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("a"), "aa", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0)
     private val label2 =
-        ContactLabelUiModel(LabelId("b"), "bb", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("b"), "bb", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0)
     private val label3 =
-        ContactLabelUiModel(LabelId("c"), "cc", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0, 0, 0)
+        ContactLabelUiModel(LabelId("c"), "cc", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0)
 
     private val testColorInt = 871
 

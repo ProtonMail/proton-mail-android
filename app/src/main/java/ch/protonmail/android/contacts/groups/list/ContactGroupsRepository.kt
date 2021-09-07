@@ -55,8 +55,6 @@ class ContactGroupsRepository @Inject constructor(
                         type = entity.type,
                         path = entity.path,
                         parentId = entity.parentId,
-                        expanded = entity.expanded,
-                        sticky = entity.sticky,
                         contactEmailsCount = contactRepository.countContactEmailsByLabelId(entity.id)
                     )
                 }

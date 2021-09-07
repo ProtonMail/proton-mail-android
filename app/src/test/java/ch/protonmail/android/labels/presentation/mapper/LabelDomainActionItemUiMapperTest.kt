@@ -73,8 +73,6 @@ class LabelDomainActionItemUiMapperTest {
             type = LabelType.MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
-            expanded = 0,
-            sticky = 0,
         )
         val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelType.MESSAGE_LABEL
@@ -109,8 +107,6 @@ class LabelDomainActionItemUiMapperTest {
             type = LabelType.MESSAGE_LABEL,
             path = "a/b",
             parentId = "parentId",
-            expanded = 0,
-            sticky = 0,
         )
         val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelType.FOLDER
