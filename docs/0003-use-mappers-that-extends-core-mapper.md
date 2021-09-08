@@ -26,6 +26,7 @@ to have common approach to this basic problem.
 
 * We choose to rely on a mapper that extends interface Mapper<in In, out Out>  from core, with plain function per parameter
 * We would like to use one Mapper per 2 types, therefore multiple mappers may be required
+* We should not use extension function from Core, about `List` and `Flow`, but the standard syntax ( e.g. `list.map { mapper.toUiModel(it) }` or `mapper.toUiModels(list)` )
 
 ## Consequences
 1. All Workers mappers in the application should follow the approach suggested above
