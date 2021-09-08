@@ -100,7 +100,6 @@ class QueueNetworkUtil @Inject constructor(
     fun isConnected(): Boolean = hasConn(false)
 
     fun setCurrentlyHasConnectivity() = updateRealConnectivity(true)
-    fun setCurrentlyDoesntHaveConnectivity() = updateRealConnectivity(false)
 
     fun setConnectivityHasFailed(throwable: Throwable) {
         // for valid failure types specified below
