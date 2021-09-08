@@ -22,8 +22,8 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
-import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import me.proton.core.domain.arch.Mapper
 import timber.log.Timber
@@ -65,13 +65,13 @@ class LabelDomainActionItemUiMapper @Inject constructor(
         }
 
         return LabelActonItemUiModel(
-            labelId = label.id.id,
+            labelId = label.id,
             iconRes = iconRes,
             title = label.name,
             titleRes = null,
             colorInt = colorInt,
             isChecked = isChecked,
-            labelType = labelType.typeInt
+            labelType = labelType
         )
     }
 

@@ -19,12 +19,12 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
-import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import io.mockk.MockKAnnotations
@@ -134,10 +134,10 @@ class GetAllLabelsTest {
         StandardFolderLocation.values()
             .map { location ->
                 LabelActonItemUiModel(
-                    labelId = location.id,
+                    labelId = LabelId(location.id),
                     iconRes = location.iconRes,
                     titleRes = location.title,
-                    labelType = LabelType.FOLDER.typeInt
+                    labelType = LabelType.FOLDER
                 )
             }
 

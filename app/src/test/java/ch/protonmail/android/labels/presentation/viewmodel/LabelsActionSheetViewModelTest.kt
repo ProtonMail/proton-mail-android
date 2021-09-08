@@ -139,22 +139,22 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     )
 
     private val model1UiLabel = LabelActonItemUiModel(
-        labelId1,
+        LabelId(labelId1),
         iconRes,
         title,
         titleRes,
         colorInt,
         true,
-        LabelType.MESSAGE_LABEL.typeInt
+        LabelType.MESSAGE_LABEL
     )
     private val model2UiFolder = LabelActonItemUiModel(
-        labelId2,
+        LabelId(labelId2),
         iconRes,
         title,
         titleRes,
         colorInt,
         false,
-        LabelType.FOLDER.typeInt
+        LabelType.FOLDER
     )
 
     @BeforeTest
@@ -257,18 +257,19 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyThatWhenOnLabelClickedIsCalledForLabelTypeAndNumberOfSelectedLabelsIsLessThanThresholdDefaultIsEmitted() = runBlockingTest {
+    fun verifyThatWhenOnLabelClickedIsCalledForLabelTypeAndNumberOfSelectedLabelsIsLessThanThresholdDefaultIsEmitted() =
+        runBlockingTest {
 
-        // given
-        coEvery { userManager.didReachLabelsThreshold(any()) } returns false
+            // given
+            coEvery { userManager.didReachLabelsThreshold(any()) } returns false
 
-        // when
-        viewModel.onLabelClicked(model1UiLabel)
+            // when
+            viewModel.onLabelClicked(model1UiLabel)
 
-        // then
-        assertEquals(listOf(model1UiLabel.copy(isChecked = false)), viewModel.labels.value)
-        assertEquals(ManageLabelActionResult.Default, viewModel.actionsResult.value)
-    }
+            // then
+            assertEquals(listOf(model1UiLabel.copy(isChecked = false)), viewModel.labels.value)
+            assertEquals(ManageLabelActionResult.Default, viewModel.actionsResult.value)
+        }
 
     @Test
     fun verifyThatAfterOnLabelIsClickedForLabelTypeStandardLabelsAreAdded() = runBlockingTest {
@@ -289,8 +290,14 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // given
             val maximumLabelsSelectedThreshold = 100
+            val testMessage = mockk<Message> {
+                every { messageId } returns messageId1
+                every { labelIDsNotIncludingLocations } returns (0..maximumLabelsSelectedThreshold).map { "$it" }
+            }
+            coEvery { messageRepository.findMessageById(any()) } returns testMessage
             val expectedResult = ManageLabelActionResult.ErrorLabelsThresholdReached(maximumLabelsSelectedThreshold)
-            coEvery { getAllLabels.invoke(any(), any(), any()) } returns buildAListOfMoreThanOneHundredSelectedLabels()
+            val buildAListOfMoreThanOneHundredSelectedLabels = buildAListOfMoreThanOneHundredSelectedLabels()
+            coEvery { getAllLabels.invoke(any()) } returns buildAListOfMoreThanOneHundredSelectedLabels
             val labelsActionSheetViewModel = LabelsActionSheetViewModel(
                 savedStateHandle,
                 getAllLabels,
@@ -301,11 +308,12 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
                 moveConversationsToFolder,
                 conversationModeEnabled,
                 messageRepository,
-                conversationsRepository
+                conversationsRepository,
+                labelDomainUiMapper
             )
 
             // when
-            labelsActionSheetViewModel.onLabelClicked(model1label)
+            labelsActionSheetViewModel.onLabelClicked(model1UiLabel)
 
             // then
             assertEquals(expectedResult, labelsActionSheetViewModel.actionsResult.value)
@@ -392,20 +400,17 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(false), viewModel.actionsResult.value)
         }
 
-    private fun buildAListOfMoreThanOneHundredSelectedLabels(): List<LabelActonItemUiModel> {
-        val labels = mutableListOf<LabelActonItemUiModel>()
-        for (index in 0..100) {
-            labels.add(
-                LabelActonItemUiModel(
-                    labelId = "$index",
-                    iconRes = R.drawable.circle_labels_selection,
-                    title = "title $index",
-                    titleRes = null,
-                    isChecked = true,
-                    labelType = LabelsActionSheet.Type.LABEL.typeInt
-                )
+    private fun buildAListOfMoreThanOneHundredSelectedLabels(): List<Label> {
+        return (0..100).map { index ->
+            Label(
+                id = LabelId("$index"),
+                name = "title $index",
+                color = color,
+                type = LabelType.MESSAGE_LABEL,
+                path = EMPTY_STRING,
+                parentId = EMPTY_STRING
             )
         }
-        return labels
+
     }
 }

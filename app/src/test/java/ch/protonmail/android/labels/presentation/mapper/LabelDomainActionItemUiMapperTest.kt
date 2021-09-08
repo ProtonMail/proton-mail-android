@@ -22,9 +22,9 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import android.graphics.Color
 import ch.protonmail.android.R
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import io.mockk.every
 import io.mockk.mockk
@@ -77,13 +77,13 @@ class LabelDomainActionItemUiMapperTest {
         val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelType.MESSAGE_LABEL
         val expected = LabelActonItemUiModel(
-            labelId1.id,
+            labelId1,
             R.drawable.circle_labels_selection,
             labelName1,
             null,
             testColorInt,
             true,
-            LabelType.MESSAGE_LABEL.typeInt
+            LabelType.MESSAGE_LABEL
         )
 
         // when
@@ -111,13 +111,13 @@ class LabelDomainActionItemUiMapperTest {
         val currentLabelsIds = listOf(labelId1.id)
         val sheetType = LabelType.FOLDER
         val expected = LabelActonItemUiModel(
-            labelId1.id,
+            labelId1,
             R.drawable.ic_folder_filled,
             labelName1,
             null,
             testColorInt,
             null,
-            LabelType.FOLDER.typeInt
+            LabelType.FOLDER
         )
 
         // when

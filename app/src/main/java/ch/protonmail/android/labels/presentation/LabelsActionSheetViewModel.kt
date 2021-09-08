@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
@@ -149,21 +150,21 @@ internal class LabelsActionSheetViewModel @Inject constructor(
         }
         .map { location ->
             LabelActonItemUiModel(
-                labelId = location.id,
+                labelId = LabelId(location.id),
                 iconRes = location.iconRes,
                 titleRes = location.title,
-                labelType = LabelType.FOLDER.typeInt
+                labelType = LabelType.FOLDER
             )
         }
 
     fun onLabelClicked(model: LabelActonItemUiModel) {
 
-        if (model.labelType == LabelType.FOLDER.typeInt) {
-            onFolderClicked(model.labelId)
+        if (model.labelType == LabelType.FOLDER) {
+            onFolderClicked(model.labelId.id)
         } else {
             // label type clicked
             val updatedLabels = labels.value
-                .filter { it.labelType == LabelType.MESSAGE_LABEL.typeInt }
+                .filter { it.labelType == LabelType.MESSAGE_LABEL }
                 .map { label ->
                     if (label.labelId == model.labelId) {
                         Timber.v("Label: ${label.labelId} was clicked")
@@ -205,13 +206,13 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                     updateConversationsLabels.enqueue(
                         ids,
                         userManager.requireCurrentUserId(),
-                        selectedLabels
+                        selectedLabels.map { it.id }
                     )
                 } else {
                     ids.forEach { id ->
                         updateLabels(
                             id,
-                            selectedLabels
+                            selectedLabels.map { it.id }
                         )
                     }
                 }
