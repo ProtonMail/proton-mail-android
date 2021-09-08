@@ -33,4 +33,7 @@ internal class DatabaseToDomainUnreadCounterMapper @Inject constructor() :
     fun toDomainModel(counterEntity: UnreadCounterEntity) = UnreadCounter(
         counterEntity.labelId, counterEntity.unreadCount
     )
+
+    fun toDomainModels(counterEntities: List<UnreadCounterEntity>): List<UnreadCounter> =
+        counterEntities.map(::toDomainModel)
 }

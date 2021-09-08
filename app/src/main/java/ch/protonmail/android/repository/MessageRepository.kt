@@ -197,24 +197,19 @@ internal class MessageRepository @Inject constructor(
             }.getOrNull()
         }
 
-    fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> {
-        val countersFlow = unreadCounterDao.observeMessagesUnreadCounters(userId).map { list ->
-            val domainModels = list.map(databaseToDomainUnreadCounterMapper) { toDomainModel(it) }
-            // Cast is needed, in order to emit Error.Remote
-            DataResult.Success(ResponseSource.Local, domainModels) as DataResult<List<UnreadCounter>>
-        }.onStart {
-            fetchAndSaveUnreadCounters(userId)
-        }.catch { exception ->
-            if (exception is CancellationException) {
-                throw exception
-            } else {
-                emit(DataResult.Error.Remote(exception.message, exception))
-            }
+    fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
+        refreshUnreadCountersTrigger.flatMapLatest {
+            observerUnreadCountersFromDatabase(userId)
+                .onStart { fetchAndSaveUnreadCounters(userId) }
         }
-
-        return refreshUnreadCountersTrigger.flatMapLatest { countersFlow }
             .onStart { refreshUnreadCounters() }
-    }
+            .catch { exception ->
+                if (exception is CancellationException) {
+                    throw exception
+                } else {
+                    emit(DataResult.Error.Remote(exception.message, exception))
+                }
+            }
 
     private suspend fun fetchAndSaveUnreadCounters(userId: UserId) {
         val response = protonMailApiManager.fetchMessagesCounts(userId)
@@ -339,4 +334,10 @@ internal class MessageRepository @Inject constructor(
             }
         }
     }
+
+    private fun observerUnreadCountersFromDatabase(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
+        unreadCounterDao.observeMessagesUnreadCounters(userId).map { list ->
+            val domainModels = databaseToDomainUnreadCounterMapper.toDomainModels(list)
+            DataResult.Success(ResponseSource.Local, domainModels)
+        }
 }

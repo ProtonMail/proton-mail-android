@@ -150,24 +150,19 @@ internal class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
-    override fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> {
-        val countersFlow = unreadCounterDao.observeConversationsUnreadCounters(userId).map { list ->
-            val domainModels = list.map(databaseToDomainUnreadCounterMapper) { toDomainModel(it) }
-            // Cast is needed, in order to emit Error.Remote
-            Success(ResponseSource.Local, domainModels) as DataResult<List<UnreadCounter>>
-        }.onStart {
-            fetchAndSaveUnreadCounters(userId)
-        }.catch { exception ->
-            if (exception is CancellationException) {
-                throw exception
-            } else {
-                emit(Error.Remote(exception.message, exception))
-            }
+    override fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
+        refreshUnreadCountersTrigger.flatMapLatest {
+            observeUnreadCountersFromDatabase(userId)
+                .onStart { fetchAndSaveUnreadCounters(userId) }
         }
-
-        return refreshUnreadCountersTrigger.flatMapLatest { countersFlow }
             .onStart { refreshUnreadCounters() }
-    }
+            .catch { exception ->
+                if (exception is CancellationException) {
+                    throw exception
+                } else {
+                    emit(Error.Remote(exception.message, exception))
+                }
+            }
 
     override fun refreshUnreadCounters() {
         refreshUnreadCountersTrigger.tryEmit(Unit)
@@ -564,5 +559,12 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                 databaseToConversationMapper.toDomainModel(conversation, messages.toDomainModelList())
             }
         }.distinctUntilChanged()
+
+
+    private fun observeUnreadCountersFromDatabase(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
+        unreadCounterDao.observeConversationsUnreadCounters(userId).map { list ->
+            val domainModels = databaseToDomainUnreadCounterMapper.toDomainModels(list)
+            Success(ResponseSource.Local, domainModels)
+        }
 
 }
