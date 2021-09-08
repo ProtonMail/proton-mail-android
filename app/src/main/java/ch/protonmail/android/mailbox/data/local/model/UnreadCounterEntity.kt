@@ -21,31 +21,34 @@ package ch.protonmail.android.mailbox.data.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_LABEL_ID
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_TYPE
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_USER_ID
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import me.proton.core.domain.entity.UserId
+
+const val UNREAD_COUNTER_TABLE_NAME = "UnreadCounter"
+const val UNREAD_COUNTER_COLUMN_USER_ID = "user_id"
+const val UNREAD_COUNTER_COLUMN_TYPE = "type"
+const val UNREAD_COUNTER_COLUMN_LABEL_ID = "label_id"
+const val UNREAD_COUNTER_COLUMN_UNREAD_COUNT = "unread_count"
 
 /**
  * Database model for [UnreadCounter]
  */
 @Entity(
-    tableName = UnreadCounterEntity.TABLE_NAME,
-    primaryKeys = [COLUMN_USER_ID, COLUMN_LABEL_ID, COLUMN_TYPE]
+    tableName = UNREAD_COUNTER_TABLE_NAME,
+    primaryKeys = [UNREAD_COUNTER_COLUMN_USER_ID, UNREAD_COUNTER_COLUMN_LABEL_ID, UNREAD_COUNTER_COLUMN_TYPE]
 )
 internal data class UnreadCounterEntity(
 
-    @ColumnInfo(name = COLUMN_USER_ID)
+    @ColumnInfo(name = UNREAD_COUNTER_COLUMN_USER_ID)
     val userId: UserId,
 
-    @ColumnInfo(name = COLUMN_TYPE)
+    @ColumnInfo(name = UNREAD_COUNTER_COLUMN_TYPE)
     val type: Type,
 
-    @ColumnInfo(name = COLUMN_LABEL_ID)
+    @ColumnInfo(name = UNREAD_COUNTER_COLUMN_LABEL_ID)
     val labelId: String,
 
-    @ColumnInfo(name = COLUMN_UNREAD_COUNT)
+    @ColumnInfo(name = UNREAD_COUNTER_COLUMN_UNREAD_COUNT)
     val unreadCount: Int
 ) {
 
@@ -54,12 +57,4 @@ internal data class UnreadCounterEntity(
         CONVERSATIONS
     }
 
-    companion object {
-
-        const val TABLE_NAME = "UnreadCounter"
-        const val COLUMN_USER_ID = "user_id"
-        const val COLUMN_TYPE = "type"
-        const val COLUMN_LABEL_ID = "label_id"
-        const val COLUMN_UNREAD_COUNT = "unread_count"
-    }
 }

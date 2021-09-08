@@ -21,10 +21,10 @@ package ch.protonmail.android.mailbox.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
+import ch.protonmail.android.mailbox.data.local.model.UNREAD_COUNTER_COLUMN_TYPE
+import ch.protonmail.android.mailbox.data.local.model.UNREAD_COUNTER_COLUMN_USER_ID
+import ch.protonmail.android.mailbox.data.local.model.UNREAD_COUNTER_TABLE_NAME
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_TYPE
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.COLUMN_USER_ID
-import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Companion.TABLE_NAME
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
@@ -40,10 +40,10 @@ internal abstract class UnreadCounterDao : BaseDao<UnreadCounterEntity>() {
 
     @Query(
         """
-            SELECT * FROM $TABLE_NAME
+            SELECT * FROM $UNREAD_COUNTER_TABLE_NAME
             WHERE 
-              $COLUMN_USER_ID = :userId AND
-              $COLUMN_TYPE = :type
+              $UNREAD_COUNTER_COLUMN_USER_ID = :userId AND
+              $UNREAD_COUNTER_COLUMN_TYPE = :type
         """
     )
     abstract fun observeUnreadCounters(
