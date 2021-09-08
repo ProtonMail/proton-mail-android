@@ -346,10 +346,6 @@ abstract class MessageDao : BaseDao<Message>() {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun saveAttachment(attachment: Attachment): Long
 
-    @Deprecated("Use suspend abstract function", ReplaceWith("saveAttachment(attachment)"))
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAttachmentBlocking(attachment: Attachment): Long
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun saveAllAttachments(attachments: List<Attachment>): List<Long>
 
