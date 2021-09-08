@@ -30,4 +30,6 @@ data class Conversation(
     val expirationTime: Long,
     val labels: List<LabelContext>,
     val messages: List<MessageDomainModel>?
-)
+) {
+    fun isComplete() = messagesCount == messages?.size
+}

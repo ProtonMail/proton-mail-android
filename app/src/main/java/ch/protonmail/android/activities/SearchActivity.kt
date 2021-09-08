@@ -113,24 +113,26 @@ class SearchActivity : BaseActivity() {
                 )
                 startActivity(intent)
             } else {
-                val intent =
-                    AppUtil.decorInAppIntent(Intent(this@SearchActivity, MessageDetailsActivity::class.java))
-                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, mailboxUiItem.itemId)
-                intent.putExtra(
-                    MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID,
-                    MessageLocationType.SEARCH.messageLocationTypeValue
-                )
+                val intent = AppUtil.decorInAppIntent(
+                    Intent(this@SearchActivity, MessageDetailsActivity::class.java)
+                ).apply {
+                    putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, mailboxUiItem.itemId)
+                    putExtra(
+                        MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID,
+                        MessageLocationType.SEARCH.messageLocationTypeValue
+                    )
+                    putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, mailboxUiItem.subject)
+                }
                 startActivity(intent)
             }
         }
         messageDetailsRepository.getAllLabelsLiveData().observe(
-            this,
-            { labels: List<Label>? ->
-                if (labels != null) {
-                    adapter.setLabels(labels)
-                }
+            this
+        ) { labels: List<Label>? ->
+            if (labels != null) {
+                adapter.setLabels(labels)
             }
-        )
+        }
     }
 
     private fun showSearchResults(items: List<MailboxUiItem>) {

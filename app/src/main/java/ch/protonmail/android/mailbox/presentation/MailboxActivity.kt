@@ -323,6 +323,7 @@ internal class MailboxActivity :
                 WeakReference(this@MailboxActivity),
                 messageDetailsRepository,
                 mailboxUiItem.itemId,
+                mailboxUiItem.subject,
                 currentMailboxLocation.messageLocationTypeValue
             ).execute()
         }
@@ -1324,6 +1325,7 @@ internal class MailboxActivity :
         private val mailboxActivity: WeakReference<MailboxActivity>,
         private val messageDetailsRepository: MessageDetailsRepository,
         private val messageId: String,
+        private val messageSubject: String,
         private val currentMailboxLocationType: Int
     ) : AsyncTask<Unit, Unit, Message>() {
 
@@ -1353,6 +1355,7 @@ internal class MailboxActivity :
                     currentMailboxLocationType
                 )
                 intent.putExtra(MessageDetailsActivity.EXTRA_MAILBOX_LABEL_ID, mailboxActivity?.mailboxLabelId)
+                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, messageSubject)
                 mailboxActivity?.startActivity(intent)
             }
         }
