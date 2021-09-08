@@ -81,8 +81,8 @@ abstract class MessageDao : BaseDao<Message>() {
 
     @Query(
         """
-        SELECT * FROM $TABLE_MESSAGES 
-        WHERE $COLUMN_MESSAGE_LOCATION = :location 
+        SELECT * FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_LOCATION = :location
           AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
@@ -91,7 +91,7 @@ abstract class MessageDao : BaseDao<Message>() {
 
     @Query(
         """
-        SELECT * FROM $TABLE_MESSAGES 
+        SELECT * FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_IS_STARRED = 1
           AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
@@ -102,15 +102,15 @@ abstract class MessageDao : BaseDao<Message>() {
     @Query(
         """
         SELECT COUNT($COLUMN_MESSAGE_ID)
-        FROM $TABLE_MESSAGES 
-        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'
     """
     )
     abstract fun getMessagesCountByByLabelId(labelId: String): Int
 
     @Query(
         """
-        SELECT * FROM $TABLE_MESSAGES 
+        SELECT * FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
@@ -121,17 +121,17 @@ abstract class MessageDao : BaseDao<Message>() {
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  
+        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
     abstract fun getMessagesByLabelId(label: String): List<Message>
 
     /** Since we have decided to use this query to also retrieve messages that are SENT
-    now the query looks for the :label at the beginning, middle or end of the $COLUMN_MESSAGE_LABELS string.
-    The $COLUMN_MESSAGE_LABELS string uses semicolon(;) as separator ex.
-    `0;5;7;N2ttCeO9GZ7kNTfW5MUfZ8nP6pUOEnNiWVVlOIPgeIFGBKqrBowMR4wefbeIelXsgDLiYZ5YFRDiFZ-VPC0YUA==`
-    so the label that we are looking for can be preceded and followed by zero or one semicolon(;)
+     now the query looks for the :label at the beginning, middle or end of the $COLUMN_MESSAGE_LABELS string.
+     The $COLUMN_MESSAGE_LABELS string uses semicolon(;) as separator ex.
+     `0;5;7;N2ttCeO9GZ7kNTfW5MUfZ8nP6pUOEnNiWVVlOIPgeIFGBKqrBowMR4wefbeIelXsgDLiYZ5YFRDiFZ-VPC0YUA==`
+     so the label that we are looking for can be preceded and followed by zero or one semicolon(;)
      **/
     @Query(
         """
@@ -321,9 +321,9 @@ abstract class MessageDao : BaseDao<Message>() {
 
     @Query(
         """
-        DELETE 
+        DELETE
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_EXPIRATION_TIME <> 0 
+        WHERE $COLUMN_MESSAGE_EXPIRATION_TIME <> 0
           AND $COLUMN_MESSAGE_EXPIRATION_TIME < :currentTime
     """
     )
@@ -340,15 +340,6 @@ abstract class MessageDao : BaseDao<Message>() {
 
     @Delete
     abstract fun deleteMessage(message: Message)
-
-    @Query(
-        """
-        UPDATE $TABLE_MESSAGES 
-        SET $COLUMN_MESSAGE_IS_STARRED = :starred
-        WHERE $COLUMN_MESSAGE_ID = :messageId
-    """
-    )
-    abstract suspend fun updateStarred(messageId: String, starred: Boolean)
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
     abstract fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>

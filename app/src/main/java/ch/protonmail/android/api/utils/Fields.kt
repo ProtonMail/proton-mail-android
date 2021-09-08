@@ -165,11 +165,6 @@ object Fields {
             const val NAME = "Name"
             const val ADDRESS = "Address"
         }
-
-        object ParsedHeaders {
-            const val RECIPIENT_AUTHENTICATION = "X-Pm-Recipient-Authentication"
-            const val RECIPIENT_ENCRYPTION = "X-Pm-Recipient-Encryption"
-        }
     }
 
     object Unread {

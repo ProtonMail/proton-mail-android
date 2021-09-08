@@ -19,9 +19,11 @@
 package ch.protonmail.android.api.models.room.messages
 
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
+import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import junit.framework.Assert.assertEquals
+import java.net.URLEncoder
 import kotlin.test.Test
 
 class MessagesTypesConverterTest {
@@ -39,7 +41,7 @@ class MessagesTypesConverterTest {
     }
 
     @Test
-    fun parsedHeadersNullIn() {
+    fun verifySerializationOfNullParsedHeadersIsHandled() {
         val expected = null
 
         val actual = messagesTypesConverter.parsedHeadersToString(null)
@@ -48,10 +50,23 @@ class MessagesTypesConverterTest {
     }
 
     @Test
-    fun parsedHeadersNullOut() {
+    fun verifyDeserializationOfNullParsedHeadersIsHandled() {
         val expected = null
 
         val actual = messagesTypesConverter.stringToParsedHeaders(null)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun verifyParsedHeadersAreMappedCorrectly() {
+        val expected = ParsedHeaders(
+            "${URLEncoder.encode("a@a.com", "UTF-8")}=a",
+            "${URLEncoder.encode("a@a.com", "UTF-8")}=b"
+        )
+        val parsedHeadersString = messagesTypesConverter.parsedHeadersToString(expected)
+
+        val actual = messagesTypesConverter.stringToParsedHeaders(parsedHeadersString)
 
         assertEquals(expected, actual)
     }

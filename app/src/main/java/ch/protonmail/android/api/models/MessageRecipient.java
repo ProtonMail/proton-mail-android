@@ -18,7 +18,8 @@
  */
 package ch.protonmail.android.api.models;
 
-import android.widget.Toast;
+import static ch.protonmail.android.data.local.model.ContactDataKt.COLUMN_CONTACT_DATA_NAME;
+import static ch.protonmail.android.data.local.model.ContactEmailKt.COLUMN_CONTACT_EMAILS_EMAIL;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -36,9 +37,6 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
-
-import static ch.protonmail.android.data.local.model.ContactDataKt.COLUMN_CONTACT_DATA_NAME;
-import static ch.protonmail.android.data.local.model.ContactEmailKt.COLUMN_CONTACT_EMAILS_EMAIL;
 
 
 public class MessageRecipient implements Serializable, Comparable<MessageRecipient> {

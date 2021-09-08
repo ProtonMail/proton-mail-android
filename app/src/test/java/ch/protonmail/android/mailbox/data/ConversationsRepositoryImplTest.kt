@@ -93,6 +93,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.toDuration
 
+private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723_478
+private const val STARRED_LABEL_ID = "10"
+
 @OptIn(FlowPreview::class)
 class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
@@ -468,7 +471,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
 
             // when
-            val result = conversationsRepository.getConversation(userId, conversationId).take(1).toList()
+            val result = conversationsRepository.getConversation(userId, conversationId).take(2).toList()
 
             // then
             val expectedMessage = MessageDomainModel(
@@ -506,7 +509,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     expectedMessage
                 )
             )
-            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[0])
+            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[1])
         }
     }
 
@@ -634,7 +637,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
                     // then
                     assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
-                    assertEquals(ResponseSource.Remote, (expectItem() as DataResult.Success).source)
+                    assertEquals(ResponseSource.Local, (expectItem() as DataResult.Success).source)
                     coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
                     coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
                 }
@@ -756,7 +759,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val testMessageId = "messageId"
             val message = Message(
                 messageId = testMessageId,
-                time = 123
+                allLabelIDs = emptyList(),
+                isStarred = false
             )
             coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
@@ -769,18 +773,24 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
-            coEvery { messageDao.updateStarred(testMessageId, true) } just runs
             val expectedResult = ConversationsActionResult.Success
 
             // when
             val result = conversationsRepository.star(conversationIds, userId)
 
             // then
+            val expected = Message(
+                messageId = testMessageId,
+                isStarred = true,
+                allLabelIDs = listOf(STARRED_LABEL_ID), // Needed to ensure that the starred label is added locally
+                location = 10 // Changed to starred (10) when adding starred label
+            )
             coVerify(exactly = 2) {
                 conversationDao.updateLabels(any(), any())
             }
-            coVerify(exactly = 4) {
-                messageDao.updateStarred(any(), true)
+            // Expected exactly 2 times as in this test we star two conversations
+            coVerify(exactly = 2) {
+                messageDao.saveMessages(listOf(expected, expected))
             }
             assertEquals(expectedResult, result)
         }
@@ -799,7 +809,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
-            coEvery { messageDao.updateStarred(testMessageId, true) } just runs
             val expectedResult = ConversationsActionResult.Error
 
             // when
@@ -820,7 +829,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("2", 0, 3, 123, 123, 0)
             )
             val testMessageId = "messageId"
-            val message = Message(messageId = testMessageId)
+            val message = Message(
+                messageId = testMessageId,
+                isStarred = true,
+                allLabelIDs = listOf(STARRED_LABEL_ID),
+            )
             coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
@@ -833,18 +846,24 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
-            coEvery { messageDao.updateStarred(testMessageId, false) } just runs
             val expectedResult = ConversationsActionResult.Success
 
             // when
             val result = conversationsRepository.unstar(conversationIds, userId)
 
             // then
+            val expected = Message(
+                messageId = testMessageId,
+                isStarred = false,
+                allLabelIDs = emptyList(), // Needed to ensure that the starred label is removed locally
+                location = 0 // Changed when removing labels, defaults to INBOX (0) if no labels
+            )
             coVerify(exactly = 2) {
                 conversationDao.updateLabels(any(), any())
             }
-            coVerify(exactly = 4) {
-                messageDao.updateStarred(testMessageId, false)
+            // Expected exactly 2 times as in this test we unstar two conversations
+            coVerify(exactly = 2) {
+                messageDao.saveMessages(listOf(expected, expected))
             }
             assertEquals(expectedResult, result)
         }
@@ -855,6 +874,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         runBlockingTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns mockk(relaxed = true)
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
@@ -987,17 +1007,15 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val labelId = "labelId"
-            val message = mockk<Message> {
-                every { time } returns 123
-                every { addLabels(any()) } just runs
-            }
+            val message = Message(
+                allLabelIDs = emptyList()
+            )
             val listOfMessages = listOf(message, message)
             val conversationLabels = listOf(
                 LabelContextDatabaseModel("5", 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel("0", 0, 2, 123, 123, 0)
             )
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
-            coEvery { messageDao.saveMessage(message) } returns 123
             coEvery { conversationDao.findConversation(userId.id, any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
@@ -1014,7 +1032,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val result = conversationsRepository.label(conversationIds, userId, labelId)
 
             // then
-            coVerify(exactly = 4) { messageDao.saveMessage(message) }
+            val expected = Message(
+                allLabelIDs = listOf(labelId),
+                // Needed because the addition of labels will change location to "LABEL" since 'labelId' it's the only label
+                location = Constants.MessageLocationType.LABEL.messageLocationTypeValue
+            )
+            coVerify(exactly = 2) { messageDao.saveMessages(listOf(expected, expected)) }
             coVerify { conversationDao.updateLabels(conversationId1, any()) }
             coVerify { conversationDao.updateLabels(conversationId1, any()) }
             assertEquals(expectedResult, result)
@@ -1033,7 +1056,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
             val listOfMessages = listOf(message, message)
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
-            coEvery { messageDao.saveMessage(message) } returns 123
             coEvery { conversationDao.findConversation(userId.id, any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
@@ -1051,9 +1073,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val labelId = "labelId"
-            val message = mockk<Message> {
-                every { removeLabels(any()) } just runs
-            }
+            val message = Message(
+                allLabelIDs = listOf(labelId)
+            )
             val listOfMessages = listOf(message, message)
             val conversationLabels = listOf(
                 LabelContextDatabaseModel("5", 0, 2, 123, 123, 1),
@@ -1061,7 +1083,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("labelId", 0, 2, 123, 123, 0)
             )
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
-            coEvery { messageDao.saveMessage(message) } returns 123
             coEvery { conversationDao.findConversation(userId.id, any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
@@ -1074,8 +1095,13 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val result = conversationsRepository.unlabel(conversationIds, userId, labelId)
 
             // then
-            coVerify(exactly = 4) {
-                messageDao.saveMessage(message)
+            val expected = Message(
+                allLabelIDs = emptyList(),
+                // Needed because the removal of labels will change location, defalting to INBOX if no labels
+                location = Constants.MessageLocationType.INBOX.messageLocationTypeValue
+            )
+            coVerify(exactly = 2) {
+                messageDao.saveMessages(listOf(expected, expected))
             }
             coVerify {
                 conversationDao.updateLabels(conversationId, any())
@@ -1098,7 +1124,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
             val listOfMessages = listOf(message, message)
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
-            coEvery { messageDao.saveMessage(message) } returns 123
             coEvery { conversationDao.findConversation(userId.id, any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
