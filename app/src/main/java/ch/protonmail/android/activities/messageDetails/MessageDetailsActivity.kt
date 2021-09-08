@@ -461,10 +461,11 @@ internal class MessageDetailsActivity :
             this,
             { isConnectionActive ->
                 Timber.v("isConnectionActive:${isConnectionActive.name}")
-                if (isConnectionActive != Constants.ConnectionState.CONNECTED) {
-                    showNoConnSnackExtended(isConnectionActive)
-                } else {
+                if (isConnectionActive == Constants.ConnectionState.CONNECTED) {
                     hideNoConnSnackExtended()
+                    viewModel.fetchMessageDetails(false)
+                } else {
+                    showNoConnSnackExtended(isConnectionActive)
                 }
             }
         )

@@ -78,10 +78,7 @@ class QueueNetworkUtil @Inject constructor(
     }
 
     @Synchronized
-    fun updateRealConnectivity(
-        serverAccessible: Boolean,
-        connectionState: Constants.ConnectionState = Constants.ConnectionState.CONNECTED
-    ) {
+    private fun updateRealConnectivity(serverAccessible: Boolean) {
         isServerAccessible = serverAccessible
 
         if (serverAccessible) {
@@ -95,7 +92,7 @@ class QueueNetworkUtil @Inject constructor(
             val mayEmit = emissionTimeDelta > DISCONNECTION_EMISSION_WINDOW_MS
             if (mayEmit) {
                 lastEmissionTime = currentTime
-                backendExceptionFlow.value = connectionState
+                backendExceptionFlow.value = Constants.ConnectionState.CANT_REACH_SERVER
             }
         }
     }
@@ -103,8 +100,7 @@ class QueueNetworkUtil @Inject constructor(
     fun isConnected(): Boolean = hasConn(false)
 
     fun setCurrentlyHasConnectivity() = updateRealConnectivity(true)
-    fun retryPingAsPreviousRequestWasInconclusive() =
-        updateRealConnectivity(false, Constants.ConnectionState.PING_NEEDED)
+    fun setCurrentlyDoesntHaveConnectivity() = updateRealConnectivity(false)
 
     fun setConnectivityHasFailed(throwable: Throwable) {
         // for valid failure types specified below
@@ -113,7 +109,7 @@ class QueueNetworkUtil @Inject constructor(
         when (throwable) {
             is SocketTimeoutException,
             is GeneralSecurityException, // e.g. CertificateException
-            is SSLException -> updateRealConnectivity(false, Constants.ConnectionState.CANT_REACH_SERVER)
+            is SSLException -> updateRealConnectivity(false)
             else -> Timber.d("connectivityHasFailed ignoring exception: $throwable")
         }
     }
@@ -141,6 +137,8 @@ class QueueNetworkUtil @Inject constructor(
                 }
             }
             return hasConnection
+
+
         }
     }
 

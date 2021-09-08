@@ -50,12 +50,12 @@ class ProtonMailRequestInterceptor private constructor(
         var response: Response? = null
         try {
             requestCount++
-            Timber.d("Intercept: advancing request with url: " + request.url())
+            Timber.d("Intercept: advancing request with url: " + request.url)
             response = chain.proceed(request)
 
         } catch (exception: IOException) {
-            Timber.d(exception, "Intercept: IOException with url: " + request.url())
-            networkUtils.retryPingAsPreviousRequestWasInconclusive()
+            Timber.d(exception, "Intercept: IOException with url: " + request.url)
+            networkUtils.setConnectivityHasFailed(exception)
         }
 
         requestCount--

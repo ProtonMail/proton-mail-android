@@ -72,6 +72,7 @@ class PingWorker @WorkerInject constructor(
                 onFailure = { throwable ->
                     Timber.v("Ping isAccessible: failed")
                     queueNetworkUtil.setConnectivityHasFailed(throwable)
+                    AppUtil.postEventOnUi(ConnectivityEvent(false))
                     failure(throwable)
                 }
             )
