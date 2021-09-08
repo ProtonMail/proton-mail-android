@@ -31,13 +31,14 @@ import javax.inject.Inject
 internal class ApiToDatabaseUnreadCounterMapper @Inject constructor() :
     Mapper<CountsApiModel, UnreadCounterEntity> {
 
-    fun CountsApiModel.toDatabaseModel(
+    fun toDatabaseModel(
+        apiModel: CountsApiModel,
         userId: UserId,
         type: UnreadCounterEntity.Type
     ) = UnreadCounterEntity(
         userId = userId,
         type = type,
-        labelId = labelId,
-        unreadCount = unread
+        labelId = apiModel.labelId,
+        unreadCount = apiModel.unread
     )
 }

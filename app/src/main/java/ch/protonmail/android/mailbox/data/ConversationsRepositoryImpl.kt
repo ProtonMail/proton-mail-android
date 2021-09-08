@@ -152,7 +152,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
 
     override fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> {
         val countersFlow = unreadCounterDao.observeConversationsUnreadCounters(userId).map { list ->
-            val domainModels = list.map(databaseToDomainUnreadCounterMapper) { it.toDomainModel() }
+            val domainModels = list.map(databaseToDomainUnreadCounterMapper) { toDomainModel(it) }
             // Cast is needed, in order to emit Error.Remote
             Success(ResponseSource.Local, domainModels) as DataResult<List<UnreadCounter>>
         }.onStart {
@@ -501,7 +501,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
 
     private suspend fun fetchAndSaveUnreadCounters(userId: UserId) {
         val counts = api.fetchConversationsCounts(userId).counts
-            .map(apiToDatabaseUnreadCounterMapper) { it.toDatabaseModel(userId, UnreadCounterEntity.Type.CONVERSATIONS) }
+            .map(apiToDatabaseUnreadCounterMapper) {
+                toDatabaseModel(
+                    it, userId, UnreadCounterEntity.Type.CONVERSATIONS
+                )
+            }
         unreadCounterDao.insertOrUpdate(counts)
     }
 

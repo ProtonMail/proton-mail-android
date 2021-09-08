@@ -30,12 +30,12 @@ import javax.inject.Inject
 class LabelContextApiModelToLabelContextMapper @Inject constructor() :
     Mapper<LabelContextApiModel, LabelContext> {
 
-    fun LabelContextApiModel.toDomainModel() = LabelContext(
-        id = id,
-        contextNumUnread = contextNumUnread,
-        contextNumMessages = contextNumMessages,
-        contextTime = contextTime,
-        contextSize = contextSize,
-        contextNumAttachments = contextNumAttachments
+    fun toDomainModel(apiModel: LabelContextApiModel) = LabelContext(
+        id = apiModel.id,
+        contextNumUnread = apiModel.contextNumUnread,
+        contextNumMessages = apiModel.contextNumMessages,
+        contextTime = apiModel.contextTime,
+        contextSize = apiModel.contextSize,
+        contextNumAttachments = apiModel.contextNumAttachments
     )
 }

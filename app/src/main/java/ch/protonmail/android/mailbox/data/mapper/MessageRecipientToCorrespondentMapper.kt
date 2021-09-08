@@ -31,8 +31,8 @@ import javax.inject.Inject
 class MessageRecipientToCorrespondentMapper @Inject constructor() :
     Mapper<MessageRecipient, Correspondent> {
 
-    fun MessageRecipient.toDomainModel() = Correspondent(
-        name = name ?: EMPTY_STRING,
-        address = emailAddress ?: EMPTY_STRING
+    fun toDomainModel(messageRecipient: MessageRecipient) = Correspondent(
+        name = messageRecipient.name ?: EMPTY_STRING,
+        address = messageRecipient.emailAddress ?: EMPTY_STRING
     )
 }

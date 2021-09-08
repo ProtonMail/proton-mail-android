@@ -625,7 +625,7 @@ internal class EventHandler @AssistedInject constructor(
 
     private fun writeUnreadUpdates(messageCounts: List<CountsApiModel>) {
         val databaseModels = messageCounts
-            .map(apiToDatabaseUnreadCounterMapper) { it.toDatabaseModel(userId, Type.MESSAGES) }
+            .map(apiToDatabaseUnreadCounterMapper) { toDatabaseModel(it, userId, Type.MESSAGES) }
         runBlocking {
             unreadCounterDao.insertOrUpdate(databaseModels)
         }

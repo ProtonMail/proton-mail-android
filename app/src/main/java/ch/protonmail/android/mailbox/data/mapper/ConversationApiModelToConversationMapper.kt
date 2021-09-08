@@ -33,16 +33,16 @@ class ConversationApiModelToConversationMapper @Inject constructor(
     private val labelsMapper: LabelContextApiModelToLabelContextMapper
 ) : Mapper<ConversationApiModel, Conversation> {
 
-    fun ConversationApiModel.toDomainModel() = Conversation(
-        id = id,
-        subject = subject,
-        senders = senders.map(correspondentMapper) { it.toDomainModel() },
-        receivers = recipients.map(correspondentMapper) { it.toDomainModel() },
-        messagesCount = numMessages,
-        unreadCount = numUnread,
-        attachmentsCount = numAttachments,
-        expirationTime = expirationTime,
-        labels = labels.map(labelsMapper) { it.toDomainModel() },
+    fun toDomainModel(apiModel: ConversationApiModel) = Conversation(
+        id = apiModel.id,
+        subject = apiModel.subject,
+        senders = apiModel.senders.map(correspondentMapper) { toDomainModel(it) },
+        receivers = apiModel.recipients.map(correspondentMapper) { toDomainModel(it) },
+        messagesCount = apiModel.numMessages,
+        unreadCount = apiModel.numUnread,
+        attachmentsCount = apiModel.numAttachments,
+        expirationTime = apiModel.expirationTime,
+        labels = apiModel.labels.map(labelsMapper) { toDomainModel(it) },
         messages = null
     )
 }

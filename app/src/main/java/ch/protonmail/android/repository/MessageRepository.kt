@@ -199,7 +199,7 @@ internal class MessageRepository @Inject constructor(
 
     fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> {
         val countersFlow = unreadCounterDao.observeMessagesUnreadCounters(userId).map { list ->
-            val domainModels = list.map(databaseToDomainUnreadCounterMapper) { it.toDomainModel() }
+            val domainModels = list.map(databaseToDomainUnreadCounterMapper) { toDomainModel(it) }
             // Cast is needed, in order to emit Error.Remote
             DataResult.Success(ResponseSource.Local, domainModels) as DataResult<List<UnreadCounter>>
         }.onStart {
@@ -220,7 +220,7 @@ internal class MessageRepository @Inject constructor(
         val response = protonMailApiManager.fetchMessagesCounts(userId)
         Timber.v("Fetch Messages Unread response: $response")
         val counts = response.counts
-            .map(apiToDatabaseUnreadCounterMapper) { it.toDatabaseModel(userId, Type.MESSAGES) }
+            .map(apiToDatabaseUnreadCounterMapper) { toDatabaseModel(it, userId, Type.MESSAGES) }
         unreadCounterDao.insertOrUpdate(counts)
     }
 

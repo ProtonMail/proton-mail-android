@@ -30,6 +30,6 @@ import javax.inject.Inject
 class CorrespondentApiModelToCorrespondentMapper @Inject constructor() :
     Mapper<CorrespondentApiModel, Correspondent> {
 
-    fun CorrespondentApiModel.toDomainModel(): Correspondent =
-        Correspondent(name = name, address = address)
+    fun toDomainModel(apiModel: CorrespondentApiModel): Correspondent =
+        Correspondent(name = apiModel.name, address = apiModel.address)
 }

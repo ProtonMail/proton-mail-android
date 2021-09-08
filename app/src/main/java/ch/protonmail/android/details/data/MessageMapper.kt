@@ -36,16 +36,16 @@ internal fun Message.toDomainModel(): MessageDomainModel {
         conversationId = conversationId.orEmpty(),
         subject = subject.orEmpty(),
         isUnread = Unread,
-        sender = senderToCorrespondentMapper { sender.toDomainModelOrEmpty() },
-        receivers = toList.map(recipientToCorrespondentMapper) { it.toDomainModel() },
+        sender = senderToCorrespondentMapper { toDomainModelOrEmpty(sender) },
+        receivers = toList.map(recipientToCorrespondentMapper) { toDomainModel(it) },
         time = time,
         attachmentsCount = numAttachments,
         expirationTime = expirationTime,
         isReplied = isReplied ?: false,
         isRepliedAll = isRepliedAll ?: false,
         isForwarded = isForwarded ?: false,
-        ccReceivers = ccList.map(recipientToCorrespondentMapper) { it.toDomainModel() },
-        bccReceivers = bccList.map(recipientToCorrespondentMapper) { it.toDomainModel() },
+        ccReceivers = ccList.map(recipientToCorrespondentMapper) { toDomainModel(it) },
+        bccReceivers = bccList.map(recipientToCorrespondentMapper) { toDomainModel(it) },
         labelsIds = allLabelIDs
     )
 }
@@ -58,16 +58,16 @@ internal fun MessageDomainModel.toDbModel(): Message {
         conversationId = conversationId,
         subject = subject,
         Unread = isUnread,
-        sender = correspondentToSenderMapper { sender.toDatabaseModel() },
-        toList = receivers.map(correspondentToRecipientMapper) { it.toDatabaseModel() },
+        sender = correspondentToSenderMapper { toDatabaseModel(sender) },
+        toList = receivers.map(correspondentToRecipientMapper) { toDatabaseModel(it) },
         time = time,
         numAttachments = attachmentsCount,
         expirationTime = expirationTime,
         isReplied = isReplied,
         isRepliedAll = isRepliedAll,
         isForwarded = isForwarded,
-        ccList = ccReceivers.map(correspondentToRecipientMapper) { it.toDatabaseModel() },
-        bccList = bccReceivers.map(correspondentToRecipientMapper) { it.toDatabaseModel() },
+        ccList = ccReceivers.map(correspondentToRecipientMapper) { toDatabaseModel(it) },
+        bccList = bccReceivers.map(correspondentToRecipientMapper) { toDatabaseModel(it) },
         allLabelIDs = labelsIds
     )
 }

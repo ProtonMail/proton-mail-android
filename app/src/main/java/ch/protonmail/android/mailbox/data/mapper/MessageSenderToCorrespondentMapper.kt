@@ -31,13 +31,13 @@ import javax.inject.Inject
 class MessageSenderToCorrespondentMapper @Inject constructor() :
     Mapper<MessageSender, Correspondent> {
 
-    fun MessageSender.toDomainModel() = Correspondent(
-        name = name ?: EMPTY_STRING,
-        address = emailAddress ?: EMPTY_STRING
+    fun toDomainModel(messageSender: MessageSender) = Correspondent(
+        name = messageSender.name ?: EMPTY_STRING,
+        address = messageSender.emailAddress ?: EMPTY_STRING
     )
 
-    fun MessageSender?.toDomainModelOrEmpty(): Correspondent =
-        this?.toDomainModel() ?: Correspondent(
+    fun toDomainModelOrEmpty(messageSender: MessageSender?): Correspondent =
+        messageSender?.let(::toDomainModel) ?: Correspondent(
             name = EMPTY_STRING,
             address = EMPTY_STRING
         )

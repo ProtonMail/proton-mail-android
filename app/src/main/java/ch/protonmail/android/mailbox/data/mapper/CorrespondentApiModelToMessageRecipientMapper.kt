@@ -30,6 +30,6 @@ import javax.inject.Inject
 class CorrespondentApiModelToMessageRecipientMapper @Inject constructor() :
     Mapper<CorrespondentApiModel, MessageRecipient> {
 
-    fun CorrespondentApiModel.toDatabaseModel(): MessageRecipient =
-        MessageRecipient(name, address)
+    fun toDatabaseModel(apiModel: CorrespondentApiModel): MessageRecipient =
+        MessageRecipient(apiModel.name, apiModel.address)
 }
