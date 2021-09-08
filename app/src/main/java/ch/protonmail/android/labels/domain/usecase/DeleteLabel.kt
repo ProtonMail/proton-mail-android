@@ -17,15 +17,15 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.delete
+package ch.protonmail.android.labels.domain.usecase
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
+import ch.protonmail.android.labels.data.remote.worker.DeleteLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.utils.extensions.filter
-import ch.protonmail.android.worker.DeleteLabelWorker
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider

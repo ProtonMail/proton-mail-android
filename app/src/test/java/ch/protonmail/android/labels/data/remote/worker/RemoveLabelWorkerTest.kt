@@ -17,18 +17,18 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.labels.data.remote.worker
 
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApi
-import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.UnreadLabelCounter
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -46,7 +46,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ApplyLabelWorkerTest {
+class RemoveLabelWorkerTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -66,7 +66,7 @@ class ApplyLabelWorkerTest {
     @MockK
     private lateinit var messageRepository: MessageRepository
 
-    private lateinit var worker: ApplyLabelWorker
+    private lateinit var worker: RemoveLabelWorker
 
     private val testUserId = UserId("testUser")
 
@@ -77,7 +77,7 @@ class ApplyLabelWorkerTest {
         every { counterDao.findUnreadLabelById(any()) } returns mockk<UnreadLabelCounter>(relaxed = true)
         every { counterDao.insertUnreadLabel(any()) } just Runs
 
-        worker = ApplyLabelWorker(
+        worker = RemoveLabelWorker(
             context,
             parameters,
             accountManager,
@@ -94,8 +94,7 @@ class ApplyLabelWorkerTest {
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty label id or message ids")
             )
-            val response = mockk<MoveToFolderResponse>()
-            every { api.labelMessages(any()) } returns response
+            every { api.unlabelMessages(any()) } returns Unit
 
             // when
             val result = worker.doWork()
@@ -118,10 +117,9 @@ class ApplyLabelWorkerTest {
                 KEY_INPUT_DATA_LABEL_ID to testLabelId
             )
 
-            val response = mockk<MoveToFolderResponse>()
-            every { api.labelMessages(any()) } returns response
+            every { api.unlabelMessages(any()) }  returns Unit
             val message = Message(messageId = testMessageId)
-            coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns  message
+            coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns message
 
             // when
             val result = worker.doWork()

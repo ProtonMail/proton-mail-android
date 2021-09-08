@@ -29,7 +29,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
-import ch.protonmail.android.usecase.delete.DeleteLabel
+import ch.protonmail.android.labels.domain.usecase.DeleteLabel
 import ch.protonmail.android.utils.Event
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery

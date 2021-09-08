@@ -31,13 +31,13 @@ import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.data.remote.worker.PostLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.domain.usecase.DeleteLabel
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
-import ch.protonmail.android.usecase.delete.DeleteLabel
-import ch.protonmail.android.worker.PostLabelWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first

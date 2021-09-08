@@ -17,29 +17,37 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.labels.data.remote.worker
 
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.models.MoveToFolderResponse
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.UnreadLabelCounter
+import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class RemoveMembersFromContactGroupWorkerTest {
+class ApplyLabelWorkerTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -48,58 +56,47 @@ class RemoveMembersFromContactGroupWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @MockK
-    private lateinit var api: ProtonMailApiManager
+    private lateinit var api: ProtonMailApi
 
     @MockK
-    private lateinit var labelRepository: LabelRepository
+    private lateinit var counterDao: CounterDao
 
     @MockK
     private lateinit var accountManager: AccountManager
 
-    private val testUserId = UserId("TestUserId")
+    @MockK
+    private lateinit var messageRepository: MessageRepository
 
-    private lateinit var worker: RemoveMembersFromContactGroupWorker
+    private lateinit var worker: ApplyLabelWorker
+
+    private val testUserId = UserId("testUser")
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
-        worker = RemoveMembersFromContactGroupWorker(
+        every { counterDao.findUnreadLabelById(any()) } returns mockk<UnreadLabelCounter>(relaxed = true)
+        every { counterDao.insertUnreadLabel(any()) } just Runs
+
+        worker = ApplyLabelWorker(
             context,
             parameters,
+            accountManager,
+            messageRepository,
+            counterDao,
             api,
-            TestDispatcherProvider,
-            labelRepository,
-            accountManager
         )
     }
 
     @Test
-    fun verifyWorkerFailsWithNoGroupIdProvided() {
+    fun verifyWorkerFailsWithNoLabelIdProvided() {
         runBlockingTest {
             // given
             val expected = ListenableWorker.Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty contacts group id")
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty label id or message ids")
             )
-
-            // when
-            val operationResult = worker.doWork()
-
-            // then
-            assertEquals(operationResult, expected)
-        }
-    }
-
-    @Test
-    fun verifyWorkerFailsWithNoMembersListProvided() {
-        runBlockingTest {
-            // given
-            val groupId = "Id1"
-            every { parameters.inputData } returns
-                workDataOf(KEY_INPUT_DATA_CONTACT_GROUP_ID to groupId)
-            val expected = ListenableWorker.Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty members list")
-            )
+            val response = mockk<MoveToFolderResponse>()
+            every { api.labelMessages(any()) } returns response
 
             // when
             val result = worker.doWork()
@@ -110,27 +107,29 @@ class RemoveMembersFromContactGroupWorkerTest {
     }
 
     @Test
-    fun verifySuccessResultIsGeneratedWithRequiredParameters() {
+    fun verifyWorkerSuccessesWithRequiredParametersProvided() {
         runBlockingTest {
             // given
-            val groupId = "Id1"
-            val member1 = "MemberId1"
-            every { parameters.inputData } returns
-                workDataOf(
-                    KEY_INPUT_DATA_CONTACT_GROUP_ID to groupId,
-                    KEY_INPUT_DATA_MEMBERS_LIST to arrayOf(member1)
-                )
+            val testMessageId = "id1"
+            val testLabelId = "LabelId1"
             val expected = ListenableWorker.Result.success()
 
-            coEvery { api.unlabelContactEmails(any()) } returns Unit
+            every { parameters.inputData } returns workDataOf(
+                KEY_INPUT_DATA_MESSAGES_IDS to arrayOf(testMessageId),
+                KEY_INPUT_DATA_LABEL_ID to testLabelId
+            )
+
+            val response = mockk<MoveToFolderResponse>()
+            every { api.labelMessages(any()) } returns response
+            val message = Message(messageId = testMessageId)
+            coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns  message
 
             // when
-            val operationResult = worker.doWork()
+            val result = worker.doWork()
 
             // then
-            assertEquals(operationResult, expected)
+            assertEquals(expected, result)
+            verify { counterDao.insertUnreadLabel(any()) }
         }
     }
-
-
 }

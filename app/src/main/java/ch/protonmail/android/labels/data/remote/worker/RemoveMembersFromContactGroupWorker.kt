@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.labels.data.remote.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
@@ -32,6 +32,7 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.filterNotNull

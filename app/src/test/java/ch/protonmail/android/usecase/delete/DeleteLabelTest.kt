@@ -23,11 +23,11 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
-import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.remote.worker.DeleteLabelWorker
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.worker.DeleteLabelWorker
+import ch.protonmail.android.labels.domain.usecase.DeleteLabel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
@@ -52,9 +52,6 @@ class DeleteLabelTest {
 
     @MockK
     private lateinit var labelRepository: LabelRepository
-
-    @MockK
-    private lateinit var contactDao: ContactDao
 
     private lateinit var deleteLabel: DeleteLabel
 

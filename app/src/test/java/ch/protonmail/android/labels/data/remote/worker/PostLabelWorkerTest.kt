@@ -17,19 +17,19 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.labels.data.remote.worker
 
 import android.content.Context
 import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery

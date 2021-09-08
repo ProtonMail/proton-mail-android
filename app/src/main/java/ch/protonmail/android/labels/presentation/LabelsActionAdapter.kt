@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.presentation.viewmodel
+package ch.protonmail.android.labels.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -30,7 +30,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemDiffUtil
 import timber.log.Timber
 
 class LabelsActionAdapter(

@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.labels.data.remote.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
@@ -35,20 +35,18 @@ import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
-internal const val KEY_INPUT_DATA_MESSAGES_IDS = "KeyInputDataMessagesIds"
-
 @HiltWorker
-class ApplyLabelWorker @AssistedInject constructor(
+class RemoveLabelWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val accountManager: AccountManager,
@@ -61,7 +59,7 @@ class ApplyLabelWorker @AssistedInject constructor(
         val messageIds = requireNotNull(inputData.getStringArray(KEY_INPUT_DATA_MESSAGES_IDS))
         val labelId = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
-        Timber.v("Apply label $labelId for messages: $messageIds")
+        Timber.v("Remove label $labelId for messages: $messageIds")
 
         if (messageIds.isEmpty() || labelId == null) {
             return Result.failure(
@@ -69,17 +67,31 @@ class ApplyLabelWorker @AssistedInject constructor(
             )
         }
 
-        val idList = IDList(labelId, messageIds.asList())
+        var totalUnread = 0
+
+        for (messageId in messageIds) {
+            val message: Message = messageRepository.findMessage(userId, messageId)
+                ?: continue
+            if (message.isRead) {
+                totalUnread++
+            }
+        }
+
+        val unreadLabelCounter = counterDao.findUnreadLabelById(labelId)
+        if (unreadLabelCounter != null) {
+            unreadLabelCounter.increment(totalUnread)
+            counterDao.insertUnreadLabel(unreadLabelCounter)
+        }
+
 
         return runCatching {
-            protonMailApi.labelMessages(idList)
+            val idList = IDList(labelId, messageIds.asList())
+            protonMailApi.unlabelMessages(idList)
         }.fold(
             onSuccess = {
-                countUnread(ModificationMethod.INCREMENT, userId, labelId, messageIds)
                 Result.success()
             },
             onFailure = { throwable ->
-                countUnread(ModificationMethod.DECREMENT, userId, labelId, messageIds)
                 if (throwable is CancellationException) {
                     throw throwable
                 }
@@ -88,31 +100,6 @@ class ApplyLabelWorker @AssistedInject constructor(
                 )
             }
         )
-    }
-
-    private suspend fun countUnread(
-        modificationMethod: ModificationMethod,
-        userId: UserId,
-        labelId: String,
-        messagesIds: Array<String>
-    ) {
-        var totalUnread = 0
-
-        for (messageId in messagesIds) {
-            val message: Message = messageRepository.findMessage(userId, messageId)
-                ?: continue
-            if (message.isRead) {
-                totalUnread++
-            }
-        }
-        val unreadLabelCounter = counterDao.findUnreadLabelById(labelId)
-        if (unreadLabelCounter != null) {
-            when (modificationMethod) {
-                ModificationMethod.INCREMENT -> unreadLabelCounter.increment(totalUnread)
-                ModificationMethod.DECREMENT -> unreadLabelCounter.decrement(totalUnread)
-            }
-            counterDao.insertUnreadLabel(unreadLabelCounter)
-        }
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
@@ -124,7 +111,7 @@ class ApplyLabelWorker @AssistedInject constructor(
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val workRequest = OneTimeWorkRequestBuilder<ApplyLabelWorker>()
+            val workRequest = OneTimeWorkRequestBuilder<RemoveLabelWorker>()
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
@@ -137,9 +124,5 @@ class ApplyLabelWorker @AssistedInject constructor(
 
             return workManager.getWorkInfoByIdLiveData(workRequest.id)
         }
-    }
-
-    internal enum class ModificationMethod {
-        INCREMENT, DECREMENT
     }
 }

@@ -20,13 +20,13 @@
 package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.remote.worker.ApplyLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.RemoveLabelWorker
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.worker.ApplyLabelWorker
-import ch.protonmail.android.worker.RemoveLabelWorker
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery

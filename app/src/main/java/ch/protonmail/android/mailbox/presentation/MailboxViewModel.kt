@@ -25,7 +25,7 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.api.utils.ApplyRemoveLabels
+import ch.protonmail.android.mailbox.presentation.model.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager

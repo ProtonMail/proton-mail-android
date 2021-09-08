@@ -28,9 +28,9 @@ import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityRequestMapper
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
+import ch.protonmail.android.labels.data.remote.worker.RemoveMembersFromContactGroupWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.worker.CreateContactGroupWorker
-import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId

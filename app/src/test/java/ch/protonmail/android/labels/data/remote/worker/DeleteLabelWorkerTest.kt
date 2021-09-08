@@ -17,13 +17,14 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.labels.data.remote.worker
 
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
