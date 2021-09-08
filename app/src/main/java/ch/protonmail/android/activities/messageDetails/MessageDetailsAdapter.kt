@@ -211,10 +211,10 @@ internal class MessageDetailsAdapter(
             if (isMessageBodyExpanded()) {
                 messageDetailsHeaderView.allowExpandingHeaderView()
                 messageDetailsHeaderView.showRecipientsCollapsedView()
-                messageDetailsHeaderView.hideCollapsedLabelsView()
+                messageDetailsHeaderView.hideCollapsedMessageViews()
             } else {
                 messageDetailsHeaderView.hideRecipientsCollapsedView()
-                messageDetailsHeaderView.showCollapsedLabelsView()
+                messageDetailsHeaderView.showCollapsedMessageViews()
             }
 
             if (message.isRead) {

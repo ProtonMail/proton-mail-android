@@ -72,6 +72,7 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
             gravity = Gravity.CENTER_VERTICAL
         }
         setTextAppearance(R.style.Proton_Text_Caption)
+        includeFontPadding = false
     }
 
     init {

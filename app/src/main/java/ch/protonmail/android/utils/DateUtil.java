@@ -63,6 +63,21 @@ public class DateUtil {
         return formatDaysAndHours(context, days, hours, minutes);
     }
 
+    public static String formatTheLargestAvailableUnitOnly(Context context, long seconds) {
+        int days = (int) (seconds / (24 * 60 * 60));
+        if (days > 0) {
+            return context.getResources().getString(R.string.expiration_days, days);
+        }
+        seconds = (int) (seconds - days * (24 * 60 * 60));
+        int hours = (int)(seconds / (60 * 60));
+        if (hours > 0) {
+            return context.getResources().getString(R.string.expiration_hours, hours);
+        }
+        seconds = (int) (seconds - hours * (60 * 60));
+        int minutes = (int) (seconds / 60);
+        return context.getResources().getString(R.string.expiration_minutes, minutes);
+    }
+
     public static String formatDaysAndHours(Context context, int days, int hours, int minutes) {
         if (days == 0 && hours == 0 & minutes == 0) {
             return "";

@@ -25,15 +25,6 @@
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-    <TextView
-        android:id="@+id/messageExpirationView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="12h" />
-
     <ImageView
         android:id="@+id/attachmentsImageView"
         android:layout_width="@dimen/message_details_header_small_icon_size"

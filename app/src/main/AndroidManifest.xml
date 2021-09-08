@@ -132,6 +132,7 @@
 
 
         <activity android:name=".ViewTestActivity"/>
+        <activity android:name=".util.HiltViewTestActivity"/>
 
         <!-- Begin - Root Activities -->
         <activity
