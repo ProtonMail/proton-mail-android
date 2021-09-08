@@ -97,9 +97,11 @@
     <dimen name="message_details_header_margin_big">16dp</dimen>
     <dimen name="message_details_header_margin_normal">8dp</dimen>
     <dimen name="message_details_header_margin_small">4dp</dimen>
+    <dimen name="message_details_header_margin_extra_small">2dp</dimen>
     <dimen name="message_details_header_small_icon_size">16dp</dimen>
     <dimen name="message_details_header_chevron_icon_size">40dp</dimen>
     <dimen name="message_details_header_chevron_icon_padding">12dp</dimen>
+    <dimen name="message_details_header_hourglass_icon_size">12dp</dimen>
 
     <dimen name="message_details_banner_height">48dp</dimen>
     <dimen name="message_details_banner_margin_horizontal">16dp</dimen>

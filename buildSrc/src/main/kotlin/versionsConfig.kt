@@ -53,7 +53,7 @@ fun initVersions() {
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
     `dagger version` =                          "2.35.1"        // Released: Apr 28, 2021
 
-    `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
+    `mockK version` =                           "1.12.0"        // Released: Jul 01, 2021
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""
     `robolectric version` =                     "4.3.1"         // Released: Oct 11, 2019

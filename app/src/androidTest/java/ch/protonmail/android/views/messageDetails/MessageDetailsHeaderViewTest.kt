@@ -34,24 +34,24 @@ import org.junit.runner.RunWith
 class MessageDetailsHeaderViewTest : ViewTest<MessageDetailsHeaderView>(::MessageDetailsHeaderView) {
 
     @Test
-    fun shouldHideCollapsedLabels() {
+    fun shouldHideCollapsedMessageViews() {
         runOnActivityThread {
-            testView.showCollapsedLabelsView()
-            testView.hideCollapsedLabelsView()
+            testView.showCollapsedMessageViews()
+            testView.hideCollapsedMessageViews()
         }
 
-        onCollapsedLabelsView().check(isGone())
+        onCollapsedMessageView().check(isGone())
     }
 
     @Test
-    fun shouldShowCollapsedLabels() {
+    fun shouldShowCollapsedMessageViews() {
         runOnActivityThread {
-            testView.hideCollapsedLabelsView()
-            testView.showCollapsedLabelsView()
+            testView.hideCollapsedMessageViews()
+            testView.showCollapsedMessageViews()
         }
 
-        onCollapsedLabelsView().check(isVisible())
+        onCollapsedMessageView().check(isVisible())
     }
 
-    private fun onCollapsedLabelsView(): ViewInteraction = onView(withId(R.id.collapsedLabelsView))
+    private fun onCollapsedMessageView(): ViewInteraction = onView(withId(R.id.collapsedMessageViews))
 }

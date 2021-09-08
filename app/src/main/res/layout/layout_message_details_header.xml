@@ -109,11 +109,11 @@
         app:layout_constraintTop_toTopOf="@id/senderNameTextView"
         tools:text="@string/lock_default" />
 
-    <ch.protonmail.android.ui.view.SingleLineCollapsedLabelGroupView
-        android:id="@+id/collapsedLabelsView"
+    <ch.protonmail.android.details.presentation.view.CollapsedMessageViews
+        android:id="@+id/collapsedMessageViews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/message_details_header_margin_small"
+        android:layout_marginStart="@dimen/message_details_header_margin_extra_small"
         android:layout_marginEnd="@dimen/message_details_header_margin_small"
         app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
         app:layout_constraintEnd_toStartOf="@id/messageDetailsIcons"

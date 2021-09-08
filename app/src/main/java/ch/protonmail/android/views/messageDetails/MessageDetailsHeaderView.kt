@@ -44,10 +44,10 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.view.CollapsedMessageViews
 import ch.protonmail.android.details.presentation.view.MessageDetailsHeaderIcons
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
-import ch.protonmail.android.ui.view.SingleLineCollapsedLabelGroupView
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
@@ -87,7 +87,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val labelsImageView: ImageView
     private val labelsCollapsedGroupView: SingleLineLabelChipGroupView
     private val labelsExpandedGroupView: MultiLineLabelChipGroupView
-    private val collapsedLabelsView: SingleLineCollapsedLabelGroupView
 
     private val timeDateTextView: TextView
     private val timeDateExtendedTextView: TextView
@@ -108,6 +107,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val forwardedImageView: ImageView
 
     private val messageDetailsIcons: MessageDetailsHeaderIcons
+    private val collapsedMessageViews: CollapsedMessageViews
     // endregion
 
     init {
@@ -136,7 +136,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         labelsImageView = binding.labelsImageView
         labelsCollapsedGroupView = binding.labelsCollapsedGroupView
         labelsExpandedGroupView = binding.labelsExpandedGroupView
-        collapsedLabelsView = binding.collapsedLabelsView
 
         timeDateTextView = binding.timeDateTextView
         timeDateExtendedTextView = binding.timeDateExtendedTextView
@@ -157,6 +156,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         forwardedImageView = binding.forwardedImageView
 
         messageDetailsIcons = binding.messageDetailsIcons
+        collapsedMessageViews = binding.collapsedMessageViews
         // endregion
 
         // animated layout changes looks buggy on Android 27, so we enable only on 28 +
@@ -197,7 +197,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         labelsExpandedGroupView.setLabels(nonExclusiveLabels)
         collapsedHeaderGroup.addView(labelsCollapsedGroupView)
         expandedHeaderGroup.addView(labelsExpandedGroupView)
-        collapsedLabelsView.setLabels(nonExclusiveLabels)
 
         // Can't control the visibility of individual views within the group as the group visibility trumps the
         // visibility of the individual views within the group; thus we want to add the icon to the group only
@@ -265,6 +264,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         forwardedImageView.isVisible = message.isForwarded ?: false
 
         messageDetailsIcons.bind(message)
+        collapsedMessageViews.bind(message, nonExclusiveLabels)
     }
 
     fun allowExpandingHeaderView() {
@@ -283,12 +283,12 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         collapsedHeaderGroup.isVisible = true
     }
 
-    fun showCollapsedLabelsView() {
-        collapsedLabelsView.isVisible = true
+    fun showCollapsedMessageViews() {
+        collapsedMessageViews.isVisible = true
     }
 
-    fun hideCollapsedLabelsView() {
-        collapsedLabelsView.isVisible = false
+    fun hideCollapsedMessageViews() {
+        collapsedMessageViews.isVisible = false
     }
 
     fun collapseHeader() {

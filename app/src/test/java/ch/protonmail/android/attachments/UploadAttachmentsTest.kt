@@ -598,11 +598,11 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             uploadAttachments.doWork()
 
-            val actualMessage = slot<Message>()
+            val actualMessages = mutableListOf<Message>()
             val expectedAttachments = listOf(uploadedAttachmentMock1, uploadedAttachmentMock2)
             verify { messageDetailsRepository.findAttachmentById(uploadedAttachmentMock2Id) }
-            coVerify { messageDetailsRepository.saveMessage(capture(actualMessage)) }
-            assertEquals(expectedAttachments, actualMessage.captured.attachments)
+            coVerify(exactly = 2) { messageDetailsRepository.saveMessage(capture(actualMessages)) }
+            assertEquals(expectedAttachments, actualMessages.last().attachments)
         }
     }
 
@@ -676,10 +676,10 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             uploadAttachments.doWork()
 
-            val actualMessage = slot<Message>()
+            val actualMessages = mutableListOf<Message>()
             val expectedAttachments = listOf(attachmentMock1)
-            coVerify(exactly = 2) { messageDetailsRepository.saveMessage(capture(actualMessage)) }
-            assertEquals(expectedAttachments, actualMessage.captured.attachments)
+            coVerify(exactly = 2) { messageDetailsRepository.saveMessage(capture(actualMessages)) }
+            assertEquals(expectedAttachments, actualMessages.last().attachments)
         }
     }
 
