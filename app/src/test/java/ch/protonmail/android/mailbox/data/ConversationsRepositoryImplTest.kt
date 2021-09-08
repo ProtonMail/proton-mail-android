@@ -1309,17 +1309,18 @@ class ConversationsRepositoryImplTest : ArchTest {
     fun handlesExceptionDuringUnreadCountersRefresh() = runBlockingTest {
         // given
         val expectedMessage = "Invalid username!"
-        val expectedException = IllegalArgumentException(expectedMessage)
         coEvery { api.fetchConversationsCounts(testUserId) } answers {
-            throw expectedException
+            throw IllegalArgumentException(expectedMessage)
         }
-        val expectedError = DataResult.Error.Remote(expectedMessage, expectedException)
 
         // when
         conversationsRepository.getUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(expectedError, expectItem())
+            val actual = expectItem() as DataResult.Error.Remote
+            assertEquals(expectedMessage, actual.message)
+
+            expectComplete()
         }
     }
 
