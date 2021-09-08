@@ -22,9 +22,9 @@ package ch.protonmail.android.details.presentation.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutCollapsedMessageViewsBinding
 import ch.protonmail.android.ui.model.LabelChipUiModel
@@ -60,11 +60,11 @@ class CollapsedMessageViews @JvmOverloads constructor(
     }
 
     private fun SingleLineCollapsedLabelGroupView.showLabelsOrHide(labels: List<LabelChipUiModel>) {
-        if (labels.isNotEmpty()) {
+        isVisible = if (labels.isNotEmpty()) {
             setLabels(labels)
-            visibility = View.VISIBLE
+            true
         } else {
-            visibility = View.GONE
+            false
         }
     }
 
@@ -73,9 +73,9 @@ class CollapsedMessageViews @JvmOverloads constructor(
             val remainingSeconds = expirationTime -
                 TimeUnit.MILLISECONDS.toSeconds(serverTimeProvider.currentTimeMillis())
             text = DateUtil.formatTheLargestAvailableUnitOnly(context, remainingSeconds)
-            visibility = View.VISIBLE
+            isVisible = true
         } else {
-            visibility = View.GONE
+            isVisible = false
         }
     }
 }
