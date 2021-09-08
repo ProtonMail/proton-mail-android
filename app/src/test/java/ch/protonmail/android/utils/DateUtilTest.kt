@@ -18,13 +18,33 @@
  */
 package ch.protonmail.android.utils
 
-import androidx.test.platform.app.InstrumentationRegistry
+import android.content.Context
+import android.content.res.Resources
+import ch.protonmail.android.R
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class DateUtilTest {
 
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
+    private val resourcesMock = mockk<Resources> {
+        every { getString(eq(R.string.expiration_days), any()) } answers {
+            val days = secondArg<Array<Any>>()[0]
+            "${days}D"
+        }
+        every { getString(eq(R.string.expiration_hours), any<Int>()) } answers {
+            val hours = secondArg<Array<Any>>()[0]
+            "${hours}H"
+        }
+        every { getString(eq(R.string.expiration_minutes), any<Int>()) } answers {
+            val minutes = secondArg<Array<Any>>()[0]
+            "${minutes}M"
+        }
+    }
+    private val contextMock = mockk<Context> {
+        every { resources } returns resourcesMock
+    }
 
     @Test
     fun shouldFormatTheLargestAvailableUnitOnly() {
@@ -35,9 +55,9 @@ class DateUtilTest {
         val expectedHoursString = "6H"
         val expectedMinutesString = "7M"
 
-        val actualDaysString = DateUtil.formatTheLargestAvailableUnitOnly(context, fiveDaysSixHoursAndSevenMinutes)
-        val actualHoursString = DateUtil.formatTheLargestAvailableUnitOnly(context, sixHoursAndSevenMinutes)
-        val actualMinutesString = DateUtil.formatTheLargestAvailableUnitOnly(context, sevenMinutes)
+        val actualDaysString = DateUtil.formatTheLargestAvailableUnitOnly(contextMock, fiveDaysSixHoursAndSevenMinutes)
+        val actualHoursString = DateUtil.formatTheLargestAvailableUnitOnly(contextMock, sixHoursAndSevenMinutes)
+        val actualMinutesString = DateUtil.formatTheLargestAvailableUnitOnly(contextMock, sevenMinutes)
 
         assertEquals(expectedDaysString, actualDaysString)
         assertEquals(expectedHoursString, actualHoursString)
