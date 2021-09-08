@@ -23,7 +23,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.AttachmentTypesConverter
-import ch.protonmail.android.data.local.model.CommonTypeConverters
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
@@ -32,6 +31,7 @@ import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
+import me.proton.core.data.room.db.CommonConverters
 
 @Database(
     entities = [
@@ -45,7 +45,7 @@ import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 )
 @TypeConverters(
     value = [
-        CommonTypeConverters::class,
+        CommonConverters::class,
 
         AttachmentTypesConverter::class,
         MessagesTypesConverter::class,

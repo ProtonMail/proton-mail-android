@@ -68,16 +68,6 @@ class MessagesTypesConverter {
         }
     }
 
-    // TODO unsafe conversion create for label ids separate type
-    @TypeConverter
-    fun labelIdsToString(labelIds: List<String>): String =
-        labelIds.joinToString(";")
-
-    // TODO unsafe conversion create for label ids separate type
-    @TypeConverter
-    fun stringToLabelIds(labelIdsString: String): List<String> =
-        labelIdsString.split(";").dropLastWhile { it.isEmpty() }
-
     @TypeConverter
     fun messageTypeToInt(messageType: Message.MessageType): Int =
         messageType.ordinal
