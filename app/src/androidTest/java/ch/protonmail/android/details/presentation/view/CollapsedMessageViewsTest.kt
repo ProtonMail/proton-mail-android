@@ -51,28 +51,34 @@ class CollapsedMessageViewsTest : HiltViewTest<CollapsedMessageViews>(::Collapse
 
     @Test
     fun shouldHideExpirationViewWhenMessageDoesNotHaveExpiration() {
+        // given
         every { serverTimeProviderMock.currentTimeMillis() } returns 0
         val labels = emptyList<LabelChipUiModel>()
         val message = Message(expirationTime = 0)
 
+        // when
         runOnActivityThread {
             testView.bind(message, labels)
         }
 
+        // then
         onExpirationTextView().check(isGone())
     }
 
     @Test
     fun shouldShowCorrectExpirationTimeWhenMessageDoesHaveExpiration() {
+        // given
         every { serverTimeProviderMock.currentTimeMillis() } returns 60000
         val labels = emptyList<LabelChipUiModel>()
         val message = Message(expirationTime = 420)
         val expectedExpirationString = "6M"
 
+        // when
         runOnActivityThread {
             testView.bind(message, labels)
         }
 
+        // then
         onExpirationTextView()
             .check(isVisible())
             .check(matches(withText(expectedExpirationString)))
@@ -80,18 +86,22 @@ class CollapsedMessageViewsTest : HiltViewTest<CollapsedMessageViews>(::Collapse
 
     @Test
     fun shouldHideLabelsViewWhenNoLabelsProvided() {
+        // given
         val labels = emptyList<LabelChipUiModel>()
         val message = Message()
 
+        // when
         runOnActivityThread {
             testView.bind(message, labels)
         }
 
+        // then
         onLabelsView().check(isGone())
     }
 
     @Test
     fun shouldShowLabelsViewWhenLabelsProvided() {
+        // given
         val labels = listOf(
             LabelChipUiModel(
                 id = LabelId("1"),
@@ -101,10 +111,12 @@ class CollapsedMessageViewsTest : HiltViewTest<CollapsedMessageViews>(::Collapse
         )
         val message = Message()
 
+        // when
         runOnActivityThread {
             testView.bind(message, labels)
         }
 
+        // then
         onLabelsView().check(isVisible())
     }
 

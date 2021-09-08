@@ -48,6 +48,7 @@ class DateUtilTest {
 
     @Test
     fun shouldFormatTheLargestAvailableUnitOnly() {
+        // given
         val fiveDaysSixHoursAndSevenMinutes = 454_020L
         val sixHoursAndSevenMinutes = 22_020L
         val sevenMinutes = 420L
@@ -55,10 +56,12 @@ class DateUtilTest {
         val expectedHoursString = "6H"
         val expectedMinutesString = "7M"
 
+        // when
         val actualDaysString = DateUtil.formatTheLargestAvailableUnitOnly(contextMock, fiveDaysSixHoursAndSevenMinutes)
         val actualHoursString = DateUtil.formatTheLargestAvailableUnitOnly(contextMock, sixHoursAndSevenMinutes)
         val actualMinutesString = DateUtil.formatTheLargestAvailableUnitOnly(contextMock, sevenMinutes)
 
+        // then
         assertEquals(expectedDaysString, actualDaysString)
         assertEquals(expectedHoursString, actualHoursString)
         assertEquals(expectedMinutesString, actualMinutesString)
