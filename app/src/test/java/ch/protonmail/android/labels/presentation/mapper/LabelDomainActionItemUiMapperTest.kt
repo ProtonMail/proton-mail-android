@@ -23,7 +23,7 @@ import android.content.Context
 import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import io.mockk.every

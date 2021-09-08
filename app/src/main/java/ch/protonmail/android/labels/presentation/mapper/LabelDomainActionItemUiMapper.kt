@@ -22,7 +22,7 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
-import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import me.proton.core.domain.arch.Mapper

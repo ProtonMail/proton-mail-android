@@ -20,12 +20,12 @@ package ch.protonmail.android.labels.data.remote
 
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_CONTACT_GROUP
-import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_FOLDER
-import ch.protonmail.android.labels.data.local.model.LABEL_TYPE_ID_MESSAGE_LABEL
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
+import ch.protonmail.android.labels.domain.model.LABEL_TYPE_ID_CONTACT_GROUP
+import ch.protonmail.android.labels.domain.model.LABEL_TYPE_ID_FOLDER
+import ch.protonmail.android.labels.domain.model.LABEL_TYPE_ID_MESSAGE_LABEL
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -39,7 +39,6 @@ private const val PATH_LABEL_ID = "label_id"
 
 interface LabelService : BaseRetrofitApi {
 
-    // TODO: rename fetch -> get
     @GET("v4/labels?Type=$LABEL_TYPE_ID_MESSAGE_LABEL")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun getLabels(): LabelsResponse

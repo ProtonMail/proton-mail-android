@@ -32,10 +32,10 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.labels.domain.LabelRepository;
 import ch.protonmail.android.labels.data.local.model.LabelEntity;
+import ch.protonmail.android.labels.domain.LabelRepository;
 import ch.protonmail.android.labels.domain.model.LabelId;
-import ch.protonmail.android.labels.data.local.model.LabelType;
+import ch.protonmail.android.labels.domain.model.LabelType;
 import timber.log.Timber;
 
 @Deprecated // replaced with PostToLocationWorker

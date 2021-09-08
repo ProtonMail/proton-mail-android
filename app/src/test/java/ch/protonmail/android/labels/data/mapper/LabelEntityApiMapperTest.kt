@@ -21,7 +21,7 @@ package ch.protonmail.android.labels.data.mapper
 
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import me.proton.core.domain.entity.UserId
 import org.junit.Assert.assertEquals

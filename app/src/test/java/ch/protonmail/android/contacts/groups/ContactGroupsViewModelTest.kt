@@ -27,7 +27,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event

@@ -38,7 +38,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil

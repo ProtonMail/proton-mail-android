@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.labels.data.remote.model
 
-import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

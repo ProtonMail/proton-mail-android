@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.data.local.model
+package ch.protonmail.android.labels.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

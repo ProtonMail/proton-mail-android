@@ -19,8 +19,6 @@
 
 package ch.protonmail.android.labels.domain.model
 
-import ch.protonmail.android.labels.data.local.model.LabelType
-
 data class Label(
     val id: LabelId,
     val name: String,

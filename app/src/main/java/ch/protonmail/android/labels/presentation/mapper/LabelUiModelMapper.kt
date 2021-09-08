@@ -21,7 +21,7 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mapper.UiModelMapper
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil

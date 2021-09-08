@@ -24,7 +24,7 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsRes
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.data.local.model.LabelType
+import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
