@@ -40,7 +40,6 @@ class MailboxRecyclerViewAdapter(
     private var mailboxLocation = Constants.MessageLocationType.INVALID
 
     private var labels = mapOf<String, LabelEntity>()
-    private var mailboxItems = listOf<MailboxUiItem>()
     private val selectedMailboxItemsIds: MutableSet<String> = mutableSetOf()
 
     private var pendingUploadList: List<PendingUpload>? = null
@@ -50,17 +49,15 @@ class MailboxRecyclerViewAdapter(
     private var onItemSelectionChangedListener: (() -> Unit)? = null
 
     val checkedMailboxItems get() =
-        selectedMailboxItemsIds.mapNotNull { mailboxItems.find { message -> message.itemId == it } }
+        selectedMailboxItemsIds.mapNotNull { currentList.find { message -> message.itemId == it } }
 
-    public fun getMailboxItem(position: Int) = mailboxItems[position]
+    public fun getMailboxItem(position: Int): MailboxUiItem = getItem(position)
 
     override fun submitList(list: List<MailboxUiItem>?) {
-        mailboxItems = list ?: emptyList()
         super.submitList(list)
     }
 
     override fun submitList(list: List<MailboxUiItem>?, commitCallback: Runnable?) {
-        mailboxItems = list ?: emptyList()
         super.submitList(list, commitCallback)
     }
 
@@ -77,7 +74,7 @@ class MailboxRecyclerViewAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        val itemViewType = if (position == mailboxItems.size) ElementType.FOOTER else ElementType.MESSAGE
+        val itemViewType = if (position == itemCount) ElementType.FOOTER else ElementType.MESSAGE
         return itemViewType.ordinal
     }
 
@@ -91,9 +88,7 @@ class MailboxRecyclerViewAdapter(
     override fun onBindViewHolder(holder: MailboxItemViewHolder, position: Int) {
         when (ElementType.values()[getItemViewType(position)]) {
             ElementType.MESSAGE -> (holder as MailboxItemViewHolder.MessageViewHolder).bindMailboxItem(position)
-            ElementType.FOOTER -> {
-                // NOOP
-            }
+            ElementType.FOOTER -> Unit
         }
     }
 
@@ -132,7 +127,7 @@ class MailboxRecyclerViewAdapter(
     }
 
     private fun MailboxItemViewHolder.MessageViewHolder.bindMailboxItem(position: Int) {
-        val mailboxItem = mailboxItems[position]
+        val mailboxItem = currentList[position]
 
         val pendingSend = pendingSendList?.find { it.messageId == mailboxItem.itemId }
         val isBeingSent = pendingSend != null && pendingSend.sent == null
@@ -205,7 +200,7 @@ class MailboxRecyclerViewAdapter(
         mailboxItemsIds: List<String>,
         startPosition: Int,
         endPosition: Int
-    ) = mailboxItems.subList(startPosition, endPosition + 1)
+    ) = currentList.subList(startPosition, endPosition + 1)
         .any { it.itemId in mailboxItemsIds }
 
 }
