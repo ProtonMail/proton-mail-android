@@ -35,6 +35,7 @@ import ch.protonmail.android.labels.data.remote.worker.PostLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.DeleteLabel
+import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
@@ -111,7 +112,7 @@ internal class LabelsManagerViewModel @Inject constructor(
     val labels = ViewStateStore.from(
         selectedLabelIds.switchMap { selectedList ->
             labelsSource.map(labelMapper) {
-                it.toUiModel().copy(isChecked = it.id in selectedList)
+                it.toUiModel().copy(isChecked = it.id.id in selectedList)
             }.toLiveData(20)
         }
     ).lock

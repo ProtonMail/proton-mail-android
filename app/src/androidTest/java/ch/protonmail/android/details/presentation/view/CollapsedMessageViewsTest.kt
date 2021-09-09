@@ -26,8 +26,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.testAndroidInstrumented.assertion.isGone
 import ch.protonmail.android.testAndroidInstrumented.assertion.isVisible
 import ch.protonmail.android.ui.model.LabelChipUiModel

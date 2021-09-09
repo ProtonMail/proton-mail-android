@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.labelsManager
+package ch.protonmail.android.labels.presentation
 
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -32,9 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.CREATE
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UNDEFINED
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UPDATE
+import ch.protonmail.android.activities.labelsManager.LabelsManagerViewModel
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
@@ -99,7 +97,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     }
 
     /** Current [State] of the `Activity` */
-    private var state: State = UNDEFINED
+    private var state: State = State.UNDEFINED
         set(value) {
             if (field != value) {
                 field = value
@@ -153,7 +151,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             adapter = colorsAdapter
         }
 
-        state = if (createOnly) CREATE else UNDEFINED
+        state = if (createOnly) State.CREATE else State.UNDEFINED
 
         // Set listeners
         delete_labels.setOnClickListener { showDeleteConfirmation() }
@@ -213,8 +211,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     }
 
     override fun onBackPressed() {
-        if (state != UNDEFINED && !createOnly) {
-            state = UNDEFINED
+        if (state != State.UNDEFINED && !createOnly) {
+            state = State.UNDEFINED
         } else {
             saveLastInteraction()
             super.onBackPressed()
@@ -235,7 +233,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** When a Label is clicked */
     private fun onLabelClick(label: LabelUiModel) {
-        state = UPDATE
+        state = State.UPDATE
 
         label_name.setText(label.name)
         add_label_container.isVisible = true
@@ -262,8 +260,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private fun onLabelNameChange(name: CharSequence) {
         save_button.isVisible = name.isNotBlank()
 
-        if (name.isNotEmpty() && state == UNDEFINED) {
-            state = CREATE
+        if (name.isNotEmpty() && state == State.UNDEFINED) {
+            state = State.CREATE
         }
 
         viewModel.setLabelName(name)
@@ -280,7 +278,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private fun onStateChange(state: State) {
         when (state) {
 
-            UNDEFINED -> {
+            State.UNDEFINED -> {
                 viewModel.onNewLabel()
                 toggleColorPicker(false)
                 closeKeyboard()
@@ -288,13 +286,13 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
                 save_button.setText(R.string.done)
             }
 
-            CREATE -> {
+            State.CREATE -> {
                 selectRandomColor()
                 toggleColorPicker(true)
                 save_button.setText(R.string.done)
             }
 
-            UPDATE -> {
+            State.UPDATE -> {
                 toggleColorPicker(true)
 
                 save_button.setText(
@@ -331,7 +329,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             }
         )
 
-        state = UNDEFINED
+        state = State.UNDEFINED
     }
 
     private fun displayLabelCreationOutcome(workInfo: WorkInfo) {

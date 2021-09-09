@@ -92,10 +92,10 @@ internal class LabelRepositoryImpl @Inject constructor(
         labelDao.findLabelByName(userId, labelName)
 
     override fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
-        labelDao.findAllMessageLabelsPaged(userId)
+        labelDao.findAllLabelsPaged(userId, LabelType.MESSAGE_LABEL)
 
     override fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
-        labelDao.findAllFoldersPaged(userId)
+        labelDao.findAllLabelsPaged(userId, LabelType.FOLDER)
 
     override suspend fun saveLabels(labels: List<LabelEntity>) {
         Timber.v("Save labels: ${labels.map { it.id.id }}")

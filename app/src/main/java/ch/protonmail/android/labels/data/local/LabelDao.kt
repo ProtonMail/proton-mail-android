@@ -30,8 +30,6 @@ import ch.protonmail.android.labels.data.local.model.COLUMN_LABEL_USER_ID
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.local.model.TABLE_LABELS
 import ch.protonmail.android.labels.domain.model.LABEL_TYPE_ID_CONTACT_GROUP
-import ch.protonmail.android.labels.domain.model.LABEL_TYPE_ID_FOLDER
-import ch.protonmail.android.labels.domain.model.LABEL_TYPE_ID_MESSAGE_LABEL
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.coroutines.flow.Flow
@@ -108,7 +106,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
 
     @Query(
         """
-         SELECT * FROM $TABLE_LABELS 
+        SELECT * FROM $TABLE_LABELS 
         WHERE $COLUMN_LABEL_USER_ID=:userId
         AND $COLUMN_LABEL_NAME = :labelName
         """
@@ -118,22 +116,12 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
     @Query(
         """
         SELECT * FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_TYPE = $LABEL_TYPE_ID_MESSAGE_LABEL 
-        AND $COLUMN_LABEL_USER_ID=:userId 
+        WHERE $COLUMN_LABEL_USER_ID=:userId
+        AND $COLUMN_LABEL_TYPE = :labelType
         ORDER BY $COLUMN_LABEL_ORDER
         """
     )
-    abstract fun findAllMessageLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
-
-    @Query(
-        """
-        SELECT * FROM $TABLE_LABELS 
-        WHERE $COLUMN_LABEL_TYPE = $LABEL_TYPE_ID_FOLDER 
-        AND $COLUMN_LABEL_USER_ID=:userId 
-        ORDER BY $COLUMN_LABEL_ORDER
-        """
-    )
-    abstract fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
+    abstract fun findAllLabelsPaged(userId: UserId, labelType: LabelType): DataSource.Factory<Int, LabelEntity>
 
     @Query("DELETE FROM $TABLE_LABELS")
     abstract fun deleteLabelsTableData()

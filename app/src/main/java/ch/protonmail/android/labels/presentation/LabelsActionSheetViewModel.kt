@@ -270,7 +270,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
             if (cancellationException != null) {
                 actionsResultMutableFlow.value = ManageLabelActionResult.ErrorMovingToFolder
             } else {
-                val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+                val dismissBackingActivity = !isApplyingActionToMsgWithinAConversation()
                 actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved(
                     dismissBackingActivity
                 )
@@ -302,15 +302,15 @@ internal class LabelsActionSheetViewModel @Inject constructor(
 
     private fun isActionAppliedToConversation(location: Constants.MessageLocationType?) =
         conversationModeEnabled(location) &&
-            !isApplyingActionToMessageWithinAConversation() &&
-            !isApplyingActionToMessageItemInDetailScreen()
+            !isApplyingActionToMsgWithinAConversation() &&
+            !isApplyingActionToMsgItemInDetailScreen()
 
-    private fun isApplyingActionToMessageWithinAConversation(): Boolean {
+    private fun isApplyingActionToMsgWithinAConversation(): Boolean {
         val actionsTarget = getActionsTargetInputArg()
         return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
     }
 
-    private fun isApplyingActionToMessageItemInDetailScreen(): Boolean {
+    private fun isApplyingActionToMsgItemInDetailScreen(): Boolean {
         val actionsTarget = getActionsTargetInputArg()
         return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
     }

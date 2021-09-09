@@ -29,6 +29,7 @@ import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType.MESSAGE_LABEL
+import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
