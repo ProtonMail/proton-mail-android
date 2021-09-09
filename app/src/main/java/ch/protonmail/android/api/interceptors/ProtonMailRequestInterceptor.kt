@@ -55,7 +55,8 @@ class ProtonMailRequestInterceptor private constructor(
 
         } catch (exception: IOException) {
             Timber.d(exception, "Intercept: IOException with url: " + request.url())
-            networkUtils.retryPingAsPreviousRequestWasInconclusive()
+            AppUtil.postEventOnUi(ConnectivityEvent(false))
+            networkUtils.setConnectivityHasFailed(exception)
         }
 
         requestCount--

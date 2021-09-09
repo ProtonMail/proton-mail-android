@@ -52,7 +52,7 @@ open class ConnectivityBaseViewModel @ViewModelInject constructor(
             verifyConnection()
                 .distinctUntilChanged()
                 .onEach { isConnected ->
-                    if (isConnected == Constants.ConnectionState.CANT_REACH_SERVER) {
+                    if (isConnected != Constants.ConnectionState.CONNECTED) {
                         retryWithDoh()
                     }
                 }
