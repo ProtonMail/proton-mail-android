@@ -30,7 +30,7 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.domain.usecase.GetAllLabels
+import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
@@ -77,7 +77,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var userManager: UserManager
 
     @MockK
-    private lateinit var getAllLabels: GetAllLabels
+    private lateinit var getLabelsByType: GetLabelsByType
 
     @MockK
     private lateinit var savedStateHandle: SavedStateHandle
@@ -180,14 +180,14 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
         } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
-        coEvery { getAllLabels.invoke(any()) } returns listOf(label1)
+        coEvery { getLabelsByType.invoke(any()) } returns listOf(label1)
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
         every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(any()) } returns false
 
         viewModel = LabelsActionSheetViewModel(
             savedStateHandle,
-            getAllLabels,
+            getLabelsByType,
             userManager,
             updateLabels,
             updateConversationsLabels,
@@ -297,10 +297,10 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             coEvery { messageRepository.findMessageById(any()) } returns testMessage
             val expectedResult = ManageLabelActionResult.ErrorLabelsThresholdReached(maximumLabelsSelectedThreshold)
             val buildAListOfMoreThanOneHundredSelectedLabels = buildAListOfMoreThanOneHundredSelectedLabels()
-            coEvery { getAllLabels.invoke(any()) } returns buildAListOfMoreThanOneHundredSelectedLabels
+            coEvery { getLabelsByType.invoke(any()) } returns buildAListOfMoreThanOneHundredSelectedLabels
             val labelsActionSheetViewModel = LabelsActionSheetViewModel(
                 savedStateHandle,
-                getAllLabels,
+                getLabelsByType,
                 userManager,
                 updateLabels,
                 updateConversationsLabels,

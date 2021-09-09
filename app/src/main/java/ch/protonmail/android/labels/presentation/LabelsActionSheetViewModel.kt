@@ -27,7 +27,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.domain.usecase.GetAllLabels
+import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
@@ -57,7 +57,7 @@ private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
 @HiltViewModel
 internal class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val getAllLabels: GetAllLabels,
+    private val getLabelsByType: GetLabelsByType,
     private val userManager: UserManager,
     private val updateLabels: UpdateLabels,
     private val updateConversationsLabels: UpdateConversationsLabelsWorker.Enqueuer,
@@ -95,7 +95,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val allLabels = getAllLabels(labelsSheetType)
+            val allLabels = getLabelsByType(labelsSheetType)
 
             val savedModels = allLabels.map { label ->
                 labelDomainUiMapper.toActionItemUi(

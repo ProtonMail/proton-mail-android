@@ -19,29 +19,29 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 
-class GetAllLabels @Inject constructor(
+class GetLabelsByType @Inject constructor(
     private val labelsMapper: LabelEntityDomainMapper,
     private val accountManager: AccountManager,
     private val labelRepository: LabelRepository
 ) {
 
     suspend operator fun invoke(
-        labelsSheetType: LabelType = LabelType.MESSAGE_LABEL
+        labelsType: LabelType
     ): List<Label> {
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
         val dbLabels = labelRepository.findAllLabels(userId, false)
 
         return dbLabels
-            .filter { it.type.typeInt == labelsSheetType.typeInt }
+            .filter { it.type == labelsType }
             .map { labelsMapper.toLabel(it) }
     }
 
