@@ -78,7 +78,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -89,7 +88,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.DataResult
-import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -199,9 +197,6 @@ internal class MailboxViewModel @Inject constructor(
                 }
             }
         }
-        // TODO: Filter empty list because Messages Unreads are not implemented yet, so the empty list will override
-        //  pre-existent badges
-        .filterNot { it.isEmpty() }
 
     private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxState>
 
@@ -729,15 +724,21 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     fun setNewMailboxLocation(newLocation: Constants.MessageLocationType) {
-        mutableMailboxLocation.value = newLocation
+        if (mutableMailboxLocation.value != newLocation) {
+            mutableMailboxLocation.value = newLocation
+        }
     }
 
     fun setNewMailboxLabel(labelId: String) {
-        mutableMailboxLabelId.value = labelId
+        if (mutableMailboxLabelId.value != labelId) {
+            mutableMailboxLabelId.value = labelId
+        }
     }
 
     fun setNewUserId(currentUserId: UserId) {
-        mutableUserId.value = currentUserId
+        if (mutableUserId.value != currentUserId) {
+            mutableUserId.value = currentUserId
+        }
     }
 
     fun refreshMessages() {
