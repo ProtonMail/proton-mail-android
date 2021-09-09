@@ -40,6 +40,11 @@ import kotlin.time.toDuration
 
 /**
  * Emit [AllUnreadCounters]
+ *
+ * This can emit more than once for a single event, particularly it will emits:
+ * * **one** [DataResult.Success] if we have success for Messages Counters and Conversations Counters
+ * * **one** [DataResult.Success] and **one** [DataResult.Error] if only one if one of the above is successfully
+ * * **two** [DataResult.Error] if none of the above is successfully
  */
 internal class ObserveAllUnreadCounters @Inject constructor(
     private val messagesRepository: MessageRepository,

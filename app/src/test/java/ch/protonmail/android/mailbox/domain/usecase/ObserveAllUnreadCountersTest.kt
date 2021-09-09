@@ -86,7 +86,8 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
         observeAllUnreadCounters(testUserId).test {
 
             // then
-            expectItem() // Success with messages Unreads
+            // An Item is emitted from conversationRepository which is mocked to return a success
+            expectItem()
             assertEquals(expectedError, expectItem())
         }
     }
@@ -127,7 +128,8 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
         observeAllUnreadCounters(testUserId).test {
 
             // then
-            expectItem() // Success with messages Unreads
+            // An Item is emitted from messageRepository which is mocked to return a success
+            expectItem()
             assertEquals(expectedError, expectItem())
         }
     }
