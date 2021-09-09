@@ -25,8 +25,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsAdapter
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType.MESSAGE_LABEL
 import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
@@ -40,7 +40,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -94,7 +94,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
     @Test
     fun verifyCheckedStateIsUpdatedCorrectlyForAdapterItems() {
 
-        runBlocking {
+        runBlockingTest {
             val adapter = LabelsAdapter()
             viewModel.labels.observeDataForever(adapter::submitList)
 
