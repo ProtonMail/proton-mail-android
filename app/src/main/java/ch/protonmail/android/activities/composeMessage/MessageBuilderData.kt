@@ -48,7 +48,7 @@ class MessageBuilderData(
     val messagePassword: String?,
     val passwordHint: String?,
     val isPasswordValid: Boolean,
-    val expirationTime: Long = 0,
+    val expiresAfterInSeconds: Long = 0,
     val sendPreferences: Map<String, SendPreference>,
     val isRespondInlineButtonVisible: Boolean,
     val isRespondInlineChecked: Boolean,
@@ -82,7 +82,7 @@ class MessageBuilderData(
         private var messagePassword: String? = null
         private var passwordHint: String? = ""
         private var isPasswordValid: Boolean = true
-        private var expirationTime: Long = 0
+        private var expiresAfterInSeconds: Long = 0
         private var sendPreferences: Map<String, SendPreference> = emptyMap()
         private var isRespondInlineButtonVisible: Boolean = true
         private var isRespondInlineChecked: Boolean = false
@@ -119,7 +119,7 @@ class MessageBuilderData(
             this.messagePassword = oldObject.messagePassword
             this.passwordHint = oldObject.passwordHint
             this.isPasswordValid = oldObject.isPasswordValid
-            this.expirationTime = oldObject.expirationTime
+            this.expiresAfterInSeconds = oldObject.expiresAfterInSeconds
             this.sendPreferences = oldObject.sendPreferences
             this.isRespondInlineButtonVisible = oldObject.isRespondInlineButtonVisible
             this.isRespondInlineChecked = oldObject.isRespondInlineChecked
@@ -195,7 +195,8 @@ class MessageBuilderData(
         fun isPasswordValid(isPasswordValid: Boolean) =
             apply { this.isPasswordValid = isPasswordValid }
 
-        fun expirationTime(expirationTime: Long) = apply { this.expirationTime = expirationTime }
+        fun expiresAfterInSeconds(expiresAfterInSeconds: Long) =
+            apply { this.expiresAfterInSeconds = expiresAfterInSeconds }
 
         fun sendPreferences(sendPreferences: Map<String, SendPreference>) =
             apply { this.sendPreferences = sendPreferences }
@@ -247,7 +248,7 @@ class MessageBuilderData(
                 messagePassword,
                 passwordHint,
                 isPasswordValid,
-                expirationTime,
+                expiresAfterInSeconds,
                 sendPreferences,
                 isRespondInlineButtonVisible,
                 isRespondInlineChecked,

@@ -830,6 +830,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             // Given
             val parentId = "89345"
             val messageDbId = 345L
+            val expirationTime = 1234567L
             val message = Message().apply {
                 dbId = messageDbId
                 messageId = "ac7b3d53-fc64-4d44-a1f5-39ed45b629ef"
@@ -840,6 +841,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
                 numAttachments = 2
                 attachments = emptyList()
+                this.expirationTime = expirationTime
             }
 
             val apiDraftRequest = DraftBody(message = testMessagePayload)
@@ -885,6 +887,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.numAttachments = message.numAttachments
                 this.attachments = responseMessage.attachments
                 this.localId = message.messageId
+                this.expirationTime = message.expirationTime
             }
             val actualMessage = slot<Message>()
             coVerify { messageDetailsRepository.saveMessage(capture(actualMessage)) }

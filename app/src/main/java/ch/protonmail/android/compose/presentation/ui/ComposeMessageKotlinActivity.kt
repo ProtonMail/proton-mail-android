@@ -54,7 +54,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     // region expiration
     private val setExpirationLauncher =
         registerForActivityResult(SetMessageExpirationActivity.ResultContract()) {
-            composeViewModel.setExpiration(it)
+            composeViewModel.setExpiresAfterInSeconds(it)
         }
     // endregion
 
