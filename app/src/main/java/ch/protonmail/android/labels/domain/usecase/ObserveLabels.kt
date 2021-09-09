@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
-internal class ObserveLabels @Inject constructor(
+class ObserveLabels @Inject constructor(
     private val labelsMapper: LabelEntityDomainMapper,
     private val labelRepository: LabelRepository
 ) {

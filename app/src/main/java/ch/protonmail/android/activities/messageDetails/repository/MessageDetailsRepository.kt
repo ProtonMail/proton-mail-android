@@ -22,7 +22,6 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.room.Transaction
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -39,8 +38,8 @@ import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.utils.MessageUtils
 import com.birbit.android.jobqueue.JobManager
@@ -261,8 +260,6 @@ class MessageDetailsRepository @Inject constructor(
         messagesDao.deleteMessagesByLabel(labelId)
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
-
-    fun getAllLabelsLiveData(userId: UserId) = labelRepository.observeAllLabels(userId, false).asLiveData()
 
     suspend fun findLabelsWithIds(labelIds: List<String>, userId: UserId): List<LabelEntity> =
         labelRepository.findLabels(userId, labelIds.map { LabelId(it) })

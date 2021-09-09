@@ -25,7 +25,6 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.mailbox.presentation.model.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
@@ -40,8 +39,8 @@ import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSec
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -60,6 +59,7 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
+import ch.protonmail.android.mailbox.presentation.model.ApplyRemoveLabels
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.settings.domain.GetMailSettings

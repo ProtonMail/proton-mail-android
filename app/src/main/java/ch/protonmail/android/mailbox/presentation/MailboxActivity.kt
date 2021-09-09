@@ -291,8 +291,6 @@ internal class MailboxActivity :
 
         mailboxViewModel.pendingSendsLiveData.observe(this, mailboxAdapter::setPendingForSendingList)
         mailboxViewModel.pendingUploadsLiveData.observe(this, mailboxAdapter::setPendingUploadsList)
-        messageDetailsRepository.getAllLabelsLiveData(userManager.requireCurrentUserId())
-            .observe(this, mailboxAdapter::setLabels)
 
         mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this) { isSuccess ->
             Timber.v("Delete message status is success $isSuccess")

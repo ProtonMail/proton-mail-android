@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.ListAdapter
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messagesList.MailboxItemFooterView
@@ -39,7 +38,6 @@ class MailboxRecyclerViewAdapter(
 
     private var mailboxLocation = Constants.MessageLocationType.INVALID
 
-    private var labels = mapOf<String, LabelEntity>()
     private val selectedMailboxItemsIds: MutableSet<String> = mutableSetOf()
 
     private var pendingUploadList: List<PendingUpload>? = null
@@ -170,11 +168,6 @@ class MailboxRecyclerViewAdapter(
 
     fun endSelectionMode() {
         selectedMailboxItemsIds.clear()
-        notifyDataSetChanged()
-    }
-
-    fun setLabels(labels: List<LabelEntity>) {
-        this.labels = labels.map { it.id.id to it }.toMap()
         notifyDataSetChanged()
     }
 

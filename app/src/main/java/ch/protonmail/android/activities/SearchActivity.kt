@@ -42,14 +42,11 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.events.NoResultsEvent
 import ch.protonmail.android.events.SearchResultEvent
 import ch.protonmail.android.jobs.SearchMessagesJob
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.AppUtil
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 import javax.inject.Provider
@@ -132,16 +129,7 @@ internal class SearchActivity : BaseActivity() {
                 startActivity(intent)
             }
         }
-        val userId = runBlocking {
-            requireNotNull(accountManager.getPrimaryUserId().first())
-        }
-        messageDetailsRepository.getAllLabelsLiveData(userId).observe(
-            this
-        ) { labels: List<LabelEntity>? ->
-            if (labels != null) {
-                adapter.setLabels(labels)
-            }
-        }
+
     }
 
     private fun showSearchResults(items: List<MailboxUiItem>) {
