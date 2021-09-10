@@ -170,6 +170,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             }
             viewModel.handleStarUnStar(messageOrConversationId, isChecked)
         }
+
+        lifecycle.addObserver(viewModel)
     }
 
     private fun continueSetup() {

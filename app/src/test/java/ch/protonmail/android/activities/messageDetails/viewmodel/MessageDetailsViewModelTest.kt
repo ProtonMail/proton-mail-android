@@ -1031,6 +1031,42 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         assertTrue(result)
     }
 
+    @Test
+    fun whenPausedShouldNotEmitConversationModels() = runBlockingTest {
+        // Given
+        val conversationObserver = viewModel.decryptedConversationUiModel.testObserver()
+        every { userManager.requireCurrentUserId() } returns testId1
+        val message = Message(isDownloaded = true)
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns message
+
+        // When
+        viewModel.pause()
+        observeMessageFlow.tryEmit(message)
+
+        // Then
+        assertTrue(conversationObserver.observedValues.isEmpty())
+    }
+
+    @Test
+    fun whenResumedShouldEmitConversationModels() = runBlockingTest {
+        // Given
+        val conversationObserver = viewModel.decryptedConversationUiModel.testObserver()
+        every { userManager.requireCurrentUserId() } returns testId1
+        val message = Message(isDownloaded = true)
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns message
+
+        // When
+        viewModel.pause()
+        viewModel.resume()
+        observeMessageFlow.tryEmit(message)
+
+        // Then
+        assertEquals(1, conversationObserver.observedValues.size)
+        val emittedConversation = conversationObserver.observedValues.first()!!
+        assertEquals(1, emittedConversation.messages.size)
+        assertEquals(message, emittedConversation.messages.first())
+    }
+
     private fun buildMessage(
         messageId: String = MESSAGE_ID_ONE,
         subject: String = SUBJECT,
