@@ -28,10 +28,8 @@ import ch.protonmail.android.labels.domain.model.LabelId
 class ProtonMailConverters {
 
     @TypeConverter
-    fun fromLabelIdToString(value: LabelId?): String? = value?.id
+    fun fromLabelIdToString(value: LabelId): String = value.id
 
     @TypeConverter
-    fun fromStringToLabelId(value: String?): LabelId? = value?.let {
-        LabelId(value)
-    }
+    fun fromStringToLabelId(value: String): LabelId = LabelId(value)
 }
