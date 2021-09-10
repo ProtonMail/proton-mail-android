@@ -65,6 +65,7 @@ import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.MailToData
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
@@ -615,6 +616,8 @@ class ComposeMessageViewModel @Inject constructor(
                 watchForMessageSent()
                 // region here in this block we are updating local view model attachments with the latest data for the attachments filled from the API
                 val savedAttachments = message.attachments // already saved attachments in DB
+
+                Logger.doLog("ZORICA V .. " + savedAttachments.size)
                 val iterator = _messageDataResult.attachmentList.iterator() // current attachments in view model
                 val listLocalAttachmentsAlreadySavedInDb = ArrayList<LocalAttachment>()
                 while (iterator.hasNext()) {
@@ -798,6 +801,16 @@ class ComposeMessageViewModel @Inject constructor(
                 .build()
         }
     }
+
+    /** This method should NOT be used. This is just a patch for the case when we are
+     * sharing attachments from outside the app
+     */
+    fun saveImportedAttachmentsToDB() {
+        viewModelScope.launch {
+            composeMessageRepository.saveAttachments(_draftId.get(), messageDataResult.attachmentList)
+        }
+    }
+
 
     fun initSignatures(): StringBuilder {
         var signature = ""

@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
@@ -63,6 +64,7 @@ class ComposeMessageRepository @Inject constructor(
     private val userManager: UserManager,
     private val labelRepository: LabelRepository,
     private val contactRepository: ContactsRepository
+    private val dispatcherProvider: DispatcherProvider,
 ) {
 
     val lazyManager = resettableManager()
@@ -108,6 +110,15 @@ class ComposeMessageRepository @Inject constructor(
         }
 
     fun getAttachmentsBlocking(message: Message): List<Attachment> = message.attachmentsBlocking(messageDao)
+
+    suspend fun saveAttachments(
+        messageId: String,
+        localAttachments: List<LocalAttachment>
+    ) {
+        val attachments = createAttachmentList(localAttachments, dispatcherProvider.Io)
+        attachments.map { it.messageId = messageId }
+        messageDao.saveAllAttachments(attachments)
+    }
 
     fun findMessageByIdSingle(id: String): Single<Message> =
         messageDetailsRepository.findMessageByIdSingle(id)

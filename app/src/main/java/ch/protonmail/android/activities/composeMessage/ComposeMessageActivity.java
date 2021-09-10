@@ -844,6 +844,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.setIsDirty(true);
             attachmentsList.add(new LocalAttachment(Uri.parse(event.uri), event.displayName, event.size, event.mimeType));
             renderViews();
+            composeMessageViewModel.saveImportedAttachmentsToDB();
         }
     }
 
