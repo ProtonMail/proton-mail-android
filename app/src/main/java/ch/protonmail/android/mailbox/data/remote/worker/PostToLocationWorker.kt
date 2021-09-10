@@ -32,6 +32,7 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.labels.data.remote.worker.KEY_LABEL_WORKER_ERROR_DESCRIPTION
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException

@@ -28,6 +28,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.labels.data.remote.worker.KEY_LABEL_WORKER_ERROR_DESCRIPTION
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

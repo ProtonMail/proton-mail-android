@@ -26,13 +26,14 @@ import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.labels.data.remote.worker.UpdateConversationsLabelsWorker
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.domain.usecase.UpdateLabels
+import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
@@ -40,7 +41,6 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
-import ch.protonmail.android.mailbox.domain.worker.UpdateConversationsLabelsWorker
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -71,7 +71,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var moveMessagesToFolder: MoveMessagesToFolder
 
     @MockK
-    private lateinit var updateLabels: UpdateLabels
+    private lateinit var updateMessageLabels: UpdateMessageLabels
 
     @MockK
     private lateinit var userManager: UserManager
@@ -189,7 +189,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             savedStateHandle,
             getLabelsByType,
             userManager,
-            updateLabels,
+            updateMessageLabels,
             updateConversationsLabels,
             moveMessagesToFolder,
             moveConversationsToFolder,
@@ -212,7 +212,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val shallMoveToArchive = true
         val inboxLocationId = "0"
         val archiveLocationId = "6"
-        coEvery { updateLabels.invoke(any(), any()) } returns mockk()
+        coEvery { updateMessageLabels.invoke(any(), any()) } returns mockk()
         coEvery {
             moveMessagesToFolder(
                 listOf(messageId1), Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
@@ -225,7 +225,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         viewModel.onDoneClicked(shallMoveToArchive)
 
         // then
-        coVerify { updateLabels.invoke(any(), any()) }
+        coVerify { updateMessageLabels.invoke(any(), any()) }
         coVerify {
             moveMessagesToFolder(
                 listOf(messageId1),
@@ -302,7 +302,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
                 savedStateHandle,
                 getLabelsByType,
                 userManager,
-                updateLabels,
+                updateMessageLabels,
                 updateConversationsLabels,
                 moveMessagesToFolder,
                 moveConversationsToFolder,

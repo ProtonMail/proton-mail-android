@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain.worker
+package ch.protonmail.android.labels.data.remote.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
@@ -29,7 +29,7 @@ import androidx.work.Operation
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
+import ch.protonmail.android.labels.domain.usecase.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

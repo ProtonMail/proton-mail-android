@@ -21,8 +21,8 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.remote.worker.ApplyLabelWorker
-import ch.protonmail.android.labels.data.remote.worker.RemoveLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.RemoveMessageLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -43,13 +43,13 @@ import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class UpdateLabelsTest {
+class UpdateMessageLabelsTest {
 
     @MockK
-    private lateinit var applyLabelWorker: ApplyLabelWorker.Enqueuer
+    private lateinit var applyMessageLabelWorker: ApplyMessageLabelWorker.Enqueuer
 
     @MockK
-    private lateinit var removeLabelWorker: RemoveLabelWorker.Enqueuer
+    private lateinit var removeMessageLabelWorker: RemoveMessageLabelWorker.Enqueuer
 
     @MockK
     private lateinit var messageRepository: MessageRepository
@@ -60,18 +60,18 @@ class UpdateLabelsTest {
     @MockK
     private lateinit var labelRepository: LabelRepository
 
-    private lateinit var useCase: UpdateLabels
+    private lateinit var useCase: UpdateMessageLabels
 
     private val testUserId = UserId("testUserId")
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { applyLabelWorker.enqueue(any(), any()) } returns mockk()
-        every { removeLabelWorker.enqueue(any(), any()) } returns mockk()
+        every { applyMessageLabelWorker.enqueue(any(), any()) } returns mockk()
+        every { removeMessageLabelWorker.enqueue(any(), any()) } returns mockk()
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
-        useCase = UpdateLabels(
-            messageRepository, accountManager, labelRepository, applyLabelWorker, removeLabelWorker,
+        useCase = UpdateMessageLabels(
+            messageRepository, accountManager, labelRepository, applyMessageLabelWorker, removeMessageLabelWorker,
             TestDispatcherProvider
         )
     }

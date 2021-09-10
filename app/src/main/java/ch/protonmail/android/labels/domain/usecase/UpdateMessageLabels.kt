@@ -21,8 +21,8 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.remote.worker.ApplyLabelWorker
-import ch.protonmail.android.labels.data.remote.worker.RemoveLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.RemoveMessageLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.repository.MessageRepository
@@ -36,12 +36,12 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
-internal class UpdateLabels @Inject constructor(
+internal class UpdateMessageLabels @Inject constructor(
     private val messageRepository: MessageRepository,
     private val accountManager: AccountManager,
     private val labelRepository: LabelRepository,
-    private val applyLabelWorker: ApplyLabelWorker.Enqueuer,
-    private val removeLabelWorker: RemoveLabelWorker.Enqueuer,
+    private val applyMessageLabelWorker: ApplyMessageLabelWorker.Enqueuer,
+    private val removeMessageLabelWorker: RemoveMessageLabelWorker.Enqueuer,
     private val dispatchers: DispatcherProvider,
 ) {
 
@@ -77,14 +77,14 @@ internal class UpdateLabels @Inject constructor(
             if (!mutableLabelIds.contains(labelId) && label.type == LabelType.MESSAGE_LABEL) {
                 // this label should be removed
                 labelsToRemove.add(labelId)
-                removeLabelWorker.enqueue(listOf(messageId), labelId)
+                removeMessageLabelWorker.enqueue(listOf(messageId), labelId)
             } else if (mutableLabelIds.contains(labelId)) {
                 // the label remains
                 mutableLabelIds.remove(labelId)
             }
         }
         // schedule updates of all message
-        mutableLabelIds.forEach { applyLabelWorker.enqueue(listOf(messageId), it) }
+        mutableLabelIds.forEach { applyMessageLabelWorker.enqueue(listOf(messageId), it) }
         // update the message with the new labels
         message.addLabels(mutableLabelIds)
         message.removeLabels(labelsToRemove)

@@ -24,6 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.UnreadLabelCounter
@@ -46,7 +47,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class RemoveLabelWorkerTest {
+class ApplyMessageLabelWorkerTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -66,7 +67,7 @@ class RemoveLabelWorkerTest {
     @MockK
     private lateinit var messageRepository: MessageRepository
 
-    private lateinit var worker: RemoveLabelWorker
+    private lateinit var worker: ApplyMessageLabelWorker
 
     private val testUserId = UserId("testUser")
 
@@ -77,7 +78,7 @@ class RemoveLabelWorkerTest {
         every { counterDao.findUnreadLabelById(any()) } returns mockk<UnreadLabelCounter>(relaxed = true)
         every { counterDao.insertUnreadLabel(any()) } just Runs
 
-        worker = RemoveLabelWorker(
+        worker = ApplyMessageLabelWorker(
             context,
             parameters,
             accountManager,
@@ -94,7 +95,8 @@ class RemoveLabelWorkerTest {
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty label id or message ids")
             )
-            every { api.unlabelMessages(any()) } returns Unit
+            val response = mockk<MoveToFolderResponse>()
+            every { api.labelMessages(any()) } returns response
 
             // when
             val result = worker.doWork()
@@ -117,9 +119,10 @@ class RemoveLabelWorkerTest {
                 KEY_INPUT_DATA_LABEL_ID to testLabelId
             )
 
-            every { api.unlabelMessages(any()) }  returns Unit
+            val response = mockk<MoveToFolderResponse>()
+            every { api.labelMessages(any()) } returns response
             val message = Message(messageId = testMessageId)
-            coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns message
+            coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns  message
 
             // when
             val result = worker.doWork()

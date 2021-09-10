@@ -24,12 +24,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.labels.data.remote.worker.UpdateConversationsLabelsWorker
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.domain.usecase.UpdateLabels
+import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
@@ -37,7 +38,6 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
-import ch.protonmail.android.mailbox.domain.worker.UpdateConversationsLabelsWorker
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -59,7 +59,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getLabelsByType: GetLabelsByType,
     private val userManager: UserManager,
-    private val updateLabels: UpdateLabels,
+    private val updateMessageLabels: UpdateMessageLabels,
     private val updateConversationsLabels: UpdateConversationsLabelsWorker.Enqueuer,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val moveConversationsToFolder: MoveConversationsToFolder,
@@ -210,7 +210,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                     )
                 } else {
                     ids.forEach { id ->
-                        updateLabels(
+                        updateMessageLabels(
                             id,
                             selectedLabels.map { it.id }
                         )

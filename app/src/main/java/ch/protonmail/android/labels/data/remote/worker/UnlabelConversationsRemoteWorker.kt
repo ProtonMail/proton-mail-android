@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data.remote.worker
+package ch.protonmail.android.labels.data.remote.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker

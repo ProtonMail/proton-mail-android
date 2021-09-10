@@ -17,9 +17,10 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject

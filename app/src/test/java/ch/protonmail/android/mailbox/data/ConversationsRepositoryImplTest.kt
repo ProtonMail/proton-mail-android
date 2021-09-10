@@ -30,8 +30,10 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.remote.worker.LabelConversationsRemoteWorker
+import ch.protonmail.android.labels.data.remote.worker.UnlabelConversationsRemoteWorker
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
@@ -60,10 +62,8 @@ import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
-import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
-import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.Correspondent
