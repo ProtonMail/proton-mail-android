@@ -37,7 +37,7 @@ import java.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PostToLocationWorkerTest {
+class MoveMessageToLocationWorkerTest {
 
     private val context = mockk<Context>(relaxed = true)
     private val workerParameters = mockk<WorkerParameters>(relaxed = true)
@@ -45,12 +45,12 @@ class PostToLocationWorkerTest {
 
     private val protonMailApiManager = mockk<ProtonMailApiManager>()
 
-    private val postToLocationWorker = PostToLocationWorker(
+    private val postToLocationWorker = MoveMessageToLocationWorker(
         context,
         workerParameters,
         protonMailApiManager
     )
-    private val postToLocationWorkerEnqueuer = PostToLocationWorker.Enqueuer(
+    private val postToLocationWorkerEnqueuer = MoveMessageToLocationWorker.Enqueuer(
         workManager
     )
 

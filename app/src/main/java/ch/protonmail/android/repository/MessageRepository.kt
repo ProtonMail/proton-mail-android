@@ -42,7 +42,7 @@ import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
-import ch.protonmail.android.mailbox.data.remote.worker.PostToLocationWorker
+import ch.protonmail.android.mailbox.data.remote.worker.MoveMessageToLocationWorker
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
@@ -85,7 +85,7 @@ internal class MessageRepository @Inject constructor(
     private val jobManager: JobManager,
     connectivityManager: NetworkConnectivityManager,
     private val labelRepository: LabelRepository,
-    private var postToLocationWorker: PostToLocationWorker.Enqueuer
+    private var moveMessageToLocationWorker: MoveMessageToLocationWorker.Enqueuer
 ) {
 
     private val allMessagesStore by lazy {
@@ -232,7 +232,7 @@ internal class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.TRASH
-        postToLocationWorker.enqueue(messageIds, newLocation = newLocation)
+        moveMessageToLocationWorker.enqueue(messageIds, newLocation = newLocation)
         moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
     }
 
@@ -242,7 +242,7 @@ internal class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.ARCHIVE
-        postToLocationWorker.enqueue(messageIds, newLocation = newLocation)
+        moveMessageToLocationWorker.enqueue(messageIds, newLocation = newLocation)
         moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
     }
 
@@ -252,7 +252,7 @@ internal class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.INBOX
-        postToLocationWorker.enqueue(messageIds, newLocation = newLocation)
+        moveMessageToLocationWorker.enqueue(messageIds, newLocation = newLocation)
         moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
     }
 
@@ -262,7 +262,7 @@ internal class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.SPAM
-        postToLocationWorker.enqueue(messageIds, newLocation = newLocation)
+        moveMessageToLocationWorker.enqueue(messageIds, newLocation = newLocation)
         moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
     }
 
@@ -273,7 +273,7 @@ internal class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.LABEL
-        postToLocationWorker.enqueue(messageIds, newCustomLocation = newCustomLocationId)
+        moveMessageToLocationWorker.enqueue(messageIds, newCustomLocation = newCustomLocationId)
         moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId, newCustomLocationId)
     }
 

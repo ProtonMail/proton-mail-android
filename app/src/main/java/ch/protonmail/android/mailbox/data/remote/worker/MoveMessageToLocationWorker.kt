@@ -45,7 +45,7 @@ const val KEY_POST_WORKER_CUSTOM_LOCATION_ID = "KeyPostWorkerCustomLocationId"
 private const val MAX_RUN_ATTEMPTS = 3
 
 @HiltWorker
-class PostToLocationWorker @AssistedInject constructor(
+class MoveMessageToLocationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val protonMailApiManager: ProtonMailApiManager
@@ -113,7 +113,7 @@ class PostToLocationWorker @AssistedInject constructor(
                 KEY_POST_WORKER_CUSTOM_LOCATION_ID to newCustomLocation,
             )
 
-            val request = OneTimeWorkRequestBuilder<PostToLocationWorker>()
+            val request = OneTimeWorkRequestBuilder<MoveMessageToLocationWorker>()
                 .setConstraints(constraints)
                 .setInputData(data)
                 .build()
