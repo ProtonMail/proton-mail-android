@@ -41,4 +41,10 @@ internal class ApiToDatabaseUnreadCounterMapper @Inject constructor() :
         labelId = apiModel.labelId,
         unreadCount = apiModel.unread
     )
+
+    fun toDatabaseModels(
+        apiModels: Collection<CountsApiModel>,
+        userId: UserId,
+        type: UnreadCounterEntity.Type
+    ): List<UnreadCounterEntity> = apiModels.map { toDatabaseModel(it, userId, type) }
 }

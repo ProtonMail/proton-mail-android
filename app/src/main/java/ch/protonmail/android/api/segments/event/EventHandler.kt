@@ -65,7 +65,6 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 
@@ -628,8 +627,7 @@ internal class EventHandler @AssistedInject constructor(
     }
 
     private fun writeUnreadCountersUpdates(messageCounts: List<CountsApiModel>, type: Type) {
-        val databaseModels = messageCounts
-            .map { apiToDatabaseUnreadCounterMapper.toDatabaseModel(it, userId, type) }
+        val databaseModels = apiToDatabaseUnreadCounterMapper.toDatabaseModels(messageCounts, userId, type)
         runBlocking {
             unreadCounterDao.insertOrUpdate(databaseModels)
         }
