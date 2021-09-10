@@ -446,7 +446,6 @@ class ComposeMessageViewModel @Inject constructor(
 
                 // overwrite "old sender ID" when updating draft
                 _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId
-                setIsDirty(false)
                 //endregion
             } else {
                 //region new draft here
@@ -474,11 +473,10 @@ class ComposeMessageViewModel @Inject constructor(
                 )
 
                 _oldSenderAddressId = ""
-                setIsDirty(false)
                 //endregion
             }
 
-            _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).isDirty(false).build()
+            _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).build()
         }
     }
 
@@ -733,7 +731,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     @Synchronized
     fun sendMessage(message: Message) {
-        setIsDirty(false)
         val messageWithExpirationTime = addExpirationTimeToMessage(message, _messageDataResult.expiresAfterInSeconds)
 
         if (sendingInProcess) {
@@ -886,13 +883,6 @@ class ComposeMessageViewModel @Inject constructor(
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
             .content(content)
-            .build()
-    }
-
-    fun setIsDirty(isDirty: Boolean) {
-        _messageDataResult = MessageBuilderData.Builder()
-            .fromOld(_messageDataResult)
-            .isDirty(isDirty)
             .build()
     }
 
@@ -1210,7 +1200,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun finishBuildingMessage(contentFromComposeBodyEditText: String) {
         setUploadAttachments(true)
-        setIsDirty(false)
 
         _actionType = UserAction.FINISH_EDIT
         var content = contentFromComposeBodyEditText

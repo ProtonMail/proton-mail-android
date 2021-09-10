@@ -42,7 +42,6 @@ class MessageBuilderData(
     val mBigContentHolder: BigContentHolder,
     val attachmentList: ArrayList<LocalAttachment>,
     val embeddedAttachmentsList: ArrayList<LocalAttachment>,
-    var isDirty: Boolean,
     val signature: String,
     val mobileFooter: String,
     val messagePassword: String?,
@@ -112,7 +111,6 @@ class MessageBuilderData(
             this.attachmentList = oldObject.attachmentList
             this.embeddedAttachmentsList = oldObject.embeddedAttachmentsList
 
-            this.isDirty = oldObject.isDirty
             this.signature = oldObject.signature
             this.mobileFooter = oldObject.mobileFooter
 
@@ -180,8 +178,6 @@ class MessageBuilderData(
         fun embeddedAttachmentsList(embeddedAttachments: ArrayList<LocalAttachment>) =
             apply { this.embeddedAttachmentsList = embeddedAttachments }
 
-        fun isDirty(isDirty: Boolean) = apply { this.isDirty = isDirty }
-
         fun signature(signature: String) = apply { this.signature = signature }
 
         fun mobileFooter(mobileFooter: String) =
@@ -242,7 +238,6 @@ class MessageBuilderData(
                 mBigContentHolder,
                 attachmentList,
                 embeddedAttachmentsList,
-                isDirty,
                 signature,
                 mobileFooter,
                 messagePassword,
