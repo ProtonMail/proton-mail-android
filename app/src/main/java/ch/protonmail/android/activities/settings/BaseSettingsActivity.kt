@@ -33,6 +33,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -83,11 +84,16 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.startMailboxActivity
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.settings_item_layout.view.*
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.usersettings.presentation.UserSettingsOrchestrator
+import me.proton.core.usersettings.presentation.onPasswordManagementResult
+import me.proton.core.usersettings.presentation.onUpdateRecoveryEmailResult
 import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
@@ -112,6 +118,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     @Inject
     lateinit var attachmentMetadataDao: AttachmentMetadataDao
+
+    @Inject
+    lateinit var userSettingsOrchestrator: UserSettingsOrchestrator
+    @Inject
+    lateinit var accountManager: AccountManager
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -164,6 +175,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        userSettingsOrchestrator.register(this)
         legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
         val userId = user.id
@@ -295,15 +307,33 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                     AppUtil.decorInAppIntent(Intent(this, AccountTypeActivity::class.java))
                 startActivity(accountTypeIntent)
             }
-            PASSWORD_MANAGEMENT,
+            PASSWORD_MANAGEMENT -> {
+                lifecycleScope.launch {
+                    accountManager.getPrimaryUserId().first()?.let {
+                        with(userSettingsOrchestrator) {
+                            onPasswordManagementResult {
+                                if (it?.result == true) {
+                                    showToast(getString(R.string.password_changed))
+                                }
+                            }
+                            startPasswordManagementWorkflow(userId = it)
+                        }
+                    }
+                }
+            }
             RECOVERY_EMAIL -> {
-                showInfoDialog(
-                    this,
-                    "",
-                    getString(R.string.info_for_missing_functionality)
-                ) { unit: Unit -> unit }
-                // TODO("startChangePasswordWorkflow")
-                // TODO("startrecoverysetupworkflow")
+                lifecycleScope.launch {
+                    accountManager.getPrimaryUserId().first()?.let {
+                        with(userSettingsOrchestrator) {
+                            onUpdateRecoveryEmailResult {
+                                if (it?.result == true) {
+                                    showToast(getString(R.string.recovery_email_changed))
+                                }
+                            }
+                            startUpdateRecoveryEmailWorkflow(userId = it)
+                        }
+                    }
+                }
             }
             DEFAULT_EMAIL -> {
                 showSortAliasDialog()

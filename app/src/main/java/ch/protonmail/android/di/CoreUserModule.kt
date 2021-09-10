@@ -49,9 +49,6 @@ import me.proton.core.user.domain.repository.DomainRepository
 import me.proton.core.user.domain.repository.PassphraseRepository
 import me.proton.core.user.domain.repository.UserAddressRepository
 import me.proton.core.user.domain.repository.UserRepository
-import me.proton.core.usersettings.data.db.UserSettingsDatabase
-import me.proton.core.usersettings.data.repository.UserSettingsRepositoryImpl
-import me.proton.core.usersettings.domain.repository.UserSettingsRepository
 import javax.inject.Singleton
 
 @Module
