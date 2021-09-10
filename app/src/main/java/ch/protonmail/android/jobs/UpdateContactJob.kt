@@ -32,7 +32,6 @@ import ch.protonmail.android.crypto.Crypto.Companion.forUser
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.AppUtil
@@ -40,6 +39,7 @@ import com.birbit.android.jobqueue.Params
 import ezvcard.Ezvcard
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
+import java.security.GeneralSecurityException
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -63,8 +63,8 @@ class UpdateContactJob(
             val signedDataSignature = crypto.sign(signedData)
             updateContact(contactName, contactEmails, tct.armored, encryptedDataSignature, signedDataSignature, false)
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.SAVED, true))
-        } catch (e: Exception) {
-            Timber.w(e, "UpdateContact error")
+        } catch (exception: GeneralSecurityException) {
+            Timber.w(exception, "UpdateContact error")
         }
         if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.NO_NETWORK, true))
@@ -95,7 +95,8 @@ class UpdateContactJob(
                 AppUtil.postEventOnUi(ContactEvent(ContactEvent.DUPLICATE_EMAIL, true))
             } else {
                 updateContact(
-                    contactName, response.contact.emails!!, tct.armored, encryptedDataSignature, signedDataSignature,
+                    contactName, requireNotNull(response.contact.emails), tct.armored, encryptedDataSignature,
+                    signedDataSignature,
                     true
                 )
                 AppUtil.postEventOnUi(ContactEvent(ContactEvent.SUCCESS, true))
@@ -112,18 +113,20 @@ class UpdateContactJob(
         updateJoins: Boolean
     ) {
         requireContactDao()
-        val contactData = contactDao!!.findContactDataById(contactId)
+        val contactData = contactDao?.findContactDataById(contactId)
         if (contactData != null) {
             contactData.name = contactName
-            contactDao!!.saveContactData(contactData)
+            contactDao?.saveContactData(contactData)
         }
-        val emails = contactDao!!.findContactEmailsByContactIdBlocking(contactId)
-        contactDao!!.deleteAllContactsEmails(emails)
+        val emails = contactDao?.findContactEmailsByContactIdBlocking(contactId)
+        if (emails != null) {
+            contactDao?.deleteAllContactsEmails(emails)
+        }
         for (email in contactEmails) {
             val emailToClear = email.email
-            contactDao!!.clearByEmailBlocking(emailToClear)
+            contactDao?.clearByEmailBlocking(emailToClear)
         }
-        contactDao!!.saveAllContactsEmailsBlocking(contactEmails)
+        contactDao?.saveAllContactsEmailsBlocking(contactEmails)
         val mapContactGroupContactEmails: MutableMap<ContactLabelUiModel, MutableList<String>> = HashMap()
         if (updateJoins) {
             for (email in contactEmails) {
@@ -138,11 +141,11 @@ class UpdateContactJob(
                 }
             }
         }
-        var contact: FullContactDetails? = null
-        try {
-            contact = contactDao!!.findFullContactDetailsByIdBlocking(contactId)
+        val contact = try {
+            contactDao?.findFullContactDetailsByIdBlocking(contactId)
         } catch (tooBigException: SQLiteBlobTooBigException) {
             Timber.i(tooBigException, "Data too big to be fetched")
+            null
         }
         if (contact != null) {
             val contactEncryptedData =
@@ -167,7 +170,7 @@ class UpdateContactJob(
             contact.addEncryptedData(contactEncryptedData)
             contact.name = contactName
             contact.emails = contactEmails
-            contactDao!!.insertFullContactDetailsBlocking(contact)
+            contactDao?.insertFullContactDetailsBlocking(contact)
             if (updateJoins) {
                 for ((key, value) in mapContactGroupContactEmails) {
                     updateJoins(key.id.id, key.name, value)
