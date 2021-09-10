@@ -111,9 +111,9 @@ internal class ViewModelModule {
         moveConversationsToFolder: MoveConversationsToFolder,
         moveMessagesToFolder: MoveMessagesToFolder,
         deleteConversations: DeleteConversations,
+        observeLabels: ObserveLabels,
         drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings: GetMailSettings,
-        observeLabels : ObserveLabels,
         messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper
     ) = MailboxViewModel(
         messageDetailsRepository = messageDetailsRepository,
@@ -138,7 +138,6 @@ internal class ViewModelModule {
         observeLabels = observeLabels,
         drawerFoldersAndLabelsSectionUiModelMapper = drawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings = getMailSettings,
-        observeLabels = observeLabels,
         messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper
     )
 }

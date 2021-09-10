@@ -24,19 +24,18 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -65,14 +64,10 @@ open class ContactDetailsRepository @Inject constructor(
     fun observeContactEmails(contactId: String): Flow<List<ContactEmail>> =
         contactDao.observeContactEmailsByContactId(contactId)
 
-    fun getContactGroups(userId: UserId): Observable<List<Label>> {
-        return Observable.fromCallable {
-            runBlocking {
-                val dbContacts = getContactGroupsFromDb(userId)
-                val apiContacts = getContactGroupsFromApi(userId)
-                dbContacts.plus(apiContacts)
-            }
-        }
+    suspend fun getContactGroups(userId: UserId): List<Label> {
+        val dbContacts = getContactGroupsFromDb(userId)
+        val apiContacts = getContactGroupsFromApi(userId)
+        return dbContacts.plus(apiContacts)
     }
 
     suspend fun getContactEmailsCount(contactGroupId: LabelId) =

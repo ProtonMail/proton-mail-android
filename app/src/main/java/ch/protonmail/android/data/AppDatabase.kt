@@ -105,8 +105,6 @@ internal abstract class AppDatabase :
     UserSettingsDatabase {
 
     abstract fun labelDao(): LabelDao
-    // abstract fun contactDao(): ContactDao
-    // abstract fun messagesDao(): MessageDao
 
     companion object {
 

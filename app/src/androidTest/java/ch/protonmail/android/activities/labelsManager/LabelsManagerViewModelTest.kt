@@ -21,6 +21,7 @@ package ch.protonmail.android.activities.labelsManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.paging.DataSource
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -79,8 +80,13 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        val testPagedResponse = object : DataSource.Factory<Int, LabelEntity>() {
+            override fun create(): DataSource<Int, LabelEntity> {
+                return mockk()
+            }
+        }
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        every { labelRepository.findAllLabelsPaged(userId) } returns mockk()
+        every { labelRepository.findAllLabelsPaged(userId) } returns testPagedResponse
         viewModel =
             LabelsManagerViewModel(
                 labelRepository = labelRepository,

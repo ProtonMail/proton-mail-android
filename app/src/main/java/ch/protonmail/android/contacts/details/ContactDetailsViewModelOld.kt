@@ -136,7 +136,12 @@ open class ContactDetailsViewModelOld @Inject constructor(
     fun fetchContactGroupsAndContactEmails(contactId: String) {
         val userId = userManager.requireCurrentUserId()
         Observable.zip(
-            contactDetailsRepository.getContactGroups(userId).subscribeOn(ThreadSchedulers.io())
+            Observable.fromCallable {
+                runBlocking {
+                    contactDetailsRepository.getContactGroups(userId)
+                }
+            }
+                .subscribeOn(ThreadSchedulers.io())
                 .doOnError {
                     if (allContactGroups.isEmpty()) {
                         _setupError.postValue(

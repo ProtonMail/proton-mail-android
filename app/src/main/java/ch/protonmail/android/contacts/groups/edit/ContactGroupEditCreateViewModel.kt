@@ -48,7 +48,7 @@ import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.user.domain.UserManager
-import me.proton.core.user.domain.extension.hasSubscription
+import me.proton.core.user.domain.extension.hasSubscriptionForMail
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.Locale
@@ -128,7 +128,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
     fun save(name: String) {
         viewModelScope.launch {
             val userId = requireNotNull(accountManager.getPrimaryAccount().first()?.userId)
-            val isPaidUser = userManager.getUser(userId).hasSubscription()
+            val isPaidUser = userManager.getUser(userId).hasSubscriptionForMail()
             if (!isPaidUser) {
                 _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.UNAUTHORIZED)))
                 return@launch
@@ -168,10 +168,10 @@ class ContactGroupEditCreateViewModel @Inject constructor(
     ) {
         val userId = requireNotNull(accountManager.getPrimaryUserId().first())
         val contactLabel = LabelEntity(
-            id = LabelId(contactGroupItem!!.contactId),
+            id = LabelId(requireNotNull(contactGroupItem?.contactId)),
             userId = userId,
             name = name,
-            color = String.format(Locale.getDefault(), "#%06X", 0xFFFFFF and contactGroupItem.color),
+            color = String.format(Locale.getDefault(), "#%06X", 0xFFFFFF and (contactGroupItem?.color ?: 0)),
             type = LabelType.CONTACT_GROUP,
             path = "",
             expanded = 0,

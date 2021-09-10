@@ -44,7 +44,6 @@ import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
@@ -518,6 +517,8 @@ internal class MailboxViewModel @Inject constructor(
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first() }
         val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { LabelId(it) }
+
+        Timber.v("messagesToMailboxItems labels: $labelIds")
 
         val labels = labelIds
             .chunked(Constants.MAX_SQL_ARGUMENTS)

@@ -39,37 +39,51 @@ data class LabelApiModel(
     @SerialName(ID)
     val id: String,
 
-    // required, cannot be same as an existing label of this Type. Max length is 100 characters
+    /**
+     * @property name required, cannot be same as an existing label of this Type. Max length is 100 characters
+     */
     @SerialName(NAME)
     val name: String,
 
     @SerialName(PATH)
     val path: String,
 
-    // required, must match default colors
+    /**
+     * @property color required, must match default colors
+     */
     @SerialName(COLOR)
     val color: String,
 
-    // required, 1 => Message Labels (default), 2 => Contact Groups, 3 => Message Folders
+    /**
+     * @property type required, 1 => Message Labels (default), 2 => Contact Groups, 3 => Message Folders
+     */
     @SerialName(TYPE)
     val type: LabelType,
 
-    // optional, 0 => no desktop/email notifications, 1 => notifications, folders only, default is 1 for folders
+    /**
+     * @property notify optional, 0 => no desktop/email notifications, 1 => notifications, folders only, default is 1 for folders
+     */
     @SerialName(NOTIFY)
     val notify: Int,
 
     @SerialName(ORDER)
     val order: Int?,
 
-    // optional, encrypted label id of parent folder, default is root level
+    /**
+     * @property parentId optional, encrypted label id of parent folder, default is root level
+     */
     @SerialName(PARENT_ID)
     val parentId: String? = null,
 
-    // v4 optional, 0 => collapse and hide sub-folders, 1 => expanded and show sub-folders
+    /**
+     * @property expanded optional, 0 => collapse and hide sub-folders, 1 => expanded and show sub-folders
+     */
     @SerialName(EXPANDED)
     val expanded: Int?,
 
-    // v4 optional, 0 => not sticky, 1 => stick to the page in the sidebar
+    /**
+     * @property sticky optional, 0 => not sticky, 1 => stick to the page in the sidebar
+     */
     @SerialName(STICKY)
     val sticky: Int?,
 )

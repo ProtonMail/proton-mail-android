@@ -59,7 +59,9 @@ class ApplyLabelWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val messageIds = requireNotNull(inputData.getStringArray(KEY_INPUT_DATA_MESSAGES_IDS))
+        val messageIds = requireNotNull(inputData.getStringArray(KEY_INPUT_DATA_MESSAGES_IDS)) {
+            "Message IDs are missing, cannot apply labels without it!"
+        }
         val labelId = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
         Timber.v("Apply label $labelId for messages: $messageIds")
