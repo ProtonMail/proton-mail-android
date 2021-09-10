@@ -32,8 +32,8 @@ class ObserveLabels @Inject constructor(
     private val labelRepository: LabelRepository
 ) {
 
-    operator fun invoke(userId: UserId): Flow<List<Label>> =
-        labelRepository.observeAllLabels(userId)
+    operator fun invoke(userId: UserId, shallRefresh: Boolean = false): Flow<List<Label>> =
+        labelRepository.observeAllLabels(userId, shallRefresh)
             .map { labels ->
                 labels.map {
                     labelsMapper.toLabel(it)

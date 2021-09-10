@@ -23,45 +23,45 @@ import android.graphics.Color
 import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.mapper.UiModelMapper
 import ch.protonmail.android.utils.UiUtil
+import me.proton.core.domain.arch.Mapper
 import timber.log.Timber
 import javax.inject.Inject
 
 /**
  * A Mapper of [DrawerLabelUiModel]
- * Inherit from [UiModelMapper]
+ * Inherit from [Mapper]
  *
  * @property useFolderColor whether the user enabled the settings for use Colors for Folders.
  *  TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`
  */
 internal class DrawerLabelUiModelMapper @Inject constructor(
     private val context: Context
-) : UiModelMapper<LabelEntity, DrawerLabelUiModel> {
+) : Mapper<Label, DrawerLabelUiModel> {
 
     private val useFolderColor: Boolean = true
 
-    override fun LabelEntity.toUiModel(): DrawerLabelUiModel {
+    fun toUiModel(model: Label): DrawerLabelUiModel {
 
-        val type =
-            if (type == LabelType.FOLDER) DrawerLabelUiModel.Type.FOLDERS
-            else DrawerLabelUiModel.Type.LABELS
+        val type = model.type
 
         return DrawerLabelUiModel(
-            labelId = id.id,
-            name = name,
-            icon = buildIcon(type, color),
+            labelId = model.id.id,
+            name = model.name,
+            icon = buildIcon(type, model.color),
             type = type
         )
     }
 
-    private fun buildIcon(type: DrawerLabelUiModel.Type, color: String): DrawerLabelUiModel.Icon {
+    private fun buildIcon(type: LabelType, color: String): DrawerLabelUiModel.Icon {
 
         val drawableRes = when (type) {
-            DrawerLabelUiModel.Type.LABELS -> R.drawable.shape_ellipse
-            DrawerLabelUiModel.Type.FOLDERS -> if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
+            LabelType.MESSAGE_LABEL -> R.drawable.shape_ellipse
+            LabelType.FOLDER -> if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
+            LabelType.CONTACT_GROUP ->
+                throw IllegalArgumentException("Contact groups are not supported by the nav drawer")
         }
 
         val colorInt =

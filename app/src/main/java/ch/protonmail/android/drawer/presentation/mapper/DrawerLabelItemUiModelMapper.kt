@@ -19,19 +19,18 @@
 package ch.protonmail.android.drawer.presentation.mapper
 
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
-import ch.protonmail.android.labels.data.model.Label
 import ch.protonmail.android.labels.domain.model.Label
-import ch.protonmail.android.mapper.UiModelMapper
+import me.proton.core.domain.arch.Mapper
 import javax.inject.Inject
 
 /**
  * Map from [Label] to [DrawerItemUiModel.Primary.Label]
- * Inherit from [UiModelMapper]
+ * Inherit from [Mapper]
  */
 internal class DrawerLabelItemUiModelMapper @Inject constructor(
     private val drawerLabelMapper: DrawerLabelUiModelMapper
-) : UiModelMapper<Label, DrawerItemUiModel.Primary.Label> {
+) : Mapper<Label, DrawerItemUiModel.Primary.Label> {
 
-    override fun Label.toUiModel(): DrawerItemUiModel.Primary.Label =
-        DrawerItemUiModel.Primary.Label(drawerLabelMapper { toUiModel() })
+    fun toUiModel(model: Label): DrawerItemUiModel.Primary.Label =
+        DrawerItemUiModel.Primary.Label(drawerLabelMapper.toUiModel(model))
 }

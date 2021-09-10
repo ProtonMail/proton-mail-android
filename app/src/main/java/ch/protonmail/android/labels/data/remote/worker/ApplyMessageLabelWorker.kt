@@ -49,7 +49,7 @@ import javax.inject.Inject
 internal const val KEY_INPUT_DATA_MESSAGES_IDS = "KeyInputDataMessagesIds"
 
 @HiltWorker
-class ApplyMessageLabelWorker @AssistedInject constructor(
+internal class ApplyMessageLabelWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val accountManager: AccountManager,

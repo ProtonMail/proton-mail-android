@@ -38,7 +38,7 @@ class GetLabelsByType @Inject constructor(
         labelsType: LabelType
     ): List<Label> {
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
-        val dbLabels = labelRepository.findAllLabels(userId, false)
+        val dbLabels = labelRepository.findAllLabels(userId)
 
         return dbLabels
             .filter { it.type == labelsType }

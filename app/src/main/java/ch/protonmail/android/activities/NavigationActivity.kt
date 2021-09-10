@@ -49,6 +49,7 @@ import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
 import ch.protonmail.android.drawer.presentation.ui.view.ProtonSideDrawer
 import ch.protonmail.android.feature.account.AccountStateManager
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
@@ -446,8 +447,8 @@ internal abstract class NavigationActivity : BaseActivity() {
     }
 
     private fun onDrawerLabelSelected(label: DrawerLabelUiModel) {
-        val exclusive = label.type == DrawerLabelUiModel.Type.FOLDERS
-        onLabelMailBox(Constants.DrawerOptionType.LABEL, label.labelId, label.name, exclusive)
+        val isFolder = label.type == LabelType.FOLDER
+        onLabelMailBox(Constants.DrawerOptionType.LABEL, label.labelId, label.name, isFolder)
     }
 
 }

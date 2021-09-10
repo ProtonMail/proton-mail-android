@@ -23,13 +23,12 @@ import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.AQUA_BASE_V3_COLOR
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.SAGE_BASE_V3_COLOR
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import me.proton.core.util.kotlin.EMPTY_STRING
-import me.proton.core.util.kotlin.invoke
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -74,12 +73,12 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun worksCorrectlyWithCorrectColor() {
         // given
-        val input = mockk<LabelEntity>(relaxed = true) {
+        val input = mockk<Label>(relaxed = true) {
             every { color } returns "#123"
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummyParsedColor, result.icon.colorInt)
@@ -88,12 +87,12 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun defaultColorIsSetIfColorIsEmpty() {
         // given
-        val input = mockk<LabelEntity>(relaxed = true) {
+        val input = mockk<Label>(relaxed = true) {
             every { color } returns EMPTY_STRING
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummyIconInvertedColor, result.icon.colorInt)
@@ -102,12 +101,12 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun defaultColorIsSetIfColorCantBeParsed() {
         // given
-        val input = mockk<LabelEntity>(relaxed = true) {
+        val input = mockk<Label>(relaxed = true) {
             every { color } returns "incorrect"
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummyIconInvertedColor, result.icon.colorInt)
@@ -116,12 +115,12 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun aquaBaseColorIsReplacedCorrectly() {
         // given
-        val input = mockk<LabelEntity>(relaxed = true) {
+        val input = mockk<Label>(relaxed = true) {
             every { color } returns AQUA_BASE_V3_COLOR
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummyAquaBaseColor, result.icon.colorInt)
@@ -130,12 +129,12 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun sageBaseColorIsReplacedCorrectly() {
         // given
-        val input = mockk<LabelEntity>(relaxed = true) {
+        val input = mockk<Label>(relaxed = true) {
             every { color } returns SAGE_BASE_V3_COLOR
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummySageBaseColor, result.icon.colorInt)

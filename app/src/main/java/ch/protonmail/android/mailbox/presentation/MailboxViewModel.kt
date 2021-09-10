@@ -44,6 +44,7 @@ import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
@@ -92,7 +93,6 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
-import me.proton.core.util.kotlin.invoke
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
@@ -169,10 +169,10 @@ internal class MailboxViewModel @Inject constructor(
     val drawerLabels: Flow<DrawerFoldersAndLabelsSectionUiModel> = combine(
         mutableUserId,
         mutableRefreshFlow.onStart { emit(false) }
-    ) { userId, _ -> userId }
-        .flatMapLatest { userId -> observeLabels(userId) }
+    ) { userId, isRefresh -> userId to isRefresh }
+        .flatMapLatest { userIdPair -> observeLabels(userIdPair.first, userIdPair.second) }
         .map { labels ->
-            drawerFoldersAndLabelsSectionUiModelMapper { labels.toUiModel() }
+            drawerFoldersAndLabelsSectionUiModelMapper.toUiModel(labels)
         }
 
     val unreadCounters: Flow<List<UnreadCounter>> = combine(
@@ -458,7 +458,7 @@ internal class MailboxViewModel @Inject constructor(
         val userId = userManager.currentUserId ?: return emptyList()
 
         val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.findAllLabels(userId, false)
+        val labels = labelRepository.findAllLabels(userId)
 
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {

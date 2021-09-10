@@ -46,7 +46,7 @@ import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 @HiltWorker
-class RemoveMessageLabelWorker @AssistedInject constructor(
+internal class RemoveMessageLabelWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val accountManager: AccountManager,
