@@ -80,7 +80,6 @@ class ClearUserData @Inject constructor(
                 clearMessagesCache()
                 clearAttachmentsCache()
             }
-            labelRepository.deleteAllLabels(userId)
             conversationDao?.clear()
             notificationDao?.clearNotificationCache()
             pendingActionDao?.run {
