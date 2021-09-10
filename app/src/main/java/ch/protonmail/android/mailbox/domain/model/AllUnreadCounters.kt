@@ -17,19 +17,21 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data.mapper
+package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
-import ch.protonmail.android.mailbox.domain.model.Correspondent
-import me.proton.core.domain.arch.Mapper
-import javax.inject.Inject
+import me.proton.core.mailsettings.domain.entity.ViewMode
 
 /**
- * Maps [CorrespondentApiModel] to [Correspondent] Domain model
+ * A set of all the [UnreadCounter]s, for each [ViewMode] and labelId
  */
-class CorrespondentApiModelToCorrespondentMapper @Inject constructor() :
-    Mapper<CorrespondentApiModel, Correspondent> {
+data class AllUnreadCounters(
+    val messagesCounters: List<UnreadCounter>,
+    val conversationsCounters: List<UnreadCounter>
+) {
 
-    fun toDomainModel(apiModel: CorrespondentApiModel): Correspondent =
-        Correspondent(name = apiModel.name, address = apiModel.address)
+    fun getFor(viewMode: ViewMode): List<UnreadCounter> =
+        when (viewMode) {
+            ViewMode.ConversationGrouping -> conversationsCounters
+            ViewMode.NoConversationGrouping -> messagesCounters
+        }
 }

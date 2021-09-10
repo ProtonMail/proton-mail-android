@@ -46,7 +46,6 @@ import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
-import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
@@ -72,7 +71,6 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.MessageUtils.toContactsAndGroupsString
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.EntryPoints
-import io.mockk.Called
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -80,7 +78,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.channels.Channel
@@ -95,7 +92,6 @@ import org.junit.After
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 private const val STARRED_LABEL_ID = "10"
 private const val ALL_DRAFT_LABEL_ID = "1"
@@ -195,13 +191,17 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             verifyConnection = verifyConnection,
             networkConfigurator = networkConfigurator,
             conversationModeEnabled = conversationModeEnabled,
+            observeConversationModeEnabled = mockk(),
             observeMessagesByLocation = observeMessagesByLocation,
             observeConversationsByLocation = observeConversationsByLocation,
             changeConversationsReadStatus = changeConversationsReadStatus,
             changeConversationsStarredStatus = changeConversationsStarredStatus,
+            observeAllUnreadCounters = mockk(),
             moveConversationsToFolder = moveConversationsToFolder,
             moveMessagesToFolder = moveMessagesToFolder,
             deleteConversations = deleteConversations,
+            observeLabels = mockk(),
+            drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings
         )
     }
@@ -1058,26 +1058,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 assertEquals(expected, expectItem())
             }
         }
-
-    @Test
-    fun refreshMailboxCountTriggersFetchMessagesCountJobWhenConversationsModeIsNotEnabled() {
-        every { conversationModeEnabled(any()) } returns false
-
-        viewModel.refreshMailboxCount(INBOX)
-
-        val actual = slot<FetchMessageCountsJob>()
-        verify { jobManager.addJobInBackground(capture(actual)) }
-        assertNotNull(actual.captured)
-    }
-
-    @Test
-    fun refreshMailboxCountDoesNotTriggerFetchMessagesCountJobWhenConversationsModeIsEnabled() {
-        every { conversationModeEnabled(any()) } returns true
-
-        viewModel.refreshMailboxCount(INBOX)
-
-        verify { jobManager wasNot Called }
-    }
 
     @Test
     fun isFreshDataIsFalseBeforeDataRefreshAndTrueAfter() = runBlockingTest {

@@ -34,5 +34,5 @@ class ConversationsResponseToConversationsMapper @Inject constructor(
 ) : ProtonStoreMapper<GetAllConversationsParameters, ConversationsResponse, List<Conversation>> {
 
     override fun ConversationsResponse.toOut(key: GetAllConversationsParameters): List<Conversation> =
-        conversations.map(mapper) { it.toDomainModel() }
+        conversations.map(mapper) { toDomainModel(it) }
 }

@@ -42,7 +42,6 @@ import ch.protonmail.android.api.models.PaymentsStatusResponse
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.UnregisterDeviceRequestBody
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
@@ -77,6 +76,7 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -233,8 +233,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun deleteLabel(labelId: String): ResponseBody = api.deleteLabel(labelId)
 
-    override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
-        api.fetchMessagesCount(userIdTag)
+    override suspend fun fetchMessagesCounts(userId: UserId): CountsResponse =
+        api.fetchMessagesCounts(userId)
 
     override suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse =
         api.getMessages(params)
@@ -345,6 +345,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchConversation(params: GetOneConversationParameters): ConversationResponse =
         api.fetchConversation(params)
+
+    override suspend fun fetchConversationsCounts(userId: UserId): CountsResponse =
+        api.fetchConversationsCounts(userId)
 
     override suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,

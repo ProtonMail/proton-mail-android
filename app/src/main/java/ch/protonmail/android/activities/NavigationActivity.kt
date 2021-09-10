@@ -28,14 +28,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
-import ch.protonmail.android.activities.navigation.NavigationViewModel
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.api.AccountManager
@@ -47,7 +43,7 @@ import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.drawer.presentation.mapper.LabelWithUnreadCounterToDrawerLabelItemUiModelMapper
+import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelItemUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.Type
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
@@ -73,7 +69,6 @@ import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
 import me.proton.core.auth.presentation.AuthOrchestrator
-import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.presentation.utils.setDarkStatusBar
 import me.proton.core.presentation.utils.setLightStatusBar
@@ -129,9 +124,8 @@ internal abstract class NavigationActivity : BaseActivity() {
     lateinit var userManager: UserManager
 
     @Inject
-    lateinit var drawerLabelMapper: LabelWithUnreadCounterToDrawerLabelItemUiModelMapper
+    lateinit var drawerLabelMapper: DrawerLabelItemUiModelMapper
 
-    private val navigationViewModel by viewModels<NavigationViewModel>()
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
 
     protected abstract val currentMailboxLocation: Constants.MessageLocationType
@@ -146,8 +140,6 @@ internal abstract class NavigationActivity : BaseActivity() {
      * TODO: Optimize loading and remove this delay
      */
     private var onDrawerClose: () -> Unit = {}
-
-    private var labelsWithUnreadCounterLiveData: MediatorLiveData<MutableList<LabelWithUnreadCounter>>? = null
 
     protected open fun onAccountSwitched(switch: AccountStateManager.AccountSwitch) {
         val currentUsername = switch.current?.username
@@ -317,7 +309,6 @@ internal abstract class NavigationActivity : BaseActivity() {
     }
 
     protected fun setUpDrawer() {
-        navigationViewModel.reloadDependencies()
         drawerToggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -349,12 +340,6 @@ internal abstract class NavigationActivity : BaseActivity() {
                 onDrawerClose = {}
             }
         })
-
-        labelsWithUnreadCounterLiveData?.removeObservers(this)
-        labelsWithUnreadCounterLiveData = navigationViewModel.labelsWithUnreadCounterLiveData()
-        labelsWithUnreadCounterLiveData?.observe(this, CreateLabelsMenuObserver())
-
-        navigationViewModel.locationsUnreadLiveData().observe(this, LocationsMenuObserver())
     }
 
     private suspend fun areNotificationsSnoozed(userId: UserId): Boolean {
@@ -465,24 +450,4 @@ internal abstract class NavigationActivity : BaseActivity() {
         onLabelMailBox(Constants.DrawerOptionType.LABEL, label.labelId, label.name, exclusive)
     }
 
-    private inner class CreateLabelsMenuObserver : Observer<List<LabelWithUnreadCounter>> {
-
-        override fun onChanged(labels: List<LabelWithUnreadCounter>?) {
-            if (labels == null)
-                return
-
-            // Prepare new Labels for the Adapter
-            val (labelsItems, foldersItems) = labels.map(drawerLabelMapper) { it.toUiModel() }
-                .partition { it.uiModel.type == DrawerLabelUiModel.Type.LABELS }
-            sideDrawer.setFolderItems(R.string.folders, foldersItems)
-            sideDrawer.setLabelItems(R.string.labels, labelsItems)
-        }
-    }
-
-    private inner class LocationsMenuObserver : Observer<Map<Int, Int>> {
-
-        override fun onChanged(unreadLocations: Map<Int, Int>) {
-            sideDrawer.setUnreadCounters(unreadLocations)
-        }
-    }
 }

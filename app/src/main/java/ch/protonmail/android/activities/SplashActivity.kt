@@ -35,7 +35,7 @@ import me.proton.core.auth.presentation.AuthOrchestrator
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SplashActivity : AppCompatActivity() {
+internal class SplashActivity : AppCompatActivity() {
 
     @Inject
     lateinit var accountStateManager: AccountStateManager

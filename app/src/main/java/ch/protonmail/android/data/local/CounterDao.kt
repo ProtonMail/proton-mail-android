@@ -71,17 +71,6 @@ abstract class CounterDao {
     abstract fun insertAllUnreadLocations(unreadLocations: Collection<UnreadLocationCounter>)
     //endregion
 
-    @Transaction
-    open fun updateUnreadCounters(
-        locations: Collection<UnreadLocationCounter>,
-        labels: Collection<UnreadLabelCounter>
-    ) {
-        clearUnreadLocationsTable()
-        clearUnreadLabelsTable()
-        insertAllUnreadLocations(locations)
-        insertAllUnreadLabels(labels)
-    }
-
     //region Total Label Counters
     @Query("SELECT * FROM $TABLE_TOTAL_LABEL_COUNTERS")
     abstract fun findAllTotalLabels(): LiveData<List<TotalLabelCounter>>

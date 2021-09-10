@@ -1,45 +1,42 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events;
 
-import java.io.Serializable;
+package ch.protonmail.android.mailbox.data.remote.model
 
-import ch.protonmail.android.api.models.UnreadTotalMessagesResponse;
+import com.google.gson.annotations.SerializedName
 
-public class MessageCountsEvent implements Serializable {
-    private final Status status;
-    private UnreadTotalMessagesResponse unreadMessagesResponse;
+data class CountsApiModel(
 
-    public MessageCountsEvent(Status status) {
-        this.status = status;
-    }
+    @SerializedName(LABEL_ID)
+    val labelId: String,
 
-    public MessageCountsEvent(Status status, UnreadTotalMessagesResponse response) {
-        this.status = status;
-        this.unreadMessagesResponse = response;
-    }
+    @SerializedName(TOTAL)
+    val total: Int,
 
-    public Status getStatus() {
-        return status;
-    }
+    @SerializedName(UNREAD)
+    val unread: Int
+) {
 
-    public UnreadTotalMessagesResponse getUnreadMessagesResponse() {
-        return unreadMessagesResponse;
+    private companion object {
+
+        const val LABEL_ID = "LabelID"
+        const val TOTAL = "Total"
+        const val UNREAD = "Unread"
     }
 }

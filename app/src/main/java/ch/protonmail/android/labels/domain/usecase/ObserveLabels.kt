@@ -16,8 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.navigation
 
+package ch.protonmail.android.labels.domain.usecase
+
+import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.Label
+import kotlinx.coroutines.flow.Flow
+import me.proton.core.domain.entity.UserId
+import javax.inject.Inject
 
-data class LabelWithUnreadCounter(val label: Label, val unreadCount: Int)
+internal class ObserveLabels @Inject constructor(
+    private val labelRepository: LabelRepository
+) {
+
+    operator fun invoke(userId: UserId): Flow<List<Label>> =
+        labelRepository.findAllLabels(userId)
+}

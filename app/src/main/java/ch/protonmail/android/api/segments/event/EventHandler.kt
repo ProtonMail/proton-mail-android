@@ -25,8 +25,6 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.api.models.MessageCount
-import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.enumerations.MessageFlag
 import ch.protonmail.android.api.models.messages.receive.LabelFactory
@@ -48,12 +46,13 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
-import ch.protonmail.android.events.MessageCountsEvent
-import ch.protonmail.android.events.Status
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
+import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
+import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
 import ch.protonmail.android.mailbox.domain.HandleChangeToConversations
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
-import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
@@ -66,12 +65,15 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 
-class EventHandler @AssistedInject constructor(
+internal class EventHandler @AssistedInject constructor(
     private val context: Context,
     private val protonMailApiManager: ProtonMailApiManager,
+    private val unreadCounterDao: UnreadCounterDao,
+    private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
     private val userManager: UserManager,
     private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val changeToConversations: HandleChangeToConversations,
@@ -621,9 +623,12 @@ class EventHandler @AssistedInject constructor(
         }
     }
 
-    private fun writeUnreadUpdates(messageCounts: List<MessageCount>) {
-        val response = UnreadTotalMessagesResponse(messageCounts)
-        AppUtil.postEventOnUi(MessageCountsEvent(Status.SUCCESS, response))
+    private fun writeUnreadUpdates(messageCounts: List<CountsApiModel>) {
+        val databaseModels = messageCounts
+            .map(apiToDatabaseUnreadCounterMapper) { toDatabaseModel(it, userId, Type.MESSAGES) }
+        runBlocking {
+            unreadCounterDao.insertOrUpdate(databaseModels)
+        }
     }
 
     private fun writeMessageLabel(

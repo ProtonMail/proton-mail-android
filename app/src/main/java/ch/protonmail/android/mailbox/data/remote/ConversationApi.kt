@@ -23,6 +23,7 @@ import ch.protonmail.android.api.segments.BaseApi
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 
@@ -44,6 +45,9 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
 
     override suspend fun fetchConversation(params: GetOneConversationParameters): ConversationResponse =
         service.fetchConversation(params.conversationId, UserIdTag(params.userId))
+
+    override suspend fun fetchConversationsCounts(userId: UserId): CountsResponse =
+        service.fetchConversationsCounts(UserIdTag(userId))
 
     override suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,

@@ -32,13 +32,17 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
+import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
+import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -99,12 +103,16 @@ internal class ViewModelModule {
         networkConfigurator: NetworkConfigurator,
         conversationModeEnabled: ConversationModeEnabled,
         observeConversationsByLocation: ObserveConversationsByLocation,
+        observeConversationModeEnabled: ObserveConversationModeEnabled,
         changeConversationsReadStatus: ChangeConversationsReadStatus,
         changeConversationsStarredStatus: ChangeConversationsStarredStatus,
         observeMessagesByLocation: ObserveMessagesByLocation,
+        observeAllUnreadCounters: ObserveAllUnreadCounters,
         moveConversationsToFolder: MoveConversationsToFolder,
         moveMessagesToFolder: MoveMessagesToFolder,
         deleteConversations: DeleteConversations,
+        observeLabels: ObserveLabels,
+        drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings: GetMailSettings
     ) = MailboxViewModel(
         messageDetailsRepository = messageDetailsRepository,
@@ -119,11 +127,15 @@ internal class ViewModelModule {
         conversationModeEnabled = conversationModeEnabled,
         observeMessagesByLocation = observeMessagesByLocation,
         observeConversationsByLocation = observeConversationsByLocation,
+        observeConversationModeEnabled = observeConversationModeEnabled,
         changeConversationsReadStatus = changeConversationsReadStatus,
         changeConversationsStarredStatus = changeConversationsStarredStatus,
+        observeAllUnreadCounters = observeAllUnreadCounters,
         moveConversationsToFolder = moveConversationsToFolder,
         moveMessagesToFolder = moveMessagesToFolder,
         deleteConversations = deleteConversations,
+        observeLabels = observeLabels,
+        drawerFoldersAndLabelsSectionUiModelMapper = drawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings = getMailSettings
     )
 }

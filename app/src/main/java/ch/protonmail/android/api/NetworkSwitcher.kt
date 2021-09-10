@@ -31,7 +31,7 @@ interface INetworkSwitcher {
 }
 
 @Singleton
-class NetworkSwitcher @Inject constructor(
+internal class NetworkSwitcher @Inject constructor(
     private val api: ProtonMailApiManager,
     private val apiProvider: ProtonMailApiProvider,
     private val protonOkHttpProvider: OkHttpProvider,

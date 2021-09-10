@@ -243,17 +243,6 @@ internal class CounterDaoTest {
     }
 
     @Test
-    fun updateUnreadCounters() {
-        val insertedLabels = listOf(UnreadLabelCounter("e", 8), UnreadLabelCounter("f", 7))
-        val insertedLocations = listOf(UnreadLocationCounter(5, 8), UnreadLocationCounter(6, 7))
-        database.updateUnreadCounters(insertedLocations, insertedLabels)
-        assertDatabaseState(
-            expectedUnreadLocations = insertedLocations,
-            expectedUnreadLabels = insertedLabels
-        )
-    }
-
-    @Test
     fun findAllTotalLabels() {
         val expected = totalLabels.matchers
         val actual = database.findAllTotalLabels().testValue

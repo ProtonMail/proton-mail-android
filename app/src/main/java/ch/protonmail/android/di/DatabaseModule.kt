@@ -33,6 +33,7 @@ import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,7 +41,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DatabaseModule {
+internal object DatabaseModule {
 
     @Provides
     fun provideAttachmentMetadataDao(
@@ -76,13 +77,15 @@ object DatabaseModule {
     fun provideMessageDatabase(
         context: Context,
         @CurrentUserId userId: UserId
-    ): MessageDao = MessageDatabase.getInstance(context, userId).getDao()
+    ): MessageDatabase = MessageDatabase.getInstance(context, userId)
 
     @Provides
-    fun provideConversationDatabase(
-        context: Context,
-        @CurrentUserId userId: UserId
-    ): ConversationDao = MessageDatabase.getInstance(context, userId).getConversationDao()
+    fun provideMessageDao(messageDatabase: MessageDatabase): MessageDao =
+        messageDatabase.getMessageDao()
+
+    @Provides
+    fun provideConversationDao(messageDatabase: MessageDatabase): ConversationDao =
+        messageDatabase.getConversationDao()
 
 
     @Provides
@@ -93,4 +96,8 @@ object DatabaseModule {
     fun providePendingActionDao(
         pendingActionDatabase: PendingActionDatabase
     ): PendingActionDao = pendingActionDatabase.getDao()
+
+    @Provides
+    fun provideUnreadCounterDao(messageDatabase: MessageDatabase): UnreadCounterDao =
+        messageDatabase.getUnreadCounterDao()
 }

@@ -27,8 +27,10 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
 import ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 
 internal class ProtonSideDrawer @JvmOverloads constructor(
     context: Context,
@@ -49,6 +51,8 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     private var moreSectionItem: DrawerItemUiModel.SectionName? = null
     private var moreItems = listOf<DrawerItemUiModel.Primary.Static>()
     private var footerItem: DrawerItemUiModel.Footer? = null
+
+    private var labelIdsToUnreadCountersMap: Map<String, Int> = emptyMap()
 
     init {
         bodyRecyclerView = RecyclerView(context).apply {
@@ -77,33 +81,37 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         update()
     }
 
-    /**
-     * Set unread counters to "Location items"
-     * @see setLocationItems
-     *
-     * @param locationsToUnreadsMap [Map] associating type's id to the count of unread Messages
-     * @see DrawerItemUiModel.Primary.Static.Type.itemId
-     */
-    internal fun setUnreadCounters(locationsToUnreadsMap: Map<Int, Int>) {
-        locationItems = locationItems.map { item ->
-            // Get unread count by id of item's type from unread
-            val unreadCount = locationsToUnreadsMap.getOrElse(item.type.itemId) { 0 }
-            // Update the notificationCount for the item
-            item.copyWithNotificationCount(unreadCount)
-        }
-        update()
+    fun setFoldersAndLabelsSection(section: DrawerFoldersAndLabelsSectionUiModel) {
+        setFolderItems(section.foldersSectionNameRes, section.folders)
+        setLabelItems(section.labelsSectionNameRes, section.labels)
     }
 
-
-    fun setFolderItems(@StringRes sectionNameRes: Int, items: List<DrawerItemUiModel.Primary.Label>) {
+    private fun setFolderItems(
+        @StringRes sectionNameRes: Int,
+        items: List<DrawerItemUiModel.Primary.Label>
+    ) {
         foldersSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
         folderItems = items
         update()
     }
 
-    fun setLabelItems(@StringRes sectionNameRes: Int, items: List<DrawerItemUiModel.Primary.Label>) {
+    private fun setLabelItems(
+        @StringRes sectionNameRes: Int,
+        items: List<DrawerItemUiModel.Primary.Label>
+    ) {
         labelsSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
         labelItems = items
+        update()
+    }
+
+    /**
+     * Set unread counters to "Location items"
+     * @see setLocationItems
+     *
+     * @see DrawerItemUiModel.Primary.Static.Type.itemId
+     */
+    internal fun setUnreadCounters(counters: List<UnreadCounter>) {
+        labelIdsToUnreadCountersMap = counters.map { it.labelId to it.unreadCount }.toMap()
         update()
     }
 
@@ -125,15 +133,33 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     @OptIn(ExperimentalStdlibApi::class)
     private fun update() {
         bodyAdapter.items = buildList {
-            addAll(locationItems)
+            addAll(locationItems.mapWithCounters())
             foldersSectionItem?.let { add(it) }
-            addAll(folderItems)
+            addAll(folderItems.mapWithCounters())
             labelsSectionItem?.let { add(it) }
-            addAll(labelItems)
+            addAll(labelItems.mapWithCounters())
             moreSectionItem?.let { add(it) }
             addAll(moreItems)
             footerItem?.let { add(it) }
         }
+    }
+
+    @JvmName("mapLocationsWithCounters")
+    private fun List<DrawerItemUiModel.Primary.Static>.mapWithCounters() =
+        mapWithCounters { it.type.itemId.toString() }
+
+    @JvmName("mapLabelsWithCounters")
+    private fun List<DrawerItemUiModel.Primary.Label>.mapWithCounters() =
+        mapWithCounters { it.uiModel.labelId }
+
+    private fun <T : DrawerItemUiModel.Primary> List<T>.mapWithCounters(
+        getDrawerItemLabelId: (T) -> String
+    ): List<T> = map { drawerItem ->
+        // Get unread count by id of item's type from unread
+        val unreadCount = labelIdsToUnreadCountersMap.getOrElse(getDrawerItemLabelId(drawerItem)) { 0 }
+        // Update the notificationCount for the item
+        @Suppress("UncheckedCast") // We know the item is T
+        drawerItem.copyWithNotificationCount(unreadCount) as T
     }
 
 }

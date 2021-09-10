@@ -43,14 +43,14 @@ class ConversationApiModelToConversationDatabaseModelMapper @Inject constructor(
         order = conversationApiModel.order,
         userId = userId.id,
         subject = conversationApiModel.subject,
-        senders = conversationApiModel.senders.map(messageSenderMapper) { it.toDatabaseModel() },
-        recipients = conversationApiModel.recipients.map(messageRecipientMapper) { it.toDatabaseModel() },
+        senders = conversationApiModel.senders.map(messageSenderMapper) { toDatabaseModel(it) },
+        recipients = conversationApiModel.recipients.map(messageRecipientMapper) { toDatabaseModel(it) },
         numMessages = conversationApiModel.numMessages,
         numUnread = conversationApiModel.numUnread,
         numAttachments = conversationApiModel.numAttachments,
         expirationTime = conversationApiModel.expirationTime,
         size = conversationApiModel.size,
-        labels = conversationApiModel.labels.map(labelMapper) { it.toDatabaseModel() }
+        labels = conversationApiModel.labels.map(labelMapper) { toDatabaseModel(it) }
     )
 
     fun toDatabaseModels(

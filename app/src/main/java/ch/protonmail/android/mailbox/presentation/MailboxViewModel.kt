@@ -38,11 +38,13 @@ import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreMap
+import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
+import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.jobs.ApplyLabelJob
-import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -51,6 +53,9 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
+import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -66,22 +71,27 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.invoke
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
@@ -94,7 +104,7 @@ private const val STARRED_LABEL_ID = "10"
 private const val MIN_MESSAGES_TO_SHOW_COUNT = 2
 
 @HiltViewModel
-class MailboxViewModel @Inject constructor(
+internal class MailboxViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
     private val jobManager: JobManager,
@@ -105,13 +115,17 @@ class MailboxViewModel @Inject constructor(
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
     private val conversationModeEnabled: ConversationModeEnabled,
+    private val observeConversationModeEnabled: ObserveConversationModeEnabled,
     private val observeMessagesByLocation: ObserveMessagesByLocation,
     private val observeConversationsByLocation: ObserveConversationsByLocation,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
+    private val observeAllUnreadCounters: ObserveAllUnreadCounters,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val deleteConversations: DeleteConversations,
+    private val observeLabels: ObserveLabels,
+    private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
     private val getMailSettings: GetMailSettings
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
@@ -148,8 +162,41 @@ class MailboxViewModel @Inject constructor(
         get() = _hasSuccessfullyDeletedMessages
 
     val mailboxState = mutableMailboxState.asStateFlow()
-
     val mailboxLocation = mutableMailboxLocation.asStateFlow()
+
+    val drawerLabels: Flow<DrawerFoldersAndLabelsSectionUiModel> = combine(
+        mutableUserId,
+        mutableRefreshFlow.onStart { emit(false) }
+    ) { userId, _ -> userId }
+        .flatMapLatest { userId -> observeLabels(userId) }
+        .map { labels ->
+            drawerFoldersAndLabelsSectionUiModelMapper { labels.toUiModel() }
+        }
+
+    val unreadCounters: Flow<List<UnreadCounter>> = combine(
+        mutableUserId,
+        mutableRefreshFlow.onStart { emit(false) }
+    ) { userId, _ -> userId }
+        .flatMapLatest { userId ->
+            combineTransform(
+                observeAllUnreadCounters(userId),
+                observeConversationModeEnabled(userId)
+            ) { allCountersResult, isConversationsModeEnabled ->
+
+                if (allCountersResult is DataResult.Error) {
+                    Timber.e(allCountersResult.cause, allCountersResult.message)
+                }
+
+                if (allCountersResult is DataResult.Success) {
+                    val value = if (isConversationsModeEnabled) {
+                        allCountersResult.value.conversationsCounters
+                    } else {
+                        allCountersResult.value.messagesCounters
+                    }
+                    emit(value)
+                }
+            }
+        }
 
     private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxState>
 
@@ -589,14 +636,6 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun refreshMailboxCount(location: Constants.MessageLocationType) {
-        if (conversationModeEnabled(location)) {
-            return
-        }
-
-        jobManager.addJobInBackground(FetchMessageCountsJob(null))
-    }
-
     private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
         filterNot { it.exclusive }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
@@ -685,15 +724,21 @@ class MailboxViewModel @Inject constructor(
     }
 
     fun setNewMailboxLocation(newLocation: Constants.MessageLocationType) {
-        mutableMailboxLocation.value = newLocation
+        if (mutableMailboxLocation.value != newLocation) {
+            mutableMailboxLocation.value = newLocation
+        }
     }
 
     fun setNewMailboxLabel(labelId: String) {
-        mutableMailboxLabelId.value = labelId
+        if (mutableMailboxLabelId.value != labelId) {
+            mutableMailboxLabelId.value = labelId
+        }
     }
 
     fun setNewUserId(currentUserId: UserId) {
-        mutableUserId.value = currentUserId
+        if (mutableUserId.value != currentUserId) {
+            mutableUserId.value = currentUserId
+        }
     }
 
     fun refreshMessages() {

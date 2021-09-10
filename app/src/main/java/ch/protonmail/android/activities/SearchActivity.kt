@@ -52,7 +52,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class SearchActivity : BaseActivity() {
+internal class SearchActivity : BaseActivity() {
 
     private lateinit var adapter: MailboxRecyclerViewAdapter
     private lateinit var noMessagesView: TextView

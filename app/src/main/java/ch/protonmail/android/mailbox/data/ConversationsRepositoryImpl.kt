@@ -29,12 +29,16 @@ import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
+import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationApiModelToConversationDatabaseModelMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationDatabaseModelToConversationMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsDatabaseModelsMapper
 import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversationsMapper
+import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
@@ -46,19 +50,28 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.DataResult.Error
+import me.proton.core.domain.arch.DataResult.Success
+import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
@@ -67,15 +80,18 @@ import kotlin.math.max
 // For non-custom locations such as: Inbox, Sent, Archive etc.
 private const val MAX_LOCATION_ID_LENGTH = 2
 
-class ConversationsRepositoryImpl @Inject constructor(
+internal class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
+    private val unreadCounterDao: UnreadCounterDao,
     private val api: ProtonMailApiManager,
     responseToConversationsMapper: ConversationsResponseToConversationsMapper,
     private val databaseToConversationMapper: ConversationDatabaseModelToConversationMapper,
     private val apiToDatabaseConversationMapper: ConversationApiModelToConversationDatabaseModelMapper,
     responseToDatabaseConversationsMapper: ConversationsResponseToConversationsDatabaseModelsMapper,
     private val messageFactory: MessageFactory,
+    private val databaseToDomainUnreadCounterMapper: DatabaseToDomainUnreadCounterMapper,
+    private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
     private val markConversationsReadWorker: MarkConversationsReadRemoteWorker.Enqueuer,
     private val markConversationsUnreadWorker: MarkConversationsUnreadRemoteWorker.Enqueuer,
     private val labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer,
@@ -83,6 +99,8 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer,
     connectivityManager: NetworkConnectivityManager
 ) : ConversationsRepository {
+
+    private val refreshUnreadCountersTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     private val allConversationsStore by lazy {
         ProtonStore(
@@ -132,8 +150,23 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
             .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
-    override suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel? =
-        conversationDao.findConversation(userId.id, conversationId)
+    override fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
+        refreshUnreadCountersTrigger.flatMapLatest {
+            observeUnreadCountersFromDatabase(userId)
+                .onStart { fetchAndSaveUnreadCounters(userId) }
+        }
+            .onStart { refreshUnreadCounters() }
+            .catch { exception ->
+                if (exception is CancellationException) {
+                    throw exception
+                } else {
+                    emit(Error.Remote(exception.message, exception))
+                }
+            }
+
+    override fun refreshUnreadCounters() {
+        refreshUnreadCountersTrigger.tryEmit(Unit)
+    }
 
     override suspend fun saveConversationsDatabaseModels(
         userId: UserId,
@@ -461,6 +494,16 @@ class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
+    private suspend fun fetchAndSaveUnreadCounters(userId: UserId) {
+        val counts = api.fetchConversationsCounts(userId).counts
+            .map(apiToDatabaseUnreadCounterMapper) {
+                toDatabaseModel(
+                    it, userId, UnreadCounterEntity.Type.CONVERSATIONS
+                )
+            }
+        unreadCounterDao.insertOrUpdate(counts)
+    }
+
     private suspend fun addLabelsToConversation(
         conversationId: String,
         userId: UserId,
@@ -516,5 +559,12 @@ class ConversationsRepositoryImpl @Inject constructor(
                 databaseToConversationMapper.toDomainModel(conversation, messages.toDomainModelList())
             }
         }.distinctUntilChanged()
+
+
+    private fun observeUnreadCountersFromDatabase(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
+        unreadCounterDao.observeConversationsUnreadCounters(userId).map { list ->
+            val domainModels = databaseToDomainUnreadCounterMapper.toDomainModels(list)
+            Success(ResponseSource.Local, domainModels)
+        }
 
 }

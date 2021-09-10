@@ -38,15 +38,28 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
+import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
+import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -58,10 +71,13 @@ private const val FILE_PREFIX = "file://"
 /**
  * A repository for getting and saving messages.
  */
-class MessageRepository @Inject constructor(
+internal class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
+    private val unreadCounterDao: UnreadCounterDao,
     private val databaseProvider: DatabaseProvider,
     private val protonMailApiManager: ProtonMailApiManager,
+    private val databaseToDomainUnreadCounterMapper: DatabaseToDomainUnreadCounterMapper,
+    private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
     messagesResponseToMessagesMapper: MessagesResponseToMessagesMapper,
     private val messageBodyFileManager: MessageBodyFileManager,
     private val userManager: UserManager,
@@ -87,6 +103,8 @@ class MessageRepository @Inject constructor(
         refreshAtStart: Boolean = true
     ): LoadMoreFlow<DataResult<List<Message>>> =
         allMessagesStore.loadMoreFlow(params, refreshAtStart)
+
+    private val refreshUnreadCountersTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {
         val messageDao = databaseProvider.provideMessageDao(userId)
@@ -178,6 +196,32 @@ class MessageRepository @Inject constructor(
                 }
             }.getOrNull()
         }
+
+    fun getUnreadCounters(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
+        refreshUnreadCountersTrigger.flatMapLatest {
+            observerUnreadCountersFromDatabase(userId)
+                .onStart { fetchAndSaveUnreadCounters(userId) }
+        }
+            .onStart { refreshUnreadCounters() }
+            .catch { exception ->
+                if (exception is CancellationException) {
+                    throw exception
+                } else {
+                    emit(DataResult.Error.Remote(exception.message, exception))
+                }
+            }
+
+    private suspend fun fetchAndSaveUnreadCounters(userId: UserId) {
+        val response = protonMailApiManager.fetchMessagesCounts(userId)
+        Timber.v("Fetch Messages Unread response: $response")
+        val counts = response.counts
+            .map(apiToDatabaseUnreadCounterMapper) { toDatabaseModel(it, userId, Type.MESSAGES) }
+        unreadCounterDao.insertOrUpdate(counts)
+    }
+
+    fun refreshUnreadCounters() {
+        refreshUnreadCountersTrigger.tryEmit(Unit)
+    }
 
     fun moveToTrash(messageIds: List<String>, currentFolderLabelId: String) {
         jobManager.addJobInBackground(
@@ -290,4 +334,10 @@ class MessageRepository @Inject constructor(
             }
         }
     }
+
+    private fun observerUnreadCountersFromDatabase(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
+        unreadCounterDao.observeMessagesUnreadCounters(userId).map { list ->
+            val domainModels = databaseToDomainUnreadCounterMapper.toDomainModels(list)
+            DataResult.Success(ResponseSource.Local, domainModels)
+        }
 }

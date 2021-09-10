@@ -41,7 +41,7 @@ import javax.inject.Inject
 /**
  * Use case for observe Messages by location
  */
-class ObserveMessagesByLocation @Inject constructor(
+internal class ObserveMessagesByLocation @Inject constructor(
     private val messageRepository: MessageRepository
 ) {
 

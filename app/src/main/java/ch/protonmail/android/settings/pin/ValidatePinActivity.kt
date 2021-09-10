@@ -30,7 +30,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.FetchDraftDetailEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
-import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.PostImportAttachmentEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.AppUtil
@@ -44,7 +43,6 @@ import java.util.concurrent.Executors
 const val EXTRA_PIN_VALID = "extra_pin_valid"
 const val EXTRA_FRAGMENT_TITLE = "extra_title"
 const val EXTRA_ATTACHMENT_IMPORT_EVENT = "extra_attachment_import_event"
-const val EXTRA_TOTAL_COUNT_EVENT = "extra_total_count_event"
 const val EXTRA_MESSAGE_DETAIL_EVENT = "extra_message_details_event"
 const val EXTRA_DRAFT_DETAILS_EVENT = "extra_draft_details_event"
 // endregion
@@ -56,7 +54,6 @@ class ValidatePinActivity :
     PinFragmentViewModel.ReopenFingerprintDialogListener {
 
     private var importAttachmentEvent: PostImportAttachmentEvent? = null
-    private var messageCountsEvent: MessageCountsEvent? = null
     private var messageDetailEvent: FetchMessageDetailEvent? = null
     private var draftDetailEvent: FetchDraftDetailEvent? = null
     private lateinit var biometricPrompt: BiometricPrompt
@@ -103,11 +100,6 @@ class ValidatePinActivity :
     @Subscribe
     fun onPostImportAttachmentEvent(event: PostImportAttachmentEvent) {
         importAttachmentEvent = event
-    }
-
-    @Subscribe
-    fun onMessageCountsEvent(event: MessageCountsEvent) {
-        messageCountsEvent = event
     }
 
     @Subscribe
@@ -219,9 +211,6 @@ class ValidatePinActivity :
             putExtra(EXTRA_PIN_VALID, true)
             if (importAttachmentEvent != null) {
                 putExtra(EXTRA_ATTACHMENT_IMPORT_EVENT, importAttachmentEvent)
-            }
-            if (messageCountsEvent != null) {
-                putExtra(EXTRA_TOTAL_COUNT_EVENT, messageCountsEvent)
             }
             if (messageDetailEvent != null) {
                 putExtra(EXTRA_MESSAGE_DETAIL_EVENT, messageDetailEvent)

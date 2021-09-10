@@ -23,7 +23,6 @@ import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -31,6 +30,7 @@ import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -49,7 +49,9 @@ interface MessageService {
 
     @GET("mail/v4/messages/count")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchMessagesCount(@Tag userIdTag: UserIdTag): Call<UnreadTotalMessagesResponse>
+    suspend fun fetchMessagesCounts(
+        @Tag userIdTag: UserIdTag
+    ): CountsResponse
 
     @PUT("mail/v4/messages/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

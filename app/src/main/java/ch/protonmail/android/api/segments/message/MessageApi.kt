@@ -23,7 +23,6 @@ import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -32,16 +31,17 @@ import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import io.reactivex.Observable
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.io.IOException
 
 class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpec {
 
-    @Throws(IOException::class)
-    override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
-        ParseUtils.parse(service.fetchMessagesCount(userIdTag).execute())
+    override suspend fun fetchMessagesCounts(userId: UserId): CountsResponse =
+        service.fetchMessagesCounts(UserIdTag(userId))
 
     override suspend fun getMessages(params: GetAllMessagesParameters): MessagesResponse =
         service.getMessages(

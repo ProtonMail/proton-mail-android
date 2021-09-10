@@ -31,8 +31,15 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.user.User
+import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
+import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
+import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
+import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
+import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
@@ -44,7 +51,9 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -65,13 +74,21 @@ import kotlin.test.assertNull
 class MessageRepositoryTest {
 
     private val messageDao: MessageDao = mockk()
+
+    private val unreadCounterDao: UnreadCounterDao = mockk {
+        every { observeMessagesUnreadCounters(any()) } returns flowOf(emptyList())
+        coEvery { insertOrUpdate(any<Collection<UnreadCounterEntity>>()) } just Runs
+    }
+
     private val databaseProvider: DatabaseProvider = mockk {
         every { provideMessageDao(any()) } returns messageDao
     }
 
     private val messageBodyFileManager: MessageBodyFileManager = mockk()
 
-    private val protonMailApiManager: ProtonMailApiManager = mockk()
+    private val protonMailApiManager: ProtonMailApiManager = mockk {
+        coEvery { fetchMessagesCounts(any()) } returns CountsResponse(emptyList())
+    }
 
     private val newUser = mockk<User> {
         every { id } returns testUserId
@@ -98,14 +115,17 @@ class MessageRepositoryTest {
     private val allServerMessages = listOf(serverMessage1, serverMessage2, serverMessage3, serverMessage4)
 
     private val messageRepository = MessageRepository(
-        TestDispatcherProvider,
-        databaseProvider,
-        protonMailApiManager,
-        MessagesResponseToMessagesMapper(),
-        messageBodyFileManager,
-        userManager,
-        jobManager,
-        networkConnectivityManager
+        dispatcherProvider = TestDispatcherProvider,
+        unreadCounterDao = unreadCounterDao,
+        databaseProvider = databaseProvider,
+        protonMailApiManager = protonMailApiManager,
+        databaseToDomainUnreadCounterMapper = DatabaseToDomainUnreadCounterMapper(),
+        apiToDatabaseUnreadCounterMapper = ApiToDatabaseUnreadCounterMapper(),
+        messagesResponseToMessagesMapper = MessagesResponseToMessagesMapper(),
+        messageBodyFileManager = messageBodyFileManager,
+        userManager = userManager,
+        jobManager = jobManager,
+        connectivityManager = networkConnectivityManager
     )
 
     @Test
@@ -582,6 +602,146 @@ class MessageRepositoryTest {
             // verify message from api
             assertEquals(apiMessages.remote(), expectItem())
             assertEquals(allMessages.local(), expectItem())
+        }
+    }
+
+    @Test
+    fun unreadCountersAreCorrectlyFetchedFromDatabase() = runBlockingTest {
+        // given
+        val labelId = "inbox"
+        val unreadCount = 15
+        val databaseModel = UnreadCounterEntity(
+            userId = testUserId,
+            type = UnreadCounterEntity.Type.MESSAGES,
+            labelId = labelId,
+            unreadCount = unreadCount
+        )
+        every { unreadCounterDao.observeMessagesUnreadCounters(testUserId) } returns flowOf(listOf(databaseModel))
+        val expected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, unreadCount)))
+
+        // when
+        messageRepository.getUnreadCounters(testUserId).test {
+
+            // then
+            assertEquals(expected, expectItem())
+        }
+    }
+
+    @Test
+    fun unreadCountersAreCorrectlyFetchedFromApi() = runBlockingTest {
+        // given
+        val labelId = "inbox"
+        val unreadCount = 15
+        val apiModel = CountsApiModel(
+            labelId = labelId,
+            total = 0,
+            unread = unreadCount
+        )
+
+        setupUnreadCounterDaoToSimulateReplace()
+
+        val apiResponse = CountsResponse(listOf(apiModel))
+        coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } returns apiResponse
+
+        val expectedList = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, unreadCount)))
+
+        // when
+        messageRepository.getUnreadCounters(testUserId).test {
+
+            // then
+            assertEquals(expectedList, expectItem())
+        }
+    }
+
+    @Test
+    fun unreadCountersAreRefreshedFromApi() = runBlockingTest {
+        // given
+        val labelId = "inbox"
+        val firstUnreadCount = 15
+        val secondUnreadCount = 20
+        val thirdUnreadCount = 25
+
+        setupUnreadCounterDaoToSimulateReplace()
+
+        val firstApiModel = CountsApiModel(
+            labelId = labelId,
+            total = 0,
+            unread = firstUnreadCount
+        )
+        val secondApiModel = firstApiModel.copy(
+            unread = secondUnreadCount
+        )
+        val thirdApiModel = secondApiModel.copy(
+            unread = thirdUnreadCount
+        )
+
+        val firstApiResponse = CountsResponse(listOf(firstApiModel))
+        val secondApiResponse = CountsResponse(listOf(secondApiModel))
+        val thirdApiResponse = CountsResponse(listOf(thirdApiModel))
+        val allApiResponses = listOf(firstApiResponse, secondApiResponse, thirdApiResponse)
+
+        var apiCounter = 0
+        coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } answers {
+            allApiResponses[apiCounter++]
+        }
+
+        val firstExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, firstUnreadCount)))
+        val secondExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, secondUnreadCount)))
+        val thirdExpected = DataResult.Success(ResponseSource.Local, listOf(UnreadCounter(labelId, thirdUnreadCount)))
+
+        // when
+        messageRepository.getUnreadCounters(testUserId).test {
+
+            // then
+            assertEquals(firstExpected, expectItem())
+
+            messageRepository.refreshUnreadCounters()
+            assertEquals(secondExpected, expectItem())
+
+            messageRepository.refreshUnreadCounters()
+            assertEquals(thirdExpected, expectItem())
+        }
+    }
+
+    @Test
+    fun handlesExceptionDuringUnreadCountersRefresh() = runBlockingTest {
+        // given
+        val expectedMessage = "Invalid username!"
+        coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } answers {
+            throw IllegalArgumentException(expectedMessage)
+        }
+
+        // when
+        messageRepository.getUnreadCounters(testUserId).test {
+
+            // then
+            val actual = expectItem() as DataResult.Error.Remote
+            assertEquals(expectedMessage, actual.message)
+
+            expectComplete()
+        }
+    }
+
+    @Test(expected = ClosedReceiveChannelException::class)
+    fun getCountersIsCancellerWhenApiCallIsCancelled() = runBlockingTest {
+        // given
+        coEvery { protonMailApiManager.fetchMessagesCounts(testUserId) } answers {
+            throw CancellationException("Cancelled")
+        }
+
+        // when
+        messageRepository.getUnreadCounters(testUserId).test {
+            expectItem()
+        }
+    }
+
+    private fun setupUnreadCounterDaoToSimulateReplace() {
+
+        val counters = MutableStateFlow(emptyList<UnreadCounterEntity>())
+
+        every { unreadCounterDao.observeMessagesUnreadCounters(testUserId) } returns counters
+        coEvery { unreadCounterDao.insertOrUpdate(any<Collection<UnreadCounterEntity>>()) } answers {
+            counters.value = firstArg<Collection<UnreadCounterEntity>>().toList()
         }
     }
 

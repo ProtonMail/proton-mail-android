@@ -44,7 +44,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.proton.core.domain.arch.onSuccess
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
@@ -52,7 +54,7 @@ import javax.inject.Inject
 private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
 
 @HiltViewModel
-class LabelsActionSheetViewModel @Inject constructor(
+internal class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getAllLabels: GetAllLabels,
     private val userManager: UserManager,
@@ -225,9 +227,11 @@ class LabelsActionSheetViewModel @Inject constructor(
         val checkedLabels = mutableListOf<String>()
         ids.forEach { id ->
             if (isActionAppliedToConversation(currentMessageFolder)) {
-                conversationsRepository.findConversation(id, userManager.requireCurrentUserId())?.let { conversation ->
-                    checkedLabels.addAll(conversation.labels.map { label -> label.id })
-                }
+                conversationsRepository.getConversation(userManager.requireCurrentUserId(), id)
+                    .first()
+                    .onSuccess { conversation ->
+                        checkedLabels.addAll(conversation.labels.map { label -> label.id })
+                    }
             } else {
                 val message = messageRepository.findMessageById(id)
                 Timber.v("Checking message labels: ${message?.labelIDsNotIncludingLocations}")

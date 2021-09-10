@@ -16,21 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.mailbox
 
-import android.os.AsyncTask
-import ch.protonmail.android.data.local.CounterDao
-import ch.protonmail.android.data.local.model.TotalLabelCounter
-import ch.protonmail.android.data.local.model.TotalLocationCounter
+package ch.protonmail.android.mailbox.domain.model
 
-internal class RefreshTotalCountersTask(
-    private val counterDao: CounterDao,
-    private val locationCounters: List<TotalLocationCounter>,
-    private val labelCounters: List<TotalLabelCounter>
-) : AsyncTask<Void, Void, Void>() {
-
-    override fun doInBackground(vararg voids: Void): Void? {
-        counterDao.refreshTotalCounters(locationCounters, labelCounters)
-        return null
-    }
-}
+/**
+ * Represents the count of unread Messages / Conversations for a given [labelId] ( or Location )
+ */
+data class UnreadCounter(
+    val labelId: String,
+    val unreadCount: Int
+)

@@ -98,14 +98,4 @@ class MessagesTypesConverterTest {
 
         assertEquals(messageType, actual)
     }
-
-    @Test
-    fun labelIds() {
-        val expected = listOf("Label 1", "Super label", "AA", "Label HMM")
-        val serialised = messagesTypesConverter.labelIdsToString(expected)
-
-        val actual = messagesTypesConverter.stringToLabelIds(serialised)
-
-        assertEquals(expected, actual)
-    }
 }

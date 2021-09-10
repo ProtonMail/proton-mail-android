@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.mailbox.presentation
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -67,7 +66,6 @@ import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.mailbox.RefreshEmptyViewTask
-import ch.protonmail.android.activities.mailbox.RefreshTotalCountersTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.adapters.messages.MailboxItemViewHolder.MessageViewHolder
@@ -78,7 +76,6 @@ import ch.protonmail.android.adapters.swipe.SpamSwipeHandler
 import ch.protonmail.android.adapters.swipe.StarSwipeHandler
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler
-import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
@@ -95,14 +92,11 @@ import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.TotalLabelCounter
-import ch.protonmail.android.data.local.model.TotalLocationCounter
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
-import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager
@@ -116,7 +110,6 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.domain.GetMailSettings
-import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
@@ -130,7 +123,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButto
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messageDetails.BottomActionsView
-import ch.protonmail.libs.core.utils.contains
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
@@ -138,6 +130,9 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
+import kotlinx.android.synthetic.main.activity_message_details.*
+import kotlinx.android.synthetic.main.navigation_drawer.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -348,14 +343,24 @@ internal class MailboxActivity :
 
         fetchOrganizationData()
 
-        mailboxViewModel.mailboxState
-            .onEach { renderState(it) }
-            .launchIn(lifecycleScope)
+        with(mailboxViewModel) {
 
-        mailboxViewModel.mailboxLocation
-            .onEach { mailboxAdapter.setNewLocation(it) }
-            .launchIn(lifecycleScope)
+            mailboxState
+                .onEach { renderState(it) }
+                .launchIn(lifecycleScope)
 
+            mailboxLocation
+                .onEach { mailboxAdapter.setNewLocation(it) }
+                .launchIn(lifecycleScope)
+
+            drawerLabels
+                .onEach { sideDrawer.setFoldersAndLabelsSection(it) }
+                .launchIn(lifecycleScope)
+
+            unreadCounters
+                .onEach { sideDrawer.setUnreadCounters(it) }
+                .launchIn(lifecycleScope)
+        }
 
         setUpMailboxActionsView()
 
@@ -759,7 +764,6 @@ internal class MailboxActivity :
     override fun onResume() {
         super.onResume()
 
-        mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         registerFcmReceiver()
         checkDelinquency()
         mailboxViewModel.checkConnectivity()
@@ -1008,20 +1012,6 @@ internal class MailboxActivity :
         }
     }
 
-    @Subscribe
-    fun onMessageCountsEvent(event: MessageCountsEvent) {
-        //region old total count
-        if (event.status != Status.SUCCESS) {
-            return
-        }
-        val response = event.unreadMessagesResponse ?: return
-        val messageCountsList = response.counts ?: emptyList()
-        counterDao = CounterDatabase
-            .getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
-        OnMessageCountsListTask(WeakReference(this), counterDao, messageCountsList).execute()
-        //endregion
-    }
-
     // region Action mode
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         actionMode = mode
@@ -1191,7 +1181,6 @@ internal class MailboxActivity :
     override fun onRefresh() {
         mailboxViewModel.checkConnectivity()
         syncUUID = UUID.randomUUID().toString()
-        mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         mailboxViewModel.refreshMessages()
     }
 
@@ -1246,29 +1235,6 @@ internal class MailboxActivity :
             addHandler(SwipeAction.STAR, StarSwipeHandler())
             addHandler(SwipeAction.ARCHIVE, ArchiveSwipeHandler())
             addHandler(SwipeAction.MARK_READ, MarkReadSwipeHandler())
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-
-            when (requestCode) {
-                REQUEST_CODE_VALIDATE_PIN -> {
-                    requireNotNull(data) { "No data for request $requestCode" }
-                    if (EXTRA_TOTAL_COUNT_EVENT in data) {
-                        val totalCountEvent: Any? = data.getSerializableExtra(
-                            EXTRA_TOTAL_COUNT_EVENT
-                        )
-                        if (totalCountEvent is MessageCountsEvent) {
-                            onMessageCountsEvent(totalCountEvent)
-                        }
-                    }
-                    super.onActivityResult(requestCode, resultCode, data)
-                }
-                else -> super.onActivityResult(requestCode, resultCode, data)
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -1611,39 +1577,4 @@ internal class MailboxActivity :
         }
     }
 
-    private class OnMessageCountsListTask internal constructor(
-        private val mailboxActivity: WeakReference<MailboxActivity>,
-        private val counterDao: CounterDao,
-        private val messageCountsList: List<MessageCount>
-    ) : AsyncTask<Unit, Unit, Int>() {
-
-        override fun doInBackground(vararg params: Unit): Int {
-            val totalInbox = counterDao.findTotalLocationById(MessageLocationType.INBOX.messageLocationTypeValue)
-            return totalInbox?.count ?: -1
-        }
-
-        override fun onPostExecute(inboxMessagesCount: Int) {
-            val mailboxActivity = mailboxActivity.get() ?: return
-            val locationCounters: MutableList<TotalLocationCounter> = ArrayList()
-            val labelCounters: MutableList<TotalLabelCounter> = ArrayList()
-            for (messageCount in messageCountsList) {
-                val labelId = messageCount.labelId
-                val total = messageCount.total
-                if (labelId.length <= 2) {
-                    val location = fromInt(Integer.valueOf(labelId))
-                    if (location == MessageLocationType.INBOX &&
-                        inboxMessagesCount in 0 until total &&
-                        !mailboxActivity.refreshMailboxJobRunning
-                    ) {
-                        mailboxActivity.checkUserAndFetchNews()
-                    }
-                    locationCounters.add(TotalLocationCounter(location.messageLocationTypeValue, total))
-                } else {
-                    // label
-                    labelCounters.add(TotalLabelCounter(labelId, total))
-                }
-            }
-            RefreshTotalCountersTask(counterDao, locationCounters, labelCounters).execute()
-        }
-    }
 }

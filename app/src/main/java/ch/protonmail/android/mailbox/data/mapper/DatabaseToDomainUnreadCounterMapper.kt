@@ -1,49 +1,39 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models;
 
-import com.google.gson.annotations.SerializedName;
+package ch.protonmail.android.mailbox.data.mapper
 
-import java.io.Serializable;
-
-import ch.protonmail.android.api.utils.Fields;
+import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
+import me.proton.core.domain.arch.Mapper
+import javax.inject.Inject
 
 /**
- * Created by dkadrikj on 18.8.15.
+ * Maps [UnreadCounterEntity] to [UnreadCounter] domain model
  */
-public class MessageCount implements Serializable {
-    @SerializedName(Fields.Message.LABEL_ID)
-    private String labelId;
-    @SerializedName(Fields.Message.TOTAL)
-    private int total;
-    @SerializedName(Fields.Unread.UNREAD)
-    private int unread;
+internal class DatabaseToDomainUnreadCounterMapper @Inject constructor() :
+    Mapper<UnreadCounterEntity, UnreadCounter> {
 
-    public String getLabelId() {
-        return labelId;
-    }
+    fun toDomainModel(counterEntity: UnreadCounterEntity) = UnreadCounter(
+        counterEntity.labelId, counterEntity.unreadCount
+    )
 
-    public int getTotal() {
-        return total;
-    }
-
-    public int getUnread() {
-        return unread;
-    }
+    fun toDomainModels(counterEntities: List<UnreadCounterEntity>): List<UnreadCounter> =
+        counterEntities.map(::toDomainModel)
 }

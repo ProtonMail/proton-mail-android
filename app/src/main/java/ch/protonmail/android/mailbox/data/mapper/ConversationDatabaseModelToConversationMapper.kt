@@ -45,13 +45,13 @@ class ConversationDatabaseModelToConversationMapper @Inject constructor(
     ) = Conversation(
         id = conversation.id,
         subject = conversation.subject,
-        senders = conversation.senders.map(senderMapper) { it.toDomainModel() },
-        receivers = conversation.recipients.map(recipientMapper) { it.toDomainModel() },
+        senders = conversation.senders.map(senderMapper) { toDomainModel(it) },
+        receivers = conversation.recipients.map(recipientMapper) { toDomainModel(it) },
         messagesCount = conversation.numMessages,
         unreadCount = conversation.numUnread,
         attachmentsCount = conversation.numAttachments,
         expirationTime = conversation.expirationTime,
-        labels = conversation.labels.map(labelMapper) { it.toDomainModel() },
+        labels = conversation.labels.map(labelMapper) { toDomainModel(it) },
         messages = messages
     )
 

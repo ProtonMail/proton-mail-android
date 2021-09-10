@@ -25,7 +25,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 import ch.protonmail.android.api.models.MailSettings;
-import ch.protonmail.android.api.models.MessageCount;
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
@@ -36,6 +35,7 @@ import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsFactory;
 import ch.protonmail.android.data.local.model.ServerFullContactDetails;
+import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel;
 
 public class EventResponse extends ResponseBody {
 
@@ -60,7 +60,7 @@ public class EventResponse extends ResponseBody {
     @SerializedName(Fields.Events.MAIL_SETTINGS)
     private MailSettings mailSettings;
     @SerializedName(Fields.Events.MESSAGE_COUNTS)
-    private List<MessageCount> messageCounts;
+    private List<CountsApiModel> messageCounts;
     @SerializedName(Fields.Events.USED_SPACE)
     private long usedSpace;
     @SerializedName(Fields.Events.ADDRESSES)
@@ -79,7 +79,7 @@ public class EventResponse extends ResponseBody {
 
     public List<ContactEmailEventBody> getContactEmailsUpdates() { return contactEmails; }
 
-    public List<MessageCount> getMessageCounts() {
+    public List<CountsApiModel> getMessageCounts() {
         return messageCounts;
     }
 
