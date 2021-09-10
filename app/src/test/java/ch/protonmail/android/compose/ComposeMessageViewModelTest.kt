@@ -371,10 +371,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // Given
             val message = Message(messageId = "message id")
-            val messageWithExpirationTime = message.copy(
-                messageId = message.messageId + "2",
-                expirationTime = 42L
-            )
+            val messageWithExpirationTime = message.copy(expirationTime = 42L)
             givenViewModelPropertiesAreInitialised()
             viewModel.setPassword(MessagePasswordUiModel.Set("messagePassword", "a hint to discover it"))
             every { workManager.cancelUniqueWork(any()) } returns mockk()
