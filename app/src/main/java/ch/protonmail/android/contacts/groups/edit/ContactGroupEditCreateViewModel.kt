@@ -60,7 +60,6 @@ class ContactGroupEditCreateViewModel @Inject constructor(
     private val contactGroupEditCreateRepository: ContactGroupEditCreateRepository
 ) : ViewModel() {
 
-    // private var contactGroupItem: ContactGroupListItem? = null
     private lateinit var mode: ContactGroupMode
     private var _changed: Boolean = false
     private var _data = listOf<ContactEmail>()

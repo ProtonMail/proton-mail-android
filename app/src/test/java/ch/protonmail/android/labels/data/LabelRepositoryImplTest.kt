@@ -24,17 +24,16 @@ import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
@@ -90,7 +89,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
     }
 
     @Test
-    fun verifyThatFetchLabelsDoesNotRefreshTheDataWhenThereIsNoConnectivity() = runBlocking {
+    fun verifyThatFetchLabelsDoesNotRefreshTheDataWhenThereIsNoConnectivity() = runBlockingTest {
         // given
         coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns false
         val dbReply = listOf(testLabelEntity1)
@@ -108,7 +107,7 @@ class LabelRepositoryImplTest : CoroutinesTest {
 
 
     @Test
-    fun verifyThatFetchLabelsDoesNotRefreshTheDataWhenThereIsConnectivityButItWasNotRequested() = runBlocking {
+    fun verifyThatFetchLabelsDoesNotRefreshTheDataWhenThereIsConnectivityButItWasNotRequested() = runBlockingTest {
         // given
         coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns true
         val dbReply = listOf(testLabelEntity1)

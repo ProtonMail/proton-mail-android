@@ -78,11 +78,11 @@ internal class ApplyMessageLabelWorker @AssistedInject constructor(
             protonMailApi.labelMessages(idList)
         }.fold(
             onSuccess = {
-                countUnread(ModificationMethod.INCREMENT, userId, labelId, messageIds)
+                updateLocalCounter(ModificationMethod.INCREMENT, userId, labelId, messageIds)
                 Result.success()
             },
             onFailure = { throwable ->
-                countUnread(ModificationMethod.DECREMENT, userId, labelId, messageIds)
+                updateLocalCounter(ModificationMethod.DECREMENT, userId, labelId, messageIds)
                 if (throwable is CancellationException) {
                     throw throwable
                 }
@@ -93,7 +93,7 @@ internal class ApplyMessageLabelWorker @AssistedInject constructor(
         )
     }
 
-    private suspend fun countUnread(
+    private suspend fun updateLocalCounter(
         modificationMethod: ModificationMethod,
         userId: UserId,
         labelId: String,

@@ -23,15 +23,15 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityRequestMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
@@ -41,7 +41,7 @@ import io.mockk.coVerifyOrder
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
 import kotlin.test.Test
@@ -91,7 +91,7 @@ class ContactGroupEditCreateRepositoryTest {
     private val testUserId = UserId("TestUserId")
 
     @Test
-    fun whenEditContactGroupSucceedsThenSaveContactGroupAndContactEmailToTheDb() = runBlocking {
+    fun whenEditContactGroupSucceedsThenSaveContactGroupAndContactEmailToTheDb() = runBlockingTest {
         // given
         val contactGroupId = "contact-group-id"
         val contactLabel = LabelEntity(
@@ -124,7 +124,7 @@ class ContactGroupEditCreateRepositoryTest {
 
 
     @Test
-    fun whenEditContactGroupApiCallFailsThenCreateContactGroupWorkerIsCalled() = runBlocking {
+    fun whenEditContactGroupApiCallFailsThenCreateContactGroupWorkerIsCalled() = runBlockingTest {
         val contactGroupId = "contact-group-id"
         val contactLabel = LabelEntity(
             LabelId(contactGroupId),
@@ -152,7 +152,7 @@ class ContactGroupEditCreateRepositoryTest {
 
     @Test
     fun whenCreateContactGroupIsCalledCreateLabelCompletableApiGetsCalledWithTheRequestObject() =
-        runBlocking {
+        runBlockingTest {
             val contactGroupId = "contact-group-id"
             val contactLabel = LabelEntity(
                 LabelId(contactGroupId),
@@ -178,7 +178,7 @@ class ContactGroupEditCreateRepositoryTest {
         }
 
     @Test
-    fun whenCreateContactGroupSucceedsThenSaveContactGroupToTheDb() = runBlocking {
+    fun whenCreateContactGroupSucceedsThenSaveContactGroupToTheDb() = runBlockingTest {
         // given
         val contactLabel =
             LabelEntity(
@@ -208,7 +208,7 @@ class ContactGroupEditCreateRepositoryTest {
     }
 
     @Test
-    fun whenCreateContactGroupApiCallFailsThenCreateContactGroupWorkerIsCalled() = runBlocking {
+    fun whenCreateContactGroupApiCallFailsThenCreateContactGroupWorkerIsCalled() = runBlockingTest {
         val contactLabel =
             LabelEntity(
                 LabelId(""), testUserId, "name", "color", 1, LabelType.CONTACT_GROUP, "a/b", "ParentId", 1,
@@ -227,7 +227,7 @@ class ContactGroupEditCreateRepositoryTest {
     }
 
     @Test
-    fun verifyThatRemovingMembersEmailsFromGroupsWorks() = runBlocking {
+    fun verifyThatRemovingMembersEmailsFromGroupsWorks() = runBlockingTest {
         // given
         val testGroupName = "testGroupName"
         val testMember1 = "one@member.com"
@@ -258,7 +258,7 @@ class ContactGroupEditCreateRepositoryTest {
     }
 
     @Test
-    fun verifyThatAddingMembersEmailsToGroupsWorks() = runBlocking {
+    fun verifyThatAddingMembersEmailsToGroupsWorks() = runBlockingTest {
         // given
         val testGroupName = "testGroupName"
         val testMember1 = "one@member.com"

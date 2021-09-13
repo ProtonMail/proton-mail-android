@@ -48,9 +48,11 @@ internal class UpdateMessageLabels @Inject constructor(
     suspend operator fun invoke(
         messageId: String,
         checkedLabelIds: List<String>
-    ) = withContext(dispatchers.Io) {
+    ): Message = withContext(dispatchers.Io) {
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
-        val message = requireNotNull(messageRepository.findMessage(userId, messageId))
+        val message = requireNotNull(messageRepository.findMessage(userId, messageId)) {
+            "Cannot continue without a message!"
+        }
         val existingLabels = labelRepository.findAllLabels(userId)
             .filter { it.id.id in message.labelIDsNotIncludingLocations }
         Timber.v("UpdateLabels checkedLabelIds: $checkedLabelIds")
@@ -67,9 +69,11 @@ internal class UpdateMessageLabels @Inject constructor(
         checkedLabelIds: List<String>,
         labels: List<LabelEntity>,
         userId: UserId
-    ) = withContext(dispatchers.Io) {
+    ): Message = withContext(dispatchers.Io) {
         val labelsToRemove = arrayListOf<String>()
-        val messageId = requireNotNull(message.messageId)
+        val messageId = requireNotNull(message.messageId) {
+            "Message id is required"
+        }
         val mutableLabelIds = checkedLabelIds.toMutableList()
         for (label in labels) {
             ensureActive()

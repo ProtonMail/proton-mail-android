@@ -31,7 +31,7 @@ import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLabelCounter;
 
-@Deprecated // replaced with  RemoveLabelWorker
+@Deprecated // replaced with MoveMessageToLocationWorker
 public class RemoveLabelJob extends ProtonMailBaseJob {
 
     private List<String> messageIds;

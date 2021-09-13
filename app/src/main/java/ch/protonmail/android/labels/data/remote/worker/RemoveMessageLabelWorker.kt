@@ -56,7 +56,9 @@ internal class RemoveMessageLabelWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val messageIds = requireNotNull(inputData.getStringArray(KEY_INPUT_DATA_MESSAGES_IDS))
+        val messageIds = requireNotNull(inputData.getStringArray(KEY_INPUT_DATA_MESSAGES_IDS)) {
+            "Cannot continue without message ids!"
+        }
         val labelId = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
         val userId = accountManager.getPrimaryUserId().filterNotNull().first()
         Timber.v("Remove label $labelId for messages: $messageIds")

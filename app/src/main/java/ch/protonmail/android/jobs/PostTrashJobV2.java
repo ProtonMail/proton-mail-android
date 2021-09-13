@@ -38,7 +38,7 @@ import ch.protonmail.android.labels.domain.model.LabelId;
 import ch.protonmail.android.labels.domain.model.LabelType;
 import timber.log.Timber;
 
-@Deprecated // replaced with PostToLocationWorker
+@Deprecated // replaced with MoveMessageToLocationWorker
 public class PostTrashJobV2 extends ProtonMailCounterJob {
 
     private final List<String> mMessageIds;

@@ -41,11 +41,11 @@ class MoveMessageToLocationWorkerTest {
 
     private val context = mockk<Context>(relaxed = true)
     private val workerParameters = mockk<WorkerParameters>(relaxed = true)
-    private val workManager = mockk<WorkManager>(relaxed = true)
+    private val workManager = mockk<WorkManager>()
 
     private val protonMailApiManager = mockk<ProtonMailApiManager>()
 
-    private val postToLocationWorker = MoveMessageToLocationWorker(
+    private val moveMessageToLocationWorker = MoveMessageToLocationWorker(
         context,
         workerParameters,
         protonMailApiManager
@@ -86,7 +86,7 @@ class MoveMessageToLocationWorkerTest {
             val expectedResult = ListenableWorker.Result.success()
 
             // when
-            val result = postToLocationWorker.doWork()
+            val result = moveMessageToLocationWorker.doWork()
 
             // then
             assertEquals(expectedResult, result)
@@ -111,7 +111,7 @@ class MoveMessageToLocationWorkerTest {
             )
 
             // when
-            val result = postToLocationWorker.doWork()
+            val result = moveMessageToLocationWorker.doWork()
 
             // then
             assertEquals(expectedResult, result)
@@ -135,7 +135,7 @@ class MoveMessageToLocationWorkerTest {
             val expectedResult = ListenableWorker.Result.retry()
 
             // when
-            val result = postToLocationWorker.doWork()
+            val result = moveMessageToLocationWorker.doWork()
 
             // then
             assertEquals(expectedResult, result)
@@ -164,7 +164,7 @@ class MoveMessageToLocationWorkerTest {
             )
 
             // when
-            val result = postToLocationWorker.doWork()
+            val result = moveMessageToLocationWorker.doWork()
 
             // then
             assertEquals(expectedResult, result)

@@ -71,7 +71,11 @@ class UpdateMessageLabelsTest {
         every { removeMessageLabelWorker.enqueue(any(), any()) } returns mockk()
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
         useCase = UpdateMessageLabels(
-            messageRepository, accountManager, labelRepository, applyMessageLabelWorker, removeMessageLabelWorker,
+            messageRepository,
+            accountManager,
+            labelRepository,
+            applyMessageLabelWorker,
+            removeMessageLabelWorker,
             TestDispatcherProvider
         )
     }

@@ -22,7 +22,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.DataSource
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsAdapter
@@ -64,8 +63,6 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
 
     @MockK
     private lateinit var accountManager: AccountManager
-
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @MockK
     private lateinit var labelRepository: LabelRepository

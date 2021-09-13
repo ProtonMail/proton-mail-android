@@ -51,14 +51,6 @@ class MailboxRecyclerViewAdapter(
 
     public fun getMailboxItem(position: Int): MailboxUiItem = getItem(position)
 
-    override fun submitList(list: List<MailboxUiItem>?) {
-        super.submitList(list)
-    }
-
-    override fun submitList(list: List<MailboxUiItem>?, commitCallback: Runnable?) {
-        super.submitList(list, commitCallback)
-    }
-
     fun setItemClick(onItemClick: ((MailboxUiItem) -> Unit)?) {
         this.onItemClick = onItemClick
     }

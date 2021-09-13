@@ -34,7 +34,7 @@ import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import timber.log.Timber;
 
-@Deprecated // replaced with PostToLocationWorker
+@Deprecated // replaced with MoveMessageToLocationWorker
 public class PostArchiveJob extends ProtonMailCounterJob {
 
     private final List<String> mMessageIds;
