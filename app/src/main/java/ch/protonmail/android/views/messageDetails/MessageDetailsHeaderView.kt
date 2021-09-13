@@ -25,7 +25,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.text.format.Formatter
-import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -100,7 +99,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val lockIconTextView: TextView
     private val lockIconExtendedTextView: TextView
     private val encryptionInfoTextView: TextView
-    private val learnMoreTextView: TextView
 
     private val repliedImageView: ImageView
     private val repliedAllImageView: ImageView
@@ -149,7 +147,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         lockIconTextView = binding.lockIconTextView
         lockIconExtendedTextView = binding.lockIconExtendedTextView
         encryptionInfoTextView = binding.encryptionInfoTextView
-        learnMoreTextView = binding.learnMoreTextView
 
         repliedImageView = binding.repliedImageView
         repliedAllImageView = binding.repliedAllImageView
@@ -215,7 +212,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         lockIconExtendedTextView.text = context.getText(senderLockIcon.icon)
         lockIconExtendedTextView.setTextColor(senderLockIcon.color)
         encryptionInfoTextView.text = context.getText(senderLockIcon.tooltip)
-        learnMoreTextView.movementMethod = LinkMovementMethod.getInstance()
 
         val messageLocation = message.location
         getIconForMessageLocation(Constants.MessageLocationType.fromInt(messageLocation))?.let { icon ->

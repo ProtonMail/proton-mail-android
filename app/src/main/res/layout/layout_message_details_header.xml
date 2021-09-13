@@ -380,16 +380,6 @@
         app:layout_constraintTop_toBottomOf="@id/storageTextView"
         tools:text="End-to-end encrypted and signed message" />
 
-    <TextView
-        android:id="@+id/learnMoreTextView"
-        style="@style/Proton.Text.DefaultSmall.Interaction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sender_lock_learn_more"
-        android:textColorLink="@color/cornflower_blue"
-        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
-        app:layout_constraintTop_toBottomOf="@id/encryptionInfoTextView" />
-
     <androidx.constraintlayout.widget.Group
         android:id="@+id/collapsedHeaderGroup"
         android:layout_width="wrap_content"
@@ -406,7 +396,7 @@
         app:constraint_referenced_ids="senderEmailTextView, lockIconExtendedTextView,
         encryptionInfoTextView, locationExtendedImageView, locationTextView,
         calendarImageView, timeDateExtendedTextView, storageImageView,
-        storageTextView, learnMoreTextView"
+        storageTextView"
         tools:visibility="visible" />
 
 </merge>
