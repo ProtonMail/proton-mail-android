@@ -20,21 +20,20 @@ package ch.protonmail.android.contacts.groups.list
 
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class ContactGroupsRepository @Inject constructor(
-    private val contactDao: ContactDao,
     private val dispatchers: DispatcherProvider,
     private val labelRepository: LabelRepository,
     private val accountsManager: AccountManager,
@@ -44,7 +43,7 @@ class ContactGroupsRepository @Inject constructor(
     fun observeContactGroups(filter: String): Flow<List<ContactLabelUiModel>> =
         accountsManager.getPrimaryUserId().filterNotNull()
             .flatMapLatest {
-                labelRepository.observeSearchContactGroups(it, filter)
+                labelRepository.observeSearchContactGroups(filter, it)
             }
             .map { labels ->
                 labels.map { entity ->
@@ -64,8 +63,8 @@ class ContactGroupsRepository @Inject constructor(
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
         contactRepository.findAllContactEmailsByContactGroupId(id)
 
-    suspend fun saveContactGroup(contactLabel: LabelEntity) {
-        labelRepository.saveLabel(contactLabel)
+    suspend fun saveContactGroup(contactLabel: Label, userId: UserId) {
+        labelRepository.saveLabel(contactLabel, userId)
     }
 
 }

@@ -21,8 +21,8 @@ package ch.protonmail.android.data
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
@@ -63,7 +63,7 @@ class ContactsRepository @Inject constructor(
             .map { contactEmail ->
                 val labelsIds = contactEmail.labelIds?.map { LabelId(it) }
                 if (!labelsIds.isNullOrEmpty()) {
-                    labelRepository.findLabels(userManager.requireCurrentUserId(), labelsIds)
+                    labelRepository.findLabels(labelsIds, userManager.requireCurrentUserId())
                 } else {
                     emptyList()
                 }

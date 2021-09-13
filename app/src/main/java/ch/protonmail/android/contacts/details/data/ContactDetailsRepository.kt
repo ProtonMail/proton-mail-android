@@ -25,7 +25,6 @@ import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
@@ -49,7 +48,6 @@ open class ContactDetailsRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val labelRepository: LabelRepository,
     private val contactRepository: ContactsRepository,
-    private val labelEntityApiMapper: LabelEntityApiMapper,
     private val labelEntityDomainMapper: LabelEntityDomainMapper
 ) {
 
@@ -64,37 +62,14 @@ open class ContactDetailsRepository @Inject constructor(
     fun observeContactEmails(contactId: String): Flow<List<ContactEmail>> =
         contactDao.observeContactEmailsByContactId(contactId)
 
-    suspend fun getContactGroups(userId: UserId): List<Label> {
-        val dbContacts = getContactGroupsFromDb(userId)
-        val apiContacts = getContactGroupsFromApi(userId)
-        return dbContacts.plus(apiContacts)
-    }
-
     suspend fun getContactEmailsCount(contactGroupId: LabelId) =
         contactRepository.countContactEmailsByLabelId(contactGroupId)
 
-    private suspend fun getContactGroupsFromApi(userId: UserId): List<Label> {
-        val contactGroupsResponse = api.getContactGroups(userId).valueOrNull?.labels
-
-        return contactGroupsResponse?.let { labels ->
-            val entities = labels.map {
-                labelEntityApiMapper.toEntity(it, userId)
-            }
-            labelRepository.deleteContactGroups(userId)
-            labelRepository.saveLabels(entities)
-            entities.map {
-                labelEntityDomainMapper.toLabel(it, getContactEmailsCount(it.id))
-            }
-
-        } ?: emptyList()
-    }
-
-    private suspend fun getContactGroupsFromDb(userId: UserId): List<Label> {
-        return labelRepository.findContactGroups(userId)
+    suspend fun getContactGroups(userId: UserId): List<Label> =
+        labelRepository.findContactGroups(userId)
             .map { entity ->
                 labelEntityDomainMapper.toLabel(entity, getContactEmailsCount(entity.id))
             }
-    }
 
     suspend fun saveContactEmails(emails: List<ContactEmail>) = withContext(dispatcherProvider.Io) {
         contactDao.saveAllContactsEmails(emails)

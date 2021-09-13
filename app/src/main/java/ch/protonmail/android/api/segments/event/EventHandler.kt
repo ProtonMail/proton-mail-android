@@ -43,10 +43,11 @@ import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -547,59 +548,24 @@ internal class EventHandler @AssistedInject constructor(
                     val id = item.id
                     val name = item.name
                     val color = item.color
-                    val order = item.order ?: 0
                     val path = item.path
                     val parentId = item.parentId
-                    val expanded = item.expanded ?: 0
-                    val sticky = item.sticky ?: 0
-                    val notify = item.notify
-                    if (labelType == LabelType.MESSAGE_LABEL) {
-                        val label = LabelEntity(
-                            id = LabelId(id),
-                            userId = userId,
-                            name = name,
-                            color = color,
-                            order = order,
-                            type = labelType,
-                            path = path,
-                            parentId = parentId ?: EMPTY_STRING,
-                            expanded = expanded,
-                            sticky = sticky,
-                            notify = notify
-                        )
-                        externalScope.launch {
-                            labelRepository.saveLabel(label)
-                        }
-                    } else if (labelType == LabelType.CONTACT_GROUP) {
-                        val label = LabelEntity(
-                            id = LabelId(id),
-                            userId = userId,
-                            name = name,
-                            color = color,
-                            order = order,
-                            type = labelType,
-                            path = path,
-                            parentId = parentId ?: EMPTY_STRING,
-                            expanded = expanded,
-                            sticky = sticky,
-                            notify = notify
-                        )
-                        externalScope.launch {
-                            labelRepository.saveLabel(label)
-                        }
+                    val label = Label(
+                        id = LabelId(id),
+                        name = name,
+                        color = color,
+                        type = labelType,
+                        path = path,
+                        parentId = parentId ?: EMPTY_STRING,
+                    )
+                    externalScope.launch {
+                        labelRepository.saveLabel(label, userId)
                     }
                 }
 
                 ActionType.UPDATE -> externalScope.launch {
-                    val labelType = item.type
-                    val labelId = item.id
-                    if (labelType == LabelType.MESSAGE_LABEL) {
-                        val label = labelRepository.findLabel(LabelId(labelId))
-                        writeMessageLabel(label, item)
-                    } else if (labelType == LabelType.CONTACT_GROUP) {
-                        val contactGroupLabel = labelRepository.findLabel(LabelId(labelId))
-                        writeContactGroup(contactGroupLabel, item)
-                    }
+                    val label = labelRepository.findLabel(LabelId(item.id))
+                    writeLabel(label, item)
                 }
 
                 ActionType.DELETE -> {
@@ -624,28 +590,16 @@ internal class EventHandler @AssistedInject constructor(
         }
     }
 
-    private fun writeMessageLabel(
+    private fun writeLabel(
         currentLabel: LabelEntity?,
         updatedLabel: LabelApiModel
     ) {
         if (currentLabel != null) {
             val mapper = LabelEntityApiMapper()
+            val domainMapper = LabelEntityDomainMapper()
             val labelToSave = mapper.toEntity(updatedLabel, userId)
             externalScope.launch {
-                labelRepository.saveLabel(labelToSave)
-            }
-        }
-    }
-
-    private fun writeContactGroup(
-        currentGroup: LabelEntity?,
-        updatedGroup: LabelApiModel
-    ) {
-        if (currentGroup != null) {
-            val mapper = LabelEntityApiMapper()
-            val labelToSave = mapper.toEntity(updatedGroup, userId)
-            externalScope.launch {
-                labelRepository.saveLabel(labelToSave)
+                labelRepository.saveLabel(domainMapper.toLabel(labelToSave), userId)
             }
         }
     }

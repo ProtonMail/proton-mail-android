@@ -196,7 +196,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
         }
         coEvery { labelRepository.findAllLabels(any()) } returns allLabels
-        coEvery { labelRepository.findLabels(currentUserId, any()) } answers {
+        coEvery { labelRepository.findLabels(any(), currentUserId) } answers {
             val labelIds = arg<List<LabelId>>(1)
             allLabels.filter { label -> label.id in labelIds }
         }
@@ -535,8 +535,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(any()) } returns false
         coEvery {
             labelRepository.findLabels(
-                currentUserId,
-                listOf(LabelId("0"), LabelId("2"))
+                listOf(LabelId("0"), LabelId("2")),
+                currentUserId
             )
         } returns listOf(
             LabelEntity(LabelId("0"), currentUserId, "label 0", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0, 0),
@@ -1069,8 +1069,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             every { conversationModeEnabled(any()) } returns false
             coEvery {
                 labelRepository.findLabels(
-                    currentUserId,
-                    listOf(LabelId(ALL_DRAFT_LABEL_ID), LabelId(DRAFT_LABEL_ID))
+                    listOf(LabelId(ALL_DRAFT_LABEL_ID), LabelId(DRAFT_LABEL_ID)),
+                    currentUserId
                 )
             } returns listOf(
                 LabelEntity(

@@ -25,6 +25,7 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityRequestMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
@@ -37,7 +38,6 @@ import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.coVerifyOrder
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
@@ -60,6 +60,8 @@ class ContactGroupEditCreateRepositoryTest {
 
     private val labelsMapper: LabelEntityApiMapper = LabelEntityApiMapper()
 
+    private val labelDomainMapper = LabelEntityDomainMapper()
+
     private val requestMapper: LabelEntityRequestMapper = LabelEntityRequestMapper()
 
     private val labelRepository: LabelRepository = mockk()
@@ -67,8 +69,8 @@ class ContactGroupEditCreateRepositoryTest {
     private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer = mockk(relaxed = true)
 
     private val repository = ContactGroupEditCreateRepository(
-        jobManager, workManager, apiManager, contactsRepository, labelsMapper, createContactGroupWorker,
-        labelRepository, requestMapper
+        jobManager, workManager, apiManager, contactsRepository, labelsMapper, labelDomainMapper,
+        createContactGroupWorker, labelRepository, requestMapper
     )
 
     private val testPath = "a/bpath"
@@ -94,13 +96,15 @@ class ContactGroupEditCreateRepositoryTest {
     fun whenEditContactGroupSucceedsThenSaveContactGroupAndContactEmailToTheDb() = runBlockingTest {
         // given
         val contactGroupId = "contact-group-id"
-        val contactLabel = LabelEntity(
+        val contactLabelEntity = LabelEntity(
             LabelId(contactGroupId), testUserId, "name", "color", 1, testType, testPath, testParentId, 0, 0, 0
         )
+
+        val contactLabel = labelDomainMapper.toLabel(contactLabelEntity)
         val labelResponse =
             LabelResponse(testLabel.copy(id = contactGroupId, type = LabelType.CONTACT_GROUP))
         coEvery { apiManager.updateLabel(any(), any(), any()) } returns ApiResult.Success(labelResponse)
-        coEvery { labelRepository.saveLabel(contactLabel) } just Runs
+        coEvery { labelRepository.saveLabel(contactLabel, testUserId) } just Runs
         val updateLabelRequest = LabelRequestBody(
             name = "name",
             color = "color",
@@ -112,13 +116,13 @@ class ContactGroupEditCreateRepositoryTest {
         )
 
         // when
-        val apiResult = repository.editContactGroup(contactLabel, testUserId)
+        val apiResult = repository.editContactGroup(contactLabelEntity, testUserId)
 
         // then
         assertNotNull(apiResult)
         coVerify { apiManager.updateLabel(testUserId, contactGroupId, updateLabelRequest) }
-        coVerifyOrder {
-            labelRepository.saveLabel(contactLabel)
+        coVerify {
+            labelRepository.saveLabel(contactLabel, testUserId)
         }
     }
 
@@ -170,7 +174,7 @@ class ContactGroupEditCreateRepositoryTest {
             val updateLabelRequest = requestMapper.toRequest(contactLabel)
             val labelResponse = LabelResponse(testLabel)
             coEvery { apiManager.createLabel(testUserId, any()) } returns ApiResult.Success(labelResponse)
-            coEvery { labelRepository.saveLabel(any()) } just Runs
+            coEvery { labelRepository.saveLabel(any(), testUserId) } just Runs
 
             repository.createContactGroup(contactLabel, testUserId)
 
@@ -180,7 +184,7 @@ class ContactGroupEditCreateRepositoryTest {
     @Test
     fun whenCreateContactGroupSucceedsThenSaveContactGroupToTheDb() = runBlockingTest {
         // given
-        val contactLabel =
+        val contactLabelEntity =
             LabelEntity(
                 LabelId("labelID"),
                 testUserId,
@@ -195,16 +199,17 @@ class ContactGroupEditCreateRepositoryTest {
                 0
             )
         val labelResponse = LabelResponse(testLabel)
+        val contactLabel = labelDomainMapper.toLabel(contactLabelEntity)
         coEvery { apiManager.createLabel(testUserId, any()) } returns ApiResult.Success(labelResponse)
-        coEvery { labelRepository.saveLabel(contactLabel) } just Runs
+        coEvery { labelRepository.saveLabel(contactLabel, testUserId) } just Runs
 
         // when
-        val apiResult = repository.createContactGroup(contactLabel, testUserId)
+        val apiResult = repository.createContactGroup(contactLabelEntity, testUserId)
 
         // then
         assertNotNull(apiResult)
         assertEquals(testLabel, (apiResult as? ApiResult.Success)?.valueOrThrow?.label)
-        coVerify { labelRepository.saveLabel(contactLabel) }
+        coVerify { labelRepository.saveLabel(contactLabel, testUserId) }
     }
 
     @Test

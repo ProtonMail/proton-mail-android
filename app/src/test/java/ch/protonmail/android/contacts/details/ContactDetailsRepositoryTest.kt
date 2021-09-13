@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.contacts.details
 
-import androidx.work.WorkManager
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
@@ -29,9 +28,8 @@ import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
-import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -50,15 +48,11 @@ import kotlin.test.Test
 
 class ContactDetailsRepositoryTest {
 
-    private val workManager: WorkManager = mockk(relaxed = true)
-
     private val jobManager: JobManager = mockk(relaxed = true)
 
     private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
 
     private val labelEntityDomainMapper: LabelEntityDomainMapper = mockk()
-
-    private val labelEntityApiMapper: LabelEntityApiMapper = mockk()
 
     private val labelsRepository: LabelRepository = mockk()
 
@@ -73,7 +67,7 @@ class ContactDetailsRepositoryTest {
 
     private val repository = ContactDetailsRepository(
         jobManager, apiManager, contactDao, TestDispatcherProvider, labelsRepository,
-        contactRepository, labelEntityApiMapper, labelEntityDomainMapper
+        contactRepository, labelEntityDomainMapper
     )
 
     @Test

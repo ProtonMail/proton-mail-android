@@ -26,12 +26,13 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -46,7 +47,6 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -73,6 +73,8 @@ class CreateContactGroupWorkerTest {
     @MockK
     private lateinit var accountManager: AccountManager
 
+    private val labelsDomainMapper = LabelEntityDomainMapper()
+
     private val labelResponse = mockk<LabelResponse> {
         every { label } returns LabelApiModel(
             id = "labelID",
@@ -87,8 +89,6 @@ class CreateContactGroupWorkerTest {
             sticky = 0
         )
     }
-
-    private var dispatcherProvider = TestDispatcherProvider
 
     private val testUserId = UserId("TestUser")
 
@@ -164,7 +164,7 @@ class CreateContactGroupWorkerTest {
 
             val result = worker.doWork()
 
-            coVerify { repository.saveContactGroup(any()) }
+            coVerify { repository.saveContactGroup(any(), testUserId) }
             assertEquals(ListenableWorker.Result.success(), result)
         }
     }
@@ -276,7 +276,7 @@ class CreateContactGroupWorkerTest {
                 Data.Builder().putString(KEY_RESULT_DATA_CREATE_CONTACT_GROUP_ERROR, error).build()
             )
             assertEquals(expectedFailure, result)
-            coVerify(exactly = 0) { repository.saveContactGroup(any()) }
+            coVerify(exactly = 0) { repository.saveContactGroup(any(), testUserId) }
         }
     }
 

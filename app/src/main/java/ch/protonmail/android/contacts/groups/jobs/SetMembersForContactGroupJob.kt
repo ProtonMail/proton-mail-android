@@ -35,13 +35,11 @@ class SetMembersForContactGroupJob(
 
     override fun onRun() {
         var id = contactGroupId
-        if (id.isEmpty()) {
-            runBlocking {
-                val contactLabel = labelRepository.findLabelByName(requireNotNull(userId), contactGroupName)
+        runBlocking {
+            if (id.isEmpty()) {
+                val contactLabel = labelRepository.findLabelByName(contactGroupName, requireNotNull(userId))
                 id = contactLabel?.id?.id ?: ""
             }
-        }
-        runBlocking {
             val labelContactsBody = LabelContactsBody(id, membersList)
             getApi().labelContacts(labelContactsBody)
         }

@@ -27,6 +27,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType.MESSAGE_LABEL
 import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
@@ -105,10 +106,10 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
             assertEquals(0, adapter.itemCount)
 
             // Add single label
-            val label = LabelEntity(
-                LabelId("1"), userId, EMPTY_STRING, EMPTY_STRING, 0, MESSAGE_LABEL, EMPTY_STRING, EMPTY_STRING, 0, 0, 0
+            val label = Label(
+                LabelId("1"), EMPTY_STRING, EMPTY_STRING, MESSAGE_LABEL, EMPTY_STRING, EMPTY_STRING
             )
-            labelRepository.saveLabel(label)
+            labelRepository.saveLabel(label, userId)
             delay(50) // Wait for async delivery
             assertEquals(1, adapter.itemCount)
 

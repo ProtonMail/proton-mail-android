@@ -25,6 +25,7 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -47,9 +48,11 @@ class LabelRepositoryImplTest : CoroutinesTest {
     private val labelDao = mockk<LabelDao>()
     private val api = mockk<ProtonMailApi>()
     private val labelMapper = LabelEntityApiMapper()
+    private val labelDomainMapper = LabelEntityDomainMapper()
     private val networkConnectivityManager = mockk<NetworkConnectivityManager>()
 
-    private val repository = LabelRepositoryImpl(labelDao, api, labelMapper, networkConnectivityManager)
+    private val repository =
+        LabelRepositoryImpl(labelDao, api, labelMapper, labelDomainMapper, networkConnectivityManager)
 
     private val dbFlow = MutableSharedFlow<List<LabelEntity>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
 

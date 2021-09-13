@@ -172,7 +172,10 @@ internal class MailboxViewModel @Inject constructor(
     ) { userId, isRefresh -> userId to isRefresh }
         .flatMapLatest { userIdPair -> observeLabels(userIdPair.first, userIdPair.second) }
         .map { labels ->
-            drawerFoldersAndLabelsSectionUiModelMapper.toUiModel(labels)
+            drawerFoldersAndLabelsSectionUiModelMapper.toUiModel(
+                // filter out contact group labels
+                labels.filter { it.type != LabelType.CONTACT_GROUP }
+            )
         }
 
     val unreadCounters: Flow<List<UnreadCounter>> = combine(
@@ -522,7 +525,7 @@ internal class MailboxViewModel @Inject constructor(
 
         val labels = labelIds
             .chunked(Constants.MAX_SQL_ARGUMENTS)
-            .flatMap { labelChunk -> labelRepository.findLabels(userId, labelChunk) }
+            .flatMap { labelChunk -> labelRepository.findLabels(labelChunk, userId) }
             .toLabelChipUiModels()
 
         return messages.map { message ->

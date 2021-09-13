@@ -25,9 +25,8 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.jobs.UpdateContactJob
-import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.JobManager
 import ezvcard.VCard
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -40,11 +39,9 @@ class EditContactDetailsRepository @Inject constructor(
     contactDao: ContactDao,
     private val labelRepository: LabelRepository,
     val contactRepository: ContactsRepository,
-    labelEntityApiMapper: LabelEntityApiMapper,
     labelEntityDomainMapper: LabelEntityDomainMapper
 ) : ContactDetailsRepository(
-    jobManager, api, contactDao, dispatcherProvider, labelRepository, contactRepository, labelEntityApiMapper,
-    labelEntityDomainMapper
+    jobManager, api, contactDao, dispatcherProvider, labelRepository, contactRepository, labelEntityDomainMapper
 ) {
 
     suspend fun clearEmail(email: String) {
@@ -61,8 +58,13 @@ class EditContactDetailsRepository @Inject constructor(
     ) {
         jobManager.addJobInBackground(
             UpdateContactJob(
-                contactId, contactName, emails, vCardEncrypted.write(),
-                vCardSigned.write(), mapEmailGroupsIds, labelRepository
+                contactId,
+                contactName,
+                emails,
+                vCardEncrypted.write(),
+                vCardSigned.write(),
+                mapEmailGroupsIds,
+                labelRepository
             )
         )
     }

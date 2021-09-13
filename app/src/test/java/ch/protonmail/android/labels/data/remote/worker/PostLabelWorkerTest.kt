@@ -25,6 +25,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
@@ -69,6 +70,7 @@ class PostLabelWorkerTest {
     private lateinit var worker: PostLabelWorker
 
     private val labelMapper = LabelEntityApiMapper()
+    private val labelDomainMapper = LabelEntityDomainMapper()
 
 
     @BeforeTest
@@ -95,6 +97,7 @@ class PostLabelWorkerTest {
             apiManager,
             repository,
             labelMapper,
+            labelDomainMapper,
             accountManager
         )
     }
@@ -140,7 +143,7 @@ class PostLabelWorkerTest {
 
             val result = worker.doWork()
 
-            coVerify { repository.saveLabel(any()) }
+            coVerify { repository.saveLabel(any(), any()) }
             assertEquals(ListenableWorker.Result.success(), result)
         }
     }
@@ -243,7 +246,7 @@ class PostLabelWorkerTest {
                 Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, error).build()
             )
             assertEquals(expectedFailure, result)
-            coVerify(exactly = 0) { repository.saveLabel(any()) }
+            coVerify(exactly = 0) { repository.saveLabel(any(), any()) }
         }
     }
 

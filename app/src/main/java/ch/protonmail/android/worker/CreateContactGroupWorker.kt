@@ -31,6 +31,7 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.labels.domain.model.LABEL_TYPE_ID_CONTACT_GROUP
@@ -56,6 +57,7 @@ class CreateContactGroupWorker @AssistedInject constructor(
     private val apiManager: ProtonMailApiManager,
     private val repository: ContactGroupsRepository,
     private val labelsMapper: LabelEntityApiMapper,
+    private val labelsDomainMapper: LabelEntityDomainMapper,
     private val accountManager: AccountManager
 ) : CoroutineWorker(context, params) {
 
@@ -70,8 +72,10 @@ class CreateContactGroupWorker @AssistedInject constructor(
                     return failureResultWithError("Error, Label id is empty")
                 }
                 val userId = requireNotNull(accountManager.getPrimaryUserId().first())
-                val contactLabel = labelsMapper.toEntity(labelResponse.label, userId)
-                repository.saveContactGroup(contactLabel)
+                val contactLabel = labelsDomainMapper.toLabel(
+                    labelsMapper.toEntity(labelResponse.label, userId)
+                )
+                repository.saveContactGroup(contactLabel, userId)
                 return Result.success()
             }
             is ApiResult.Error.Http -> {

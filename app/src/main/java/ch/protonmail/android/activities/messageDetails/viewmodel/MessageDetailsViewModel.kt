@@ -270,7 +270,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         message: Message
     ): Pair<Collection<LabelEntity>, List<LabelChipUiModel>>? {
         val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
-        return labelRepository.observeLabels(userId, allLabelIds)
+        return labelRepository.observeLabels(allLabelIds, userId)
             .firstOrNull()
             ?.partition { it.type == LabelType.FOLDER }
             ?.mapSecond { it.toNonExclusiveLabelModel() }

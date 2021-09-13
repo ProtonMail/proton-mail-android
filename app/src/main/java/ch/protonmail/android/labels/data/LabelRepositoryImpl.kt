@@ -25,7 +25,9 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.coroutines.async
@@ -42,7 +44,8 @@ import javax.inject.Inject
 internal class LabelRepositoryImpl @Inject constructor(
     private val labelDao: LabelDao,
     private val api: ProtonMailApi,
-    private val labelMapper: LabelEntityApiMapper,
+    private val labelApiMapper: LabelEntityApiMapper,
+    private val labelDomainMapper: LabelEntityDomainMapper,
     private val networkConnectivityManager: NetworkConnectivityManager
 ) : LabelRepository {
 
@@ -61,11 +64,11 @@ internal class LabelRepositoryImpl @Inject constructor(
     override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<LabelEntity> =
         observeAllLabels(userId, shallRefresh).first()
 
-    override fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>> =
+    override fun observeLabels(labelsIds: List<LabelId>, userId: UserId): Flow<List<LabelEntity>> =
         labelDao.observeLabelsById(userId, labelsIds)
 
-    override suspend fun findLabels(userId: UserId, labelsIds: List<LabelId>): List<LabelEntity> =
-        observeLabels(userId, labelsIds).first()
+    override suspend fun findLabels(labelsIds: List<LabelId>, userId: UserId): List<LabelEntity> =
+        observeLabels(labelsIds, userId).first()
 
     override suspend fun findLabel(labelId: LabelId): LabelEntity? =
         labelDao.findLabelById(labelId)
@@ -85,10 +88,10 @@ internal class LabelRepositoryImpl @Inject constructor(
     override suspend fun findContactGroups(userId: UserId): List<LabelEntity> =
         labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP)
 
-    override fun observeSearchContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>> =
+    override fun observeSearchContactGroups(labelName: String, userId: UserId): Flow<List<LabelEntity>> =
         labelDao.observeSearchLabelsByNameAndType(userId, labelName, LabelType.CONTACT_GROUP)
 
-    override suspend fun findLabelByName(userId: UserId, labelName: String): LabelEntity? =
+    override suspend fun findLabelByName(labelName: String, userId: UserId): LabelEntity? =
         labelDao.findLabelByName(userId, labelName)
 
     override fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
@@ -97,13 +100,24 @@ internal class LabelRepositoryImpl @Inject constructor(
     override fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
         labelDao.findAllLabelsPaged(userId, LabelType.FOLDER)
 
-    override suspend fun saveLabels(labels: List<LabelEntity>) {
+    override suspend fun saveLabels(labels: List<Label>, userId: UserId) {
+        saveLabels(
+            labels.map {
+                labelDomainMapper.toEntity(it, userId)
+            }
+        )
+    }
+
+    private suspend fun saveLabels(labels: List<LabelEntity>) {
         Timber.v("Save labels: ${labels.map { it.id.id }}")
         labelDao.insertOrUpdate(*labels.toTypedArray())
     }
 
-    override suspend fun saveLabel(label: LabelEntity) =
-        saveLabels(listOf(label))
+    override suspend fun saveLabel(label: Label, userId: UserId) {
+        saveLabels(
+            listOf(labelDomainMapper.toEntity(label, userId))
+        )
+    }
 
     override suspend fun deleteLabel(labelId: LabelId) {
         labelDao.deleteLabelById(labelId)
@@ -124,7 +138,7 @@ internal class LabelRepositoryImpl @Inject constructor(
         val serverFolders = async { api.getFolders(userId).valueOrThrow.labels }
         val serverContactGroups = async { api.getContactGroups(userId).valueOrThrow.labels }
         val allLabels = serverLabels.await() + serverFolders.await() + serverContactGroups.await()
-        val allLabelsEntities = allLabels.map { labelMapper.toEntity(it, userId) }
+        val allLabelsEntities = allLabels.map { labelApiMapper.toEntity(it, userId) }
         Timber.v("fetchAndSaveAllLabels size: ${allLabelsEntities.size} user: $userId")
         saveLabels(allLabelsEntities)
         allLabelsEntities

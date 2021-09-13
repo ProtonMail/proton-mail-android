@@ -22,11 +22,12 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
@@ -39,6 +40,7 @@ class ContactEmailsManager @Inject constructor(
     private val databaseProvider: DatabaseProvider,
     private val accountManager: AccountManager,
     private val labelsMapper: LabelEntityApiMapper,
+    private val labelsDomainMapper: LabelEntityDomainMapper,
     private val labelRepository: LabelRepository
 ) {
 
@@ -61,16 +63,18 @@ class ContactEmailsManager @Inject constructor(
             val allContactEmails = allResults.flatMap { it.contactEmails }
             val contactLabels = mapToContactLabelsEntity(contactGroupsResponse?.labels, userId)
             val contactsDao = databaseProvider.provideContactDao(userId)
-            labelRepository.saveLabels(contactLabels)
+            labelRepository.saveLabels(contactLabels, userId)
             contactsDao.insertNewContacts(allContactEmails)
         } else {
             Timber.v("contactEmails result list is empty")
         }
     }
 
-    private fun mapToContactLabelsEntity(labels: List<LabelApiModel>?, userId: UserId): List<LabelEntity> {
+    private fun mapToContactLabelsEntity(labels: List<LabelApiModel>?, userId: UserId): List<Label> {
         return labels?.map { label ->
             labelsMapper.toEntity(label, userId)
+        }?.map {
+            labelsDomainMapper.toLabel(it)
         } ?: emptyList()
     }
 

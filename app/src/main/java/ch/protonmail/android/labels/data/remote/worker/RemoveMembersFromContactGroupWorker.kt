@@ -76,7 +76,7 @@ class RemoveMembersFromContactGroupWorker @AssistedInject constructor(
         Timber.v("Remove group Members $membersList")
 
         if (id.isEmpty() && contactGroupName?.isNotEmpty() == true) {
-            val contactLabel = labelRepository.findLabelByName(userId, contactGroupName)
+            val contactLabel = labelRepository.findLabelByName(contactGroupName, userId)
             id = contactLabel?.id?.id ?: ""
         }
 

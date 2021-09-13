@@ -26,6 +26,7 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityRequestMapper
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.labels.data.remote.worker.RemoveMembersFromContactGroupWorker
@@ -45,6 +46,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     val apiManager: ProtonMailApiManager,
     private val contactRepository: ContactsRepository,
     private val labelsMapper: LabelEntityApiMapper,
+    private val labelsDomainMapper: LabelEntityDomainMapper,
     private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer,
     private val labelRepository: LabelRepository,
     private val requestMapper: LabelEntityRequestMapper
@@ -57,7 +59,10 @@ class ContactGroupEditCreateRepository @Inject constructor(
             is ApiResult.Success -> {
                 val label = updateLabelResult.value.label
                 labelRepository.saveLabel(
-                    labelsMapper.toEntity(label, userId)
+                    labelsDomainMapper.toLabel(
+                        labelsMapper.toEntity(label, userId),
+                    ),
+                    userId
                 )
             }
             is ApiResult.Error.Http -> {
@@ -159,7 +164,10 @@ class ContactGroupEditCreateRepository @Inject constructor(
             is ApiResult.Success -> {
                 val label = createLabelResult.value.label
                 labelRepository.saveLabel(
-                    labelsMapper.toEntity(label, userId)
+                    labelsDomainMapper.toLabel(
+                        labelsMapper.toEntity(label, userId),
+                    ),
+                    userId
                 )
             }
             is ApiResult.Error.Http -> {

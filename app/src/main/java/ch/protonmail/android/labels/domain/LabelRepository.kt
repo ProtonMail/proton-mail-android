@@ -21,6 +21,7 @@ package ch.protonmail.android.labels.domain
 
 import androidx.paging.DataSource
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
@@ -31,9 +32,9 @@ interface LabelRepository {
 
     suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean = false): List<LabelEntity>
 
-    fun observeLabels(userId: UserId, labelsIds: List<LabelId>): Flow<List<LabelEntity>>
+    fun observeLabels(labelsIds: List<LabelId>, userId: UserId): Flow<List<LabelEntity>>
 
-    suspend fun findLabels(userId: UserId, labelsIds: List<LabelId>): List<LabelEntity>
+    suspend fun findLabels(labelsIds: List<LabelId>, userId: UserId): List<LabelEntity>
 
     suspend fun findLabel(labelId: LabelId): LabelEntity?
 
@@ -43,19 +44,19 @@ interface LabelRepository {
 
     fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>>
 
-    fun observeSearchContactGroups(userId: UserId, labelName: String): Flow<List<LabelEntity>>
+    fun observeSearchContactGroups(labelName: String, userId: UserId): Flow<List<LabelEntity>>
 
     suspend fun findContactGroups(userId: UserId): List<LabelEntity>
 
-    suspend fun findLabelByName(userId: UserId, labelName: String): LabelEntity?
+    suspend fun findLabelByName(labelName: String, userId: UserId): LabelEntity?
 
     fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
     fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 
-    suspend fun saveLabel(label: LabelEntity)
+    suspend fun saveLabel(label: Label, userId: UserId)
 
-    suspend fun saveLabels(labels: List<LabelEntity>)
+    suspend fun saveLabels(labels: List<Label>, userId: UserId)
 
     suspend fun deleteLabel(labelId: LabelId)
 
