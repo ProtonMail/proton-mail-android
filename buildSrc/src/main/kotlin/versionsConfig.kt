@@ -95,7 +95,7 @@ const val `Proton-user-settings version` =      "1.5.1"         // Released: Jul
 
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
-const val `android-test-ext version` =          "1.1.3-alpha05" // Released: Mar 15, 2021
+const val `android-test-ext version` =          "1.1.3-rc01"    // Released: Jun 22, 2021
 const val `assertJ version` =                   "3.13.2"        // Released: Aug 04, 2019
 const val `falcon version` =                    "2.1.1"         // Released: Sep 24, 2018
 const val `hamcrest version` =                  "1.3"           // Released:
@@ -137,7 +137,7 @@ const val `sentry version` =                    "1.7.30"        // Released: Jan
 const val `sentry-plugin version` =             "1.7.36"        // Released: Oct 16, 2020
 const val `sonarQube version` =                 "2.7.1"         // Released: May 14, 2019
 const val `stetho version` =                    "1.5.1"         // Released: Mar 18, 2019
-const val `timber version` =                    "4.7.1"         // Released:
+const val `timber version` =                    "4.7.1"         // Released: 
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
 const val `remark version` =                    "1.1.0"         // Released: Dec 08, 2016
 const val `store version` =                     "4.0.2-KT15"    // Released: May 17, 2021
