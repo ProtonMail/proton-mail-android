@@ -23,22 +23,22 @@ import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.enumerations.PackageType
 
 class ComposerLockIcon(
-    private val mSendPreference: SendPreference,
-    private val mEOEnabled: Boolean
+    private val sendPreference: SendPreference,
+    private val isMessagePasswordEncrypted: Boolean
 ) : LockIcon {
 
     override fun getIcon(): Int {
-        if (mSendPreference.isEncryptionEnabled) {
-            return if (mSendPreference.hasPinnedKeys()) {
+        if (sendPreference.isEncryptionEnabled) {
+            return if (sendPreference.hasPinnedKeys()) {
                 R.string.pgp_lock_check
             } else {
                 R.string.lock_default
             }
         }
-        if (mEOEnabled) {
+        if (isMessagePasswordEncrypted) {
             return R.string.lock_default
         }
-        return if (mSendPreference.isSignatureEnabled) {
+        return if (sendPreference.isSignatureEnabled) {
             R.string.pgp_lock_pen
         } else {
             R.string.no_icon
@@ -46,12 +46,12 @@ class ComposerLockIcon(
     }
 
     override fun getColor(): Int {
-        if (mSendPreference.encryptionScheme == PackageType.PM ||
-            !mSendPreference.isEncryptionEnabled && mEOEnabled
+        if (sendPreference.encryptionScheme == PackageType.PM ||
+            !sendPreference.isEncryptionEnabled && isMessagePasswordEncrypted
         ) {
             return R.color.icon_purple
         }
-        return if (mSendPreference.isPGP) {
+        return if (sendPreference.isPGP) {
             R.color.icon_green
         } else {
             R.color.icon_warning
@@ -59,18 +59,18 @@ class ComposerLockIcon(
     }
 
     override fun getTooltip(): Int {
-        if (mSendPreference.encryptionScheme == PackageType.PM) {
-            return if (mSendPreference.hasPinnedKeys()) {
+        if (sendPreference.encryptionScheme == PackageType.PM) {
+            return if (sendPreference.hasPinnedKeys()) {
                 R.string.composer_lock_internal_pinned
             } else {
                 R.string.composer_lock_internal
             }
         }
-        if (!mSendPreference.isEncryptionEnabled && mEOEnabled) {
+        if (!sendPreference.isEncryptionEnabled && isMessagePasswordEncrypted) {
             return R.string.composer_lock_internal
         }
-        return if (mSendPreference.isPGP) {
-            if (mSendPreference.isEncryptionEnabled) {
+        return if (sendPreference.isPGP) {
+            if (sendPreference.isEncryptionEnabled) {
                 R.string.composer_lock_pgp_encrypted_pinned
             } else {
                 R.string.composer_lock_pgp_signed
