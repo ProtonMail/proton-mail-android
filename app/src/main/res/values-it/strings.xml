@@ -976,4 +976,5 @@
     <string name="details_show_history">Mostra cronologia</string>
     <string name="could_not_complete_action">Impossibile completare l\'azione</string>
     <string name="decryption_of_message_failed">Errore di decriptazione: decriptazione del contenuto crittografato di questo messaggio fallita.</string>
+    <string name="labels_selected_limit_reached">Limit reached</string>
 </resources>

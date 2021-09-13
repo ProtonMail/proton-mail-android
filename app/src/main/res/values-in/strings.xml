@@ -958,4 +958,5 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="details_show_history">Tampilkan riwayat</string>
     <string name="could_not_complete_action">Tidak dapat menyelesaikan tindakan</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
+    <string name="labels_selected_limit_reached">Limit reached</string>
 </resources>
