@@ -314,13 +314,7 @@ internal class MessageDetailsAdapter(
             val messageActionsView: MessageDetailsActionsView =
                 itemView.messageWebViewContainer.findViewById(R.id.item_message_body_actions_layout_id) ?: return
 
-            val replyMode = if (message.toList.size + message.ccList.size > 1) {
-                MessageDetailsActionsView.ReplyMode.REPLY_ALL
-            } else {
-                MessageDetailsActionsView.ReplyMode.REPLY
-            }
             val uiModel = MessageDetailsActionsView.UiModel(
-                replyMode,
                 messageHtmlWithQuotedHistory.isNullOrEmpty(),
                 message.isDraft()
             )
@@ -330,7 +324,6 @@ internal class MessageDetailsAdapter(
                 loadHtmlDataIntoWebView(webView, messageHtmlWithQuotedHistory.orEmpty())
                 showHistoryButton.isVisible = false
             }
-            messageActionsView.onReplyClicked { onReplyMessageClicked(message) }
             messageActionsView.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
         }
 

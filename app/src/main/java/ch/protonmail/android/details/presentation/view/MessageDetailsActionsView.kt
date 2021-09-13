@@ -25,11 +25,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
-import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import ch.protonmail.android.R
 import ch.protonmail.android.databinding.MessageDetailsActionsBinding
 
 class MessageDetailsActionsView @JvmOverloads constructor(
@@ -39,7 +36,6 @@ class MessageDetailsActionsView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val showHistoryButton: Button
-    private val replyButton: ImageButton
     private val moreActionsButton: ImageButton
 
     init {
@@ -48,18 +44,12 @@ class MessageDetailsActionsView @JvmOverloads constructor(
             this
         )
         showHistoryButton = binding.detailsButtonShowHistory
-        replyButton = binding.detailsButtonReply
         moreActionsButton = binding.detailsButtonMoreActions
     }
 
     fun bind(uiModel: UiModel) {
-        replyButton.setImageDrawable(ContextCompat.getDrawable(context, uiModel.replyMode.drawableId))
         showHistoryButton.isVisible = !uiModel.hideShowHistory
         this.isVisible = !uiModel.hideAllActions
-    }
-
-    fun onReplyClicked(callback: (View) -> Unit) {
-        replyButton.setOnClickListener { callback(it) }
     }
 
     fun onShowHistoryClicked(callback: (View) -> Unit) {
@@ -71,13 +61,7 @@ class MessageDetailsActionsView @JvmOverloads constructor(
     }
 
     data class UiModel(
-        val replyMode: ReplyMode,
         val hideShowHistory: Boolean,
         val hideAllActions: Boolean
     )
-
-    enum class ReplyMode(@DrawableRes val drawableId: Int) {
-        REPLY(R.drawable.ic_reply),
-        REPLY_ALL(R.drawable.ic_reply_all),
-    }
 }

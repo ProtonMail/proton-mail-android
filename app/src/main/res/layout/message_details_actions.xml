@@ -38,21 +38,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-
-    <ImageButton
-        android:id="@+id/details_button_reply"
-        style="@style/ProtonImage.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_m"
-        android:contentDescription="@string/reply"
-        android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_reply"
-        app:layout_constraintEnd_toStartOf="@id/details_button_more_actions"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:tint="@color/cornflower_blue" />
-
     <ImageButton
         android:id="@+id/details_button_more_actions"
         style="@style/ProtonImage.ImageButton"
