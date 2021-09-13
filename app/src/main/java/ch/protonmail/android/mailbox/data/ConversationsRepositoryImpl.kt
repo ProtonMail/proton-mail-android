@@ -528,7 +528,8 @@ internal class ConversationsRepositoryImpl @Inject constructor(
             newLabels.add(newLabel)
         }
         val labels = conversation.labels.toMutableList()
-        labels.removeIf { it.id in labelIds }
+
+        labels.removeAll { it.id in labelIds }
         labels.addAll(newLabels)
         Timber.v("Update labels: $labels conversation: $conversationId")
         conversationDao.updateLabels(conversationId, labels)
@@ -546,7 +547,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
             return ConversationsActionResult.Error
         }
         val labels = conversation.labels.toMutableList()
-        labels.removeIf { it.id in labelIds }
+        labels.removeAll { it.id in labelIds }
         conversationDao.updateLabels(conversationId, labels)
         return ConversationsActionResult.Success
     }
