@@ -34,56 +34,47 @@ internal const val EXPANDED = "Expanded"
 internal const val STICKY = "Sticky"
 internal const val PARENT_ID = "ParentID"
 
+/**
+ * Label model as received from the backend.
+ *
+ * @property name required, cannot be same as an existing label of this Type. Max length is 100 characters
+ * @property path required, relative folder path e.g. "Folder/Event Label!",
+ * @property color required, must match default colors
+ * @property type required, 1 => Message Labels (default), 2 => Contact Groups, 3 => Message Folders
+ * @property notify optional, 0 => no desktop/email notifications, 1 => notifications, folders only, default is 1 for folders
+ * @property parentId optional, encrypted label id of parent folder, default is root level
+ * @property expanded optional, 0 => collapse and hide sub-folders, 1 => expanded and show sub-folders
+ * @property sticky optional, 0 => not sticky, 1 => stick to the page in the sidebar
+ */
 @Serializable
 data class LabelApiModel(
     @SerialName(ID)
     val id: String,
 
-    /**
-     * @property name required, cannot be same as an existing label of this Type. Max length is 100 characters
-     */
     @SerialName(NAME)
     val name: String,
 
     @SerialName(PATH)
     val path: String,
 
-    /**
-     * @property color required, must match default colors
-     */
     @SerialName(COLOR)
     val color: String,
 
-    /**
-     * @property type required, 1 => Message Labels (default), 2 => Contact Groups, 3 => Message Folders
-     */
     @SerialName(TYPE)
     val type: LabelType,
 
-    /**
-     * @property notify optional, 0 => no desktop/email notifications, 1 => notifications, folders only, default is 1 for folders
-     */
     @SerialName(NOTIFY)
     val notify: Int,
 
     @SerialName(ORDER)
     val order: Int?,
 
-    /**
-     * @property parentId optional, encrypted label id of parent folder, default is root level
-     */
     @SerialName(PARENT_ID)
     val parentId: String? = null,
 
-    /**
-     * @property expanded optional, 0 => collapse and hide sub-folders, 1 => expanded and show sub-folders
-     */
     @SerialName(EXPANDED)
     val expanded: Int?,
 
-    /**
-     * @property sticky optional, 0 => not sticky, 1 => stick to the page in the sidebar
-     */
     @SerialName(STICKY)
     val sticky: Int?,
 )
