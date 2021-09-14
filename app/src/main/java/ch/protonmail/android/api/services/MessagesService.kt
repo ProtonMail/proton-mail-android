@@ -53,7 +53,7 @@ private const val EXTRA_REFRESH_MESSAGES = "refreshMessages"
 
 
 @AndroidEntryPoint
-class MessagesService : JobIntentService() {
+internal class MessagesService : JobIntentService() {
 
     @Inject
     internal lateinit var mApi: ProtonMailApiManager

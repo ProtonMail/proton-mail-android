@@ -22,7 +22,6 @@ package ch.protonmail.android.labels.domain
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.work.WorkInfo
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -53,9 +52,9 @@ interface LabelRepository {
 
     suspend fun findLabelByName(labelName: String, userId: UserId): Label?
 
-    fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
+    fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, Label>
 
-    fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
+    fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, Label>
 
     suspend fun saveLabel(label: Label, userId: UserId)
 

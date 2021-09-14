@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.details
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.util.PatternsCompat
@@ -29,7 +28,6 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
-import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.UserManager
@@ -37,7 +35,6 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
@@ -81,57 +78,10 @@ open class ContactDetailsViewModelOld @Inject constructor(
     private val _setupComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _setupError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
 
-    private var _emailGroupsResult: MutableLiveData<ContactEmailsGroups> = MutableLiveData()
-    private val _emailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
-    private val _mapEmailGroups: HashMap<String, List<LabelEntity>> = HashMap()
-
-    private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabelUiModel>> = MutableLiveData()
-    private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
-
     val setupComplete: LiveData<Event<Boolean>>
         get() = _setupComplete
 
     val profilePicture = ViewStateStore<Bitmap>().lock
-
-    @SuppressLint("CheckResult")
-    fun mergeContactEmailGroups(email: String) {
-        Observable.just(allContactEmails)
-            .flatMap { emailList ->
-                val contactEmail =
-                    emailList.find { contactEmail -> contactEmail.email == email }!!
-                val list1 = allContactGroups
-                val list2 = _mapEmailGroups[contactEmail.contactEmailId]
-                list2?.let { _ ->
-                    list1.forEach { contactLabel ->
-                        val selectedState =
-                            list2.find { selected -> selected.id == contactLabel.id } != null
-                        contactLabel.copy(
-                            isSelected = if (selectedState) {
-                                SELECTED
-                            } else {
-                                ContactEmailGroupSelectionState.DEFAULT
-                            }
-                        )
-                    }
-                }
-                Observable.just(list1)
-            }
-            .subscribe(
-                {
-                    _mergedContactEmailGroupsResult.postValue(it)
-                },
-                {
-                    _mergedContactEmailGroupsError.postValue(
-                        Event(
-                            ErrorResponse(
-                                it.message ?: "",
-                                ErrorEnum.INVALID_GROUP_LIST
-                            )
-                        )
-                    )
-                }
-            )
-    }
 
     fun fetchContactGroupsAndContactEmails(contactId: String) {
         val userId = userManager.requireCurrentUserId()

@@ -25,7 +25,6 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.jobs.UpdateContactJob
-import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.JobManager
 import ezvcard.VCard
@@ -38,8 +37,7 @@ class EditContactDetailsRepository @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     contactDao: ContactDao,
     private val labelRepository: LabelRepository,
-    val contactRepository: ContactsRepository,
-    labelEntityDomainMapper: LabelEntityDomainMapper
+    val contactRepository: ContactsRepository
 ) : ContactDetailsRepository(
     jobManager, api, contactDao, dispatcherProvider, labelRepository, contactRepository
 ) {

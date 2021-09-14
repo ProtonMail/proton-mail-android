@@ -36,7 +36,6 @@ import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
-import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filterNotNull
@@ -63,10 +62,10 @@ internal class LabelsManagerViewModel @Inject constructor(
 ) : ViewModel(), ViewStateStoreScope {
 
     // Extract the original form of the data
-    private val type: LabelUiModel.Type = if (savedStateHandle.get<Boolean>(EXTRA_MANAGE_FOLDERS) == true) {
-        LabelUiModel.Type.FOLDERS
+    private val type: LabelType = if (savedStateHandle.get<Boolean>(EXTRA_MANAGE_FOLDERS) == true) {
+        LabelType.FOLDER
     } else {
-        LabelUiModel.Type.LABELS
+        LabelType.MESSAGE_LABEL
     }
 
     /** Triggered when a selection has changed */
@@ -88,16 +87,17 @@ internal class LabelsManagerViewModel @Inject constructor(
      * Triggered when a Labels are updated in DB
      */
     private val labelsSource = when (type) {
-        LabelUiModel.Type.LABELS -> labelRepository.findAllLabelsPaged(
+        LabelType.MESSAGE_LABEL -> labelRepository.findAllLabelsPaged(
             runBlocking {
                 accountManager.getPrimaryUserId().filterNotNull().first()
             }
         )
-        LabelUiModel.Type.FOLDERS -> labelRepository.findAllFoldersPaged(
+        LabelType.FOLDER -> labelRepository.findAllFoldersPaged(
             runBlocking {
                 accountManager.getPrimaryUserId().filterNotNull().first()
             }
         )
+        LabelType.CONTACT_GROUP -> throw IllegalArgumentException("We cannot manage contact groups here!")
     }
 
     private val labelMapper = LabelUiModelMapper()
@@ -109,13 +109,13 @@ internal class LabelsManagerViewModel @Inject constructor(
      */
     val labels = ViewStateStore.from(
         selectedLabelIds.switchMap { selectedList ->
-            labelsSource.map(labelMapper) {
-                it.toUiModel().copy(isChecked = it.id.id in selectedList)
+            labelsSource.map {
+                labelMapper.toUiModel(it).copy(isChecked = it.id.id in selectedList)
             }.toLiveData(20)
         }
     ).lock
 
-    /** A reference to a [LabelEditor] for edit a [LabelEntity] */
+    /** A reference to a [LabelEditor] for edit a [Label] */
     private var labelEditor: LabelEditor? = null
 
     /** [ColorInt] that hold the color for a new Label */
@@ -207,9 +207,9 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
             labelName = name.toString(),
             color = color.toColorHex(),
             expanded = initialLabel.expanded,
-            isFolder = initialLabel.type.toExclusive(),
+            isFolder = initialLabel.type == LabelType.FOLDER,
             update = true,
-            labelId = initialLabel.labelId
+            labelId = initialLabel.labelId.id
         )
     }
 
@@ -218,7 +218,7 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
         val labelName: String,
         val color: String,
         val expanded: Int,
-        val isFolder: Int,
+        val isFolder: Boolean,
         val update: Boolean,
         val labelId: String
     )
@@ -226,10 +226,6 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
 
 /** @return [String] color hex from a [ColorInt] */
 private fun Int.toColorHex() = String.format("#%06X", 0xFFFFFF and this)
-
-/** @return [Boolean] exclusive from a [LabelUiModel.Type] */
-@Deprecated("Exclusive field was used in Labels apiv3, which is no longer in use")
-private fun LabelUiModel.Type.toExclusive() = if (this == LabelUiModel.Type.FOLDERS) 1 else 0
 
 // region Selected Labels extensions
 private typealias MutableLiveStringSet = MutableLiveData<MutableSet<String>>

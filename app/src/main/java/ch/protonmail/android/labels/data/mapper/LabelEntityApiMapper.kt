@@ -20,8 +20,8 @@
 package ch.protonmail.android.labels.data.mapper
 
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.domain.model.LabelId
 import me.proton.core.domain.arch.Mapper
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING

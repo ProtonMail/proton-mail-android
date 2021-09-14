@@ -16,13 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.details
 
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+package ch.protonmail.android.labels.data.mapper
 
-data class ContactEmailsGroups(
-    val groups: List<LabelEntity>,
-    val emailId: String?,
-    val rowID: Int
-)
+import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
+import ch.protonmail.android.labels.domain.model.Label
+import me.proton.core.domain.arch.Mapper
+import javax.inject.Inject
 
+class LabelRequestMapper @Inject constructor() : Mapper<Label, LabelRequestBody> {
+
+    fun toRequest(labelEntity: Label) = LabelRequestBody(
+        name = labelEntity.name,
+        color = labelEntity.color,
+        type = labelEntity.type.typeInt,
+        parentId = if (labelEntity.parentId.isBlank()) null else labelEntity.parentId,
+        notify = null,
+        expanded = null,
+        sticky = null
+    )
+}

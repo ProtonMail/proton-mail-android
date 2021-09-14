@@ -25,6 +25,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.extensions.truncateToLength
 import ch.protonmail.libs.core.ui.adapter.BasePagedAdapter
@@ -80,11 +81,11 @@ internal class LabelsAdapter :
             }
 
             // Set View
-            if (item.type == LabelUiModel.Type.LABELS) {
+            if (item.type == LabelType.MESSAGE_LABEL) {
                 color.layoutParams.height = resources.getDimensionPixelSize(R.dimen.padding_l)
                 color.layoutParams.width = resources.getDimensionPixelSize(R.dimen.padding_l)
                 color.setImageDrawable(getDrawable(R.drawable.circle_labels_selection))
-            } else if (item.type == LabelUiModel.Type.FOLDERS) {
+            } else if (item.type == LabelType.FOLDER) {
                 color.layoutParams.height = resources.getDimensionPixelSize(R.dimen.padding_xl)
                 color.layoutParams.width = resources.getDimensionPixelSize(R.dimen.padding_xl)
                 color.setImageDrawable(getDrawable(R.drawable.ic_folder_filled))

@@ -29,7 +29,7 @@ import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.utils.Event
@@ -158,18 +158,13 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         contactGroupItem: ContactGroupListItem?
     ) {
         val userId = requireNotNull(accountManager.getPrimaryUserId().first())
-        val contactLabel = LabelEntity(
+        val contactLabel = Label(
             id = LabelId(requireNotNull(contactGroupItem?.contactId)),
-            userId = userId,
             name = name,
             color = String.format(Locale.getDefault(), "#%06X", 0xFFFFFF and (contactGroupItem?.color ?: 0)),
             type = LabelType.CONTACT_GROUP,
             path = "",
-            expanded = 0,
-            order = 0,
-            parentId = "",
-            sticky = 0,
-            notify = 0
+            parentId = ""
         )
         when (
             val editContactResult = contactGroupEditCreateRepository.editContactGroup(contactLabel, userId)
@@ -200,18 +195,13 @@ class ContactGroupEditCreateViewModel @Inject constructor(
     ) {
 
         val userId = requireNotNull(accountManager.getPrimaryUserId().first())
-        val contactLabel = LabelEntity(
+        val contactLabel = Label(
             id = LabelId(EMPTY_STRING),
-            userId = userId,
             name = name,
             color = String.format(Locale.getDefault(), "#%06X", 0xFFFFFF and (contactGroupItem?.color ?: 0)),
             type = LabelType.CONTACT_GROUP,
             path = "",
-            expanded = 0,
-            order = 0,
-            parentId = "",
-            sticky = 0,
-            notify = 0
+            parentId = ""
         )
         if (!validate(contactLabel)) {
             _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.VALIDATION_FAILED)))
@@ -237,7 +227,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         }
     }
 
-    private fun validate(contactLabel: LabelEntity): Boolean {
+    private fun validate(contactLabel: Label): Boolean {
         if (contactLabel.name.isEmpty()) {
             return false
         }

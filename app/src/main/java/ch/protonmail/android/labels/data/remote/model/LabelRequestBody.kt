@@ -22,6 +22,14 @@ package ch.protonmail.android.labels.data.remote.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+private const val NAME = "Name"
+private const val COLOR = "Color"
+private const val TYPE = "Type"
+private const val NOTIFY = "Notify"
+private const val EXPANDED = "Expanded"
+private const val STICKY = "Sticky"
+private const val PARENT_ID = "ParentID"
+
 @Serializable
 data class LabelRequestBody(
     @SerialName(NAME)

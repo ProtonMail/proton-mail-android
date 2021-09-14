@@ -20,28 +20,15 @@ package ch.protonmail.android.uiModel
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 
-/**
- * An UiModel representing a Label item
- *
- * @author Davide Farella
- */
 data class LabelUiModel(
-    val labelId: String,
+    val labelId: LabelId,
     val name: String,
     @DrawableRes val image: Int,
     @ColorInt val color: Int,
     val isChecked: Boolean,
     val expanded: Int,
-    val type: Type
-) {
-
-    /** The type of the Model */
-    enum class Type {
-        /** Model is Label */
-        LABELS,
-
-        /** Model is Folder */
-        FOLDERS
-    }
-}
+    val type: LabelType
+)

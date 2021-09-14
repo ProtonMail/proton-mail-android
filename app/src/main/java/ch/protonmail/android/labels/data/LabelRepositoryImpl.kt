@@ -120,11 +120,13 @@ internal class LabelRepositoryImpl @Inject constructor(
             labelDomainMapper.toLabel(it)
         }
 
-    override fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
+    override fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, Label> =
         labelDao.findAllLabelsPaged(userId, LabelType.MESSAGE_LABEL)
+            .map { labelDomainMapper.toLabel(it) }
 
-    override fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
+    override fun findAllFoldersPaged(userId: UserId): DataSource.Factory<Int, Label> =
         labelDao.findAllLabelsPaged(userId, LabelType.FOLDER)
+            .map { labelDomainMapper.toLabel(it) }
 
     override suspend fun saveLabels(labels: List<Label>, userId: UserId) {
         saveLabels(

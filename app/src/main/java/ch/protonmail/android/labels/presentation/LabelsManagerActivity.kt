@@ -36,9 +36,8 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerViewModel
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.uiModel.LabelUiModel
-import ch.protonmail.android.uiModel.LabelUiModel.Type.FOLDERS
-import ch.protonmail.android.uiModel.LabelUiModel.Type.LABELS
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
@@ -70,7 +69,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private val colorsAdapter by lazy {
         LabelColorsAdapter(
             applicationContext, colorOptions,
-            if (type == LABELS) R.layout.label_color_item_circle else R.layout.folder_color_item
+            if (type == LabelType.MESSAGE_LABEL) R.layout.label_color_item_circle else R.layout.folder_color_item
         )
     }
 
@@ -106,14 +105,14 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         }
 
     /**
-     * The [Type] handled by the `Activity`.
+     * The [LabelType] handled by the `Activity`.
      * It represents which type of entity is currently managing
-     * @see Type.FOLDERS
-     * @see Type.LABELS
+     * @see LabelType.FOLDER
+     * @see LabelType.MESSAGE_LABEL
      */
     private val type by lazy {
         val managingFolders = intent?.extras?.getBoolean(EXTRA_MANAGE_FOLDERS, false) ?: false
-        if (managingFolders) FOLDERS else LABELS
+        if (managingFolders) LabelType.FOLDER else LabelType.MESSAGE_LABEL
     }
 
     private val viewModel: LabelsManagerViewModel by viewModels()
@@ -134,7 +133,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             val elevation = resources.getDimension(R.dimen.action_bar_elevation)
             this.elevation = elevation
             title = getString(
-                if (type == LABELS) R.string.labels_manager
+                if (type == LabelType.MESSAGE_LABEL) R.string.labels_manager
                 else R.string.folders_manager
             )
         }
@@ -270,7 +269,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     /** When a Label is selected or unselected */
     private fun onLabelSelectionChange(label: LabelUiModel, isSelected: Boolean) {
         viewModel.onLabelSelected(
-            label.labelId, isSelected
+            label.labelId.id, isSelected
         )
     }
 
@@ -297,8 +296,9 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
                 save_button.setText(
                     when (type) {
-                        LABELS -> R.string.update_label
-                        FOLDERS -> R.string.update_folder
+                        LabelType.MESSAGE_LABEL -> R.string.update_label
+                        LabelType.FOLDER -> R.string.update_folder
+                        else -> throw IllegalArgumentException("Unsupported type: $type")
                     }
                 )
             }
@@ -308,8 +308,9 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     /** Show a message that prompt the user to confirm the deletion */
     private fun showDeleteConfirmation() {
         val title = when (type) {
-            LABELS -> R.string.delete_label_confirmation_title
-            FOLDERS -> R.string.delete_folder_confirmation_title
+            LabelType.MESSAGE_LABEL -> R.string.delete_label_confirmation_title
+            LabelType.FOLDER -> R.string.delete_folder_confirmation_title
+            else -> throw IllegalArgumentException("Unsupported type: $type")
         }
         AlertDialog.Builder(this)
             .setTitle(title)
@@ -341,18 +342,19 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         colors_grid_view.isVisible = true
 
         val message = when (type) {
-            FOLDERS -> {
+            LabelType.FOLDER -> {
                 when (success) {
                     true -> getString(R.string.folder_created)
                     false -> errorMessage ?: getString(R.string.folder_invalid)
                 }
             }
-            LABELS -> {
+            LabelType.MESSAGE_LABEL -> {
                 when (success) {
                     true -> getString(R.string.label_created)
                     false -> errorMessage ?: getString(R.string.label_invalid)
                 }
             }
+            else -> throw IllegalArgumentException("Unsupported type: $type")
         }
 
         showToast(message, Toast.LENGTH_SHORT)
@@ -378,44 +380,50 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private fun initTexts() {
         save_button.setText(
             when (type) {
-                LABELS -> R.string.update_label
-                FOLDERS -> R.string.update_folder
+                LabelType.MESSAGE_LABEL -> R.string.update_label
+                LabelType.FOLDER -> R.string.update_folder
+                else -> throw IllegalArgumentException("Unsupported type: $type")
             }
         )
 
         no_labels.setText(
             when (type) {
-                LABELS -> R.string.no_labels
-                FOLDERS -> R.string.no_folders
+                LabelType.MESSAGE_LABEL -> R.string.no_labels
+                LabelType.FOLDER -> R.string.no_folders
+                else -> throw IllegalArgumentException("Unsupported type: $type")
             }
         )
 
         labels_dialog_title.setText(
             when (type) {
-                LABELS -> R.string.label_add_new
-                FOLDERS -> R.string.folder_add_new
+                LabelType.MESSAGE_LABEL -> R.string.label_add_new
+                LabelType.FOLDER -> R.string.folder_add_new
+                else -> throw IllegalArgumentException("Unsupported type: $type")
             }
         )
 
         label_name.setHint(
             when (type) {
-                LABELS -> R.string.label_name
-                FOLDERS -> R.string.folder_name
+                LabelType.MESSAGE_LABEL -> R.string.label_name
+                LabelType.FOLDER -> R.string.folder_name
+                else -> throw IllegalArgumentException("Unsupported type: $type")
             }
         )
 
         available_labels_title.setText(
             when (type) {
-                LABELS -> R.string.available_labels
-                FOLDERS -> R.string.available_folders
+                LabelType.MESSAGE_LABEL -> R.string.available_labels
+                LabelType.FOLDER -> R.string.available_folders
+                else -> throw IllegalArgumentException("Unsupported type: $type")
             }
         )
     }
 
     private fun onLabelDeletedEvent(isSuccessful: Boolean) {
         val message = when (type) {
-            FOLDERS -> if (isSuccessful) R.string.folder_deleted else R.string.folder_deleted_error
-            LABELS -> if (isSuccessful) R.string.label_deleted else R.string.label_deleted_error
+            LabelType.FOLDER -> if (isSuccessful) R.string.folder_deleted else R.string.folder_deleted_error
+            LabelType.MESSAGE_LABEL -> if (isSuccessful) R.string.label_deleted else R.string.label_deleted_error
+            else -> throw IllegalArgumentException("Unsupported type: $type")
         }
         showToast(message, Toast.LENGTH_SHORT)
     }

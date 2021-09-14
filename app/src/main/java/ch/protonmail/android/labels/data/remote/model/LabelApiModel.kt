@@ -23,16 +23,16 @@ import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-internal const val ID = "ID"
-internal const val NAME = "Name"
-internal const val PATH = "Path"
-internal const val COLOR = "Color"
-internal const val TYPE = "Type"
-internal const val NOTIFY = "Notify"
-internal const val ORDER = "Order"
-internal const val EXPANDED = "Expanded"
-internal const val STICKY = "Sticky"
-internal const val PARENT_ID = "ParentID"
+private const val ID = "ID"
+private const val NAME = "Name"
+private const val PATH = "Path"
+private const val COLOR = "Color"
+private const val TYPE = "Type"
+private const val NOTIFY = "Notify"
+private const val ORDER = "Order"
+private const val EXPANDED = "Expanded"
+private const val STICKY = "Sticky"
+private const val PARENT_ID = "ParentID"
 
 /**
  * Label model as received from the backend.

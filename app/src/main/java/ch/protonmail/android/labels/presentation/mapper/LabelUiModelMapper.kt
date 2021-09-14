@@ -21,40 +21,37 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.mapper.UiModelMapper
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
+import me.proton.core.domain.arch.Mapper
 import timber.log.Timber
 
 /**
  * A Mapper of [LabelUiModel]
- * Inherit from [UiModelMapper]
  *
  * @author Davide Farella
  */
-internal class LabelUiModelMapper : UiModelMapper<LabelEntity, LabelUiModel> {
+internal class LabelUiModelMapper : Mapper<Label, LabelUiModel> {
 
     /** @return [LabelUiModel] from receiver [LabelEntity] Entity */
-    override fun LabelEntity.toUiModel(): LabelUiModel {
+    fun toUiModel(label: Label): LabelUiModel {
 
-        val type = if (type == LabelType.FOLDER) {
-            LabelUiModel.Type.FOLDERS
-        } else LabelUiModel.Type.LABELS
-
-        val image = when (type) {
-            LabelUiModel.Type.LABELS -> R.drawable.shape_ellipse
-            LabelUiModel.Type.FOLDERS -> R.drawable.ic_folder
+        val image = when (label.type) {
+            LabelType.MESSAGE_LABEL -> R.drawable.shape_ellipse
+            LabelType.FOLDER -> R.drawable.ic_folder
+            LabelType.CONTACT_GROUP -> throw IllegalArgumentException("Contact groups are not supported!")
         }
 
         return LabelUiModel(
-            labelId = id.id,
-            name = name,
+            labelId = label.id,
+            name = label.name,
             image = image,
-            color = normalizeColor(color),
+            color = normalizeColor(label.color),
             isChecked = false,
-            expanded = expanded,
-            type = type
+            expanded = 0,
+            type = label.type
         )
     }
 
