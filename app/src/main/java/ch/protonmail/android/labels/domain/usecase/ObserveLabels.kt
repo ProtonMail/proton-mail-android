@@ -19,24 +19,16 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 class ObserveLabels @Inject constructor(
-    private val labelsMapper: LabelEntityDomainMapper,
     private val labelRepository: LabelRepository
 ) {
 
     operator fun invoke(userId: UserId, shallRefresh: Boolean = false): Flow<List<Label>> =
         labelRepository.observeAllLabels(userId, shallRefresh)
-            .map { labels ->
-                labels.map {
-                    labelsMapper.toLabel(it)
-                }
-            }
 }

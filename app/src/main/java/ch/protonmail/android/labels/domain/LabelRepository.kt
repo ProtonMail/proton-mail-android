@@ -31,27 +31,27 @@ import me.proton.core.domain.entity.UserId
 
 interface LabelRepository {
 
-    fun observeAllLabels(userId: UserId, shallRefresh: Boolean = false): Flow<List<LabelEntity>>
+    fun observeAllLabels(userId: UserId, shallRefresh: Boolean = false): Flow<List<Label>>
 
-    suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean = false): List<LabelEntity>
+    suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean = false): List<Label>
 
-    fun observeLabels(labelsIds: List<LabelId>, userId: UserId): Flow<List<LabelEntity>>
+    fun observeLabels(labelsIds: List<LabelId>, userId: UserId): Flow<List<Label>>
 
-    suspend fun findLabels(labelsIds: List<LabelId>, userId: UserId): List<LabelEntity>
+    suspend fun findLabels(labelsIds: List<LabelId>, userId: UserId): List<Label>
 
-    suspend fun findLabel(labelId: LabelId): LabelEntity?
+    suspend fun findLabel(labelId: LabelId): Label?
 
-    fun observeLabel(labelId: LabelId): Flow<LabelEntity?>
+    fun observeLabel(labelId: LabelId): Flow<Label?>
 
-    fun findLabelBlocking(labelId: LabelId): LabelEntity?
+    fun findLabelBlocking(labelId: LabelId): Label?
 
-    fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>>
+    fun observeContactGroups(userId: UserId): Flow<List<Label>>
 
-    fun observeSearchContactGroups(labelName: String, userId: UserId): Flow<List<LabelEntity>>
+    suspend fun findContactGroups(userId: UserId): List<Label>
 
-    suspend fun findContactGroups(userId: UserId): List<LabelEntity>
+    fun observeSearchContactGroups(labelName: String, userId: UserId): Flow<List<Label>>
 
-    suspend fun findLabelByName(labelName: String, userId: UserId): LabelEntity?
+    suspend fun findLabelByName(labelName: String, userId: UserId): Label?
 
     fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity>
 

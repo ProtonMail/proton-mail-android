@@ -24,13 +24,12 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsRe
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import me.proton.core.domain.entity.UserId
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -70,10 +69,9 @@ class ContactDetailsMapperTest {
 
     private val groupId1 = LabelId("ID1")
     private val groupName1 = "name1"
-    private val userId = UserId("testUserId")
     private val contactLabel =
-        LabelEntity(
-            groupId1, userId, groupName1, "color", 1, LabelType.MESSAGE_LABEL, "a/b", "parentId", 0, 0, 0
+        Label(
+            groupId1, groupName1, "color", LabelType.MESSAGE_LABEL, "a/b", "parentId"
         )
     private val fetchContactGroupResult = FetchContactGroupsResult(
         listOf(contactLabel)

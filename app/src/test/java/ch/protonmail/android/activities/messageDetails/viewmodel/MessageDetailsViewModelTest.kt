@@ -44,10 +44,9 @@ import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
@@ -57,6 +56,7 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
@@ -329,33 +329,23 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun shouldLoadMessageWithLabelsWhenLabelsPresent() = runBlockingTest {
         val labels = (1..2).map {
-            LabelEntity(
+            Label(
                 id = LabelId("id$it"),
-                userId = testId1,
                 "name$it",
                 testColorInt.toString(),
-                0,
                 LabelType.MESSAGE_LABEL,
                 EMPTY_STRING,
                 "parent",
-                0,
-                0,
-                0
             )
         }
         val folders = (3..5).map {
-            LabelEntity(
+            Label(
                 id = LabelId("id$it"),
-                userId = testId1,
                 "name$it",
                 testColorInt.toString(),
-                0,
                 LabelType.FOLDER,
                 EMPTY_STRING,
                 "parent",
-                0,
-                0,
-                0
             )
         }
         val allLabels = labels + folders

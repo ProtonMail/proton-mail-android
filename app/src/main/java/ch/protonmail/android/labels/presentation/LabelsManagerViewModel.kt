@@ -30,7 +30,6 @@ import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -60,7 +59,6 @@ internal class LabelsManagerViewModel @Inject constructor(
     private val labelRepository: LabelRepository,
     savedStateHandle: SavedStateHandle,
     private val deleteLabels: DeleteLabels,
-    private val workManager: WorkManager,
     private val accountManager: AccountManager
 ) : ViewModel(), ViewStateStoreScope {
 

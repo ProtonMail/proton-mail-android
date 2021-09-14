@@ -38,8 +38,8 @@ import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.utils.MessageUtils
 import com.birbit.android.jobqueue.JobManager
@@ -261,7 +261,7 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
 
-    suspend fun findLabelsWithIds(labelIds: List<String>, userId: UserId): List<LabelEntity> =
+    suspend fun findLabelsWithIds(labelIds: List<String>, userId: UserId): List<Label> =
         labelRepository.findLabels(labelIds.map { LabelId(it) }, userId)
 
     suspend fun prepareEditMessageIntent(

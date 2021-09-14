@@ -102,8 +102,8 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
@@ -1360,16 +1360,16 @@ internal class MailboxActivity :
         private val newLocation: Int,
         private val labelName: String?,
         private val userId: UserId
-    ) : AsyncTask<Unit, Unit, LabelEntity?>() {
+    ) : AsyncTask<Unit, Unit, Label?>() {
 
-        override fun doInBackground(vararg params: Unit): LabelEntity? {
+        override fun doInBackground(vararg params: Unit): Label? {
             return runBlocking {
                 val labels = messageDetailsRepository.findLabelsWithIds(listOf(labelId), userId)
                 if (labels.isEmpty()) null else labels[0]
             }
         }
 
-        override fun onPostExecute(label: LabelEntity?) {
+        override fun onPostExecute(label: Label?) {
             val mailboxActivity = mailboxActivity.get() ?: return
             mailboxActivity.setElevationOnToolbarAndStatusView(false)
             if (mailboxActivity.actionMode != null) {

@@ -19,8 +19,8 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.UpdateConversationsLabels
@@ -40,23 +40,17 @@ class UpdateConversationsLabelsTest {
 
     private val conversationsRepository = mockk<ConversationsRepository>()
     private val labelRepository = mockk<LabelRepository>()
-    private val testUserId = UserId("TestUserId")
     private val testPath = "a/bpath"
     private val testParentId = "parentIdForTests"
 
     private val allLabels = (1..3).map { count ->
-        LabelEntity(
+        Label(
             id = LabelId("label$count"),
-            userId = testUserId,
             name = "name$count",
             color = "color",
-            order = 1,
             type = if (count > 2) LabelType.FOLDER else LabelType.MESSAGE_LABEL,
             testPath,
             testParentId,
-            0,
-            0,
-            0
         )
     }
 

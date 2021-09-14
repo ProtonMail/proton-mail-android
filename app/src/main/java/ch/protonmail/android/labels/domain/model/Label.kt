@@ -26,6 +26,4 @@ data class Label(
     val type: LabelType,
     val path: String,
     val parentId: String,
-    val contactEmailsCount: Int = 0,
-    val contactDataCount: Int = 0,
 )

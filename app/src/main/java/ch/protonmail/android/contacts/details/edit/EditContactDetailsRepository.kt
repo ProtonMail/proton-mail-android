@@ -41,7 +41,7 @@ class EditContactDetailsRepository @Inject constructor(
     val contactRepository: ContactsRepository,
     labelEntityDomainMapper: LabelEntityDomainMapper
 ) : ContactDetailsRepository(
-    jobManager, api, contactDao, dispatcherProvider, labelRepository, contactRepository, labelEntityDomainMapper
+    jobManager, api, contactDao, dispatcherProvider, labelRepository, contactRepository
 ) {
 
     suspend fun clearEmail(email: String) {

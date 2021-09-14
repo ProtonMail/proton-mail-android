@@ -30,10 +30,10 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.labels.data.remote.worker.UnlabelConversationsRemoteWorker
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
@@ -931,7 +931,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 LabelContextDatabaseModel(starredId, 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel(inboxId, 0, 2, 123, 123, 0)
             )
-            val label: LabelEntity = mockk {
+            val label: Label = mockk {
                 every { type } returns LabelType.MESSAGE_LABEL
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
@@ -976,7 +976,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 time = 123,
                 allLabelIDs = listOf(inboxId, allMailId),
             )
-            val label: LabelEntity = mockk {
+            val label: Label = mockk {
                 every { type } returns LabelType.MESSAGE_LABEL
             }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)

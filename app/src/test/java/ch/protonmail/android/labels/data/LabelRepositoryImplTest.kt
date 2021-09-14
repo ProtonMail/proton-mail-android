@@ -24,6 +24,7 @@ import androidx.work.WorkInfo
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
@@ -65,6 +66,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
     private val removeMessageLabelWorker = mockk<RemoveMessageLabelWorker.Enqueuer>()
     private val deleteLabelWorker = mockk<DeleteLabelsWorker.Enqueuer>()
     private val postLabelWorker = mockk<PostLabelWorker.Enqueuer>()
+    private val contactsRepository = mockk<ContactsRepository>()
 
     private val repository =
         LabelRepositoryImpl(
@@ -99,20 +101,22 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
         coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns true
 
         val dataToSaveInDb = listOf(testLabelEntity1, testLabelEntity2, testLabelEntity3)
+        val expectedDbData = listOf(testLabel1, testLabel2, testLabel3)
         coEvery { labelDao.insertOrUpdate(*anyVararg()) } answers {
             dbFlow.tryEmit(dataToSaveInDb)
         }
 
         val subsequentDbReply = listOf(testLabelEntity1)
+        val subsequentExpectedDbReply = listOf(testLabel1)
 
         // when
         repository.observeAllLabels(testUserId, true).test {
 
             // then
             coVerify { labelDao.insertOrUpdate(*anyVararg()) }
-            assertEquals(dataToSaveInDb, expectItem())
+            assertEquals(expectedDbData, expectItem())
             dbFlow.tryEmit(subsequentDbReply)
-            assertEquals(subsequentDbReply, expectItem())
+            assertEquals(subsequentExpectedDbReply, expectItem())
         }
     }
 

@@ -20,8 +20,8 @@
 package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.repository.MessageRepository
@@ -80,7 +80,7 @@ class UpdateMessageLabelsTest {
             every { addLabels(any()) } just Runs
             every { removeLabels(any()) } just Runs
         }
-        val label = mockk<LabelEntity> {
+        val label = mockk<Label> {
             every { id } returns LabelId(testLabelId1)
             every { type } returns LabelType.MESSAGE_LABEL
         }

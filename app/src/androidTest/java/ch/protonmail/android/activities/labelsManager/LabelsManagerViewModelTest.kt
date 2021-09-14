@@ -23,18 +23,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.DataSource
 import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType.MESSAGE_LABEL
+import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -59,14 +58,14 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
     @get:Rule
     val archRule = InstantTaskExecutorRule()
 
-    @RelaxedMockK
-    private lateinit var workManager: WorkManager
-
     @MockK
     private lateinit var accountManager: AccountManager
 
     @MockK
     private lateinit var labelRepository: LabelRepository
+
+    @MockK
+    private lateinit var deleteLabels: DeleteLabels
 
     private lateinit var viewModel: LabelsManagerViewModel
 
@@ -89,8 +88,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
             LabelsManagerViewModel(
                 labelRepository = labelRepository,
                 savedStateHandle = savedState,
-                deleteLabel = mockk(),
-                workManager = workManager,
+                deleteLabels = deleteLabels,
                 accountManager = accountManager
             )
     }

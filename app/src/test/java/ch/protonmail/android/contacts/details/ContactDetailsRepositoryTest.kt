@@ -67,7 +67,7 @@ class ContactDetailsRepositoryTest {
 
     private val repository = ContactDetailsRepository(
         jobManager, apiManager, contactDao, TestDispatcherProvider, labelsRepository,
-        contactRepository, labelEntityDomainMapper
+        contactRepository
     )
 
     @Test

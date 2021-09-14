@@ -39,11 +39,10 @@ import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSec
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -55,6 +54,7 @@ import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
@@ -599,17 +599,17 @@ internal class MailboxViewModel @Inject constructor(
         message: Message,
         checkedLabelIds: MutableList<String>,
         unchangedLabels: List<String>,
-        currentContactLabels: List<LabelEntity>?
+        currentContactLabels: List<Label>?
     ): ApplyRemoveLabels? {
         val labelsToRemove = ArrayList<String>()
 
         currentContactLabels?.forEach {
-            val labelId = it.id
+            val labelId = it.id.id
             if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(
                     labelId
                 ) && it.type == LabelType.MESSAGE_LABEL
             ) {
-                labelsToRemove.add(labelId.id)
+                labelsToRemove.add(labelId)
             } else if (checkedLabelIds.contains(labelId)) {
                 checkedLabelIds.remove(labelId)
             }
@@ -650,7 +650,7 @@ internal class MailboxViewModel @Inject constructor(
         }
     }
 
-    private fun List<LabelEntity>.toLabelChipUiModels(): List<LabelChipUiModel> =
+    private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
         filter { it.type == LabelType.MESSAGE_LABEL }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }

@@ -56,6 +56,7 @@ import ch.protonmail.android.details.presentation.mapper.MessageEncryptionUiMode
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
@@ -94,7 +95,7 @@ internal class MessageDetailsAdapter(
     private val onMoreMessageActionsClicked: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
-    private var exclusiveLabelsPerMessage: HashMap<String, List<LabelEntity>> = hashMapOf()
+    private var exclusiveLabelsPerMessage: HashMap<String, List<Label>> = hashMapOf()
     private var nonExclusiveLabelsPerMessage: HashMap<String, List<LabelChipUiModel>> = hashMapOf()
 
     private val messageLoadingSpinnerTopMargin by lazy {

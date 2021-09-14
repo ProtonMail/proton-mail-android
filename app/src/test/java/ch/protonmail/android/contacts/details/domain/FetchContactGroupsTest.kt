@@ -22,7 +22,7 @@ package ch.protonmail.android.contacts.details.domain
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.coEvery
@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
@@ -46,8 +45,6 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
     private val useCase = FetchContactGroups(
         repository, dispatchers
     )
-
-    private val testUserId = UserId("testUserId")
 
     @Test
     fun verifyStandardCaseJustOneEmissionOfTwoValues() = runBlockingTest {
@@ -63,14 +60,12 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val contactEmail2 = ContactEmail(contactEmailId2, "test2@abc.com", "name1", labelIds = labelIds)
         val list1 = listOf(contactEmail1, contactEmail2)
         val contactLabel1 =
-            LabelEntity(
-                labelId1, testUserId, "name1", "color1", 1,  LabelType.MESSAGE_LABEL, "a/b", "parentId", 0, 0,
-                0
+            Label(
+                labelId1, "name1", "color1", LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         val contactLabel2 =
-            LabelEntity(
-                labelId2, testUserId, "name2", "color2", 1,  LabelType.MESSAGE_LABEL, "a/b", "parentId", 0, 0,
-                0
+            Label(
+                labelId2, "name2", "color2", LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         every { repository.observeContactEmails(contactId) } returns flowOf(list1)
         coEvery { repository.getContactGroupsLabelForId(contactEmailId1) } returns listOf(contactLabel1)
@@ -104,19 +99,16 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val list1 = listOf(contactEmail1, contactEmail2)
         val list2 = listOf(contactEmail3)
         val contactLabel1 =
-            LabelEntity(
-                labelId1, testUserId, "name1", "color1", 1,  LabelType.MESSAGE_LABEL, "a/b", "parentId", 0, 0,
-                0
+            Label(
+                labelId1, "name1", "color1", LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         val contactLabel2 =
-            LabelEntity(
-                labelId2, testUserId, "name2", "color2", 1,  LabelType.MESSAGE_LABEL, "a/b", "parentId", 0, 0,
-                0
+            Label(
+                labelId2, "name2", "color2", LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         val contactLabel3 =
-            LabelEntity(
-                labelId3, testUserId, "name3", "color3", 1,  LabelType.MESSAGE_LABEL, "a/b", "parentId", 0, 0,
-                0
+            Label(
+                labelId3, "name3", "color3", LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         every { repository.observeContactEmails(contactId) } returns flow {
             emit(list1)

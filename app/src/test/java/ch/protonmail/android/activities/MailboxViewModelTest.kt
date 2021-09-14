@@ -45,10 +45,9 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
@@ -59,6 +58,7 @@ import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
@@ -180,18 +180,13 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery { contactsRepository.findContactsByEmail(any()) } returns flowOf(emptyList())
 
         val allLabels = (0..11).map {
-            LabelEntity(
+            Label(
                 id = LabelId("$it"),
-                userId = currentUserId,
                 name = "label $it",
                 color = testColorInt.toString(),
                 type = LabelType.MESSAGE_LABEL,
-                order = 0,
                 path = "a/b",
                 parentId = "parentId",
-                expanded = 0,
-                sticky = 0,
-                notify = 0
             )
 
         }
@@ -539,8 +534,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 currentUserId
             )
         } returns listOf(
-            LabelEntity(LabelId("0"), currentUserId, "label 0", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0, 0),
-            LabelEntity(LabelId("2"), currentUserId, "label 2", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0, 0)
+            Label(LabelId("0"), "label 0", "blue", LabelType.MESSAGE_LABEL, "", ""),
+            Label(LabelId("2"), "label 2", "blue", LabelType.MESSAGE_LABEL, "", "")
         )
 
         val expected = MailboxUiItem(
@@ -1073,13 +1068,11 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     currentUserId
                 )
             } returns listOf(
-                LabelEntity(
-                    LabelId(ALL_DRAFT_LABEL_ID), currentUserId, "label 1", "blue", 0, LabelType.MESSAGE_LABEL, "", "",
-                    0, 0, 0
+                Label(
+                    LabelId(ALL_DRAFT_LABEL_ID), "label 1", "blue", LabelType.MESSAGE_LABEL, "", "",
                 ),
-                LabelEntity(
-                    LabelId(DRAFT_LABEL_ID), currentUserId, "label 8", "blue", 0, LabelType.MESSAGE_LABEL, "", "", 0, 0,
-                    0
+                Label(
+                    LabelId(DRAFT_LABEL_ID), "label 8", "blue", LabelType.MESSAGE_LABEL, "", "",
                 )
             )
 

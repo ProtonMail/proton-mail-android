@@ -61,16 +61,16 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.model.LabelChipUiModel
@@ -249,7 +249,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private fun Flow<ConversationUiModel>.combineWithLabels() = flatMapLatest { conversation ->
         val nonExclusiveLabelsHashMap = hashMapOf<String, List<LabelChipUiModel>>()
-        val exclusiveLabelsHashMap = hashMapOf<String, List<LabelEntity>>()
+        val exclusiveLabelsHashMap = hashMapOf<String, List<Label>>()
         conversation.messages.filter { it.allLabelIDs.isNotEmpty() }.forEach { message ->
             val messageId = requireNotNull(message.messageId)
             getAllLabelsFor(userManager.requireCurrentUserId(), message)?.let { (exclusiveLabels, nonExclusiveLabels) ->
@@ -268,7 +268,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private suspend fun getAllLabelsFor(
         userId: UserId,
         message: Message
-    ): Pair<Collection<LabelEntity>, List<LabelChipUiModel>>? {
+    ): Pair<Collection<Label>, List<LabelChipUiModel>>? {
         val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
         return labelRepository.observeLabels(allLabelIds, userId)
             .firstOrNull()
@@ -276,7 +276,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             ?.mapSecond { it.toNonExclusiveLabelModel() }
     }
 
-    private fun LabelEntity.toNonExclusiveLabelModel(): LabelChipUiModel {
+    private fun Label.toNonExclusiveLabelModel(): LabelChipUiModel {
         val labelColor = color.takeIfNotBlank()
             ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
         return LabelChipUiModel(id, Name(name), labelColor)

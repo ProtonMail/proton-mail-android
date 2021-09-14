@@ -27,14 +27,13 @@ import javax.inject.Inject
 
 class LabelEntityDomainMapper @Inject constructor() : Mapper<LabelEntity, Label> {
 
-    fun toLabel(model: LabelEntity, contactEmailsCount: Int = 0) = Label(
+    fun toLabel(model: LabelEntity) = Label(
         id = model.id,
         name = model.name,
         color = model.color,
         type = model.type,
         path = model.path,
-        parentId = model.parentId,
-        contactEmailsCount = contactEmailsCount
+        parentId = model.parentId
     )
 
     fun toEntity(model: Label, userId: UserId) = LabelEntity(

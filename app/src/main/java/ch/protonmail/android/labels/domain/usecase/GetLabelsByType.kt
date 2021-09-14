@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -29,7 +28,6 @@ import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 
 class GetLabelsByType @Inject constructor(
-    private val labelsMapper: LabelEntityDomainMapper,
     private val accountManager: AccountManager,
     private val labelRepository: LabelRepository
 ) {
@@ -42,7 +40,6 @@ class GetLabelsByType @Inject constructor(
 
         return dbLabels
             .filter { it.type == labelsType }
-            .map { labelsMapper.toLabel(it) }
     }
 
 }

@@ -50,7 +50,7 @@ internal const val KEY_INPUT_DATA_LABEL_TYPE = "keyInputDataLabelType"
 internal const val KEY_POST_LABEL_WORKER_RESULT_ERROR = "keyResultDataPostLabelWorkerError"
 
 @HiltWorker
-class PostLabelWorker @AssistedInject constructor(
+internal class PostLabelWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted val workerParams: WorkerParameters,
     private val apiManager: ProtonMailApiManager,

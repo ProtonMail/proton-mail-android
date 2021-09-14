@@ -32,8 +32,8 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.labels.data.local.model.LabelEntity;
 import ch.protonmail.android.labels.domain.LabelRepository;
+import ch.protonmail.android.labels.domain.model.Label;
 import ch.protonmail.android.labels.domain.model.LabelId;
 import ch.protonmail.android.labels.domain.model.LabelType;
 import timber.log.Timber;
@@ -104,7 +104,7 @@ public class PostInboxJob extends ProtonMailCounterJob {
         ArrayList<String> labelsToRemove = new ArrayList<>();
 
         for (String labelId : oldLabels) {
-            LabelEntity label = labelRepository.findLabelBlocking(new LabelId(labelId));
+            Label label = labelRepository.findLabelBlocking(new LabelId(labelId));
             // find folders
             if (label != null &&
                     (label.getType() == LabelType.FOLDER) &&

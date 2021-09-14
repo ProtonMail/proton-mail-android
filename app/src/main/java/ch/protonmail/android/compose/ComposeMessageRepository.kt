@@ -38,7 +38,6 @@ import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
@@ -106,9 +105,6 @@ class ComposeMessageRepository @Inject constructor(
                 }
             }
     }
-
-    suspend fun getContactGroupFromDB(userId: UserId, groupName: String): LabelEntity? =
-        labelRepository.findLabelByName(groupName, userId)
 
     suspend fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> =
         contactDao.observeAllContactsEmailsByContactGroup(groupId).first()

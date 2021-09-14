@@ -21,7 +21,6 @@ package ch.protonmail.android.contacts.details
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -67,18 +66,13 @@ class ContactGroupsRepositoryTest {
 
     private val testUserId = UserId("testUserId")
 
-    private val label1 = LabelEntity(
+    private val label1 = Label(
         id = LabelId("a"),
-        userId = testUserId,
         name = "aa",
         color = "testColor",
         type = LabelType.MESSAGE_LABEL,
         path = "a/b",
         parentId = "parentId",
-        expanded = 0,
-        sticky = 0,
-        order = 0,
-        notify = 0
     )
 
     private val label1UiModel = ContactLabelUiModel(

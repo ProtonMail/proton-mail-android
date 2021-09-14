@@ -20,8 +20,8 @@
 package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.repository.MessageRepository
 import kotlinx.coroutines.ensureActive
@@ -63,7 +63,7 @@ internal class UpdateMessageLabels @Inject constructor(
     private suspend fun findAllLabelsWithIds(
         message: Message,
         checkedLabelIds: List<String>,
-        labels: List<LabelEntity>,
+        labels: List<Label>,
         userId: UserId
     ): Message = withContext(dispatchers.Io) {
         val labelsToRemove = arrayListOf<String>()

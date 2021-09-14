@@ -24,8 +24,6 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
-import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -47,11 +45,10 @@ open class ContactDetailsRepository @Inject constructor(
     protected val contactDao: ContactDao,
     private val dispatcherProvider: DispatcherProvider,
     private val labelRepository: LabelRepository,
-    private val contactRepository: ContactsRepository,
-    private val labelEntityDomainMapper: LabelEntityDomainMapper
+    private val contactRepository: ContactsRepository
 ) {
 
-    suspend fun getContactGroupsLabelForId(emailId: String): List<LabelEntity> =
+    suspend fun getContactGroupsLabelForId(emailId: String): List<Label> =
         contactRepository.getAllContactGroupsByContactEmail(emailId)
 
     fun getContactEmails(id: String): Observable<List<ContactEmail>> {
@@ -67,9 +64,6 @@ open class ContactDetailsRepository @Inject constructor(
 
     suspend fun getContactGroups(userId: UserId): List<Label> =
         labelRepository.findContactGroups(userId)
-            .map { entity ->
-                labelEntityDomainMapper.toLabel(entity, getContactEmailsCount(entity.id))
-            }
 
     suspend fun saveContactEmails(emails: List<ContactEmail>) = withContext(dispatcherProvider.Io) {
         contactDao.saveAllContactsEmails(emails)

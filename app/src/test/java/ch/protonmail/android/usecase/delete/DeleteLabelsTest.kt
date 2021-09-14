@@ -23,8 +23,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import io.mockk.coEvery
@@ -51,7 +51,7 @@ class DeleteLabelsTest {
         runBlockingTest {
             // given
             val testLabelId = LabelId("Id1")
-            val contactLabel = mockk<LabelEntity> {
+            val contactLabel = mockk<Label> {
                 every { id } returns testLabelId
             }
             val finishState = WorkInfo.State.SUCCEEDED
@@ -86,7 +86,7 @@ class DeleteLabelsTest {
         runBlockingTest {
             // given
             val testLabelId = LabelId("Id1")
-            val contactLabel = mockk<LabelEntity> {
+            val contactLabel = mockk<Label> {
                 every { id } returns testLabelId
             }
             val finishState = WorkInfo.State.FAILED
@@ -121,7 +121,7 @@ class DeleteLabelsTest {
         runBlockingTest {
             // given
             val testLabelId = LabelId("Id1")
-            val contactLabel = mockk<LabelEntity> {
+            val contactLabel = mockk<Label> {
                 every { id } returns testLabelId
             }
             val finishState = WorkInfo.State.ENQUEUED

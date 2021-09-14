@@ -41,7 +41,6 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
 import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
@@ -591,7 +590,7 @@ internal class EventHandler @AssistedInject constructor(
     }
 
     private fun writeLabel(
-        currentLabel: LabelEntity?,
+        currentLabel: Label?,
         updatedLabel: LabelApiModel
     ) {
         if (currentLabel != null) {

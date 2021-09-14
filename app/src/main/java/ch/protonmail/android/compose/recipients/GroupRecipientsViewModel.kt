@@ -28,7 +28,8 @@ import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filterNotNull
@@ -42,13 +43,14 @@ import javax.inject.Inject
 @HiltViewModel
 class GroupRecipientsViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
-    private val accountManager: AccountManager
+    private val accountManager: AccountManager,
+    private val labelRepository: LabelRepository
 ) : ViewModel() {
 
     private lateinit var _recipients: ArrayList<MessageRecipient>
     private var _location: Constants.RecipientLocationType = Constants.RecipientLocationType.TO
     private lateinit var _group: String
-    private lateinit var _groupDetails: LabelEntity
+    private lateinit var _groupDetails: Label
     private lateinit var _groupAllEmails: List<ContactEmail>
 
     private val _contactGroupResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()
@@ -77,7 +79,7 @@ class GroupRecipientsViewModel @Inject constructor(
 
     private suspend fun getContactGroupFromDB(userId: UserId) {
         val groupName = _recipients[0].group
-        val contactGroup = composeMessageRepository.getContactGroupFromDB(userId, groupName)
+        val contactGroup = labelRepository.findLabelByName(groupName, userId)
         if (contactGroup != null) {
             _groupDetails = contactGroup
             val emails = composeMessageRepository.getContactGroupEmailsSync(contactGroup.id.id)

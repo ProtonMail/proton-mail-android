@@ -40,8 +40,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
@@ -59,7 +61,7 @@ internal class LabelRepositoryImpl @Inject constructor(
     private val postLabelWorker: PostLabelWorker.Enqueuer
 ) : LabelRepository {
 
-    override fun observeAllLabels(userId: UserId, shallRefresh: Boolean): Flow<List<LabelEntity>> =
+    override fun observeAllLabels(userId: UserId, shallRefresh: Boolean): Flow<List<Label>> =
         labelDao.observeAllLabels(userId)
             .onStart {
                 if (shallRefresh && networkConnectivityManager.isInternetConnectionPossible()) {
@@ -67,42 +69,56 @@ internal class LabelRepositoryImpl @Inject constructor(
                     fetchAndSaveAllLabels(userId)
                 }
             }
+            .mapToLabel()
             .onEach {
                 Timber.v("Emitting new labels size: ${it.size} user: $userId")
             }
 
-    override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<LabelEntity> =
+    override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<Label> =
         observeAllLabels(userId, shallRefresh).first()
 
-    override fun observeLabels(labelsIds: List<LabelId>, userId: UserId): Flow<List<LabelEntity>> =
+    override fun observeLabels(labelsIds: List<LabelId>, userId: UserId): Flow<List<Label>> =
         labelDao.observeLabelsById(userId, labelsIds)
+            .mapToLabel()
 
-    override suspend fun findLabels(labelsIds: List<LabelId>, userId: UserId): List<LabelEntity> =
+    override suspend fun findLabels(labelsIds: List<LabelId>, userId: UserId): List<Label> =
         observeLabels(labelsIds, userId).first()
 
-    override suspend fun findLabel(labelId: LabelId): LabelEntity? =
-        labelDao.findLabelById(labelId)
-
-    override fun observeLabel(labelId: LabelId): Flow<LabelEntity?> =
+    override fun observeLabel(labelId: LabelId): Flow<Label?> =
         labelDao.observeLabelById(labelId)
+            .transform { label ->
+                if (label != null) {
+                    emit(labelDomainMapper.toLabel(label))
+                } else {
+                    return@transform
+                }
+            }
 
-    override fun findLabelBlocking(labelId: LabelId): LabelEntity? {
+    override suspend fun findLabel(labelId: LabelId): Label? =
+        observeLabel(labelId).first()
+
+    override fun findLabelBlocking(labelId: LabelId): Label? {
         return runBlocking {
             findLabel(labelId)
         }
     }
 
-    override fun observeContactGroups(userId: UserId): Flow<List<LabelEntity>> =
+    override fun observeContactGroups(userId: UserId): Flow<List<Label>> =
         labelDao.observeLabelsByType(userId, LabelType.CONTACT_GROUP)
+            .mapToLabel()
 
-    override suspend fun findContactGroups(userId: UserId): List<LabelEntity> =
+    override suspend fun findContactGroups(userId: UserId): List<Label> =
         labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP)
+            .map { labelDomainMapper.toLabel(it) }
 
-    override fun observeSearchContactGroups(labelName: String, userId: UserId): Flow<List<LabelEntity>> =
+    override fun observeSearchContactGroups(labelName: String, userId: UserId): Flow<List<Label>> =
         labelDao.observeSearchLabelsByNameAndType(userId, labelName, LabelType.CONTACT_GROUP)
+            .mapToLabel()
 
-    override suspend fun findLabelByName(labelName: String, userId: UserId): LabelEntity? =
-        labelDao.findLabelByName(userId, labelName)
+    override suspend fun findLabelByName(labelName: String, userId: UserId): Label? =
+        labelDao.findLabelByName(userId, labelName)?.let {
+            labelDomainMapper.toLabel(it)
+        }
 
     override fun findAllLabelsPaged(userId: UserId): DataSource.Factory<Int, LabelEntity> =
         labelDao.findAllLabelsPaged(userId, LabelType.MESSAGE_LABEL)
@@ -182,4 +198,11 @@ internal class LabelRepositoryImpl @Inject constructor(
         labelType,
         labelId
     )
+
+    private fun Flow<List<LabelEntity>>.mapToLabel() = map { entities ->
+        entities.map { entity ->
+            labelDomainMapper.toLabel(entity)
+        }
+    }
+
 }

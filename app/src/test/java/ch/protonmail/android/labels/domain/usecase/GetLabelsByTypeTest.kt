@@ -19,8 +19,6 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -38,8 +36,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GetLabelsByTypeTest {
-
-    private val labelsMapper = LabelEntityDomainMapper()
 
     @MockK
     private lateinit var accountManager: AccountManager
@@ -69,8 +65,7 @@ class GetLabelsByTypeTest {
         testColor,
         sheetType,
         testPath,
-        testParentId,
-        contactEmailsCount = emailsCount
+        testParentId
     )
     private val label2 = Label(
         testLabelId2,
@@ -78,49 +73,21 @@ class GetLabelsByTypeTest {
         testColor,
         sheetType2,
         testPath,
-        testParentId,
-        contactEmailsCount = emailsCount
-    )
-
-    private val labelEntity1 = LabelEntity(
-        testLabelId1,
-        testUserId,
-        testLabelName1,
-        testColor,
-        1,
-        LabelType.MESSAGE_LABEL,
-        testPath,
-        testParentId,
-        0,
-        0,
-        0
-    )
-    private val labelEntity2 = LabelEntity(
-        testLabelId2,
-        testUserId,
-        testLabelName2,
-        testColor,
-        1,
-        LabelType.FOLDER,
-        testPath,
-        testParentId,
-        0,
-        0,
-        0
+        testParentId
     )
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
-        useCase = GetLabelsByType(labelsMapper, accountManager, repository)
+        useCase = GetLabelsByType(accountManager, repository)
     }
 
     @Test
     fun verifyThatLabelsTypeAreReceivedAndProcessedCorrectly() = runBlocking {
         // given
         val expected = listOf(label1)
-        coEvery { repository.findAllLabels(testUserId, false) } returns listOf(labelEntity1, labelEntity2)
+        coEvery { repository.findAllLabels(testUserId, false) } returns listOf(label1, label2)
 
         // when
         val result = useCase.invoke(LabelType.MESSAGE_LABEL)
@@ -133,7 +100,7 @@ class GetLabelsByTypeTest {
     fun verifyThatFolderLabelsAreFilteredCorrectly() = runBlocking {
         // given
         val expected = listOf(label2)
-        coEvery { repository.findAllLabels(testUserId, false) } returns listOf(labelEntity1, labelEntity2)
+        coEvery { repository.findAllLabels(testUserId, false) } returns listOf(label1, label2)
 
         // when
         val result = useCase.invoke(LabelType.FOLDER)

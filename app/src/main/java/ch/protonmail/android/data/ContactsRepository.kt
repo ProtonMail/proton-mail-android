@@ -21,8 +21,8 @@ package ch.protonmail.android.data
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
@@ -55,10 +55,7 @@ class ContactsRepository @Inject constructor(
         // we take only a part of the label as in the old DB they were Unicode escaped and has some brackets
         contactDao.countContactEmailsByGroupId(labelId.id.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
 
-    suspend fun getAllContactGroupsByContactEmail(emailId: String): List<LabelEntity> =
-        observeAllContactGroupsByContactEmail(emailId).first()
-
-    private fun observeAllContactGroupsByContactEmail(emailId: String): Flow<List<LabelEntity>> =
+    suspend fun getAllContactGroupsByContactEmail(emailId: String): List<Label> =
         contactDao.observeContactEmailById(emailId)
             .filterNotNull()
             .map { contactEmail ->
@@ -68,7 +65,7 @@ class ContactsRepository @Inject constructor(
                 } else {
                     emptyList()
                 }
-            }
+            }.first()
 
     suspend fun findAllContactEmailsByContactGroupId(groupLabelId: String): List<ContactEmail> =
         contactDao.observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
