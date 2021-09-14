@@ -32,7 +32,7 @@ import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.domain.usecase.DeleteLabel
+import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -54,7 +54,7 @@ import kotlin.time.toDuration
 @HiltViewModel
 class ContactGroupDetailsViewModel @Inject constructor(
     private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
-    private val deleteLabel: DeleteLabel,
+    private val deleteLabels: DeleteLabels,
     private val contactsMapper: ContactsListMapper,
     private val contactRepository: ContactsRepository
 ) : ViewModel() {
@@ -90,7 +90,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
     private fun processDeleteLiveData(contactsToDelete: List<String>): LiveData<Event<Status>> {
         return liveData {
             emitSource(
-                deleteLabel(contactsToDelete)
+                deleteLabels(contactsToDelete.map { LabelId(it) })
                     .map { isSuccess ->
                         if (isSuccess) {
                             Event(Status.SUCCESS)

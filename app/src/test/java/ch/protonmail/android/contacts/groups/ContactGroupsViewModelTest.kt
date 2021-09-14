@@ -29,7 +29,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
-import ch.protonmail.android.labels.domain.usecase.DeleteLabel
+import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.utils.Event
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -56,7 +56,7 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     private lateinit var userManager: UserManager
 
     @RelaxedMockK
-    private lateinit var deleteLabel: DeleteLabel
+    private lateinit var deleteLabels: DeleteLabels
 
     private val contactsListMapper = ContactsListMapper()
 

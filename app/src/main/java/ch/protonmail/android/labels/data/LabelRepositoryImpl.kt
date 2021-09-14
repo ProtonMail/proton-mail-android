@@ -19,13 +19,19 @@
 
 package ch.protonmail.android.labels.data
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
+import androidx.work.WorkInfo
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.DeleteLabelsWorker
+import ch.protonmail.android.labels.data.remote.worker.PostLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.RemoveMessageLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -46,7 +52,11 @@ internal class LabelRepositoryImpl @Inject constructor(
     private val api: ProtonMailApi,
     private val labelApiMapper: LabelEntityApiMapper,
     private val labelDomainMapper: LabelEntityDomainMapper,
-    private val networkConnectivityManager: NetworkConnectivityManager
+    private val networkConnectivityManager: NetworkConnectivityManager,
+    private val applyMessageLabelWorker: ApplyMessageLabelWorker.Enqueuer,
+    private val removeMessageLabelWorker: RemoveMessageLabelWorker.Enqueuer,
+    private val deleteLabelsWorker: DeleteLabelsWorker.Enqueuer,
+    private val postLabelWorker: PostLabelWorker.Enqueuer
 ) : LabelRepository {
 
     override fun observeAllLabels(userId: UserId, shallRefresh: Boolean): Flow<List<LabelEntity>> =
@@ -120,7 +130,7 @@ internal class LabelRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteLabel(labelId: LabelId) {
-        labelDao.deleteLabelById(labelId)
+        labelDao.deleteLabelsById(listOf(labelId))
     }
 
     override suspend fun deleteAllLabels(userId: UserId) {
@@ -143,4 +153,33 @@ internal class LabelRepositoryImpl @Inject constructor(
         saveLabels(allLabelsEntities)
         allLabelsEntities
     }
+
+    override fun applyMessageLabelWithWorker(messageIds: List<String>, labelId: String) {
+        applyMessageLabelWorker.enqueue(messageIds, labelId)
+    }
+
+    override fun removeMessageLabelWithWorker(messageIds: List<String>, labelId: String) {
+        removeMessageLabelWorker.enqueue(messageIds, labelId)
+    }
+
+    override suspend fun deleteLabelsWithWorker(labelIds: List<LabelId>): LiveData<WorkInfo> {
+        // delete db
+        labelDao.deleteLabelsById(labelIds)
+        // schedule remote removal
+        return deleteLabelsWorker.enqueue(labelIds)
+    }
+
+    override fun saveLabelWithWorker(
+        labelName: String,
+        color: String,
+        isUpdate: Boolean,
+        labelType: LabelType,
+        labelId: String?
+    ) = postLabelWorker.enqueue(
+        labelName,
+        color,
+        isUpdate,
+        labelType,
+        labelId
+    )
 }

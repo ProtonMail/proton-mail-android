@@ -19,10 +19,13 @@
 
 package ch.protonmail.android.labels.domain
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
+import androidx.work.WorkInfo
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 
@@ -63,4 +66,18 @@ interface LabelRepository {
     suspend fun deleteAllLabels(userId: UserId)
 
     suspend fun deleteContactGroups(userId: UserId)
+
+    fun applyMessageLabelWithWorker(messageIds: List<String>, labelId: String)
+
+    fun removeMessageLabelWithWorker(messageIds: List<String>, labelId: String)
+
+    suspend fun deleteLabelsWithWorker(labelIds: List<LabelId>): LiveData<WorkInfo>
+
+    fun saveLabelWithWorker(
+        labelName: String,
+        color: String,
+        isUpdate: Boolean,
+        labelType: LabelType,
+        labelId: String?
+    ): LiveData<WorkInfo>
 }

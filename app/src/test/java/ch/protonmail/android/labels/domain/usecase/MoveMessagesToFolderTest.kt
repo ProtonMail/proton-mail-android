@@ -20,6 +20,7 @@
 package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs

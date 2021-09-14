@@ -40,7 +40,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DeleteLabelWorkerTest {
+class DeleteLabelsWorkerTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -54,7 +54,7 @@ class DeleteLabelWorkerTest {
     @MockK
     private lateinit var accountManager: AccountManager
 
-    private lateinit var worker: DeleteLabelWorker
+    private lateinit var worker: DeleteLabelsWorker
 
     private val testUserId = UserId("testUser")
 
@@ -62,7 +62,7 @@ class DeleteLabelWorkerTest {
     fun setUp() {
         MockKAnnotations.init(this)
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
-        worker = DeleteLabelWorker(
+        worker = DeleteLabelsWorker(
             context,
             parameters,
             api,

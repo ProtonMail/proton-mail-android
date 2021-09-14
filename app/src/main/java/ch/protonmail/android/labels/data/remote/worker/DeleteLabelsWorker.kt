@@ -31,6 +31,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -54,7 +55,7 @@ private const val WORKER_TAG = "DeleteLabelWorkerTag"
  * @see androidx.work.WorkManager
  */
 @HiltWorker
-class DeleteLabelWorker @AssistedInject constructor(
+class DeleteLabelsWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
@@ -95,13 +96,14 @@ class DeleteLabelWorker @AssistedInject constructor(
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
-        fun enqueue(labelIds: List<String>): LiveData<WorkInfo> {
+        fun enqueue(labelIds: List<LabelId>): LiveData<WorkInfo> {
+            val labelIdsArray = labelIds.map { it.id }.toTypedArray()
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val workRequest = OneTimeWorkRequestBuilder<DeleteLabelWorker>()
+            val workRequest = OneTimeWorkRequestBuilder<DeleteLabelsWorker>()
                 .setConstraints(constraints)
-                .setInputData(workDataOf(KEY_INPUT_DATA_LABEL_IDS to labelIds.toTypedArray()))
+                .setInputData(workDataOf(KEY_INPUT_DATA_LABEL_IDS to labelIdsArray))
                 .addTag(WORKER_TAG)
                 .build()
             workManager.enqueue(workRequest)

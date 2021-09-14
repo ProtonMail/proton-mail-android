@@ -31,10 +31,10 @@ import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import ch.protonmail.android.labels.data.remote.worker.PostLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.labels.domain.usecase.DeleteLabel
+import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
@@ -57,9 +57,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 internal class LabelsManagerViewModel @Inject constructor(
-    labelRepository: LabelRepository,
+    private val labelRepository: LabelRepository,
     savedStateHandle: SavedStateHandle,
-    private val deleteLabel: DeleteLabel,
+    private val deleteLabels: DeleteLabels,
     private val workManager: WorkManager,
     private val accountManager: AccountManager
 ) : ViewModel(), ViewStateStoreScope {
@@ -81,7 +81,7 @@ internal class LabelsManagerViewModel @Inject constructor(
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = deleteLabelIds.switchMap {
             liveData {
-                emitSource(deleteLabel(it))
+                emitSource(deleteLabels(it.map { LabelId(it) }))
             }
         }
 
@@ -157,14 +157,13 @@ internal class LabelsManagerViewModel @Inject constructor(
     fun saveLabel(): LiveData<WorkInfo> {
         labelEditor?.let {
             return with(it.buildParams()) {
-                createOrUpdateLabel(labelName, color, expanded, update, labelId)
+                createOrUpdateLabel(labelName, color, update, labelId)
             }
         }
 
         return createOrUpdateLabel(
             tempLabelName.toString(),
             tempLabelColor.toColorHex(),
-            0,
             false,
             null
         )
@@ -183,19 +182,15 @@ internal class LabelsManagerViewModel @Inject constructor(
     private fun createOrUpdateLabel(
         labelName: String,
         color: String,
-        expanded: Int,
-        update: Boolean,
+        isUpdate: Boolean,
         labelId: String?
-    ): LiveData<WorkInfo> {
-        return PostLabelWorker.Enqueuer(workManager).enqueue(
-            labelName,
-            color,
-            expanded,
-            LabelType.MESSAGE_LABEL,
-            update,
-            labelId
-        )
-    }
+    ): LiveData<WorkInfo> = labelRepository.saveLabelWithWorker(
+        labelName,
+        color,
+        isUpdate,
+        LabelType.MESSAGE_LABEL,
+        labelId
+    )
 }
 
 /** A class that hold editing progress of a Label */

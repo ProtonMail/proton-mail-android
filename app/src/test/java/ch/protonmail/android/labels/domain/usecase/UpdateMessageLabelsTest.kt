@@ -21,8 +21,6 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
-import ch.protonmail.android.labels.data.remote.worker.RemoveMessageLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -46,12 +44,6 @@ import kotlin.test.Test
 class UpdateMessageLabelsTest {
 
     @MockK
-    private lateinit var applyMessageLabelWorker: ApplyMessageLabelWorker.Enqueuer
-
-    @MockK
-    private lateinit var removeMessageLabelWorker: RemoveMessageLabelWorker.Enqueuer
-
-    @MockK
     private lateinit var messageRepository: MessageRepository
 
     @MockK
@@ -67,15 +59,11 @@ class UpdateMessageLabelsTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { applyMessageLabelWorker.enqueue(any(), any()) } returns mockk()
-        every { removeMessageLabelWorker.enqueue(any(), any()) } returns mockk()
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
         useCase = UpdateMessageLabels(
             messageRepository,
             accountManager,
             labelRepository,
-            applyMessageLabelWorker,
-            removeMessageLabelWorker,
             TestDispatcherProvider
         )
     }

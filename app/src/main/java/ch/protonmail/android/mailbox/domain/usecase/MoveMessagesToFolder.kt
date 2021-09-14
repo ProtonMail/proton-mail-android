@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.domain.usecase
+package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.repository.MessageRepository

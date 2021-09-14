@@ -28,7 +28,8 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.labels.domain.usecase.DeleteLabel
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +45,7 @@ import javax.inject.Inject
 class ContactGroupsViewModel @Inject constructor(
     private val contactGroupsRepository: ContactGroupsRepository,
     private val userManager: UserManager,
-    private val deleteLabel: DeleteLabel,
+    private val deleteLabels: DeleteLabels,
     private val contactsListMapper: ContactsListMapper
 ) : ViewModel(), ISearchListenerViewModel {
 
@@ -88,10 +89,10 @@ class ContactGroupsViewModel @Inject constructor(
     }
 
     fun deleteSelected(contactGroups: List<ContactGroupListItem>) {
-        val labelIds = contactGroups.map { it.contactId }
+        val labelIds = contactGroups.map { LabelId(it.contactId) }
         Timber.v("Delete labelIds $labelIds")
         viewModelScope.launch {
-            deleteLabel(labelIds)
+            deleteLabels(labelIds)
         }
     }
 

@@ -19,6 +19,8 @@
 
 package ch.protonmail.android.labels.data
 
+import androidx.lifecycle.MutableLiveData
+import androidx.work.WorkInfo
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
@@ -28,31 +30,54 @@ import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
+import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.DeleteLabelsWorker
+import ch.protonmail.android.labels.data.remote.worker.PostLabelWorker
+import ch.protonmail.android.labels.data.remote.worker.RemoveMessageLabelWorker
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
+import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
-class LabelRepositoryImplTest : CoroutinesTest {
+class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
 
     private val labelDao = mockk<LabelDao>()
     private val api = mockk<ProtonMailApi>()
     private val labelMapper = LabelEntityApiMapper()
     private val labelDomainMapper = LabelEntityDomainMapper()
     private val networkConnectivityManager = mockk<NetworkConnectivityManager>()
+    private val applyMessageLabelWorker = mockk<ApplyMessageLabelWorker.Enqueuer>()
+    private val removeMessageLabelWorker = mockk<RemoveMessageLabelWorker.Enqueuer>()
+    private val deleteLabelWorker = mockk<DeleteLabelsWorker.Enqueuer>()
+    private val postLabelWorker = mockk<PostLabelWorker.Enqueuer>()
 
     private val repository =
-        LabelRepositoryImpl(labelDao, api, labelMapper, labelDomainMapper, networkConnectivityManager)
+        LabelRepositoryImpl(
+            labelDao,
+            api,
+            labelMapper,
+            labelDomainMapper,
+            networkConnectivityManager,
+            applyMessageLabelWorker,
+            removeMessageLabelWorker,
+            deleteLabelWorker,
+            postLabelWorker
+        )
 
     private val dbFlow = MutableSharedFlow<List<LabelEntity>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
 
@@ -124,6 +149,74 @@ class LabelRepositoryImplTest : CoroutinesTest {
             assertEquals(dbReply, expectItem())
             coVerify(exactly = 0) { labelDao.insertOrUpdate(*anyVararg()) }
         }
+    }
+
+    @Test
+    fun verifyThatDeleteWithWorkerSchedulesAppropriateWorker() = runBlockingTest {
+        // given
+        val labelId1 = LabelId("id1")
+        val labelId2 = LabelId("id2")
+        val labelIds = listOf(labelId1, labelId2)
+        val expectedWorkInfo = mockk<WorkInfo> {
+            every { state } returns WorkInfo.State.SUCCEEDED
+        }
+        val workInfoLiveData = MutableLiveData<WorkInfo>()
+        coEvery { labelDao.deleteLabelsById(labelIds) } just Runs
+        every { deleteLabelWorker.enqueue(labelIds) } returns workInfoLiveData
+        workInfoLiveData.postValue(expectedWorkInfo)
+
+        // when
+        val result = repository.deleteLabelsWithWorker(labelIds)
+
+        // then
+        coVerify { labelDao.deleteLabelsById(labelIds) }
+        verify { deleteLabelWorker.enqueue(labelIds) }
+        assertEquals(expectedWorkInfo, result.value)
+    }
+
+    @Test
+    fun verifyThatSaveWithWorkerSchedulesAppropriateWorker() = runBlockingTest {
+        // given
+        val labelId1 = LabelId("id1")
+        val labelName = "labelName"
+        val color = "blue"
+        val isUpdate = false
+        val labelType = LabelType.MESSAGE_LABEL
+        val expectedWorkInfo = mockk<WorkInfo> {
+            every { state } returns WorkInfo.State.SUCCEEDED
+        }
+        val workInfoLiveData = MutableLiveData<WorkInfo>()
+        every {
+            postLabelWorker.enqueue(
+                labelName,
+                color,
+                isUpdate,
+                labelType,
+                labelId1.id
+            )
+        } returns workInfoLiveData
+        workInfoLiveData.postValue(expectedWorkInfo)
+
+        // when
+        val result = repository.saveLabelWithWorker(
+            labelName,
+            color,
+            isUpdate,
+            labelType,
+            labelId1.id
+        )
+
+        // then
+        verify {
+            postLabelWorker.enqueue(
+                labelName,
+                color,
+                isUpdate,
+                labelType,
+                labelId1.id
+            )
+        }
+        assertEquals(expectedWorkInfo, result.value)
     }
 
     companion object {

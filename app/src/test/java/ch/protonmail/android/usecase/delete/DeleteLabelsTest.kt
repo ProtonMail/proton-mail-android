@@ -24,49 +24,34 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.remote.worker.DeleteLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.domain.usecase.DeleteLabel
-import io.mockk.MockKAnnotations
+import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Rule
 import java.util.UUID
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class DeleteLabelTest {
+class DeleteLabelsTest {
 
     @get:Rule
     val archRule = InstantTaskExecutorRule()
 
-    @MockK
-    private lateinit var workScheduler: DeleteLabelWorker.Enqueuer
+    private val labelRepository: LabelRepository = mockk()
 
-    @MockK
-    private lateinit var labelRepository: LabelRepository
-
-    private lateinit var deleteLabel: DeleteLabel
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        deleteLabel = DeleteLabel(TestDispatcherProvider, labelRepository, workScheduler)
-    }
+    private val deleteLabel = DeleteLabels(labelRepository)
 
     @Test
     fun verifyThatMessageIsSuccessfullyDeleted() {
         runBlockingTest {
             // given
             val testLabelId = LabelId("Id1")
-            val contactLabel = mockk<LabelEntity>{
+            val contactLabel = mockk<LabelEntity> {
                 every { id } returns testLabelId
             }
             val finishState = WorkInfo.State.SUCCEEDED
@@ -84,11 +69,10 @@ class DeleteLabelTest {
             val expected = true
 
             coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
-            coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
-            every { workScheduler.enqueue(any()) } returns workerStatusLiveData
+            coEvery { labelRepository.deleteLabelsWithWorker(listOf(testLabelId)) } returns workerStatusLiveData
 
             // when
-            val response = deleteLabel(listOf(testLabelId.id))
+            val response = deleteLabel(listOf(testLabelId))
             response.observeForever { }
 
             // then
@@ -101,7 +85,7 @@ class DeleteLabelTest {
     fun verifyThatMessageDeleteHasFailed() {
         runBlockingTest {
             // given
-            val testLabelId =  LabelId("Id1")
+            val testLabelId = LabelId("Id1")
             val contactLabel = mockk<LabelEntity> {
                 every { id } returns testLabelId
             }
@@ -120,11 +104,10 @@ class DeleteLabelTest {
             val expected = false
 
             coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
-            coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
-            every { workScheduler.enqueue(any()) } returns workerStatusLiveData
+            coEvery { labelRepository.deleteLabelsWithWorker(listOf(testLabelId)) } returns workerStatusLiveData
 
             // when
-            val response = deleteLabel(listOf(testLabelId.id))
+            val response = deleteLabel(listOf(testLabelId))
             response.observeForever { }
 
             // then
@@ -155,11 +138,10 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
 
             coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
-            coEvery { labelRepository.deleteLabel(testLabelId) } returns Unit
-            every { workScheduler.enqueue(any()) } returns workerStatusLiveData
+            coEvery { labelRepository.deleteLabelsWithWorker(listOf(testLabelId)) } returns workerStatusLiveData
 
             // when
-            val response = deleteLabel(listOf(testLabelId.id))
+            val response = deleteLabel(listOf(testLabelId))
             response.observeForever { }
 
             // then

@@ -126,8 +126,8 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
     @Query("DELETE FROM $TABLE_LABELS")
     abstract fun deleteLabelsTableData()
 
-    @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract suspend fun deleteLabelById(labelId: LabelId)
+    @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
+    abstract suspend fun deleteLabelsById(labelIds: List<LabelId>)
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_USER_ID=:userId ")
     abstract suspend fun deleteAllLabels(userId: UserId)

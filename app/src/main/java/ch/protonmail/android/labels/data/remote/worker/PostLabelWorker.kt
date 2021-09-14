@@ -40,12 +40,12 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.network.domain.ApiResult
+import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
 internal const val KEY_INPUT_DATA_IS_UPDATE = "keyInputDataIsUpdate"
 internal const val KEY_INPUT_DATA_LABEL_COLOR = "keyInputDataLabelColor"
-internal const val KEY_INPUT_DATA_LABEL_EXPANDED = "keyInputDataLabelExpanded"
 internal const val KEY_INPUT_DATA_LABEL_TYPE = "keyInputDataLabelType"
 internal const val KEY_POST_LABEL_WORKER_RESULT_ERROR = "keyResultDataPostLabelWorkerError"
 
@@ -63,10 +63,9 @@ class PostLabelWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val labelName = getLabelNameParam() ?: return Result.failure()
         val color = getLabelColorParam() ?: return Result.failure()
-        val expanded = getExpandedParam()
         val type = getTypeParam()
 
-        return when (val response = createOrUpdateLabel(labelName, color, expanded, type)) {
+        return when (val response = createOrUpdateLabel(labelName, color, type)) {
             is ApiResult.Success -> {
                 val labelResponse = response.value
                 if (labelResponse.label.id.isEmpty()) {
@@ -96,7 +95,6 @@ class PostLabelWorker @AssistedInject constructor(
     private suspend fun createOrUpdateLabel(
         labelName: String,
         color: String,
-        expanded: Int,
         type: Int
     ): ApiResult<LabelResponse> {
         val requestBody = LabelRequestBody(
@@ -105,7 +103,7 @@ class PostLabelWorker @AssistedInject constructor(
             type = type,
             parentId = null,
             notify = 0,
-            expanded = expanded,
+            expanded = 0,
             sticky = 0
         )
 
@@ -123,22 +121,19 @@ class PostLabelWorker @AssistedInject constructor(
 
     private fun getTypeParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, LabelType.MESSAGE_LABEL.typeInt)
 
-    private fun getExpandedParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_EXPANDED, 0)
-
     private fun getLabelColorParam() = inputData.getString(KEY_INPUT_DATA_LABEL_COLOR)
 
     private fun getLabelNameParam() = inputData.getString(KEY_INPUT_DATA_LABEL_NAME)
 
     private fun isUpdateParam() = inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false)
 
-    class Enqueuer(private val workManager: WorkManager) {
+    class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
         fun enqueue(
             labelName: String,
             color: String,
-            expanded: Int? = 0,
+            isUpdate: Boolean? = false,
             type: LabelType,
-            update: Boolean? = false,
             labelId: String? = null
         ): LiveData<WorkInfo> {
 
@@ -149,8 +144,7 @@ class PostLabelWorker @AssistedInject constructor(
                         KEY_INPUT_DATA_LABEL_NAME to labelName,
                         KEY_INPUT_DATA_LABEL_COLOR to color,
                         KEY_INPUT_DATA_LABEL_TYPE to type.typeInt,
-                        KEY_INPUT_DATA_IS_UPDATE to update,
-                        KEY_INPUT_DATA_LABEL_EXPANDED to expanded
+                        KEY_INPUT_DATA_IS_UPDATE to isUpdate,
                     )
                 ).build()
 
