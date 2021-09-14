@@ -27,6 +27,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import javax.inject.Inject
@@ -77,7 +78,11 @@ class ContactsRepository @Inject constructor(
         contactDao.findContactEmailById(emailId)
 
     fun observeAllContactEmailsByContactGroupId(groupLabelId: String): Flow<List<ContactEmail>> =
-        contactDao.observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
+        if (groupLabelId.isBlank()) {
+            flowOf(emptyList())
+        } else {
+            contactDao.observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
+        }
 
     fun observeFilterContactEmailsByContactGroup(groupLabelId: String, filter: String): Flow<List<ContactEmail>> =
         contactDao.observeFilterContactEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT), filter)

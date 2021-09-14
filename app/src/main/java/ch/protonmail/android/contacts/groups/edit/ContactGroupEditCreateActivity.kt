@@ -20,8 +20,6 @@ package ch.protonmail.android.contacts.groups.edit
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -29,6 +27,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.UnsavedChangesDialog
@@ -45,9 +44,10 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_edit_create_contact_group_header.*
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.presentation.utils.onTextChange
+import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.Random
@@ -84,10 +84,9 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         contactGroupEditCreateViewModel.setData(intent?.extras?.getParcelable(EXTRA_CONTACT_GROUP))
 
         contactGroupEditCreateViewModel.contactGroupItemFlow
-            .filterNotNull()
             .onEach { item ->
-                setColor(item.color)
-                setName(item.name)
+                setColor(item?.color)
+                setName(item?.name ?: EMPTY_STRING)
             }
             .launchIn(lifecycleScope)
 
@@ -188,7 +187,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
             mode = GroupsItemAdapterMode.NORMAL
         )
         with(contactEmailsRecyclerView) {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@ContactGroupEditCreateActivity)
+            layoutManager = LinearLayoutManager(this@ContactGroupEditCreateActivity)
             adapter = contactGroupEmailsAdapter
         }
     }
@@ -262,19 +261,16 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     }
 
     private fun setName(groupName: String) {
-        contactGroupName.text = groupName
-        contactGroupName.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
+        contactGroupName.apply {
+            text = groupName
+            onTextChange {
                 contactGroupEditCreateViewModel.setChanged()
             }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
-        })
+        }
     }
 
-    private fun setColor(colorInt: Int) {
-        val color = if (colorInt != 0) {
+    private fun setColor(colorInt: Int?) {
+        val color = if (colorInt != null && colorInt != 0) {
             colorInt
         } else {
             val randomColor = generateNewColor()

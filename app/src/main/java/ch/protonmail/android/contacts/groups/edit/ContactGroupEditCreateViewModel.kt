@@ -24,8 +24,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.rx.RxEventBus
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
@@ -74,10 +72,6 @@ class ContactGroupEditCreateViewModel @Inject constructor(
     private val _contactGroupItemFlow = MutableStateFlow<ContactGroupListItem?>(null)
     val contactGroupItemFlow = _contactGroupItemFlow.asStateFlow()
 
-    private val _apiError: (ResponseBody) -> Unit = {
-        // todo show the error to the user
-        val msg = it.error
-    }
     val contactGroupEmailsResult: LiveData<List<ContactEmail>>
         get() = _contactGroupEmailsResult
 
@@ -94,8 +88,6 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         get() = _cleanUpComplete
 
     init {
-        RxEventBus.listen(ResponseBody::class.java).subscribe(_apiError)
-
         _contactGroupItemFlow
             .filterNotNull()
             .flatMapLatest { contactGroupEditCreateRepository.observeContactGroupEmails(it.contactId) }
