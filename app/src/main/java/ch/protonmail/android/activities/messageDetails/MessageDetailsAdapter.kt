@@ -49,6 +49,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.domain.GetEncryptionStatus
 import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
@@ -82,6 +83,7 @@ internal class MessageDetailsAdapter(
     private val messageDetailsRecyclerView: RecyclerView,
     private val messageBodyParser: MessageBodyParser,
     private val userManager: UserManager,
+    private val getEncryptionStatus: GetEncryptionStatus,
     private val onLoadEmbeddedImagesClicked: (Message, List<String>) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
@@ -223,8 +225,10 @@ internal class MessageDetailsAdapter(
 
         fun bind(message: Message) {
             val messageDetailsHeaderView = itemView.headerView
+            val messageEncryptionStatus = getEncryptionStatus.invoke(message.messageEncryption!!)
             messageDetailsHeaderView.bind(
                 message,
+                messageEncryptionStatus,
                 exclusiveLabelsPerMessage[message.messageId] ?: listOf(),
                 nonExclusiveLabelsPerMessage[message.messageId] ?: listOf(),
                 ::onHeaderCollapsed
