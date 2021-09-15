@@ -34,9 +34,9 @@ interface LabelRepository {
 
     suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean = false): List<Label>
 
-    fun observeLabels(labelsIds: List<LabelId>, userId: UserId): Flow<List<Label>>
+    fun observeLabels(labelsIds: List<LabelId>): Flow<List<Label>>
 
-    suspend fun findLabels(labelsIds: List<LabelId>, userId: UserId): List<Label>
+    suspend fun findLabels(labelsIds: List<LabelId>): List<Label>
 
     suspend fun findLabel(labelId: LabelId): Label?
 

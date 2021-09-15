@@ -61,7 +61,7 @@ class ContactsRepository @Inject constructor(
             .map { contactEmail ->
                 val labelsIds = contactEmail.labelIds?.map { LabelId(it) }
                 if (!labelsIds.isNullOrEmpty()) {
-                    labelRepository.findLabels(labelsIds, userManager.requireCurrentUserId())
+                    labelRepository.findLabels(labelsIds)
                 } else {
                     emptyList()
                 }

@@ -252,7 +252,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         val exclusiveLabelsHashMap = hashMapOf<String, List<Label>>()
         conversation.messages.filter { it.allLabelIDs.isNotEmpty() }.forEach { message ->
             val messageId = requireNotNull(message.messageId)
-            getAllLabelsFor(userManager.requireCurrentUserId(), message)?.let { (exclusiveLabels, nonExclusiveLabels) ->
+            getAllLabelsFor(message)?.let { (exclusiveLabels, nonExclusiveLabels) ->
                 exclusiveLabelsHashMap[messageId] = exclusiveLabels.toList()
                 nonExclusiveLabelsHashMap[messageId] = nonExclusiveLabels
             }
@@ -266,11 +266,10 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private suspend fun getAllLabelsFor(
-        userId: UserId,
         message: Message
     ): Pair<Collection<Label>, List<LabelChipUiModel>>? {
         val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
-        return labelRepository.observeLabels(allLabelIds, userId)
+        return labelRepository.observeLabels(allLabelIds)
             .firstOrNull()
             ?.partition { it.type == LabelType.FOLDER }
             ?.mapSecond { it.toNonExclusiveLabelModel() }

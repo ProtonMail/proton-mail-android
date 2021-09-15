@@ -77,12 +77,12 @@ internal class LabelRepositoryImpl @Inject constructor(
     override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<Label> =
         observeAllLabels(userId, shallRefresh).first()
 
-    override fun observeLabels(labelsIds: List<LabelId>, userId: UserId): Flow<List<Label>> =
-        labelDao.observeLabelsById(userId, labelsIds)
+    override fun observeLabels(labelsIds: List<LabelId>): Flow<List<Label>> =
+        labelDao.observeLabelsById(labelsIds)
             .mapToLabel()
 
-    override suspend fun findLabels(labelsIds: List<LabelId>, userId: UserId): List<Label> =
-        observeLabels(labelsIds, userId).first()
+    override suspend fun findLabels(labelsIds: List<LabelId>): List<Label> =
+        observeLabels(labelsIds).first()
 
     override fun observeLabel(labelId: LabelId): Flow<Label?> =
         labelDao.observeLabelById(labelId)

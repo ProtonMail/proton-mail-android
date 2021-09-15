@@ -512,8 +512,6 @@ internal class MailboxViewModel @Inject constructor(
 
     private suspend fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
         Timber.v("messagesToMailboxItems size: ${messages.size}")
-        // Note for future: Get userId from Message (should contain it).
-        val userId = userManager.currentUserId ?: return emptyList()
 
         val emails = messages.map { message -> message.senderEmail }.distinct()
         val contacts = emails
@@ -525,7 +523,7 @@ internal class MailboxViewModel @Inject constructor(
 
         val labels = labelIds
             .chunked(Constants.MAX_SQL_ARGUMENTS)
-            .flatMap { labelChunk -> labelRepository.findLabels(labelChunk, userId) }
+            .flatMap { labelChunk -> labelRepository.findLabels(labelChunk) }
             .toLabelChipUiModels()
 
         return messages.map { message ->
@@ -593,7 +591,7 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     private suspend fun getAllLabelsByIds(labelIds: List<String>, userId: UserId) =
-        messageDetailsRepository.findLabelsWithIds(labelIds, userId)
+        messageDetailsRepository.findLabelsWithIds(labelIds)
 
     private fun resolveMessageLabels(
         message: Message,

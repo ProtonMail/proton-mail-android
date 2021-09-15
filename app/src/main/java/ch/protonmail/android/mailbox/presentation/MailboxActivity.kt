@@ -1364,7 +1364,7 @@ internal class MailboxActivity :
 
         override fun doInBackground(vararg params: Unit): Label? {
             return runBlocking {
-                val labels = messageDetailsRepository.findLabelsWithIds(listOf(labelId), userId)
+                val labels = messageDetailsRepository.findLabelsWithIds(listOf(labelId))
                 if (labels.isEmpty()) null else labels[0]
             }
         }

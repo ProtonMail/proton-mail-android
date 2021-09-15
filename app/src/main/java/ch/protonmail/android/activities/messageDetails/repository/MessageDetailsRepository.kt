@@ -261,8 +261,8 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
 
-    suspend fun findLabelsWithIds(labelIds: List<String>, userId: UserId): List<Label> =
-        labelRepository.findLabels(labelIds.map { LabelId(it) }, userId)
+    suspend fun findLabelsWithIds(labelIds: List<String>): List<Label> =
+        labelRepository.findLabels(labelIds.map { LabelId(it) })
 
     suspend fun prepareEditMessageIntent(
         messageAction: Constants.MessageActionType,

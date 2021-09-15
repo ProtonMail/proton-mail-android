@@ -40,11 +40,10 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         """
         SELECT * FROM LabelEntity 
         WHERE id IN (:labelIds) 
-        AND userId = :userId  
         ORDER BY labelOrder
         """
     )
-    abstract fun observeLabelsById(userId: UserId, labelIds: List<LabelId>): Flow<List<LabelEntity>>
+    abstract fun observeLabelsById(labelIds: List<LabelId>): Flow<List<LabelEntity>>
 
     @Query(
         """
