@@ -200,6 +200,19 @@
         <item name="android:textColor">@color/cornflower_blue</item>
         <item name="android:background">@color/transparent</item>
     </style>
+
+    <style name="ReplyButtonTextStyle">
+        <item name="android:textAppearance">@style/Proton.Text.DefaultSmall</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:breakStrategy">balanced</item>
+    </style>
+
+    <style name="ReplyButtonStyle">
+        <item name="android:background">@drawable/ripple_reply_actions</item>
+        <item name="android:elevation">@dimen/elevation_s</item>
+    </style>
     <!-- endregion -->
 
     <!-- region V3 -->

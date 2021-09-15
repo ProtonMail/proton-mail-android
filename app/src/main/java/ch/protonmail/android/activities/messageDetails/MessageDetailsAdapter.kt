@@ -62,6 +62,7 @@ import ch.protonmail.android.utils.ui.TYPE_ITEM
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
+import ch.protonmail.android.views.messageDetails.ReplyActionsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
@@ -144,6 +145,9 @@ internal class MessageDetailsAdapter(
                 itemView.messageWebViewContainer.addView(detailsMessageActions)
             }
 
+            val replyActionsView = createReplyActionsView()
+            itemView.messageWebViewContainer.addView(replyActionsView)
+
             ItemViewHolder(itemView)
         }
     }
@@ -160,6 +164,12 @@ internal class MessageDetailsAdapter(
         val detailsMessageActions = MessageDetailsActionsView(context)
         detailsMessageActions.id = R.id.item_message_body_actions_layout_id
         return detailsMessageActions
+    }
+
+    private fun createReplyActionsView(): ReplyActionsView {
+        val replyActionsView = ReplyActionsView(context)
+        replyActionsView.id = R.id.item_message_body_reply_actions_layout_id
+        return replyActionsView
     }
 
     private fun setupMessageBodyWebView(itemView: View): WebView? {
@@ -296,6 +306,7 @@ internal class MessageDetailsAdapter(
             setUpViewDividers()
 
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
+            setupReplyActionsView(message)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
 
             itemView.messageWebViewContainer.postDelayed(EXPAND_MESSAGE_ANIMATION_DELAY_MS) {
@@ -325,6 +336,13 @@ internal class MessageDetailsAdapter(
                 showHistoryButton.isVisible = false
             }
             messageActionsView.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
+        }
+
+        private fun setupReplyActionsView(message: Message) {
+            val replyActionsView: ReplyActionsView =
+                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id) ?: return
+
+            replyActionsView.bind(message.toList.size + message.ccList.size > 1)
         }
 
         private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String) {
