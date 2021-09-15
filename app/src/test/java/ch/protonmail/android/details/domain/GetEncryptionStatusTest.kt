@@ -167,4 +167,58 @@ class GetEncryptionStatusTest {
         assertEquals(expected, actual)
     }
 
+    @Test
+    fun externalPgpMessageWithSuccessfulSignatureVerificationIsRepresentedByGreenCheckedPadlockAndPgpEncryptedMessageFromVerifiedAddressTooltip() {
+        val messageEncryption = MessageEncryption.EXTERNAL_PGP
+
+        val actual = getEncryptionStatus(
+            messageEncryption,
+            SignatureVerification.SUCCESSFUL,
+            false
+        )
+
+        val expected = MessageEncryptionStatus(
+            R.string.pgp_lock_check,
+            R.color.icon_green,
+            R.string.sender_lock_pgp_encrypted_verified
+        )
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun externalPgpMessageWithUnknownSignatureVerificationIsRepresentedByGreenPadlockAndPgpEncryptedMessageTooltip() {
+        val messageEncryption = MessageEncryption.EXTERNAL_PGP
+
+        val actual = getEncryptionStatus(
+            messageEncryption,
+            SignatureVerification.UNKNOWN,
+            false
+        )
+
+        val expected = MessageEncryptionStatus(
+            R.string.lock_default,
+            R.color.icon_green,
+            R.string.sender_lock_pgp_encrypted
+        )
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun externalPgpMessageWithFailedSignatureVerificationIsRepresentedByGreenPadlockWithWarningAndVerificationFailedTooltip() {
+        val messageEncryption = MessageEncryption.EXTERNAL_PGP
+
+        val actual = getEncryptionStatus(
+            messageEncryption,
+            SignatureVerification.FAILED,
+            false
+        )
+
+        val expected = MessageEncryptionStatus(
+            R.string.pgp_lock_warning,
+            R.color.icon_green,
+            R.string.sender_lock_verification_failed
+        )
+        assertEquals(expected, actual)
+    }
+
 }
