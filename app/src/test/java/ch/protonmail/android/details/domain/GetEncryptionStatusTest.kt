@@ -76,7 +76,7 @@ class GetEncryptionStatusTest {
     }
 
     @Test
-    fun internalMessageWithVerifiedSignatureIsRepresentedByBluePadlockWithCheckmarkAndE2eEncryptedToVerifiedRecipientTooltip() {
+    fun internalMessageWithSuccessfulSignatureVerificationIsRepresentedByBluePadlockWithCheckmarkAndE2eEncryptedToVerifiedRecipientTooltip() {
         val messageEncryption = MessageEncryption.INTERNAL
 
         val actual = getEncryptionStatus(
@@ -91,4 +91,22 @@ class GetEncryptionStatusTest {
         )
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun internalMessageWithFailedSignatureVerificationIsRepresentedByBluePadlockWithWarningAndSenderVerificationFailedTooltip() {
+        val messageEncryption = MessageEncryption.INTERNAL
+
+        val actual = getEncryptionStatus(
+            messageEncryption,
+            SignatureVerification.FAILED
+        )
+
+        val expected = MessageEncryptionStatus(
+            R.string.pgp_lock_warning,
+            R.color.icon_purple,
+            R.string.sender_lock_verification_failed
+        )
+        assertEquals(expected, actual)
+    }
+
 }
