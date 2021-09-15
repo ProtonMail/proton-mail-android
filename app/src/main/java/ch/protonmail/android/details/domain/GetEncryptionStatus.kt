@@ -21,8 +21,6 @@ package ch.protonmail.android.details.domain
 
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.model.MessageEncryptionStatus
 import ch.protonmail.android.details.domain.model.SignatureVerification
 import timber.log.Timber
@@ -35,43 +33,43 @@ class GetEncryptionStatus @Inject constructor() {
         signatureVerification: SignatureVerification,
         isMessageSent: Boolean
     ): MessageEncryptionStatus {
-        val message = Message(messageEncryption = messageEncryption).apply {
-            hasValidSignature = signatureVerification == SignatureVerification.SUCCESSFUL
-            hasInvalidSignature = signatureVerification == SignatureVerification.FAILED
-            Type = if (isMessageSent) Message.MessageType.SENT else Message.MessageType.INBOX
-        }
         return MessageEncryptionStatus(
-            getIcon(message),
-            getColor(message),
-            getTooltip(message)
+            getIcon(messageEncryption, signatureVerification, isMessageSent),
+            getColor(messageEncryption),
+            getTooltip(messageEncryption, signatureVerification, isMessageSent)
         )
     }
 
 
-    private fun getIcon(message: Message): Int {
-        if (!message.messageEncryption!!.isStoredEncrypted) {
+    private fun getIcon(
+        messageEncryption: MessageEncryption,
+        signatureVerification: SignatureVerification,
+        isMessageSent: Boolean
+    ): Int {
+        if (!messageEncryption.isStoredEncrypted) {
             return R.string.pgp_lock_open
         }
-        if (message.hasInvalidSignature) {
+        if (signatureVerification == SignatureVerification.FAILED) {
             return R.string.pgp_lock_warning
         }
-        if (message.isSent) {
-            return if (!message.hasValidSignature && message.time > Constants.PM_SIGNATURES_START) {
+        if (isMessageSent) {
+            // This hardcoded "false" represents the always false `message.time > Constants.PM_SIGNATURES_START` check
+            // (preserving to take small and clear steps: will be dropped in a later commit)
+            return if (signatureVerification != SignatureVerification.SUCCESSFUL && false) {
                 R.string.pgp_lock_warning
             } else {
                 R.string.lock_default
             }
         }
-        return if (message.hasValidSignature) {
+        return if (signatureVerification == SignatureVerification.SUCCESSFUL) {
             R.string.pgp_lock_check
         } else {
             R.string.lock_default
         }
     }
 
-    private fun getColor(message: Message): Int {
-        val messageEncryption = message.messageEncryption
-        if (messageEncryption!!.isPGPEncrypted) {
+    private fun getColor(messageEncryption: MessageEncryption): Int {
+        if (messageEncryption.isPGPEncrypted) {
             return R.color.icon_green
         }
         return if (messageEncryption.isEndToEndEncrypted || messageEncryption.isInternalEncrypted) {
@@ -81,22 +79,25 @@ class GetEncryptionStatus @Inject constructor() {
         }
     }
 
-    private fun getTooltip(message: Message): Int {
-        if (message.hasInvalidSignature) {
+    private fun getTooltip(
+        messageEncryption: MessageEncryption,
+        signatureVerification: SignatureVerification,
+        isMessageSent: Boolean
+    ): Int {
+        if (signatureVerification == SignatureVerification.FAILED) {
             return R.string.sender_lock_verification_failed
         }
-        val messageEncryption = message.messageEncryption
         if (messageEncryption == MessageEncryption.AUTO_RESPONSE) {
             return R.string.sender_lock_sent_autoresponder
         }
-        if (message.isSent) {
-            return sentTooltip(message)
+        if (isMessageSent) {
+            return sentTooltip(messageEncryption, signatureVerification)
         }
-        if (messageEncryption!!.isInternalEncrypted) {
-            return internalTooltip(message)
+        if (messageEncryption.isInternalEncrypted) {
+            return internalTooltip(signatureVerification)
         }
         if (messageEncryption.isPGPEncrypted) {
-            return pGPTooltip(message)
+            return pGPTooltip(signatureVerification)
         }
         // We only support EO (handled in sentTooltip), PGP and Internal for e2e-encryption
         // So this should never happen:
@@ -105,7 +106,7 @@ class GetEncryptionStatus @Inject constructor() {
             return R.string.sender_lock_unknown_scheme
         }
         return if (messageEncryption.isStoredEncrypted) {
-            zeroAccessTooltip(message)
+            zeroAccessTooltip(signatureVerification)
         } else {
             R.string.sender_lock_unencrypted
         }
@@ -118,33 +119,37 @@ class GetEncryptionStatus @Inject constructor() {
      * So we don't want to show the regular verified sender case if the user does not know about
      * address verification.
      */
-    private fun sentTooltip(message: Message): Int {
-        val messageEncryption = message.messageEncryption
-        if (!message.hasValidSignature && message.time > Constants.PM_SIGNATURES_START) {
+    private fun sentTooltip(
+        messageEncryption: MessageEncryption,
+        signatureVerification: SignatureVerification
+    ): Int {
+        // This hardcoded "false" represents the always false `message.time > Constants.PM_SIGNATURES_START` check
+        // (preserving to take small and clear steps: will be dropped in a later commit)
+        if (signatureVerification != SignatureVerification.SUCCESSFUL && false) {
             return R.string.sender_lock_verification_failed
         }
-        if (messageEncryption!!.isEndToEndEncrypted) {
+        if (messageEncryption.isEndToEndEncrypted) {
             return R.string.sender_lock_sent_end_to_end
         }
         return R.string.sender_lock_zero_access
     }
 
-    private fun internalTooltip(message: Message) =
-        if (message.hasValidSignature) {
+    private fun internalTooltip(signatureVerification: SignatureVerification) =
+        if (signatureVerification == SignatureVerification.SUCCESSFUL) {
             R.string.sender_lock_internal_verified
         } else {
             R.string.sender_lock_internal
         }
 
-    private fun pGPTooltip(message: Message) =
-        if (message.hasValidSignature) {
+    private fun pGPTooltip(signatureVerification: SignatureVerification) =
+        if (signatureVerification == SignatureVerification.SUCCESSFUL) {
             R.string.sender_lock_pgp_encrypted_verified
         } else {
             R.string.sender_lock_pgp_encrypted
         }
 
-    private fun zeroAccessTooltip(message: Message) =
-        if (message.hasValidSignature) {
+    private fun zeroAccessTooltip(signatureVerification: SignatureVerification) =
+        if (signatureVerification == SignatureVerification.SUCCESSFUL) {
             R.string.sender_lock_pgp_signed_verified_sender
         } else {
             R.string.sender_lock_zero_access
