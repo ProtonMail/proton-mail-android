@@ -113,8 +113,9 @@ class GetEncryptionStatusTest {
     }
 
     @Test
-    fun sentMessageWithE2eeIsRepresentedByBluePadlockAndSentByYouWithE2eeTooltip() {
-        val messageEncryption = MessageEncryption.INTERNAL
+    fun externalSentMessageWithE2eeIsRepresentedByGreenPadlockAndSentByYouWithE2eeTooltip() {
+        // The MessageEncryption values having e2ee are `INTERNAL` and `MIME_PGP`
+        val messageEncryption = MessageEncryption.MIME_PGP
 
         val actual = getEncryptionStatus(
             messageEncryption,
@@ -124,8 +125,44 @@ class GetEncryptionStatusTest {
 
         val expected = MessageEncryptionStatus(
             R.string.lock_default,
-            R.color.icon_purple,
+            R.color.icon_green,
             R.string.sender_lock_sent_end_to_end
+        )
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun externalSentMessageWithoutE2eeIsRepresentedByGrayPadlockAndStoredWithZeroAccessEncryptionTooltip() {
+        val messageEncryption = MessageEncryption.EXTERNAL
+
+        val actual = getEncryptionStatus(
+            messageEncryption,
+            SignatureVerification.UNKNOWN,
+            true
+        )
+
+        val expected = MessageEncryptionStatus(
+            R.string.lock_default,
+            R.color.icon_gray,
+            R.string.sender_lock_zero_access
+        )
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun autoResponseMessageIsRepresentedByBluePadlockAndSentByProtonmailWithZeroAccessEncryptionTooltip() {
+        val messageEncryption = MessageEncryption.AUTO_RESPONSE
+
+        val actual = getEncryptionStatus(
+            messageEncryption,
+            SignatureVerification.UNKNOWN,
+            false
+        )
+
+        val expected = MessageEncryptionStatus(
+            R.string.lock_default,
+            R.color.icon_purple,
+            R.string.sender_lock_sent_autoresponder
         )
         assertEquals(expected, actual)
     }
