@@ -34,7 +34,7 @@ class GetEncryptionStatus @Inject constructor() {
         isMessageSent: Boolean
     ): MessageEncryptionStatus {
         return MessageEncryptionStatus(
-            getIcon(messageEncryption, signatureVerification, isMessageSent),
+            getIcon(signatureVerification, isMessageSent),
             getColor(messageEncryption),
             getTooltip(messageEncryption, signatureVerification, isMessageSent)
         )
@@ -42,26 +42,14 @@ class GetEncryptionStatus @Inject constructor() {
 
 
     private fun getIcon(
-        messageEncryption: MessageEncryption,
         signatureVerification: SignatureVerification,
         isMessageSent: Boolean
     ): Int {
-        if (!messageEncryption.isStoredEncrypted) {
-            return R.string.pgp_lock_open
-        }
         if (signatureVerification == SignatureVerification.FAILED) {
             return R.string.pgp_lock_warning
         }
-        if (isMessageSent) {
-            // This hardcoded "false" represents the always false `message.time > Constants.PM_SIGNATURES_START` check
-            // (preserving to take small and clear steps: will be dropped in a later commit)
-            return if (signatureVerification != SignatureVerification.SUCCESSFUL && false) {
-                R.string.pgp_lock_warning
-            } else {
-                R.string.lock_default
-            }
-        }
-        return if (signatureVerification == SignatureVerification.SUCCESSFUL) {
+
+        return if (signatureVerification == SignatureVerification.SUCCESSFUL && !isMessageSent) {
             R.string.pgp_lock_check
         } else {
             R.string.lock_default
@@ -72,11 +60,10 @@ class GetEncryptionStatus @Inject constructor() {
         if (messageEncryption.isPGPEncrypted) {
             return R.color.icon_green
         }
-        return if (messageEncryption.isEndToEndEncrypted || messageEncryption.isInternalEncrypted) {
-            R.color.icon_purple
-        } else {
-            R.color.icon_gray
+        if (messageEncryption.isEndToEndEncrypted || messageEncryption.isInternalEncrypted) {
+            return R.color.icon_purple
         }
+        return R.color.icon_gray
     }
 
     private fun getTooltip(
@@ -91,7 +78,7 @@ class GetEncryptionStatus @Inject constructor() {
             return R.string.sender_lock_sent_autoresponder
         }
         if (isMessageSent) {
-            return sentTooltip(messageEncryption, signatureVerification)
+            return sentTooltip(messageEncryption)
         }
         if (messageEncryption.isInternalEncrypted) {
             return internalTooltip(signatureVerification)
@@ -105,29 +92,12 @@ class GetEncryptionStatus @Inject constructor() {
             Timber.w("Unhandled EndToEndEncryption tooltip!")
             return R.string.sender_lock_unknown_scheme
         }
-        return if (messageEncryption.isStoredEncrypted) {
-            zeroAccessTooltip(signatureVerification)
-        } else {
-            R.string.sender_lock_unencrypted
-        }
+        return zeroAccessTooltip(signatureVerification)
     }
 
-    /**
-     * Special case, we don't show when signatures are actually valid, but signatures should always be here
-     * so instead, when a signature is not available we display an error.
-     * This is a special case, because address verification happens always for sent messages
-     * So we don't want to show the regular verified sender case if the user does not know about
-     * address verification.
-     */
     private fun sentTooltip(
-        messageEncryption: MessageEncryption,
-        signatureVerification: SignatureVerification
+        messageEncryption: MessageEncryption
     ): Int {
-        // This hardcoded "false" represents the always false `message.time > Constants.PM_SIGNATURES_START` check
-        // (preserving to take small and clear steps: will be dropped in a later commit)
-        if (signatureVerification != SignatureVerification.SUCCESSFUL && false) {
-            return R.string.sender_lock_verification_failed
-        }
         if (messageEncryption.isEndToEndEncrypted) {
             return R.string.sender_lock_sent_end_to_end
         }
