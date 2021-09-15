@@ -64,7 +64,8 @@ class GetEncryptionStatusTest {
 
         val actual = getEncryptionStatus(
             messageEncryption,
-            SignatureVerification.UNKNOWN
+            SignatureVerification.UNKNOWN,
+            false
         )
 
         val expected = MessageEncryptionStatus(
@@ -81,7 +82,8 @@ class GetEncryptionStatusTest {
 
         val actual = getEncryptionStatus(
             messageEncryption,
-            SignatureVerification.SUCCESSFUL
+            SignatureVerification.SUCCESSFUL,
+            false
         )
 
         val expected = MessageEncryptionStatus(
@@ -98,13 +100,32 @@ class GetEncryptionStatusTest {
 
         val actual = getEncryptionStatus(
             messageEncryption,
-            SignatureVerification.FAILED
+            SignatureVerification.FAILED,
+            false
         )
 
         val expected = MessageEncryptionStatus(
             R.string.pgp_lock_warning,
             R.color.icon_purple,
             R.string.sender_lock_verification_failed
+        )
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun sentMessageWithE2eeIsRepresentedByBluePadlockAndSentByYouWithE2eeTooltip() {
+        val messageEncryption = MessageEncryption.INTERNAL
+
+        val actual = getEncryptionStatus(
+            messageEncryption,
+            SignatureVerification.UNKNOWN,
+            true
+        )
+
+        val expected = MessageEncryptionStatus(
+            R.string.lock_default,
+            R.color.icon_purple,
+            R.string.sender_lock_sent_end_to_end
         )
         assertEquals(expected, actual)
     }

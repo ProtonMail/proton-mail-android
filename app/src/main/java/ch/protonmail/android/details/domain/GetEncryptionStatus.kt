@@ -30,11 +30,13 @@ class GetEncryptionStatus @Inject constructor() {
 
     operator fun invoke(
         messageEncryption: MessageEncryption,
-        isSignatureVerified: SignatureVerification
+        signatureVerification: SignatureVerification,
+        isMessageSent: Boolean
     ): MessageEncryptionStatus {
         val message = Message(messageEncryption = messageEncryption).apply {
-            hasValidSignature = isSignatureVerified == SignatureVerification.SUCCESSFUL
-            hasInvalidSignature = isSignatureVerified == SignatureVerification.FAILED
+            hasValidSignature = signatureVerification == SignatureVerification.SUCCESSFUL
+            hasInvalidSignature = signatureVerification == SignatureVerification.FAILED
+            Type = if (isMessageSent) Message.MessageType.SENT else Message.MessageType.INBOX
         }
         val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
         return MessageEncryptionStatus(

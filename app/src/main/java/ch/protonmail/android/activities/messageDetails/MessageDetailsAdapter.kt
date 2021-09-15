@@ -226,14 +226,15 @@ internal class MessageDetailsAdapter(
 
         fun bind(message: Message) {
             val messageDetailsHeaderView = itemView.headerView
-            val isSignatureVerified = when {
+            val signatureVerification = when {
                 message.hasValidSignature -> SignatureVerification.SUCCESSFUL
                 message.hasInvalidSignature -> SignatureVerification.FAILED
                 else -> SignatureVerification.UNKNOWN
             }
             val messageEncryptionStatus = getEncryptionStatus.invoke(
                 message.messageEncryption!!,
-                isSignatureVerified
+                signatureVerification,
+                message.isSent
             )
             messageDetailsHeaderView.bind(
                 message,
