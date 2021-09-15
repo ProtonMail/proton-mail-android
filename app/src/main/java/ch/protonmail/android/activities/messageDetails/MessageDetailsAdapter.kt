@@ -232,7 +232,7 @@ internal class MessageDetailsAdapter(
                 else -> SignatureVerification.UNKNOWN
             }
             val messageEncryptionStatus = getEncryptionStatus.invoke(
-                message.messageEncryption!!,
+                message.messageEncryption,
                 signatureVerification,
                 message.isSent
             )
