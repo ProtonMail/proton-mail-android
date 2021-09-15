@@ -22,15 +22,20 @@ package ch.protonmail.android.details.domain
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.model.MessageEncryptionStatus
+import ch.protonmail.android.details.domain.model.SignatureVerification
 import ch.protonmail.android.utils.ui.locks.SenderLockIcon
 import javax.inject.Inject
 
 class GetEncryptionStatus @Inject constructor() {
 
-    operator fun invoke(messageEncryption: MessageEncryption): MessageEncryptionStatus {
-        val message = Message(
-            messageEncryption = messageEncryption
-        )
+    operator fun invoke(
+        messageEncryption: MessageEncryption,
+        isSignatureVerified: SignatureVerification
+    ): MessageEncryptionStatus {
+        val message = Message(messageEncryption = messageEncryption).apply {
+            hasValidSignature = isSignatureVerified == SignatureVerification.SUCCESSFUL
+            hasInvalidSignature = isSignatureVerified == SignatureVerification.FAILED
+        }
         val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
         return MessageEncryptionStatus(
             senderLockIcon.icon,

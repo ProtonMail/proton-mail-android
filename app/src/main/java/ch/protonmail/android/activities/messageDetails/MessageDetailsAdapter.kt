@@ -51,6 +51,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.GetEncryptionStatus
 import ch.protonmail.android.details.domain.MessageBodyParser
+import ch.protonmail.android.details.domain.model.SignatureVerification
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
@@ -225,7 +226,15 @@ internal class MessageDetailsAdapter(
 
         fun bind(message: Message) {
             val messageDetailsHeaderView = itemView.headerView
-            val messageEncryptionStatus = getEncryptionStatus.invoke(message.messageEncryption!!)
+            val isSignatureVerified = when {
+                message.hasValidSignature -> SignatureVerification.SUCCESSFUL
+                message.hasInvalidSignature -> SignatureVerification.FAILED
+                else -> SignatureVerification.UNKNOWN
+            }
+            val messageEncryptionStatus = getEncryptionStatus.invoke(
+                message.messageEncryption!!,
+                isSignatureVerified
+            )
             messageDetailsHeaderView.bind(
                 message,
                 messageEncryptionStatus,

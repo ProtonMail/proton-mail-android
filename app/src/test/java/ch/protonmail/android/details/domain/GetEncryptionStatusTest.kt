@@ -23,6 +23,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.details.domain.model.MessageEncryptionStatus
+import ch.protonmail.android.details.domain.model.SignatureVerification
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -34,7 +35,7 @@ import kotlin.test.assertEquals
 
 class GetEncryptionStatusTest {
 
-    private val mockUserManager = mockk<ch.protonmail.android.core.UserManager>() {
+    private val mockUserManager = mockk<ch.protonmail.android.core.UserManager> {
         every { currentLegacyUser } returns mockk {
             every { addresses } returns listOf()
         }
@@ -58,17 +59,35 @@ class GetEncryptionStatusTest {
     }
 
     @Test
-    fun internalMessageWithoutVerifiedSignatureIsRepresentedByBluePadlockAndE2eEncryptedAndSignedTooltip() {
+    fun internalMessageWithUnknownSignatureVerificationIsRepresentedByBluePadlockAndE2eEncryptedAndSignedTooltip() {
         val messageEncryption = MessageEncryption.INTERNAL
 
         val actual = getEncryptionStatus(
-            messageEncryption
+            messageEncryption,
+            SignatureVerification.UNKNOWN
         )
 
         val expected = MessageEncryptionStatus(
             R.string.lock_default,
             R.color.icon_purple,
             R.string.sender_lock_internal
+        )
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun internalMessageWithVerifiedSignatureIsRepresentedByBluePadlockWithCheckmarkAndE2eEncryptedToVerifiedRecipientTooltip() {
+        val messageEncryption = MessageEncryption.INTERNAL
+
+        val actual = getEncryptionStatus(
+            messageEncryption,
+            SignatureVerification.SUCCESSFUL
+        )
+
+        val expected = MessageEncryptionStatus(
+            R.string.pgp_lock_check,
+            R.color.icon_purple,
+            R.string.sender_lock_internal_verified
         )
         assertEquals(expected, actual)
     }
