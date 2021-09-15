@@ -22,6 +22,7 @@ package ch.protonmail.android.views.messageDetails
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -58,5 +59,17 @@ class ReplyActionsView @JvmOverloads constructor(
 
     fun bind(shouldShowReplyAllAction: Boolean) {
         replyAllButton.isVisible = shouldShowReplyAllAction
+    }
+
+    fun onReplyActionClicked(callback: (View) -> Unit) {
+        replyButton.setOnClickListener { callback(it) }
+    }
+
+    fun onReplyAllActionClicked(callback: (View) -> Unit) {
+        replyAllButton.setOnClickListener { callback(it) }
+    }
+
+    fun onForwardActionClicked(callback: (View) -> Unit) {
+        forwardButton.setOnClickListener { callback(it) }
     }
 }

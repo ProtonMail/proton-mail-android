@@ -89,7 +89,7 @@ internal class MessageDetailsAdapter(
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
     private val onEditDraftClicked: (Message) -> Unit,
-    private val onReplyMessageClicked: (Message) -> Unit,
+    private val onReplyMessageClicked: (Constants.MessageActionType, Message) -> Unit,
     private val onMoreMessageActionsClicked: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
@@ -343,6 +343,16 @@ internal class MessageDetailsAdapter(
                 itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id) ?: return
 
             replyActionsView.bind(message.toList.size + message.ccList.size > 1)
+
+            replyActionsView.onReplyActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.REPLY, message)
+            }
+            replyActionsView.onReplyAllActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.REPLY_ALL, message)
+            }
+            replyActionsView.onForwardActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.FORWARD, message)
+            }
         }
 
         private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String) {

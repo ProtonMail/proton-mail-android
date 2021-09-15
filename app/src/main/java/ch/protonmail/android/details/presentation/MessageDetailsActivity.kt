@@ -626,15 +626,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
     }
 
-    private fun onReplyMessage(message: Message) {
-        val messageAction = if (message.toList.size + message.ccList.size > 1) {
-            Constants.MessageActionType.REPLY_ALL
-        } else {
-            Constants.MessageActionType.REPLY
-        }
-        executeMessageAction(messageAction, message.messageId)
-    }
-
     private fun displayToolbarData(conversation: ConversationUiModel) {
         starToggleButton.isChecked = conversation.isStarred
         val isInvalidSubject = conversation.subject.isNullOrEmpty()
@@ -871,8 +862,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         storagePermissionHelper.checkPermission()
     }
 
-    private fun onReplyMessageClicked(message: Message) {
-        onReplyMessage(message)
+    private fun onReplyMessageClicked(messageAction: Constants.MessageActionType, message: Message) {
+        executeMessageAction(messageAction, message.messageId)
     }
 
     private fun onShowMessageActionSheet(message: Message) {
