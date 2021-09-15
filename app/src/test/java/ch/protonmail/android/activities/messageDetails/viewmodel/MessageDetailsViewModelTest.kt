@@ -1032,39 +1032,42 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun whenPausedShouldNotEmitConversationModels() = runBlockingTest {
+    fun whenLoadingMessageBodyAndPausedShouldNotMarkMessageAsRead() = runBlockingTest {
         // Given
-        val conversationObserver = viewModel.decryptedConversationUiModel.testObserver()
-        every { userManager.requireCurrentUserId() } returns testId1
-        val message = Message(isDownloaded = true)
+        val message = Message(messageId = INPUT_ITEM_DETAIL_ID, Unread = true).toSpy()
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns message
+        every { messageRepository.markRead(any()) } returns Unit
 
         // When
         viewModel.pause()
-        observeMessageFlow.tryEmit(message)
+        val loadMessageBodyFlow = viewModel.loadMessageBody(message)
 
         // Then
-        assertTrue(conversationObserver.observedValues.isEmpty())
+        loadMessageBodyFlow.test {
+            coVerify(exactly = 0) { messageRepository.markRead(any()) }
+            expectItem()
+            expectComplete()
+        }
     }
 
     @Test
-    fun whenResumedShouldEmitConversationModels() = runBlockingTest {
+    fun whenLoadingMessageBodyAndResumedShouldMarkMessageAsRead() = runBlockingTest {
         // Given
-        val conversationObserver = viewModel.decryptedConversationUiModel.testObserver()
-        every { userManager.requireCurrentUserId() } returns testId1
-        val message = Message(isDownloaded = true)
+        val message = Message(messageId = INPUT_ITEM_DETAIL_ID, Unread = true).toSpy()
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns message
+        every { messageRepository.markRead(any()) } returns Unit
 
         // When
         viewModel.pause()
         viewModel.resume()
-        observeMessageFlow.tryEmit(message)
+        val loadMessageBodyFlow = viewModel.loadMessageBody(message)
 
         // Then
-        assertEquals(1, conversationObserver.observedValues.size)
-        val emittedConversation = conversationObserver.observedValues.first()!!
-        assertEquals(1, emittedConversation.messages.size)
-        assertEquals(message, emittedConversation.messages.first())
+        loadMessageBodyFlow.test {
+            coVerify(exactly = 1) { messageRepository.markRead(listOf(INPUT_ITEM_DETAIL_ID)) }
+            expectItem()
+            expectComplete()
+        }
     }
 
     private fun buildMessage(

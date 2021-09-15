@@ -202,7 +202,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private var areImagesDisplayed: Boolean = false
 
-    private var pauseConversationModelEmissions = false
+    private var visibleToTheUser = true
 
     init {
         // message render flow
@@ -321,7 +321,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
             val isDecrypted = fetchedMessage.tryDecrypt(publicKeys)
             Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")
-            if (!fetchedMessage.isRead) {
+            if (!fetchedMessage.isRead && visibleToTheUser) {
                 messageRepository.markRead(listOf(messageId))
             }
 
@@ -335,12 +335,12 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun pause() {
-        pauseConversationModelEmissions = true
+        visibleToTheUser = false
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun resume() {
-        pauseConversationModelEmissions = false
+        visibleToTheUser = true
     }
 
     private suspend fun loadMessageDetails(message: Message?): ConversationUiModel? {
@@ -426,10 +426,8 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private suspend fun emitConversationUiItem(conversationUiModel: ConversationUiModel) {
         refreshedKeys = true
-        if (!pauseConversationModelEmissions) {
-            _decryptedConversationUiModel.postValue(conversationUiModel)
-            _conversationUiFlow.emit(conversationUiModel)
-        }
+        _decryptedConversationUiModel.postValue(conversationUiModel)
+        _conversationUiFlow.emit(conversationUiModel)
     }
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
