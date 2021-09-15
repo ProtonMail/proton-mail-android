@@ -45,6 +45,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
@@ -218,6 +219,23 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
             )
         }
         assertEquals(expectedWorkInfo, result.value)
+    }
+
+    @Test
+    fun verifyThatObservingGivenLabelsReturnsLabelObject() = runBlockingTest {
+        // given
+        val labelId1 = LabelId("id1")
+        coEvery {  labelDao.observeLabelById(labelId1) } returns flowOf(testLabelEntity1)
+        val expected = labelDomainMapper.toLabel(testLabelEntity1)
+
+        // when
+        repository.observeLabel(labelId1).test {
+            // then
+            val actual = awaitItem()
+            assertEquals(expected, actual)
+            awaitComplete()
+        }
+
     }
 
     companion object {

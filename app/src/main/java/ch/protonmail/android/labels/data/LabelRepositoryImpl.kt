@@ -43,7 +43,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
@@ -86,11 +85,11 @@ internal class LabelRepositoryImpl @Inject constructor(
 
     override fun observeLabel(labelId: LabelId): Flow<Label?> =
         labelDao.observeLabelById(labelId)
-            .transform { label ->
+            .map { label ->
                 if (label != null) {
-                    emit(labelDomainMapper.toLabel(label))
+                    labelDomainMapper.toLabel(label)
                 } else {
-                    return@transform
+                    null
                 }
             }
 
