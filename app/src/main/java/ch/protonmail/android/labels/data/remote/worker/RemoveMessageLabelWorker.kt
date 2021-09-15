@@ -32,9 +32,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.api.models.IDList
-import ch.protonmail.android.data.local.CounterDao
-import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.data.local.CounterRepository
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -50,8 +48,7 @@ internal class RemoveMessageLabelWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val accountManager: AccountManager,
-    private val messageRepository: MessageRepository,
-    private val counterDao: CounterDao,
+    private val counterRepository: CounterRepository,
     private val protonMailApi: ProtonMailApi
 ) : CoroutineWorker(context, params) {
 
@@ -69,28 +66,17 @@ internal class RemoveMessageLabelWorker @AssistedInject constructor(
             )
         }
 
-        var totalUnread = 0
-
-        for (messageId in messageIds) {
-            val message: Message = messageRepository.findMessage(userId, messageId)
-                ?: continue
-            if (message.isRead) {
-                totalUnread++
-            }
-        }
-
-        val unreadLabelCounter = counterDao.findUnreadLabelById(labelId)
-        if (unreadLabelCounter != null) {
-            unreadLabelCounter.increment(totalUnread)
-            counterDao.insertUnreadLabel(unreadLabelCounter)
-        }
-
-
         return runCatching {
             val idList = IDList(labelId, messageIds.asList())
             protonMailApi.unlabelMessages(idList)
         }.fold(
             onSuccess = {
+                counterRepository.updateMessageLabelCounter(
+                    userId,
+                    labelId,
+                    messageIds.asList(),
+                    CounterRepository.CounterModificationMethod.DECREMENT
+                )
                 Result.success()
             },
             onFailure = { throwable ->

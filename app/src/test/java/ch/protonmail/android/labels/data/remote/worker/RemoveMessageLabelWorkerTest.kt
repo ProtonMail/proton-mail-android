@@ -24,20 +24,14 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApi
-import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterRepository
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.UnreadLabelCounter
-import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import io.mockk.MockKAnnotations
-import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
@@ -48,25 +42,17 @@ import kotlin.test.assertEquals
 
 class RemoveMessageLabelWorkerTest {
 
-    @RelaxedMockK
-    private lateinit var context: Context
+    private val context = mockk<Context>()
 
-    @RelaxedMockK
-    private lateinit var parameters: WorkerParameters
+    private val parameters = mockk<WorkerParameters>(relaxed = true)
 
-    @MockK
-    private lateinit var api: ProtonMailApi
+    private val api = mockk<ProtonMailApi>()
 
-    @MockK
-    private lateinit var counterDao: CounterDao
+    private val accountManager = mockk<AccountManager>()
 
-    @MockK
-    private lateinit var accountManager: AccountManager
+    private val counterRepository = mockk<CounterRepository>()
 
-    @MockK
-    private lateinit var messageRepository: MessageRepository
-
-    private lateinit var workerMessage: RemoveMessageLabelWorker
+    private lateinit var worker: RemoveMessageLabelWorker
 
     private val testUserId = UserId("testUser")
 
@@ -74,16 +60,13 @@ class RemoveMessageLabelWorkerTest {
     fun setUp() {
         MockKAnnotations.init(this)
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
-        every { counterDao.findUnreadLabelById(any()) } returns mockk<UnreadLabelCounter>(relaxed = true)
-        every { counterDao.insertUnreadLabel(any()) } just Runs
 
-        workerMessage = RemoveMessageLabelWorker(
+        worker = RemoveMessageLabelWorker(
             context,
             parameters,
             accountManager,
-            messageRepository,
-            counterDao,
-            api,
+            counterRepository,
+            api
         )
     }
 
@@ -97,7 +80,7 @@ class RemoveMessageLabelWorkerTest {
             every { api.unlabelMessages(any()) } returns Unit
 
             // when
-            val result = workerMessage.doWork()
+            val result = worker.doWork()
 
             // then
             assertEquals(expected, result)
@@ -119,14 +102,28 @@ class RemoveMessageLabelWorkerTest {
 
             every { api.unlabelMessages(any()) }  returns Unit
             val message = Message(messageId = testMessageId)
-            coEvery { messageRepository.findMessage(testUserId, testMessageId) } returns message
+            coEvery {
+                counterRepository.updateMessageLabelCounter(
+                    testUserId,
+                    testLabelId,
+                    listOf(testMessageId),
+                    CounterRepository.CounterModificationMethod.DECREMENT
+                )
+            } returns Unit
 
             // when
-            val result = workerMessage.doWork()
+            val result = worker.doWork()
 
             // then
             assertEquals(expected, result)
-            verify { counterDao.insertUnreadLabel(any()) }
+            coVerify {
+                counterRepository.updateMessageLabelCounter(
+                    testUserId,
+                    testLabelId,
+                    listOf(testMessageId),
+                    CounterRepository.CounterModificationMethod.DECREMENT
+                )
+            }
         }
     }
 }
