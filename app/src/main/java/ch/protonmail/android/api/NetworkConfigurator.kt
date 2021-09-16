@@ -54,7 +54,7 @@ class NetworkConfigurator @Inject constructor(
 
     lateinit var networkSwitcher: INetworkSwitcher
     private var isRunning = false
-    var callback: INetworkConfiguratorCallback? = null
+    private var callback: INetworkConfiguratorCallback? = null
 
     fun refreshDomainsAsync() = scope.launch {
         if (!isRunning) {

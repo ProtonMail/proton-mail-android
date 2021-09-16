@@ -203,7 +203,7 @@ internal class ContactDaoTest {
     @Test
     fun findContactDataById() {
         val expected = contactData[3]
-        val actual = database.findContactDataById(expected.contactId!!)
+        val actual = database.findContactDataByIdBlocking(expected.contactId!!)
         Assert.assertEquals(expected, actual)
         assertDatabaseState()
     }
@@ -234,7 +234,7 @@ internal class ContactDaoTest {
     fun saveContactData() {
         val inserted = ContactData("z", "zz")
         val expected = contactData + inserted
-        database.saveContactData(inserted)
+        database.saveContactDataBlocking(inserted)
         assertDatabaseState(expectedContactData = expected)
     }
 
@@ -343,7 +343,7 @@ internal class ContactDaoTest {
     fun deleteAllContactsEmails() {
         val deleted = listOf(contactEmails[3], contactEmails[1])
         val expected = contactEmails - deleted
-        database.deleteAllContactsEmails(deleted)
+        database.deleteAllContactsEmailsBlocking(deleted)
         assertDatabaseState(expectedContactEmails = expected)
     }
 

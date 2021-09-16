@@ -103,9 +103,9 @@ class DeleteContactWorkerTest {
             val contactEmail= mockk<ContactEmail>()
             val expected = ListenableWorker.Result.success()
 
-            every { contactDao.findContactDataById(contactId) } returns contactData
+            every { contactDao.findContactDataByIdBlocking(contactId) } returns contactData
             every { contactDao.findContactEmailsByContactIdBlocking(contactId) } returns listOf(contactEmail)
-            every { contactDao.deleteAllContactsEmails(any()) } returns mockk()
+            every { contactDao.deleteAllContactsEmailsBlocking(any()) } returns mockk()
             every { contactDao.deleteContactData(any()) } returns mockk()
             every { parameters.inputData } returns
                 workDataOf(KEY_INPUT_DATA_CONTACT_IDS to arrayOf(contactId))
@@ -134,9 +134,9 @@ class DeleteContactWorkerTest {
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $randomErrorCode")
             )
 
-            every { contactDao.findContactDataById(contactId) } returns contactData
+            every { contactDao.findContactDataByIdBlocking(contactId) } returns contactData
             every { contactDao.findContactEmailsByContactIdBlocking(contactId) } returns listOf(contactEmail)
-            every { contactDao.deleteAllContactsEmails(any()) } returns mockk()
+            every { contactDao.deleteAllContactsEmailsBlocking(any()) } returns mockk()
             every { contactDao.deleteContactData(any()) } returns mockk()
             every { parameters.inputData } returns
                 workDataOf(KEY_INPUT_DATA_CONTACT_IDS to arrayOf(contactId))

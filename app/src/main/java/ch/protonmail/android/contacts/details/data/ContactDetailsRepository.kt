@@ -73,7 +73,7 @@ open class ContactDetailsRepository @Inject constructor(
         withContext(dispatcherProvider.Io) {
             contactDao.findContactDataByDbId(contactDataInDb.dbId ?: -1)?.let {
                 it.contactId = contactServerId
-                contactDao.saveContactData(it)
+                contactDao.saveContactDataBlocking(it)
             }
         }
     }
@@ -82,7 +82,7 @@ open class ContactDetailsRepository @Inject constructor(
         withContext(dispatcherProvider.Io) {
             contactId?.let {
                 val localContactEmails = contactDao.findContactEmailsByContactId(it)
-                contactDao.deleteAllContactsEmails(localContactEmails)
+                contactDao.deleteAllContactsEmailsBlocking(localContactEmails)
                 contactDao.saveAllContactsEmails(contactServerEmails)
             }
         }
@@ -95,7 +95,7 @@ open class ContactDetailsRepository @Inject constructor(
 
     suspend fun saveContactData(contactData: ContactData): Long =
         withContext(dispatcherProvider.Io) {
-            return@withContext contactDao.saveContactData(contactData)
+            return@withContext contactDao.saveContactDataBlocking(contactData)
         }
 
     fun observeFullContactDetails(contactId: String): Flow<FullContactDetails> =

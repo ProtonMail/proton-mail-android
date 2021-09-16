@@ -132,7 +132,7 @@ internal class EventHandler @AssistedInject constructor(
             clearAttachmentsCache()
         }
         launchInitialDataFetch(
-            this.userId,
+            userId,
             shouldRefreshDetails = false,
             shouldRefreshContacts = false
         )
@@ -467,17 +467,17 @@ internal class EventHandler @AssistedInject constructor(
                     val contactId = contact.contactId
                     val contactName = contact.name
                     val contactData = ContactData(contactId, contactName!!)
-                    contactDao.saveContactData(contactData)
+                    contactDao.saveContactDataBlocking(contactData)
                     contactDao.insertFullContactDetailsBlocking(contact)
                 }
 
                 ActionType.UPDATE -> {
                     val fullContact = event.contact
                     val contactId = fullContact.contactId
-                    val contactData = contactDao.findContactDataById(contactId)
+                    val contactData = contactDao.findContactDataByIdBlocking(contactId)
                     if (contactData != null) {
                         contactData.name = event.contact.name!!
-                        contactDao.saveContactData(contactData)
+                        contactDao.saveContactDataBlocking(contactData)
                     }
 
                     val localFullContact = try {
@@ -494,7 +494,7 @@ internal class EventHandler @AssistedInject constructor(
 
                 ActionType.DELETE -> {
                     val contactId = event.contactID
-                    val contactData = contactDao.findContactDataById(contactId)
+                    val contactData = contactDao.findContactDataByIdBlocking(contactId)
                     if (contactData != null) {
                         contactDao.deleteContactData(contactData)
                     }

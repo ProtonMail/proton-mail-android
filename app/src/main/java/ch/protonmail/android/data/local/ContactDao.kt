@@ -48,7 +48,10 @@ interface ContactDao {
 
     //region Contact data
     @Query("SELECT * FROM $TABLE_CONTACT_DATA WHERE $COLUMN_CONTACT_DATA_ID = :contactId")
-    fun findContactDataById(contactId: String): ContactData?
+    fun findContactDataByIdBlocking(contactId: String): ContactData?
+
+    @Query("SELECT * FROM $TABLE_CONTACT_DATA WHERE $COLUMN_CONTACT_DATA_ID = :contactId")
+    suspend fun findContactDataById(contactId: String): ContactData?
 
     @Query("SELECT * FROM $TABLE_CONTACT_DATA WHERE ${BaseColumns._ID} = :contactDbId")
     fun findContactDataByDbId(contactDbId: Long): ContactData?
@@ -63,7 +66,10 @@ interface ContactDao {
     fun clearContactDataCache()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactData(contactData: ContactData): Long
+    fun saveContactDataBlocking(contactData: ContactData): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveContactData(contactData: ContactData): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveAllContactsData(vararg contactData: ContactData): List<Long>
@@ -150,7 +156,10 @@ interface ContactDao {
     fun deleteContactEmail(vararg contactEmail: ContactEmail)
 
     @Delete
-    fun deleteAllContactsEmails(contactEmail: Collection<ContactEmail>)
+    fun deleteAllContactsEmailsBlocking(contactEmail: Collection<ContactEmail>)
+
+    @Delete
+    suspend fun deleteAllContactsEmails(contactEmail: Collection<ContactEmail>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveContactEmail(contactEmail: ContactEmail): Long

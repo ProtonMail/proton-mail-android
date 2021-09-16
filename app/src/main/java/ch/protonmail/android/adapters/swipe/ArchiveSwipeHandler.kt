@@ -39,7 +39,7 @@ class ArchiveSwipeHandler : ISwipeHandler {
         messageLocation: Constants.MessageLocationType,
         currentLocation: String,
         labelRepository: LabelRepository
-    ): Job? {
+    ): Job {
         return if (messageLocation == Constants.MessageLocationType.LABEL_FOLDER) {
             MoveToFolderJob(listOf(message.messageId), currentLocation, labelRepository)
         } else {

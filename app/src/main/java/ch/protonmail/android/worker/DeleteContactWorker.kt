@@ -94,13 +94,13 @@ class DeleteContactWorker @AssistedInject constructor(
 
     private fun updateDb(contactIds: Array<String>) {
         for (contactId in contactIds) {
-            val contactData = contactDao.findContactDataById(contactId)
+            val contactData = contactDao.findContactDataByIdBlocking(contactId)
 
             contactData?.let { contact ->
                 contactDatabase.runInTransaction {
                     contact.contactId?.let {
                         val contactEmails = contactDao.findContactEmailsByContactIdBlocking(it)
-                        contactDao.deleteAllContactsEmails(contactEmails)
+                        contactDao.deleteAllContactsEmailsBlocking(contactEmails)
                     }
                     contactDao.deleteContactData(contact)
                 }

@@ -18,6 +18,18 @@
  */
 package ch.protonmail.android.contacts.details.edit;
 
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE0;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE2;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE3_PATH;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_EMAIL;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_FLOW;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_LOCAL_CONTACT;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_NAME;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_CONVERT_CONTACT;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_EDIT_CONTACT;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_NEW_CONTACT;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -111,18 +123,6 @@ import ezvcard.util.PartialDate;
 import kotlin.Unit;
 import me.proton.core.presentation.ui.view.ProtonInput;
 import timber.log.Timber;
-
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE0;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE2;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE3_PATH;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_EMAIL;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_FLOW;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_LOCAL_CONTACT;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_NAME;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_CONVERT_CONTACT;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_EDIT_CONTACT;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_NEW_CONTACT;
 
 @AndroidEntryPoint
 public class EditContactDetailsActivity extends BaseConnectivityActivity {
@@ -237,10 +237,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE2),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE3_PATH));
 
-        viewModel.getSetupComplete().observe(this, event ->
-                viewModel.fetchContactGroupsForEmails()
-        );
-
         addPhotoBtn.setOnClickListener(v -> {
 
             AlertDialog.Builder pictureDialog = new AlertDialog.Builder(EditContactDetailsActivity.this);
@@ -252,7 +248,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                     (dialog, which) -> {
                         switch (which) {
                             case 0:
-
                                 Intent intent = new Intent();
                                 intent.setType("image/*");
                                 intent.setAction(Intent.ACTION_GET_CONTENT);

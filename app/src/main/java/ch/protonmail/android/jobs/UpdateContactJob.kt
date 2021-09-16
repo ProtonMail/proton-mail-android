@@ -43,6 +43,7 @@ import java.security.GeneralSecurityException
 import java.util.ArrayList
 import java.util.HashMap
 
+@Deprecated("Replaced with UpdateContactWorker and EditContactDetailsRepository")
 class UpdateContactJob(
     private val contactId: String,
     private val contactName: String,
@@ -113,14 +114,14 @@ class UpdateContactJob(
         updateJoins: Boolean
     ) {
         requireContactDao()
-        val contactData = contactDao?.findContactDataById(contactId)
+        val contactData = contactDao?.findContactDataByIdBlocking(contactId)
         if (contactData != null) {
             contactData.name = contactName
-            contactDao?.saveContactData(contactData)
+            contactDao?.saveContactDataBlocking(contactData)
         }
         val emails = contactDao?.findContactEmailsByContactIdBlocking(contactId)
         if (emails != null) {
-            contactDao?.deleteAllContactsEmails(emails)
+            contactDao?.deleteAllContactsEmailsBlocking(emails)
         }
         for (email in contactEmails) {
             val emailToClear = email.email

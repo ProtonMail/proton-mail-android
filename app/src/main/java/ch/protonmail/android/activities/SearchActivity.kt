@@ -47,7 +47,6 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.AppUtil
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
-import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -65,9 +64,6 @@ internal class SearchActivity : BaseActivity() {
 
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
-
-    @Inject
-    lateinit var accountManager: AccountManager
 
     @Inject
     lateinit var mailboxViewModelProvider: Provider<MailboxViewModel>

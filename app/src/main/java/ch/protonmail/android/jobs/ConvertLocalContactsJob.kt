@@ -132,7 +132,7 @@ class ConvertLocalContactsJob(
                         contactItem.name
                     )
 
-                    val dbId = contactsDatabase.saveContactData(contactData)
+                    val dbId = contactsDatabase.saveContactDataBlocking(contactData)
                     var emailGroupCounter = 1
                     for (email in localContact.emails) {
                         val vCardEmail = Email(email)
@@ -342,8 +342,8 @@ class ConvertLocalContactsJob(
                 previousContactData!!.contactId!!
             )
             previousContactData.contactId = remoteContactId
-            contactDao.saveContactData(previousContactData)
-            contactDao.deleteAllContactsEmails(contactEmails)
+            contactDao.saveContactDataBlocking(previousContactData)
+            contactDao.deleteAllContactsEmailsBlocking(contactEmails)
             val responses = response.responses
             for (contactResponse in responses) {
                 val contact = contactResponse.response.contact

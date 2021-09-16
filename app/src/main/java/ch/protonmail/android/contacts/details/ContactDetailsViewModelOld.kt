@@ -75,11 +75,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
     protected lateinit var allContactEmails: List<ContactEmail>
 
     private var _setupCompleteValue: Boolean = false
-    private val _setupComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _setupError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
-
-    val setupComplete: LiveData<Event<Boolean>>
-        get() = _setupComplete
 
     val profilePicture = ViewStateStore<Bitmap>().lock
 
@@ -156,7 +152,6 @@ open class ContactDetailsViewModelOld @Inject constructor(
                 {
                     if (!_setupCompleteValue) {
                         _setupCompleteValue = true
-                        _setupComplete.value = Event(true)
                     }
                 },
                 {

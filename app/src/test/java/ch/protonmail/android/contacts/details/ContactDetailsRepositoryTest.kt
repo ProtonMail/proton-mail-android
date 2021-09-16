@@ -60,8 +60,8 @@ class ContactDetailsRepositoryTest {
 
     private val contactDao: ContactDao = mockk {
         every { deleteContactData(any()) } just Runs
-        every { deleteAllContactsEmails(any()) } just Runs
-        every { saveContactData(any()) } returns 0
+        every { deleteAllContactsEmailsBlocking(any()) } just Runs
+        every { saveContactDataBlocking(any()) } returns 0
         coEvery { saveAllContactsEmails(any<List<ContactEmail>>()) } returns mockk()
     }
 
@@ -96,7 +96,7 @@ class ContactDetailsRepositoryTest {
 
             verify { contactDao.findContactDataByDbId(contactDbId) }
             val expectedContactData = contactData.copy(contactId = contactServerId)
-            verify { contactDao.saveContactData(expectedContactData) }
+            verify { contactDao.saveContactDataBlocking(expectedContactData) }
         }
     }
 
@@ -117,7 +117,7 @@ class ContactDetailsRepositoryTest {
             repository.updateAllContactEmails(contactId, serverEmails)
 
             coVerify { contactDao.findContactEmailsByContactId(contactId) }
-            verify { contactDao.deleteAllContactsEmails(localContactEmails) }
+            verify { contactDao.deleteAllContactsEmailsBlocking(localContactEmails) }
             coVerify { contactDao.saveAllContactsEmails(serverEmails) }
         }
     }
@@ -138,11 +138,11 @@ class ContactDetailsRepositoryTest {
         runBlockingTest {
             val contactData = ContactData("1243", "Tyler")
             val expectedDbId = 8945L
-            every { contactDao.saveContactData(contactData) } returns expectedDbId
+            every { contactDao.saveContactDataBlocking(contactData) } returns expectedDbId
 
             val actualDbId = repository.saveContactData(contactData)
 
-            verify { contactDao.saveContactData(contactData) }
+            verify { contactDao.saveContactDataBlocking(contactData) }
             assertEquals(expectedDbId, actualDbId)
         }
     }

@@ -31,7 +31,7 @@ class StarSwipeHandler : ISwipeHandler {
         message: SimpleMessage,
         currentLocation: String,
         labelRepository: LabelRepository
-    ): Job? {
+    ): Job {
         return if (!message.isStarred) {
             PostStarJob(listOf(message.messageId))
         } else {
@@ -44,7 +44,7 @@ class StarSwipeHandler : ISwipeHandler {
         messageLocation: Constants.MessageLocationType,
         currentLocation: String,
         labelRepository: LabelRepository
-    ): Job? {
+    ): Job {
         return if (message.isStarred) {
             PostStarJob(listOf(message.messageId))
         } else {
