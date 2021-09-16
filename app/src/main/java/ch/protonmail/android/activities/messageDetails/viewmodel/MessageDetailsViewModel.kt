@@ -370,7 +370,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     fun isConversationEnabled() = conversationModeEnabled(location)
 
     fun doesConversationHaveMoreThanOneMessage() = runBlocking {
-        conversationUiModel.first().messagesCount!! > 1
+        val messagesCount = conversationUiModel.first().messagesCount
+        if (messagesCount != null) messagesCount > 1 else false
     }
 
     private suspend fun loadConversationDetails(

@@ -584,7 +584,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 openedFolderLabelId ?: openedFolderLocationId.toString(),
                 getCurrentSubject(),
                 getMessagesFrom(message.sender?.name),
-                message.isStarred ?: false
+                message.isStarred ?: false,
+                viewModel.doesConversationHaveMoreThanOneMessage()
             )
                 .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
         }
