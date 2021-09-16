@@ -18,17 +18,16 @@
  */
 package ch.protonmail.android.api.models.messages
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
-
 
 private const val RECIPIENT_AUTHENTICATION = "X-Pm-Recipient-Authentication"
 private const val RECIPIENT_ENCRYPTION = "X-Pm-Recipient-Encryption"
 
 @Serializable
 data class ParsedHeaders(
-    @SerialName(RECIPIENT_ENCRYPTION)
+    @SerializedName(RECIPIENT_ENCRYPTION)
     val recipientEncryption: String? = null,
-    @SerialName(RECIPIENT_AUTHENTICATION)
+    @SerializedName(RECIPIENT_AUTHENTICATION)
     val recipientAuthentication: String? = null
 )
