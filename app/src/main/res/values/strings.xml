@@ -950,7 +950,7 @@
     <string name="storage_value" >%1$d MB (%2$.2f MB used)</string>
     <!-- endregion -->
 
-    <string name="app_settings">App Settings</string>
+    <string name="app_settings">App settings</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Extended Notifications</string>
@@ -977,13 +977,13 @@
 
     <string name="local_cache_management">Local cache</string>
     <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear Data</string>
+    <string name="empty_data">Clear data</string>
     <!-- endregion -->
 
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
 
-    <string name="app_info">App Information</string>
+    <string name="app_info">App information</string>
     <string name="app_version">App version</string>
     <string name="app_version_code" translatable="false">%1$s (%2$d)</string>
     <string name="app_version_code_login" translatable="false">Android v.%1$s (%2$d)</string>
