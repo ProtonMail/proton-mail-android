@@ -77,7 +77,6 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -771,33 +770,7 @@ public class ComposeMessageActivity
     private void handleSendFileUri(Uri uri) {
         if (uri != null) {
             composerInstanceId = UUID.randomUUID().toString();
-            Data data = new Data.Builder()
-                    .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, new String[]{uri.toString()})
-                    .putString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID, composerInstanceId)
-                    .build();
-            OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
-                    .setInputData(data)
-                    .build();
-            WorkManager workManager = WorkManager.getInstance();
-            workManager.enqueue(importAttachmentsWork);
-
-            // Observe the Worker with a LiveData, because result will be received when the
-            // Activity will back in foreground, since an EventBut event would be lost while in
-            // Background
-            workManager.getWorkInfoByIdLiveData(importAttachmentsWork.getId())
-                    .observe(this, workInfo -> {
-                        if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-
-                            // Get the Event from Worker
-                            String json = workInfo.getOutputData().getString(composerInstanceId);
-                            if (json != null) {
-                                PostImportAttachmentEvent event = SerializationUtils.deserialize(
-                                        json, PostImportAttachmentEvent.class
-                                );
-                                onPostImportAttachmentEvent(event);
-                            }
-                        }
-                    });
+            importAttachments(new String[]{uri.toString()});
         }
     }
 
@@ -809,20 +782,32 @@ public class ComposeMessageActivity
                 uriStrings[i] = fileUris.get(i).toString();
             }
             composerInstanceId = UUID.randomUUID().toString();
-            Data data = new Data.Builder()
-                    .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, uriStrings)
-                    .putString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID, composerInstanceId)
-                    .build();
-            OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
-                    .setInputData(data)
-                    .build();
-            WorkManager.getInstance().enqueue(importAttachmentsWork);
-            WorkManager.getInstance().getWorkInfoByIdLiveData(importAttachmentsWork.getId()).observe(this, workInfo -> {
-                if (workInfo != null) {
-                    Log.d("PMTAG", "ImportAttachmentsWorker workInfo = " + workInfo.getState());
-                }
-            });
+            importAttachments(uriStrings);
         }
+    }
+
+    void importAttachments(String[] uriStrings) {
+        Data data = new Data.Builder()
+                .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, uriStrings)
+                .putString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID, composerInstanceId)
+                .build();
+        OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
+                .setInputData(data)
+                .build();
+        WorkManager.getInstance().enqueue(importAttachmentsWork);
+        WorkManager.getInstance().getWorkInfoByIdLiveData(importAttachmentsWork.getId()).observe(this, workInfo -> {
+            if (workInfo != null) {
+                // Get the Event from Worker
+                String json = workInfo.getOutputData().getString(composerInstanceId);
+                if (json != null) {
+                    PostImportAttachmentEvent event = SerializationUtils.deserialize(
+                            json, PostImportAttachmentEvent.class
+                    );
+                    onPostImportAttachmentEvent(event);
+                }
+                Log.d("PMTAG", "ImportAttachmentsWorker workInfo = " + workInfo.getState());
+            }
+        });
     }
 
     @Subscribe
