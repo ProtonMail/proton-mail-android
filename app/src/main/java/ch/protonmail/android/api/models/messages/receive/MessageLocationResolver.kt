@@ -43,6 +43,7 @@ class MessageLocationResolver @Inject constructor(
 
         val validLocations: List<Int> = listOf(
             Constants.MessageLocationType.INBOX.messageLocationTypeValue,
+            Constants.MessageLocationType.ALL_SENT.messageLocationTypeValue,
             Constants.MessageLocationType.TRASH.messageLocationTypeValue,
             Constants.MessageLocationType.SPAM.messageLocationTypeValue,
             Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue,
