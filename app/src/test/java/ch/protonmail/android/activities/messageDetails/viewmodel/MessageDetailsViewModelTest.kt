@@ -211,9 +211,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun loadMailboxItemGetsMessageFromServerWithMessageIdAndUserIdWhenWeDontHaveTheMessageInDb() = runBlockingTest {
-
         // given
-        every { userManager.requireCurrentUserId() } returns testId1
         val messageOrConversationId = INPUT_ITEM_DETAIL_ID
         val downLoadedMessage = buildMessage(isDownloaded = true)
         coEvery { messageRepository.getMessage(testId1, messageOrConversationId, true) } returns downLoadedMessage
@@ -289,7 +287,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserId() = runBlockingTest {
         // Given
-        every { userManager.requireCurrentUserId() } returns testId1
         val message = buildMessage(messageId = INPUT_ITEM_DETAIL_ID, isDownloaded = false)
         val downLoadedMessage = buildMessage(messageId = INPUT_ITEM_DETAIL_ID, isDownloaded = true)
 
@@ -317,7 +314,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     fun shouldLoadMessageWithLabelsWhenLabelsPresent() = runBlockingTest {
         val allLabels = (1..5).map { Label(id = "id$it", name = "name$it", color = "", exclusive = it > 2) }
         val allLabelIds = allLabels.map { LabelId(it.id) }
-        every { userManager.requireCurrentUserId() } returns testId1
         val message = buildMessage(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = false,
@@ -349,7 +345,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun shouldLoadMessageWithoutLabelsWhenLabelsNotPresent() = runBlockingTest {
-        every { userManager.requireCurrentUserId() } returns testId1
         val message = buildMessage(isDownloaded = false, allLabelIds = emptyList())
         val downLoadedMessage = buildMessage(isDownloaded = true, allLabelIds = emptyList())
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
@@ -413,9 +408,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns messageSpy
         coEvery { messageRepository.markRead(any()) } just Runs
 
-        val userId = UserId("userId4")
-        every { userManager.requireCurrentUserId() } returns userId
-
         // When
         val actual = viewModel.loadMessageBody(messageSpy).first()
         val expected = MessageBodyState.Success(messageSpy)
@@ -478,7 +470,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun loadMessageDoesNotEmitMessageToLiveDataWhenTheMessageWasNotFound() = runBlockingTest {
         // Given
-        every { userManager.requireCurrentUserId() } returns testId1
         val message = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = false,
@@ -537,13 +528,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun loadMessageBodyFetchesMessageFromMessageRepositoryWhenInputMessageIsNotDecrypted() = runBlockingTest {
         // Given
-        val userId = UserId("userId3")
-        every { userManager.requireCurrentUserId() } returns userId
         val message = buildMessage(unread = true)
         val fetchedMessage = buildMessage(unread = false)
             .apply { messageBody = "encrypted message body" }
             .toSpy()
-        coEvery { messageRepository.getMessage(userId, MESSAGE_ID_ONE, true) } returns fetchedMessage
+        coEvery { messageRepository.getMessage(testId1, MESSAGE_ID_ONE, true) } returns fetchedMessage
 
         // When
         val decryptedMessage = viewModel.loadMessageBody(message).first()
@@ -564,8 +553,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         every { savedStateHandle.get<String>(EXTRA_MAILBOX_LABEL_ID) } returns null
-        val userId = UserId("userId3")
-        every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation(CONVERSATION_ID))
         val conversationMessage = buildMessage()
@@ -582,7 +569,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             changeConversationsReadStatus.invoke(
                 listOf(inputConversationId),
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                userId,
+                testId1,
                 inputMessageLocation,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
@@ -602,8 +589,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         every { savedStateHandle.get<String>(EXTRA_MAILBOX_LABEL_ID) } returns null
-        val userId = UserId("userId3")
-        every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
@@ -620,7 +605,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             changeConversationsReadStatus.invoke(
                 listOf(inputConversationId),
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                userId,
+                testId1,
                 inputMessageLocation,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
@@ -639,8 +624,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
-        val userId = UserId("userId3")
-        every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
         coEvery { messageRepository.markUnRead(any()) } just Runs
         val message = Message(
@@ -648,7 +631,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             isDownloaded = true,
             sender = messageSender
         )
-        coEvery { messageRepository.getMessage(userId, inputConversationId, true) } returns message
+        coEvery { messageRepository.getMessage(testId1, inputConversationId, true) } returns message
 
         // when
         observeMessageFlow.tryEmit(message)
@@ -708,10 +691,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
-        val userString = "userId3"
-        val id = UserId(userString)
-        val userId = UserId(userString)
-        every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation(CONVERSATION_ID))
         val conversationMessage = buildMessage()
@@ -727,7 +706,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 1) {
             moveConversationsToFolder(
                 listOf(inputConversationId),
-                userId,
+                testId1,
                 Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
             )
         }
@@ -749,10 +728,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
-        val userString = "userId3"
-        val id = UserId(userString)
-        val userId = UserId(userString)
-        every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
@@ -767,7 +742,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 0) {
             moveConversationsToFolder(
                 listOf(inputConversationId),
-                userId,
+                testId1,
                 Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
             )
         }
@@ -832,9 +807,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
-        val userString = "userId3"
-        val userId = UserId(userString)
-        every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation(CONVERSATION_ID))
         val conversationMessage = buildMessage()
@@ -850,7 +822,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 1) {
             deleteConversations(
                 listOf(inputConversationId),
-                userId,
+                testId1,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
         }
@@ -871,9 +843,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
-        val userString = "userId3"
-        val userId = UserId(userString)
-        every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
@@ -888,7 +857,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 0) {
             deleteConversations(
                 listOf(inputConversationId),
-                userId,
+                testId1,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
         }
@@ -910,10 +879,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
-        val userString = "userId3"
-        val id = UserId(userString)
-        val userId = UserId(userString)
-        every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val isChecked = true
 
@@ -924,7 +889,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 1) {
             changeConversationsStarredStatus(
                 listOf(inputConversationId),
-                userId,
+                testId1,
                 ChangeConversationsStarredStatus.Action.ACTION_STAR
             )
         }
@@ -949,9 +914,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
-        val userString = "userId3"
-        val id = UserId(userString)
-        every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
         val isChecked = true
         every {
