@@ -20,9 +20,9 @@
 package ch.protonmail.android.labels.data.mapper
 
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import me.proton.core.domain.entity.UserId
 import org.junit.Assert.assertEquals
 import kotlin.test.Test
@@ -37,88 +37,54 @@ class LabelEntityApiMapperTest {
 
     @Test
     fun mappingLabelApiModelToLabelEntitySucceedsWhenAllFieldsAreValid() {
-        val serverLabel = LabelApiModel(
-            id = "ID",
-            name = "name",
-            color = "color",
-            order = 1,
-            type = LabelType.FOLDER,
-            path = testPath,
-            notify = 0,
-            expanded = null,
-            sticky = null,
-            parentId = testParentId
-        )
+        // given
+        val serverLabel = getTestLabelApiModel(testId = "ID")
 
+        // when
         val actual = labelsMapper.toEntity(serverLabel, testUserId)
 
-        val expected = LabelEntity(
-            LabelId("ID"), testUserId, "name", "color", 1, LabelType.FOLDER, testPath,
-            testParentId, 0, 0, 0
-        )
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun mappingLabelEntityToServerLabelSucceedsWhenAllFieldsAreValid() {
-        val contactLabel = LabelEntity(LabelId("ID"), testUserId, "name", "color", 1, testType, testPath,  testParentId, 0, 0, 0)
-
-        val actual = labelsMapper.toApiModel(contactLabel)
-
-        val expected = LabelApiModel(
-            id = "ID",
-            name = "name",
-            color = "color",
-            order = 1,
-            type = testType,
-            expanded = 0,
-            sticky = 0,
-            path = testPath,
-            notify = 0,
-            parentId = testParentId
-        )
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun mappingLabelEntityToServerLabelSucceedsWhenSomeFieldsAreNotPassedExplicitly() {
-        val contactLabel = LabelEntity(LabelId("ID"), testUserId, "name", "color", 1, testType, testPath,  testParentId, 0, 0, 0)
-
-        val actual = labelsMapper.toApiModel(contactLabel)
-
-        val expected = LabelApiModel(
-            id = "ID",
-            name = "name",
-            color = "color",
-            order = 1,
-            type = testType,
-            expanded = 0,
-            sticky = 0,
-            path = testPath,
-            notify = 0,
-            parentId = testParentId
-        )
+        // then
+        val expected = getTestLabelEntitiy(testId = "ID")
         assertEquals(expected, actual)
     }
 
     @Test
     fun mappingLabelEntityToServerLabelSucceedsWhenIdIsEmpty() {
-        val contactLabel = LabelEntity(LabelId(""), testUserId, "name", "color", 1, testType, testPath,  testParentId, 0, 0, 0)
+        // given
+        val contactLabel = getTestLabelEntitiy(testId = "")
 
+        // when
         val actual = labelsMapper.toApiModel(contactLabel)
 
-        val expected = LabelApiModel(
-            id = "",
-            name = "name",
-            color = "color",
-            order = 1,
-            type = testType,
-            expanded = 0,
-            sticky = 0,
-            path = testPath,
-            notify = 0,
-            parentId = testParentId
-        )
+        // then
+        val expected = getTestLabelApiModel(testId = "")
         assertEquals(expected, actual)
     }
+
+    private fun getTestLabelApiModel(testId: String) = LabelApiModel(
+        id = testId,
+        name = "name",
+        color = "color",
+        order = 1,
+        type = testType,
+        expanded = 0,
+        sticky = 0,
+        path = testPath,
+        notify = 0,
+        parentId = testParentId
+    )
+
+    private fun getTestLabelEntitiy(testId: String) = LabelEntity(
+        id = LabelId(testId),
+        userId = testUserId,
+        name = "name",
+        color = "color",
+        order = 1,
+        type = testType,
+        expanded = 0,
+        sticky = 0,
+        path = testPath,
+        notify = 0,
+        parentId = testParentId
+    )
 }

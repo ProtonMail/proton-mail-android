@@ -77,6 +77,7 @@ internal class UpdateMessageLabels @Inject constructor(
             if (!mutableLabelIds.contains(labelId) && label.type == LabelType.MESSAGE_LABEL) {
                 // this label should be removed
                 labelsToRemove.add(labelId)
+                // Improvement TO BE implemented in MAILAND-2395 with multiple labels support
                 labelRepository.scheduleRemoveMessageLabel(listOf(messageId), labelId)
             } else if (mutableLabelIds.contains(labelId)) {
                 // the label remains
