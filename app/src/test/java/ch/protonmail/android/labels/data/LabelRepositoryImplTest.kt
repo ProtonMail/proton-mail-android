@@ -168,12 +168,13 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
         workInfoLiveData.postValue(expectedWorkInfo)
 
         // when
-        val result = repository.deleteLabelsWithWorker(labelIds)
+        repository.scheduleDeleteLabels(labelIds).test {
+            // then
+            coVerify { labelDao.deleteLabelsById(labelIds) }
+            verify { deleteLabelWorker.enqueue(labelIds) }
+            assertEquals(expectedWorkInfo, awaitItem())
+        }
 
-        // then
-        coVerify { labelDao.deleteLabelsById(labelIds) }
-        verify { deleteLabelWorker.enqueue(labelIds) }
-        assertEquals(expectedWorkInfo, result.value)
     }
 
     @Test
@@ -200,32 +201,34 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
         workInfoLiveData.postValue(expectedWorkInfo)
 
         // when
-        val result = repository.saveLabelWithWorker(
+        repository.scheduleSaveLabel(
             labelName,
             color,
             isUpdate,
             labelType,
             labelId1.id
-        )
+        ).test {
 
-        // then
-        verify {
-            postLabelWorker.enqueue(
-                labelName,
-                color,
-                isUpdate,
-                labelType,
-                labelId1.id
-            )
+            // then
+            verify {
+                postLabelWorker.enqueue(
+                    labelName,
+                    color,
+                    isUpdate,
+                    labelType,
+                    labelId1.id
+                )
+            }
+            assertEquals(expectedWorkInfo, awaitItem())
         }
-        assertEquals(expectedWorkInfo, result.value)
+
     }
 
     @Test
     fun verifyThatObservingGivenLabelsReturnsLabelObject() = runBlockingTest {
         // given
         val labelId1 = LabelId("id1")
-        coEvery {  labelDao.observeLabelById(labelId1) } returns flowOf(testLabelEntity1)
+        coEvery { labelDao.observeLabelById(labelId1) } returns flowOf(testLabelEntity1)
         val expected = labelDomainMapper.toLabel(testLabelEntity1)
 
         // when
@@ -327,7 +330,5 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
             sticky = 0,
             parentId = testParentId
         )
-
-
     }
 }

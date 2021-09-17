@@ -20,9 +20,9 @@
 package ch.protonmail.android.usecase.delete
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
+import app.cash.turbine.test
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -30,12 +30,12 @@ import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
 import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class DeleteLabelsTest {
 
@@ -64,20 +64,18 @@ class DeleteLabelsTest {
                 outputData,
                 0
             )
-            val workerStatusLiveData = MutableLiveData<WorkInfo>()
-            workerStatusLiveData.value = workInfo
             val expected = true
 
             coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
-            coEvery { labelRepository.deleteLabelsWithWorker(listOf(testLabelId)) } returns workerStatusLiveData
+            coEvery { labelRepository.scheduleDeleteLabels(listOf(testLabelId)) } returns flowOf(workInfo)
 
             // when
-            val response = deleteLabel(listOf(testLabelId))
-            response.observeForever { }
+            deleteLabel(listOf(testLabelId)).test {
 
-            // then
-            assertNotNull(response.value)
-            assertEquals(expected, response.value)
+                // then
+                assertEquals(expected, awaitItem())
+                awaitComplete()
+            }
         }
     }
 
@@ -99,20 +97,19 @@ class DeleteLabelsTest {
                 outputData,
                 0
             )
-            val workerStatusLiveData = MutableLiveData<WorkInfo>()
-            workerStatusLiveData.value = workInfo
             val expected = false
 
             coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
-            coEvery { labelRepository.deleteLabelsWithWorker(listOf(testLabelId)) } returns workerStatusLiveData
+            coEvery { labelRepository.scheduleDeleteLabels(listOf(testLabelId)) } returns flowOf(workInfo)
 
             // when
-            val response = deleteLabel(listOf(testLabelId))
-            response.observeForever { }
+            deleteLabel(listOf(testLabelId)).test {
 
-            // then
-            assertNotNull(response.value)
-            assertEquals(expected, response.value)
+                // then
+                assertEquals(expected, awaitItem())
+                awaitComplete()
+            }
+
         }
     }
 
@@ -134,18 +131,16 @@ class DeleteLabelsTest {
                 outputData,
                 0
             )
-            val workerStatusLiveData = MutableLiveData<WorkInfo>()
-            workerStatusLiveData.value = workInfo
 
             coEvery { labelRepository.findLabel(testLabelId) } returns contactLabel
-            coEvery { labelRepository.deleteLabelsWithWorker(listOf(testLabelId)) } returns workerStatusLiveData
+            coEvery { labelRepository.scheduleDeleteLabels(listOf(testLabelId)) } returns flowOf(workInfo)
 
             // when
-            val response = deleteLabel(listOf(testLabelId))
-            response.observeForever { }
+            deleteLabel(listOf(testLabelId)).test {
 
-            // then
-            assertEquals(null, response.value)
+                // then
+                awaitComplete()
+            }
         }
     }
 

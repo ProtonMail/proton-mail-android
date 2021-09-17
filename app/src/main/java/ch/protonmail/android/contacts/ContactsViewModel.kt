@@ -22,7 +22,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchContactsData
@@ -36,8 +35,7 @@ internal class ContactsViewModel @Inject constructor(
     private val userManager: UserManager,
     private val fetchContactsData: FetchContactsData,
     verifyConnection: VerifyConnection,
-    networkConfigurator: NetworkConfigurator,
-    val contactEmailsManager: ContactEmailsManager
+    networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     private val fetchContactsTrigger: MutableLiveData<Unit> = MutableLiveData()

@@ -19,12 +19,12 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import androidx.work.WorkInfo
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.utils.extensions.filter
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -35,9 +35,9 @@ class DeleteLabels @Inject constructor(
     private val labelRepository: LabelRepository
 ) {
 
-    suspend operator fun invoke(labelIds: List<LabelId>): LiveData<Boolean> =
-        labelRepository.deleteLabelsWithWorker(labelIds)
-            .filter { it?.state?.isFinished == true }
+    suspend operator fun invoke(labelIds: List<LabelId>): Flow<Boolean> =
+        labelRepository.scheduleDeleteLabels(labelIds)
+            .filter { it.state.isFinished }
             .map { workInfo ->
                 Timber.v("Finished worker State ${workInfo.state}")
                 workInfo.state == WorkInfo.State.SUCCEEDED

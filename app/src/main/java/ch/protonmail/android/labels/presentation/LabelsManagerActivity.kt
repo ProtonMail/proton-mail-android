@@ -27,6 +27,7 @@ import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
@@ -44,6 +45,8 @@ import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import studio.forface.viewstatestore.ViewStateActivity
 import kotlin.random.Random
 
@@ -321,14 +324,13 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     }
 
     private fun saveCurrentLabel() {
-        viewModel.saveLabel().observe(
-            this,
-            {
+        viewModel.saveLabel()
+            .onEach {
                 if (it.state.isFinished) {
                     displayLabelCreationOutcome(it)
                 }
             }
-        )
+            .launchIn(lifecycleScope)
 
         state = State.UNDEFINED
     }

@@ -46,6 +46,7 @@ class ContactsListMapperTest {
     private val name2 = "Perro Caliente Comer Manana"
     private val email1 = "email1@abc.com"
     private val email2 = "email2@abc.com"
+    private val testPath = "test/path123"
     private val contactItem1 = ContactItem(
         isProtonMailContact = true,
         name = name1,
@@ -195,7 +196,7 @@ class ContactsListMapperTest {
         // given
         val testId = "ID1"
         val testName = "name1"
-        val testPath = "test/path123"
+
         val label1 =
             ContactLabelUiModel(
                 LabelId(testId), testName, "green", LabelType.MESSAGE_LABEL, testPath, "parentId", 1
@@ -222,7 +223,6 @@ class ContactsListMapperTest {
         val testId2 = "ID2"
         val testName = "name1"
         val testName2 = "name2"
-        val testPath = "test/path123"
         val label1 =
             ContactLabelUiModel(LabelId(testId), testName, "green", LabelType.MESSAGE_LABEL, testPath, "", 0)
         val label2 = ContactLabelUiModel(

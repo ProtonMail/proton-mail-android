@@ -19,11 +19,8 @@
 package ch.protonmail.android.activities.labelsManager
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.DataSource
-import androidx.work.WorkInfo
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
@@ -84,7 +81,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
         }
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         every { labelRepository.findAllLabelsPaged(userId) } returns testPagedResponse
-        every { labelRepository.saveLabelWithWorker(any(), any(), any(), any(), any()) } returns MutableLiveData()
+        every { labelRepository.scheduleSaveLabel(any(), any(), any(), any(), any()) } returns flowOf(mockk())
         viewModel =
             LabelsManagerViewModel(
                 labelRepository = labelRepository,
@@ -125,10 +122,4 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
         }
     }
 
-    @Test
-    fun saveLabelReturnsWorkInfoLiveData() {
-        val request = viewModel.saveLabel()
-
-        assertTrue(request is LiveData<WorkInfo>)
-    }
 }

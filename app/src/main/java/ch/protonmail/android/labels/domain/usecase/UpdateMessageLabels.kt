@@ -77,14 +77,14 @@ internal class UpdateMessageLabels @Inject constructor(
             if (!mutableLabelIds.contains(labelId) && label.type == LabelType.MESSAGE_LABEL) {
                 // this label should be removed
                 labelsToRemove.add(labelId)
-                labelRepository.removeMessageLabelWithWorker(listOf(messageId), labelId)
+                labelRepository.scheduleRemoveMessageLabel(listOf(messageId), labelId)
             } else if (mutableLabelIds.contains(labelId)) {
                 // the label remains
                 mutableLabelIds.remove(labelId)
             }
         }
         // schedule updates of all message
-        mutableLabelIds.forEach { labelRepository.applyMessageLabelWithWorker(listOf(messageId), it) }
+        mutableLabelIds.forEach { labelRepository.scheduleApplyMessageLabel(listOf(messageId), it) }
         // update the message with the new labels
         message.addLabels(mutableLabelIds)
         message.removeLabels(labelsToRemove)

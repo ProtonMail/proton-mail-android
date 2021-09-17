@@ -29,7 +29,6 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
@@ -38,6 +37,7 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -270,7 +270,7 @@ internal class LabelsActionSheetViewModel @Inject constructor(
             if (cancellationException != null) {
                 actionsResultMutableFlow.value = ManageLabelActionResult.ErrorMovingToFolder
             } else {
-                val dismissBackingActivity = !isApplyingActionToMsgWithinAConversation()
+                val dismissBackingActivity = !isApplyingActionToMsgWithinConversation()
                 actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved(
                     dismissBackingActivity
                 )
@@ -302,15 +302,15 @@ internal class LabelsActionSheetViewModel @Inject constructor(
 
     private fun isActionAppliedToConversation(location: Constants.MessageLocationType?) =
         conversationModeEnabled(location) &&
-            !isApplyingActionToMsgWithinAConversation() &&
-            !isApplyingActionToMsgItemInDetailScreen()
+            !isApplyingActionToMsgWithinConversation() &&
+            !isApplyingActionToMessageInDetailScreen()
 
-    private fun isApplyingActionToMsgWithinAConversation(): Boolean {
+    private fun isApplyingActionToMsgWithinConversation(): Boolean {
         val actionsTarget = getActionsTargetInputArg()
         return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
     }
 
-    private fun isApplyingActionToMsgItemInDetailScreen(): Boolean {
+    private fun isApplyingActionToMessageInDetailScreen(): Boolean {
         val actionsTarget = getActionsTargetInputArg()
         return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
     }

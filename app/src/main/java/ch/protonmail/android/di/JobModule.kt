@@ -90,7 +90,6 @@ interface JobEntryPoint {
 
     fun accountManager(): AccountManager
     fun apiManager(): ProtonMailApiManager
-    //fun fetchContactsEmailsWorkerEnqueuer(): FetchContactsEmailsWorker.Enqueuer
     fun fetchContactsDataWorkerEnqueuer(): FetchContactsDataWorker.Enqueuer
     fun jobManager(): JobManager
     fun messageDetailsRepository(): MessageDetailsRepository

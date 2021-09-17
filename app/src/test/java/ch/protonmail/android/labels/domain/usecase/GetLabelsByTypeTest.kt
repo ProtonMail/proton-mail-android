@@ -52,7 +52,6 @@ class GetLabelsByTypeTest {
     private val testParentId = "testParentId"
     private val sheetType = LabelType.MESSAGE_LABEL
     private val sheetType2 = LabelType.FOLDER
-    private val emailsCount = 0
     private val testLabelId1 = LabelId("labelId1")
     private val testLabelId2 = LabelId("labelId2")
 

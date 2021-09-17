@@ -43,7 +43,6 @@ import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.AfterTest
@@ -101,7 +100,6 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val testPath = "a/bpath"
     private val testParentId = "parentIdForTests"
     private val testType =  LabelType.CONTACT_GROUP
-    private val testUserId = UserId("testUserId")
 
     @BeforeTest
     fun setUp() {

@@ -117,8 +117,7 @@ internal abstract class AppDatabase :
                 Timber.v("New $name DB created")
 
                 // Initial migration from "old" core DB to the new Mail app db.
-                val migration01 = AppDatabaseMigrations.initialMigration(context)
-                migration01.migrate(db)
+                AppDatabaseMigrations.initialMigration(context).migrate(db)
             }
 
             override fun onOpen(db: SupportSQLiteDatabase) {

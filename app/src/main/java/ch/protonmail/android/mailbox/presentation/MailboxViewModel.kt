@@ -59,7 +59,6 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
-import ch.protonmail.android.mailbox.presentation.model.ApplyRemoveLabels
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -103,6 +102,7 @@ const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
 private const val STARRED_LABEL_ID = "10"
 private const val MIN_MESSAGES_TO_SHOW_COUNT = 2
+private typealias ApplyRemoveLabelsPair = Pair<List<String>, List<String>>
 
 @HiltViewModel
 internal class MailboxViewModel @Inject constructor(
@@ -173,7 +173,6 @@ internal class MailboxViewModel @Inject constructor(
         .flatMapLatest { userIdPair -> observeLabels(userIdPair.first, userIdPair.second) }
         .map { labels ->
             drawerFoldersAndLabelsSectionUiModelMapper.toUiModel(
-                // filter out contact group labels
                 labels.filter { it.type != LabelType.CONTACT_GROUP }
             )
         }
@@ -311,8 +310,8 @@ internal class MailboxViewModel @Inject constructor(
                             ArrayList(unchangedLabels),
                             labels
                         )
-                        val apply = applyRemoveLabels?.labelsToApply
-                        val remove = applyRemoveLabels?.labelsToRemove
+                        val apply = applyRemoveLabels?.first
+                        val remove = applyRemoveLabels?.second
                         apply?.forEach {
                             var labelsToApply: MutableList<String>? = labelsToApplyMap[it]
                             if (labelsToApply == null) {
@@ -598,7 +597,7 @@ internal class MailboxViewModel @Inject constructor(
         checkedLabelIds: MutableList<String>,
         unchangedLabels: List<String>,
         currentContactLabels: List<Label>?
-    ): ApplyRemoveLabels? {
+    ): ApplyRemoveLabelsPair? {
         val labelsToRemove = ArrayList<String>()
 
         currentContactLabels?.forEach {
@@ -630,7 +629,7 @@ internal class MailboxViewModel @Inject constructor(
             messageDetailsRepository.saveMessage(message)
         }
 
-        return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
+        return ApplyRemoveLabelsPair(checkedLabelIds, labelsToRemove)
     }
 
     fun deleteAction(

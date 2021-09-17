@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.labels.domain
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.work.WorkInfo
 import ch.protonmail.android.labels.domain.model.Label
@@ -66,17 +65,17 @@ interface LabelRepository {
 
     suspend fun deleteContactGroups(userId: UserId)
 
-    fun applyMessageLabelWithWorker(messageIds: List<String>, labelId: String)
+    fun scheduleApplyMessageLabel(messageIds: List<String>, labelId: String)
 
-    fun removeMessageLabelWithWorker(messageIds: List<String>, labelId: String)
+    fun scheduleRemoveMessageLabel(messageIds: List<String>, labelId: String)
 
-    suspend fun deleteLabelsWithWorker(labelIds: List<LabelId>): LiveData<WorkInfo>
+    suspend fun scheduleDeleteLabels(labelIds: List<LabelId>): Flow<WorkInfo>
 
-    fun saveLabelWithWorker(
+    fun scheduleSaveLabel(
         labelName: String,
         color: String,
         isUpdate: Boolean,
         labelType: LabelType,
         labelId: String?
-    ): LiveData<WorkInfo>
+    ): Flow<WorkInfo>
 }

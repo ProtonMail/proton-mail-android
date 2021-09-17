@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.labels.data
 
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.asFlow
 import androidx.paging.DataSource
 import androidx.work.WorkInfo
 import ch.protonmail.android.api.ProtonMailApi
@@ -171,34 +171,34 @@ internal class LabelRepositoryImpl @Inject constructor(
         allLabelsEntities
     }
 
-    override fun applyMessageLabelWithWorker(messageIds: List<String>, labelId: String) {
+    override fun scheduleApplyMessageLabel(messageIds: List<String>, labelId: String) {
         applyMessageLabelWorker.enqueue(messageIds, labelId)
     }
 
-    override fun removeMessageLabelWithWorker(messageIds: List<String>, labelId: String) {
+    override fun scheduleRemoveMessageLabel(messageIds: List<String>, labelId: String) {
         removeMessageLabelWorker.enqueue(messageIds, labelId)
     }
 
-    override suspend fun deleteLabelsWithWorker(labelIds: List<LabelId>): LiveData<WorkInfo> {
+    override suspend fun scheduleDeleteLabels(labelIds: List<LabelId>): Flow<WorkInfo> {
         // delete db
         labelDao.deleteLabelsById(labelIds)
         // schedule remote removal
-        return deleteLabelsWorker.enqueue(labelIds)
+        return deleteLabelsWorker.enqueue(labelIds).asFlow()
     }
 
-    override fun saveLabelWithWorker(
+    override fun scheduleSaveLabel(
         labelName: String,
         color: String,
         isUpdate: Boolean,
         labelType: LabelType,
         labelId: String?
-    ) = postLabelWorker.enqueue(
+    ): Flow<WorkInfo> = postLabelWorker.enqueue(
         labelName,
         color,
         isUpdate,
         labelType,
         labelId
-    )
+    ).asFlow()
 
     private fun Flow<List<LabelEntity>>.mapToLabel() = map { entities ->
         entities.map { entity ->

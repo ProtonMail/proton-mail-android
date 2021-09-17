@@ -22,8 +22,8 @@ import android.database.SQLException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
-import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.contacts.ErrorEnum
@@ -98,6 +98,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
                             Event(Status.ERROR)
                         }
                     }
+                    .asLiveData()
             )
         }
     }

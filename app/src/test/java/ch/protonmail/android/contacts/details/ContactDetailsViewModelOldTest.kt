@@ -55,7 +55,7 @@ internal class ContactDetailsViewModelOldTest :
     CoroutinesTest,
     ViewStateStoreTest by viewStateStoreTest(errorStateGenerator) {
 
-    val userManager = mockk<UserManager>(relaxed = true)
+    private val userManager = mockk<UserManager>()
 
     @Test
     fun `getBitmapFromURL handles timeout`() = coroutinesTest {

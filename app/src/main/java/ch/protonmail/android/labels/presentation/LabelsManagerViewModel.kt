@@ -24,6 +24,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
@@ -38,6 +39,7 @@ import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
 import ch.protonmail.android.uiModel.LabelUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -78,7 +80,7 @@ internal class LabelsManagerViewModel @Inject constructor(
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = deleteLabelIds.switchMap {
             liveData {
-                emitSource(deleteLabels(it.map { LabelId(it) }))
+                emitSource(deleteLabels(it.map { LabelId(it) }).asLiveData())
             }
         }
 
@@ -152,7 +154,7 @@ internal class LabelsManagerViewModel @Inject constructor(
     }
 
     /** Save the editing label */
-    fun saveLabel(): LiveData<WorkInfo> {
+    fun saveLabel(): Flow<WorkInfo> {
         labelEditor?.let {
             return with(it.buildParams()) {
                 createOrUpdateLabel(labelName, color, update, labelId)
@@ -182,7 +184,7 @@ internal class LabelsManagerViewModel @Inject constructor(
         color: String,
         isUpdate: Boolean,
         labelId: String?
-    ): LiveData<WorkInfo> = labelRepository.saveLabelWithWorker(
+    ): Flow<WorkInfo> = labelRepository.scheduleSaveLabel(
         labelName,
         color,
         isUpdate,
