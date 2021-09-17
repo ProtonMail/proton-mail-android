@@ -101,13 +101,13 @@ internal class MessageRepository @Inject constructor(
         )
     }
 
+    private val refreshUnreadCountersTrigger = MutableSharedFlow<Unit>(replay = 1)
+
     fun observeMessages(
         params: GetAllMessagesParameters,
         refreshAtStart: Boolean = true
     ): LoadMoreFlow<DataResult<List<Message>>> =
         allMessagesStore.loadMoreFlow(params, refreshAtStart)
-
-    private val refreshUnreadCountersTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {
         val messageDao = databaseProvider.provideMessageDao(userId)

@@ -178,6 +178,14 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             this,
             { onLabelDeletedEvent(it) }
         )
+
+        viewModel.createUpdateFlow
+            .onEach {
+                if (it.state.isFinished) {
+                    displayLabelCreationOutcome(it)
+                }
+            }
+            .launchIn(lifecycleScope)
     }
 
     /** Custom setup if [popupStyle] */
@@ -325,13 +333,6 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private fun saveCurrentLabel() {
         viewModel.saveLabel()
-            .onEach {
-                if (it.state.isFinished) {
-                    displayLabelCreationOutcome(it)
-                }
-            }
-            .launchIn(lifecycleScope)
-
         state = State.UNDEFINED
     }
 

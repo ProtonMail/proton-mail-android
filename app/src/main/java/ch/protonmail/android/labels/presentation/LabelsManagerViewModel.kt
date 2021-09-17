@@ -40,14 +40,17 @@ import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
 import ch.protonmail.android.uiModel.LabelUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.domain.AccountManager
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
 import studio.forface.viewstatestore.paging.PagedViewStateStore
 import studio.forface.viewstatestore.paging.ViewStateStoreScope
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -73,6 +76,7 @@ internal class LabelsManagerViewModel @Inject constructor(
     /** Triggered when a selection has changed */
     private val selectedLabelIds = MutableLiveData(mutableSetOf<String>())
     private var deleteLabelIds = MutableLiveData<List<String>>()
+    private var updateSaveTrigger = MutableSharedFlow<Unit>(replay = 1)
 
     /** Triggered when [selectedLabelIds] has changed */
     val hasSelectedLabels = ViewStateStore.from(selectedLabelIds.map { it.isNotEmpty() }).lock
@@ -127,6 +131,21 @@ internal class LabelsManagerViewModel @Inject constructor(
     /** [CharSequence] that hold the name for a new Label */
     private var tempLabelName: CharSequence = ""
 
+    val createUpdateFlow = updateSaveTrigger
+        .flatMapLatest {
+            labelEditor?.let { editor ->
+                with(editor.buildParams()) {
+                    createOrUpdateLabel(labelName, color, update, type, labelId)
+                }
+            } ?: createOrUpdateLabel(
+                tempLabelName.toString(),
+                tempLabelColor.toColorHex(),
+                false,
+                type,
+                null
+            )
+        }
+
     init {
         labels.setLoading()
     }
@@ -154,20 +173,8 @@ internal class LabelsManagerViewModel @Inject constructor(
     }
 
     /** Save the editing label */
-    fun saveLabel(): Flow<WorkInfo> {
-        labelEditor?.let {
-            return with(it.buildParams()) {
-                createOrUpdateLabel(labelName, color, update, labelId)
-            }
-        }
-
-        return createOrUpdateLabel(
-            tempLabelName.toString(),
-            tempLabelColor.toColorHex(),
-            false,
-            null
-        )
-    }
+    fun saveLabel() =
+        updateSaveTrigger.tryEmit(Unit)
 
     /** Set a [ColorInt] for the current editing Label */
     fun setLabelColor(@ColorInt color: Int) {
@@ -183,12 +190,13 @@ internal class LabelsManagerViewModel @Inject constructor(
         labelName: String,
         color: String,
         isUpdate: Boolean,
+        labelType: LabelType,
         labelId: String?
     ): Flow<WorkInfo> = labelRepository.scheduleSaveLabel(
         labelName,
         color,
         isUpdate,
-        LabelType.MESSAGE_LABEL,
+        labelType,
         labelId
     )
 }
@@ -226,8 +234,10 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
     )
 }
 
+private const val WHITE_COLOR_MASK = 0xFFFFFF
+
 /** @return [String] color hex from a [ColorInt] */
-private fun Int.toColorHex() = String.format("#%06X", 0xFFFFFF and this)
+private fun Int.toColorHex() = String.format(Locale.getDefault(), "#%06X", WHITE_COLOR_MASK and this)
 
 // region Selected Labels extensions
 private typealias MutableLiveStringSet = MutableLiveData<MutableSet<String>>
