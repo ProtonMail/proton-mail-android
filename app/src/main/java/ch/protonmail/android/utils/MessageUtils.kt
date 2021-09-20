@@ -25,7 +25,6 @@ import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.models.address.Address
-import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.api.models.enumerations.MessageFlag
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
@@ -217,35 +216,4 @@ object MessageUtils {
         }
     }
 
-    fun calculateEncryption(flags: Long): MessageEncryption {
-        val internal = flags and MessageFlag.INTERNAL.value == MessageFlag.INTERNAL.value
-        val e2e = flags and MessageFlag.E2E.value == MessageFlag.E2E.value
-        val received = flags and MessageFlag.RECEIVED.value == MessageFlag.RECEIVED.value
-        val sent = flags and MessageFlag.SENT.value == MessageFlag.SENT.value
-        val auto = flags and MessageFlag.AUTO.value == MessageFlag.AUTO.value
-
-        if (internal) {
-            if (e2e) {
-
-                if (received && sent) {
-                    return MessageEncryption.INTERNAL
-                } else if (received && auto) {
-                    return MessageEncryption.AUTO_RESPONSE
-                }
-                return MessageEncryption.INTERNAL
-            }
-
-            return if (auto) {
-                MessageEncryption.AUTO_RESPONSE
-            } else MessageEncryption.INTERNAL
-        } else if (received && e2e) {
-            return MessageEncryption.EXTERNAL_PGP
-        } else if (received) {
-            return MessageEncryption.EXTERNAL
-        }
-
-        return if (e2e) {
-            MessageEncryption.MIME_PGP
-        } else MessageEncryption.EXTERNAL
-    }
 }

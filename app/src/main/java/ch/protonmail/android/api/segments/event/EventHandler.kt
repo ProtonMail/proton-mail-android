@@ -44,6 +44,7 @@ import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
 import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
@@ -85,7 +86,8 @@ internal class EventHandler @AssistedInject constructor(
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val messageFactory: MessageFactory,
     @Assisted val userId: UserId,
-    private val externalScope: CoroutineScope
+    private val externalScope: CoroutineScope,
+    private val messageFlagsToEncryptionMapper: MessageFlagsToEncryptionMapper
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
@@ -396,7 +398,7 @@ internal class EventHandler @AssistedInject constructor(
                 message.isForwarded = newMessage.Flags and MessageFlag.FORWARDED.value == MessageFlag.FORWARDED.value
 
                 message.Type = MessageUtils.calculateType(newMessage.Flags)
-                message.messageEncryption = MessageUtils.calculateEncryption(newMessage.Flags)
+                message.messageEncryption = messageFlagsToEncryptionMapper.flagsToMessageEncryption(newMessage.Flags)
             }
             if (newMessage.AddressID != null) {
                 message.addressID = newMessage.AddressID

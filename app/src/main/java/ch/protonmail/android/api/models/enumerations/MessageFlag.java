@@ -18,6 +18,41 @@
  */
 package ch.protonmail.android.api.models.enumerations;
 
+/**
+ * This enum represent some of the possible values that are contained in the
+ * `Message.Flags` bitmap of message flags.
+ * Here is a list of all the possible values such flags can assume.
+ * Mapping between the Flag's bitmap and this enum is performed in `MessageFlagsToEncryptionMapper`.
+ * <p>
+ * Received = 1 (2^0)
+ * Sent = 2 (2^1)
+ * Internal = 4 (2^2)
+ * E2E = 8 (2^3)
+ * Auto = 16 (2^4)
+ * Replied = 32 (2^5)
+ * RepliedAll = 64 (2^6)
+ * Forwarded = 128 (2^7)
+ * Auto replied = 256 (2^8)
+ * Imported = 512 (2^9)
+ * Opened = 1024 (2^10)
+ * Receipt Sent = 2048 (2^11)
+ * Notified = 4096 (2^12)
+ * Touched = 8192 (2^13)
+ * Receipt = 16384 (2^14)
+ * Proton = 32768 (2^15)
+ * Receipt request = 65536 (2^16)
+ * Public key = 131072 (2^17)
+ * Sign = 262144 (2^18)
+ * Unsubscribed = 524288 (2^19)
+ * SPF fail = 16777216 (2^24)
+ * DKIM fail = 33554432 (2^25)
+ * DMARC fail = 67108864 (2^26)
+ * Ham manual = 134217728 (2^27)
+ * Spam auto = 268435456 (2^28)
+ * Spam manual = 536870912 (2^29)
+ * Phishing auto = 1073741824 (2^30)
+ * Phishing manual = 2147483648 (2^31)
+ */
 public enum MessageFlag {
     RECEIVED(1L), // whether a message is received
     SENT(2L), // whether a message is sent

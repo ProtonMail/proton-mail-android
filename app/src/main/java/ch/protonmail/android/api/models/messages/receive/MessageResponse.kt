@@ -21,6 +21,7 @@ package ch.protonmail.android.api.models.messages.receive
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
 import com.google.gson.annotations.SerializedName
 
 class MessageResponse : ResponseBody() {
@@ -32,7 +33,13 @@ class MessageResponse : ResponseBody() {
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
         val messageLocationResolver = MessageLocationResolver(null)
-        val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory, messageLocationResolver)
+        val messageFlagsMapper = MessageFlagsToEncryptionMapper()
+        val messageFactory = MessageFactory(
+            attachmentFactory,
+            messageSenderFactory,
+            messageLocationResolver,
+            messageFlagsMapper
+        )
         messageFactory.createMessage(serverMessage)
     }
 
