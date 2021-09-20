@@ -38,7 +38,7 @@ class MessageDaoTest : CoroutinesTest {
 
     private fun createBaseMessage(): Message {
         return Message().apply {
-            setIsEncrypted(MessageEncryption.INTERNAL)
+            messageEncryption = MessageEncryption.INTERNAL
             sender = MessageSender("Test", "Test")
         }
     }

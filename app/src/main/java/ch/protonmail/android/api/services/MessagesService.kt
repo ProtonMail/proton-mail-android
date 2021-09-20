@@ -235,7 +235,7 @@ class MessagesService : JobIntentService() {
                         if (savedMessage.isDownloaded) {
                             msg.messageBody = savedMessage.messageBody
                         }
-                        msg.setIsEncrypted(savedMessage.getIsEncrypted())
+                        msg.messageEncryption = savedMessage.messageEncryption
                     }
                     msg.isInline = savedMessage.isInline
                     savedMessage.location = location.messageLocationTypeValue
@@ -307,7 +307,7 @@ class MessagesService : JobIntentService() {
                     if (savedMessage.isDownloaded) {
                         msg.messageBody = savedMessage.messageBody
                     }
-                    msg.setIsEncrypted(savedMessage.getIsEncrypted())
+                    msg.messageEncryption = savedMessage.messageEncryption
                     msg.isInline = savedMessage.isInline
                     msg.mimeType = savedMessage.mimeType
                     savedMessage.location = location.messageLocationTypeValue

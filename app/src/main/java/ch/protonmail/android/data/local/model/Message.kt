@@ -138,7 +138,7 @@ data class Message @JvmOverloads constructor(
     var numAttachments: Int = 0,
 
     @ColumnInfo(name = COLUMN_MESSAGE_IS_ENCRYPTED)
-    var messageEncryption: MessageEncryption? = null,
+    var messageEncryption: MessageEncryption = MessageEncryption.UNKNOWN,
 
     @ColumnInfo(name = COLUMN_MESSAGE_EXPIRATION_TIME)
     var expirationTime: Long = 0,
@@ -314,7 +314,7 @@ data class Message @JvmOverloads constructor(
         message.isDownloaded = isDownloaded
         message.sender = sender
         message.setAttachmentList(attachments)
-        message.setIsEncrypted(getIsEncrypted())
+        message.messageEncryption = messageEncryption
         message.mimeType = mimeType
         message.spamScore = spamScore
         message.Type = Type
@@ -340,11 +340,6 @@ data class Message @JvmOverloads constructor(
         allLabelIDs = labelIDs ?: ArrayList()
         location = locationFromLabel().messageLocationTypeValue
     }
-
-    fun getIsEncrypted(): MessageEncryption? = messageEncryption
-
-    @Deprecated("Use getMessageEncryption()")
-    fun isEncrypted(): Boolean = messageEncryption!!.isEndToEndEncrypted
 
     @WorkerThread
     @Deprecated("We target removing all logic from Models. `MessageDao` can be used to get attachments instead")
@@ -392,10 +387,6 @@ data class Message @JvmOverloads constructor(
             return result
         }
         return messageDao.findAttachmentsByMessageIdAsync(messageId)
-    }
-
-    fun setIsEncrypted(isEncrypted: MessageEncryption?) {
-        this.messageEncryption = isEncrypted
     }
 
     fun setIsRead(isRead: Boolean) {

@@ -195,7 +195,6 @@ public class ComposeMessageActivity
     public static final String EXTRA_MESSAGE_BODY = "message_body";
     public static final String EXTRA_MAIL_TO = "mail_to";
     public static final String EXTRA_MESSAGE_BODY_LARGE = "message_body_large";
-    public static final String EXTRA_MESSAGE_ENCRYPTED = "message_encrypted";
     public static final String EXTRA_MESSAGE_ATTACHMENTS = "message_attachments";
     public static final String EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS = "message_attachments_embedded";
     public static final String EXTRA_MESSAGE_TIMESTAMP = "message_timestamp";
@@ -1168,7 +1167,7 @@ public class ComposeMessageActivity
         message.setBccList(bccRecipientView.getMessageRecipients());
         message.setDecryptedBody(composeMessageViewModel.getMessageDataResult().getContent());
         message.setEmbeddedImagesArray(composeMessageViewModel.getMessageDataResult().getContent());
-        message.setIsEncrypted(MessageEncryption.INTERNAL);
+        message.setMessageEncryption(MessageEncryption.INTERNAL);
         message.setLabelIDs(message.getAllLabelIDs());
         message.setInline(composeMessageViewModel.getMessageDataResult().isRespondInlineChecked());
         if (isDraft) {
@@ -1178,7 +1177,7 @@ public class ComposeMessageActivity
                     String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
             message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
             message.setTime(ServerTime.currentTimeMillis() / 1000);
-            message.setIsEncrypted(MessageEncryption.INTERNAL);
+            message.setMessageEncryption(MessageEncryption.INTERNAL);
             message.setDownloaded(true);
         }
     }

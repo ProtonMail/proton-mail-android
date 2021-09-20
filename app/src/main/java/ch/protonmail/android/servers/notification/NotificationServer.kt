@@ -637,7 +637,6 @@ private fun Context.buildReplyIntent(
         .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_BODY, message.decryptedHTML)
         .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.messageId)
         .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP, message.timeMs)
-        .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED, message.isEncrypted())
         .putExtra(ComposeMessageActivity.EXTRA_PARENT_ID, message.messageId)
         .putExtra(ComposeMessageActivity.EXTRA_ACTION_ID, Constants.MessageActionType.REPLY)
 

@@ -41,7 +41,7 @@ import me.proton.core.data.room.db.CommonConverters
         Label::class,
         UnreadCounterEntity::class
     ],
-    version = 11
+    version = 12
 )
 @TypeConverters(
     value = [

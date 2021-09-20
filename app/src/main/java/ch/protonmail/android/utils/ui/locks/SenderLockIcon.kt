@@ -31,7 +31,7 @@ class SenderLockIcon(
 ) : LockIcon {
 
     override fun getIcon(): Int {
-        if (!message.messageEncryption!!.isStoredEncrypted) {
+        if (!message.messageEncryption.isStoredEncrypted) {
             return R.string.pgp_lock_open
         }
         if (hasInvalidSignature) {
@@ -53,7 +53,7 @@ class SenderLockIcon(
 
     override fun getColor(): Int {
         val messageEncryption = message.messageEncryption
-        if (messageEncryption!!.isPGPEncrypted) {
+        if (messageEncryption.isPGPEncrypted) {
             return R.color.icon_green
         }
         return if (messageEncryption.isEndToEndEncrypted || messageEncryption.isInternalEncrypted) {
@@ -74,7 +74,7 @@ class SenderLockIcon(
         if (message.isSent) {
             return sentTooltip()
         }
-        if (messageEncryption!!.isInternalEncrypted) {
+        if (messageEncryption.isInternalEncrypted) {
             return internalTooltip()
         }
         if (messageEncryption.isPGPEncrypted) {
@@ -105,7 +105,7 @@ class SenderLockIcon(
         if (!hasValidSignature && message.time > Constants.PM_SIGNATURES_START) {
             return R.string.sender_lock_verification_failed
         }
-        if (messageEncryption!!.isEndToEndEncrypted) {
+        if (messageEncryption.isEndToEndEncrypted) {
             return R.string.sender_lock_sent_end_to_end
         }
         return R.string.sender_lock_zero_access
