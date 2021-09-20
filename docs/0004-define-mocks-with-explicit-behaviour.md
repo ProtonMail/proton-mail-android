@@ -1,4 +1,4 @@
-# Declare mocks
+# Define mocks with explicit behaviour
 
 * Status: Discussed and agreed in principle
 * Deciders: Marino, Zorica, Stefanija, Davide, Tomasz, Maciej
