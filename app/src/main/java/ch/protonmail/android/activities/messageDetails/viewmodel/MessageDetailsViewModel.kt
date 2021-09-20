@@ -26,8 +26,11 @@ import android.os.Build
 import android.os.Environment
 import android.print.PrintManager
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
@@ -112,7 +115,6 @@ import org.jsoup.Jsoup
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 @HiltViewModel
@@ -140,7 +142,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
-) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
+) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator), LifecycleObserver {
 
     private val messageOrConversationId: String =
         savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID)
@@ -175,10 +177,10 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
     private val _showPermissionMissingDialog: MutableLiveData<Unit> = MutableLiveData()
-    private val _conversationUiFLow = MutableSharedFlow<ConversationUiModel>(replay = 1)
+    private val _conversationUiFlow = MutableSharedFlow<ConversationUiModel>(replay = 1)
 
     val conversationUiModel: SharedFlow<ConversationUiModel>
-        get() = _conversationUiFLow
+        get() = _conversationUiFlow
 
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission
@@ -199,6 +201,8 @@ internal class MessageDetailsViewModel @Inject constructor(
         get() = _messageRenderedWithImages
 
     private var areImagesDisplayed: Boolean = false
+
+    private var visibleToTheUser = true
 
     init {
         // message render flow
@@ -317,7 +321,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
             val isDecrypted = fetchedMessage.tryDecrypt(publicKeys)
             Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")
-            if (!fetchedMessage.isRead) {
+            if (!fetchedMessage.isRead && visibleToTheUser) {
                 messageRepository.markRead(listOf(messageId))
             }
 
@@ -328,6 +332,16 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
         }
     }.flowOn(dispatchers.Io)
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun pause() {
+        visibleToTheUser = false
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun resume() {
+        visibleToTheUser = true
+    }
 
     private suspend fun loadMessageDetails(message: Message?): ConversationUiModel? {
 
@@ -413,7 +427,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private suspend fun emitConversationUiItem(conversationUiModel: ConversationUiModel) {
         refreshedKeys = true
         _decryptedConversationUiModel.postValue(conversationUiModel)
-        _conversationUiFLow.emit(conversationUiModel)
+        _conversationUiFlow.emit(conversationUiModel)
     }
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {

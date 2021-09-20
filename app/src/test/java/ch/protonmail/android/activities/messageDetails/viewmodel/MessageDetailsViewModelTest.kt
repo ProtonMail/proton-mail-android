@@ -1031,6 +1031,45 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         assertTrue(result)
     }
 
+    @Test
+    fun whenLoadingMessageBodyAndPausedShouldNotMarkMessageAsRead() = runBlockingTest {
+        // Given
+        val message = Message(messageId = INPUT_ITEM_DETAIL_ID, Unread = true).toSpy()
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns message
+        every { messageRepository.markRead(any()) } returns Unit
+
+        // When
+        viewModel.pause()
+        val loadMessageBodyFlow = viewModel.loadMessageBody(message)
+
+        // Then
+        loadMessageBodyFlow.test {
+            coVerify(exactly = 0) { messageRepository.markRead(any()) }
+            expectItem()
+            expectComplete()
+        }
+    }
+
+    @Test
+    fun whenLoadingMessageBodyAndResumedShouldMarkMessageAsRead() = runBlockingTest {
+        // Given
+        val message = Message(messageId = INPUT_ITEM_DETAIL_ID, Unread = true).toSpy()
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns message
+        every { messageRepository.markRead(any()) } returns Unit
+
+        // When
+        viewModel.pause()
+        viewModel.resume()
+        val loadMessageBodyFlow = viewModel.loadMessageBody(message)
+
+        // Then
+        loadMessageBodyFlow.test {
+            coVerify(exactly = 1) { messageRepository.markRead(listOf(INPUT_ITEM_DETAIL_ID)) }
+            expectItem()
+            expectComplete()
+        }
+    }
+
     private fun buildMessage(
         messageId: String = MESSAGE_ID_ONE,
         subject: String = SUBJECT,
