@@ -868,7 +868,7 @@
     <string name="local_storage">Limite de armazenamento local</string>
     <string name="storage_value">%1$d MB (%2$.2f MB usado)</string>
     <!-- endregion -->
-    <string name="app_settings">Definições da aplicação</string>
+    <string name="app_settings">App settings</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Notificações estendidas</string>
@@ -890,11 +890,11 @@
     <string name="turn_combined_contacts_on">Active esta funcionalidade para preencher automaticamente endereços de email utilizando contactos de todas as suas contas ligadas.</string>
     <string name="local_cache_management">Local cache</string>
     <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear Data</string>
+    <string name="empty_data">Clear data</string>
     <!-- endregion -->
     <string name="enabled">Activado</string>
     <string name="disabled">Desactivado</string>
-    <string name="app_info">Informação da aplicação</string>
+    <string name="app_info">App information</string>
     <string name="app_version">Versão da aplicação</string>
     <!-- endregion -->
     <!-- region Multi Account -->

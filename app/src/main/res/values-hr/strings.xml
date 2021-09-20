@@ -886,7 +886,7 @@
     <string name="local_storage">Ograničenje lokalne pohrane</string>
     <string name="storage_value">%1$d MB (%2$.2f MB iskorišteno)</string>
     <!-- endregion -->
-    <string name="app_settings">Postavke aplikacije</string>
+    <string name="app_settings">App settings</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Proširene obavijesti</string>
@@ -908,11 +908,11 @@
     <string name="turn_combined_contacts_on">Uključite ovu značajku za automatsko dovršavanje adresa e-pošte pomoću kontakata sa svih vaših prijavljenih računa.</string>
     <string name="local_cache_management">Local cache</string>
     <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear Data</string>
+    <string name="empty_data">Clear data</string>
     <!-- endregion -->
     <string name="enabled">Omogućeno</string>
     <string name="disabled">Onemogućeno</string>
-    <string name="app_info">Informacije o aplikaciji</string>
+    <string name="app_info">App information</string>
     <string name="app_version">Verzija aplikacije</string>
     <!-- endregion -->
     <!-- region Multi Account -->

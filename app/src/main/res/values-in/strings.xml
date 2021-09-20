@@ -868,18 +868,18 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="allow_secure_connections_via_third_parties">Izinkan route alternatif</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Jika situs Proton di blokir, pengaturan ini memungkinkan aplikasi untuk mencoba perutean jaringan alternatif untuk mencapai Proton, yang mana dapat berguna untuk melewati/mem-bypass firewall atau masalah jaringan. Kami sarankan untuk tetap mengaktifkan pengaturan ini untuk kendala yang lebih baik.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Jika situs Proton diblokir, pengaturan ini memungkinkan aplikasi untuk mencoba perutean jaringan alternatif untuk mencapai Proton, yang mana dapat berguna untuk melewati/mem-bypass firewall atau masalah jaringan. Kami sarankan untuk tetap mengaktifkan pengatura ini untuk keaandalan yang lebih baik.<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Pelajari lebih lanjut</a></string>
-    <string name="app_language">App language</string>
+    <string name="app_language">Bahasa aplikasi</string>
     <string name="custom_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="auto_detect">Deteksi otomatis</string>
     <string name="combined_contacts">Combined contacts</string>
     <string name="turn_combined_contacts_on">Aktifkan fitur ini untuk otomatis melengkapi alamat email menggunakan kontak dari semua akun masuk anda.</string>
-    <string name="local_cache_management">Local cache</string>
-    <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear Data</string>
+    <string name="local_cache_management">Cache lokal</string>
+    <string name="cache_cleared">Cache lokal telah dikosongkan</string>
+    <string name="empty_data">Bersihkan data</string>
     <!-- endregion -->
     <string name="enabled">Diaktifkan</string>
     <string name="disabled">Dinonaktifkan</string>
-    <string name="app_info">Informasi Aplikasi</string>
+    <string name="app_info">Seputar aplikasi</string>
     <string name="app_version">Versi Aplikasi</string>
     <!-- endregion -->
     <!-- region Multi Account -->
@@ -958,5 +958,5 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="details_show_history">Tampilkan riwayat</string>
     <string name="could_not_complete_action">Tidak dapat menyelesaikan tindakan</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
-    <string name="labels_selected_limit_reached">Limit reached</string>
+    <string name="labels_selected_limit_reached">Batas tercapai</string>
 </resources>

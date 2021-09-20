@@ -846,7 +846,7 @@
     <string name="local_storage">ストレージ容量の上限</string>
     <string name="storage_value">%1$d MB (%2$.2f MB 使用中)</string>
     <!-- endregion -->
-    <string name="app_settings">設定</string>
+    <string name="app_settings">App settings</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">拡張通知</string>
@@ -868,11 +868,11 @@
     <string name="turn_combined_contacts_on">この機能を有効化すると、ログイン済みのアカウントの連絡先を、メールアドレスの自動補完に利用可能になります。</string>
     <string name="local_cache_management">Local cache</string>
     <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear Data</string>
+    <string name="empty_data">Clear data</string>
     <!-- endregion -->
     <string name="enabled">有効</string>
     <string name="disabled">無効</string>
-    <string name="app_info">情報</string>
+    <string name="app_info">App information</string>
     <string name="app_version">バージョン</string>
     <!-- endregion -->
     <!-- region Multi Account -->

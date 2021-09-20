@@ -869,7 +869,7 @@
     <string name="local_storage">Όριο τοπικής αποθήκευσης</string>
     <string name="storage_value">%1$d MB (%2$.2f MB χρησιμοποιείται)</string>
     <!-- endregion -->
-    <string name="app_settings">Ρυθμίσεις εφαρμογής</string>
+    <string name="app_settings">App settings</string>
     <!-- region App Settings -->
     <string name="push_notifications">Ειδοποιήσεις Push</string>
     <string name="extended_notifications">Εκτεταμένες ειδοποιήσεις</string>
@@ -891,11 +891,11 @@
     <string name="turn_combined_contacts_on">Ενεργοποιήστε αυτή τη λειτουργία για να συμπληρώνετε αυτόματα τα E-mail χρησιμοποιώντας επαφές από όλους τους συνδεδεμένους λογαριασμούς σας.</string>
     <string name="local_cache_management">Τοπική προσωρινή μνήμη</string>
     <string name="cache_cleared">Η τοπική προσωρινή μνήμη ανανεώνεται</string>
-    <string name="empty_data">Καθαρισμός δεδομένων</string>
+    <string name="empty_data">Clear data</string>
     <!-- endregion -->
     <string name="enabled">Ενεργοποιημένο</string>
     <string name="disabled">Απενεργοποιημένο</string>
-    <string name="app_info">Πληροφορίες Εφαρμογής</string>
+    <string name="app_info">App information</string>
     <string name="app_version">Έκδοση εφαρμογής</string>
     <!-- endregion -->
     <!-- region Multi Account -->
