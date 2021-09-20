@@ -40,6 +40,7 @@ import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.bl.HtmlProcessor
+import ch.protonmail.android.compose.presentation.model.AddExpirationTimeToMessage
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
@@ -67,6 +68,8 @@ import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MailToData
 import ch.protonmail.android.utils.MessageUtils
+import ch.protonmail.android.utils.ServerTime
+import ch.protonmail.android.utils.ServerTimeProvider
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
@@ -115,7 +118,8 @@ class ComposeMessageViewModel @Inject constructor(
     private val sendMessage: SendMessage,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
-    private val htmlToSpanned: HtmlToSpanned
+    private val htmlToSpanned: HtmlToSpanned,
+    private val addExpirationTimeToMessage: AddExpirationTimeToMessage
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
@@ -735,30 +739,34 @@ class ComposeMessageViewModel @Inject constructor(
     @Synchronized
     fun sendMessage(message: Message) {
         setIsDirty(false)
+        val messageWithExpirationTime = addExpirationTimeToMessage(message, _messageDataResult.expiresAfterInSeconds)
 
         if (sendingInProcess) {
             return
         }
         sendingInProcess = true
         GlobalScope.launch {
-            _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).message(message).build()
+            _messageDataResult = MessageBuilderData.Builder()
+                .fromOld(_messageDataResult)
+                .message(messageWithExpirationTime)
+                .build()
             if (_dbId == null) {
                 // if db ID is null this means we do not have local DB row of the message we are about to send
                 // and we are saving it. also draftId should be null
-                message.messageId = UUID.randomUUID().toString()
-                _dbId = saveMessage(message)
+                messageWithExpirationTime.messageId = UUID.randomUUID().toString()
+                _dbId = saveMessage(messageWithExpirationTime)
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update draft job
                 // and also that the message has all the latest edits in between draft saving (creation) and sending the message
                 val savedMessage = messageDetailsRepository.findMessageByDatabaseId(_dbId!!).first()
-                message.dbId = _dbId
+                messageWithExpirationTime.dbId = _dbId
                 savedMessage?.let {
                     if (!TextUtils.isEmpty(it.localId)) {
-                        message.messageId = it.messageId
+                        messageWithExpirationTime.messageId = it.messageId
                     } else {
-                        message.messageId = _draftId.get()
+                        messageWithExpirationTime.messageId = _draftId.get()
                     }
-                    saveMessage(message)
+                    saveMessage(messageWithExpirationTime)
                 }
             }
 
@@ -767,7 +775,7 @@ class ComposeMessageViewModel @Inject constructor(
 
                 sendMessage(
                     SendMessage.SendMessageParameters(
-                        message,
+                        messageWithExpirationTime,
                         newAttachments,
                         parentId,
                         _actionId,
@@ -775,7 +783,7 @@ class ComposeMessageViewModel @Inject constructor(
                         MessageSecurityOptions(
                             messageDataResult.messagePassword,
                             messageDataResult.passwordHint,
-                            messageDataResult.expirationTime
+                            messageDataResult.expiresAfterInSeconds
                         )
                     )
                 )
@@ -1313,7 +1321,7 @@ class ComposeMessageViewModel @Inject constructor(
     // region expiration
     fun requestCurrentExpirationForUpdate() {
         viewModelScope.launch {
-            val currentExpiration = (messageDataResult.expirationTime ?: 0).seconds
+            val currentExpiration = (messageDataResult.expiresAfterInSeconds).seconds
             val days = currentExpiration.inDays
             val hours = (currentExpiration - days.days).inHours
             val uiModel = DaysHoursPair(
@@ -1324,15 +1332,15 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    fun setExpiration(expiration: DaysHoursPair) {
+    fun setExpiresAfterInSeconds(expiration: DaysHoursPair) {
         viewModelScope.launch {
-            val newExpiration = expiration.days.days + expiration.hours.hours
-            val newExpirationInSeconds = newExpiration.inSeconds.toLong()
+            val newExpiresAfter = expiration.days.days + expiration.hours.hours
+            val newExpiresAfterInSeconds = newExpiresAfter.inSeconds.toLong()
             _messageDataResult = MessageBuilderData.Builder()
                 .fromOld(_messageDataResult)
-                .expirationTime(newExpirationInSeconds)
+                .expiresAfterInSeconds(newExpiresAfterInSeconds)
                 .build()
-            _events.emit(ComposeMessageEventUiModel.OnExpirationChange(hasExpiration = newExpirationInSeconds > 0))
+            _events.emit(ComposeMessageEventUiModel.OnExpirationChange(hasExpiration = newExpiresAfterInSeconds > 0))
         }
     }
     // endregion

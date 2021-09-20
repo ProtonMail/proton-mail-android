@@ -249,6 +249,8 @@ class CreateDraftWorker @AssistedInject constructor(
             numAttachments = localDraft.numAttachments
             attachments = localAttachments.plus(attachments)
             localId = localDraft.messageId
+            // TODO: Improve on this approach; MAILAND-2366
+            expirationTime = localDraft.expirationTime
         }
 
         messageDetailsRepository.saveMessage(apiDraft)

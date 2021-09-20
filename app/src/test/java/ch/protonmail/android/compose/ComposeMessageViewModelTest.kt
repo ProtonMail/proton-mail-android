@@ -24,6 +24,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
+import ch.protonmail.android.compose.presentation.model.AddExpirationTimeToMessage
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
 import ch.protonmail.android.compose.send.SendMessage
@@ -94,6 +95,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val htmlToSpanned: HtmlToSpanned = mockk(relaxed = true)
 
+    private val addExpirationTimeToMessage: AddExpirationTimeToMessage = mockk()
+
     private val viewModel = ComposeMessageViewModel(
         composeMessageRepository = composeMessageRepository,
         userManager = userManager,
@@ -107,7 +110,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         sendMessage = sendMessage,
         verifyConnection = verifyConnection,
         networkConfigurator = networkConfigurator,
-        htmlToSpanned = htmlToSpanned
+        htmlToSpanned = htmlToSpanned,
+        addExpirationTimeToMessage = addExpirationTimeToMessage
     )
 
     @BeforeTest
@@ -366,17 +370,19 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     fun sendMessageCallsSendMessageUseCaseWithMessageParameters() {
         runBlockingTest {
             // Given
-            val message = Message()
+            val message = Message(messageId = "message id")
+            val messageWithExpirationTime = message.copy(expirationTime = 42L)
             givenViewModelPropertiesAreInitialised()
             viewModel.setPassword(MessagePasswordUiModel.Set("messagePassword", "a hint to discover it"))
             every { workManager.cancelUniqueWork(any()) } returns mockk()
+            every { addExpirationTimeToMessage(eq(message), any()) } returns messageWithExpirationTime
 
             // When
             viewModel.sendMessage(message)
 
             // Then
             val params = SendMessage.SendMessageParameters(
-                message,
+                messageWithExpirationTime,
                 listOf(),
                 "parentId823",
                 Constants.MessageActionType.FORWARD,
