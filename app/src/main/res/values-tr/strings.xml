@@ -730,10 +730,10 @@
         Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depolama alanı satın almayı düşünün.</string>
     <!-- endregion -->
     <string name="need_permissions_title">İzinler</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
-    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
-        access to storage.</string>
+    <string name="need_storage_permissions_add_attachment_text">Ekleri eklemek için depolamaya erişime
+         izin vermeniz gerekir.</string>
+    <string name="need_storage_permissions_download_attachment_text">Ekleri indirmek için depolamaya erişime
+        izin vermeniz gerekir.</string>
     <string name="need_contacts_permissions_text">Kişileri içe aktarmak için kişilere erişim izni vermeniz gerekmektedir.</string>
     <string name="push_notifications_alert_title">Anlık bildirim uyarıları</string>
     <string name="push_notifications_alert_subtitle">ProtonMail anlık bildirimleri, güncellenmiş Google Play hizmetleri olmadan çalışmaz.</string>
@@ -887,7 +887,7 @@
     <string name="turn_combined_contacts_on">Oturum açtığınız tüm hesaplardaki kişileri kullanarak e-posta adreslerini otomatik olarak tamamlamak için bu özelliği açın.</string>
     <string name="local_cache_management">Yerel önbellek</string>
     <string name="cache_cleared">Yerel önbellek yenilendi</string>
-    <string name="empty_data">Veriyi Temizle</string>
+    <string name="empty_data">Veriyi temizle</string>
     <!-- endregion -->
     <string name="enabled">Etkin</string>
     <string name="disabled">Devre dışı</string>
@@ -972,5 +972,5 @@
     <string name="details_show_history">Geçmişi göster</string>
     <string name="could_not_complete_action">İşlem tamamlanamadı</string>
     <string name="decryption_of_message_failed">Şifre çözme hatası: Bu iletinin şifrelenmiş içeriğinin şifresi çözülemedi.</string>
-    <string name="labels_selected_limit_reached">Limit reached</string>
+    <string name="labels_selected_limit_reached">Sınıra ulaşıldı</string>
 </resources>

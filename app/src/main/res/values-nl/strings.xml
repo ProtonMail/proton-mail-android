@@ -869,7 +869,7 @@
     <string name="local_storage">Lokale opslaglimiet</string>
     <string name="storage_value">%1$d MB (%2$.2f MB gebruikt)</string>
     <!-- endregion -->
-    <string name="app_settings">Appinstellingen</string>
+    <string name="app_settings">App instellingen</string>
     <!-- region App Settings -->
     <string name="push_notifications">Pushmeldingen</string>
     <string name="extended_notifications">Uitgebreide meldingen</string>

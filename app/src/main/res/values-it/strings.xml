@@ -869,7 +869,7 @@
     <string name="local_storage">Limite di spazio locale</string>
     <string name="storage_value">%1$d MB (%2$.2f MB utilizzati)</string>
     <!-- endregion -->
-    <string name="app_settings">Impostazioni app</string>
+    <string name="app_settings">Impostazioni applicazione</string>
     <!-- region App Settings -->
     <string name="push_notifications">Notifiche push</string>
     <string name="extended_notifications">Notifiche estese</string>
@@ -891,11 +891,11 @@
     <string name="turn_combined_contacts_on">Attiva questa funzione per completare automaticamente gli indirizzi email utilizzando i contatti da tutti i tuoi account collegati.</string>
     <string name="local_cache_management">Cache locale</string>
     <string name="cache_cleared">La cache locale è Ricaricata</string>
-    <string name="empty_data">Cancella Dati</string>
+    <string name="empty_data">Cancella dati</string>
     <!-- endregion -->
     <string name="enabled">Abilitata</string>
     <string name="disabled">Disabilitata</string>
-    <string name="app_info">Informazioni sull\'App</string>
+    <string name="app_info">Informazioni applicazione</string>
     <string name="app_version">Versione applicazione</string>
     <!-- endregion -->
     <!-- region Multi Account -->
@@ -976,5 +976,5 @@
     <string name="details_show_history">Mostra cronologia</string>
     <string name="could_not_complete_action">Impossibile completare l\'azione</string>
     <string name="decryption_of_message_failed">Errore di decriptazione: decriptazione del contenuto crittografato di questo messaggio fallita.</string>
-    <string name="labels_selected_limit_reached">Limit reached</string>
+    <string name="labels_selected_limit_reached">Limite raggiunto</string>
 </resources>

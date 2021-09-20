@@ -895,7 +895,7 @@
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Desactivat</string>
-    <string name="app_info">Informació de l\'app</string>
+    <string name="app_info">Informació de l\'aplicació</string>
     <string name="app_version">Versió de l\'aplicació</string>
     <!-- endregion -->
     <!-- region Multi Account -->

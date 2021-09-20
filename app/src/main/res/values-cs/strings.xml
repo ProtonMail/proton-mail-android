@@ -903,7 +903,7 @@
     <string name="local_storage">Local storage limit</string>
     <string name="storage_value">%1$d MB (využíváte %2$.2f MB)</string>
     <!-- endregion -->
-    <string name="app_settings">Nastavení aplikace</string>
+    <string name="app_settings">App settings</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push Notifikace</string>
     <string name="extended_notifications">Rozšířená oznámení</string>
@@ -925,11 +925,11 @@
     <string name="turn_combined_contacts_on">Zapněte tuto funkci pro automatické vyplňování e-mailových adres pomocí kontaktů ze všech vašich přihlášených účtů.</string>
     <string name="local_cache_management">Místní mezipaměť</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
-    <string name="empty_data">Smazat data</string>
+    <string name="empty_data">Clear data</string>
     <!-- endregion -->
     <string name="enabled">Povoleno</string>
     <string name="disabled">Zakázáno</string>
-    <string name="app_info">O aplikaci</string>
+    <string name="app_info">App information</string>
     <string name="app_version">Verze aplikace</string>
     <!-- endregion -->
     <!-- region Multi Account -->

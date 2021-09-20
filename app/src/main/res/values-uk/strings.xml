@@ -904,7 +904,7 @@
     <string name="local_storage">Обмеження локального сховища</string>
     <string name="storage_value">%1$d МБ (%2$.2f МБ використано)</string>
     <!-- endregion -->
-    <string name="app_settings">Параметри програми</string>
+    <string name="app_settings">Налаштування програми</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push-сповіщення</string>
     <string name="extended_notifications">Розширені сповіщення</string>
@@ -930,7 +930,7 @@
     <!-- endregion -->
     <string name="enabled">Увімкнено</string>
     <string name="disabled">Вимкнено</string>
-    <string name="app_info">Інформація про програму</string>
+    <string name="app_info">Про програму</string>
     <string name="app_version">Версія програми</string>
     <!-- endregion -->
     <!-- region Multi Account -->

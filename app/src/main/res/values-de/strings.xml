@@ -232,7 +232,7 @@
     <string name="email">E-Mail-Adresse</string>
     <string name="phone">Telefonnummer</string>
     <string name="save">Speichern</string>
-    <string name="syncing_messages">Synchronisiere...</string>
+    <string name="syncing_messages">Wird synchronisiert …</string>
     <string name="sync">Kontakte synchronisieren</string>
     <string name="save_message_as_draft">Nachricht als Entwurf speichern?</string>
     <string name="no_subject">Nachricht ohne Betreff senden?</string>

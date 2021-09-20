@@ -72,12 +72,12 @@
     <string name="settings_confirm_pin_code_title">Repetir código PIN</string>
     <string name="settings_pins_dont_match">¡Los códigos PIN deben coincidir!</string>
     <string name="settings_enter_pin_code_title">Introducir código PIN</string>
-    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_settings_info">Establecer gestos de deslizamiento para acceder a las acciones más utilizadas.</string>
     <string name="settings_swipe_left_to_right">Izquierda a derecha</string>
     <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">¿Descartar los cambios?</string>
-    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
+    <string name="dialog_discard_changes_message">Se perderán todos los datos que no se hayan guardado.</string>
     <string name="discard">Descartar</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
@@ -482,7 +482,7 @@
     <string name="vcard_other_option_role">Puesto</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Convertir contacto</string>
-    <string name="contacts_import_contact">Import Contact</string>
+    <string name="contacts_import_contact">Importar contactos</string>
     <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Cargar contactos</string>
     <string name="upgrade_encrypted_contact">Actualice su plan para utilizar la información cifrada de contacto.</string>
@@ -735,11 +735,10 @@ compre más
         Considere liberar algo de espacio o compre más antes de quedarse sin espacio.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permisos</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
-    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
-        access to storage.</string>
-    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_storage_permissions_add_attachment_text">Para añadir archivos adjuntos necesitas permitir
+        el acceso al almacenamiento.</string>
+    <string name="need_storage_permissions_download_attachment_text">Para añadir archivos adjuntos necesitas permitir         el acceso al almacenamiento.</string>
+    <string name="need_contacts_permissions_text">Para importar los contactos es necesario permitir el acceso a los mismos.</string>
     <string name="push_notifications_alert_title">Alerta de notificaciones push</string>
     <string name="push_notifications_alert_subtitle">Las notificaciones push para ProtonMail no funcionan sin los servicios de Google Play actualizados.</string>
     <string name="app_locked">Aplicación bloqueada</string>
@@ -773,13 +772,13 @@ compre más
     <string name="edit_display_name">Editar el nombre a mostrar</string>
     <string name="signature">Firma</string>
     <string name="mobile_footer">Mobile footer</string>
-    <string name="edit_mobile_footer">Enable mobile footer</string>
-    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
-    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
-    <string name="mobile_footer_info">This footer is added after your signature</string>
+    <string name="edit_mobile_footer">Activar el pie de página móvil</string>
+    <string name="default_mobile_footer">Enviado desde el móvil ProtonMail</string>
+    <string name="mobile_footer_is_premium">Cambiar la Firma del Móvil solo está permitido para usuarios de pago</string>
+    <string name="mobile_footer_info">Este pie de página se añade después de su firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>
-    <string name="notifications_snooze">Notifications snooze</string>
+    <string name="notifications_snooze">Notificaciones silenciadas</string>
     <string-array name="quick_snooze_values">
         <item>30 minutos</item>
         <item>1 hora</item>
@@ -834,12 +833,12 @@ compre más
     <string name="settings_auto_show_embedded_images">Mostrar automáticamente las imágenes incrustadas</string>
     <string name="settings_prevent_taking_screenshots">Prevenir capturas de pantalla</string>
     <string name="hyperlink_confirmation">Solicitar confirmación de enlace</string>
-    <string name="labels_and_folders">Labels &amp; folders </string>
+    <string name="labels_and_folders">Etiquetas &amp; carpetas </string>
     <string name="folders">Carpetas</string>
     <string name="labels">Etiquetas</string>
-    <string name="labels_manager">Labels manager</string>
+    <string name="labels_manager">Administrar etiquetas</string>
     <string name="folders_manage">Gestionar carpetas</string>
-    <string name="swipe_actions">Swipe actions</string>
+    <string name="swipe_actions">Acciones al deslizar</string>
     <string name="swipe_action_right">Deslizar hacia la derecha</string>
     <string name="swipe_action_left">Deslizar hacia la izquierda</string>
     <!-- region Swipe Actions -->
@@ -870,7 +869,7 @@ compre más
     <string name="local_storage">Límite de almacenamiento local</string>
     <string name="storage_value">%1$d MB (%2$.2f MB usado)</string>
     <!-- endregion -->
-    <string name="app_settings">Ajustes de la aplicación</string>
+    <string name="app_settings">Configuración de la aplicación</string>
     <!-- region App Settings -->
     <string name="push_notifications">Notificaciones push</string>
     <string name="extended_notifications">Notificaciones extendidas</string>
@@ -891,12 +890,12 @@ compre más
     <string name="combined_contacts">Contactos combinados</string>
     <string name="turn_combined_contacts_on">Active esta función para completar automáticamente las direcciones usando los contactos de todas sus cuentas conectadas.</string>
     <string name="local_cache_management">Caché local</string>
-    <string name="cache_cleared">Local cache is Refreshed</string>
-    <string name="empty_data">Clear Data</string>
+    <string name="cache_cleared">La caché local se actualiza</string>
+    <string name="empty_data">Limpiar datos</string>
     <!-- endregion -->
     <string name="enabled">Habilitado</string>
     <string name="disabled">Deshabilitado</string>
-    <string name="app_info">Información de la app</string>
+    <string name="app_info">Información de la aplicación</string>
     <string name="app_version">Versión de la app</string>
     <!-- endregion -->
     <!-- region Multi Account -->
@@ -969,13 +968,13 @@ compre más
     <string name="contacts_call">Llamar</string>
     <string name="contacts_send_group_message">Enviar mensaje grupal</string>
     <string name="inbox_this_folder_is_empty">Esta carpeta está vacía</string>
-    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
-    <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
-    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
+    <string name="inbox_nothing_to_see_here">Nada que ver aquí</string>
+    <string name="inbox_could_not_retrieve_messages">No se han podido recuperar sus mensajes</string>
+    <string name="inbox_pull_down_to_retry">Deslice hacia abajo para reintentar</string>
     <string name="edit_draft">Editar borrador</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
+    <string name="primary_user_error">No se pudo actualizar, algo salió mal.</string>
     <string name="details_show_history">Mostrar historial</string>
-    <string name="could_not_complete_action">Could not complete the action</string>
-    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
-    <string name="labels_selected_limit_reached">Limit reached</string>
+    <string name="could_not_complete_action">No se pudo completar la acción</string>
+    <string name="decryption_of_message_failed">Error de descifrado: ha fallado el descifrado del contenido cifrado de este mensaje.</string>
+    <string name="labels_selected_limit_reached">Límite alcanzado</string>
 </resources>
