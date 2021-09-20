@@ -27,7 +27,7 @@
     <View
         android:id="@+id/messagesDividerView"
         android:layout_width="0dp"
-        android:layout_height="4dp"
+        android:layout_height="8dp"
         android:background="@drawable/list_divider"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -45,7 +45,7 @@
     <View
         android:id="@+id/lastConversationMessageCollapsedDivider"
         android:layout_width="0dp"
-        android:layout_height="4dp"
+        android:layout_height="8dp"
         android:background="@drawable/list_divider"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
