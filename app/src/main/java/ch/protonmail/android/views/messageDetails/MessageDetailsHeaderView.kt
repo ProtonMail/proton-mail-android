@@ -168,6 +168,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             top = verticalPadding,
             bottom = verticalPadding
         )
+        background = context.getDrawable(R.color.background_norm)
 
         val typefacePgp = Typeface.createFromAsset(context.assets, "pgp-icons-android.ttf")
         lockIconTextView.typeface = typefacePgp
