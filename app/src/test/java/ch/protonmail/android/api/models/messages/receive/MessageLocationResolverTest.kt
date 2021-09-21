@@ -263,15 +263,34 @@ class MessageLocationResolverTest {
             // then
             assertEquals(expected, result)
         }
+    }
+
+    @RunWith(Parameterized::class)
+    class InvalidMessageLocationResolverTest(
+        private val resolvedLocationId: String
+    ) {
+
+        private val messageDao = mockk<MessageDao>()
+        private val messageLocationResolver = MessageLocationResolver(messageDao)
 
         @Test(expected = IllegalArgumentException::class)
         fun verifyResolvingInvalidLocationThrowsAnException() {
             // given
-            val invalidMessageLocation =
-                listOf(Constants.MessageLocationType.INVALID.messageLocationTypeValue.toString())
+            val invalidMessageLocation = listOf(resolvedLocationId)
 
             // when
             messageLocationResolver.resolveLocationFromLabels(invalidMessageLocation)
+        }
+
+        companion object {
+
+            @JvmStatic
+            @Parameterized.Parameters
+            fun data(): Collection<Array<Any>> {
+                return invalidLocations.map { messageLocationType ->
+                    arrayOf(messageLocationType.messageLocationTypeValue.toString())
+                }
+            }
         }
     }
 
@@ -298,15 +317,7 @@ class MessageLocationResolverTest {
             @JvmStatic
             @Parameterized.Parameters
             fun data(): Collection<Array<Any>> {
-                return listOf(
-                    Constants.MessageLocationType.INBOX,
-                    Constants.MessageLocationType.ALL_SENT,
-                    Constants.MessageLocationType.TRASH,
-                    Constants.MessageLocationType.SPAM,
-                    Constants.MessageLocationType.ARCHIVE,
-                    Constants.MessageLocationType.SENT,
-                    Constants.MessageLocationType.DRAFT,
-                ).map { messageLocationType ->
+                return validLocations.map { messageLocationType ->
                     arrayOf(
                         messageLocationType.messageLocationTypeValue.toString(),
                         messageLocationType
@@ -314,5 +325,29 @@ class MessageLocationResolverTest {
                 }
             }
         }
+    }
+
+    private companion object {
+
+        val validLocations = listOf(
+            Constants.MessageLocationType.INBOX,
+            Constants.MessageLocationType.ALL_DRAFT,
+            Constants.MessageLocationType.ALL_SENT,
+            Constants.MessageLocationType.TRASH,
+            Constants.MessageLocationType.SPAM,
+            Constants.MessageLocationType.ARCHIVE,
+            Constants.MessageLocationType.SENT,
+            Constants.MessageLocationType.DRAFT,
+        )
+        val invalidLocations = Constants.MessageLocationType.values()
+            .toList()
+            .minus(validLocations)
+            .minus(
+                listOf(
+                    Constants.MessageLocationType.STARRED,
+                    Constants.MessageLocationType.LABEL_FOLDER,
+                    Constants.MessageLocationType.ALL_MAIL
+                )
+            )
     }
 }

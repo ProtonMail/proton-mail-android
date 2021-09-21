@@ -43,6 +43,7 @@ class MessageLocationResolver @Inject constructor(
 
         val validLocations: List<Int> = listOf(
             Constants.MessageLocationType.INBOX.messageLocationTypeValue,
+            Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue,
             Constants.MessageLocationType.ALL_SENT.messageLocationTypeValue,
             Constants.MessageLocationType.TRASH.messageLocationTypeValue,
             Constants.MessageLocationType.SPAM.messageLocationTypeValue,
@@ -54,7 +55,7 @@ class MessageLocationResolver @Inject constructor(
         val shortLabels = labelIds.filter { it.length <= 2 }
         val longLabels = labelIds.filter { it.length > 2 }
 
-        for (i in shortLabels.indices) {
+        for (i in shortLabels.indices.reversed()) {
             val item = shortLabels[i]
             val locationInt = item.toInt()
             if (locationInt in validLocations) {
