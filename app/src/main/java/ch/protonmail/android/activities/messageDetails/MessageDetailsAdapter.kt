@@ -169,6 +169,7 @@ internal class MessageDetailsAdapter(
     private fun createReplyActionsView(): ReplyActionsView {
         val replyActionsView = ReplyActionsView(context)
         replyActionsView.id = R.id.item_message_body_reply_actions_layout_id
+        replyActionsView.isVisible = false
         return replyActionsView
     }
 
@@ -612,6 +613,10 @@ internal class MessageDetailsAdapter(
             }
 
             this.blockRemoteResources(!isAutoShowRemoteImages)
+
+            val replyActionsView: ReplyActionsView =
+                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id)
+            replyActionsView.isVisible = true
 
             super.onPageFinished(view, url)
         }
