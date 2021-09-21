@@ -751,7 +751,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 any(),
                 any(),
                 any(),
-                userId
+                any()
             )
         }
     }
@@ -789,7 +789,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 any(),
                 any(),
                 any(),
-                userId
+                testUserId1
             )
         }
 
