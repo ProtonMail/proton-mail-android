@@ -58,11 +58,17 @@ enum class MessageEncryption(
         isInternalEncrypted = true,
         isPGPEncrypted = false
     ),
+    SENT_TO_EXTERNAL(
+        isEndToEndEncrypted = false,
+        isStoredEncrypted = true,
+        isInternalEncrypted = true,
+        isPGPEncrypted = false
+    ),
     UNKNOWN(
         isEndToEndEncrypted = false,
         isStoredEncrypted = false,
         isInternalEncrypted = false,
         isPGPEncrypted = false
-    );
+    )
 
 }

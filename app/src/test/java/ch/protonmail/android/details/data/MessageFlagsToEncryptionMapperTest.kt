@@ -35,10 +35,12 @@ class MessageFlagsToEncryptionMapperTest {
     private val mapper = MessageFlagsToEncryptionMapper()
 
     @Test
-    fun messageFlagsIsMappedToInternalMessageEncryptionTypeWhenFlagsIsInternalOnly() {
-        val actual = mapper.flagsToMessageEncryption(INTERNAL_MESSAGE_FLAG_VALUE)
+    fun messageFlagsIsMappedToSentToExternalMessageEncryptionTypeWhenFlagsIsInternalAndSentButNotE2ee() {
+        val internalSentFlag = INTERNAL_MESSAGE_FLAG_VALUE + SENT_MESSAGE_FLAG_VALUE
 
-        assertEquals(MessageEncryption.INTERNAL, actual)
+        val actual = mapper.flagsToMessageEncryption(internalSentFlag)
+
+        assertEquals(MessageEncryption.SENT_TO_EXTERNAL, actual)
     }
 
     @Test

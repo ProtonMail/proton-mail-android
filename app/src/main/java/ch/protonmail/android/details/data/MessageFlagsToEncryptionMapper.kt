@@ -66,7 +66,9 @@ class MessageFlagsToEncryptionMapper @Inject constructor() : Mapper<Long, Messag
                 return MessageEncryption.AUTO_RESPONSE
             }
 
-            return MessageEncryption.INTERNAL
+            if (sent) {
+                return MessageEncryption.SENT_TO_EXTERNAL
+            }
         }
 
         if (received && e2e) {
