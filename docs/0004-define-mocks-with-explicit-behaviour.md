@@ -1,6 +1,6 @@
 # Define mocks with explicit behaviour
 
-* Status: Discussed and agreed in principle
+* Status: Accepted
 * Deciders: Marino, Zorica, Stefanija, Davide, Tomasz, Maciej
 * Date: 02/09/2021
 
