@@ -368,7 +368,6 @@ class MessageDetailsRepository @Inject constructor(
             .remoteContentDisplayed(remoteContentDisplayed)
             .isPGPMime()
             .timeMs()
-            .messageIsEncrypted()
             .messageId()
             .addressID()
             .addressEmailAlias()

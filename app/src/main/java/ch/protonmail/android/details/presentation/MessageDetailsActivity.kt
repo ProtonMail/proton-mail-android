@@ -779,10 +779,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     editIntentExtras.timeMs
                 )
                 intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
-                    editIntentExtras.messageIsEncrypted
-                )
-                intent.putExtra(
                     ComposeMessageActivity.EXTRA_PARENT_ID,
                     editIntentExtras.messageId
                 )

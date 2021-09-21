@@ -400,7 +400,7 @@ internal class EventHandler @AssistedInject constructor(
                 message.isForwarded = newMessage.Flags and MessageFlag.FORWARDED.value == MessageFlag.FORWARDED.value
 
                 message.Type = MessageUtils.calculateType(newMessage.Flags)
-                message.setIsEncrypted(MessageUtils.calculateEncryption(newMessage.Flags))
+                message.messageEncryption = MessageUtils.calculateEncryption(newMessage.Flags)
             }
             if (newMessage.AddressID != null) {
                 message.addressID = newMessage.AddressID

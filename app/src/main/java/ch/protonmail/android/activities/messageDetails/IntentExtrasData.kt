@@ -44,7 +44,6 @@ class IntentExtrasData(
     val remoteContentDisplayed: Boolean,
     val isPGPMime: Boolean,
     val timeMs: Long,
-    val messageIsEncrypted: Boolean,
     val messageId: String?,
     val addressID: String?,
     val addressEmailAlias: String?,
@@ -72,7 +71,6 @@ class IntentExtrasData(
         private var remoteContentDisplayed: Boolean = false
         private var isPGPMime: Boolean = false
         private var timeMs: Long = 0L
-        private var messageIsEncrypted: Boolean = false
         private var messageId: String? = ""
         private var addressID: String? = ""
         private var addressEmailAlias: String? = ""
@@ -121,7 +119,6 @@ class IntentExtrasData(
 
         fun isPGPMime() = apply { this.isPGPMime = message.isPGPMime }
         fun timeMs() = apply { this.timeMs = message.timeMs }
-        fun messageIsEncrypted() = apply { this.messageIsEncrypted = message.isEncrypted() }
         fun messageId() = apply { this.messageId = message.messageId }
         fun addressID() = apply { this.addressID = message.addressID }
 
@@ -202,7 +199,6 @@ class IntentExtrasData(
             remoteContentDisplayed,
             isPGPMime,
             timeMs,
-            messageIsEncrypted,
             messageId,
             addressID,
             addressEmailAlias,

@@ -56,12 +56,12 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
     private Typeface mTypefacePgp, mTypefaceGroups;
     private Map<String, View> mMapView;
     private Map<String, SendPreference> sendPreferenceMap;
-    private boolean mEOEnabled;
+    private boolean isMessagePasswordEncrypted;
     private Constants.RecipientLocationType location;
 
-    public void setSendPreferenceMap(Map<String, SendPreference> sendPreferenceMap, boolean mEOEnabled) {
+    public void setSendPreferenceMap(Map<String, SendPreference> sendPreferenceMap, boolean isMessagePasswordEncrypted) {
         this.sendPreferenceMap = sendPreferenceMap;
-        this.mEOEnabled = mEOEnabled;
+        this.isMessagePasswordEncrypted = isMessagePasswordEncrypted;
     }
 
     public MessageRecipientView(Context context, AttributeSet attrs) {
@@ -109,14 +109,8 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
                 tokenPgpView.setText(getContext().getString(groupIcon));
                 tokenPgpView.setTextColor(groupColor);
             }
-            if (groupColor != 0) {
-                // tokenPgpView.setTextColor(messageRecipient.getGroupColor());
-            }
         } else {
             tokenPgpView.setTypeface(mTypefacePgp);
-            if (color != 0) {
-                // tokenPgpView.setTextColor(getContext().getResources().getColor(messageRecipient.getIconColor()));
-            }
         }
 
         if (icon != 0) {
@@ -345,28 +339,6 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         }
     }
 
-    public void invalidateRecipients() {
-        post(() -> {
-            List<MessageRecipient> recipients = getMessageRecipients();
-            if (recipients.size() == 0) {
-                return;
-            }
-
-            for (MessageRecipient recipient : recipients) {
-                removeObject(recipient);
-            }
-
-            for (MessageRecipient recipient : recipients) {
-                addObject(recipient);
-            }
-        });
-    }
-
-//    @Override
-//    protected CharSequence tokenToString(MessageRecipient token) {
-//        return token.getEmailAddress();
-//    }
-
     protected class ClickableTokenImageSpan extends TokenImageSpan {
 
         ClickableTokenImageSpan(View d, MessageRecipient token, int maxWidth) {
@@ -387,7 +359,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
                     for (MessageRecipient messageRecipient : groupRecipients) {
                         if (sendPreferenceMap.containsKey(messageRecipient.getEmailAddress())) {
                             SendPreference sendPreference = sendPreferenceMap.get(messageRecipient.getEmailAddress());
-                            ComposerLockIcon lock = new ComposerLockIcon(sendPreference, mEOEnabled);
+                            ComposerLockIcon lock = new ComposerLockIcon(sendPreference, isMessagePasswordEncrypted);
                             messageRecipient.setDescription(lock.getTooltip());
                             messageRecipient.setIcon(lock.getIcon());
                             messageRecipient.setIconColor(lock.getColor());
