@@ -25,8 +25,6 @@ highlighting the reason of the test failure.
 * We should never use relaxed mocks
   * acceptable if its declaration is internal to a single test case, ensuring a good degree of control an isolation
 * It can be ok to use `mockk(relaxedUnitFun = true)`, as the result will be what we expect: an `Unit`
-* We should avoid mocking data models and use real instances instead
-  * acceptable to mock legacy data models if contains business code, like `Message.decrypt` that we currently have
 
 ## Consequences
 1. We should stick to what agreed here going forward, aiming to replace the current mocks in the project
