@@ -74,7 +74,7 @@ internal class EventHandler @AssistedInject constructor(
     private val unreadCounterDao: UnreadCounterDao,
     private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
     private val userManager: UserManager,
-    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
+    messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val changeToConversations: HandleChangeToConversations,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
@@ -90,7 +90,6 @@ internal class EventHandler @AssistedInject constructor(
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
     private val contactDao = databaseProvider.provideContactDao(userId)
-    private val counterDao = databaseProvider.provideCounterDao(userId)
     private val messageDao = databaseProvider.provideMessageDao(userId)
     private val pendingActionDao = databaseProvider.providePendingActionDao(userId)
 
@@ -126,12 +125,6 @@ internal class EventHandler @AssistedInject constructor(
             clearMessagesCache()
             clearAttachmentsCache()
             clearLabelsCache()
-        }
-        counterDao.run {
-            clearUnreadLocationsTable()
-            clearUnreadLabelsTable()
-            clearTotalLocationsTable()
-            clearTotalLabelsTable()
         }
         launchInitialDataFetch(
             userId,

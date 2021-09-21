@@ -18,6 +18,13 @@
  */
 package ch.protonmail.android.utils;
 
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
+import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
+import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
+import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
+import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
+
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -53,28 +60,19 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import ch.protonmail.android.data.local.ContactDao;
 import ch.protonmail.android.data.local.ContactDatabase;
-import ch.protonmail.android.data.local.CounterDao;
-import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.NotificationDao;
 import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDao;
 import ch.protonmail.android.data.local.PendingActionDatabase;
-import me.proton.core.domain.entity.UserId;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.mailbox.data.local.ConversationDao;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
+import me.proton.core.domain.entity.UserId;
 import timber.log.Timber;
-
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
-import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
-import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
-import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
-import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
 
 public class AppUtil {
 
@@ -177,7 +175,6 @@ public class AppUtil {
                     MessageDatabase.Factory.getInstance(context, userId).getDao(),
                     MessageDatabase.Factory.getInstance(context, userId).getConversationDao(),
                     NotificationDatabase.Companion.getInstance(context, userId).getDao(),
-                    CounterDatabase.Companion.getInstance(context, userId).getDao(),
                     AttachmentMetadataDatabase.Companion.getInstance(context, userId).getDao(),
                     PendingActionDatabase.Companion.getInstance(context, userId).getDao(),
                     clearDoneListener, clearContacts
@@ -306,7 +303,6 @@ public class AppUtil {
             final MessageDao searchDatabase,
             final ConversationDao conversationDao,
             final NotificationDao notificationDao,
-            final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionDao pendingActionDao,
             final boolean clearContacts
@@ -318,7 +314,6 @@ public class AppUtil {
                 messageDao,
                 conversationDao,
                 notificationDao,
-                counterDao,
                 attachmentMetadataDao,
                 pendingActionDao,
                 null,
@@ -334,7 +329,6 @@ public class AppUtil {
             final MessageDao messageDao,
             final ConversationDao conversationDao,
             final NotificationDao notificationDao,
-            final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionDao pendingActionDao,
             final IDBClearDone clearDone,
@@ -359,10 +353,6 @@ public class AppUtil {
                 messageDao.clearLabelsCache();
                 conversationDao.clear();
                 notificationDao.clearNotificationCache();
-                counterDao.clearUnreadLocationsTable();
-                counterDao.clearUnreadLabelsTable();
-                counterDao.clearTotalLocationsTable();
-                counterDao.clearTotalLabelsTable();
                 attachmentMetadataDao.clearAttachmentMetadataCache();
                 return null;
             }

@@ -22,11 +22,11 @@ package ch.protonmail.android.usecase.delete
 import android.content.Context
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.storage.MessageBodyClearingService
 import ch.protonmail.android.utils.AppUtil
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
@@ -52,12 +52,13 @@ class ClearUserData @Inject constructor(
 
         val attachmentMetadataDao = runCatching { databaseProvider.provideAttachmentMetadataDao(userId) }.getOrNull()
         val contactDao = runCatching { databaseProvider.provideContactDao(userId) }.getOrNull()
-        val counterDao = runCatching { databaseProvider.provideCounterDao(userId) }.getOrNull()
         val messageDao = runCatching { databaseProvider.provideMessageDao(userId) }.getOrNull()
-        // TODO remove this dependency and use the ConversationRepository.clear()
+        // TODO remove this dependencies and use the ConversationRepository.clear()
         //  right now it creates a circular dependency,
         //  so this needs to happen when this use-case is refactored to use only repositories
         val conversationDao = runCatching { databaseProvider.provideConversationDao(userId) }.getOrNull()
+        val counterDao = runCatching { databaseProvider.provideUnreadCounterDao(userId) }.getOrNull()
+
         val notificationDao = runCatching { databaseProvider.provideNotificationDao(userId) }.getOrNull()
         val pendingActionDao = runCatching { databaseProvider.providePendingActionDao(userId) }.getOrNull()
 
@@ -74,20 +75,13 @@ class ClearUserData @Inject constructor(
                     clearFullContactDetailsCache()
                 }
             }
-            counterDao?.run {
-                clearUnreadLocationsTable()
-                clearUnreadLabelsTable()
-                clearTotalLocationsTable()
-                clearTotalLabelsTable()
-            }
+            counterDao?.clear()
             messageDao?.run {
                 clearMessagesCache()
                 clearAttachmentsCache()
                 clearLabelsCache()
             }
-            conversationDao?.run {
-                clear()
-            }
+            conversationDao?.clear()
             notificationDao?.clearNotificationCache()
             pendingActionDao?.run {
                 clearPendingSendCache()
