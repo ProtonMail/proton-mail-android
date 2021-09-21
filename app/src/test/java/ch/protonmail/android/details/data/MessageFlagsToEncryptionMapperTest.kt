@@ -77,6 +77,15 @@ class MessageFlagsToEncryptionMapperTest {
     }
 
     @Test
+    fun messageFlagsIsMappedToInternalMessageEncryptionTypeWhenFlagsIsInternalButNotE2eeOrSentOrReceivedOrAuto() {
+        val internalSentFlag = INTERNAL_MESSAGE_FLAG_VALUE
+
+        val actual = mapper.flagsToMessageEncryption(internalSentFlag)
+
+        assertEquals(MessageEncryption.INTERNAL, actual)
+    }
+
+    @Test
     fun messageFlagsIsMappedToAutoResponseMessageEncryptionTypeWhenFlagsIsInternalAndAuto() {
         val internalAutoFlag = INTERNAL_MESSAGE_FLAG_VALUE +
             AUTO_MESSAGE_FLAG_VALUE

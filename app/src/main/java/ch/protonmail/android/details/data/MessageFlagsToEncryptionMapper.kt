@@ -50,40 +50,43 @@ class MessageFlagsToEncryptionMapper @Inject constructor() : Mapper<Long, Messag
         val sent = messageFlags and MessageFlag.SENT.value == MessageFlag.SENT.value
         val auto = messageFlags and MessageFlag.AUTO.value == MessageFlag.AUTO.value
 
-        if (internal) {
-            if (e2e) {
+        when {
+            internal -> {
+                if (e2e) {
 
-                if (received && sent) {
+                    if (received && sent) {
+                        return MessageEncryption.INTERNAL
+                    }
+                    if (received && auto) {
+                        return MessageEncryption.AUTO_RESPONSE
+                    }
                     return MessageEncryption.INTERNAL
                 }
-                if (received && auto) {
+
+                if (auto) {
                     return MessageEncryption.AUTO_RESPONSE
                 }
+
+                if (sent) {
+                    return MessageEncryption.SENT_TO_EXTERNAL
+                }
+
                 return MessageEncryption.INTERNAL
             }
 
-            if (auto) {
-                return MessageEncryption.AUTO_RESPONSE
+            received -> {
+                return if (e2e) {
+                    MessageEncryption.EXTERNAL_PGP
+                } else {
+                    MessageEncryption.EXTERNAL
+                }
             }
 
-            if (sent) {
-                return MessageEncryption.SENT_TO_EXTERNAL
-            }
+            e2e -> return MessageEncryption.MIME_PGP
+
+            else -> return MessageEncryption.EXTERNAL
         }
 
-        if (received && e2e) {
-            return MessageEncryption.EXTERNAL_PGP
-        }
-
-        if (received) {
-            return MessageEncryption.EXTERNAL
-        }
-
-        if (e2e) {
-            return MessageEncryption.MIME_PGP
-        }
-
-        return MessageEncryption.EXTERNAL
     }
 
 }
