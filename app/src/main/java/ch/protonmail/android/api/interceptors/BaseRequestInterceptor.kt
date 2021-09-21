@@ -100,7 +100,7 @@ abstract class BaseRequestInterceptor(
                     revertToOldApiIfNeeded(user, proxy.lastTrialTimestamp, false)
                 } else { // if there aren't any active proxies, find the proxy with the most recent timestamp
                     Timber.d("ProxyList is null")
-                    val latestProxy = proxies.proxyList.proxies.maxBy { it.lastTrialTimestamp }
+                    val latestProxy = proxies.proxyList.proxies.maxByOrNull { it.lastTrialTimestamp }
                     revertToOldApiIfNeeded(user, latestProxy?.lastTrialTimestamp, true)
                 }
             } else {
