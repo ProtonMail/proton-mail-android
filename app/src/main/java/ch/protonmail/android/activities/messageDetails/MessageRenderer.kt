@@ -68,11 +68,19 @@ internal class MessageRenderer(
     /** The [String] html of the message body */
     var messageBody: String? = null
         set(value) {
-            field = value
+            // Return if body is already set
+            if (field != null) return
+
+            // Update if value is not null
+            if (value != null) field = value
+
             // Clear inlined images to ensure when messageBody changes the loading of images doesn't get blocked
-            // (messageBody changing means we're loading images for another message in the same conversation)
+            //  (messageBody changing means we're loading images for another message in the same conversation)
             inlinedImageIds.clear()
         }
+
+    /** reference to the [Document] */
+    private val document by lazy { documentParser(messageBody!!) }
 
     /** A [Channel] for receive new [EmbeddedImage] images to inline in [document] */
     val images = actor<List<EmbeddedImage>> {
@@ -171,10 +179,6 @@ internal class MessageRenderer(
     private val imageInliner = actor<List<ImageString>> {
         for (imageStrings in channel) {
 
-            // Document is parsed for each emission because `messageBody`
-            // field can change when switching messages in a conversation
-            val document = documentParser(messageBody!!)
-
             for (imageString in imageStrings) {
 
                 val (embeddedImage, image64) = imageString
@@ -194,6 +198,13 @@ internal class MessageRenderer(
             // Extract the message ID for which embedded images are being loaded
             // to pass it back to the caller along with the rendered body
             val messageId = imageStrings.firstOrNull()?.first?.messageId ?: continue
+            documentStringifier.send(messageId)
+        }
+    }
+
+    /** Actor that will stringify the [document] */
+    private val documentStringifier = actor<String> {
+        for (messageId in channel) {
             renderedMessage.send(RenderedMessage(messageId, document.toString()))
         }
     }
@@ -232,10 +243,10 @@ internal class MessageRenderer(
 
 // region constants
 /** A count of bytes representing the maximum total size of the images to inline */
-private const val MAX_IMAGES_TOTAL_SIZE = 9437184 // 9 MB
+private const val MAX_IMAGES_TOTAL_SIZE = 9_437_184 // 9 MB
 
 /** A count of bytes representing the maximum size of a single images to inline */
-private const val MAX_IMAGE_SINGLE_SIZE = 1048576 // 1 MB
+private const val MAX_IMAGE_SINGLE_SIZE = 1_048_576 // 1 MB
 
 /** Max number of concurrent workers. It represents the available processors */
 private val WORKERS_COUNT get() = Runtime.getRuntime().availableProcessors()
