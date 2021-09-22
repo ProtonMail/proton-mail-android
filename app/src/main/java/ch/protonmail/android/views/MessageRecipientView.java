@@ -46,9 +46,10 @@ import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.details.presentation.model.MessageEncryptionUiModel;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.TextExtensions;
-import ch.protonmail.android.utils.ui.locks.ComposerLockIcon;
+import ch.protonmail.android.utils.ui.locks.SendPreferencesToMessageEncryptionUiModelMapper;
 
 public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient> {
 
@@ -359,10 +360,11 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
                     for (MessageRecipient messageRecipient : groupRecipients) {
                         if (sendPreferenceMap.containsKey(messageRecipient.getEmailAddress())) {
                             SendPreference sendPreference = sendPreferenceMap.get(messageRecipient.getEmailAddress());
-                            ComposerLockIcon lock = new ComposerLockIcon(sendPreference, isMessagePasswordEncrypted);
-                            messageRecipient.setDescription(lock.getTooltip());
-                            messageRecipient.setIcon(lock.getIcon());
-                            messageRecipient.setIconColor(lock.getColor());
+                            SendPreferencesToMessageEncryptionUiModelMapper sendPreferencesMapper = new SendPreferencesToMessageEncryptionUiModelMapper();
+                            MessageEncryptionUiModel encryptionUiModel = sendPreferencesMapper.toMessageEncryptionUiModel(sendPreference, isMessagePasswordEncrypted);
+                            messageRecipient.setDescription(encryptionUiModel.getTooltip());
+                            messageRecipient.setIcon(encryptionUiModel.getLockIcon());
+                            messageRecipient.setIconColor(encryptionUiModel.getLockIconColor());
                             messageRecipient.setIsPGP(sendPreference.isPGP());
                         }
                     }

@@ -129,6 +129,7 @@ import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.MessageSender;
+import ch.protonmail.android.details.presentation.model.MessageEncryptionUiModel;
 import ch.protonmail.android.di.DefaultSharedPreferences;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
@@ -162,7 +163,7 @@ import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
-import ch.protonmail.android.utils.ui.locks.ComposerLockIcon;
+import ch.protonmail.android.utils.ui.locks.SendPreferencesToMessageEncryptionUiModelMapper;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
@@ -1409,10 +1410,17 @@ public class ComposeMessageActivity
     private void setRecipientIconAndDescription(SendPreference sendPreference, MessageRecipientView recipientView) {
 
         String email = sendPreference.getEmailAddress();
-        ComposerLockIcon lock = new ComposerLockIcon(sendPreference, bottomAppBar.hasPassword());
+        SendPreferencesToMessageEncryptionUiModelMapper sendPreferencesMapper = new SendPreferencesToMessageEncryptionUiModelMapper();
+        MessageEncryptionUiModel encryptionUiModel = sendPreferencesMapper.toMessageEncryptionUiModel(sendPreference, bottomAppBar.hasPassword());
 
         composeMessageViewModel.addSendPreferences(sendPreference);
-        recipientView.setIconAndDescription(email, lock.getIcon(), lock.getColor(), lock.getTooltip(), sendPreference.isPGP());
+        recipientView.setIconAndDescription(
+                email,
+                encryptionUiModel.getLockIcon(),
+                encryptionUiModel.getLockIconColor(),
+                encryptionUiModel.getTooltip(),
+                sendPreference.isPGP()
+        );
     }
 
     @Subscribe
