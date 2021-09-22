@@ -108,10 +108,15 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
             if (groupIcon != 0) {
                 tokenPgpView.setVisibility(VISIBLE);
                 tokenPgpView.setText(getContext().getString(groupIcon));
+            }
+            if (groupColor != 0) {
                 tokenPgpView.setTextColor(groupColor);
             }
         } else {
             tokenPgpView.setTypeface(mTypefacePgp);
+            if (color != 0) {
+                tokenPgpView.setTextColor(color);
+            }
         }
 
         if (icon != 0) {
@@ -163,7 +168,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
                             tokenPgpView.setVisibility(GONE);
                         }
                         if (color != 0) {
-                            // tokenPgpView.setTextColor(getContext().getResources().getColor(messageRecipient.getIconColor()));
+                            tokenPgpView.setTextColor(getContext().getResources().getColor(messageRecipient.getIconColor()));
                         }
                         tokenPgpView.setTypeface(mTypefacePgp);
                         view.invalidate();

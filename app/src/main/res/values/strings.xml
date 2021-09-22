@@ -683,7 +683,7 @@
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end encrypted</string>
     <string name="composer_lock_internal_pinned">End-to-end encrypted to verified address</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP-signed</string>
     <string name="composer_lock_no_scheme" translatable="false"></string>
     <string name="composer_lock_unknown_scheme" translatable="false">Unknown encryption scheme</string>
