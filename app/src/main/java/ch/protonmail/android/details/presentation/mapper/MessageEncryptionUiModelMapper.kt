@@ -17,23 +17,24 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.details.domain
+package ch.protonmail.android.details.presentation.mapper
 
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
-import ch.protonmail.android.details.domain.model.MessageEncryptionStatus
 import ch.protonmail.android.details.domain.model.SignatureVerification
+import ch.protonmail.android.details.presentation.model.MessageEncryptionUiModel
+import me.proton.core.domain.arch.Mapper
 import timber.log.Timber
 import javax.inject.Inject
 
-class GetEncryptionStatus @Inject constructor() {
+class MessageEncryptionUiModelMapper @Inject constructor() : Mapper<MessageEncryption, MessageEncryptionUiModel> {
 
-    operator fun invoke(
+    fun messageEncryptionToUiModel(
         messageEncryption: MessageEncryption,
         signatureVerification: SignatureVerification,
         isMessageSent: Boolean
-    ): MessageEncryptionStatus {
-        return MessageEncryptionStatus(
+    ): MessageEncryptionUiModel {
+        return MessageEncryptionUiModel(
             getIcon(signatureVerification, isMessageSent),
             getColor(messageEncryption),
             getTooltip(messageEncryption, signatureVerification, isMessageSent)

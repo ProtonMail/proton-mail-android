@@ -17,58 +17,30 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.details.domain
+package ch.protonmail.android.details.presentation.mapper
 
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
-import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.details.domain.model.MessageEncryptionStatus
 import ch.protonmail.android.details.domain.model.SignatureVerification
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
+import ch.protonmail.android.details.presentation.model.MessageEncryptionUiModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class GetEncryptionStatusTest {
+class MessageEncryptionUiModelMapperTest {
 
-    private val mockUserManager = mockk<ch.protonmail.android.core.UserManager> {
-        every { currentLegacyUser } returns mockk {
-            every { addresses } returns listOf()
-        }
-    }
-
-    val getEncryptionStatus = GetEncryptionStatus()
-
-    @BeforeTest
-    fun setUp() {
-        // This mock is only needed while covering the existing logic with tests.
-        // Will be dropped once we migrate the logic from SenderLockIcon to GetEncryptedStatus
-        mockkStatic(ProtonMailApplication::class)
-        every { ProtonMailApplication.getApplication() } returns mockk {
-            every { userManager } returns mockUserManager
-        }
-    }
-
-    @AfterTest
-    fun tearDown() {
-        unmockkStatic(ProtonMailApplication::class)
-    }
+    private val messageEncryptionMapper = MessageEncryptionUiModelMapper()
 
     @Test
     fun internalMessageWithUnknownSignatureVerificationIsRepresentedByBluePadlockAndE2eEncryptedAndSignedTooltip() {
         val messageEncryption = MessageEncryption.INTERNAL
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.UNKNOWN,
             false
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.lock_default,
             R.color.icon_purple,
             R.string.sender_lock_internal
@@ -80,13 +52,13 @@ class GetEncryptionStatusTest {
     fun internalMessageWithSuccessfulSignatureVerificationIsRepresentedByBluePadlockWithCheckmarkAndE2eEncryptedToVerifiedRecipientTooltip() {
         val messageEncryption = MessageEncryption.INTERNAL
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.SUCCESSFUL,
             false
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.pgp_lock_check,
             R.color.icon_purple,
             R.string.sender_lock_internal_verified
@@ -98,13 +70,13 @@ class GetEncryptionStatusTest {
     fun internalMessageWithFailedSignatureVerificationIsRepresentedByBluePadlockWithWarningAndSenderVerificationFailedTooltip() {
         val messageEncryption = MessageEncryption.INTERNAL
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.FAILED,
             false
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.pgp_lock_warning,
             R.color.icon_purple,
             R.string.sender_lock_verification_failed
@@ -117,13 +89,13 @@ class GetEncryptionStatusTest {
         // The MessageEncryption values having e2ee are `INTERNAL` and `MIME_PGP`
         val messageEncryption = MessageEncryption.MIME_PGP
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.UNKNOWN,
             true
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.lock_default,
             R.color.icon_green,
             R.string.sender_lock_sent_end_to_end
@@ -135,13 +107,13 @@ class GetEncryptionStatusTest {
     fun externalSentMessageWithoutE2eeIsRepresentedByGrayPadlockAndStoredWithZeroAccessEncryptionTooltip() {
         val messageEncryption = MessageEncryption.EXTERNAL
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.UNKNOWN,
             true
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.lock_default,
             R.color.icon_gray,
             R.string.sender_lock_zero_access
@@ -153,13 +125,13 @@ class GetEncryptionStatusTest {
     fun autoResponseMessageIsRepresentedByBluePadlockAndSentByProtonmailWithZeroAccessEncryptionTooltip() {
         val messageEncryption = MessageEncryption.AUTO_RESPONSE
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.UNKNOWN,
             false
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.lock_default,
             R.color.icon_purple,
             R.string.sender_lock_sent_autoresponder
@@ -171,13 +143,13 @@ class GetEncryptionStatusTest {
     fun externalPgpMessageWithSuccessfulSignatureVerificationIsRepresentedByGreenCheckedPadlockAndPgpEncryptedMessageFromVerifiedAddressTooltip() {
         val messageEncryption = MessageEncryption.EXTERNAL_PGP
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.SUCCESSFUL,
             false
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.pgp_lock_check,
             R.color.icon_green,
             R.string.sender_lock_pgp_encrypted_verified
@@ -189,13 +161,13 @@ class GetEncryptionStatusTest {
     fun externalPgpMessageWithUnknownSignatureVerificationIsRepresentedByGreenPadlockAndPgpEncryptedMessageTooltip() {
         val messageEncryption = MessageEncryption.EXTERNAL_PGP
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.UNKNOWN,
             false
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.lock_default,
             R.color.icon_green,
             R.string.sender_lock_pgp_encrypted
@@ -207,13 +179,13 @@ class GetEncryptionStatusTest {
     fun externalPgpMessageWithFailedSignatureVerificationIsRepresentedByGreenPadlockWithWarningAndVerificationFailedTooltip() {
         val messageEncryption = MessageEncryption.EXTERNAL_PGP
 
-        val actual = getEncryptionStatus(
+        val actual = messageEncryptionMapper.messageEncryptionToUiModel(
             messageEncryption,
             SignatureVerification.FAILED,
             false
         )
 
-        val expected = MessageEncryptionStatus(
+        val expected = MessageEncryptionUiModel(
             R.string.pgp_lock_warning,
             R.color.icon_green,
             R.string.sender_lock_verification_failed

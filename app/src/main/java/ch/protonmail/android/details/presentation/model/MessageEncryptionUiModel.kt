@@ -17,12 +17,12 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.details.domain.model
+package ch.protonmail.android.details.presentation.model
 
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 
-data class MessageEncryptionStatus(
+data class MessageEncryptionUiModel(
     @StringRes val lockIcon: Int,
     @ColorRes val lockIconColor: Int,
     @StringRes val tooltip: Int
