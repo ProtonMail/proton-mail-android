@@ -44,12 +44,12 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
+import ch.protonmail.android.compose.presentation.mapper.SendPreferencesToMessageEncryptionUiModelMapper;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.details.presentation.model.MessageEncryptionUiModel;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.TextExtensions;
-import ch.protonmail.android.utils.ui.locks.SendPreferencesToMessageEncryptionUiModelMapper;
 
 public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient> {
 
