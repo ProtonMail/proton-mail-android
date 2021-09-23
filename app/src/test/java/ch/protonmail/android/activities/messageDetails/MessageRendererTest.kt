@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.activities.messageDetails
 
+import android.graphics.Bitmap
 import android.util.Base64
 import app.cash.turbine.test
 import ch.protonmail.android.details.presentation.model.RenderedMessage
@@ -32,6 +33,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.plus
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.util.kotlin.EMPTY_STRING
+import org.jsoup.nodes.Document
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.AfterTest
@@ -46,9 +49,13 @@ internal class MessageRendererTest : CoroutinesTest {
     val folder: TemporaryFolder = TemporaryFolder()
         .also { it.create() }
 
-    private val mockImageDecoder: ImageDecoder = mockk(relaxed = true)
+    private val mockImageDecoder: ImageDecoder = mockk {
+        every { this@mockk(any(), any()) } returns buildMockBitmap()
+    }
 
-    private val mockDocumentParser: DocumentParser = mockk(relaxed = true)
+    private val mockDocumentParser: DocumentParser = mockk {
+        every { this@mockk(any()) } returns buildMockDocument()
+    }
 
     private fun CoroutineScope.buildRenderer() =
         MessageRenderer(
@@ -74,8 +81,8 @@ internal class MessageRendererTest : CoroutinesTest {
     fun renderedBodyDoesNotEmitForImagesSentWithTooShortDelay() = coroutinesTest {
         // given
         val messageRenderer = buildRenderer()
-        val imageSet1 = buildMockEmbeddedImages(idsRange = 1..3)
-        val imageSet2 = buildMockEmbeddedImages(idsRange = 4..7)
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
         createFilesFor(imageSet1, imageSet2)
 
         // when
@@ -94,8 +101,8 @@ internal class MessageRendererTest : CoroutinesTest {
     fun renderedBodyEmitsForEveryImageSentWithRightDelay() = coroutinesTest {
         // given
         val messageRenderer = buildRenderer()
-        val imageSet1 = buildMockEmbeddedImages(idsRange = 1..3)
-        val imageSet2 = buildMockEmbeddedImages(idsRange = 4..7)
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
         createFilesFor(imageSet1, imageSet2)
 
         // when
@@ -120,7 +127,7 @@ internal class MessageRendererTest : CoroutinesTest {
         val messageRenderer = buildRenderer()
         val firstMessageBody = "first message body"
         val secondMessageBody = "second message body"
-        val imageSet = buildMockEmbeddedImages(idsRange = 1..10)
+        val imageSet = buildEmbeddedImages(idsRange = 1..10)
         createFilesFor(imageSet)
         messageRenderer.messageBody = firstMessageBody
         every { Base64.encodeToString(any(), any()) } returns "base64EncodedImageData"
@@ -153,16 +160,34 @@ internal class MessageRendererTest : CoroutinesTest {
         assertEquals(secondMessageExpected, secondMessageActual)
     }
 
-    private fun buildMockEmbeddedImages(
+    private fun buildMockDocument(block: Document.() -> Unit = {}): Document =
+        mockk(relaxed = true) {
+            every { this@mockk.toString() } returns "document"
+            block()
+        }
+
+    private fun buildMockBitmap(block: Bitmap.() -> Unit = {}): Bitmap =
+        mockk {
+            every { compress(any(), any(), any()) } returns true
+            block()
+        }
+
+    private fun buildEmbeddedImages(
         messageIdSuffix: Int = 1,
         idsRange: IntRange = 0..10
     ): List<EmbeddedImage> = idsRange.map {
-        mockk(relaxed = true) {
-            every { localFileName } returns "$it"
-            every { contentId } returns "id $it"
-            every { encoding } returns ""
-            every { messageId } returns "messageId-$messageIdSuffix"
-        }
+        EmbeddedImage(
+            attachmentId = "attachment $it",
+            fileName = "file $it",
+            key = EMPTY_STRING,
+            contentType = EMPTY_STRING,
+            encoding = EMPTY_STRING,
+            contentId = "content $it",
+            mimeData = null,
+            size = 10,
+            messageId = "message $messageIdSuffix",
+            localFileName = "local file $it"
+        )
     }
 
     private fun createFilesFor(vararg imageSets: List<EmbeddedImage>) {
