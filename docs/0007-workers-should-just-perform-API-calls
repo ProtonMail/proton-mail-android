@@ -1,4 +1,4 @@
-# Usage of Worker component decission
+# Workers should just perform API calls
 
 * Status: Accepted
 * Deciders: Marino, Zorica, Stefanija, Davide, Tomasz, Maciej
