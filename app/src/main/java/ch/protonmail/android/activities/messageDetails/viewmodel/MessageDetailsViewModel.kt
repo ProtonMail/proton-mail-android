@@ -282,7 +282,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun markUnread() {
         viewModelScope.launch {
-            if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
+            if (isConversationEnabled()) {
                 changeConversationsReadStatus(
                     listOf(messageOrConversationId),
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
@@ -290,9 +290,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                     mailboxLocationId ?: location.messageLocationTypeValue.toString()
                 )
             } else {
-                lastMessage()?.let { message ->
-                    messageRepository.markUnRead(listOf(requireNotNull(message.messageId)))
-                }
+                messageRepository.markUnRead(listOf(messageOrConversationId))
             }
         }
     }
@@ -723,29 +721,26 @@ internal class MessageDetailsViewModel @Inject constructor(
     fun moveLastMessageToTrash() {
         viewModelScope.launch {
             val primaryUserId = userManager.requireCurrentUserId()
-            if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
+            if (isConversationEnabled()) {
                 moveConversationsToFolder(
                     listOf(messageOrConversationId),
                     primaryUserId,
                     Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
                 )
             } else {
-                lastMessage()?.let { message ->
-                    moveMessagesToFolder(
-                        listOf(requireNotNull(message.messageId)),
-                        Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
-                        message.folderLocation ?: EMPTY_STRING,
-                        primaryUserId
-                    )
-                }
+                moveMessagesToFolder(
+                    listOf(messageOrConversationId),
+                    Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
+                    location.messageLocationTypeValue.toString(),
+                    primaryUserId
+                )
             }
-
         }
     }
 
     fun delete() {
         viewModelScope.launch {
-            if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
+            if (isConversationEnabled()) {
                 val primaryUserId = userManager.requireCurrentUserId()
                 deleteConversations(
                     listOf(messageOrConversationId),
@@ -753,12 +748,10 @@ internal class MessageDetailsViewModel @Inject constructor(
                     location.messageLocationTypeValue.toString()
                 )
             } else {
-                lastMessage()?.let { message ->
-                    deleteMessage(
-                        listOf(requireNotNull(message.messageId)),
-                        location.messageLocationTypeValue.toString()
-                    )
-                }
+                deleteMessage(
+                    listOf(messageOrConversationId),
+                    location.messageLocationTypeValue.toString()
+                )
             }
         }
     }
