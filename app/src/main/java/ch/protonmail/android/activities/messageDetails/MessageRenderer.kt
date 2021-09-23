@@ -32,6 +32,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.plus
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -49,13 +51,20 @@ private const val DEBOUNCE_DELAY_MILLIS = 500L
 
 /**
  * A class that will inline the images in the message's body.
- * Implement [CoroutineScope] by the constructor scope
+ *
+ * ## Input
+ * For start the process, these functions must be called
+ * * [setMessageBody]
+ * * [setImagesAndStartProcess]
+ *
+ * ## Output
+ * The results will be delivered by [results]
+ *
+ *
+ * Implements [CoroutineScope] by the constructor scope
  *
  * @param scope [CoroutineScope] which this class inherit from, this should be our `ViewModel`s
  * scope, so when `ViewModel` is cleared all the coroutines for this class will be canceled
- *
- *
- * @author Davide Farella
  */
 internal class MessageRenderer(
     private val dispatchers: DispatcherProvider,
@@ -65,7 +74,17 @@ internal class MessageRenderer(
     scope: CoroutineScope
 ) : CoroutineScope by scope + dispatchers.Comp {
 
+    /**
+     * Emits the results of Inlining process
+     */
+    val results: Flow<RenderedMessage> get() =
+        renderedMessage.consumeAsFlow()
+
     /** The [String] html of the message body */
+    @set:Deprecated(
+        "Use 'setMessageBody' with relative messageId. This will be removed",
+        ReplaceWith("setMessageBody(messageId, messageBody!!)")
+    )
     var messageBody: String? = null
         set(value) {
             // Return if body is already set
@@ -82,7 +101,12 @@ internal class MessageRenderer(
     /** reference to the [Document] */
     private val document by lazy { documentParser(messageBody!!) }
 
+    // region Actors
     /** A [Channel] for receive new [EmbeddedImage] images to inline in [document] */
+    @Deprecated(
+        "Use 'setImagesAndStartProcess' with relative messageId. This will be private",
+        ReplaceWith("setImagesAndStartProcess(messageId, embeddedImages)")
+    )
     val images = actor<List<EmbeddedImage>> {
         for (embeddedImages in channel) {
             imageCompressor.send(embeddedImages)
@@ -93,6 +117,10 @@ internal class MessageRenderer(
     }
 
     /** A [Channel] that will emits message body [String] with inlined images */
+    @Deprecated(
+        "Use 'results'. This will be private",
+        ReplaceWith("results")
+    )
     val renderedMessage = Channel<RenderedMessage>()
 
     /** [List] for keep track of ids of the already inlined images across the threads */
@@ -215,6 +243,28 @@ internal class MessageRenderer(
     /** Actor that will update [inlinedImageIds] */
     private val idsListUpdater = actor<String>(idsListContext) {
         for (id in channel) inlinedImageIds += id
+    }
+    // endregion
+
+    /**
+     * Set the [messageBody] for the message with the given [messageId]
+     * The [messageBody] will be used when [setImagesAndStartProcess] is called for a message with the same [messageId]
+     *
+     * @param messageBody [String] representation of the HTML message's body
+     */
+    fun setMessageBody(messageId: String, messageBody: String) {
+
+    }
+
+    /**
+     * Set [EmbeddedImage]s to be inlined in the message with the given [messageId] and start the inlining process
+     * Result will be delivered through [renderedMessage]
+     *
+     * @throws IllegalStateException if no message body has been set for the message
+     *  @see setMessageBody
+     */
+    fun setImagesAndStartProcess(messageId: String, images: List<EmbeddedImage>) {
+
     }
 
     /** @return [File] directory for the current message */
