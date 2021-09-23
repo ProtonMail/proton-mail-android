@@ -50,43 +50,49 @@ class MessageFlagsToEncryptionMapper @Inject constructor() : Mapper<Long, Messag
         val sent = messageFlags and MessageFlag.SENT.value == MessageFlag.SENT.value
         val auto = messageFlags and MessageFlag.AUTO.value == MessageFlag.AUTO.value
 
-        when {
-            internal -> {
-                if (e2e) {
-
-                    if (received && sent) {
-                        return MessageEncryption.INTERNAL
-                    }
-                    if (received && auto) {
-                        return MessageEncryption.AUTO_RESPONSE
-                    }
-                    return MessageEncryption.INTERNAL
-                }
-
-                if (auto) {
-                    return MessageEncryption.AUTO_RESPONSE
-                }
-
-                if (sent) {
-                    return MessageEncryption.SENT_TO_EXTERNAL
-                }
-
-                return MessageEncryption.INTERNAL
-            }
-
-            received -> {
-                return if (e2e) {
-                    MessageEncryption.EXTERNAL_PGP
-                } else {
-                    MessageEncryption.EXTERNAL
-                }
-            }
-
-            e2e -> return MessageEncryption.MIME_PGP
-
-            else -> return MessageEncryption.EXTERNAL
+        return when {
+            internal -> handleInternalMessage(e2e, received, sent, auto)
+            received -> handleReceivedMessage(e2e)
+            e2e -> MessageEncryption.MIME_PGP
+            else -> MessageEncryption.EXTERNAL
         }
 
+    }
+
+    private fun handleReceivedMessage(
+        e2e: Boolean
+    ) = if (e2e) {
+        MessageEncryption.EXTERNAL_PGP
+    } else {
+        MessageEncryption.EXTERNAL
+    }
+
+    private fun handleInternalMessage(
+        e2e: Boolean,
+        received: Boolean,
+        sent: Boolean,
+        auto: Boolean
+    ): MessageEncryption {
+        if (e2e) {
+
+            if (received && sent) {
+                return MessageEncryption.INTERNAL
+            }
+            if (received && auto) {
+                return MessageEncryption.AUTO_RESPONSE
+            }
+            return MessageEncryption.INTERNAL
+        }
+
+        if (auto) {
+            return MessageEncryption.AUTO_RESPONSE
+        }
+
+        if (sent) {
+            return MessageEncryption.SENT_TO_EXTERNAL
+        }
+
+        return MessageEncryption.INTERNAL
     }
 
 }
