@@ -28,6 +28,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -120,6 +121,78 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
+    fun correctlyInlineImagesInTheMessage() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val messageId = "message id"
+        val imageSet = buildEmbeddedImages(idsRange = 1..2)
+        val messageBody = """
+            This is the first picture:
+            img[src=${imageSet[0].contentId}]
+            And this is another picture:
+            img[src=${imageSet[1].contentId}]
+        """.trimIndent()
+
+        setBase64EncodeToStringToIncrementalResult()
+        setMockDocumentParserToReplaceStringsInMessage(messageBody)
+        createFilesFor(imageSet)
+
+        val expectedMessageBody = """
+            This is the first picture:
+            data:;,image 1
+            And this is another picture:
+            data:;,image 2
+        """.trimIndent()
+        val expected = RenderedMessage(messageId, expectedMessageBody)
+
+        // when
+        messageRenderer.messageBody = messageBody
+        messageRenderer.renderedMessage.consumeAsFlow().test {
+            messageRenderer.images.send(imageSet)
+
+            // then
+            assertEquals(expected, expectItem())
+        }
+    }
+
+    @Test
+    fun correctlyCompressesTheImages() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet = buildEmbeddedImages(idsRange = 1..3)
+        createFilesFor(imageSet)
+
+        val mockBitmap = buildMockBitmap()
+        every { mockImageDecoder(any(), any()) } returns mockBitmap
+
+        // when
+        messageRenderer.images.send(imageSet)
+
+        // then
+        verify(exactly = imageSet.size) { mockBitmap.compress(any(), any(), any()) }
+    }
+
+    @Test
+    fun skipsImagesAlreadyProcessed() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 1..5)
+        createFilesFor(imageSet1, imageSet2)
+
+        val mockBitmap = buildMockBitmap()
+        every { mockImageDecoder(any(), any()) } returns mockBitmap
+
+        // when
+        messageRenderer.images.send(imageSet1)
+        advanceUntilIdle()
+        messageRenderer.images.send(imageSet2)
+
+        // then
+        verify(exactly = imageSet2.size) { mockBitmap.compress(any(), any(), any()) }
+    }
+
+    @Test
     @Ignore("To be refactored")
     fun messageRendererRendersImagesForDifferentMessagesByChangingTheMessageBody() = coroutinesTest {
         // Render images for the first message
@@ -166,6 +239,21 @@ internal class MessageRendererTest : CoroutinesTest {
             block()
         }
 
+    private fun buildMockDocumentWithReplaceFeature(documentString: String) = buildMockDocument document@ {
+        var document = documentString
+        every { this@document.select(any<String>()) } answers {
+            val query = firstArg<String>()
+
+            mockk(relaxed = true) elements@ {
+                every { this@elements.attr(any(), any()) } answers {
+                    document = document.replace(query, secondArg())
+                    this@elements
+                }
+            }
+        }
+        every { this@document.toString() } answers { document }
+    }
+
     private fun buildMockBitmap(block: Bitmap.() -> Unit = {}): Bitmap =
         mockk {
             every { compress(any(), any(), any()) } returns true
@@ -173,7 +261,7 @@ internal class MessageRendererTest : CoroutinesTest {
         }
 
     private fun buildEmbeddedImages(
-        messageIdSuffix: Int = 1,
+        messageId: String = "message id",
         idsRange: IntRange = 0..10
     ): List<EmbeddedImage> = idsRange.map {
         EmbeddedImage(
@@ -185,7 +273,7 @@ internal class MessageRendererTest : CoroutinesTest {
             contentId = "content $it",
             mimeData = null,
             size = 10,
-            messageId = "message $messageIdSuffix",
+            messageId = messageId,
             localFileName = "local file $it"
         )
     }
@@ -201,8 +289,10 @@ internal class MessageRendererTest : CoroutinesTest {
         for ((messageId, filesNames) in messagesIdsToFilesNames) {
             folder.newFolder(messageId)
             for (fileName in filesNames) {
-                val file = folder.newFile("$messageId/$fileName")
-                file.writeText("_")
+                runCatching { // ignore pre-existent files
+                    val file = folder.newFile("$messageId/$fileName")
+                    file.writeText("_")
+                }
             }
         }
     }
@@ -215,5 +305,14 @@ internal class MessageRendererTest : CoroutinesTest {
                 map[key] ?: emptyList()
             }
         }.toMap()
+    }
+
+    private fun setBase64EncodeToStringToIncrementalResult() {
+        var count = 0
+        every { Base64.encodeToString(any(), any()) } answers { "image ${++count}" }
+    }
+
+    private fun setMockDocumentParserToReplaceStringsInMessage(message: String) {
+        every { mockDocumentParser(any()) } returns buildMockDocumentWithReplaceFeature(message)
     }
 }
