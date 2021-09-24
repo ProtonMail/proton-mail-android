@@ -35,6 +35,7 @@ import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.utils.extensions.forEachAsync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.delay
@@ -84,50 +85,18 @@ internal class MessageRenderer(
      * Emits the results of Inlining process
      */
     val results: Flow<RenderedMessage> get() =
-        renderedMessage.consumeAsFlow()
-
-    /** The [String] html of the message body */
-    @set:Deprecated(
-        "Use 'setMessageBody' with relative messageId. This will be removed",
-        ReplaceWith("setMessageBody(messageId, messageBody!!)")
-    )
-    private var messageBody: String? = null
-        set(value) {
-            // Return if body is already set
-            if (field != null) return
-
-            // Update if value is not null
-            if (value != null) field = value
-
-            // Clear inlined images to ensure when messageBody changes the loading of images doesn't get blocked
-            //  (messageBody changing means we're loading images for another message in the same conversation)
-            inlinedImageIds.clear()
-        }
-
-    /** reference to the [Document] */
-    private val document by lazy { documentParser(messageBody!!) }
+        resultsChannel.consumeAsFlow()
 
     private val messagesBodiesById = mutableMapOf<String, String>()
+    // keep track of ids of the already inlined images across the threads
+    private val inlinedImagesIdsByMessageId = mutableMapOf<String, MutableList<String>>()
 
     // region Actors
-    private val queue = actor<MessageEmbeddedImages> {
-        for (messageEmbeddedImages in channel) {
-            imageCompressor.send(messageEmbeddedImages)
-            // Workaround that ignore values for the next half second, since ViewModel is emitting
-            // too many times
-            delay(DEBOUNCE_DELAY_MILLIS)
-        }
-    }
 
-    /** A [Channel] that will emits message body [String] with inlined images */
-    @Deprecated(
-        "Use 'results'. This will be private",
-        ReplaceWith("results")
-    )
-    private val renderedMessage = Channel<RenderedMessage>()
+    // one queue for each message id
+    private val queues = mutableMapOf<String, SendChannel<MessageEmbeddedImages>>()
 
-    /** [List] for keep track of ids of the already inlined images across the threads */
-    private val inlinedImageIds = mutableListOf<String>()
+    private val resultsChannel = Channel<RenderedMessage>()
 
     /**
      * Actor that will compress images.
@@ -149,7 +118,7 @@ internal class MessageRenderer(
                 val contentId = embeddedImage.contentId.formatContentId()
 
                 // Skip if we don't have a content id or already rendered
-                if (contentId.isNotBlank() && contentId !in inlinedImageIds)
+                if (contentId.isNotBlank() && contentId !in getInlinedImagesIds(messageId))
                     imageSelector.send(embeddedImage)
             }
 
@@ -209,6 +178,8 @@ internal class MessageRenderer(
     /** Actor that will inline images into [Document] */
     private val imageInliner = actor<MessageEmbeddedImagesWithContent> {
         for ((messageId, imagesWithContents) in channel) {
+            val messageBody = messagesBodiesById.getValue(messageId)
+            val document = documentParser(messageBody)
 
             for (imageWithContent in imagesWithContents) {
 
@@ -216,8 +187,8 @@ internal class MessageRenderer(
                 val contentId = embeddedImage.contentId.formatContentId()
 
                 // Skip if we don't have a content id or already rendered
-                if (contentId.isBlank() || contentId in inlinedImageIds) continue
-                idsListUpdater.send(contentId)
+                if (contentId.isBlank() || contentId in getInlinedImagesIds(messageId)) continue
+                idsListUpdater.send(messageId to contentId)
 
                 val encoding = embeddedImage.encoding.formatEncoding()
                 val contentType = embeddedImage.contentType.formatContentType()
@@ -233,16 +204,19 @@ internal class MessageRenderer(
     /** Actor that will stringify the Document of the message body */
     private val documentStringifier = actor<MessageBodyDocument> {
         for ((messageId, document) in channel) {
-            renderedMessage.send(RenderedMessage(messageId, document.toString()))
+            resultsChannel.send(RenderedMessage(messageId, document.toString()))
         }
     }
 
-    /** `CoroutineContext` for [idsListUpdater] for update [inlinedImageIds] of a single thread */
+    /** `CoroutineContext` for [idsListUpdater] for update [inlinedImagesIdsByMessageId] of a single thread */
     private val idsListContext = newSingleThreadContext("idsListContext")
 
-    /** Actor that will update [inlinedImageIds] */
-    private val idsListUpdater = actor<String>(idsListContext) {
-        for (id in channel) inlinedImageIds += id
+    /** Actor that will update [inlinedImagesIdsByMessageId] */
+    private val idsListUpdater = actor<Pair<String, String>>(idsListContext) {
+        for ((messageId, imageId) in channel) {
+            inlinedImagesIdsByMessageId.getOrPut(messageId) { mutableListOf() }
+                .add(imageId)
+        }
     }
     // endregion
 
@@ -254,7 +228,7 @@ internal class MessageRenderer(
      */
     fun setMessageBody(messageId: String, messageBody: String) {
         messagesBodiesById[messageId] = messageBody
-        this.messageBody = messageBody
+        inlinedImagesIdsByMessageId[messageId]?.clear()
     }
 
     /**
@@ -266,10 +240,25 @@ internal class MessageRenderer(
      */
     fun setImagesAndStartProcess(messageId: String, images: List<EmbeddedImage>) {
         checkNotNull(messagesBodiesById[messageId]) { "No message body set for id: $messageId" }
-        this.queue.trySend(MessageEmbeddedImages(messageId, images))
+        addToQueue(MessageEmbeddedImages(messageId, images))
     }
 
-    /** @return [File] directory for the current message */
+    private fun addToQueue(messageImages: MessageEmbeddedImages) {
+        queues.getOrPut(messageImages.messageId) {
+            actor {
+                for (messageEmbeddedImages in channel) {
+                    imageCompressor.send(messageEmbeddedImages)
+                    // Workaround that ignore values for the next half second, since ViewModel is emitting
+                    // too many times
+                    delay(DEBOUNCE_DELAY_MILLIS)
+                }
+            }
+        }.trySend(messageImages)
+    }
+
+    private fun getInlinedImagesIds(messageId: String): List<String> =
+        inlinedImagesIdsByMessageId[messageId] ?: emptyList()
+
     private fun messageDirectory(messageId: String) = File(attachmentsDirectory, messageId)
 
     /**

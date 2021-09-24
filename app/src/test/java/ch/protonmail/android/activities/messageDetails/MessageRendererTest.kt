@@ -313,10 +313,9 @@ internal class MessageRendererTest : CoroutinesTest {
         every { this@document.toString() } answers { document }
     }
 
-    private fun buildMockBitmap(block: Bitmap.() -> Unit = {}): Bitmap =
+    private fun buildMockBitmap(): Bitmap =
         mockk {
             every { compress(any(), any(), any()) } returns true
-            block()
         }
 
     private fun buildEmbeddedImages(
