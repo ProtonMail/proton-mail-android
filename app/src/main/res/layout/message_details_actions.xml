@@ -22,8 +22,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/padding_m">
+    android:layout_height="wrap_content">
 
     <Button
         android:id="@+id/details_button_show_history"

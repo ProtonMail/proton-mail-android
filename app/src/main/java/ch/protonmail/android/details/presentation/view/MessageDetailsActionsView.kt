@@ -27,6 +27,8 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
+import ch.protonmail.android.R
 import ch.protonmail.android.databinding.MessageDetailsActionsBinding
 
 class MessageDetailsActionsView @JvmOverloads constructor(
@@ -39,6 +41,8 @@ class MessageDetailsActionsView @JvmOverloads constructor(
     private val moreActionsButton: ImageButton
 
     init {
+        setPadding(context.resources.getDimensionPixelSize(R.dimen.padding_m))
+
         val binding = MessageDetailsActionsBinding.inflate(
             LayoutInflater.from(context),
             this
