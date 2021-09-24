@@ -31,7 +31,7 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.plus
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -45,6 +45,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class MessageRendererTest : CoroutinesTest {
+
+    private val testMessageId = "message id"
+    private val testMessageBody = "Message body"
 
     @get:Rule
     val folder: TemporaryFolder = TemporaryFolder()
@@ -65,7 +68,9 @@ internal class MessageRendererTest : CoroutinesTest {
             bitmapImageDecoder = mockImageDecoder,
             attachmentsDirectory = folder.root,
             scope = this + Job()
-        ).apply { messageBody = "" }
+        ).apply {
+            setMessageBody(testMessageId, testMessageBody)
+        }
 
     @BeforeTest
     fun setUp() {
@@ -87,13 +92,13 @@ internal class MessageRendererTest : CoroutinesTest {
         createFilesFor(imageSet1, imageSet2)
 
         // when
-        messageRenderer.renderedMessage.consumeAsFlow().test {
+        messageRenderer.results.test {
 
             // then
-            messageRenderer.images.trySend(imageSet1)
+            messageRenderer.setImagesAndStartProcess(testMessageId, imageSet1)
             expectItem()
 
-            messageRenderer.images.trySend(imageSet2)
+            messageRenderer.setImagesAndStartProcess(testMessageId, imageSet2)
             expectNoEvents()
         }
     }
@@ -107,15 +112,15 @@ internal class MessageRendererTest : CoroutinesTest {
         createFilesFor(imageSet1, imageSet2)
 
         // when
-        messageRenderer.renderedMessage.consumeAsFlow().test {
+        messageRenderer.results.test {
 
             // then
-            messageRenderer.images.trySend(imageSet1)
+            messageRenderer.setImagesAndStartProcess(testMessageId, imageSet1)
             expectItem()
 
             advanceUntilIdle()
 
-            messageRenderer.images.trySend(imageSet2)
+            messageRenderer.setImagesAndStartProcess(testMessageId, imageSet2)
             expectItem()
         }
     }
@@ -146,9 +151,9 @@ internal class MessageRendererTest : CoroutinesTest {
         val expected = RenderedMessage(messageId, expectedMessageBody)
 
         // when
-        messageRenderer.messageBody = messageBody
-        messageRenderer.renderedMessage.consumeAsFlow().test {
-            messageRenderer.images.send(imageSet)
+        messageRenderer.setMessageBody(testMessageId, messageBody)
+        messageRenderer.results.test {
+            messageRenderer.setImagesAndStartProcess(testMessageId, imageSet)
 
             // then
             assertEquals(expected, expectItem())
@@ -166,7 +171,7 @@ internal class MessageRendererTest : CoroutinesTest {
         every { mockImageDecoder(any(), any()) } returns mockBitmap
 
         // when
-        messageRenderer.images.send(imageSet)
+        messageRenderer.setImagesAndStartProcess(testMessageId, imageSet)
 
         // then
         verify(exactly = imageSet.size) { mockBitmap.compress(any(), any(), any()) }
@@ -184,12 +189,24 @@ internal class MessageRendererTest : CoroutinesTest {
         every { mockImageDecoder(any(), any()) } returns mockBitmap
 
         // when
-        messageRenderer.images.send(imageSet1)
+        messageRenderer.setImagesAndStartProcess(testMessageId, imageSet1)
         advanceUntilIdle()
-        messageRenderer.images.send(imageSet2)
+        messageRenderer.setImagesAndStartProcess(testMessageId, imageSet2)
 
         // then
         verify(exactly = imageSet2.size) { mockBitmap.compress(any(), any(), any()) }
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun setImagesAndStartProcessThrowsExceptionIfNoMessageBodySetForGivenMessageId() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val messageId1 = "message 1"
+        val messageId2 = "message 2"
+
+        // when
+        messageRenderer.setMessageBody(messageId1, EMPTY_STRING)
+        messageRenderer.setImagesAndStartProcess(messageId2, emptyList())
     }
 
     @Test
@@ -202,19 +219,19 @@ internal class MessageRendererTest : CoroutinesTest {
         val secondMessageBody = "second message body"
         val imageSet = buildEmbeddedImages(idsRange = 1..10)
         createFilesFor(imageSet)
-        messageRenderer.messageBody = firstMessageBody
+        messageRenderer.setMessageBody(testMessageId, firstMessageBody)
         every { Base64.encodeToString(any(), any()) } returns "base64EncodedImageData"
         every { mockDocumentParser.invoke(firstMessageBody) } returns mockk(relaxed = true) {
             every { this@mockk.toString() } returns "First message body with inlined images"
         }
 
         // When
-        messageRenderer.images.trySend(imageSet)
+        messageRenderer.setImagesAndStartProcess(testMessageId, imageSet)
         advanceTimeBy(500)
 
         // Then
         val expected = RenderedMessage("messageId-1", "First message body with inlined images")
-        val actual = messageRenderer.renderedMessage.tryReceive().getOrNull()
+        val actual = messageRenderer.results.firstOrNull()
         assertEquals(expected, actual)
 
         // Render images for a second message
@@ -222,14 +239,14 @@ internal class MessageRendererTest : CoroutinesTest {
         every { mockDocumentParser.invoke(secondMessageBody) } returns mockk(relaxed = true) {
             every { this@mockk.toString() } returns "Second message body with inlined images"
         }
-        messageRenderer.messageBody = secondMessageBody
+        messageRenderer.setMessageBody(testMessageId, secondMessageBody)
 
         // When
-        messageRenderer.images.trySend(imageSet)
+        messageRenderer.setImagesAndStartProcess(testMessageId, imageSet)
 
         // Then
         val secondMessageExpected = RenderedMessage("messageId-1", "Second message body with inlined images")
-        val secondMessageActual = messageRenderer.renderedMessage.tryReceive().getOrNull()
+        val secondMessageActual = messageRenderer.results.firstOrNull()
         assertEquals(secondMessageExpected, secondMessageActual)
     }
 

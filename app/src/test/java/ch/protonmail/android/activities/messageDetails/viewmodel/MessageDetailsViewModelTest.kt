@@ -72,7 +72,6 @@ import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -172,7 +171,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private var messageRendererFactory = mockk<MessageRenderer.Factory> {
         every { create(any()) } returns mockk(relaxed = true) {
-            every { renderedMessage } returns Channel()
+            every { results } returns flowOf()
         }
     }
 

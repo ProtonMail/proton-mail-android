@@ -85,7 +85,7 @@ internal class MessageRenderer(
         "Use 'setMessageBody' with relative messageId. This will be removed",
         ReplaceWith("setMessageBody(messageId, messageBody!!)")
     )
-    var messageBody: String? = null
+    private var messageBody: String? = null
         set(value) {
             // Return if body is already set
             if (field != null) return
@@ -101,13 +101,15 @@ internal class MessageRenderer(
     /** reference to the [Document] */
     private val document by lazy { documentParser(messageBody!!) }
 
+    private val messagesBodiesById = mutableMapOf<String, String>()
+
     // region Actors
     /** A [Channel] for receive new [EmbeddedImage] images to inline in [document] */
     @Deprecated(
         "Use 'setImagesAndStartProcess' with relative messageId. This will be private",
         ReplaceWith("setImagesAndStartProcess(messageId, embeddedImages)")
     )
-    val images = actor<List<EmbeddedImage>> {
+    private val images = actor<List<EmbeddedImage>> {
         for (embeddedImages in channel) {
             imageCompressor.send(embeddedImages)
             // Workaround that ignore values for the next half second, since ViewModel is emitting
@@ -121,7 +123,7 @@ internal class MessageRenderer(
         "Use 'results'. This will be private",
         ReplaceWith("results")
     )
-    val renderedMessage = Channel<RenderedMessage>()
+    private val renderedMessage = Channel<RenderedMessage>()
 
     /** [List] for keep track of ids of the already inlined images across the threads */
     private val inlinedImageIds = mutableListOf<String>()
@@ -253,18 +255,20 @@ internal class MessageRenderer(
      * @param messageBody [String] representation of the HTML message's body
      */
     fun setMessageBody(messageId: String, messageBody: String) {
-
+        messagesBodiesById[messageId] = messageBody
+        this.messageBody = messageBody
     }
 
     /**
      * Set [EmbeddedImage]s to be inlined in the message with the given [messageId] and start the inlining process
-     * Result will be delivered through [renderedMessage]
+     * Result will be delivered through [results]
      *
      * @throws IllegalStateException if no message body has been set for the message
      *  @see setMessageBody
      */
     fun setImagesAndStartProcess(messageId: String, images: List<EmbeddedImage>) {
-
+        checkNotNull(messagesBodiesById[messageId]) { "No message body set for id: $messageId" }
+        this.images.trySend(images)
     }
 
     /** @return [File] directory for the current message */
