@@ -23,6 +23,12 @@ package ch.protonmail.android.activities.messageDetails
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import ch.protonmail.android.details.domain.model.EmbeddedImageWithContent
+import ch.protonmail.android.details.domain.model.EmbeddedImageWithOutputStream
+import ch.protonmail.android.details.domain.model.MessageBodyDocument
+import ch.protonmail.android.details.domain.model.MessageEmbeddedImages
+import ch.protonmail.android.details.domain.model.MessageEmbeddedImagesWithContent
+import ch.protonmail.android.details.domain.model.MessageEmbeddedImagesWithOutputStream
 import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.di.AttachmentsDirectory
 import ch.protonmail.android.jobs.helper.EmbeddedImage
@@ -104,14 +110,9 @@ internal class MessageRenderer(
     private val messagesBodiesById = mutableMapOf<String, String>()
 
     // region Actors
-    /** A [Channel] for receive new [EmbeddedImage] images to inline in [document] */
-    @Deprecated(
-        "Use 'setImagesAndStartProcess' with relative messageId. This will be private",
-        ReplaceWith("setImagesAndStartProcess(messageId, embeddedImages)")
-    )
-    private val images = actor<List<EmbeddedImage>> {
-        for (embeddedImages in channel) {
-            imageCompressor.send(embeddedImages)
+    private val queue = actor<MessageEmbeddedImages> {
+        for (messageEmbeddedImages in channel) {
+            imageCompressor.send(messageEmbeddedImages)
             // Workaround that ignore values for the next half second, since ViewModel is emitting
             // too many times
             delay(DEBOUNCE_DELAY_MILLIS)
@@ -136,9 +137,9 @@ internal class MessageRenderer(
      * and each task will collect and process items - concurrently - from `imageSelector` until it's
      * empty.
      */
-    private val imageCompressor = actor<List<EmbeddedImage>> {
-        for (embeddedImages in channel) {
-            val outputs = Channel<ImageStream>(capacity = embeddedImages.size)
+    private val imageCompressor = actor<MessageEmbeddedImages> {
+        for ((messageId, embeddedImages) in channel) {
+            val outputsChannel = Channel<EmbeddedImageWithOutputStream>(capacity = embeddedImages.size)
 
             /** This [Channel] works as a queue for handle [EmbeddedImage]s concurrently */
             val imageSelector = Channel<EmbeddedImage>(capacity = embeddedImages.size)
@@ -183,35 +184,35 @@ internal class MessageRenderer(
                     }
 
                     // Add the processed image to outputs
-                    outputs.send(embeddedImage to compressed)
+                    outputsChannel.send(EmbeddedImageWithOutputStream(embeddedImage, compressed))
                 }
             }
 
             imageSelector.close()
-            outputs.close()
-            imageStringifier.send(outputs.toList())
+            outputsChannel.close()
+            imageStringifier.send(MessageEmbeddedImagesWithOutputStream(messageId, outputsChannel.toList()))
         }
     }
 
     /** Actor that will stringify images */
-    private val imageStringifier = actor<List<ImageStream>> {
-        for (imageStreams in channel) {
+    private val imageStringifier = actor<MessageEmbeddedImagesWithOutputStream> {
+        for ((messageId, imagesWithStreams) in channel) {
 
-            val imageStrings = imageStreams.map { imageStream ->
-                val (embeddedImage, stream) = imageStream
-                embeddedImage to Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
+            val imageStrings = imagesWithStreams.map { imageWithStream ->
+                val content = Base64.encodeToString(imageWithStream.stream.toByteArray(), Base64.DEFAULT)
+                EmbeddedImageWithContent(imageWithStream.image, content)
             }
-            imageInliner.send(imageStrings)
+            imageInliner.send(MessageEmbeddedImagesWithContent(messageId, imageStrings))
         }
     }
 
     /** Actor that will inline images into [Document] */
-    private val imageInliner = actor<List<ImageString>> {
-        for (imageStrings in channel) {
+    private val imageInliner = actor<MessageEmbeddedImagesWithContent> {
+        for ((messageId, imagesWithContents) in channel) {
 
-            for (imageString in imageStrings) {
+            for (imageWithContent in imagesWithContents) {
 
-                val (embeddedImage, image64) = imageString
+                val (embeddedImage, image64) = imageWithContent
                 val contentId = embeddedImage.contentId.formatContentId()
 
                 // Skip if we don't have a content id or already rendered
@@ -225,16 +226,13 @@ internal class MessageRenderer(
                     ?.attr("src", "data:$contentType;$encoding,$image64")
             }
 
-            // Extract the message ID for which embedded images are being loaded
-            // to pass it back to the caller along with the rendered body
-            val messageId = imageStrings.firstOrNull()?.first?.messageId ?: continue
-            documentStringifier.send(messageId)
+            documentStringifier.send(MessageBodyDocument(messageId, document))
         }
     }
 
-    /** Actor that will stringify the [document] */
-    private val documentStringifier = actor<String> {
-        for (messageId in channel) {
+    /** Actor that will stringify the Document of the message body */
+    private val documentStringifier = actor<MessageBodyDocument> {
+        for ((messageId, document) in channel) {
             renderedMessage.send(RenderedMessage(messageId, document.toString()))
         }
     }
@@ -268,7 +266,7 @@ internal class MessageRenderer(
      */
     fun setImagesAndStartProcess(messageId: String, images: List<EmbeddedImage>) {
         checkNotNull(messagesBodiesById[messageId]) { "No message body set for id: $messageId" }
-        this.images.trySend(images)
+        this.queue.trySend(MessageEmbeddedImages(messageId, images))
     }
 
     /** @return [File] directory for the current message */
@@ -311,11 +309,6 @@ private const val ID_PLACEHOLDER = "%id"
 /** [Array] of html attributes that could contain an image */
 private val IMAGE_ATTRIBUTES =
     arrayOf("img[src=$ID_PLACEHOLDER]", "img[src=cid:$ID_PLACEHOLDER]", "img[rel=$ID_PLACEHOLDER]")
-// endregion
-
-// region typealiases
-private typealias ImageStream = Pair<EmbeddedImage, ByteArrayOutputStream>
-private typealias ImageString = Pair<EmbeddedImage, String>
 // endregion
 
 // region extensions
