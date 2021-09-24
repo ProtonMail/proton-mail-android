@@ -31,7 +31,6 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.plus
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -40,7 +39,6 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -84,7 +82,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun renderedBodyDoesNotEmitForImagesSentWithTooShortDelay() = coroutinesTest {
+    fun doesNotEmitResultForImagesSentWithTooShortDelayForTheSameMessage() = coroutinesTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -104,7 +102,31 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun renderedBodyEmitsForEveryImageSentWithRightDelay() = coroutinesTest {
+    fun emitsResultForEveryImagesSentWithTooShortDelayForDifferentMessages() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val firstMessageId = "message 1"
+        val secondMessageId = "message 2"
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
+        createFilesFor(imageSet1, imageSet2)
+        messageRenderer.setMessageBody(firstMessageId, EMPTY_STRING)
+        messageRenderer.setMessageBody(secondMessageId, EMPTY_STRING)
+
+        // when
+        messageRenderer.results.test {
+
+            // then
+            messageRenderer.setImagesAndStartProcess(firstMessageId, imageSet1)
+            expectItem()
+
+            messageRenderer.setImagesAndStartProcess(secondMessageId, imageSet2)
+            expectItem()
+        }
+    }
+
+    @Test
+    fun emitsResultForEveryImageSentWithRightDelay() = coroutinesTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -178,7 +200,7 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun skipsImagesAlreadyProcessed() = coroutinesTest {
+    fun skipsImagesAlreadyProcessedForTheSameMessage() = coroutinesTest {
         // given
         val messageRenderer = buildRenderer()
         val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
@@ -197,6 +219,31 @@ internal class MessageRendererTest : CoroutinesTest {
         verify(exactly = imageSet2.size) { mockBitmap.compress(any(), any(), any()) }
     }
 
+    @Test
+    fun doesNotSkipImagesAlreadyProcessedForAnotherMessage() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val firstMessageId = "message 1"
+        val secondMessageId = "message 2"
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 1..5)
+        createFilesFor(imageSet1, imageSet2)
+        messageRenderer.setMessageBody(firstMessageId, EMPTY_STRING)
+        messageRenderer.setMessageBody(secondMessageId, EMPTY_STRING)
+
+        val mockBitmap = buildMockBitmap()
+        every { mockImageDecoder(any(), any()) } returns mockBitmap
+
+        val expectedImagesProcessedCount = imageSet1.size + imageSet2.size
+
+        // when
+        messageRenderer.setImagesAndStartProcess(firstMessageId, imageSet1)
+        messageRenderer.setImagesAndStartProcess(secondMessageId, imageSet2)
+
+        // then
+        verify(exactly = expectedImagesProcessedCount) { mockBitmap.compress(any(), any(), any()) }
+    }
+
     @Test(expected = IllegalStateException::class)
     fun setImagesAndStartProcessThrowsExceptionIfNoMessageBodySetForGivenMessageId() = coroutinesTest {
         // given
@@ -210,58 +257,53 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    @Ignore("To be refactored")
-    fun messageRendererRendersImagesForDifferentMessagesByChangingTheMessageBody() = coroutinesTest {
-        // Render images for the first message
-        // Given
+    fun rendersImagesForDifferentMessages() = coroutinesTest {
+        // given
         val messageRenderer = buildRenderer()
-        val firstMessageBody = "first message body"
-        val secondMessageBody = "second message body"
+        val firstMessageId = "id1"
+        val secondMessageId = "id2"
+        val firstMessageBody = "First message body"
+        val secondMessageBody = "Second message body"
         val imageSet = buildEmbeddedImages(idsRange = 1..10)
         createFilesFor(imageSet)
-        messageRenderer.setMessageBody(testMessageId, firstMessageBody)
-        every { Base64.encodeToString(any(), any()) } returns "base64EncodedImageData"
-        every { mockDocumentParser.invoke(firstMessageBody) } returns mockk(relaxed = true) {
-            every { this@mockk.toString() } returns "First message body with inlined images"
+
+        val firstMessageBodyWithInlinedImages = "$firstMessageBody with inlined images"
+        val secondMessageBodyWithInlinedImages = "$secondMessageBody with inlined images"
+
+        every { mockDocumentParser(firstMessageBody) } returns
+            buildMockDocument(content = firstMessageBodyWithInlinedImages)
+        every { mockDocumentParser(secondMessageBody) } returns
+            buildMockDocument(content = secondMessageBodyWithInlinedImages)
+
+        val expectedFirstRenderedMessage = RenderedMessage(firstMessageId, firstMessageBodyWithInlinedImages)
+        val expectedSecondRenderedMessage = RenderedMessage(secondMessageId, secondMessageBodyWithInlinedImages)
+
+        // when
+        messageRenderer.setMessageBody(firstMessageId, firstMessageBody)
+        messageRenderer.setMessageBody(secondMessageId, secondMessageBody)
+        messageRenderer.setImagesAndStartProcess(firstMessageId, imageSet)
+        messageRenderer.setImagesAndStartProcess(secondMessageId, imageSet)
+
+        messageRenderer.results.test {
+
+            // then
+            assertEquals(expectedFirstRenderedMessage, expectItem())
+            assertEquals(expectedSecondRenderedMessage, expectItem())
         }
-
-        // When
-        messageRenderer.setImagesAndStartProcess(testMessageId, imageSet)
-        advanceTimeBy(500)
-
-        // Then
-        val expected = RenderedMessage("messageId-1", "First message body with inlined images")
-        val actual = messageRenderer.results.firstOrNull()
-        assertEquals(expected, actual)
-
-        // Render images for a second message
-        // Given
-        every { mockDocumentParser.invoke(secondMessageBody) } returns mockk(relaxed = true) {
-            every { this@mockk.toString() } returns "Second message body with inlined images"
-        }
-        messageRenderer.setMessageBody(testMessageId, secondMessageBody)
-
-        // When
-        messageRenderer.setImagesAndStartProcess(testMessageId, imageSet)
-
-        // Then
-        val secondMessageExpected = RenderedMessage("messageId-1", "Second message body with inlined images")
-        val secondMessageActual = messageRenderer.results.firstOrNull()
-        assertEquals(secondMessageExpected, secondMessageActual)
     }
 
-    private fun buildMockDocument(block: Document.() -> Unit = {}): Document =
+    private fun buildMockDocument(content: String? = null, block: Document.() -> Unit = {}): Document =
         mockk(relaxed = true) {
-            every { this@mockk.toString() } returns "document"
+            every { this@mockk.toString() } returns (content ?: "document")
             block()
         }
 
-    private fun buildMockDocumentWithReplaceFeature(documentString: String) = buildMockDocument document@ {
+    private fun buildMockDocumentWithReplaceFeature(documentString: String) = buildMockDocument document@{
         var document = documentString
         every { this@document.select(any<String>()) } answers {
             val query = firstArg<String>()
 
-            mockk(relaxed = true) elements@ {
+            mockk(relaxed = true) elements@{
                 every { this@elements.attr(any(), any()) } answers {
                     document = document.replace(query, secondArg())
                     this@elements
