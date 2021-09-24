@@ -48,6 +48,7 @@ import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
@@ -143,6 +144,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val getMailSettings: GetMailSettings = mockk()
 
+    private val observeLabels: ObserveLabels = mockk()
+
     private val messageRecipientToCorrespondentMapper = MessageRecipientToCorrespondentMapper()
 
     private lateinit var viewModel: MailboxViewModel
@@ -195,6 +198,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val labelIds = arg<List<LabelId>>(1)
             allLabels.filter { label -> label.id in labelIds }
         }
+        coEvery { observeLabels(any(), any()) } returns flowOf(allLabels)
 
         viewModel = MailboxViewModel(
             messageDetailsRepository = messageDetailsRepository,
@@ -216,7 +220,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             moveConversationsToFolder = moveConversationsToFolder,
             moveMessagesToFolder = moveMessagesToFolder,
             deleteConversations = deleteConversations,
-            observeLabels = mockk(),
+            observeLabels = observeLabels,
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings,
             messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper
