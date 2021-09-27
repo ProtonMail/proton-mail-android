@@ -820,7 +820,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="settings_auto_show_embedded_images">Tampilkan Otomatis Gambar yang Disematkan</string>
     <string name="settings_prevent_taking_screenshots">Cegah pengambilan Tangkapan layar</string>
     <string name="hyperlink_confirmation">Minta tautan konfirmasi</string>
-    <string name="labels_and_folders">Labels &amp; folders </string>
+    <string name="labels_and_folders">Label &amp; folder </string>
     <string name="folders">Folder</string>
     <string name="labels">Label</string>
     <string name="labels_manager">Pengelola Label</string>

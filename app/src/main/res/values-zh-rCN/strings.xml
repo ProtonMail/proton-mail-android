@@ -843,7 +843,7 @@
     <string name="local_storage">本机存储限制</string>
     <string name="storage_value">%1$d MB（已使用 %2$.2f MB）</string>
     <!-- endregion -->
-    <string name="app_settings">App settings</string>
+    <string name="app_settings">程序设置</string>
     <!-- region App Settings -->
     <string name="push_notifications">推送通知</string>
     <string name="extended_notifications">通知显示详情</string>
@@ -865,11 +865,11 @@
     <string name="turn_combined_contacts_on">开启后您登录的所有账户通讯录中的邮箱都可自动补全。</string>
     <string name="local_cache_management">本机缓存</string>
     <string name="cache_cleared">本机缓存已清理</string>
-    <string name="empty_data">Clear data</string>
+    <string name="empty_data">清除数据</string>
     <!-- endregion -->
     <string name="enabled">开启</string>
     <string name="disabled">关闭</string>
-    <string name="app_info">App information</string>
+    <string name="app_info">程序信息</string>
     <string name="app_version">程序版本</string>
     <!-- endregion -->
     <!-- region Multi Account -->
