@@ -795,7 +795,7 @@
     <string name="default_mail_address">Типова електронна адреса</string>
     <string name="default_address">Типова адреса</string>
     <string name="display_name_n_signature">Ім\'я та підпис</string>
-    <string name="display_name">Ім\'я для показу</string>
+    <string name="display_name">Показуване ім\'я</string>
     <string name="edit_display_name">Редагувати ім\'я</string>
     <string name="signature">Підпис</string>
     <string name="mobile_footer">Підпис мобільного клієнта</string>

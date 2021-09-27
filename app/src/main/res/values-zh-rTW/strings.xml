@@ -850,7 +850,7 @@
     <string name="local_storage">本機儲存空間限制</string>
     <string name="storage_value">%1$d MB（已使用 %2$.2f MB）</string>
     <!-- endregion -->
-    <string name="app_settings">App settings</string>
+    <string name="app_settings">應用程式設定</string>
     <!-- region App Settings -->
     <string name="push_notifications">推播通知</string>
     <string name="extended_notifications">延伸通知</string>
@@ -872,11 +872,11 @@
     <string name="turn_combined_contacts_on">啟用此功能以使用您所有已登入的帳號中的聯絡人來自動完成電子郵件地址。</string>
     <string name="local_cache_management">本機快取</string>
     <string name="cache_cleared">本機快取已重新整理</string>
-    <string name="empty_data">Clear data</string>
+    <string name="empty_data">清除資料</string>
     <!-- endregion -->
     <string name="enabled">已啟用</string>
     <string name="disabled">已停用</string>
-    <string name="app_info">App information</string>
+    <string name="app_info">應用程式資訊</string>
     <string name="app_version">應用程式版本</string>
     <!-- endregion -->
     <!-- region Multi Account -->

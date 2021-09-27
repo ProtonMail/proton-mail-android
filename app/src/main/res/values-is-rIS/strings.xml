@@ -869,7 +869,7 @@
     <string name="local_storage">Takmörk á staðværu geymslurými</string>
     <string name="storage_value">%1$d MB (%2$.2f MB notað)</string>
     <!-- endregion -->
-    <string name="app_settings">App settings</string>
+    <string name="app_settings">Stillingar forrits</string>
     <!-- region App Settings -->
     <string name="push_notifications">Ýti-tilkynningar</string>
     <string name="extended_notifications">Ítarlegri tilkynningar</string>
@@ -891,11 +891,11 @@
     <string name="turn_combined_contacts_on">Kveiktu á þessum eiginleika til að sjálfvirk klárun tölvupóstfanga noti tengiliði úr öllum þeim notendaaðgöngum sem þú ert skráður inn í.</string>
     <string name="local_cache_management">Skyndiminni á tækinu</string>
     <string name="cache_cleared">Endurlas skyndiminni á tækinu</string>
-    <string name="empty_data">Clear data</string>
+    <string name="empty_data">Hreinsa gögn</string>
     <!-- endregion -->
     <string name="enabled">Virkt</string>
     <string name="disabled">Óvirkt</string>
-    <string name="app_info">App information</string>
+    <string name="app_info">Upplýsingar um forrit</string>
     <string name="app_version">Útgáfa forrits</string>
     <!-- endregion -->
     <!-- region Multi Account -->
@@ -975,6 +975,6 @@
     <string name="primary_user_error">Tókst ekki að uppfæra, eitthvað fór úrskeiðis.</string>
     <string name="details_show_history">Birta feril</string>
     <string name="could_not_complete_action">Gat ekki lokið aðgerðinni</string>
-    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
-    <string name="labels_selected_limit_reached">Limit reached</string>
+    <string name="decryption_of_message_failed">Afkóðunarvilla: afkóðun dulritaðs efnis þessara skilaboða mistókst.</string>
+    <string name="labels_selected_limit_reached">Takmörkum náð</string>
 </resources>
