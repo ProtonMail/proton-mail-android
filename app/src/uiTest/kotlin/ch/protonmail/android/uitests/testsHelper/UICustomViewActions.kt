@@ -18,102 +18,53 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
+import android.content.Intent
 import android.view.View
-import android.view.Window
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerViewAction
-import androidx.test.espresso.matcher.RootMatchers.withDecorView
+import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.contacts.list.listView.ContactsListAdapter
+import junit.framework.AssertionFailedError
+import me.proton.core.test.android.instrumented.uiwaits.UIWaits.waitUntilLoaded
+import me.proton.core.test.android.instrumented.utils.ActivityProvider.currentActivity
+import me.proton.core.test.android.instrumented.watchers.ProtonWatcher
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers
 import org.jetbrains.annotations.Contract
-import org.junit.Assert
-import kotlin.test.*
+import kotlin.test.assertFalse
 
-/**
- * Created by Nikola Nolchevski on 12-Apr-20.
- */
-internal object UICustomViewActions {
+object UICustomViewActions {
 
-    private const val TIMEOUT_5S = 5000L
+    const val TIMEOUT_15S = 15_000L
+    const val TIMEOUT_10S = 10_000L
+    private const val TIMEOUT_5S = 5_000L
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-    private val window: Window
-        get() = ProtonMailApplication.getApplication().currentActivity.window
 
-    private fun getResourceName(objectId: Int): String {
-        return targetContext.resources.getResourceName(objectId)
-    }
-
-    fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Long = TIMEOUT_5S): ViewInteraction {
+    fun waitUntilIntentMatcherFulfilled(
+        matcher: Matcher<Intent>,
+        timeout: Long = TIMEOUT_5S
+    ) {
         ProtonWatcher.setTimeout(timeout)
-        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition {
             var errorMessage = ""
 
-            override fun getDescription() = "waitForElement - $errorMessage"
-
-            override fun checkCondition() = try {
-                interaction.check(matches(isDisplayed()))
-                true
-            } catch (e: NoMatchingViewException) {
-                if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                    throw e
-                } else {
-                    false
-                }
-            }
-        })
-        return interaction
-    }
-
-    fun waitUntilRecyclerViewPopulated(@IdRes id: Int, timeout: Long = TIMEOUT_5S) {
-        ProtonWatcher.setTimeout(timeout)
-        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-            var errorMessage = ""
-
-            override fun getDescription() =
-                "RecyclerView: ${targetContext.resources.getResourceName(id)} was not populated with items"
-
-            override fun checkCondition() = try {
-                val rv = ActivityProvider.currentActivity!!.findViewById<RecyclerView>(id)
-                rv.adapter!!.itemCount > 0
-            } catch (e: Exception) {
-                errorMessage = e.message.toString()
-                false
-            }
-        })
-    }
-
-    fun waitUntilViewIsGone(viewInteraction: ViewInteraction, timeout: Long = TIMEOUT_5S): ViewInteraction {
-        ProtonWatcher.setTimeout(timeout)
-        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
-            var errorMessage = ""
-
-            override fun getDescription(): String {
-                return "Waiting until view appears - $errorMessage\n"
-            }
+            override fun getDescription() = "UICustomViewActions.waitUntilIntentMatcherFulfilled $errorMessage"
 
             override fun checkCondition(): Boolean {
                 return try {
-                    viewInteraction.check(matches(not(isDisplayed())))
+                    intended(matcher)
                     true
-                } catch (e: NoMatchingViewException) {
+                } catch (e: AssertionFailedError) {
                     if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
                         throw e
                     } else {
@@ -121,58 +72,43 @@ internal object UICustomViewActions {
                     }
                 }
             }
-        }
-        ProtonWatcher.waitForCondition(condition)
-        return viewInteraction
+        })
     }
 
-    private fun checkCondition(condition: ProtonWatcher.Condition, element: String) {
-        try {
-            ProtonWatcher.waitForCondition(condition)
-        } catch (e: Exception) {
-            Assert.fail("$element was not found")
-            e.printStackTrace()
-        }
-    }
+    fun waitForAdapterItemWithIdAndText(
+        @IdRes recyclerViewId: Int,
+        @IdRes viewId: Int,
+        text: String,
+        timeout: Long = 5000L
+    ) {
+        ProtonWatcher.setTimeout(timeout)
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition {
 
-    fun waitUntilToastAppears(objectId: Int) {
-        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
-            override fun getDescription(): String {
-                return "Waiting until object appears"
-            }
+            override fun getDescription() =
+                "RecyclerView: ${targetContext.resources.getResourceName(recyclerViewId)} was not populated with items"
 
             override fun checkCondition(): Boolean {
-                return try {
-                    onView(withText(objectId)).inRoot(withDecorView(Matchers.not(window.decorView)))
-                        .check(matches(isDisplayed()))
-                    return true
-                } catch (e: NoMatchingViewException) {
-                    e.printStackTrace()
-                    false
-                }
-            }
-        }
-        checkCondition(condition, getResourceName(objectId))
-    }
+                try {
+                    val rv = currentActivity!!.findViewById<RecyclerView>(recyclerViewId)
+                    waitUntilLoaded { rv }
 
-    fun waitUntilToastAppears(objectText: String) {
-        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
-            override fun getDescription(): String {
-                return "Waiting until object appears"
-            }
-
-            override fun checkCondition(): Boolean {
-                return try {
-                    onView(withText(objectText)).inRoot(withDecorView(not(window.decorView)))
-                        .check(matches(isDisplayed()))
-                    true
-                } catch (e: NoMatchingViewException) {
-                    e.printStackTrace()
-                    false
+                    (rv.adapter!! as ContactsListAdapter).items.forEach {
+                        return if (it.getEmail() == text) {
+                            return true
+                        } else {
+                            if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                                throw Exception(getDescription())
+                            } else {
+                                false
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    throw  e
                 }
+                return false
             }
-        }
-        checkCondition(condition, objectText)
+        })
     }
 
     @Contract(value = "_ -> new", pure = true)
@@ -197,21 +133,23 @@ internal object UICustomViewActions {
             val recyclerView = view as RecyclerView
             val layoutManager = recyclerView.layoutManager as LinearLayoutManager
             val messageSubject = layoutManager.getChildAt(position)
-                ?.findViewById<TextView>(R.id.messageTitleTextView)!!.text.toString()
+                ?.findViewById<TextView>(R.id.messageTitleTextView)?.text.toString()
             val messageDate = layoutManager.getChildAt(position)
-                ?.findViewById<TextView>(R.id.messageDateTextView)!!.text.toString()
+                ?.findViewById<TextView>(R.id.messageDateTextView)?.text.toString()
             saveSubject.invoke(messageSubject, messageDate)
         }
     }
 
-    fun checkItemDoesNotExist(subject: String, date: String): PositionableRecyclerViewAction {
-        return CheckItemDoesNotExist(subject, date)
-    }
+    fun checkMessageDoesNotExist(subject: String, date: String): PositionableRecyclerViewAction =
+        CheckMessageDoesNotExist(subject, date)
 
-    class CheckItemDoesNotExist(private val subject: String, private val date: String) : PositionableRecyclerViewAction {
+    class CheckMessageDoesNotExist(
+        private val subject: String,
+        private val date: String
+    ) : PositionableRecyclerViewAction {
 
         override fun atPosition(position: Int): PositionableRecyclerViewAction =
-            checkItemDoesNotExist(subject, date)
+            checkMessageDoesNotExist(subject, date)
 
         override fun getDescription(): String = "Checking if message with subject exists in the list."
 
@@ -227,13 +165,96 @@ internal object UICustomViewActions {
                 if (item != null) {
                     messageSubject = item.findViewById<TextView>(R.id.messageTitleTextView).text.toString()
                     messageDate = item.findViewById<TextView>(R.id.messageDateTextView).text.toString()
-                    isMatches = (messageSubject == subject) && (messageDate == date)
+                    isMatches = messageSubject == subject && messageDate == date
                     if (isMatches) {
                         break
                     }
                 }
             }
             assertFalse(isMatches, "RecyclerView should not contain item with subject: \"$subject\"")
+        }
+    }
+
+    fun checkContactDoesNotExist(name: String, email: String): PositionableRecyclerViewAction =
+        CheckContactDoesNotExist(name, email)
+
+    class CheckContactDoesNotExist(
+        private val name: String,
+        private val email: String
+    ) : PositionableRecyclerViewAction {
+
+        override fun atPosition(position: Int): PositionableRecyclerViewAction =
+            checkContactDoesNotExist(name, email)
+
+        override fun getDescription(): String = "Checking if contact with name and email exists in the list."
+
+        override fun getConstraints(): Matcher<View> = allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
+
+        override fun perform(uiController: UiController?, view: View?) {
+            var isMatches = true
+            var contactName = ""
+            var contactEmail = ""
+            val recyclerView = view as RecyclerView
+            for (i in 0..recyclerView.adapter!!.itemCount) {
+                val item = recyclerView.getChildAt(i)
+                if (item != null) {
+                    contactName = item.findViewById<TextView>(R.id.contact_name)?.text.toString()
+                    contactEmail = item.findViewById<TextView>(R.id.email)?.text.toString()
+                    isMatches = contactName == name && contactEmail == email
+                    if (isMatches) {
+                        break
+                    }
+                }
+            }
+            assertFalse(isMatches, "RecyclerView should not contain contact with name: \"$name\"")
+        }
+    }
+
+
+    fun checkGroupDoesNotExist(name: String, email: String): PositionableRecyclerViewAction =
+        CheckGroupDoesNotExist(name, email)
+
+    class CheckGroupDoesNotExist(
+        private val name: String,
+        private val email: String
+    ) : PositionableRecyclerViewAction {
+
+        override fun atPosition(position: Int): PositionableRecyclerViewAction =
+            checkGroupDoesNotExist(name, email)
+
+        override fun getDescription(): String = "Checking if contact with name and email exists in the list."
+
+        override fun getConstraints(): Matcher<View> = allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
+
+        override fun perform(uiController: UiController?, view: View?) {
+            var isMatches = true
+            var contactName = ""
+            var contactEmail = ""
+            val recyclerView = view as RecyclerView
+            for (i in 0..recyclerView.adapter!!.itemCount) {
+                val item = recyclerView.getChildAt(i)
+                if (item != null) {
+                    contactName = item.findViewById<TextView>(R.id.contact_name)?.text.toString()
+                    contactEmail = item.findViewById<TextView>(R.id.email)?.text.toString()
+                    isMatches = contactName == name && contactEmail == email
+                    if (isMatches) {
+                        break
+                    }
+                }
+            }
+            assertFalse(isMatches, "RecyclerView should not contain contact with name: \"$name\"")
+        }
+    }
+
+    fun clickOnChildWithId(@IdRes id: Int): ViewAction {
+        return object : ViewAction {
+            override fun perform(uiController: UiController, view: View) {
+                view.findViewById<View>(id).performClick()
+            }
+
+            override fun getDescription(): String = "Click child view with id."
+
+            override fun getConstraints(): Matcher<View> = isAssignableFrom(View::class.java)
         }
     }
 }

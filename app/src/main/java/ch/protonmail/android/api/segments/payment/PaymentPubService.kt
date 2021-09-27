@@ -18,16 +18,30 @@
  */
 package ch.protonmail.android.api.segments.payment
 
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.AvailablePlansResponse
+import ch.protonmail.android.api.models.CreatePaymentTokenBody
+import ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponse
+import ch.protonmail.android.api.models.GetPaymentTokenResponse
+import ch.protonmail.android.api.models.VerifyBody
+import ch.protonmail.android.api.models.VerifyResponse
 import ch.protonmail.android.api.segments.RetrofitConstants
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PaymentPubService {
 
     @GET("payments/plans")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun fetchAvailablePlans(@Query("Currency") currency: String, @Query("Cycle") cycle: Int): Call<AvailablePlansResponse>
+    fun fetchAvailablePlans(
+        @Query("Currency") currency: String,
+        @Query("Cycle") cycle: Int
+    ): Call<AvailablePlansResponse>
 
     @POST("payments/verify")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
@@ -35,7 +49,11 @@ interface PaymentPubService {
 
     @POST("payments/tokens")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun createPaymentToken(@Body body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse>
+    fun createPaymentToken(
+        @Body body: CreatePaymentTokenBody,
+        @Header("X-PM-Human-Verification-Token") token: String?,
+        @Header("X-PM-Human-Verification-Token-Type") tokenType: String?
+    ): Call<CreatePaymentTokenSuccessResponse>
 
     @GET("payments/tokens/{token}")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)

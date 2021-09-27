@@ -19,8 +19,9 @@
 package ch.protonmail.android.uitests.robots.mailbox.labelfolder
 
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndLocation
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [LabelFolderRobot] class implements [MailboxRobotInterface],
@@ -28,15 +29,28 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 class LabelFolderRobot : MailboxRobotInterface {
 
+    override fun refreshMessageList(): LabelFolderRobot {
+        super.refreshMessageList()
+        return this
+    }
+
     /**
      * Contains all the validations that can be performed by [LabelFolderRobot].
      */
-    open class Verify {
+    open class Verify : MailboxRobotInterface.verify() {
 
-        fun messageMoved(messageSubject: String) {
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.messageTitleTextView, messageSubject)
+        fun withMessageSubjectAndLocationExists(subject: String, location: String) {
+            UIActions
+                .recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    R.id.messages_list_view,
+                    withMessageSubjectAndLocation(subject, location)
+                )
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+    inline fun verify(block: Verify.() -> Unit): LabelFolderRobot {
+        Verify().apply(block)
+        return LabelFolderRobot()
+    }
 }

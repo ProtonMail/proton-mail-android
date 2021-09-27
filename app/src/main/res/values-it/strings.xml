@@ -46,12 +46,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Impossibile effettuare l\'accesso</string>
     <string name="invalid_server_proof">Prova del server non valida</string>
     <string name="invalid_credentials">Credenziali non valide</string>
+    <string name="incorrect_key_parameters">Parametri della chiave errati</string>
     <string name="invalid_mailbox_password">Password della casella email non valida</string>
     <string name="not_signed_up">Lei non è iscritto alla beta di ProtonMail per Android</string>
     <string name="no_network">Nessuna rete</string>
     <string name="no_network_queued">Nessuna rete, messaggio in coda</string>
     <string name="update_app_title">Aggiornamento richiesto</string>
     <string name="update_app">La sua app di ProtonMail non potrà essere utilizzata fino a quando non verrà aggiornata</string>
+    <string name="you_are_offline">You are offline</string>
     <string name="api_offline_title">API ProtonMail non in linea</string>
     <string name="api_offline">ProtonMail è attualmente offline. Si prega di controllare https://protonstatus.com o https://twitter.com/protonmail per lo stato attuale.</string>
     <string name="contact_saved">Contatto salvato</string>
@@ -244,10 +246,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_me_for_new_features">Tienimi aggiornato sulle nuove funzionalità</string>
     <string name="create_mailbox_password">Crea password</string>
     <string name="password_note"><b>Nota:</b> Questa viene utilizzata per criptare e decriptare i tuoi messaggi.
-Non perdere questa password, noi non possiamo recuperarla. Se perdessi la tua password, non saresti più in grado di leggere le tue email.</string>
+         Non perdere questa password, noi non possiamo recuperarla. Se perdessi la tua password, non saresti più in grado di leggere le tue email.</string>
     <string name="username_note"><b>Nota:</b> Il nome utente è anche il tuo indirizzo ProtonMail</string>
     <string name="terms_and_conditions">Utilizzando ProtonMail, accetti i nostri\n
-<a href="https://protonmail.com/terms-and-conditions">termini e condizioni</a> e l\'<a href="https://protonmail.com/privacy-policy"> informativa sulla privacy</a></string>
+        <a href="https://protonmail.com/terms-and-conditions">termini e condizioni</a> e l\'<a href="https://protonmail.com/privacy-policy"> informativa sulla privacy</a></string>
     <string name="human_verification">Verifica umana</string>
     <string name="human_verification_subtitle">Per prevenire abusi di ProtonMail,\ndobbiamo verificare che tu sia umano.</string>
     <string name="select_options">Seleziona una delle seguenti opzioni:</string>
@@ -284,7 +286,7 @@ Non perdere questa password, noi non possiamo recuperarla. Se perdessi la tua pa
     <string name="message_deleted_error">Errore durante l\'eliminazione di alcuni messaggi. Alcuni dei messaggi selezionati sono in fase di invio?!</string>
     <string name="respond_inline">Rispondi in linea</string>
     <string name="no_connectivity_detected">Nessuna connessione rilevata...</string>
-    <string name="no_connectivity_detected_troubleshoot">Nessuna connettività rilevata… (<u>Risoluzione problemi</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Verificando la connessione...</string>
     <string name="sync_short">sincronizza</string>
     <string name="draft_attachments_uploading">La bozza si sta ancora caricando...</string>
@@ -305,9 +307,9 @@ Non perdere questa password, noi non possiamo recuperarla. Se perdessi la tua pa
     <string name="congratulation">Congratulazioni!</string>
     <string name="new_account_ready">Il suo nuovo account\ndi email sicura è disponibile.</string>
     <string name="optional_email_note">L\'indirizzo email di recupero opzionale le consente di
-reimpostare la password di login se è stata dimenticata.</string>
+        reimpostare la password di login se è stata dimenticata.</string>
     <string name="optional_display_name">Quando invia un\'email, questo è il nome che
-appare nel campo del mittente.</string>
+        appare nel campo del mittente.</string>
     <string name="error_captcha_not_valid">Non valido</string>
     <string name="close_engagement">termina tour</string>
     <string name="engagement_title_welcome">Benvenuto in ProtonMail!</string>
@@ -383,24 +385,9 @@ appare nel campo del mittente.</string>
     <string name="log_out">Uscire %s?</string>
     <string name="logout_question">È sicuro di voler uscire?</string>
     <string name="logout_question_next_account">Sei sicuro di voler uscire con l\'account corrente e procedere utilizzando %s?</string>
-    <string name="upselling">Effettua l\'upgrade/Dona</string>
     <string name="upselling_title">ProtonMail è gratuito e open source</string>
     <string name="upselling_subtitle">Abbiamo bisogno del tuo sostegno per continuare a proteggere la privacy e migliorare ProtonMail</string>
-    <string name="upselling_donate_title">Dona</string>
     <string name="upselling_upgrade_title">Effettuare l\'upgrade a ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">La sua donazione ci aiuterà ad aggiungere
-funzioni e a continuare lo sviluppo di ProtonMail come software libero ed open source. Solo tramite il
-sostegno della comunità riusciremo a rendere disponibile ProtonMail alle persone di tutto
-il mondo.</string>
-    <string name="upgrade_donate">Effettua l\'upgrade/Dona</string>
-    <string name="upselling_donate_pick_amount">Seleziona un importo della donazione o inserisci un qualsiasi importo</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Inserisca l\'importo della donazione</string>
-    <string name="donate">Dona</string>
-    <string name="donate_paypal_bitcoin">Dona via PayPal o Bitcoin</string>
     <string name="upgrade_line1">Tutto incluso nel nostro piano gratuito</string>
     <string name="upgrade_line2">5 GB di spazio</string>
     <string name="upgrade_line3">Utilizza il tuo dominio</string>
@@ -409,11 +396,11 @@ il mondo.</string>
     <string name="upgrade">Effettua l\'upgrade</string>
     <string name="payment_options">Opzioni di pagamento</string>
     <string name="other_plans">Per i piani con più spazio di archiviazione, è possibile effettuare l\'upgrade del proprio piano tramite
-l\'interfaccia webmail di ProtonMail.</string>
+    l\'interfaccia webmail di ProtonMail.</string>
     <string name="upgrade_paid_user">Grazie per essere un utente pagante!</string>
     <string name="select_account_type">Seleziona il tipo del tuo account</string>
     <string name="select_account_type_subtitle">ProtonMail è un servizio gratuito
-per il bene pubblico. Puoi contribuire a supportare la privacy online scegliendo un account a pagamento.</string>
+    per il bene pubblico. Puoi contribuire a supportare la privacy online scegliendo un account a pagamento.</string>
     <string name="plan_free_with_price">GRATIS</string>
     <string name="plan_plus_with_price">PLUS %s /Mese</string>
     <string name="plan_visionary_with_price">VISIONARY %s /mese</string>
@@ -444,7 +431,7 @@ per il bene pubblico. Puoi contribuire a supportare la privacy online scegliendo
     <string name="country">Paese</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">Cliccando su Invia, accetti
-di rispettare i\n<a href="https://protonmail.com/terms-and-conditions">termini e le condizioni di ProtonMail</a></string>
+    di rispettare i\n<a href="https://protonmail.com/terms-and-conditions">termini e le condizioni di ProtonMail</a></string>
     <string name="submit">Invia</string>
     <string name="currency">Valuta</string>
     <string name="plan_duration">Ciclo di fatturazione</string>
@@ -467,8 +454,6 @@ di rispettare i\n<a href="https://protonmail.com/terms-and-conditions">termini e
     <string name="payment_picker_disclaimer">Per favore seleziona il tipo di pagamento</string>
     <string name="payment_success_title">Pagamento riuscito!</string>
     <string name="payment_success_text">Stiamo aggiornando il tuo account, attendi un attimo. Grazie per il tuo supporto!</string>
-    <string name="donation_success_title">Donazione riuscita!</string>
-    <string name="donation_success_text">Il tuo sostegno è essenziale per mantenere ProtonMail funzionante. Grazie per il tuo supporto alla privacy in internet!</string>
     <string name="create_free_account">Crea un account gratuito</string>
     <string name="storage_gb">%d GB di spazio</string>
     <string name="storage_mb">%d MB di spazio</string>
@@ -604,7 +589,7 @@ di rispettare i\n<a href="https://protonmail.com/terms-and-conditions">termini e
         <item>@string/vcard_other_option_url</item>
     </string-array>
     <string name="logged_out">Disconnesso</string>
-    <string name="logged_out_description">È stato disconnesso. Effettui nuovamente l\'accesso.</string>
+    <string name="logged_out_description">Sei stato disconnesso. Effettua nuovamente l\'accesso.</string>
     <string name="verification_needed">Verifica richiesta</string>
     <string name="verification_needed_description">Per motivi di sicurezza, si prega di verificare di non essere un robot.</string>
     <string name="verification_needed_description_notification">Per favore, verifichi di essere un umano prima di inviare questo messaggio: %s</string>
@@ -671,9 +656,7 @@ di rispettare i\n<a href="https://protonmail.com/terms-and-conditions">termini e
     <string name="close_app">Chiudi l\'applicazione</string>
     <string name="empty_subject">(Nessun Oggetto)</string>
     <string name="contacts_unknown">Sconosciuto</string>
-    <string name="learn_more">
-        <u>Per saperne di più</u>
-    </string>
+    <string name="learn_more"><u>Per saperne di più</u></string>
     <string name="info">Informazioni</string>
     <string name="error_can_not_send_from_this_address">Effettui l\'upgrade ad un piano a pagamento per inviare dal suo indirizzo %s.</string>
     <string name="email_empty">Indirizzo email mancante</string>
@@ -733,9 +716,7 @@ di rispettare i\n<a href="https://protonmail.com/terms-and-conditions">termini e
     <string name="expiration_error_add_msg_password">Aggiungi una password al messaggio per i seguenti destinatari:</string>
     <string name="expiration_error_disable_pgp_sending">Disabilita l\'invio con PGP per abilitare la scadenza per i seguenti destinatari:</string>
     <string name="expiration_error_proceed">Tocca invia ugualmente per inviare senza scadenza a questi destinatari.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">APPROFONDISCI</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">APPROFONDISCI</a></string>
     <string name="channel_name_attachments">Allegati</string>
     <string name="channel_description_attachments">Informa riguardo lo stato di download degli allegati</string>
     <string name="channel_name_emails">Email</string>
@@ -744,14 +725,14 @@ di rispettare i\n<a href="https://protonmail.com/terms-and-conditions">termini e
     <string name="channel_description_account">Stato dell\'account</string>
     <string name="channel_name_ongoing_operations">Operazioni in corso</string>
     <string name="channel_description_ongoing_operations">Mostra tutte le operazioni in corso come ad esempio
-il download dei nuovi messaggi in background</string>
+		il download dei nuovi messaggi in background</string>
     <string name="checking_mailbox">Controllando la casella di posta</string>
     <string name="report_phishing">Segnala phishing</string>
     <string name="print">Stampa</string>
     <string name="phishing_dialog_title">Conferma il report di phishing</string>
     <string name="phishing_dialog_message">Segnalare un messaggio come tentativo di phishing invierà il
-messaggio a noi, cosicché potremo analizzarlo e migliorare i nostri filtri. Questo significa che saremo in grado
-di leggere i contenuti del messaggio per intero.</string>
+		messaggio a noi, cosicché potremo analizzarlo e migliorare i nostri filtri. Questo significa che saremo in grado
+		di leggere i contenuti del messaggio per intero.</string>
     <string name="phishing_report_send_message_moved_to_spam">Rapporto inviato. Messaggio spostato nello spam.</string>
     <string name="cannot_send_report_send">Impossibile inviare il report</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
@@ -811,7 +792,6 @@ di leggere i contenuti del messaggio per intero.</string>
     </plurals>
     <string name="members">Membri</string>
     <string name="max_emails_in_group_title">Raggiunto il numero massimo di email per gruppo</string>
-    <string name="max_emails_in_group_subtitle">Hai raggiunto il numero massimo di email per gruppo (%1$d). Per favore rimuovi %2$d elementi.</string>
     <string name="select_deselect_all">Seleziona tutto</string>
     <string name="contact_group_name_hint">Scegli un nome del gruppo</string>
     <string name="contact_group_change_color">Cambia colore</string>
@@ -823,17 +803,17 @@ di leggere i contenuti del messaggio per intero.</string>
     <string name="save_group_validation_error">Si prega di fornire il nome del gruppo</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Hai raggiunto il limite di archiviazione. Impossibile inviare o ricevere email.
-Premi per saperne di più.</string>
+        Premi per saperne di più.</string>
     <string name="storage_limit_warning_title">Attenzione</string>
     <string name="storage_limit_reached_text">Hai utilizzato il 100% del tuo spazio disponibile. Non
-sarà più possibile inviare o ricevere email a meno che non cancelli definitivamente qualche email o che acquisti più
-spazio.</string>
+        sarà più possibile inviare o ricevere email a meno che non cancelli definitivamente qualche email o che acquisti più
+        spazio.</string>
     <string name="storage_limit_approaching_text">Hai raggiunto il 90% del tuo spazio disponibile.
-Prova a liberare dello spazio o acquista più spazio di archiviazione prima di esaurirlo tutto.</string>
+        Prova a liberare dello spazio o acquista più spazio di archiviazione prima di esaurirlo tutto.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permessi</string>
     <string name="need_storage_permissions_text">Per aggiungere allegati devi consentire
-l\'accesso all\'archiviazione.</string>
+        l\'accesso all\'archiviazione.</string>
     <string name="push_notifications_alert_title">Avviso notifiche push</string>
     <string name="push_notifications_alert_subtitle">Le notifiche push per ProtonMail non funzionano senza aggiornamenti di Google Play services.</string>
     <string name="app_locked">App bloccata</string>
@@ -911,8 +891,8 @@ l\'accesso all\'archiviazione.</string>
     <string name="labels_manage">Gestione etichette</string>
     <string name="folders_manage">Gestore cartelle</string>
     <string name="swiping_gesture">Gesto di scorrimento</string>
-    <string name="swipe_action_right">Swipe right</string>
-    <string name="swipe_action_left">Swipe left</string>
+    <string name="swipe_action_right">Scorri a destra</string>
+    <string name="swipe_action_left">Scorri a sinistra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Scelta azione con gesti di scorrimento</string>
     <string name="swipe_action_trash">Messaggio spostato nel cestino</string>
@@ -983,23 +963,27 @@ l\'accesso all\'archiviazione.</string>
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemi di connessione comuni e soluzioni</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
-</string>
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Immagine non trovata</string>
     <string name="error_image_bad_url">Url dell\'immagine malformato</string>
+    <string name="error_saving_try_again">Errore durante il salvataggio del messaggio. Riprova.</string>
     <!-- endregion -->
     <string name="allowed">Consentito</string>
     <string name="denied">Rifiutato</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Swipe gestures changed</string>
-    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
-    <string name="go_to_settings">Go to settings</string>
+    <string name="swipe_gestures_changed">Modifica dei gesti di scorrimento</string>
+    <string name="swipe_gestures_changed_message">Dopo l\'ultimo aggiornamento i gesti di scorrimento sono stati invertiti, puoi ripristinarli nelle opzioni.</string>
+    <string name="go_to_settings">Vai alle impostazioni</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Chiave API Firebase non valida. Le notifiche push non funzioneranno.</string>
+    <string name="failed_saving_draft_online">Salvataggio della bozza online per il messaggio: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Impossibile aprire questo messaggio mentre viene inviato</string>
 </resources>

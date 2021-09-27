@@ -38,6 +38,8 @@ interface LabelApiSpec {
     @Throws(IOException::class)
     fun fetchContactGroups(): Single<ContactGroupsResponse>
 
+    suspend fun fetchContactGroupsList(): List<ContactLabel>
+
     @Throws(IOException::class)
     fun fetchContactGroupsAsObservable(): Observable<List<ContactLabel>>
 
@@ -54,5 +56,7 @@ interface LabelApiSpec {
     fun updateLabelCompletable(labelId: String, label: LabelBody): Completable
 
     @Throws(IOException::class)
-    fun deleteLabel(labelId: String): Single<ResponseBody>
+    fun deleteLabelSingle(labelId: String): Single<ResponseBody>
+
+    suspend fun deleteLabel(labelId: String): ResponseBody
 }

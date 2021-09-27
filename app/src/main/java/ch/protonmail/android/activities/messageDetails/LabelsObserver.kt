@@ -27,44 +27,48 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.views.messageDetails.FolderIconView
 import ch.protonmail.android.views.messagesList.ItemLabelMarginlessSmallView
 
+// TODO change to immutable list after changing all uses to kotlin
+
 /**
  * Created by Kamil Rajtar on 13.08.18.
  */
-//TODO change to immutable list after changing all uses to kotlin
-internal class LabelsObserver(private val adapter: MessageDetailsAdapter,
-							  private val folderIds: MutableList<String>) : Observer<MutableList<Label>> {
 
-	override fun onChanged(labels:MutableList<Label>?) {
-		labels?:return
+/**
+ * LabelsObserver
+ */
+internal class LabelsObserver(
+    private val adapter: MessageDetailsAdapter,
+    private val folderIds: MutableList<String>
+) : Observer<List<Label>> {
 
-		val labelView = adapter.labels
-		val context=labelView.context
-		labelView.removeAllViews()
-		val strokeWidth=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,1f,
-				labelView.resources.displayMetrics).toInt()
-		for(label in labels) {
+    override fun onChanged(labels: List<Label>?) {
+        labels ?: return
 
-			if(label.exclusive) {
-				val colorString=label.color
-				val folderIcon=FolderIconView(context).apply {
-					setColorFilter(Color.parseColor(UiUtil.normalizeColor(colorString)))
-				}
-				labelView.addView(folderIcon,0)
-				folderIds.add(label.id)
-			} else {
-				val labelItemView=ItemLabelMarginlessSmallView(
-						context)
-				labelView.addView(labelItemView)
-				val name=label.name
-				val colorString=label.color
-				val color=if(!TextUtils.isEmpty(colorString)) {
-					Color.parseColor(UiUtil.normalizeColor(colorString))
-				}
-				else {
-					0
-				}
-				labelItemView.bind(name,color,strokeWidth)
-			}
-		}
-	}
+        val labelView = adapter.labels
+        val context = labelView.context
+        labelView.removeAllViews()
+        val strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f,
+            labelView.resources.displayMetrics).toInt()
+        for (label in labels) {
+            if (label.exclusive) {
+                val colorString = label.color
+                val folderIcon = FolderIconView(context).apply {
+                    setColorFilter(Color.parseColor(UiUtil.normalizeColor(colorString)))
+                }
+                labelView.addView(folderIcon, 0)
+                folderIds.add(label.id)
+            } else {
+                val labelItemView = ItemLabelMarginlessSmallView(context)
+                labelView.addView(labelItemView)
+                val name = label.name
+                val colorString = label.color
+                val color = if (colorString.isNotEmpty()) {
+                    Color.parseColor(UiUtil.normalizeColor(colorString))
+                } else {
+                    0
+                }
+                labelItemView.bind(name, color, strokeWidth)
+            }
+        }
+    }
 }

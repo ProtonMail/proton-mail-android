@@ -88,7 +88,7 @@ fun <V : Validable> V.validate() = (validator as Validator<V>).validate(this)
  * @return receiver [V] of [Validable]
  */
 @Suppress("UNCHECKED_CAST")
-fun <V : Validable> V.requireValid() = (validator as Validator<V>).requireValid(this)
+fun <V : Validable> V.requireValid() = (validator as Validator<V>).requireValid(this as V)
 
 /**
  * @return [Validable] created in this lambda which is marked as [Validated] if validation is successful,
@@ -106,10 +106,8 @@ inline fun <V : Validable> validOrNull(block: () -> V): V? =
 
 /**
  * An exception thrown from [Validable.requireValid] in case the validation fails
- * @param validable [Validable] that failed the validation
  */
-class ValidationException(validable: Validable) :
-    Exception("Validable did not validate successfully: $validable")
+typealias ValidationException = IllegalArgumentException
 
 /**
  * Represents an entity that is validated on its initialisation. ``  init { requireValid() }  ``
@@ -125,10 +123,13 @@ private fun <V : Validable> Validator<V>.isValid(validable: V) =
     validate(validable) is Success
 
 private fun <V : Validable> Validator<V>.validate(validable: V): Validable.Result =
-    invoke(validable)
+    try {
+        invoke(validable)
+        Success
+    } catch (e: ValidationException) {
+        Error
+    }
 
 private fun <V : Validable> Validator<V>.requireValid(validable: V) = apply {
-    validate(validable).also { result ->
-        if (result is Error) throw ValidationException(validable)
-    }
+    invoke(validable)
 }

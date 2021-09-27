@@ -20,20 +20,27 @@ package ch.protonmail.android.api.segments.address
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.address.*
+import ch.protonmail.android.api.models.address.AddressOrder
+import ch.protonmail.android.api.models.address.AddressSetupBody
+import ch.protonmail.android.api.models.address.AddressSetupResponse
+import ch.protonmail.android.api.models.address.AddressesResponse
+import ch.protonmail.android.api.models.address.CondensedAddress
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import java.io.IOException
 
-class AddressApi (val service: AddressService) : BaseApi(), AddressApiSpec {
+class AddressApi(val service: AddressService) : BaseApi(), AddressApiSpec {
 
     @Throws(IOException::class)
-    override fun fetchAddresses() : AddressesResponse =
-        ParseUtils.parse(service.fetchAddresses().execute())
+    override fun fetchAddressesBlocking(): AddressesResponse =
+        ParseUtils.parse(service.fetchAddressesCall().execute())
+
+    override suspend fun fetchAddresses(): AddressesResponse =
+        service.fetchAddresses()
 
     @Throws(IOException::class)
-    override fun fetchAddresses(username : String) : AddressesResponse =
-        ParseUtils.parse(service.fetchAddresses(RetrofitTag(username)).execute())
+    override fun fetchAddressesBlocking(username: String): AddressesResponse =
+        ParseUtils.parse(service.fetchAddressesCall(RetrofitTag(username)).execute())
 
     @Throws(IOException::class)
     override fun updateAlias(addressIds: List<String>): ResponseBody =

@@ -54,6 +54,10 @@ class LabelApi (private val service : LabelService) : BaseApi(), LabelApiSpec {
                 }
     }
 
+    override suspend fun fetchContactGroupsList(): List<ContactLabel> {
+        return service.fetchContactGroupsList().contactGroups
+    }
+
     @Throws(IOException::class)
     override fun createLabel(label: LabelBody): LabelResponse {
         return ParseUtils.parse(service.createLabel(label).execute())
@@ -79,10 +83,12 @@ class LabelApi (private val service : LabelService) : BaseApi(), LabelApiSpec {
     }
 
     @Throws(IOException::class)
-    override fun deleteLabel(labelId: String): Single<ResponseBody> {
-        return service.deleteLabel(labelId).doOnError {
+    override fun deleteLabelSingle(labelId: String): Single<ResponseBody> {
+        return service.deleteLabelSingle(labelId).doOnError {
             ParseUtils.doOnError(it)
         }
     }
+
+    override suspend fun deleteLabel(labelId: String): ResponseBody = service.deleteLabel(labelId)
 
 }

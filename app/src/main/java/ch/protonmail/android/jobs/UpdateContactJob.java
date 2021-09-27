@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -43,12 +43,11 @@ import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsR
 import ch.protonmail.android.api.rx.ThreadSchedulers;
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.crypto.UserCrypto;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.crypto.Crypto;
-import ch.protonmail.android.utils.crypto.TextCiphertext;
-import ch.protonmail.android.utils.crypto.UserCrypto;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.Email;
@@ -69,8 +68,14 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
     private transient ContactsDatabase mContactsDatabase;
 
-    public UpdateContactJob(String contactId, @NonNull String contactName, @NonNull List<ContactEmail> contactEmails,
-                            String encryptedData, String signedData, HashMap<ContactEmail, List<ContactLabel>> mapEmailGroupsIds) {
+    public UpdateContactJob(
+            String contactId,
+            @NonNull String contactName,
+            @NonNull List<ContactEmail> contactEmails,
+            String encryptedData,
+            String signedData,
+            Map<ContactEmail, List<ContactLabel>> mapEmailGroupsIds
+    ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT));
 		mContactId = contactId;
         mContactName = contactName;
@@ -82,11 +87,11 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onAdded() {
-        User user = mUserManager.getUser();
+        User user = getUserManager().getUser();
         if (user != null) {
-            UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+            UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
             try {
-                TextCiphertext tct = crypto.encrypt(mEncryptedData, false);
+                CipherText tct = crypto.encrypt(mEncryptedData, false);
                 String encryptedDataSignature = crypto.sign(mEncryptedData);
                 String signedDataSignature = crypto.sign(mSignedData);
 
@@ -96,23 +101,23 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                 e.printStackTrace();
             }
         }
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(new ContactEvent(ContactEvent.NO_NETWORK, true));
         }
     }
 
     @Override
     public void onRun() throws Throwable {
-        UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
         mContactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
 
-        TextCiphertext tct = crypto.encrypt(mEncryptedData, false);
+        CipherText tct = crypto.encrypt(mEncryptedData, false);
         String encryptedDataSignature = crypto.sign(mEncryptedData);
         String signedDataSignature = crypto.sign(mSignedData);
 
         CreateContactV2BodyItem body = new CreateContactV2BodyItem(mSignedData, signedDataSignature,
                 tct.getArmored(), encryptedDataSignature);
-        FullContactDetailsResponse response = mApi.updateContact(mContactId, body);
+        FullContactDetailsResponse response = getApi().updateContact(mContactId, body);
 
         if (response != null) {
             if (response.getCode() == RESPONSE_CODE_ERROR_EMAIL_EXIST) {
@@ -143,10 +148,10 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         mContactsDatabase.deleteAllContactsEmails(emails);
 
         for (ContactEmail email : contactEmails) {
-			final String emailToClear=email.getEmail();
-			mContactsDatabase.clearByEmail(emailToClear);
+            final String emailToClear = email.getEmail();
+            mContactsDatabase.clearByEmailBlocking(emailToClear);
         }
-		mContactsDatabase.saveAllContactsEmails(contactEmails);
+		mContactsDatabase.saveAllContactsEmailsBlocking(contactEmails);
         Map<ContactLabel, List<String>> mapContactGroupContactEmails = new HashMap<>();
         if (updateJoins) {
             for (ContactEmail email : contactEmails) {
@@ -198,16 +203,16 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
     private void updateJoins(String contactGroupId, String contactGroupName, List<String> membersList) {
         LabelContactsBody labelContactsBody = new LabelContactsBody(contactGroupId, membersList);
         try {
-            mApi.labelContacts(labelContactsBody)
+            getApi().labelContacts(labelContactsBody)
                     .doOnComplete(() -> {
                         List<ContactEmailContactLabelJoin> joins = mContactsDatabase.fetchJoins(contactGroupId);
                         for (String contactEmail : membersList) {
                             joins.add(new ContactEmailContactLabelJoin(contactEmail, contactGroupId));
                         }
-                        mContactsDatabase.saveContactEmailContactLabel(joins);
+                        mContactsDatabase.saveContactEmailContactLabelBlocking(joins);
                     })
                     .doOnError(throwable ->
-                            mJobManager.addJobInBackground(new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)))
+                            getJobManager().addJobInBackground(new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)))
                     .subscribeOn(ThreadSchedulers.io())
                     .observeOn(ThreadSchedulers.io())
                     .subscribe();

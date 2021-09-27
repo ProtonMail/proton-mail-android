@@ -22,15 +22,15 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class SettingsTests : BaseTest() {
 
     private lateinit var settingsRobot: SettingsRobot
     private val loginRobot = LoginRobot()
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         settingsRobot = loginRobot
@@ -43,6 +43,6 @@ class SettingsTests : BaseTest() {
     fun clearCache() {
         settingsRobot
             .emptyCache()
-            .verify { cacheCleared() }
+            .verify { settingsOpened() }
     }
 }

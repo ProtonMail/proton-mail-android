@@ -20,7 +20,7 @@ package ch.protonmail.android.uitests.robots.mailbox.trash
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [TrashRobot] class implements [MailboxRobotInterface],
@@ -28,8 +28,8 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 class TrashRobot : MailboxRobotInterface {
 
-    override fun swipeLeftMessageAtPosition(messagePosition: Int): TrashRobot {
-        super.swipeLeftMessageAtPosition(messagePosition)
+    override fun swipeLeftMessageAtPosition(position: Int): TrashRobot {
+        super.swipeLeftMessageAtPosition(position)
         return this
     }
 
@@ -60,7 +60,7 @@ class TrashRobot : MailboxRobotInterface {
 
         fun folderEmpty() {
             //TODO - remove this workaround with 20 sec waiting time when possible
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.no_messages, R.string.no_messages, 20000)
+            UIActions.wait.forViewWithIdAndText(R.id.no_messages, R.string.no_messages, 20000)
         }
     }
 

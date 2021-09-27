@@ -19,12 +19,12 @@
 package ch.protonmail.android.uitests.robots.mailbox.sent
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.ApplyLabelRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MoveToFolderRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.SelectionStateRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [SentRobot] class implements [MailboxRobotInterface],
@@ -47,9 +47,14 @@ class SentRobot : MailboxRobotInterface {
         return this
     }
 
-    fun getMessageSubjectAtPosition(position: Int): String = ""
-//        UIActions.get.messageSubjectByPosition(R.id.messages_list_view, position)!!
+    override fun refreshMessageList(): SentRobot {
+        super.refreshMessageList()
+        return SentRobot()
+    }
 
+    /**
+     * Handles Mailbox selection state actions and verifications after user long click one of the messages.
+     */
     class SelectionStateRobot : SelectionStateRobotInterface {
 
         override fun exitMessageSelectionState(): InboxRobot {
@@ -62,9 +67,9 @@ class SentRobot : MailboxRobotInterface {
             return this
         }
 
-        override fun addLabel(): SentRobot {
+        override fun addLabel(): ApplyLabelRobot {
             super.addLabel()
-            return SentRobot()
+            return ApplyLabelRobot()
         }
 
         override fun addFolder(): MoveToFolderRobot {
@@ -78,6 +83,9 @@ class SentRobot : MailboxRobotInterface {
         }
     }
 
+    /**
+     * Handles Move to folder dialog actions.
+     */
     class MoveToFolderRobot : MoveToFolderRobotInterface {
 
         override fun moveToExistingFolder(name: String): InboxRobot {
@@ -87,23 +95,28 @@ class SentRobot : MailboxRobotInterface {
     }
 
     /**
+     * Handles Move to folder dialog actions.
+     */
+    class ApplyLabelRobot : ApplyLabelRobotInterface {
+
+        override fun selectLabelByName(name: String): ApplyLabelRobot {
+            super.selectLabelByName(name)
+            return ApplyLabelRobot()
+        }
+
+        override fun apply(): SentRobot {
+            super.apply()
+            return SentRobot()
+        }
+    }
+
+    /**
      * Contains all the validations that can be performed by [SentRobot].
      */
-    class Verify {
-
-        fun multipleMessagesDeleted() {
-            UIActions.wait.untilViewWithIdAppears(R.id.snackbar_text)
-            UIActions.check.viewWithIdAndTextIsDisplayed(R.id.snackbar_text, "Messages moved to trash")
-            //TODO add check by message text
-        }
-
+    class Verify : MailboxRobotInterface.verify() {
         fun messageStarred() {
-            UIActions.wait.untilViewWithIdAppears(R.id.snackbar_text)
+            UIActions.wait.forViewWithId(R.id.snackbar_text)
             UIActions.check.viewWithIdAndTextIsDisplayed(R.id.snackbar_text, "Message star updated")
-        }
-
-        fun messageWithSubjectExists(subject: String) {
-            UIActions.recyclerView.scrollToRecyclerViewMatchedItem(R.id.messages_list_view, withMessageSubject(subject))
         }
     }
 

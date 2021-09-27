@@ -1,31 +1,85 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.AttachmentUploadResponse
+import ch.protonmail.android.api.models.AvailableDomainsResponse
+import ch.protonmail.android.api.models.AvailablePlansResponse
+import ch.protonmail.android.api.models.CheckSubscriptionBody
+import ch.protonmail.android.api.models.CheckSubscriptionResponse
+import ch.protonmail.android.api.models.ContactEmailsResponseV2
+import ch.protonmail.android.api.models.ContactResponse
+import ch.protonmail.android.api.models.ContactsDataResponse
+import ch.protonmail.android.api.models.CreateContact
+import ch.protonmail.android.api.models.CreateContactV2BodyItem
+import ch.protonmail.android.api.models.CreateOrganizationBody
+import ch.protonmail.android.api.models.CreatePaymentTokenBody
+import ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponse
+import ch.protonmail.android.api.models.CreateSubscriptionBody
+import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
+import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DirectEnabledResponse
+import ch.protonmail.android.api.models.DraftBody
+import ch.protonmail.android.api.models.GetPaymentTokenResponse
+import ch.protonmail.android.api.models.GetSubscriptionResponse
+import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
+import ch.protonmail.android.api.models.IDList
+import ch.protonmail.android.api.models.KeySalts
+import ch.protonmail.android.api.models.Keys
+import ch.protonmail.android.api.models.KeysSetupBody
+import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.LoginInfoResponse
+import ch.protonmail.android.api.models.LoginResponse
+import ch.protonmail.android.api.models.MailSettingsResponse
+import ch.protonmail.android.api.models.MailboxResetBody
+import ch.protonmail.android.api.models.ModulusResponse
+import ch.protonmail.android.api.models.MoveToFolderResponse
+import ch.protonmail.android.api.models.OrganizationResponse
+import ch.protonmail.android.api.models.PasswordVerifier
+import ch.protonmail.android.api.models.PaymentMethodResponse
+import ch.protonmail.android.api.models.PaymentMethodsResponse
+import ch.protonmail.android.api.models.PaymentsStatusResponse
+import ch.protonmail.android.api.models.PublicKeyResponse
+import ch.protonmail.android.api.models.RefreshBody
+import ch.protonmail.android.api.models.RefreshResponse
+import ch.protonmail.android.api.models.RegisterDeviceRequestBody
+import ch.protonmail.android.api.models.ResetTokenResponse
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.SinglePasswordChange
+import ch.protonmail.android.api.models.SrpResponseBody
+import ch.protonmail.android.api.models.TokenPaymentBody
+import ch.protonmail.android.api.models.TwoFABody
+import ch.protonmail.android.api.models.TwoFAResponse
+import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
+import ch.protonmail.android.api.models.UserInfo
+import ch.protonmail.android.api.models.UserSettingsResponse
+import ch.protonmail.android.api.models.VerificationCodeBody
+import ch.protonmail.android.api.models.VerifyBody
+import ch.protonmail.android.api.models.VerifyResponse
 import ch.protonmail.android.api.models.address.AddressSetupBody
 import ch.protonmail.android.api.models.address.AddressSetupResponse
 import ch.protonmail.android.api.models.address.AddressesResponse
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
+import ch.protonmail.android.api.models.messages.delete.MessageDeletePayload
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.api.models.messages.receive.LabelsResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
@@ -61,6 +115,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.RequestBody
 import retrofit2.Call
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by dinokadrikj on 3/3/20.
@@ -68,24 +124,26 @@ import retrofit2.Call
  * This class takes an API implementation and acts as a proxy. The real implementation is in the {@param api}
  * which can work directly with the Proton API or use any alternative proxy.
  */
-class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
-        AddressApiSpec,
-        AttachmentApiSpec,
-        AuthenticationApiSpec,
-        ConnectivityApiSpec,
-        ContactApiSpec,
-        DeviceApiSpec,
-        KeyApiSpec,
-        LabelApiSpec,
-        MessageApiSpec,
-        OrganizationApiSpec,
-        PaymentApiSpec,
-        ReportApiSpec,
-        ResetApiSpec,
-        UserSettingsApiSpec,
-        MailSettingsApiSpec,
-        UserApiSpec,
-        DomainApiSpec {
+@Singleton
+class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
+    BaseApi(),
+    AddressApiSpec,
+    AttachmentApiSpec,
+    AuthenticationApiSpec,
+    ConnectivityApiSpec,
+    ContactApiSpec,
+    DeviceApiSpec,
+    KeyApiSpec,
+    LabelApiSpec,
+    MessageApiSpec,
+    OrganizationApiSpec,
+    PaymentApiSpec,
+    ReportApiSpec,
+    ResetApiSpec,
+    UserSettingsApiSpec,
+    MailSettingsApiSpec,
+    UserApiSpec,
+    DomainApiSpec {
 
     fun reset(newApi: ProtonMailApi) {
         api = newApi
@@ -94,32 +152,44 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
     fun getSecuredServices(): SecuredServices = api.securedServices
 
     // region routes and services
-    override fun fetchAddresses(): AddressesResponse = api.fetchAddresses()
+    override fun fetchAddressesBlocking(): AddressesResponse = api.fetchAddressesBlocking()
 
-    override fun fetchAddresses(username: String): AddressesResponse = api.fetchAddresses(username)
+    override suspend fun fetchAddresses(): AddressesResponse = api.fetchAddresses()
+
+    override fun fetchAddressesBlocking(username: String): AddressesResponse = api.fetchAddressesBlocking(username)
 
     override fun updateAlias(addressIds: List<String>): ResponseBody = api.updateAlias(addressIds)
 
-    override fun setupAddress(addressSetupBody: AddressSetupBody): AddressSetupResponse = api.setupAddress(addressSetupBody)
+    override fun setupAddress(addressSetupBody: AddressSetupBody): AddressSetupResponse =
+        api.setupAddress(addressSetupBody)
 
-    override fun editAddress(addressId: String, displayName: String, signature: String): ResponseBody = api.editAddress(addressId, displayName, signature)
+    override fun editAddress(addressId: String, displayName: String, signature: String): ResponseBody =
+        api.editAddress(addressId, displayName, signature)
 
     override fun deleteAttachment(attachmentId: String): ResponseBody = api.deleteAttachment(attachmentId)
 
-    override fun downloadAttachment(attachmentId: String, progressListener: ProgressListener): ByteArray
-            = api.downloadAttachment(attachmentId)
+    override fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray =
+        api.downloadAttachmentBlocking(attachmentId, progressListener)
 
-    override fun downloadAttachment(attachmentId: String): ByteArray = api.downloadAttachment(attachmentId)
+    override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
+        api.downloadAttachmentBlocking(attachmentId)
 
-    override fun uploadAttachmentInline(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse
-            = api.uploadAttachmentInline(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
+    override suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody? =
+        api.downloadAttachment(attachmentId)
 
-    override fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse
-            = api.uploadAttachment(attachment, MessageID, KeyPackage, DataPackage, Signature)
+    override fun uploadAttachmentInlineBlocking(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInlineBlocking(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
+
+    override fun uploadAttachmentBlocking(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentBlocking(attachment, keyPackage, dataPackage, signature)
+
+    override suspend fun uploadAttachmentInline(attachment: Attachment, messageID: String, contentID: String, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInline(attachment, messageID, contentID, keyPackage, dataPackage, signature)
+
+    override suspend fun uploadAttachment(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, keyPackage, dataPackage, signature)
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 
-    override fun revokeAccess(username: String): ResponseBody = api.revokeAccess(username)
+    override fun revokeAccessBlocking(username: String): ResponseBody = api.revokeAccessBlocking(username)
+
+    override suspend fun revokeAccess(username: String): ResponseBody = api.revokeAccess(username)
 
     override fun loginInfo(username: String): LoginInfoResponse = api.loginInfo(username)
 
@@ -128,57 +198,86 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
      */
     override fun loginInfoForAuthentication(username: String): LoginInfoResponse = api.loginInfoForAuthentication(username)
 
-    override fun login(username: String, srpSession: String, clientEphemeral: ByteArray, clientProof: ByteArray): LoginResponse
-            = api.login(username, srpSession, clientEphemeral, clientProof)
+    override fun login(username: String, srpSession: String, clientEphemeral: ByteArray, clientProof: ByteArray): LoginResponse = api.login(username, srpSession, clientEphemeral, clientProof)
 
     override fun randomModulus(): ModulusResponse = api.randomModulus()
 
-    override fun refreshSync(refreshBody: RefreshBody): RefreshResponse = api.refreshSync(refreshBody)
+    override suspend fun refreshAuth(
+        refreshBody: RefreshBody,
+        retrofitTag: RetrofitTag?
+    ): RefreshResponse = api.refreshAuth(refreshBody, retrofitTag)
+
+    override fun refreshAuthBlocking(
+        refreshBody: RefreshBody,
+        retrofitTag: RetrofitTag?
+    ): RefreshResponse = api.refreshAuthBlocking(refreshBody, retrofitTag)
 
     override fun twoFactor(twoFABody: TwoFABody): TwoFAResponse = api.twoFactor(twoFABody)
 
-    override fun ping(): ResponseBody = api.ping()
-
     override suspend fun pingAsync(): ResponseBody = api.pingAsync()
 
-    override fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse? = api.fetchContacts(page, pageSize)
+    override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse =
+        api.fetchContacts(page, pageSize)
 
-    override fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?> = api.fetchContactEmails(pageSize)
+    override suspend fun fetchContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2 =
+        api.fetchContactEmails(page, pageSize)
 
-    override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2>
-            = api.fetchContactsEmailsByLabelId(page, labelId)
+    override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> = api.fetchContactsEmailsByLabelId(page, labelId)
 
-    override fun fetchContactDetails(contactId: String): FullContactDetailsResponse? = api.fetchContactDetails(contactId)
+    override fun fetchContactDetailsBlocking(contactId: String): FullContactDetailsResponse? = api.fetchContactDetailsBlocking(contactId)
 
-    override fun fetchContactDetails(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> = api.fetchContactDetails(contactIDs)
+    override suspend fun fetchContactDetails(contactId: String): FullContactDetailsResponse = api.fetchContactDetails(contactId)
 
-    override fun createContact(body: CreateContact): ContactResponse? = api.createContact(body)
+    override fun fetchContactDetailsBlocking(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> = api.fetchContactDetailsBlocking(contactIDs)
+
+    override fun createContactBlocking(body: CreateContact): ContactResponse? = api.createContactBlocking(body)
+
+    override suspend fun createContact(body: CreateContact): ContactResponse? = api.createContact(body)
 
     override fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse? = api.updateContact(contactId, body)
 
-    override fun deleteContact(contactIds: IDList): Single<DeleteContactResponse> = api.deleteContact(contactIds)
+    override fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse> = api.deleteContactSingle(contactIds)
+
+    override suspend fun deleteContact(contactIds: IDList): DeleteContactResponse = api.deleteContact(contactIds)
 
     override fun labelContacts(labelContactsBody: LabelContactsBody): Completable = api.labelContacts(labelContactsBody)
 
-    override fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable = api.unlabelContactEmails(labelContactsBody)
+    override fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable = api.unlabelContactEmailsCompletable(labelContactsBody)
 
-    override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) = api.registerDevice(registerDeviceBody, username)
+    override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) = api.unlabelContactEmails(labelContactsBody)
 
-    override fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
+    override suspend fun registerDevice(
+        registerDeviceRequestBody: RegisterDeviceRequestBody,
+        username: String
+    ) = api.registerDevice(registerDeviceRequestBody, username)
 
-    override fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
+    override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
+
+    override fun getPublicKeysBlocking(email: String): PublicKeyResponse = api.getPublicKeysBlocking(email)
+
+    override suspend fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
 
     override fun getPublicKeys(emails: Collection<String>): Map<String, PublicKeyResponse?> = api.getPublicKeys(emails)
 
     override fun updatePrivateKeys(body: SinglePasswordChange): ResponseBody = api.updatePrivateKeys(body)
 
-    override fun activateKey(keyActivationBody: KeyActivationBody, keyId: String): ResponseBody = api.activateKey(keyActivationBody, keyId)
+    override fun activateKey(
+        keyActivationBody: KeyActivationBody,
+        keyId: String
+    ): ResponseBody = api.activateKey(keyActivationBody, keyId)
+
+    override suspend fun activateKeyLegacy(
+        keyActivationBody: KeyActivationBody,
+        keyId: String
+    ): ResponseBody = api.activateKeyLegacy(keyActivationBody, keyId)
 
     override fun setupKeys(keysSetupBody: KeysSetupBody): UserInfo = api.setupKeys(keysSetupBody)
 
     override fun fetchLabels(retrofitTag: RetrofitTag): LabelsResponse = api.fetchLabels(retrofitTag)
 
     override fun fetchContactGroups(): Single<ContactGroupsResponse> = api.fetchContactGroups()
+
+    override suspend fun fetchContactGroupsList(): List<ContactLabel> = api.fetchContactGroupsList()
 
     override fun fetchContactGroupsAsObservable(): Observable<List<ContactLabel>> = api.fetchContactGroupsAsObservable()
 
@@ -190,7 +289,9 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun updateLabelCompletable(labelId: String, label: LabelBody): Completable = api.updateLabelCompletable(labelId, label)
 
-    override fun deleteLabel(labelId: String): Single<ResponseBody> = api.deleteLabel(labelId)
+    override fun deleteLabelSingle(labelId: String): Single<ResponseBody> = api.deleteLabelSingle(labelId)
+
+    override suspend fun deleteLabel(labelId: String): ResponseBody = api.deleteLabel(labelId)
 
     override fun fetchMessagesCount(retrofitTag: RetrofitTag): UnreadTotalMessagesResponse = api.fetchMessagesCount(retrofitTag)
 
@@ -206,7 +307,8 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun markMessageAsUnRead(messageIds: IDList) = api.markMessageAsUnRead(messageIds)
 
-    override fun deleteMessage(messageIds: IDList) = api.deleteMessage(messageIds)
+    override suspend fun deleteMessage(messageDeletePayload: MessageDeletePayload) =
+        api.deleteMessage(messageDeletePayload)
 
     override fun emptyDrafts() = api.emptyDrafts()
 
@@ -219,7 +321,7 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
     override fun messageDetail(messageId: String): MessageResponse = api.messageDetail(messageId)
 
     override fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
-            api.messageDetail(messageId, retrofitTag)
+        api.messageDetail(messageId, retrofitTag)
 
     override fun messageDetailObservable(messageId: String): Observable<MessageResponse> = api.messageDetailObservable(messageId)
 
@@ -229,12 +331,19 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse = api.searchByLabelAndTime(query, unixTime)
 
-    override fun createDraft(newMessage: NewMessage): MessageResponse? = api.createDraft(newMessage)
+    override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
 
-    override fun updateDraft(messageId: String, newMessage: NewMessage, retrofitTag: RetrofitTag): MessageResponse? = api.updateDraft(messageId, newMessage, retrofitTag)
+    override suspend fun updateDraft(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse = api.updateDraft(messageId, draftBody, retrofitTag)
 
-    override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse>
-            = api.sendMessage(messageId, message, retrofitTag)
+    override suspend fun sendMessage(
+        messageId: String,
+        message: MessageSendBody,
+        retrofitTag: RetrofitTag
+    ): MessageSendResponse = api.sendMessage(messageId, message, retrofitTag)
 
     override fun unlabelMessages(idList: IDList) = api.unlabelMessages(idList)
 
@@ -246,33 +355,36 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun createOrganization(body: CreateOrganizationBody): OrganizationResponse? = api.createOrganization(body)
 
-    override fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
+    override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
 
-    override fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
+    override suspend fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
 
-    override fun fetchPaymentsStatus(): PaymentsStatusResponse = api.fetchPaymentsStatus()
+    override suspend fun fetchPaymentsStatus(): PaymentsStatusResponse = api.fetchPaymentsStatus()
 
-    override fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse = api.checkSubscription(body)
+    override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
+        api.checkSubscription(body)
 
-    override fun donate(body: DonateBody): ResponseBody? = api.donate(body)
+    override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
+        api.createUpdateSubscription(body)
 
-    override fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse = api.createUpdateSubscription(body)
-
-    override fun createUpdatePaymentMethod(body: TokenPaymentBody): Call<PaymentMethodResponse> = api.createUpdatePaymentMethod(body)
+    override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
+        api.createUpdatePaymentMethod(body)
 
     override fun fetchAvailablePlans(currency: String, cycle: Int): AvailablePlansResponse = api.fetchAvailablePlans(currency, cycle)
 
     override fun verifyPayment(body: VerifyBody): VerifyResponse = api.verifyPayment(body)
 
-    override fun createPaymentToken(body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse> = api.createPaymentToken(body)
+    override fun createPaymentToken(
+        body: CreatePaymentTokenBody,
+        token: String?,
+        tokenType: String?
+    ): Call<CreatePaymentTokenSuccessResponse> = api.createPaymentToken(body, token, tokenType)
 
     override fun getPaymentToken(token: String): Call<GetPaymentTokenResponse> = api.getPaymentToken(token)
 
-    override fun reportBug(OSName: String, appVersion: String, client: String, clientVersion: String, title: String, description: String, username: String, email: String): ResponseBody
-            = api.reportBug(OSName, appVersion, client, clientVersion, title, description, username, email)
+    override fun reportBug(OSName: String, appVersion: String, client: String, clientVersion: String, title: String, description: String, username: String, email: String): ResponseBody = api.reportBug(OSName, appVersion, client, clientVersion, title, description, username, email)
 
-    override fun postPhishingReport(messageId: String, messageBody: String, mimeType: String): ResponseBody?
-            = api.postPhishingReport(messageId, messageBody, mimeType)
+    override fun postPhishingReport(messageId: String, messageBody: String, mimeType: String): ResponseBody? = api.postPhishingReport(messageId, messageBody, mimeType)
 
     override fun resetMailboxToken(): ResetTokenResponse? = api.resetMailboxToken()
 
@@ -284,16 +396,19 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun updateNotify(updateNotify: Boolean): ResponseBody? = api.updateNotify(updateNotify)
 
-    override fun updateNotificationEmail(srpSession: String, clientEpheremal: String, clientProof: String, twoFactorCode: String?, email: String): SrpResponseBody?
-            = api.updateNotificationEmail(srpSession, clientEpheremal, clientProof, twoFactorCode, email)
+    override fun updateNotificationEmail(srpSession: String, clientEpheremal: String, clientProof: String, twoFactorCode: String?, email: String): SrpResponseBody? = api.updateNotificationEmail(srpSession, clientEpheremal, clientProof, twoFactorCode, email)
 
     override fun updateLoginPassword(passwordChangeBody: PasswordChange): SrpResponseBody? = api.updateLoginPassword(passwordChangeBody)
 
     override fun upgradeLoginPassword(upgradePasswordBody: UpgradePasswordBody): ResponseBody? = api.upgradeLoginPassword(upgradePasswordBody)
 
-    override fun fetchMailSettings(): MailSettingsResponse = api.fetchMailSettings()
+    @Deprecated(message = "Use non-blocking version of the function", replaceWith = ReplaceWith("fetchMailSettings()"))
+    override fun fetchMailSettingsBlocking(): MailSettingsResponse = api.fetchMailSettingsBlocking()
 
-    override fun fetchMailSettings(username: String): MailSettingsResponse = api.fetchMailSettings(username)
+    override suspend fun fetchMailSettings(): MailSettingsResponse = api.fetchMailSettings()
+
+    override fun fetchMailSettingsBlocking(username: String): MailSettingsResponse =
+        api.fetchMailSettingsBlocking(username)
 
     override fun updateSignature(signature: String): ResponseBody? = api.updateSignature(signature)
 
@@ -305,9 +420,11 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun updateAutoShowImages(autoShowImages: Int): ResponseBody? = api.updateAutoShowImages(autoShowImages)
 
-    override fun fetchUserInfo(): UserInfo = api.fetchUserInfo()
+    override fun fetchUserInfoBlocking(): UserInfo = api.fetchUserInfoBlocking()
 
-    override fun fetchUserInfo(username: String): UserInfo = api.fetchUserInfo(username)
+    override suspend fun fetchUserInfo(): UserInfo = api.fetchUserInfo()
+
+    override fun fetchUserInfoBlocking(username: String): UserInfo = api.fetchUserInfoBlocking(username)
 
     override fun fetchKeySalts(): KeySalts = api.fetchKeySalts()
 
@@ -315,8 +432,7 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun postHumanVerification(body: PostHumanVerificationBody): ResponseBody? = api.postHumanVerification(body)
 
-    override fun createUser(username: String, password: PasswordVerifier, updateMe: Boolean, tokenType: String, token: String, timestamp: String, payload: String): UserInfo
-            = api.createUser(username, password, updateMe, tokenType, token, timestamp, payload)
+    override fun createUser(username: String, password: PasswordVerifier, updateMe: Boolean, tokenType: String, token: String, timestamp: String, payload: String): UserInfo = api.createUser(username, password, updateMe, tokenType, token, timestamp, payload)
 
     override fun sendVerificationCode(verificationCodeBody: VerificationCodeBody): ResponseBody = api.sendVerificationCode(verificationCodeBody)
 

@@ -20,7 +20,6 @@ package ch.protonmail.android.activities
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
@@ -31,7 +30,6 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import butterknife.OnClick
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
@@ -40,15 +38,12 @@ import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.PasswordChangeEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.ChangePasswordJob
-import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.jobs.user.FetchUserSettingsJob
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_change_password.*
-
-/**
- * Created by dkadrikj on 10/22/16.
- */
 
 class ChangePasswordActivity : BaseActivity() {
 
@@ -60,9 +55,7 @@ class ChangePasswordActivity : BaseActivity() {
     private var currentPassword: ByteArray? = null
     private var currentMailboxLoginPassword: ByteArray? = null
 
-    override fun isPreventingScreenshots(): Boolean {
-        return true
-    }
+    override fun isPreventingScreenshots(): Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,8 +66,8 @@ class ChangePasswordActivity : BaseActivity() {
         user = mUserManager.user
 
         if (user != null) {
-            hasTwoFactor = mUserManager.userSettings!!.twoFactor == 1
-            singlePassMode = mUserManager.userSettings!!.passwordMode == Constants.PasswordMode.SINGLE
+            hasTwoFactor = mUserManager.userSettings?.twoFactor == 1
+            singlePassMode = mUserManager.userSettings?.passwordMode == Constants.PasswordMode.SINGLE
         }
 
         if (singlePassMode) {
@@ -92,9 +85,7 @@ class ChangePasswordActivity : BaseActivity() {
         ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_change_password
-    }
+    override fun getLayoutId(): Int = R.layout.activity_change_password
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
@@ -108,7 +99,11 @@ class ChangePasswordActivity : BaseActivity() {
 
     @OnClick(R.id.save)
     fun onSaveClicked() {
-        if (!TextUtils.isEmpty(currentPasswordEditText.text.toString()) && !TextUtils.isEmpty(newPassword.text.toString()) && !TextUtils.isEmpty(newPasswordConfirm.text.toString())) {
+        if (
+            !TextUtils.isEmpty(currentPasswordEditText.text.toString()) &&
+            !TextUtils.isEmpty(newPassword.text.toString()) &&
+            !TextUtils.isEmpty(newPasswordConfirm.text.toString())
+        ) {
             progressContainer.visibility = View.VISIBLE
             currentPassword = currentPasswordEditText.text.toString().toByteArray() /*TODO passphrase*/
             if (hasTwoFactor) {
@@ -138,15 +133,16 @@ class ChangePasswordActivity : BaseActivity() {
     }
 
     @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
-        finish()
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 
     @Subscribe
     fun onPasswordChangeEvent(event: PasswordChangeEvent) {
         progressContainer.visibility = View.GONE
         if (event.status == AuthStatus.SUCCESS) {
+            val username = mUserManager.username
+            mJobManager.addJobInBackground(FetchUserSettingsJob(username))
             saveLastInteraction()
             finish()
         }
@@ -155,7 +151,11 @@ class ChangePasswordActivity : BaseActivity() {
     private fun checkAndExecutePasswordChange(twoFactorCode: String?) {
         val newPassString = newPassword.text.toString()
         val newPassConfirmString = newPasswordConfirm.text.toString()
-        if (currentPassword?.isEmpty() == true || TextUtils.isEmpty(twoFactorCode) && hasTwoFactor || TextUtils.isEmpty(newPassString) || TextUtils.isEmpty(newPassConfirmString)) {
+        val incompleteInput = currentPassword?.isEmpty() == true || newPassString.isEmpty() ||
+            newPassConfirmString.isEmpty()
+        val incompleteTwoFactorCode = hasTwoFactor && twoFactorCode.isNullOrEmpty()
+
+        if (incompleteInput || incompleteTwoFactorCode) {
             showToast(R.string.new_passwords_not_valid, Toast.LENGTH_SHORT)
             return
         }
@@ -163,7 +163,13 @@ class ChangePasswordActivity : BaseActivity() {
             showToast(R.string.new_passwords_do_not_match, Toast.LENGTH_SHORT)
             progressContainer.visibility = View.GONE
         } else {
-            val job = ChangePasswordJob(passwordType, mUserManager.userSettings!!.passwordMode, currentPassword, twoFactorCode, newPassString.toByteArray() /*TODO passphrase*/)
+            val job = ChangePasswordJob(
+                passwordType,
+                mUserManager.userSettings!!.passwordMode,
+                currentPassword,
+                twoFactorCode,
+                newPassString.toByteArray() /*TODO passphrase*/
+            )
             mJobManager.addJobInBackground(job)
         }
     }
@@ -171,7 +177,10 @@ class ChangePasswordActivity : BaseActivity() {
     private fun checkAndExecuteMailboxPasswordChange(twoFactorCode: String?) {
         val newPassString = mailboxNewPassword.text.toString()
         val newPassConfirmString = mailboxNewPasswordConfirm.text.toString()
-        if (currentMailboxLoginPassword?.isEmpty() == true || TextUtils.isEmpty(twoFactorCode) && hasTwoFactor || TextUtils.isEmpty(newPassString) || TextUtils.isEmpty(newPassConfirmString)) {
+        val incompleteInput = currentPassword?.isEmpty() == true || newPassString.isEmpty() ||
+            newPassConfirmString.isEmpty()
+        val incompleteTwoFactorCode = hasTwoFactor && twoFactorCode.isNullOrEmpty()
+        if (incompleteInput || incompleteTwoFactorCode) {
             showToast(R.string.new_passwords_not_valid, Toast.LENGTH_SHORT)
             return
         }
@@ -180,7 +189,13 @@ class ChangePasswordActivity : BaseActivity() {
             progressContainer.visibility = View.GONE
         } else {
             if (passwordType == Constants.PASSWORD_TYPE_MAILBOX) {
-                val job = ChangePasswordJob(passwordType, Constants.PasswordMode.DUAL, currentMailboxLoginPassword, twoFactorCode, newPassString.toByteArray() /*TODO passphrase*/)
+                val job = ChangePasswordJob(
+                    passwordType,
+                    Constants.PasswordMode.DUAL,
+                    currentMailboxLoginPassword,
+                    twoFactorCode,
+                    newPassString.toByteArray() /*TODO passphrase*/
+                )
                 mJobManager.addJobInBackground(job)
             }
         }

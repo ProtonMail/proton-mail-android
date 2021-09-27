@@ -51,8 +51,8 @@ object MenuMatchers {
     }
 
     /**
-     * Matches menu item by its tag value.
-     * @param tag - expected menu item tag (which is the same as menu item name)
+     * Matches menu item by its name.
+     * @param name - expected name
      */
     fun withLabelOrFolderName(name: String): Matcher<RecyclerView.ViewHolder> {
         return object : BoundedMatcher<RecyclerView.ViewHolder, DrawerAdapter.ViewHolder<*>>(DrawerAdapter.ViewHolder::class.java) {

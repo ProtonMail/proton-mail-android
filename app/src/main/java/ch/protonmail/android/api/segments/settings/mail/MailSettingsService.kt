@@ -30,36 +30,44 @@ import retrofit2.Call
 
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.PUT
+import retrofit2.http.Tag
 
 // TODO: 8/20/18 Better error handling, in a single place
 interface MailSettingsService {
 
-    @GET("settings/mail")
+    @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchMailSettings(): Call<MailSettingsResponse>
+    fun fetchMailSettingsCall(): Call<MailSettingsResponse>
 
-    @GET("settings/mail")
+    @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchMailSettings(@Tag retrofitTag: RetrofitTag): Call<MailSettingsResponse>
+    suspend fun fetchMailSettings(): MailSettingsResponse
 
-    @PUT("settings/mail/display")
+    @GET("mail/v4/settings")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    fun fetchMailSettingsCall(@Tag retrofitTag: RetrofitTag): Call<MailSettingsResponse>
+
+    @PUT("mail/v4/settings/display")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateDisplay(@Body displayName: DisplayName): Call<MailSettingsResponse>
 
-    @PUT("settings/mail/signature")
+    @PUT("mail/v4/settings/signature")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateSignature(@Body signature: Signature): Call<ResponseBody>
 
-    @PUT("settings/mail/swipeleft")
+    @PUT("mail/v4/settings/swipeleft")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateLeftSwipe(@Body swipeLeft: SwipeLeft): Call<ResponseBody>
 
-    @PUT("settings/mail/swiperight")
+    @PUT("mail/v4/settings/swiperight")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateRightSwipe(@Body swipeRight: SwipeRight): Call<ResponseBody>
 
-    @PUT("settings/mail/images")
+    @PUT("mail/v4/settings/images")
     fun updateAutoShowImages(@Body showImages: ShowImages): Call<ResponseBody>
 
 }

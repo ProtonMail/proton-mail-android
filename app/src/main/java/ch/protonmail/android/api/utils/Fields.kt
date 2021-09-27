@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -121,6 +121,7 @@ object Fields {
     object Message {
         const val MESSAGE_IDS = "MessageIDs"
         const val LABEL_ID = "LabelID"
+        const val CURRENT_LABEL_ID = "CurrentLabelID"
         const val IDS = "IDs"
         const val MESSAGE = "Message"
 
@@ -135,6 +136,8 @@ object Fields {
         const val SELF = "self"
         const val TOTAL = "Total"
         const val SENDER = "Sender"
+        const val ID = "ID"
+        const val UNREAD = "Unread"
 
         object Send {
             const val EXPIRES_IN = "ExpiresIn"
@@ -196,7 +199,6 @@ object Fields {
         const val NAME = "Name"
         const val NEWS = "News"
         const val NOTIFY = "Notify"
-        const val ORG_PRIVATE_KEY = "OrganizationPrivateKey"
         const val PASSWORD_MODE = "PasswordMode"
         const val PRIVATE = "Private"
         const val RESET = "Reset"
@@ -249,6 +251,7 @@ object Fields {
         const val KEY_SALTS = "KeySalts"
         const val KEY_ID = "ID"
         const val KEYS = "Keys"
+        const val USER_KEYS = "UserKeys"
         const val ORGANIZATION_KEY = "OrganizationKey"
 
         const val DOMAIN_ID = "DomainID"

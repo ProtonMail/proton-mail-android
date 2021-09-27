@@ -41,6 +41,7 @@ class SettingsItemUiModel {
     var settingDisabled: Boolean = false
     var toggleListener: ((View, Boolean) -> Unit)? = { _: View, _: Boolean -> }
     var editTextListener: (View) -> Unit = {}
+    var editTextChangeListener: (String) -> Unit = {}
 
     constructor(settingId: String,
                 settingHeader: String,
@@ -60,6 +61,7 @@ class SettingsItemUiModel {
         this.settingDisabled = false
         this.toggleListener = { _: View, _: Boolean -> }
         this.editTextListener = {}
+        this.editTextChangeListener = {}
     }
 
     enum class SettingsItemTypeEnum {

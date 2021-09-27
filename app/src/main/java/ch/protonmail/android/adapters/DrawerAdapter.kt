@@ -28,14 +28,16 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.uiModel.DrawerItemUiModel
-import ch.protonmail.android.uiModel.DrawerItemUiModel.*
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Divider
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Header
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
 import ch.protonmail.android.utils.extensions.inflate
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.android.views.DrawerHeaderView
-import ch.protonmail.libs.core.arch.invoke
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
+import me.proton.core.util.kotlin.invoke
 
 // region constants
 /** View types for Adapter */

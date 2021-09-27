@@ -30,7 +30,7 @@ import ch.protonmail.android.core.LOGIN_STATE_TO_INBOX
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
-import ch.protonmail.android.gcm.GcmUtil
+import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.utils.extensions.setBarColors
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToMailbox
@@ -89,7 +89,7 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
             AuthStatus.SUCCESS -> {
                 eventsUnregistered = true
                 ProtonMailApplication.getApplication().bus.unregister(this)
-                GcmUtil.setTokenSent(false) // force GCM to register new user
+                FcmUtil.setTokenSent(mUserManager.username, false) // force FCM to register new user
                 mUserManager.loginState = LOGIN_STATE_TO_INBOX
                 moveToMailbox()
                 saveLastInteraction()

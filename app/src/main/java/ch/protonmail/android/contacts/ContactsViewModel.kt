@@ -18,15 +18,34 @@
  */
 package ch.protonmail.android.contacts
 
-import androidx.lifecycle.ViewModel
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
+import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.core.UserManager
-import javax.inject.Inject
+import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.fetch.FetchContactsData
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
+import timber.log.Timber
 
-/**
- * Created by Kamil Rajtar on 23.08.18.  */
-class ContactsViewModel @Inject constructor(private val userManager: UserManager) : ViewModel() {
+class ContactsViewModel @ViewModelInject constructor(
+    private val userManager: UserManager,
+    private val fetchContactsData: FetchContactsData,
+    verifyConnection: VerifyConnection,
+    networkConfigurator: NetworkConfigurator
+) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
-    fun isPaidUser(): Boolean {
-        return userManager.user.isPaidUser
+    private val fetchContactsTrigger: MutableLiveData<Unit> = MutableLiveData()
+
+    val fetchContactsResult: LiveData<Boolean> =
+        fetchContactsTrigger.switchMap { fetchContactsData() }
+
+    fun isPaidUser(): Boolean = userManager.user.isPaidUser
+
+    fun fetchContacts() {
+        Timber.v("fetchContacts")
+        fetchContactsTrigger.value = Unit
     }
+
 }

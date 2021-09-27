@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -58,7 +58,7 @@ public class PostArchiveJob extends ProtonMailCounterJob {
                 .getDatabase();
         int totalUnread = 0;
         for (String id : mMessageIds) {
-            final Message message = messageDetailsRepository.findMessageById(id);
+            final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if (markMessageLocally(countersDatabase, message)) {
                     totalUnread++;
@@ -70,7 +70,7 @@ public class PostArchiveJob extends ProtonMailCounterJob {
                         }
                     }
                 }
-                messageDetailsRepository.saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageInDB(message);
             }
         }
 
@@ -102,13 +102,13 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         } else {
             message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
         }
-        messageDetailsRepository.saveMessageInDB(message);
+        getMessageDetailsRepository().saveMessageInDB(message);
         return unreadIncrease;
     }
 
     @Override
     public void onRun() throws Throwable {
-        mApi.labelMessages(new IDList(String.valueOf(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue()), mMessageIds));
+        getApi().labelMessages(new IDList(String.valueOf(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue()), mMessageIds));
     }
 
     @Override

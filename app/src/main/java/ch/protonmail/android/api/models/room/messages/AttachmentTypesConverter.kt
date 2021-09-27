@@ -21,12 +21,11 @@ package ch.protonmail.android.api.models.room.messages
 import androidx.room.TypeConverter
 import ch.protonmail.android.api.models.AttachmentHeaders
 
-/**
- * Created by Kamil Rajtar on 15.07.18.  */
-class AttachmentTypesConverter{
-	@TypeConverter
-	fun attachmentHeadersToString(attachmentHeaders:AttachmentHeaders?)=attachmentHeaders?.toString()
+class AttachmentTypesConverter {
+    @TypeConverter
+    fun attachmentHeadersToString(attachmentHeaders: AttachmentHeaders?) = attachmentHeaders?.toString()
 
-	@TypeConverter
-	fun stringToAttachmentHeaders(attachmentHeadersString:String?)=attachmentHeadersString?.let(AttachmentHeaders::fromString)
+    @TypeConverter
+    fun stringToAttachmentHeaders(attachmentHeadersString: String?) =
+        attachmentHeadersString?.let(AttachmentHeaders::fromString)
 }

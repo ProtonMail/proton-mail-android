@@ -29,24 +29,32 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseConnectivityActivity;
+import ch.protonmail.android.activities.fragments.BillingFragment;
 import ch.protonmail.android.activities.fragments.CreateAccountFragment;
 import ch.protonmail.android.activities.fragments.CreatePasswordsFragment;
+import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaDialogFragment;
 import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaFragment;
-import ch.protonmail.android.activities.fragments.HumanVerificationFragment;
+import ch.protonmail.android.activities.fragments.HumanVerificationDialogFragment;
 import ch.protonmail.android.activities.fragments.SelectAccountTypeFragment;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.LoginInfoResponse;
 import ch.protonmail.android.api.models.User;
@@ -58,7 +66,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AddressSetupEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.AvailablePlansEvent;
-import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.GetDirectEnabledEvent;
 import ch.protonmail.android.events.KeysSetupEvent;
 import ch.protonmail.android.events.Status;
@@ -66,20 +73,25 @@ import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.GetDirectEnabledJob;
-import ch.protonmail.android.jobs.OnFirstLoginJob;
 import ch.protonmail.android.jobs.SendVerificationCodeJob;
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
-import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.NetworkUtil;
+import ch.protonmail.android.utils.UiUtil;
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel;
+import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import timber.log.Timber;
 
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
-/**
- * Created by dkadrikj on 16.7.15.
- */
-public class CreateAccountActivity extends BaseConnectivityActivity implements CreateAccountFragment.ICreateAccountListener {
+@AndroidEntryPoint
+public class CreateAccountActivity extends BaseConnectivityActivity implements
+        CreateAccountFragment.ICreateAccountListener,
+        BillingFragment.IBillingListener,
+        HumanVerificationDialogFragment.IHumanVerificationListener {
 
     public static final String EXTRA_WINDOW_SIZE = "window_size";
     public static final String EXTRA_ADDRESS_CHOSEN = "address_chosen";
@@ -90,18 +102,24 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     private static final String STATE_DOMAIN = "domain";
     private static final String STATE_ADDRESS = "address";
 
+    private ConnectivityBaseViewModel viewModel;
+
+    @Inject
+    protected LaunchInitialDataFetch launchInitialDataFetch;
+
     @BindView(R.id.fragmentContainer)
     View fragmentContainer;
     @BindView(R.id.progress_container)
     View mProgressContainer;
     @BindView(R.id.progress_circular)
     ProgressBar mProgressBar;
-    private Snackbar mCheckForConnectivitySnack;
 
     private SelectAccountTypeFragment selectAccountFragment;
     private CreateAccountFragment createUsernameFragment;
     private CreatePasswordsFragment createPasswordsFragment;
     private HumanVerificationCaptchaFragment captchaFragment;
+    private BillingFragment billingFragment;
+    private HumanVerificationCaptchaDialogFragment humanVerificationCaptchaDialogFragment;
 
     private String mUserName;
     private byte[] mPassword;
@@ -119,7 +137,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     private AllCurrencyPlans mAllCurrencyPlans;
     private List<String> availableDomains;
 
-    private ConnectivityRetryListener connectivityRetryListener = new ConnectivityRetryListener();
     private Constants.CurrencyType currency;
     private int amount;
     private String selectedPlanId;
@@ -132,7 +149,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     protected int getLayoutId() {
         return R.layout.activity_fragment_container;
     }
-
 
     @Override
     protected boolean shouldCheckForAutoLogout() {
@@ -147,6 +163,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(ConnectivityBaseViewModel.class);
         if (fragmentContainer != null) {
             if (savedInstanceState != null) {
                 addressChosen = savedInstanceState.getParcelable(STATE_ADDRESS);
@@ -173,12 +190,27 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
 
             checkDirectEnabled();
         }
+        viewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         ProtonMailApplication.getApplication().getBus().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.checkConnectivity();
+    }
+
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        if (fragment instanceof BillingFragment) {
+            billingFragment = (BillingFragment) fragment;
+            billingFragment.setActivityListener(this);
+        }
     }
 
     @Subscribe
@@ -205,6 +237,41 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
             mJobManager.addJobInBackground(availableDomainsJob);
         }
     }
+
+    // region BillingFragment.IBillingListener
+    @Override
+    public ProtonMailApiManager getProtonMailApiManager() {
+        return mApi;
+    }
+
+    @Override
+    public void onRequestCaptchaVerification(String token) {
+        humanVerificationCaptchaDialogFragment = HumanVerificationCaptchaDialogFragment.newInstance(token);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragmentContainer, humanVerificationCaptchaDialogFragment)
+                .commitAllowingStateLoss();
+    }
+    // endregion
+
+    // region HumanVerificationDialogFragment.IHumanVerificationListener
+    @Override
+    public void verify(Constants.TokenType tokenType, String token) {
+        if (humanVerificationCaptchaDialogFragment != null && humanVerificationCaptchaDialogFragment.isAdded()) {
+            humanVerificationCaptchaDialogFragment.dismiss();
+        }
+        billingFragment.retryPaymentAfterCaptchaValidation(token, tokenType.getTokenTypeValue());
+    }
+
+    @Override
+    public void viewLoaded() {
+        UiUtil.hideKeyboard(this);
+    }
+
+    @Override
+    public void verificationOptionChose(Constants.TokenType tokenType, String token) {
+        // noop
+    }
+    // endregion
 
     @Override
     public void onAccountSelected(Constants.AccountType selectedAccountType) {
@@ -326,22 +393,11 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     }
 
     @Override
-    public void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle) {
-        CreateSubscriptionJob job = new CreateSubscriptionJob(amount, currency, couponCode, planIds, cycle, paymentToken);
-        mJobManager.addJobInBackground(job);
-    }
-
-    @Override
     public void onPaymentOptionChosen(Constants.CurrencyType currency, int amount, String planId, int cycle) {
         this.currency = currency;
         this.selectedPlanId = planId;
         this.amount = amount;
         this.selectedCycle = cycle;
-    }
-
-    @Override
-    public void donateForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken) {
-        // noop
     }
 
     @Override
@@ -366,8 +422,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
 
     @Override
     public void offerFreeAccount(int windowHeight) {
-        HumanVerificationFragment verificationFragment = HumanVerificationFragment.newInstance(windowHeight, getMethods());
-        replaceFragment(verificationFragment, verificationFragment.getFragmentKey());
+        // noop
     }
 
     @Override
@@ -440,11 +495,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     }
 
     @Override
-    public void donateDone() {
-        // noop
-    }
-
-    @Override
     public void getAvailableDomains() {
         GetAvailableDomainsJob availableDomainsJob = new GetAvailableDomainsJob(true);
         mJobManager.addJobInBackground(availableDomainsJob);
@@ -481,7 +531,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
             if (mUserManager.isFirstLogin()) {
                 LoginService.fetchUserDetails();
                 mJobManager.start();
-                mJobManager.addJobInBackground(new OnFirstLoginJob(true));
+                launchInitialDataFetch.invoke(true, true);
                 mUserManager.firstLoginDone();
             }
         }
@@ -504,17 +554,33 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
         }
     }
 
-    @Subscribe
-    public void onConnectivityEvent(ConnectivityEvent event) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(connectivityRetryListener, this);
+    private void onConnectivityEvent(Constants.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", connectivity.name());
+        if (connectivity.equals(Constants.ConnectionState.NO_INTERNET)) {
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                    mSnackLayout,
+                    mUserManager.getUser(),
+                    this,
+                    onConnectivityCheckRetry(),
+                    null,
+                    connectivity == Constants.ConnectionState.NO_INTERNET
+            ).show();
         } else {
             if (captchaFragment != null && captchaFragment.isAdded()) {
                 captchaFragment.connectionArrived();
             }
-            mPingHasConnection = true;
-            hideNoConnSnack();
+            networkSnackBarUtil.hideAllSnackBars();
         }
+    }
+
+    @NotNull
+    private Function0<Unit> onConnectivityCheckRetry() {
+        return () -> {
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
+            viewModel.checkConnectivityDelayed();
+            checkDirectEnabled();
+            return null;
+        };
     }
 
     private void checkDirectEnabled() {
@@ -557,7 +623,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
                 break;
             case NO_NETWORK:
                 checkDirectEnabled();
-                showNoConnSnack(connectivityRetryListener, this);
+                onConnectivityEvent(Constants.ConnectionState.NO_INTERNET);
                 break;
         }
     }
@@ -568,18 +634,5 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
         outState.putString(STATE_USERNAME, mUserName);
         outState.putString(STATE_DOMAIN, mDomain);
         outState.putParcelable(STATE_ADDRESS, addressChosen);
-    }
-
-    protected class ConnectivityRetryListener extends RetryListener {
-
-        @Override
-        public void onClick(View v) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(
-                    getMSnackLayout(), CreateAccountActivity.this);
-            mCheckForConnectivitySnack.show();
-            checkDirectEnabled();
-            super.onClick(v);
-        }
     }
 }

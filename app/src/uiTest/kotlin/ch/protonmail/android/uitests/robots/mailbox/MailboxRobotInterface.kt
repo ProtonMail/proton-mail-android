@@ -20,127 +20,196 @@
 
 package ch.protonmail.android.uitests.robots.mailbox
 
+import android.widget.ImageView
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndFlag
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndRecipient
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.robots.mailbox.message.MessageRobot
+import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import me.proton.core.test.android.instrumented.CoreRobot
 
-interface MailboxRobotInterface {
+interface MailboxRobotInterface : CoreRobot {
 
     fun swipeLeftMessageAtPosition(position: Int): Any {
         UIActions.recyclerView
-            .saveMessageSubjectAtPosition(R.id.messages_list_view, position, (::SetSwipeLeftMessage)())
-        UIActions.recyclerView.swipeRightToLeftObjectWithIdAtPosition(R.id.messages_list_view, position)
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSwipeLeftMessage)())
+        UIActions.recyclerView.common.swipeRightToLeftObjectWithIdAtPosition(messagesRecyclerViewId, position)
         return Any()
     }
 
     fun longClickMessageOnPosition(position: Int): Any {
         UIActions.recyclerView
-            .saveMessageSubjectAtPosition(R.id.messages_list_view, position, (::SetLongClickMessage)())
-        UIActions.recyclerView.longClickItemInRecyclerView(R.id.messages_list_view, position)
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetLongClickMessage)())
+        UIActions.recyclerView.common.longClickItemInRecyclerView(messagesRecyclerViewId, position)
         return Any()
     }
 
     fun deleteMessageWithSwipe(position: Int): Any {
         UIActions.recyclerView
-            .saveMessageSubjectAtPosition(R.id.messages_list_view, position, (::SetDeleteWithSwipeMessage)())
-        UIActions.recyclerView.swipeItemLeftToRightOnPosition(R.id.messages_list_view, position)
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetDeleteWithSwipeMessage)())
+        UIActions.recyclerView.common.swipeItemLeftToRightOnPosition(messagesRecyclerViewId, position)
         return Any()
     }
 
     fun searchBar(): SearchRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.search)
-        UIActions.id.clickViewWithId(R.id.search)
+        view.withId(R.id.search).click()
         return SearchRobot()
     }
 
     fun compose(): ComposerRobot {
-        UIActions.id.clickViewWithId(R.id.compose)
+        view.withId(R.id.compose).click()
         return ComposerRobot()
     }
 
     fun menuDrawer(): MenuRobot {
-        UIActions.id.openMenuDrawerWithId(R.id.drawer_layout)
+        view.withId(drawerLayoutId).wait(15_000L).openDrawer()
         return MenuRobot()
     }
 
-    fun selectMessage(position: Int): MessageRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.messages_list_view)
-        UIActions.recyclerView.saveMessageSubjectAtPosition(R.id.messages_list_view, position, (::SetSelectMessage)())
-        UIActions.recyclerView.clickOnRecyclerViewItemByPosition(R.id.messages_list_view, 1)
+    fun clickMessageByPosition(position: Int): MessageRobot {
+        UIActions.wait.forViewWithId(messagesRecyclerViewId)
+        UIActions.recyclerView
+            .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSelectMessage)())
+        UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(messagesRecyclerViewId, position)
         return MessageRobot()
+    }
+
+    fun clickMessageBySubject(subject: String): MessageRobot {
+        view.instanceOf(ImageView::class.java).withParent(view.withId(R.id.messages_list_view)).waitUntilGone()
+        recyclerView
+            .withId(messagesRecyclerViewId)
+            .waitUntilPopulated()
+            .onHolderItem(withMessageSubject(subject))
+            .click()
+        return MessageRobot()
+    }
+
+    fun clickFirstMatchedMessageBySubject(subject: String): MessageRobot {
+        view.instanceOf(ImageView::class.java).withParent(view.withId(R.id.messages_list_view)).waitUntilGone()
+        recyclerView
+            .withId(messagesRecyclerViewId)
+            .waitUntilPopulated()
+            .onHolderItem(withFirstInstanceMessageSubject(subject))
+            .click()
+        return MessageRobot()
+    }
+
+    fun refreshMessageList(): Any {
+        view.withId(messagesRecyclerViewId).swipeDown()
+        return Any()
     }
 
     /**
      * Contains all the validations that can be performed by [InboxRobot].
      */
     @Suppress("ClassName")
-    class verify {
-
-        fun messageMoved(messageSubject: String) {
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.messageTitleTextView, messageSubject)
-        }
+    open class verify : CoreRobot {
 
         fun draftWithAttachmentSaved(draftSubject: String) {
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.messageTitleTextView, draftSubject)
+            UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, draftSubject)
         }
 
         fun mailboxLayoutShown() {
-            UIActions.wait.untilViewWithIdAppears(R.id.swipe_refresh_layout)
+            view.withId(R.id.swipe_refresh_layout).wait()
+        }
+
+        fun messageDeleted(subject: String, date: String) {
+            UIActions.recyclerView
+                .common.waitForBeingPopulated(messagesRecyclerViewId)
+                .messages.checkDoesNotContainMessage(messagesRecyclerViewId, subject, date)
+        }
+
+        fun messageWithSubjectExists(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.wait.forViewWithText(subject)
+            UIActions.recyclerView.common
+                .scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
+        }
+
+        fun messageWithSubjectHasRepliedFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageReplyTextView)
+                )
+        }
+
+        fun messageWithSubjectHasRepliedAllFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageReplyAllTextView)
+                )
+        }
+
+        fun messageWithSubjectHasForwardedFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageForwardTextView)
+                )
+        }
+
+        fun messageWithSubjectAndRecipientExists(subject: String, to: String) {
+            recyclerView
+                .withId(messagesRecyclerViewId)
+                .waitUntilPopulated()
+                .scrollToHolder(withMessageSubjectAndRecipient(subject, to))
         }
     }
 
-    fun setSwipedLeftMessage(text: String) {
-        swipeLeftMessageText = text
-    }
-
-    fun setSelectedMessage(text: String) {
-        selectedMessageText = text
-    }
-
-    fun setDeletedMessage(text: String) {
-        deletedMessageText = text
-    }
-
     private class SetLongClickMessage : (String, String) -> Unit {
-        override fun invoke(message: String, date: String) {
-            longClickedMessageText = message
+        override fun invoke(subject: String, date: String) {
+            longClickedMessageSubject = subject
             longClickedMessageDate = date
         }
     }
 
     private class SetSwipeLeftMessage : (String, String) -> Unit {
         override fun invoke(text: String, date: String) {
-            swipeLeftMessageText = text
+            swipeLeftMessageSubject = text
             swipeLeftMessageDate = date
         }
     }
 
     private class SetDeleteWithSwipeMessage : (String, String) -> Unit {
         override fun invoke(text: String, date: String) {
-            deletedMessageText = text
+            deletedMessageSubject = text
             deletedMessageDate = date
         }
     }
 
     private class SetSelectMessage : (String, String) -> Unit {
-        override fun invoke(text: String, date: String) {
-            selectedMessageText = text
+        override fun invoke(subject: String, date: String) {
+            selectedMessageSubject = subject
             selectedMessageDate = date
         }
     }
 
     companion object {
-        var longClickedMessageText = ""
+        var longClickedMessageSubject = ""
         var longClickedMessageDate = ""
-        var swipeLeftMessageText = ""
+        var swipeLeftMessageSubject = ""
         var swipeLeftMessageDate = ""
-        var selectedMessageText = ""
+        var selectedMessageSubject = ""
         var selectedMessageDate = ""
-        var deletedMessageText = ""
+        var deletedMessageSubject = ""
         var deletedMessageDate = ""
+
+        private const val messagesRecyclerViewId = R.id.messages_list_view
+        private const val messageTitleTextViewId = R.id.messageTitleTextView
+        private const val drawerLayoutId = R.id.drawer_layout
     }
 }

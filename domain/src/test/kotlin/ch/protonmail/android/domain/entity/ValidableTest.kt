@@ -46,7 +46,7 @@ internal class ValidableTest {
 
         assert that fails<ValidationException> {
             EmailTestValidable("invalid").requireValid()
-        } with "Validable did not validate successfully: EmailTestValidable(s=invalid)"
+        } with "Regex mismatch: <invalid>, <.+@.+\\..+>"
     }
 
     @Test

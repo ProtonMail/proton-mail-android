@@ -27,7 +27,6 @@ import android.net.ConnectivityManager
 import android.os.Build
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.receivers.ConnectivityBroadcastReceiver
 import ch.protonmail.android.utils.AppUtil
 import android.content.Intent
@@ -63,7 +62,5 @@ class ConnectivityService : JobService(), ConnectivityBroadcastReceiver.Connecti
             alarmReceiver.setAlarm(this)
             ProtonMailApplication.getApplication().startJobManager()
         }
-
-        AppUtil.postEventOnUi(ConnectivityEvent(isOnline))
     }
 }

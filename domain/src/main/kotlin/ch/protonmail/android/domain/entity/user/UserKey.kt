@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -32,9 +32,9 @@ import ch.protonmail.android.domain.entity.requireValid
 @Validated
 data class UserKey(
     val id: Id,
-    val version: Int,
+    val version: UInt,
     val privateKey: PgpField.PrivateKey,
-    val token: PgpField.Message
+    val token: PgpField.Message?
 )
 
 /**
@@ -49,10 +49,20 @@ data class UserKeys(
     val primaryKey: UserKey?,
     val keys: Collection<UserKey>
 ) : Validable by Validator<UserKeys>({
-    primaryKey == null && keys.isEmpty() ||
-        primaryKey in keys
-}) {
+        require(
+            primaryKey == null && keys.isEmpty() ||
+                primaryKey in keys
+        )
+    }) {
     init { requireValid() }
 
     val hasKeys get() = keys.isNotEmpty()
+
+    companion object {
+
+        /**
+         * Empty [UserKeys]
+         */
+        val Empty get() = UserKeys(null, emptySet())
+    }
 }

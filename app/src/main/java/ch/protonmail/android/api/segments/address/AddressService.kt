@@ -28,17 +28,27 @@ import ch.protonmail.android.api.models.address.CondensedAddress
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Tag
 
 interface AddressService {
 
     @GET("addresses")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchAddresses(): Call<AddressesResponse>
+    fun fetchAddressesCall(): Call<AddressesResponse>
 
     @GET("addresses")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchAddresses(@Tag retrofitTag: RetrofitTag): Call<AddressesResponse>
+    suspend fun fetchAddresses(): AddressesResponse
+
+    @GET("addresses")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    fun fetchAddressesCall(@Tag retrofitTag: RetrofitTag): Call<AddressesResponse>
 
     @POST("addresses/setup")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

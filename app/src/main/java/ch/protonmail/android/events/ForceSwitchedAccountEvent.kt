@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.events
 
-class ForceSwitchedAccountEvent(
-        val toAccount: String,
-        val fromAccount: String)
+data class ForceSwitchedAccountEvent(
+    val toAccount: String,
+    val fromAccount: String
+)

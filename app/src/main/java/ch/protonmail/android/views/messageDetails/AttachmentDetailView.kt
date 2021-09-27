@@ -20,36 +20,39 @@ package ch.protonmail.android.views.messageDetails
 
 import android.content.Context
 import android.graphics.Typeface
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import android.text.format.Formatter
 import android.util.AttributeSet
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.view_attachment_detail.view.*
 
-/**
- * Created by Kamil Rajtar on 10.08.18.  */
-class AttachmentDetailView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-	: ConstraintLayout(context, attrs, defStyleAttr) {
-	init {
-		inflate(context, R.layout.view_attachment_detail, this)
-		val typefacePgp = Typeface.createFromAsset(context.assets, "pgp-icons-android.ttf")
-		attachment_modifier.typeface = typefacePgp
-		attachment_modifier.setText(R.string.pgp_lock_open)
-		attachment_modifier.setTextColor(ContextCompat.getColor(context, R.color.icon_warning))
-	}
+class AttachmentDetailView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
+    init {
+        inflate(context, R.layout.view_attachment_detail, this)
+        val typefacePgp = Typeface.createFromAsset(context.assets, "pgp-icons-android.ttf")
+        attachment_modifier.typeface = typefacePgp
+        attachment_modifier.setText(R.string.pgp_lock_open)
+        attachment_modifier.setTextColor(ContextCompat.getColor(context, R.color.icon_warning))
+    }
 
-	fun bind(fileName: CharSequence?,
-			 fileSize: Long,
-			 attachmentSpecificIcon: Int,
-			 showWarningIcon: Boolean,
-			 downloading: Boolean) {
-		attachment_name.text = fileName
-		val formattedSize = Formatter.formatShortFileSize(context, fileSize)
-		attachment_size.text = context.getString(R.string.attachment_size, formattedSize)
-		attachment_specific_icon.setImageResource(attachmentSpecificIcon)
-		attachment_modifier.visibility = if (showWarningIcon) View.VISIBLE else View.GONE
-		attachment_download_progress.visibility = if (downloading) View.VISIBLE else View.GONE
-	}
+    fun bind(
+        fileName: CharSequence?,
+        fileSize: Long,
+        attachmentSpecificIcon: Int,
+        showWarningIcon: Boolean,
+        downloading: Boolean
+    ) {
+        attachment_name.text = fileName
+        val formattedSize = Formatter.formatShortFileSize(context, fileSize)
+        attachment_size.text = context.getString(R.string.attachment_size, formattedSize)
+        attachment_specific_icon.setImageResource(attachmentSpecificIcon)
+        attachment_modifier.visibility = if (showWarningIcon) View.VISIBLE else View.GONE
+        attachment_download_progress.visibility = if (downloading) View.VISIBLE else View.GONE
+    }
 }

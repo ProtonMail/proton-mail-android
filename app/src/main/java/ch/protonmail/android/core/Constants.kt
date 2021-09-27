@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -43,7 +43,6 @@ object Constants {
     const val END_PGP = "-----END PGP MESSAGE-----"
 
     const val DIR_EMB_ATTACHMENT_DOWNLOADS = "/ProtonMail/emb_att/"
-    const val DIR_ATTACHMENT_DOWNLOADS = "/"
     const val DIR_MESSAGE_BODY_DOWNLOADS = "/ProtonMail/messages/"
 
     const val FONTS_FOLDER = "fonts/"
@@ -57,6 +56,8 @@ object Constants {
 
     // This is the app version in which the switch of the swipe gestures happens
     const val SWIPE_GESTURES_CHANGED_VERSION = 729
+    // This is the version in which the FCM migration happens
+    const val FCM_MIGRATION_VERSION = 739
 
     const val MAX_ATTACHMENTS = 100
     const val MAX_ATTACHMENT_FILE_SIZE_IN_BYTES = (25 * 1000 * 1000).toLong() // 25 MB
@@ -92,12 +93,10 @@ object Constants {
     // Address types
     const val ADDRESS_TYPE_PRIMARY = 1
 
-    // BCrypt
-    const val BCRYPT_PREFIX = "$2a$10$"
-
     // Response codes
     const val RESPONSE_CODE_OK = 1000
     const val RESPONSE_CODE_MULTIPLE_OK = 1001
+    const val RESPONSE_CODE_API_OFFLINE = 7001
 
     // JobIntentService IDs
     const val JOB_INTENT_SERVICE_ID_EVENT_UPDATER = 870
@@ -167,10 +166,10 @@ object Constants {
         const val PREF_USER_CURRENCY = "user_currency"
         const val PREF_USER_ID = "user_id"
         const val PREF_USER_NAME = "user_name"
-        const val PREF_USER_ORG_PRIVATE_KEY = "user_organization_private_key"
         const val PREF_USER_PRIVATE = "user_private"
         const val PREF_USER_SERVICES = "user_services"
         const val PREF_USING_REGULAR_API = "pref_doh_using_regular_api"
+        const val PREF_USER_LEGACY_ACCOUNT = "user_legacy_account"
 
         // permissions
         const val PREF_PERMISSION_READ_CONTACTS = "pref_permission_contacts"
@@ -283,19 +282,6 @@ object Constants {
         BUSINESS
     }
 
-    enum class VpnPlanType(val vpnPlanTypeValue: String) {
-        BASIC("vpnbasic"),
-        PLUS("vpnplus");
-
-        companion object {
-            fun fromString(vpnPlanTypeValue: String): VpnPlanType {
-                return values().find {
-                    vpnPlanTypeValue == it.vpnPlanTypeValue
-                } ?: BASIC
-            }
-        }
-    }
-
     enum class PlanType(val planTypeValue: String) {
         FREE("free"),
         PLUS("plus"),
@@ -304,7 +290,7 @@ object Constants {
         PROFESSIONAL("professional");
 
         companion object {
-            fun fromString(planTypeValue: String): PlanType {
+            fun fromString(planTypeValue: String?): PlanType {
                 return values().find {
                     planTypeValue == it.planTypeValue
                 } ?: FREE
@@ -325,8 +311,7 @@ object Constants {
 
     enum class BillingType {
         CREATE,
-        UPGRADE,
-        DONATE
+        UPGRADE
     }
 
     enum class TokenType(val tokenTypeValue: String) {
@@ -403,13 +388,12 @@ object Constants {
         UNSIGNED(0),
         SIGNED(2),
         SIGNED_ENCRYPTED(3);
+    }
 
-        companion object {
-            fun fromInt(vCardTypeValue: Int): VCardType {
-                return values().find {
-                    vCardTypeValue == it.vCardTypeValue
-                } ?: UNSIGNED
-            }
-        }
+    enum class ConnectionState {
+        PING_NEEDED,
+        CONNECTED,
+        NO_INTERNET,
+        CANT_REACH_SERVER;
     }
 }

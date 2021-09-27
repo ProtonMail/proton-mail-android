@@ -25,18 +25,21 @@ import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.moveToLogin
+import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.launch
+import java.util.Locale
 
-
+@AndroidEntryPoint
 class AccountSettingsActivity : BaseSettingsActivity() {
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_settings
-    }
+    override fun getLayoutId(): Int = R.layout.activity_settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,6 +103,19 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         val autoLockSettingValue = if (mPinValue) getString(R.string.enabled) else getString(R.string.disabled)
         setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
 
-        setValue(SettingsEnum.APP_VERSION, String.format(getString(R.string.app_version_code), AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this)))
+        setValue(
+            SettingsEnum.APP_VERSION,
+            String.format(
+                getString(R.string.app_version_code),
+                AppUtil.getAppVersionName(this),
+                AppUtil.getAppVersionCode(this)
+            )
+        )
+    }
+
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

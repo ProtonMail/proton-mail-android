@@ -22,5 +22,5 @@ package ch.protonmail.android.api.interceptors
  * Objects of this class can be attached to OkHttp's requests and be read by Interceptors.
  */
 data class RetrofitTag(
-        val usernameAuth: String? // username which we want to authorize request for, remove auth if null
+    val usernameAuth: String? // username which we want to authorize request for, remove auth if null
 )

@@ -18,36 +18,53 @@
  */
 package ch.protonmail.android.api.interceptors
 
-import androidx.annotation.VisibleForTesting
-import ch.protonmail.android.api.ProtonMailPublicService
+import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.doh.ProxyItem
-import ch.protonmail.android.api.segments.*
+import ch.protonmail.android.api.segments.AUTH_INFO_PATH
+import ch.protonmail.android.api.segments.AUTH_PATH
+import ch.protonmail.android.api.segments.HEADER_APP_VERSION
+import ch.protonmail.android.api.segments.HEADER_AUTH
+import ch.protonmail.android.api.segments.HEADER_LOCALE
+import ch.protonmail.android.api.segments.HEADER_UID
+import ch.protonmail.android.api.segments.HEADER_USER_AGENT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_NOT_ALLOWED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_SERVICE_UNAVAILABLE
+import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
+import ch.protonmail.android.api.segments.RESPONSE_CODE_UNPROCESSABLE_ENTITY
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.RequestTimeoutEvent
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
-import com.birbit.android.jobqueue.TagConstraint
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import timber.log.Timber
+import java.io.IOException
 
 // region constants
-// private const val TWO_MINUTES_IN_MILLIS = 2 * 60 * 1000L
 private const val TWENTY_FOUR_HOURS_IN_MILLIS = 24 * 60 * 60 * 1000L
-// private const val TAG = "BaseRequestInterceptor"
 // endregion
 
-abstract class BaseRequestInterceptor(protected val userManager: UserManager,
-                                      protected val jobManager: JobManager,
-                                      protected val networkUtils: QueueNetworkUtil) : Interceptor {
-
-    // this can't be required in constructor because of circular dependency when setting up networking
-    lateinit var publicService: ProtonMailPublicService
+abstract class BaseRequestInterceptor(
+    protected val userManager: UserManager,
+    protected val jobManager: JobManager,
+    protected val networkUtils: QueueNetworkUtil,
+    protected val userNotifier: UserNotifier
+) : Interceptor {
 
     private val appVersionName by lazy {
         val name = "Android_" + AppUtil.getAppVersionName(ProtonMailApplication.getApplication())
@@ -58,7 +75,7 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
         }
     }
 
-    private fun check24hExpired() : Boolean {
+    private fun check24hExpired(): Boolean {
         val user = userManager.user
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
         val proxies = Proxies.getInstance(null, prefs)
@@ -68,6 +85,7 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                 val proxy: ProxyItem? = try {
                     proxies.getCurrentActiveProxy()
                 } catch (e: Exception) {
+                    Timber.i(e, "getCurrentActiveProxy exception")
                     null
                 }
 
@@ -81,6 +99,7 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                 }
             } else {
                 // TODO: DoH: proxy list is empty, what to do here?
+                Timber.d("DoH: proxy list is empty")
             }
         } else {
             // if user has not enabled third party, do nothing
@@ -88,13 +107,13 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
         return false
     }
 
-    private fun revertToOldApiIfNeeded(user: User, timeStamp: Long?, force: Boolean) : Boolean {
-         if (force) {
-             Timber.d("force switching to old api, since the new api is not available")
-             networkUtils.networkConfigurator.networkSwitcher.reconfigureProxy(null) // force switch to old proxy
-             user.usingDefaultApi = true
-             return true
-         }
+    private fun revertToOldApiIfNeeded(user: User, timeStamp: Long?, force: Boolean): Boolean {
+        if (force) {
+            Timber.d("force switching to old api, since the new api is not available")
+            networkUtils.networkConfigurator.networkSwitcher.reconfigureProxy(null) // force switch to old proxy
+            user.usingDefaultApi = true
+            return true
+        }
 
         val currentTime = System.currentTimeMillis()
         val lastApiAttempt = timeStamp ?: currentTime // Proxies.getLastApiAttemptTimeStamp(prefs)
@@ -112,89 +131,64 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
     /**
      * @return if returned null, no need to re-authorize or HTTP 504/429 happened (there's nothing we can do)
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    fun checkIfTokenExpired(chain: Interceptor.Chain, request: Request, response: Response?): Response? {
+    fun checkResponse(response: Response?): Response? {
         if (response == null) {
             return null
         }
 
-        if(check24hExpired()) {
+        if (check24hExpired()) {
             return null
         }
 
-        if (response.code() == RESPONSE_CODE_UNAUTHORIZED) {
-            val usernameAuth = chain.request().tag(RetrofitTag::class.java)?.usernameAuth ?: userManager.username
-            val tokenManager = userManager.getTokenManager(usernameAuth)
-
-            if (tokenManager != null && !request.url().encodedPath().contains(REFRESH_PATH)) {
-                synchronized(this) {
-                    Timber.d("access token expired, trying to refresh")
-                    // get a new token with synchronous retrofit call
-                    val refreshBody = tokenManager.createRefreshBody()
-                    val refreshResponse = publicService.refreshSync(refreshBody, RetrofitTag(usernameAuth)).execute()
-                    val refreshResponseBody = refreshResponse.body()
-                    if (refreshResponseBody != null && refreshResponseBody.accessToken != null) {
-                        Timber.tag("429").i("access token expired, got correct refresh response, handle refresh in token manager")
-                        tokenManager.handleRefresh(refreshResponseBody)
-                    } else {
-                        return if (refreshResponse.code() == RESPONSE_CODE_TOO_MANY_REQUESTS) {
-                            Timber.tag("429").i("access token expired, got 429 response trying to refresh it, quitting flow")
-                            null
-                        } else {
-                            Timber.tag("429").i("access token expired, got error response (${refreshResponse.code()}) trying to refresh it (refresh token blank = ${tokenManager.isRefreshTokenBlank()}, uid blank = ${tokenManager.isUidBlank()}), logging out")
-                            ProtonMailApplication.getApplication().notifyLoggedOut(usernameAuth)
-                            jobManager.stop()
-                            jobManager.clear()
-                            jobManager.cancelJobsInBackground(null, TagConstraint.ALL)
-                            userManager.logoutOffline(usernameAuth)
-                            response
-                        }
-                    }
-
-                    // update request with new token
-                    val newRequest: Request
-                    if (tokenManager.authAccessToken != null) {
-                        Timber.d("access token expired, updating request with new token")
-                        newRequest = request.newBuilder()
-                                .header(HEADER_AUTH, tokenManager.authAccessToken!!)
-                                .header(HEADER_UID, tokenManager.uid)
-                                .header(HEADER_API_VERSION, API_VERSION)
-                                .header(HEADER_APP_VERSION, appVersionName)
-                                .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
-                                .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
-                                .build()
-                    } else {
-                        Timber.tag("429").i("access token expired, updating request without the token (should not happen!) and uid blank? ${tokenManager.isUidBlank()}")
-                        newRequest = request.newBuilder()
-                                .header(HEADER_UID, tokenManager.uid)
-                                .header(HEADER_API_VERSION, API_VERSION)
-                                .header(HEADER_APP_VERSION, appVersionName)
-                                .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
-                                .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
-                                .build()
-                    }
-                    // retry the original request which got 401 when we first tried it
-                    return chain.proceed(newRequest)
-                }
-            } else { // if received 401 error while refreshing access token, send event to logout user
-                Timber.tag("429").i("access token expired, got 401 while trying to refresh it (refresh token blank = ${tokenManager?.isRefreshTokenBlank()}, uid blank = ${tokenManager?.isUidBlank()})") // TODO will log `null` if TokenManager was null
-                ProtonMailApplication.getApplication().notifyLoggedOut(usernameAuth)
-                userManager.logoutOffline(usernameAuth)
-                return response
+        when {
+            response.code() == RESPONSE_CODE_GATEWAY_TIMEOUT -> {
+                Timber.d("'gateway timeout' when processing request")
+                AppUtil.postEventOnUi(RequestTimeoutEvent())
             }
-        } else if (response.code() == RESPONSE_CODE_GATEWAY_TIMEOUT) {
-            Timber.d("'gateway timeout' when processing request")
-            AppUtil.postEventOnUi(RequestTimeoutEvent())
-        } else if (response.code() == RESPONSE_CODE_TOO_MANY_REQUESTS) {
-            Timber.d("'too many requests' when processing request")
-        } else if (response.code() == RESPONSE_CODE_SERVICE_UNAVAILABLE) { // 503
-            Timber.d("'service unavailable' when processing request")
+            response.code() == RESPONSE_CODE_TOO_MANY_REQUESTS -> {
+                Timber.d("'too many requests' when processing request")
+            }
+            response.code() == RESPONSE_CODE_SERVICE_UNAVAILABLE -> { // 503
+                Timber.d("'service unavailable' when processing request")
+                networkUtils.retryPingAsPreviousRequestWasInconclusive()
+            }
+            response.code() == RESPONSE_CODE_UNPROCESSABLE_ENTITY -> {
+                Timber.d("'unprocessable entity' when processing request")
+                var responseBodyError = response.message()
+                var responseBody: ResponseBody? = null
+                try {
+                    responseBody = Gson().fromJson(
+                        response.peekBody(Long.MAX_VALUE).string(),
+                        ResponseBody::class.java
+                    )
+                    responseBodyError = responseBody.error
+                } catch (e: JsonSyntaxException) {
+                    Timber.d(e, "response had more bytes than MAX_VALUE")
+                } catch (e: IOException) {
+                    Timber.d(e)
+                }
+                // when we introduced global handling of 422 http error code it resulted with toast
+                // showing up in places where we have questionable behaviours that don't really cause
+                // issues for the end user. And sadly the errors provided by the API weren't of any
+                // particular use to the end user. So for now we show only the errors for this error codes.
+                if (responseBody?.code in arrayOf(
+                        RESPONSE_CODE_MESSAGE_READING_RESTRICTED,
+                        RESPONSE_CODE_OLD_PASSWORD_INCORRECT,
+                        RESPONSE_CODE_ERROR_VERIFICATION_NEEDED,
+                        RESPONSE_CODE_NOT_ALLOWED,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED
+                    )
+                ) {
+                    userNotifier.showError(responseBodyError)
+                }
+            }
         }
-
         return null
     }
 
-    fun applyHeadersToRequest(request: Request) : Request {
+    fun applyHeadersToRequest(request: Request): Request {
 
         val requestBuilder = request.newBuilder()
         val tokenManager = userManager.tokenManager
@@ -206,7 +200,6 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
             }
         }
         requestBuilder
-            .header(HEADER_API_VERSION, API_VERSION)
             .header(HEADER_APP_VERSION, appVersionName)
             .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
             .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
@@ -221,9 +214,10 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
             if (it.usernameAuth == null) { // clear out default auth and unique session headers
                 requestBuilder.removeHeader(HEADER_AUTH)
                 requestBuilder.removeHeader(HEADER_UID)
-            } else if (it.usernameAuth != tokenManager?.username) { // if it's the default user, credentials are already there
+            } else if (it.usernameAuth != tokenManager?.username) {
+                // if it's the default user, credentials are already there
                 val userTokenManager = userManager.getTokenManager(it.usernameAuth)
-                userTokenManager?.let {manager ->
+                userTokenManager?.let { manager ->
                     if (manager.authAccessToken != null) {
                         Timber.d("setting non-default auth headers for ${it.usernameAuth}")
                         requestBuilder.header(HEADER_AUTH, manager.authAccessToken!!)

@@ -65,7 +65,7 @@ public class MoveToFolderDialogFragment extends AbstractDialogFragment implement
     /**
      * Instantiates a new fragment of this class.
      *
-     * @return new instance of {@link ManageLabelsDialogFragment}
+     * @return new instance of {@link MoveToFolderDialogFragment}
      */
     public static MoveToFolderDialogFragment newInstance(Constants.MessageLocationType mailboxLocation) {
         MoveToFolderDialogFragment fragment = new MoveToFolderDialogFragment();

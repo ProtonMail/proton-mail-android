@@ -27,22 +27,47 @@ import java.io.IOException
 
 interface AttachmentApiSpec {
 
-    @Throws(IOException::class)
     fun deleteAttachment(attachmentId: String): ResponseBody
 
-    @Throws(IOException::class)
-    fun downloadAttachment(attachmentId: String, progressListener: ProgressListener): ByteArray
+    fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray
+
+    fun downloadAttachmentBlocking(attachmentId: String): ByteArray
+
+    suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody?
 
     @Throws(IOException::class)
-    fun downloadAttachment(attachmentId: String): ByteArray
+    fun uploadAttachmentInlineBlocking(
+        attachment: Attachment,
+        MessageID: String,
+        contentID: String,
+        KeyPackage: RequestBody,
+        DataPackage: RequestBody,
+        Signature: RequestBody
+    ): AttachmentUploadResponse
 
     @Throws(IOException::class)
-    fun uploadAttachmentInline(attachment: Attachment, MessageID: String,
-                                        contentID: String,
-                                        KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse
-
-    @Throws(IOException::class)
-    fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse
+    fun uploadAttachmentBlocking(
+        attachment: Attachment,
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
+    ): AttachmentUploadResponse
 
     fun getAttachmentUrl(attachmentId: String): String
+
+    suspend fun uploadAttachment(
+        attachment: Attachment,
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
+    ): AttachmentUploadResponse
+
+    suspend fun uploadAttachmentInline(
+        attachment: Attachment,
+        messageID: String,
+        contentID: String,
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
+    ): AttachmentUploadResponse
 }

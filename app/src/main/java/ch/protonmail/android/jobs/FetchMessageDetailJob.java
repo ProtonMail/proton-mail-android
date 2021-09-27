@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -25,7 +25,6 @@ import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
@@ -45,20 +44,20 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
     public void onRun() throws Throwable {
         final MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
                 getApplicationContext()).getDatabase();
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_FETCH_MESSAGE_DETAIL_JOB, "no network cannot fetch message detail");
             AppUtil.postEventOnUi(new FetchMessageDetailEvent(false, mMessageId));
             return;
         }
 
         try {
-            final MessageResponse messageResponse = mApi.messageDetail(mMessageId);
+            final MessageResponse messageResponse = getApi().messageDetail(mMessageId);
             final Message message = messageResponse.getMessage();
-            Message savedMessage = messageDetailsRepository.findMessageById(message.getMessageId());
+            Message savedMessage = getMessageDetailsRepository().findMessageByIdBlocking(message.getMessageId());
             final FetchMessageDetailEvent event = new FetchMessageDetailEvent(true, mMessageId);
             if (savedMessage != null) {
                 message.writeTo(savedMessage);
-                messageDetailsRepository.saveMessageInDB(savedMessage);
+                getMessageDetailsRepository().saveMessageInDB(savedMessage);
                 event.setMessage(savedMessage);
             } else {
                 message.setToList(message.getToList());
@@ -81,7 +80,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
                 }
                 message.setLocation(location.getMessageLocationTypeValue());
                 message.setFolderLocation(messagesDatabase);
-                messageDetailsRepository.saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageInDB(message);
                 event.setMessage(message);
             }
 

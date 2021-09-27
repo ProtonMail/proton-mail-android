@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -30,7 +30,6 @@ import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -39,6 +38,8 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.JobManager
+import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 // region constants
@@ -66,6 +67,7 @@ private const val PREF_LAST_MESSAGE_TIME_TRASH = "lastMessageTimeTrash"
 private const val PREF_LAST_MESSAGE_TIME_ALL = "lastMessageTimeAll"
 // endregion
 
+@AndroidEntryPoint
 class MessagesService : JobIntentService() {
 
     @Inject
@@ -78,9 +80,6 @@ class MessagesService : JobIntentService() {
     internal lateinit var userManager: UserManager
 
     @Inject
-    internal lateinit var mNetworkUtils: QueueNetworkUtil
-
-    @Inject
     internal lateinit var mNetworkResults: NetworkResults
 
     @Inject
@@ -89,17 +88,8 @@ class MessagesService : JobIntentService() {
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
 
-    init {
-        ProtonMailApplication.getApplication().appComponent.inject(this)
-    }
-
     override fun onHandleWork(intent: Intent) {
 
-        if (!mNetworkUtils.isConnected()) {
-            Logger.doLog(TAG_MESSAGES_SERVICE, "no network to fetch messages")
-            AppUtil.postEventOnUi(MailboxLoadedEvent(Status.NO_NETWORK, null))
-            return
-        }
         val currentUser = userManager.username
         messageDetailsRepository.reloadDependenciesForUser(currentUser)
         when (intent.action) {
@@ -108,13 +98,20 @@ class MessagesService : JobIntentService() {
                 val refreshDetails = intent.getBooleanExtra(EXTRA_REFRESH_DETAILS, false)
                 val refreshMessages = intent.getBooleanExtra(EXTRA_REFRESH_MESSAGES, false)
                 if (Constants.MessageLocationType.fromInt(location)
-                        in listOf(Constants.MessageLocationType.LABEL, Constants.MessageLocationType.LABEL_FOLDER)) {
-                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)
-                    handleFetchFirstLabelPage(Constants.MessageLocationType.LABEL, labelId,
-                            currentUser, refreshMessages)
+                    in listOf(Constants.MessageLocationType.LABEL, Constants.MessageLocationType.LABEL_FOLDER)
+                ) {
+                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
+                    handleFetchFirstLabelPage(
+                        Constants.MessageLocationType.LABEL,
+                        labelId,
+                        currentUser,
+                        refreshMessages
+                    )
                 } else {
-                    handleFetchFirstPage(Constants.MessageLocationType.fromInt(location), refreshDetails,
-                            intent.getStringExtra(EXTRA_UUID), currentUser, refreshMessages)
+                    handleFetchFirstPage(
+                        Constants.MessageLocationType.fromInt(location), refreshDetails,
+                        intent.getStringExtra(EXTRA_UUID), currentUser, refreshMessages
+                    )
                 }
             }
             ACTION_FETCH_MESSAGES_BY_TIME -> {
@@ -122,12 +119,19 @@ class MessagesService : JobIntentService() {
                 val extraTime = intent.getLongExtra(EXTRA_TIME, 0)
                 val savedTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), "")
                 val time = minOf(savedTime, extraTime)
-                if (Constants.MessageLocationType.fromInt(location) in listOf(Constants.MessageLocationType.LABEL,
-                                Constants.MessageLocationType.LABEL_FOLDER)) {
-                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)
+                if (Constants.MessageLocationType.fromInt(location) in listOf(
+                        Constants.MessageLocationType.LABEL,
+                        Constants.MessageLocationType.LABEL_FOLDER
+                    )
+                ) {
+                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
                     val labelTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), labelId)
-                    handleFetchMessagesByLabel(Constants.MessageLocationType.fromInt(location), labelTime,
-                            labelId, currentUser)
+                    handleFetchMessagesByLabel(
+                        Constants.MessageLocationType.fromInt(location),
+                        labelTime,
+                        labelId,
+                        currentUser
+                    )
                 } else {
                     handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, currentUser)
                 }
@@ -138,15 +142,24 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleFetchFirstPage(
-            location: Constants.MessageLocationType,
-            refreshDetails: Boolean,
-            uuid: String?,
-            currentUser: String,
-            refreshMessages: Boolean
+        location: Constants.MessageLocationType,
+        refreshDetails: Boolean,
+        uuid: String?,
+        currentUser: String,
+        refreshMessages: Boolean
     ) {
         try {
             val messages = mApi.messages(location.messageLocationTypeValue, RetrofitTag(currentUser))
-            handleResult(messages, location, refreshDetails, uuid, currentUser, refreshMessages)
+            if (messages?.code == Constants.RESPONSE_CODE_OK)
+                handleResult(messages, location, refreshDetails, uuid, currentUser, refreshMessages)
+            else {
+                val errorMessage = messages?.error ?: ""
+                val event = MailboxLoadedEvent(Status.FAILED, uuid, errorMessage)
+                AppUtil.postEventOnUi(event)
+                mNetworkResults.setMailboxLoaded(event)
+                Timber.v( "error while fetching messages", Exception(errorMessage))
+            }
+
         } catch (error: Exception) {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
@@ -166,10 +179,10 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleFetchFirstLabelPage(
-            location: Constants.MessageLocationType,
-            labelId: String,
-            currentUser: String,
-            refreshMessages: Boolean
+        location: Constants.MessageLocationType,
+        labelId: String,
+        currentUser: String,
+        refreshMessages: Boolean
     ) {
         try {
             val messagesResponse = mApi.searchByLabelAndPage(labelId, 0)
@@ -181,10 +194,10 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleFetchMessagesByLabel(
-            location: Constants.MessageLocationType,
-            unixTime: Long,
-            labelId: String,
-            currentUser: String
+        location: Constants.MessageLocationType,
+        unixTime: Long,
+        labelId: String,
+        currentUser: String
     ) {
         try {
             val messages = mApi.searchByLabelAndTime(labelId, unixTime)
@@ -197,9 +210,9 @@ class MessagesService : JobIntentService() {
 
     private fun handleFetchContactGroups() {
         try {
-            contactEmailsManager.refresh()
+            contactEmailsManager.refreshBlocking()
         } catch (e: Exception) {
-            // todo inform that contact groups could not be fetched
+            Timber.i(e, "handleFetchContactGroups has failed")
         }
     }
 
@@ -215,14 +228,14 @@ class MessagesService : JobIntentService() {
         }
     }
 
-    //TODO extract common logic from handleResult methods
+    // TODO extract common logic from handleResult methods
     private fun handleResult(
-            messages: MessagesResponse?,
-            location: Constants.MessageLocationType,
-            refreshDetails: Boolean,
-            uuid: String?,
-            currentUser: String,
-            refreshMessages: Boolean = false
+        messages: MessagesResponse?,
+        location: Constants.MessageLocationType,
+        refreshDetails: Boolean,
+        uuid: String?,
+        currentUser: String,
+        refreshMessages: Boolean = false
     ) {
         val messageList = messages?.messages
         if (messageList == null || messageList.isEmpty()) {
@@ -242,7 +255,7 @@ class MessagesService : JobIntentService() {
                     if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
                     messageList.asSequence().map { msg ->
                         unixTime = msg.time
-                        val savedMessage = messageDetailsRepository.findMessageById(msg.messageId!!)
+                        val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
                         msg.setLabelIDs(msg.getEventLabelIDs())
                         msg.location = location.messageLocationTypeValue
                         msg.setFolderLocation(messagesDb)
@@ -290,11 +303,11 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleResult(
-            messagesResponse: MessagesResponse,
-            location: Constants.MessageLocationType,
-            labelId: String,
-            currentUser: String,
-            refreshMessages: Boolean = false
+        messagesResponse: MessagesResponse,
+        location: Constants.MessageLocationType,
+        labelId: String,
+        currentUser: String,
+        refreshMessages: Boolean = false
     ) {
         val messageList = messagesResponse.messages
         if (messageList.isEmpty()) {
@@ -314,7 +327,7 @@ class MessagesService : JobIntentService() {
                     if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
                     messageList.asSequence().map { msg ->
                         unixTime = msg.time
-                        val savedMessage = messageDetailsRepository.findMessageById(msg.messageId!!)
+                        val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
                         msg.setLabelIDs(msg.getEventLabelIDs())
                         msg.location = location.messageLocationTypeValue
                         msg.setFolderLocation(messagesDb)
@@ -386,10 +399,10 @@ class MessagesService : JobIntentService() {
          * Load initial page and detail of every message it fetch
          */
         fun startFetchFirstPage(
-                location: Constants.MessageLocationType,
-                refreshDetails: Boolean,
-                uuid: String?,
-                refreshMessages: Boolean
+            location: Constants.MessageLocationType,
+            refreshDetails: Boolean,
+            uuid: String?,
+            refreshMessages: Boolean
         ) {
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)
@@ -414,9 +427,9 @@ class MessagesService : JobIntentService() {
          * Load initial page and detail of every message it fetch dino
          */
         fun startFetchFirstPageByLabel(
-                location: Constants.MessageLocationType,
-                labelId: String?,
-                refreshMessages: Boolean
+            location: Constants.MessageLocationType,
+            labelId: String?,
+            refreshMessages: Boolean
         ) {
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)

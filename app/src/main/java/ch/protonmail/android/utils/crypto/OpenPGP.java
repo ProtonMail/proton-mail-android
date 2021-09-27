@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -38,14 +38,22 @@ import com.proton.gopenpgp.srp.Srp;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.List;
 
-import at.favre.lib.crypto.bcrypt.Radix64Encoder;
-import ch.protonmail.android.utils.Logger;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import ch.protonmail.android.utils.crypto.Primes.PrimeGenerator;
 import timber.log.Timber;
 
+@Singleton
 public class OpenPGP {
+
+    @Inject
+    public OpenPGP() {
+
+    }
 
     public byte[] decryptAttachmentBinKey(byte[] keyPacket, byte[] dataPacket, List<byte[]> privateKeys, byte[] passphrase) throws Exception {
         KeyRing privateKeyRing = buildPrivateKeyRing(privateKeys, passphrase);
@@ -105,6 +113,8 @@ public class OpenPGP {
             throw new Exception("passphrase for generating key can't be empty");
         }
 
+        Crypto.setKeyGenerationOffset(-86400);
+
         if (keyType == KeyType.RSA) {
             // Generate some primes as the go library is quite slow. On android we can use SSL + multithreading
             // This reduces the generation time from 3 minutes to 1 second.
@@ -156,11 +166,12 @@ public class OpenPGP {
     }
 
     public byte[] generateMailboxPassword(String encodedSalt, byte[] password) {
-
+        int passphraseHashSize = 31;
         byte[] decodedKeySalt = Base64.decode(encodedSalt, Base64.DEFAULT);
+
         try {
-            String generatedMailboxPassword = Srp.mailboxPassword(new String(password), decodedKeySalt);
-            return generatedMailboxPassword.replace("$2y$10$", "").replace(new String(new Radix64Encoder.Default().encode(decodedKeySalt)), "").getBytes();
+            byte[] srpPassword = Srp.mailboxPassword(password, decodedKeySalt);
+            return Arrays.copyOfRange(srpPassword, srpPassword.length - passphraseHashSize, srpPassword.length);
 
         } catch (Exception e) {
             Timber.e(e, "Generating mailbox password failed");
@@ -199,8 +210,7 @@ public class OpenPGP {
     }
 
     public byte[] keyPacketWithPublicKey(SessionKey sessionSplit, String publicKey) throws Exception {
-        KeyRing keyRing = buildKeyRingArmored(publicKey);
-        return keyRing.encryptSessionKey(sessionSplit);
+        return buildKeyRingArmored(publicKey).encryptSessionKey(sessionSplit);
     }
 
     public String getFingerprint(String key) throws Exception {
@@ -249,7 +259,7 @@ public class OpenPGP {
             Crypto.newKeyFromArmored(armoredKey).unlock(passphrase);
             return true;
         } catch (Exception e) {
-            Logger.doLogException(e);
+            Timber.e(e);
         }
         return false;
     }
@@ -293,7 +303,7 @@ public class OpenPGP {
     /**
      * Builds KeyRing from single Public Key.
      */
-    KeyRing buildKeyRing(byte[] key) throws Exception {
+    public KeyRing buildKeyRing(byte[] key) throws Exception {
         return Crypto.newKeyRing(Crypto.newKey(key));
     }
 

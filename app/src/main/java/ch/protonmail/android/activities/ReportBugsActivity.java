@@ -45,7 +45,7 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 
-public class ReportBugsActivity extends BaseConnectivityActivity {
+public class ReportBugsActivity extends BaseActivity {
     @BindView(R.id.bug_description_title)
     EditText mBugDescriptionTitle;
 
@@ -164,7 +164,6 @@ public class ReportBugsActivity extends BaseConnectivityActivity {
             TextExtensions.showToast(this, R.string.received_report, Toast.LENGTH_SHORT);
         } else if (event.getStatus() == Status.NO_NETWORK) {
             TextExtensions.showToast(this, R.string.not_received_report_offline);
-            showNoConnSnack(this);
         } else {
             TextExtensions.showToast(this, R.string.not_received_report, Toast.LENGTH_SHORT);
         }

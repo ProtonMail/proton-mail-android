@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,6 +23,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
@@ -58,6 +59,7 @@ import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.settings.pin.ValidatePinActivity
@@ -101,8 +103,10 @@ const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
  * refactoring because it still has more than 700 lines of code.
  */
 
-abstract class NavigationActivity : BaseActivity(),
-        DrawerHeaderView.IDrawerHeaderListener, QuickSnoozeDialogFragment.IQuickSnoozeListener {
+abstract class NavigationActivity :
+    BaseActivity(),
+    DrawerHeaderView.IDrawerHeaderListener,
+    QuickSnoozeDialogFragment.IQuickSnoozeListener {
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -148,6 +152,9 @@ abstract class NavigationActivity : BaseActivity(),
     }
 
     @Inject
+    lateinit var accountManager: AccountManager
+
+    @Inject
     lateinit var databaseProvider: DatabaseProvider
 
     private val navigationViewModel by resettableLazy(lazyManager) {
@@ -160,7 +167,7 @@ abstract class NavigationActivity : BaseActivity(),
 
     protected abstract val currentMailboxLocation: Constants.MessageLocationType
 
-    protected abstract val currentLabelId: String
+    protected abstract val currentLabelId: String?
 
     /**
      * A lambda that holds an operation that needs to be executed after the Drawer has been closed
@@ -251,7 +258,6 @@ abstract class NavigationActivity : BaseActivity(),
     }
 
     protected fun switchAccountProcedure(accountName: String) {
-        ProtonMailApplication.getApplication().clearPaymentMethods()
         userManager.switchToAccount(accountName)
         onSwitchedAccounts()
         DialogUtils.showSignedInSnack(drawerLayout, String.format(getString(R.string.signed_in_with), accountName))
@@ -279,9 +285,15 @@ abstract class NavigationActivity : BaseActivity(),
     protected fun setUpDrawer() {
         navigationViewModel.reloadDependencies()
         drawerToggle = ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer
+            this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer
         )
-        drawerLayout.setStatusBarBackgroundColor(UiUtil.scaleColor(getColorCompat(R.color.dark_purple), 0.6f, true))
+        drawerLayout.setStatusBarBackgroundColor(
+            UiUtil.scaleColor(
+                ContextCompat.getColor(this, R.color.dark_purple),
+                0.6f,
+                true
+            )
+        )
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
 
         setUpInitialDrawerItems(mUserManager.user)
@@ -317,64 +329,89 @@ abstract class NavigationActivity : BaseActivity(),
                 val nextLoggedInAccount = userManager.nextLoggedInAccountOtherThanCurrent
                 mUserManager.logoutAccount(username)
                 nextLoggedInAccount?.let {
-                    Handler().postDelayed({
-                        switchAccountProcedure(it)
-                    }, 100)
+                    Handler(Looper.getMainLooper()).postDelayed(
+                        {
+                            switchAccountProcedure(it)
+                        },
+                        100
+                    )
                 }
                 onSwitchedAccounts()
             }
         }
 
         setupAccountsList()
+        ForceSwitchedAccountNotifier.notifier.postValue(null)
     }
 
     protected fun setupAccountsList() {
         navigationViewModel.reloadDependencies()
         navigationViewModel.notificationsCounts()
-        navigationViewModel.notificationsCounterLiveData.observe(this, Observer {map ->
-            val accountsManager = AccountManager.getInstance(this)
-            val currentPrimaryAccount = mUserManager.username
-            val accounts = accountsManager.getLoggedInUsers().sortedByDescending {
-                it == currentPrimaryAccount
-            }.map {
-                val userAddresses = userManager.getUser(it).addresses
-                val primaryAddress = userAddresses.find { address ->
-                    address.type == Constants.ADDRESS_TYPE_PRIMARY
-                }
-                val primaryAddressEmail = if (primaryAddress == null) {
-                    it
-                } else {
-                    primaryAddress.email
-                }
-                val displayName = primaryAddress?.displayName ?: ""
-                DrawerUserModel.BaseUser.DrawerUser(it, primaryAddressEmail, true, map[it] ?: 0, areNotificationSnoozed(it), if (displayName.isNotEmpty()) displayName else it)
-            } as MutableList<DrawerUserModel>
-            accounts.addAll(accountsManager.getSavedUsers().map {
-                DrawerUserModel.BaseUser.DrawerUser(name = it, loggedIn = false, notifications = 0, notificationsSnoozed = false, displayName = it)
-            } as MutableList<DrawerUserModel>)
-            // todo fetch all user missing data (email, notifications etc)
-            accounts.add(DrawerUserModel.Footer)
-            accountsAdapter.items = accounts
-        })
+        navigationViewModel.notificationsCounterLiveData.observe(
+            this,
+            { map ->
+                val accountsManager = AccountManager.getInstance(this)
+                val currentPrimaryAccount = mUserManager.username
+                val accounts = accountsManager.getLoggedInUsers().sortedByDescending {
+                    it == currentPrimaryAccount
+                }.map {
+                    val userAddresses = userManager.getUser(it).addresses
+                    val primaryAddress = userAddresses.find { address ->
+                        address.type == Constants.ADDRESS_TYPE_PRIMARY
+                    }
+                    val primaryAddressEmail = if (primaryAddress == null) {
+                        it
+                    } else {
+                        primaryAddress.email
+                    }
+                    val displayName = primaryAddress?.displayName ?: ""
+                    DrawerUserModel.BaseUser.DrawerUser(
+                        it,
+                        primaryAddressEmail,
+                        true,
+                        map[it] ?: 0,
+                        areNotificationSnoozed(it),
+                        if (displayName.isNotEmpty()) displayName else it
+                    )
+                } as MutableList<DrawerUserModel>
+                accounts.addAll(
+                    accountsManager.getSavedUsers().map {
+                        DrawerUserModel.BaseUser.DrawerUser(
+                            name = it,
+                            loggedIn = false,
+                            notifications = 0,
+                            notificationsSnoozed = false,
+                            displayName = it
+                        )
+                    } as MutableList<DrawerUserModel>
+                )
+                // todo fetch all user missing data (email, notifications etc)
+                accounts.add(DrawerUserModel.Footer)
+                accountsAdapter.items = accounts
+            }
+        )
     }
 
     private fun areNotificationSnoozed(username: String): Boolean {
         val rightNow = Calendar.getInstance()
         val snoozeSettings = SnoozeSettings.load(username)
         var areSnoozed = false
-        snoozeSettings.ifNullElse({}, {
-            val shouldShowNotification = !snoozeSettings.shouldSuppressNotification(rightNow)
-            val isQuickSnoozeEnabled = snoozeSettings.snoozeQuick
-            val isScheduledSnoozeEnabled = snoozeSettings.getScheduledSnooze(username)
-            areSnoozed = isQuickSnoozeEnabled || (isScheduledSnoozeEnabled && !shouldShowNotification)
-        })
+        snoozeSettings.ifNullElse(
+            {},
+            {
+                val shouldShowNotification = !snoozeSettings.shouldSuppressNotification(rightNow)
+                val isQuickSnoozeEnabled = snoozeSettings.snoozeQuick
+                val isScheduledSnoozeEnabled = snoozeSettings.getScheduledSnooze(username)
+                areSnoozed = isQuickSnoozeEnabled || (isScheduledSnoozeEnabled && !shouldShowNotification)
+            }
+        )
         return areSnoozed
     }
 
     private fun setUpInitialDrawerItems(user: User?) {
         val hasPin = user != null &&
-                user.isUsePin &&
-                mUserManager.getMailboxPin() != null
+            user.isUsePin &&
+            mUserManager.getMailboxPin() != null
 
         staticDrawerItems = mutableListOf<DrawerItemUiModel>().apply {
             add(Primary.Static(Type.INBOX, R.string.inbox, R.drawable.inbox))
@@ -392,7 +429,7 @@ abstract class NavigationActivity : BaseActivity(),
             if (hasPin) {
                 add(Primary.Static(Type.LOCK, R.string.lock_the_app, R.drawable.notification_icon))
             }
-            add(Primary.Static(Type.UPSELLING, R.string.upselling, R.drawable.cubes))
+            add(Primary.Static(Type.UPSELLING, R.string.upgrade, R.drawable.cubes))
             add(Primary.Static(Type.SIGNOUT, R.string.logout, R.drawable.signout))
         }.toList()
     }
@@ -404,9 +441,9 @@ abstract class NavigationActivity : BaseActivity(),
             val address = addresses[0]
 
             drawerHeader = DrawerItemUiModel.Header(
-                    address.displayName,
-                    address.email,
-                    areNotificationSnoozed(mUserManager.username)
+                address.displayName,
+                address.email,
+                areNotificationSnoozed(mUserManager.username)
             )
             drawerHeaderView.setUser(address.displayName, address.email)
             drawerHeaderView.refresh(areNotificationSnoozed(mUserManager.username))
@@ -471,11 +508,11 @@ abstract class NavigationActivity : BaseActivity(),
                     val nextLoggedInAccount = userManager.nextLoggedInAccountOtherThanCurrent
                     val builder = AlertDialog.Builder(this)
                     builder.setTitle(if (nextLoggedInAccount != null) getString(R.string.logout) else String.format(getString(R.string.log_out), mUserManager.username))
-                            .setMessage(if (nextLoggedInAccount != null) String.format(getString(R.string.logout_question_next_account), nextLoggedInAccount) else getString(R.string.logout_question))
-                            .setNegativeButton(R.string.no, clickListener)
-                            .setPositiveButton(R.string.yes, clickListener)
-                            .create()
-                            .show()
+                        .setMessage(if (nextLoggedInAccount != null) String.format(getString(R.string.logout_question_next_account), nextLoggedInAccount) else getString(R.string.logout_question))
+                        .setNegativeButton(R.string.no, clickListener)
+                        .setPositiveButton(R.string.yes, clickListener)
+                        .create()
+                        .show()
                 }
 
             }
@@ -534,7 +571,7 @@ abstract class NavigationActivity : BaseActivity(),
         override fun onChanged(unreadLocations: Map<Int, Int>) {
             // Prepare drawer Items by injecting unreadLocations
             staticDrawerItems = staticDrawerItems.setUnreadLocations(unreadLocations)
-                    .toMutableList()
+                .toMutableList()
             refreshDrawer()
         }
     }

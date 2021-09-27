@@ -20,17 +20,21 @@ package ch.protonmail.android.utils.HTMLTransformer
 
 import org.jsoup.nodes.Document
 
-/**
- * Created by kaylukas on 26/06/2018.
- */
 class DefaultTransformer : AbstractTransformer() {
 
-    private val blacklist = arrayOf("meta", "audio", "video", "iframe", "object", "picture", "form", "map", "area", "button", "input", "embed", "script", "style")
+    private val blacklist = arrayOf(
+        "meta", "audio", "video", "iframe", "object",
+        "picture", "form", "map", "area", "button", "input", "embed", "script", "style"
+    )
 
     override fun transform(doc: Document): Document {
         for (blackElement in blacklist) {
             val blockedElements = doc.select(blackElement)
-            blockedElements.remove()
+            if (blockedElements.`is`("form")) {
+                blockedElements.unwrap()
+            } else {
+                blockedElements.remove()
+            }
         }
         val aHrefElements = doc.select("a[ping]")
         aHrefElements.removeAttr("ping")

@@ -1,42 +1,43 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.contacts.groups.edit.chooser
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils
-import dagger.android.AndroidInjection
+import ch.protonmail.android.utils.moveToLogin
+import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import javax.inject.Inject
 
@@ -44,11 +45,12 @@ import javax.inject.Inject
 const val EXTRA_CONTACT_EMAILS = "extra_contact_emails"
 // endregion
 
-/**
+/*
  * Created by kadrikj on 9/7/18.
  */
 
-class AddressChooserActivity: BaseActivity() {
+@AndroidEntryPoint
+class AddressChooserActivity : BaseActivity() {
 
     @Inject
     lateinit var addressChooserViewModelFactory: AddressChooserViewModelFactory
@@ -58,10 +60,9 @@ class AddressChooserActivity: BaseActivity() {
     override fun getLayoutId(): Int = R.layout.activity_address_chooser
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        addressChooserViewModel = ViewModelProviders.of(this, addressChooserViewModelFactory)
+        addressChooserViewModel = ViewModelProvider(this, addressChooserViewModelFactory)
                 .get(AddressChooserViewModel::class.java)
         setupToolbar()
         initAdapter()
@@ -83,13 +84,16 @@ class AddressChooserActivity: BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         android.R.id.home -> {
             onBackPressed()
             true
         }
         R.id.action_save -> {
-            val selected = addressChooserViewModel.updateSelected(contactGroupEmailsAdapter.getUnSelected(), contactGroupEmailsAdapter.getSelected())
+            val selected = addressChooserViewModel.updateSelected(
+                contactGroupEmailsAdapter.getUnSelected(),
+                contactGroupEmailsAdapter.getSelected()
+            )
             val intent = Intent()
             intent.putExtra(EXTRA_CONTACT_EMAILS, selected)
             setResult(Activity.RESULT_OK, intent)
@@ -137,15 +141,9 @@ class AddressChooserActivity: BaseActivity() {
         }
     }
 
-    inner class MaxEmailsReachedObserver : Observer<Event<Int>> {
-        override fun onChanged(t: Event<Int>?) {
-            val selectedEmailsCount = t?.getContentIfNotHandled() ?: 0
-            DialogUtils.showInfoDialog(this@AddressChooserActivity, getString(R.string.max_emails_in_group_title),
-                    String.format(getString(R.string.max_emails_in_group_subtitle), Constants.MAX_EMAILS_PER_CONTACT_GROUP,
-                            selectedEmailsCount - Constants.MAX_EMAILS_PER_CONTACT_GROUP)) {
-                // NOOP
-            }
-
-        }
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

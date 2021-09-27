@@ -18,13 +18,12 @@
  */
 package ch.protonmail.android.uitests.robots.login
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.uitests.testsHelper.User
-import ch.protonmail.android.uitests.testsHelper.insert
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.insert
 
 /**
  * [LoginRobot] class contains actions and verifications for login functionality.
@@ -35,32 +34,34 @@ class LoginRobot {
         return username(user.name)
             .password(user.password)
             .signIn()
+            .refreshMessageList()
     }
 
-    fun loginUserWithTwoFa(user: User): InboxRobot {
+    fun loginUserWithTwoFa(user: User): TwoFaRobot {
         return username(user.name)
             .password(user.password)
-            .signInWithMailboxPasswordOrTwoFa()
-            .twoFaCode(user.twoFaCode)
-            .confirm2Fa()
+            .signInWithTwoFa()
     }
 
-    fun loginTwoPasswordUser(user: User): InboxRobot {
+    fun loginTwoPasswordUser(user: User): MailboxPasswordRobot {
         return username(user.name)
             .password(user.password)
-            .signInWithMailboxPasswordOrTwoFa()
-            .mailboxPassword(user.mailboxPassword)
-            .decrypt()
+            .signInWithMailboxPassword()
     }
 
-    fun loginTwoPasswordUserWithTwoFa(user: User): InboxRobot {
-        return username(user.name)
-            .password(user.password)
-            .signInWithMailboxPasswordOrTwoFa()
-            .twoFaCode(user.twoFaCode)
-            .confirm2FaAndProvideMailboxPassword()
-            .mailboxPassword(user.mailboxPassword)
-            .decrypt()
+    private fun signIn(): InboxRobot {
+        UIActions.allOf.clickViewWithIdAndText(signInButtonId, R.string.sign_in)
+        return InboxRobot()
+    }
+
+    private fun signInWithMailboxPassword(): MailboxPasswordRobot {
+        signIn()
+        return MailboxPasswordRobot()
+    }
+
+    private fun signInWithTwoFa(): TwoFaRobot {
+        signIn()
+        return TwoFaRobot()
     }
 
     private fun username(name: String): LoginRobot {
@@ -73,50 +74,35 @@ class LoginRobot {
         return this
     }
 
-    private fun signIn(): InboxRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.sign_in)
-        return InboxRobot()
-    }
+    /**
+     * Class represents Message Password dialog.
+     */
+    inner class TwoFaRobot {
 
-    private fun signInWithMailboxPasswordOrTwoFa(): LoginRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.sign_in)
-        return this
-    }
+        fun provideTwoFaCode(twoFaCode: String): InboxRobot {
+            return twoFaCode(twoFaCode)
+                .confirm2Fa()
+        }
 
-    private fun mailboxPassword(password: String): LoginRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.mailbox_password).insert(password)
-        return this
-    }
+        fun provideTwoFaCodeMailbox(twoFaCode: String): MailboxPasswordRobot {
+            return twoFaCode(twoFaCode)
+                .confirm2FaMailbox()
+        }
 
-    private fun decrypt(): InboxRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.decrypt)
-        return InboxRobot()
-    }
+        private fun confirm2Fa(): InboxRobot {
+            UIActions.wait.forViewWithId(android.R.id.button1).click()
+            return InboxRobot()
+        }
 
-    private fun confirm2Fa(): InboxRobot {
-        UIActions.id.clickViewWithId(android.R.id.button1)
-        return InboxRobot()
-    }
+        private fun confirm2FaMailbox(): MailboxPasswordRobot {
+            UIActions.wait.untilViewWithIdEnabled(android.R.id.button1).click()
+            return MailboxPasswordRobot()
+        }
 
-    private fun confirm2FaAndProvideMailboxPassword(): LoginRobot {
-        UIActions.id.clickViewWithId(android.R.id.button1)
-        return this
-    }
-
-    private fun twoFaCode(twoFaCode: String): LoginRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.two_factor_code)
-        onView(withId(R.id.two_factor_code)).insert(twoFaCode)
-        return this
-    }
-
-    private fun secondPass(mailboxPassword: String): LoginRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.mailbox_password).insert(mailboxPassword)
-        return this
-    }
-
-    private fun confirmSecondPass(): LoginRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.decrypt)
-        return this
+        private fun twoFaCode(twoFaCode: String): TwoFaRobot {
+            UIActions.wait.forViewWithId(twoFactorEditTextId).insert(twoFaCode)
+            return this
+        }
     }
 
     /**
@@ -125,16 +111,15 @@ class LoginRobot {
     class Verify {
 
         fun loginScreenDisplayed(): LoginRobot {
-            UIActions.wait.untilViewWithIdAppears(R.id.sign_in)
-            return LoginRobot()
-        }
-
-        //After Removing all accounts from AccountManager
-        fun removingAccountsToastShown(): LoginRobot {
-            UIActions.check.toastMessageIsDisplayed(R.string.account_manager_remove_all_accounts)
+            UIActions.wait.forViewWithId(signInButtonId)
             return LoginRobot()
         }
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+
+    companion object {
+        const val signInButtonId = R.id.sign_in
+        const val twoFactorEditTextId = R.id.two_factor_code
+    }
 }

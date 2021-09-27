@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -42,6 +42,8 @@ fun org.gradle.api.Project.android(
 ) = (this as ExtensionAware).extensions.configure<TestedExtension> {
 
     compileSdkVersion(targetSdk)
+    buildToolsVersion("30.0.2") // Latest in Doker image
+    ndkVersion = "21.3.6528147" // Same as Docker image
     defaultConfig {
 
         // Params
@@ -62,20 +64,20 @@ fun org.gradle.api.Project.android(
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
 
-        // Annotation processors must be explicitly declared now.  The following dependencies on
-        // the compile classpath are found to contain annotation processor.  Please add them to the
-        // annotationProcessor configuration.
-        // - auto-service-1.0-rc4.jar (com.google.auto.service:auto-service:1.0-rc4)
-        //
-        // Note that this option ( 👇 ) is deprecated and will be removed in the future.
-        // See https://developer.android.com/r/tools/annotation-processor-error-message.html for
-        // more details.
-        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
-    }
+        javaCompileOptions {
+            annotationProcessorOptions {
 
-    buildTypes {
-        register("releasePlayStore")
-        register("releaseBeta")
+                // Annotation processors must be explicitly declared now.  The following dependencies on
+                // the compile classpath are found to contain annotation processor.  Please add them to the
+                // annotationProcessor configuration.
+                // - auto-service-1.0-rc4.jar (com.google.auto.service:auto-service:1.0-rc4)
+                //
+                // Note that this option ( 👇 ) is deprecated and will be removed in the future.
+                // See https://developer.android.com/r/tools/annotation-processor-error-message.html for
+                // more details.
+                includeCompileClasspath = true
+            }
+        }
     }
 
     lintOptions {
@@ -103,6 +105,7 @@ fun org.gradle.api.Project.android(
 
     packagingOptions {
         exclude("META-INF/*.kotlin_module")
+        exclude("META-INF/AL2.0")
         exclude("META-INF/DEPENDENCIES")
         exclude("META-INF/DEPENDENCIES.txt")
         exclude("META-INF/LGPL2.1")

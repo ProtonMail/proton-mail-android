@@ -27,20 +27,17 @@ import retrofit2.Response
 import java.util.Collections
 import java.util.concurrent.ArrayBlockingQueue
 
-// region constants
 const val REFRESH_PATH = "/auth/refresh"
 const val AUTH_PATH = "auth"
 const val AUTH_INFO_PATH = "auth/info"
 const val ATTACH_PATH = "attach"
 
 const val ONE_MINUTE = 60L
-const val THREE_SECONDS = 3L
 const val TEN_SECONDS = 10L
+const val THIRTY_SECONDS = 30L
 
-const val API_VERSION = "3"
 const val HEADER_LOCALE = "x-pm-locale"
 const val HEADER_UID = "x-pm-uid"
-const val HEADER_API_VERSION = "x-pm-apiversion"
 const val HEADER_APP_VERSION = "x-pm-appversion"
 const val HEADER_AUTH = "Authorization"
 const val HEADER_USER_AGENT = "User-Agent"
@@ -48,29 +45,35 @@ const val HEADER_USER_AGENT = "User-Agent"
 const val RESPONSE_CODE_UNAUTHORIZED = 401
 const val RESPONSE_CODE_GATEWAY_TIMEOUT = 504
 const val RESPONSE_CODE_TOO_MANY_REQUESTS = 429
+const val RESPONSE_CODE_UNPROCESSABLE_ENTITY = 422
 const val RESPONSE_CODE_SERVICE_UNAVAILABLE = 503
-const val RESPONSE_CODE_OLD_PASSWORD_INCORRECT = 8002
-const val RESPONSE_CODE_NEW_PASSWORD_INCORRECT = 12022
-const val RESPONSE_CODE_NEW_PASSWORD_MESSED_UP = 12020
-const val RESPONSE_CODE_ATTACHMENT_DELETE_ID_INVALID = 11123
+const val RESPONSE_CODE_INVALID_ID = 2061
+const val RESPONSE_CODE_MESSAGE_READING_RESTRICTED = 2028
+const val RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST = 2500
 const val RESPONSE_CODE_INVALID_APP_CODE = 5002
 const val RESPONSE_CODE_FORCE_UPGRADE = 5003
-const val RESPONSE_CODE_API_OFFLINE = 7001
-const val RESPONSE_CODE_RECIPIENT_NOT_FOUND = 33102
-const val RESPONSE_CODE_INVALID_EMAIL = 12065
-const val RESPONSE_CODE_INCORRECT_PASSWORD = 12066
-const val RESPONSE_CODE_ERROR_EMAIL_EXIST = 13007
-const val RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL = 13002
-const val RESPONSE_CODE_ERROR_INVALID_EMAIL = 13006
-const val RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED = 13014
-const val RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED = 13061
+const val RESPONSE_CODE_OLD_PASSWORD_INCORRECT = 8002
 const val RESPONSE_CODE_ERROR_VERIFICATION_NEEDED = 9001
-const val RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST = 2500
-const val RESPONSE_CODE_EMAIL_FAILED_VALIDATION = 12006
-// endregion
+const val RESPONSE_CODE_NOT_ALLOWED = 2011
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC = 10_001
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED = 10_002
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED = 10_003
+const val RESPONSE_CODE_EMAIL_FAILED_VALIDATION = 12_006
+const val RESPONSE_CODE_NEW_PASSWORD_INCORRECT = 12_022
+const val RESPONSE_CODE_NEW_PASSWORD_MESSED_UP = 12_020
+const val RESPONSE_CODE_INVALID_EMAIL = 12_065
+const val RESPONSE_CODE_INCORRECT_PASSWORD = 12_066
+const val RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL = 13_002
+const val RESPONSE_CODE_ERROR_INVALID_EMAIL = 13_006
+const val RESPONSE_CODE_ERROR_EMAIL_EXIST = 13_007
+const val RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED = 13_014
+const val RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED = 13_061
+const val RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST = 15_052
+const val RESPONSE_CODE_RECIPIENT_NOT_FOUND = 33_102
+const val RESPONSE_CODE_MESSAGE_ALREADY_SENT = 15_034
 
 open class BaseApi {
-    protected inline fun <reified T : ResponseBody> executeAll(list : List<Call<T>>) : List<T?> {
+    protected inline fun <reified T : ResponseBody> executeAll(list: List<Call<T>>): List<T?> {
         if (list.isEmpty()) {
             return emptyList()
         }
@@ -101,6 +104,6 @@ open class BaseApi {
             throw RuntimeException("Interrupted!")
         }
 
-        return List(list.size) { i : Int -> result[i] }
+        return List(list.size) { i: Int -> result[i] }
     }
 }

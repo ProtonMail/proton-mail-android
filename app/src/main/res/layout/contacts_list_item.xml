@@ -40,7 +40,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:textSize="@dimen/h4" />
 
         <TextView
-            android:id="@+id/contact_email"
+            android:id="@+id/contact_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/iron_gray"

@@ -22,7 +22,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,20 +34,27 @@ import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.fragments.BillingFragment;
 import ch.protonmail.android.activities.fragments.CreateAccountBaseFragment;
+import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaDialogFragment;
+import ch.protonmail.android.activities.fragments.HumanVerificationDialogFragment;
+import ch.protonmail.android.activities.guest.LoginActivity;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.LoginInfoResponse;
 import ch.protonmail.android.api.models.PaymentMethod;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
-import ch.protonmail.android.jobs.DonateJob;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
-import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
+import ch.protonmail.android.utils.AppUtil;
+import ch.protonmail.android.utils.UiUtil;
 
 /**
  * Created by dkadrikj on 6/30/16.
  */
 public class BillingActivity extends BaseActivity implements
-        CreateAccountBaseFragment.ICreateAccountListener {
+        CreateAccountBaseFragment.ICreateAccountListener,
+        BillingFragment.IBillingListener,
+        HumanVerificationDialogFragment.IHumanVerificationListener {
 
     public static final String EXTRA_WINDOW_SIZE = "window_size";
     public static final String EXTRA_AMOUNT = "billing_extra_amount";
@@ -62,6 +72,7 @@ public class BillingActivity extends BaseActivity implements
     View fragmentContainer;
 
     private BillingFragment billingFragment;
+    private HumanVerificationCaptchaDialogFragment humanVerificationCaptchaDialogFragment;
     private Constants.CurrencyType currency;
     private int amount;
     private String selectedPlanId;
@@ -107,10 +118,53 @@ public class BillingActivity extends BaseActivity implements
     }
 
     @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        if (fragment instanceof BillingFragment) {
+            BillingFragment billingFragment = (BillingFragment) fragment;
+            billingFragment.setActivityListener(this);
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         ProtonMailApplication.getApplication().getBus().unregister(this);
     }
+
+    // region BillingFragment.IBillingListener
+    @Override
+    public ProtonMailApiManager getProtonMailApiManager() {
+        return mApi;
+    }
+
+    @Override
+    public void onRequestCaptchaVerification(String token) {
+        humanVerificationCaptchaDialogFragment = HumanVerificationCaptchaDialogFragment.newInstance(token);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragmentContainer, humanVerificationCaptchaDialogFragment)
+                .commitAllowingStateLoss();
+    }
+    // endregion
+
+    // region HumanVerificationDialogFragment.IHumanVerificationListener
+    @Override
+    public void verify(Constants.TokenType tokenType, String token) {
+        if (humanVerificationCaptchaDialogFragment != null && humanVerificationCaptchaDialogFragment.isAdded()) {
+            humanVerificationCaptchaDialogFragment.dismiss();
+        }
+        billingFragment.retryPaymentAfterCaptchaValidation(token, tokenType.getTokenTypeValue());
+    }
+
+    @Override
+    public void viewLoaded() {
+        UiUtil.hideKeyboard(this);
+    }
+
+    @Override
+    public void verificationOptionChose(Constants.TokenType tokenType, String token) {
+        // noop
+    }
+    // endregion
 
     @Override
     public void onAccountSelected(Constants.AccountType selectedAccountType) {
@@ -194,7 +248,7 @@ public class BillingActivity extends BaseActivity implements
 
     @Override
     public boolean hasConnectivity() {
-        return false;
+        return mNetworkUtil.isConnected();
     }
 
     @Override
@@ -203,20 +257,8 @@ public class BillingActivity extends BaseActivity implements
     }
 
     @Override
-    public void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle) {
-        CreateSubscriptionJob job = new CreateSubscriptionJob(amount, currency, couponCode, planIds, cycle, paymentToken);
-        mJobManager.addJobInBackground(job);
-    }
-
-    @Override
     public void onPaymentOptionChosen(Constants.CurrencyType currency, int amount, String planId, int cycle) {
         // TODO: payment
-    }
-
-    @Override
-    public void donateForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken) {
-        DonateJob job = new DonateJob(paymentToken, amount, currency);
-        mJobManager.addJobInBackground(job);
     }
 
     @Override
@@ -282,15 +324,6 @@ public class BillingActivity extends BaseActivity implements
     }
 
     @Override
-    public void donateDone() {
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_SUCCESS, true);
-        setResult(RESULT_OK, intent);
-        saveLastInteraction();
-        finish();
-    }
-
-    @Override
     public void getAvailableDomains() {
         // noop
     }
@@ -298,5 +331,11 @@ public class BillingActivity extends BaseActivity implements
     @Override
     public void startAddressSetup() {
 
+    }
+
+    @Subscribe
+    public void onLogoutEvent(LogoutEvent event) {
+        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
+        finish();
     }
 }

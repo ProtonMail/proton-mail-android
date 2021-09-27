@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,7 +20,7 @@ package ch.protonmail.android.contacts.groups.details
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.EmptyResultSetException
-import ch.protonmail.android.api.ProtonMailApi
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.factories.IConverterFactory
@@ -36,38 +36,44 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.reactivex.Flowable
 import io.reactivex.Single
-import junit.framework.Assert.assertEquals
 import org.junit.Assert
 import org.junit.Rule
-import org.junit.Test
 import java.io.IOException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-/**
- * Created by kadrikj on 8/27/18. */
 class ContactGroupDetailsRepositoryTest {
     //region mocks
     private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true)
     private val database = mockk<ContactsDatabase>(relaxed = true)
     private val jobManager = mockk<JobManager>(relaxed = true)
+    private val workManager = mockk<WorkManager>(relaxed = true)
     private val contactLabelFactory = mockk<IConverterFactory<ServerLabel, ContactLabel>>(relaxed = true)
     private val databaseProvider = mockk<DatabaseProvider>(relaxed = true) {
         every { provideContactsDao(any()) } returns database
     }
     //endregion
-    
+
     //region rules
     @get:Rule val rule = InstantTaskExecutorRule()
     @get:Rule val rule2 = TestSchedulerRule()
     //endregion
-    
+
+    private lateinit var contactGroupDetailsRepository: ContactGroupDetailsRepository
+
+    @BeforeTest
+    fun setUp() {
+        contactGroupDetailsRepository = ContactGroupDetailsRepository(protonMailApi, databaseProvider, workManager)
+    }
+
     //region tests
     @Test
     fun testCorrectContactGroupReturnedById() {
         val label1 = ContactLabel("a", "aa")
         every { database.findContactGroupByIdAsync("") } returns Single.just(label1)
-        val contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
-        val testObserver = contactGroupDetailsRepository.findContactGroupDetails("").test()
+        val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("").test()
         testObserver.awaitTerminalEvent()
         testObserver.assertValue(label1)
     }
@@ -77,9 +83,8 @@ class ContactGroupDetailsRepositoryTest {
         val label1 = ContactLabel("a", "aa")
         every { database.findContactGroupByIdAsync("a") } returns Single.just(label1)
         every { database.findContactGroupByIdAsync(any()) } returns Single.error(EmptyResultSetException("no such element"))
-        val contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
-        val testObserver = contactGroupDetailsRepository.findContactGroupDetails("b").test()
+        val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("b").test()
         testObserver.awaitTerminalEvent()
         Assert.assertEquals(0, testObserver.valueCount())
         testObserver.assertError(EmptyResultSetException::class.java)
@@ -90,9 +95,8 @@ class ContactGroupDetailsRepositoryTest {
         val email1 = ContactEmail("a", "a@a.a", name = "ce1")
         val email2 = ContactEmail("b", "b@b.b", name = "ce2")
         every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(listOf(email1, email2))
-        val contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
-        val testObserver = contactGroupDetailsRepository.getContactGroupEmails("").test()
+        val testObserver = contactGroupDetailsRepository.getContactGroupEmailsBlocking("").test()
         testObserver.awaitTerminalEvent()
         val returnedResult = testObserver.values()[0]
         val first = returnedResult?.get(0)
@@ -106,9 +110,8 @@ class ContactGroupDetailsRepositoryTest {
     fun testEmptyGetContactGroupEmails() {
         val emptyList: List<ContactEmail> = emptyList()
         every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(emptyList)
-        val contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
-        val testObserver = contactGroupDetailsRepository.getContactGroupEmails("").test()
+        val testObserver = contactGroupDetailsRepository.getContactGroupEmailsBlocking("").test()
         testObserver.awaitTerminalEvent()
         val returnedResult = testObserver.values()
         Assert.assertEquals(emptyList<ContactEmail>(), returnedResult[0]) //not sure about this
@@ -121,7 +124,6 @@ class ContactGroupDetailsRepositoryTest {
         val contactLabel = ContactLabel("a1", "aa", "aaa", type = Constants.LABEL_TYPE_CONTACT_GROUPS)
         every { contactLabelFactory.createServerObjectFromDBObject(any()) } returns serverLabel
         every { protonMailApi.createLabelCompletable(any()) } returns Single.just(contactLabel)
-        val contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
         val testObserver = contactGroupDetailsRepository.createContactGroup(toCreateContactGroup).test()
         testObserver.awaitTerminalEvent()
@@ -135,11 +137,9 @@ class ContactGroupDetailsRepositoryTest {
         val serverLabel = ServerLabel("a", "aa", "aaa", type = Constants.LABEL_TYPE_CONTACT_GROUPS)
         every { contactLabelFactory.createServerObjectFromDBObject(any()) } returns serverLabel
         every { protonMailApi.createLabelCompletable(any()) } returns Single.error(IOException("api unreachable"))
-        val contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
         val testObserver = contactGroupDetailsRepository.createContactGroup(toCreateContactGroup).test()
         testObserver.awaitTerminalEvent()
-        verify(exactly = 1) { jobManager.addJobInBackground(any()) }
         verify(exactly = 0) { database.saveContactGroupLabel(any()) }
     }
 
@@ -149,7 +149,6 @@ class ContactGroupDetailsRepositoryTest {
         val serverLabel = ServerLabel("a", "aa", "aaa", type = Constants.LABEL_TYPE_CONTACT_GROUPS)
         every { contactLabelFactory.createServerObjectFromDBObject(any()) } returns serverLabel
         every { protonMailApi.createLabelCompletable(any()) } returns Single.error(NullPointerException(":("))
-        val contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
         val testObserver = contactGroupDetailsRepository.createContactGroup(toCreateContactGroup).test()
         testObserver.awaitTerminalEvent()
@@ -161,9 +160,8 @@ class ContactGroupDetailsRepositoryTest {
         val email1 = ContactEmail("a", "a@a.a", name = "ce1")
         val email2 = ContactEmail("b", "b@b.b", name = "ce2")
         every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(listOf(email1, email2))
-        val contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
-        val testObserver = contactGroupDetailsRepository.getContactGroupEmails("").test()
+        val testObserver = contactGroupDetailsRepository.getContactGroupEmailsBlocking("").test()
         testObserver.awaitTerminalEvent()
         val returnedResult = testObserver.values()[0]
         val first = returnedResult?.get(0)

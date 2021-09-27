@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,23 +23,28 @@ package ch.protonmail.android.activities.messageDetails
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import ch.protonmail.android.di.AttachmentsDirectory
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.utils.extensions.forEachAsync
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.plus
+import me.proton.core.util.kotlin.DispatcherProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
+import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.sqrt
+
+private const val DEBOUNCE_DELAY_MILLIS = 500L
 
 /**
  * A class that will inline the images in the message's body.
@@ -51,12 +56,13 @@ import kotlin.math.sqrt
  *
  * @author Davide Farella
  */
-class MessageRenderer(
-        private val directory: File,
-        private val documentParser: DocumentParser,
-        private val bitmapImageDecoder: ImageDecoder,
-        scope: CoroutineScope
-) : CoroutineScope by ( scope + Default ) {
+internal class MessageRenderer(
+    private val dispatchers: DispatcherProvider,
+    private val directory: File,
+    private val documentParser: DocumentParser,
+    private val bitmapImageDecoder: ImageDecoder,
+    scope: CoroutineScope
+) : CoroutineScope by scope + dispatchers.Comp {
 
     /** The [String] html of the message body */
     var messageBody: String? = null
@@ -77,7 +83,7 @@ class MessageRenderer(
             imageCompressor.send(embeddedImages)
             // Workaround that ignore values for the next half second, since ViewModel is emitting
             // too many times
-            delay(500)
+            delay(DEBOUNCE_DELAY_MILLIS)
         }
     }
 
@@ -124,7 +130,7 @@ class MessageRenderer(
                     if (!file.exists() || file.length() == 0L) continue
 
                     val size = (MAX_IMAGES_TOTAL_SIZE / embeddedImages.size)
-                            .coerceAtMost(MAX_IMAGE_SINGLE_SIZE)
+                        .coerceAtMost(MAX_IMAGE_SINGLE_SIZE)
 
                     val compressed = try {
                         ByteArrayOutputStream().also {
@@ -135,6 +141,7 @@ class MessageRenderer(
                             bitmap.compress(Bitmap.CompressFormat.WEBP, 80, it)
                         }
                     } catch (t: Throwable) {
+                        Timber.i(t, "Skip the image")
                         // Skip the image
                         continue
                     }
@@ -179,7 +186,7 @@ class MessageRenderer(
                 val contentType = embeddedImage.contentType.formatContentType()
 
                 document.findImageElements(contentId)
-                        ?.attr("src", "data:$contentType;$encoding,$image64")
+                    ?.attr("src", "data:$contentType;$encoding,$image64")
             }
             documentStringifier.send(Unit) // Deliver after all the elements for now
         }
@@ -206,18 +213,20 @@ class MessageRenderer(
      *
      * @param imageDecoder [ImageDecoder]
      */
-    class Factory(
-            private val attachmentsDirectory: File,
-            private val documentParser: DocumentParser = DefaultDocumentParser,
-            private val imageDecoder: ImageDecoder = DefaultImageDecoder
+    class Factory @Inject constructor(
+        private val dispatchers: DispatcherProvider,
+        @AttachmentsDirectory private val attachmentsDirectory: File,
+        private val documentParser: DocumentParser = DefaultDocumentParser(),
+        private val imageDecoder: ImageDecoder = DefaultImageDecoder()
     ) {
         /** @return [File] directory for the current message */
         private fun messageDirectory(messageId: String) = File(attachmentsDirectory, messageId)
 
         /** @return new instance of [MessageRenderer] with the given [messageBody] */
         fun create(scope: CoroutineScope, messageId: String) =
-                MessageRenderer(messageDirectory(messageId), documentParser, imageDecoder, scope)
+            MessageRenderer(dispatchers, messageDirectory(messageId), documentParser, imageDecoder, scope)
     }
+
 }
 
 // region constants
@@ -235,7 +244,7 @@ private const val ID_PLACEHOLDER = "%id"
 
 /** [Array] of html attributes that could contain an image */
 private val IMAGE_ATTRIBUTES =
-        arrayOf("img[src=$ID_PLACEHOLDER]", "img[src=cid:$ID_PLACEHOLDER]", "img[rel=$ID_PLACEHOLDER]")
+    arrayOf("img[src=$ID_PLACEHOLDER]", "img[src=cid:$ID_PLACEHOLDER]", "img[rel=$ID_PLACEHOLDER]")
 // endregion
 
 // region typealiases
@@ -247,8 +256,8 @@ private typealias ImageString = Pair<EmbeddedImage, String>
 private fun String.formatEncoding() = toLowerCase()
 private fun String.formatContentId() = trimStart('<').trimEnd('>')
 private fun String.formatContentType() = toLowerCase()
-        .replace("\r", "").replace("\n", "")
-        .replaceFirst(";.*$".toRegex(), "")
+    .replace("\r", "").replace("\n", "")
+    .replaceFirst(";.*$".toRegex(), "")
 
 /**
  * Flatten the receiver [Document] by removing the indentation and disabling prettyPrint.
@@ -259,31 +268,43 @@ private fun Document.flatten() = apply { outputSettings().indentAmount(0).pretty
 /** @return [Elements] matching the image attribute for the given [id] */
 private fun Document.findImageElements(id: String): Elements? {
     return IMAGE_ATTRIBUTES
-            .map { attr -> attr.replace(ID_PLACEHOLDER, id) }
-            // with `asSequence` iteration will stop when the first usable element
-            // is found and so avoid to make too many calls to document.select
-            .asSequence()
-            .map { select(it) }
-            .find { it.isNotEmpty() }
+        .map { attr -> attr.replace(ID_PLACEHOLDER, id) }
+        // with `asSequence` iteration will stop when the first usable element
+        // is found and so avoid to make too many calls to document.select
+        .asSequence()
+        .map { select(it) }
+        .find { it.isNotEmpty() }
 }
 // endregion
 
 // region DocumentParser
-/** Typealias for a lambda that takes a body [String] and returns a [Document] */
-internal typealias DocumentParser = (body: String) -> Document
+/**
+ * Parses a document as [String] and returns a [Document] model
+ */
+internal interface DocumentParser {
+    operator fun invoke(body: String): Document
+}
 
-/** Default implementation of [DocumentParser] */
-object DefaultDocumentParser : DocumentParser {
+/**
+ * Default implementation of [DocumentParser]
+ */
+internal class DefaultDocumentParser @Inject constructor() : DocumentParser {
     override fun invoke(body: String): Document = Jsoup.parse(body).flatten()
 }
 // endregion
 
 // region ImageDecoder
-/** Typealias for a lambda that takes an [File] and the max size in bytes and returns a [Bitmap] */
-internal typealias ImageDecoder = (file: File, maxBytes: Int) -> Bitmap
+/**
+ * Decodes to [Bitmap] the image provided by the given [File] to fit the max size provided
+ */
+internal interface ImageDecoder {
+    operator fun invoke(file: File, maxBytes: Int): Bitmap
+}
 
-/** Default implementation of [ImageDecoder] */
-object DefaultImageDecoder : ImageDecoder {
+/**
+ * Default implementation of [ImageDecoder]
+ */
+internal class DefaultImageDecoder @Inject constructor() : ImageDecoder {
     override fun invoke(file: File, maxBytes: Int): Bitmap {
         // https://stackoverflow.com/a/8497703/6372379
 

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,8 +23,6 @@ import android.util.Base64;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,10 +35,11 @@ import javax.mail.internet.MimeBodyPart;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.AttachmentHeaders;
 import ch.protonmail.android.api.models.room.messages.Attachment;
+import ch.protonmail.android.crypto.AddressCrypto;
+import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.utils.HTMLToMDConverter;
-import ch.protonmail.android.utils.crypto.AddressCrypto;
-import ch.protonmail.android.utils.crypto.BinaryCiphertext;
 import ch.protonmail.android.utils.crypto.BinaryDecryptionResult;
+import timber.log.Timber;
 
 public class MIMEBuilder {
 
@@ -88,7 +87,7 @@ public class MIMEBuilder {
         return this;
     }
 
-    public String buildString() throws Exception {
+    public String buildString() {
         try {
             MIMEPart multipart = new MIMEPart("mixed");
             multipart.addBodyPart(buildBody());
@@ -102,9 +101,7 @@ public class MIMEBuilder {
             baos.close();
             return baos.toString();
         } catch (Exception e) {
-            // Should never happen
-            StringWriter strOut = new StringWriter();
-            e.printStackTrace(new PrintWriter(strOut));
+            Timber.e(e, "Build string error");
             return "";
         }
     }
@@ -169,9 +166,9 @@ public class MIMEBuilder {
         byte[] data = attachment.getMimeData();
         if (data == null) {
             byte[] keyBytes = Base64.decode(attachment.getKeyPackets(), Base64.DEFAULT);
-            byte[] dataBytes = api.downloadAttachment(attachment.getAttachmentId());
-            BinaryCiphertext message = BinaryCiphertext.fromPackets(keyBytes, dataBytes);
-            BinaryDecryptionResult result = crypto.decrypt(message);
+            byte[] dataBytes = api.downloadAttachmentBlocking(attachment.getAttachmentId());
+            CipherText message = new CipherText(keyBytes, dataBytes);
+            BinaryDecryptionResult result = crypto.decryptAttachment(message);
             data = result.getDecryptedData();
         }
         MimeBodyPart attachmentPart = new MimeBodyPart(headers, Base64.encode(data, Base64.NO_WRAP));

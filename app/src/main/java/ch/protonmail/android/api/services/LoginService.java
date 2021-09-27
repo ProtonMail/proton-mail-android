@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -33,6 +33,7 @@ import androidx.core.app.ProtonJobIntentService;
 import com.birbit.android.jobqueue.JobManager;
 import com.google.android.gms.safetynet.SafetyNet;
 import com.proton.gopenpgp.crypto.ClearTextMessage;
+import com.proton.gopenpgp.helper.Helper;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -88,7 +89,7 @@ import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
-import ch.protonmail.android.jobs.OnFirstLoginJob;
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.ConstantTime;
 import ch.protonmail.android.utils.Logger;
@@ -96,15 +97,15 @@ import ch.protonmail.android.utils.PasswordUtils;
 import ch.protonmail.android.utils.SRPClient;
 import ch.protonmail.android.utils.crypto.KeyType;
 import ch.protonmail.android.utils.crypto.OpenPGP;
+import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.text.Charsets;
 import timber.log.Timber;
 
 import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@AndroidEntryPoint
 public class LoginService extends ProtonJobIntentService {
     private static final String TAG_LOGIN_SERVICE = "LoginService";
 
@@ -159,11 +160,12 @@ public class LoginService extends ProtonJobIntentService {
     JobManager jobManager;
     @Inject
     QueueNetworkUtil networkUtils;
+    @Inject
+    LaunchInitialDataFetch launchInitialDataFetch;
 
     private TokenManager tokenManager;
 
     public LoginService() {
-        ProtonMailApplication.getApplication().getAppComponent().inject(this);
     }
 
     @Override
@@ -385,10 +387,10 @@ public class LoginService extends ProtonJobIntentService {
 
     private void handleFetchUserDetails() {
         try {
-            UserInfo userInfo = api.fetchUserInfo();
+            UserInfo userInfo = api.fetchUserInfoBlocking();
             UserSettingsResponse userSettingsResponse = api.fetchUserSettings();
-            MailSettingsResponse mailSettingsResponse = api.fetchMailSettings();
-            AddressesResponse addressesResponse = api.fetchAddresses();
+            MailSettingsResponse mailSettingsResponse = api.fetchMailSettingsBlocking();
+            AddressesResponse addressesResponse = api.fetchAddressesBlocking();
             MailSettings mailSettings = mailSettingsResponse.getMailSettings();
             mailSettings.setUsername(userInfo.getUser().getName());
             UserSettings userSettings = userSettingsResponse.getUserSettings();
@@ -434,7 +436,7 @@ public class LoginService extends ProtonJobIntentService {
                 status = AuthStatus.NO_NETWORK;
             }
         } catch (Exception e) {
-            Logger.doLogException(TAG_LOGIN_SERVICE, e);
+            Timber.i(e, "Login failure");
         }
         AppUtil.postEventOnUi(new LoginInfoEvent(status, infoResponse, username, password, fallbackAuthVersion));
     }
@@ -535,10 +537,13 @@ public class LoginService extends ProtonJobIntentService {
                 if (!checkPassphrase) {
                     AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
                 } else {
-                    UserInfo userInfo = api.fetchUserInfo();
+                    UserInfo userInfo = api.fetchUserInfoBlocking();
                     UserSettingsResponse userSettings = api.fetchUserSettings();
-                    MailSettingsResponse mailSettings = api.fetchMailSettings();
-                    AddressesResponse addresses = api.fetchAddresses();
+                    MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
+                    AddressesResponse addresses = api.fetchAddressesBlocking();
+
+                    setAccountMigrationStatus(addresses, userInfo);
+
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
@@ -554,7 +559,7 @@ public class LoginService extends ProtonJobIntentService {
                             }
                             if (userManager.isFirstLogin()) {
                                 jobManager.start();
-                                jobManager.addJob(new OnFirstLoginJob(true));
+                                launchInitialDataFetch.invoke(true, true);
                                 userManager.firstLoginDone();
                             }
                         }
@@ -629,7 +634,7 @@ public class LoginService extends ProtonJobIntentService {
                     AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
                 } else {
                     userManager.setUsernameAndReload(username);
-                    UserInfo userInfo = api.fetchUserInfo();
+                    UserInfo userInfo = api.fetchUserInfoBlocking();
                     if (!userManager.canConnectAccount() && !userInfo.getUser().isPaidUser()) {
                         userManager.logoutAccount(username);
                         if (!TextUtils.isEmpty(currentPrimary)) {
@@ -642,8 +647,8 @@ public class LoginService extends ProtonJobIntentService {
                     }
 
                     UserSettingsResponse userSettings = api.fetchUserSettings();
-                    MailSettingsResponse mailSettings = api.fetchMailSettings();
-                    AddressesResponse addresses = api.fetchAddresses();
+                    MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
+                    AddressesResponse addresses = api.fetchAddressesBlocking();
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
@@ -653,7 +658,7 @@ public class LoginService extends ProtonJobIntentService {
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.SUCCESS));
                         jobManager.start();
-                        jobManager.addJob(new OnFirstLoginJob(true));
+                        launchInitialDataFetch.invoke(true, true);
                         userManager.firstLoginDone();
                     }
                 }
@@ -715,12 +720,12 @@ public class LoginService extends ProtonJobIntentService {
         if (infoResponse == null || (loginHelperData.status == AuthStatus.FAILED && loginHelperData.postLoginEvent)) {
             if (loginHelperData.redirectToSetup) {
                 try {
-                    AddressesResponse addressResponse = api.fetchAddresses();
+                    AddressesResponse addressResponse = api.fetchAddressesBlocking();
                     User user = loginHelperData.user;
                     AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, loginHelperData.keySalt, loginHelperData.redirectToSetup,
                             user, username, loginHelperData.domainName, addressResponse.getAddresses()));
                 } catch (Exception e) {
-                    // FIXME:
+                    Timber.e(e);
                 }
             } else {
                 AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, null, false, null, username, null, null));
@@ -756,7 +761,7 @@ public class LoginService extends ProtonJobIntentService {
             keySalt = loginResponse.getKeySalt();
 
             if (keySalt == null) { // new response doesn't contain salt
-                UserInfo userInfo = api.fetchUserInfo();
+                UserInfo userInfo = api.fetchUserInfoBlocking();
                 KeySalts keySalts = api.fetchKeySalts();
 
                 String primaryKeyId = null;
@@ -800,10 +805,10 @@ public class LoginService extends ProtonJobIntentService {
 
             if (redirectToSetup && !signUp) {
                 status = AuthStatus.FAILED;
-                UserInfo userInfo = api.fetchUserInfo();
+                UserInfo userInfo = api.fetchUserInfoBlocking();
                 UserSettingsResponse userSettingsResp = api.fetchUserSettings();
-                MailSettingsResponse mailSettingsResp = api.fetchMailSettings();
-                AddressesResponse addressesResponse = api.fetchAddresses();
+                MailSettingsResponse mailSettingsResp = api.fetchMailSettingsBlocking();
+                AddressesResponse addressesResponse = api.fetchAddressesBlocking();
                 user = userInfo.getUser();
                 userManager.setUserSettings(userSettingsResp.getUserSettings());
                 userManager.setMailSettings(mailSettingsResp.getMailSettings());
@@ -847,6 +852,11 @@ public class LoginService extends ProtonJobIntentService {
             final String privateKey = userManager.getPrivateKey();
 
             AddressPrivateKey addressPrivateKey = new AddressPrivateKey(addressId, privateKey);
+
+            // TODO: uncomment when the API is updated (i.e. when new accounts are migrated by default)
+            // TokenAndSignature tokenAndSignature = generateTokenAndSignature(privateKey);
+            // addressPrivateKey.setToken(tokenAndSignature.token);
+            // addressPrivateKey.setSignature(tokenAndSignature.signature);
             addressPrivateKey.setSignedKeyList(generateSignedKeyList(privateKey));
             List<AddressPrivateKey> addressPrivateKeys = new ArrayList<>();
             addressPrivateKeys.add(addressPrivateKey);
@@ -857,10 +867,10 @@ public class LoginService extends ProtonJobIntentService {
                 status = AuthStatus.FAILED;
             } else {
                 status = AuthStatus.SUCCESS;
-                UserInfo userInfo = api.fetchUserInfo();
+                UserInfo userInfo = api.fetchUserInfoBlocking();
                 UserSettingsResponse userSettings = api.fetchUserSettings();
-                MailSettingsResponse mailSettings = api.fetchMailSettings();
-                AddressesResponse addressesResponse = api.fetchAddresses();
+                MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
+                AddressesResponse addressesResponse = api.fetchAddressesBlocking();
                 User user = userInfo.getUser();
                 userManager.setUserSettings(userSettings.getUserSettings());
                 userManager.setMailSettings(mailSettings.getMailSettings());
@@ -878,7 +888,9 @@ public class LoginService extends ProtonJobIntentService {
 
     private SignedKeyList generateSignedKeyList(String key) throws Exception {
         String keyFingerprint = openPGP.getFingerprint(key);
-        String keyList = "[{\"Fingerprint\": \"" + keyFingerprint + "\", \"Primary\": 1, \"Flags\": 3}]"; // one-element JSON list
+        String keyList = "[{\"Fingerprint\": \"" + keyFingerprint + "\", " +
+                            "\"SHA256Fingerprints\": " + new String(Helper.getJsonSHA256Fingerprints(key)) + ", " +
+                            "\"Primary\": 1, \"Flags\": 3}]"; // one-element JSON list
         String signedKeyList = openPGP.signTextDetached(keyList, key, userManager.getMailboxPassword());
         return new SignedKeyList(keyList, signedKeyList);
     }
@@ -1035,5 +1047,19 @@ public class LoginService extends ProtonJobIntentService {
         }
     }
 
-
+    private void setAccountMigrationStatus(AddressesResponse addresses, UserInfo userInfo) {
+        // check for user account type if it's legacy or migrated and persist the info
+        List<Address> addressList = addresses.getAddresses();
+        if(!addressList.isEmpty()) {
+            List<Keys> keys = addressList.get(0).getKeys();
+            if (!keys.isEmpty()) {
+                Keys key = keys.get(0);
+                if (key.toAddressKey().getSignature() == null && key.toAddressKey().getToken() == null) {
+                    userInfo.getUser().setLegacyAccount(true);
+                } else if (key.toAddressKey().getSignature() != null && key.toAddressKey().getToken() != null) {
+                    userInfo.getUser().setLegacyAccount(false);
+                }
+            }
+        }
+    }
 }

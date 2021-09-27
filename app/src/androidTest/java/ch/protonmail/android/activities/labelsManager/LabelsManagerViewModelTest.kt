@@ -1,31 +1,36 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.activities.labelsManager
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
-import ch.protonmail.android.mapper.LabelUiModelMapper
-import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.libs.core.utils.EMPTY_STRING
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -33,34 +38,47 @@ import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.test.kotlin.coroutinesTest
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /**
  * Test suite for [LabelsManagerViewModel]
  * @author Davide Farella
  */
-internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
+internal class LabelsManagerViewModelTest : CoroutinesTest {
 
-    @get:Rule val archRule = InstantTaskExecutorRule()
+    @get:Rule
+    val archRule = InstantTaskExecutorRule()
+
+    @RelaxedMockK
+    private lateinit var workManager: WorkManager
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val messagesDatabase =
-            MessagesDatabaseFactory.buildInMemoryDatabase(context).getDatabase()
+    private val messagesDatabase = MessagesDatabaseFactory.buildInMemoryDatabase(context).getDatabase()
 
-    private val viewModel by lazy {
-        LabelsManagerViewModel(
+    private lateinit var viewModel: LabelsManagerViewModel
+
+    private val savedState = mockk<SavedStateHandle> {
+        every { get<Boolean>(EXTRA_MANAGE_FOLDERS) } returns false
+    }
+
+    @BeforeTest
+    fun setUp() {
+        MockKAnnotations.init(this)
+        viewModel =
+            LabelsManagerViewModel(
                 jobManager = mockk(),
+                savedStateHandle = savedState,
                 messagesDatabase = messagesDatabase,
-                type = LabelUiModel.Type.LABELS,
-                labelMapper = LabelUiModelMapper(isLabelEditable = false)
-        )
+                deleteLabel = mockk(),
+                workManager = workManager
+            )
     }
 
     @Test
-    fun verify_checked_state_is_updated_correctly_for_adapter_items() {
+    fun verifyCheckedStateIsUpdatedCorrectlyForAdapterItems() {
         val adapter = LabelsCirclesAdapter()
         viewModel.labels.observeDataForever(adapter::submitList)
 
@@ -84,5 +102,11 @@ internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
         runBlocking { delay(50) } // Wait for async delivery
         assertFalse(adapter.currentList!![0]!!.isChecked)
     }
-}
 
+    @Test
+    fun saveLabelReturnsWorkInfoLiveData() {
+        val request = viewModel.saveLabel()
+
+        assertTrue(request is LiveData<WorkInfo>)
+    }
+}

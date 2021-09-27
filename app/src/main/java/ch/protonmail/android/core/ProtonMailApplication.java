@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -39,6 +39,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.hilt.work.HiltWorkerFactory;
+import androidx.work.WorkManager;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.datatheorem.android.trustkit.TrustKit;
@@ -51,12 +53,12 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
@@ -70,24 +72,18 @@ import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.Organization;
-import ch.protonmail.android.api.models.PaymentMethod;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
-import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotification;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
-import ch.protonmail.android.core.di.AppComponent;
-import ch.protonmail.android.core.di.AppModule;
-import ch.protonmail.android.core.di.DaggerAppComponent;
 import ch.protonmail.android.events.ApiOfflineEvent;
+import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
-import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.InvalidAccessTokenEvent;
 import ch.protonmail.android.events.Login2FAEvent;
@@ -100,11 +96,8 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
 import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
-import ch.protonmail.android.events.payment.GetPaymentMethodsEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
-import ch.protonmail.android.gcm.GcmUtil;
-import ch.protonmail.android.jobs.FetchContactsDataJob;
-import ch.protonmail.android.jobs.FetchContactsEmailsJob;
+import ch.protonmail.android.fcm.FcmUtil;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
@@ -118,23 +111,25 @@ import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.crypto.OpenPGP;
 import ch.protonmail.android.utils.extensions.TextExtensions;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
+import ch.protonmail.android.worker.FetchContactsDataWorker;
+import ch.protonmail.android.worker.FetchContactsEmailsWorker;
+import dagger.hilt.android.HiltAndroidApp;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
 import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
+import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
 
-@Singleton
-public class ProtonMailApplication extends Application implements HasActivityInjector {
+@HiltAndroidApp
+public class ProtonMailApplication extends Application implements androidx.work.Configuration.Provider {
 
     private static ProtonMailApplication sInstance;
 
@@ -150,26 +145,23 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     ProtonMailApiManager mApi;
     @Inject
     OpenPGP mOpenPGP;
-    @Inject
-    DispatchingAndroidInjector<Activity> activityInjector;
 
     @Inject
     NetworkConfigurator networkConfigurator;
     @Inject
     NetworkSwitcher networkSwitcher;
+    @Inject
+    DownloadUtils downloadUtils;
 
     private Bus mBus;
     private boolean mIsInitialized;
     private boolean appInBackground;
-    private AppComponent mAppComponent;
     private Snackbar apiOfflineSnackBar;
     @Nullable
     private StorageLimitEvent mLastStorageLimitEvent;
-    private DraftCreatedEvent mLastDraftCreatedEvent;
     private WeakReference<Activity> mCurrentActivity;
     private boolean mUpdateOccurred;
     private AllCurrencyPlans mAllCurrencyPlans;
-    private List<PaymentMethod> mPaymentMethods;
     private Organization mOrganization;
     private List<String> mAvailableDomains;
     private String mCurrentLocale;
@@ -179,18 +171,26 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     private ContactsDatabase contactsDatabase;
     private MessagesDatabase messagesDatabase;
 
-    private String API_URL = "";
-
     @NonNull
     public static ProtonMailApplication getApplication() {
         return sInstance;
     }
 
+    @Inject
+    HiltWorkerFactory workerFactory;
+
+    @NotNull
+    @Override
+    public androidx.work.Configuration getWorkManagerConfiguration() {
+        return new androidx.work.Configuration.Builder()
+                .setWorkerFactory(workerFactory)
+                .build();
+    }
+
     @Override
     public void onCreate() {
-        super.onCreate();
-        appInBackground = true;
         sInstance = this;
+        appInBackground = true;
         mBus = new Bus();
         mBus.register(this);
 
@@ -213,9 +213,6 @@ public class ProtonMailApplication extends Application implements HasActivityInj
 
         // Initialize TrustKit for TLS Certificate Pinning
         TrustKit.initializeWithNetworkSecurityConfiguration(this);
-        mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(ProtonMailApplication.this)).build();
-
-        mAppComponent.inject(ProtonMailApplication.this);
 
         ViewStateStoreConfig.INSTANCE
                 .setErrorStateGenerator(ErrorStateGeneratorsKt.getErrorStateGenerator());
@@ -223,10 +220,15 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
 
-        checkForUpdateAndClearCache();
-        initLongRunningTask();
         FileUtils.createDownloadsDir(this);
         setupNotificationChannels();
+
+        super.onCreate();
+
+        WorkManager.initialize(this, getWorkManagerConfiguration());
+
+        checkForUpdateAndClearCache();
+        initLongRunningTask();
     }
 
     private void upgradeTlsProviderIfNeeded() {
@@ -285,7 +287,6 @@ public class ProtonMailApplication extends Application implements HasActivityInj
 
     public void startJobManager() {
         if (jobManager != null) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true);
             jobManager.start();
         }
     }
@@ -297,31 +298,10 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         return latestEvent;
     }
 
-    @Produce
-    public DraftCreatedEvent produceDraftCreatedEvent() {
-        return mLastDraftCreatedEvent;
-    }
-
-    @Subscribe
-    public void onDraftCreatedEvent(DraftCreatedEvent event) {
-        mLastDraftCreatedEvent = event;
-    }
-
-    public void resetDraftCreated() {
-        mLastDraftCreatedEvent = null;
-    }
-
     @Subscribe
     public void onOrganizationEvent(OrganizationEvent event) {
         if (event.getStatus() == Status.SUCCESS) {
             mOrganization = event.getResponse().getOrganization();
-        }
-    }
-
-    @Subscribe
-    public void onPaymentMethods(GetPaymentMethodsEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            mPaymentMethods = event.getMethods();
         }
     }
 
@@ -400,24 +380,20 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     public void onPasswordChangeEvent(PasswordChangeEvent event) {
         if (mCurrentActivity != null) {
             final Activity activity = mCurrentActivity.get();
-
-            switch (event.getStatus()) {
-                case SUCCESS: {
-                    if (event.getPasswordType() == Constants.PASSWORD_TYPE_LOGIN) {
-                        TextExtensions.showToast(activity.getApplicationContext(), R.string.new_login_password_saved);
-                    } else if (event.getPasswordType() == Constants.PASSWORD_TYPE_MAILBOX) {
-                        TextExtensions.showToast(activity.getApplicationContext(), R.string.new_mailbox_password_saved);
-                    }
+            if (event.getStatus() == AuthStatus.SUCCESS) {
+                if (event.getPasswordType() == Constants.PASSWORD_TYPE_LOGIN) {
+                    TextExtensions.showToast(activity.getApplicationContext(), R.string.new_login_password_saved);
+                } else if (event.getPasswordType() == Constants.PASSWORD_TYPE_MAILBOX) {
+                    TextExtensions.showToast(activity.getApplicationContext(), R.string.new_mailbox_password_saved);
                 }
-                break;
-                default: {
-                    String message = event.getStatusMessage();
-                    if (message == null || message.isEmpty()) {
-                        message = getString(R.string.default_error_message);
-                    }
-                    TextExtensions.showToast(activity.getApplicationContext(), message);
+            } else {
+                String message = event.getStatusMessage();
+                if (!mNetworkUtil.isConnected()) {
+                    message = getString(R.string.no_connectivity_detected);
+                } else if (message == null || message.isEmpty()) {
+                    message = getString(R.string.default_error_message);
                 }
-                break;
+                TextExtensions.showToast(activity.getApplicationContext(), message);
             }
         }
     }
@@ -433,7 +409,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     public void onDownloadAttachmentEvent(DownloadedAttachmentEvent event) {
         final Status status = event.getStatus();
         if (status != Status.FAILED) {
-            DownloadUtils.viewAttachment(this, event.getFilename(), !event.isOfflineLoaded());
+            downloadUtils.viewAttachmentNotification(this, event.getFilename(), event.getAttachmentUri(), !event.isOfflineLoaded());
         }
     }
 
@@ -522,11 +498,6 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         mUpdateOccurred = false;
     }
 
-    @Override
-    public AndroidInjector<Activity> activityInjector() {
-        return activityInjector;
-    }
-
     private static class RefreshMessagesAndAttachments extends AsyncTask<Void, Void, Void> {
 
         private final MessagesDatabase messagesDatabase;
@@ -565,7 +536,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     private void checkForUpdateAndClearCache() {
         final SharedPreferences prefs = getDefaultSharedPreferences();
         int currentAppVersion = AppUtil.getAppVersionCode(this);
-        mNetworkUtil.setCurrentlyHasConnectivity(true);
+        mNetworkUtil.setCurrentlyHasConnectivity();
         //refresh local cache if new app version
         int previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
         if (previousVersion != currentAppVersion && previousVersion > 0) {
@@ -581,11 +552,11 @@ public class ProtonMailApplication extends Application implements HasActivityInj
                 new RefreshMessagesAndAttachments(messagesDatabase).execute();
             }
             if (BuildConfig.FETCH_FULL_CONTACTS && mUserManager.isLoggedIn()) {
-                jobManager.addJobInBackground(new FetchContactsEmailsJob(0));
-                jobManager.addJobInBackground(new FetchContactsDataJob());
+                new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
+                new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
             if (BuildConfig.REREGISTER_FOR_PUSH) {
-                GcmUtil.setTokenSent(false);
+                FcmUtil.setTokenSent(false);
             }
             jobManager.addJobInBackground(new FetchLabelsJob());
             //new version will get set in RegisterGcmJob
@@ -670,6 +641,17 @@ public class ProtonMailApplication extends Application implements HasActivityInj
                         secureSharedPreferencesForUser.edit().remove(PREF_LATEST_EVENT).apply();
                     }
                 }
+                if (previousVersion < FCM_MIGRATION_VERSION) {
+                    FcmUtil.setTokenSent(false);
+                }
+                if (defaultSharedPreferences.contains(PREF_SENT_TOKEN_TO_SERVER)) {
+                    for (String user : loggedInUsers) {
+                        SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
+                        secureSharedPreferencesForUser.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
+                                defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();
+                        defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
+                    }
+                }
             }
         } else {
             mUpdateOccurred = false;
@@ -693,10 +675,6 @@ public class ProtonMailApplication extends Application implements HasActivityInj
 
     public OpenPGP getOpenPGP() {
         return mOpenPGP;
-    }
-
-    public AppComponent getAppComponent() {
-        return mAppComponent;
     }
 
     public EventManager getEventManager() {
@@ -726,24 +704,13 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         this.appInBackground = appInBackground;
     }
 
-    public List<PaymentMethod> getPaymentMethods() {
-        return mPaymentMethods;
-    }
-
-    public void clearPaymentMethods() {
-        mPaymentMethods = null;
-    }
-
+    @Nullable
     public Organization getOrganization() {
         return mOrganization;
     }
 
     public void setOrganization(Organization organization) {
         mOrganization = organization;
-    }
-
-    public List<String> getAvailableDomains() {
-        return mAvailableDomains == null ? new ArrayList<String>() : mAvailableDomains;
     }
 
     public void fetchOrganization() {
@@ -757,22 +724,6 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         INotificationServer notificationServer = new NotificationServer(this, notificationManager);
         if (mUserManager != null && mUserManager.isLoggedIn()) {
             notificationServer.notifyUserLoggedOut(mUserManager.getUser(username));
-        }
-    }
-
-    public void notifySingleErrorSendingMessage(Message message, String error, User user) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn()) {
-            notificationServer.notifySingleErrorSendingMessage(message, error, user);
-        }
-    }
-
-    public void notifyMultipleErrorSendingMessage(List<SendingFailedNotification> sendingFailedNotifications, User user) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn()) {
-            notificationServer.notifyMultipleErrorSendingMessage(sendingFailedNotifications, user);
         }
     }
 

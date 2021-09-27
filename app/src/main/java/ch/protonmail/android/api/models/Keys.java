@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -21,10 +21,23 @@ package ch.protonmail.android.api.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * This model is called AddressKey on server, we can create hierarchy of Key -> UserKey/AddressKey for refactor.
- */
+import ch.protonmail.android.domain.entity.user.AddressKey;
+import ch.protonmail.android.domain.entity.user.UserKey;
+import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper;
+import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper;
+
+@Deprecated
+@kotlin.Deprecated(
+        message = "Replace with 'ch.protonmail.android.domain.entity.user.UserKey' or" +
+                "'ch.protonmail.android.domain.entity.user.UserKey'.\n" +
+                "Where possible to have a proper DI use 'UserKeyBridgeMapper' or " +
+                "'AddressKeyBridgeMapper', otherwise the functions 'toAddressKey' or 'toUserKey'"
+)
 public class Keys extends ResponseBody implements Parcelable {
+
+    private final static String GENERIC_DEPRECATION_MESSAGE = "Use from new AddressKey or UserKey " +
+            "entities from  'ch.protonmail.android.domain.entity.user' package.\n" +
+            "Use  'toUserKey' or  'toAddressKey' or replace the User or Address directly";
 
     String ID;
     String PrivateKey;
@@ -33,8 +46,9 @@ public class Keys extends ResponseBody implements Parcelable {
     String Token;
     String Signature;
     String Activation;
+    int Active;
 
-    public Keys(String ID, String privateKey, int flags, int primary, String token, String signature, String activation) {
+    public Keys(String ID, String privateKey, int flags, int primary, String token, String signature, String activation, int active) {
         this.ID = ID;
         PrivateKey = privateKey;
         Flags = flags;
@@ -42,6 +56,7 @@ public class Keys extends ResponseBody implements Parcelable {
         Token = token;
         Signature = signature;
         Activation = activation;
+        Active = active;
     }
 
     protected Keys(Parcel in) {
@@ -52,6 +67,7 @@ public class Keys extends ResponseBody implements Parcelable {
         Token = in.readString();
         Signature = in.readString();
         Activation = in.readString();
+        Active = in.readInt();
     }
 
     public static final Creator<Keys> CREATOR = new Creator<Keys>() {
@@ -66,32 +82,52 @@ public class Keys extends ResponseBody implements Parcelable {
         }
     };
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getID() {
         return ID;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nNew fields names:  'canEncrypt' /  'canVerifySignature'")
     public int getFlags() {
         return Flags;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nThis must be get from parent AddressKeys or UserKeys entity")
     public boolean isPrimary() {
         return Primary == 1;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getPrivateKey() {
         return PrivateKey;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getToken() {
         return Token;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getSignature() {
         return Signature;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getActivation() {
         return Activation;
+    }
+
+    public int getActive() {
+        return Active;
     }
 
     @Override
@@ -108,6 +144,22 @@ public class Keys extends ResponseBody implements Parcelable {
         dest.writeString(Token);
         dest.writeString(Signature);
         dest.writeString(Activation);
+        dest.writeInt(Active);
     }
 
+    /**
+     * Convert this Key to new Address Key entity
+     * @return {@link ch.protonmail.android.domain.entity.user.AddressKey}
+     */
+    public AddressKey toAddressKey() {
+        return new AddressKeyBridgeMapper().toNewModel(this);
+    }
+
+    /**
+     * Convert this Key to new User Key entity
+     * @return {@link ch.protonmail.android.domain.entity.user.UserKey}
+     */
+    public UserKey toUserKey() {
+        return new UserKeyBridgeMapper().toNewModel(this);
+    }
 }

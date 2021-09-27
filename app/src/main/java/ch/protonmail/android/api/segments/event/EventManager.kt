@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -22,16 +22,14 @@ import android.content.SharedPreferences
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.interceptors.RetrofitTag
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.core.UserManager
-import com.birbit.android.jobqueue.JobManager
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
 // region constants
 private const val PREF_NEXT_EVENT_ID = "latest_event_id"
@@ -41,27 +39,16 @@ const val PREF_LATEST_EVENT = "latest_event"
 /**
  * EventManager manages the fetching of the proper events and delegates their handling.
  */
-class EventManager {
+@Singleton
+class EventManager @Inject constructor(
+    private val protonMailApplication: ProtonMailApplication,
+    protonMailApiManager: ProtonMailApiManager,
+    private val eventHandlerFactory: EventHandler.AssistedFactory
+) {
 
-    @Inject
-    lateinit var protonMailApiManager: ProtonMailApiManager
-    @Inject
-    lateinit var userManager: UserManager
-    @Inject
-    lateinit var jobManager: JobManager
-    @Inject
-    lateinit var databaseProvider: DatabaseProvider
-    @Inject
-    lateinit var protonMailApplication: ProtonMailApplication
-
-    private var service: EventService
+    private var service: EventService = protonMailApiManager.getSecuredServices().event
     private var sharedPrefs = mutableMapOf<String, SharedPreferences>()
     private var eventHandlers = mutableMapOf<String, EventHandler>()
-
-    init {
-        ProtonMailApplication.getApplication().appComponent.inject(this)
-        service = protonMailApiManager.getSecuredServices().event
-    }
 
     fun reconfigure(service: EventService) {
         this.service = service
@@ -96,8 +83,7 @@ class EventManager {
     fun start(loggedInUsers: List<String>) {
         loggedInUsers.forEach { username ->
             if (!eventHandlers.containsKey(username)) {
-                eventHandlers[username] = EventHandler(protonMailApplication, protonMailApiManager, databaseProvider,
-                        userManager, jobManager, username)
+                eventHandlers[username] = eventHandlerFactory.create(username)
             }
         }
 
@@ -161,9 +147,9 @@ class EventManager {
             return
         }
         Timber.d("EventManager handler stage and write")
-        if (handler.stage(response)) {
+        if (handler.stage(response.messageUpdates)) {
             // Write the updates since the staging was completed without any error
-            handler.write()
+            handler.write(response)
             // Update next event id only after writing updates to local cache has finished successfully
             backupNextEventId(handler.username, response.eventID)
         }
@@ -174,18 +160,20 @@ class EventManager {
     }
 
     private fun recoverNextEventId(username: String): String? {
-        val prefs = sharedPrefs.getOrPut(username, {
-            protonMailApplication.getSecureSharedPreferences(username)
-        })
+        val prefs = sharedPrefs.getOrPut(
+            username,
+            { protonMailApplication.getSecureSharedPreferences(username) }
+        )
         Timber.d("EventManager recoverLastEventId")
         val lastEventId = prefs.getString(PREF_NEXT_EVENT_ID, null)
         return if (lastEventId.isNullOrEmpty()) null else lastEventId
     }
 
     private fun backupNextEventId(username: String, eventId: String) {
-        val prefs = sharedPrefs.getOrPut(username, {
-            protonMailApplication.getSecureSharedPreferences(username)
-        })
+        val prefs = sharedPrefs.getOrPut(
+            username,
+            { protonMailApplication.getSecureSharedPreferences(username) }
+        )
         Timber.d("EventManager backupLastEventId")
         prefs.edit().putString(PREF_NEXT_EVENT_ID, eventId).apply()
     }

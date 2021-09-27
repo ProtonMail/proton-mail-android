@@ -18,11 +18,15 @@
  */
 package ch.protonmail.android.api.models.room.contacts
 
-import androidx.room.*
 import android.provider.BaseColumns
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
-import java.util.*
+import java.util.Random
 
 // region constants
 const val TABLE_CONTACT_DATA = "contact_data"
@@ -68,10 +72,11 @@ data class ContactData @JvmOverloads constructor(
 	var dbId:Long?=null
 
 	companion object {
-		fun generateRandomContactId():String {
-			val random=Random(System.nanoTime())
-			val randomOneSec=random.nextInt()
-			return "${-(System.currentTimeMillis()+randomOneSec)}"
+		@Deprecated("Use ContactIdGenerator instead to make Unit Testing possible")
+		fun generateRandomContactId(): String {
+			val random = Random(System.nanoTime())
+			val randomOneSec = random.nextInt()
+			return "${-(System.currentTimeMillis() + randomOneSec)}"
 		}
 	}
 }

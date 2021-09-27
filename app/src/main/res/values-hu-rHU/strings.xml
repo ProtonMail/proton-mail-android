@@ -47,12 +47,14 @@ Svájci székhellyel</string>
     <string name="login_failure">Sikertelen bejelentkezés</string>
     <string name="invalid_server_proof">Érvénytelen szerver tanúsítvány</string>
     <string name="invalid_credentials">Érvénytelen hitelesítés</string>
+    <string name="incorrect_key_parameters">Hibás kulcs paraméterek</string>
     <string name="invalid_mailbox_password">Érvénytelen e-mail jelszó</string>
     <string name="not_signed_up">Ön nem regisztrált a ProtonMail Android Béta verziójára</string>
     <string name="no_network">Nincs hálózat</string>
     <string name="no_network_queued">Nincs hálózat, az üzenet várólistára került</string>
     <string name="update_app_title">Frissítés szükséges</string>
     <string name="update_app">A ProtonMail alkalmazás nem használható, amíg nincs frissítve</string>
+    <string name="you_are_offline">You are offline</string>
     <string name="api_offline_title">A ProtonMail API jelenleg nem elérhető</string>
     <string name="api_offline">A ProtonMail nem érhető el. Kérjük, nézze meg a https://protonstatus.com vagy https://twitter.com/protonmail oldalakat a friss hírekért.</string>
     <string name="contact_saved">Névjegy elmentve</string>
@@ -88,7 +90,7 @@ Svájci székhellyel</string>
     <string name="no_search_results">Nincs találat</string>
     <string name="compose">Levélírás</string>
     <string name="compose_message">Üzenet írása</string>
-    <string name="empty_folder">Üres mappa</string>
+    <string name="empty_folder">Mappa kiürítése</string>
     <string name="view_headers">Fejlécek megtekintése</string>
     <string name="message_headers">Üzenet fejléc</string>
     <string name="delete_message">Üzenet törlése</string>
@@ -245,10 +247,10 @@ Svájci székhellyel</string>
     <string name="update_me_for_new_features">Tájékoztasson az új funkciókról</string>
     <string name="create_mailbox_password">Jelszó létrehozása</string>
     <string name="password_note"><b>Megjegyzés:</b> Ez a jelszó az üzenetek titkosítására és visszafejtésére szolgál.
-Ne veszítse el jelszavát, mert azt nem tudjuk visszaállítani. Ha jelszavát elveszíti, akkor többé nem lesz képes elolvasni üzeneteit.</string>
+        Ne veszítse el jelszavát, mert azt nem tudjuk visszaállítani. Ha jelszavát elveszíti, akkor többé nem lesz képes elolvasni üzeneteit.</string>
     <string name="username_note"><b>Megjegyzés:</b> A felhasználónév egyben a ProtonMail e-mail cím is</string>
     <string name="terms_and_conditions">A ProtonMail használatával elfogadja a\n
-<a href="https://protonmail.com/terms-and-conditions">felhasználási feltételeket</a> és az <a href="https://protonmail.com/privacy-policy">adatvédelmi irányelveket</a></string>
+        <a href="https://protonmail.com/terms-and-conditions">felhasználási feltételeket</a> és az <a href="https://protonmail.com/privacy-policy">adatvédelmi irányelveket</a></string>
     <string name="human_verification">Bizonyítsa, hogy nem robot</string>
     <string name="human_verification_subtitle">A ProtonMaillel való visszaélések elkerülése érdekében\nellenőriznünk kell, hogy nem robot.</string>
     <string name="select_options">Kérjük, válasszon egyet az alábbi lehetőségek közül:</string>
@@ -285,7 +287,7 @@ Ne veszítse el jelszavát, mert azt nem tudjuk visszaállítani. Ha jelszavát 
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Válaszolás az eredeti levélben</string>
     <string name="no_connectivity_detected">Nincs kapcsolat...</string>
-    <string name="no_connectivity_detected_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Várakozás a kapcsolatra...</string>
     <string name="sync_short">szinkronizálás</string>
     <string name="draft_attachments_uploading">A piszkozat még feltöltés alatt...</string>
@@ -306,9 +308,9 @@ Ne veszítse el jelszavát, mert azt nem tudjuk visszaállítani. Ha jelszavát 
     <string name="congratulation">Gratulálunk!</string>
     <string name="new_account_ready">Az új biztonságos e-mail\n fiókja készen áll.</string>
     <string name="optional_email_note">Az opcionális helyreállító e-mail cím, lehetőséget biztosít
-a bejelentkezési jelszó visszaállítására, ha elfelejtené azt.</string>
+        a bejelentkezési jelszó visszaállítására, ha elfelejtené azt.</string>
     <string name="optional_display_name">E-mail küldésekor, ez a név fog megjelenni
-feladóként.</string>
+        feladóként.</string>
     <string name="error_captcha_not_valid">Nem érvényes</string>
     <string name="close_engagement">bemutató bezárása</string>
     <string name="engagement_title_welcome">Üdvözöljük a ProtonMailnél!</string>
@@ -384,21 +386,9 @@ feladóként.</string>
     <string name="log_out">Kijelentkezés %s?</string>
     <string name="logout_question">Biztos, hogy ki szeretne jelentkezni?</string>
     <string name="logout_question_next_account">Biztos benne, hogy kijelentkezik az aktuális fiókból és a következőt használja: %s?</string>
-    <string name="upselling">Csomagváltás/Adományozás</string>
     <string name="upselling_title">A ProtonMail ingyenes és nyílt forráskódú</string>
     <string name="upselling_subtitle">Szükségünk van a támogatására, hogy tovább dolgozhassunk a személyes adatok védelméért és fejleszthessük a ProtonMailt</string>
-    <string name="upselling_donate_title">Adományozás</string>
     <string name="upselling_upgrade_title">Váltás ProtonVPN Plus csomagra</string>
-    <string name="upselling_donate_subtitle">Adománya segít abban, hogy kapacitásunkat növelhessük, és a ProtonMail továbbra is egy ingyenes és nyílt forráskódú szoftver maradhasson. Csak a közösség támogatása teszi lehetővé, hogy a ProtonMail szolgáltatásait az emberek bárhol a világon igénybe vehessék.</string>
-    <string name="upgrade_donate">Csomagváltás/Adományozás</string>
-    <string name="upselling_donate_pick_amount">Válasszon egy összeget vagy írjon be egy tetszőleges értéket</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Írja be az adomány összegét</string>
-    <string name="donate">Adományozás</string>
-    <string name="donate_paypal_bitcoin">Adományozás PayPal vagy Bitcoin fizetéssel</string>
     <string name="upgrade_line1">Minden ami az ingyenes csomagban is elérhető</string>
     <string name="upgrade_line2">5 GB tárhely</string>
     <string name="upgrade_line3">Saját domain név használata</string>
@@ -407,11 +397,11 @@ feladóként.</string>
     <string name="upgrade">Csomagváltás</string>
     <string name="payment_options">Fizetési mód</string>
     <string name="other_plans">Több tárhelyet tartalmazó csomagokra a
-ProtonMail webes felületén válthat.</string>
+    ProtonMail webes felületén válthat.</string>
     <string name="upgrade_paid_user">Köszönőjük, hogy ön fizető ügyfél!</string>
     <string name="select_account_type">Válassza ki a fiók típusát</string>
     <string name="select_account_type_subtitle">A ProtonMail egy ingyenes szolgáltatás,
-a közösség érdekeiért. Ön is támogathatja a személyes adatok védelmét egy fizetős csomagra váltással.</string>
+    a közösség érdekeiért. Ön is támogathatja a személyes adatok védelmét egy fizetős csomagra váltással.</string>
     <string name="plan_free_with_price">INGYENES</string>
     <string name="plan_plus_with_price">PLUS %s/hó</string>
     <string name="plan_visionary_with_price">VISIONARY %s/hó</string>
@@ -441,8 +431,8 @@ a közösség érdekeiért. Ön is támogathatja a személyes adatok védelmét 
     <string name="billing_information">Számlázási adatok</string>
     <string name="country">Ország</string>
     <string name="cvc">Biztonsági kód</string>
-    <string name="terms_and_conditions_billing">Az Elküldés gomb megnyomásával
-elfogadja a\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail Felhasználási Feltételeteket</a></string>
+    <string name="terms_and_conditions_billing">Az Elküldés gomb megnyomásával 
+    elfogadja a\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail Felhasználási Feltételeteket</a></string>
     <string name="submit">Elküldés</string>
     <string name="currency">Pénznem</string>
     <string name="plan_duration">Számlázási ciklus</string>
@@ -465,8 +455,6 @@ elfogadja a\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail Fe
     <string name="payment_picker_disclaimer">Kérem, válassza ki a fizetési módot</string>
     <string name="payment_success_title">Sikeres fizetés!</string>
     <string name="payment_success_text">Most frissítjük fiókját, kérjük várjon egy percet. Köszönjük a támogatást!</string>
-    <string name="donation_success_title">Sikeres adományozás!</string>
-    <string name="donation_success_text">A támogatása elengedhetetlen, hogy a ProtonMail működhessen. Köszönjük, hogy támogatja a személyes adatok védelmét az interneten!</string>
     <string name="create_free_account">Ingyenes fiók létrehozása</string>
     <string name="storage_gb">%d GB tárhely</string>
     <string name="storage_mb">%d MB tárhely</string>
@@ -669,9 +657,7 @@ elfogadja a\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail Fe
     <string name="close_app">Alkalmazás bezárása</string>
     <string name="empty_subject">(Nincs tárgy)</string>
     <string name="contacts_unknown">Ismeretlen</string>
-    <string name="learn_more">
-        <u>További információk</u>
-    </string>
+    <string name="learn_more"><u>További információk</u></string>
     <string name="info">Infó</string>
     <string name="error_can_not_send_from_this_address">Váltson nagyobb csomagra, hogy üzenhessen erről a címről: %s.</string>
     <string name="email_empty">E-mail cím hiányzik</string>
@@ -731,9 +717,7 @@ elfogadja a\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail Fe
     <string name="expiration_error_add_msg_password">Kérjük, adjon meg üzenet jelszót a következő címzetteknek:</string>
     <string name="expiration_error_disable_pgp_sending">Kérjük, kapcsolja a ki a PGP titkosítást, hogy lejárati időt adhasson meg, a következő címzetteknél:</string>
     <string name="expiration_error_proceed">Érintse meg, hogy ezeknek a címzetteknek időkorlát nélküli üzenetet küldjön.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">TOVÁBBI INFORMÁCIÓK</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">TOVÁBBI INFORMÁCIÓK</a></string>
     <string name="channel_name_attachments">Mellékletek</string>
     <string name="channel_description_attachments">A letöltés állapotát mutatja</string>
     <string name="channel_name_emails">E-mailek</string>
@@ -742,14 +726,14 @@ elfogadja a\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail Fe
     <string name="channel_description_account">Fiók állapota</string>
     <string name="channel_name_ongoing_operations">Folyamatban lévő műveletek</string>
     <string name="channel_description_ongoing_operations">Mutatja az összes folyamatban lévő műveletet,
-mint új üzenet letöltése a háttérben</string>
+	mint új üzenet letöltése a háttérben</string>
     <string name="checking_mailbox">Fiók ellenőrzése</string>
     <string name="report_phishing">Adathalászat bejelentése</string>
     <string name="print">Nyomtatás</string>
     <string name="phishing_dialog_title">Erősítse meg az adathalász bejelentést</string>
     <string name="phishing_dialog_message">Az adathalász kísérletként megjelölt üzeneteket a rendszer
-hozzánk továbbítja, hogy kiértékelhessük és fejleszthessük a szűrőinket. Ebben az esetben
-az üzenet teljes szövegéhez hozzáférhetünk.</string>
+	hozzánk továbbítja, hogy kiértékelhessük és fejleszthessük a szűrőinket. Ebben az esetben 
+	az üzenet teljes szövegéhez hozzáférhetünk.</string>
     <string name="phishing_report_send_message_moved_to_spam">Jelentés elküldve. Az üzenet áthelyezve a levélszeméthez.</string>
     <string name="cannot_send_report_send">Jelentés elküldése nem sikerült</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
@@ -809,7 +793,6 @@ az üzenet teljes szövegéhez hozzáférhetünk.</string>
     </plurals>
     <string name="members">Tagok</string>
     <string name="max_emails_in_group_title">Csoport létszám elérte a korlátot</string>
-    <string name="max_emails_in_group_subtitle">A csoport elérte a maximális méretet (%1$d). Töröljön %2$d címet.</string>
     <string name="select_deselect_all">Összes kijelölése</string>
     <string name="contact_group_name_hint">Adjon meg egy csoport nevet</string>
     <string name="contact_group_change_color">Szín megváltoztatása</string>
@@ -821,17 +804,17 @@ az üzenet teljes szövegéhez hozzáférhetünk.</string>
     <string name="save_group_validation_error">Adjon meg egy nevet a csoportnak</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Tárhely korlát túllépés. Nem lehet üzeneteket fogadni és küldeni.
-Kérjük, tájékozódjon a lehetőségekről.</string>
+        Kérjük, tájékozódjon a lehetőségekről.</string>
     <string name="storage_limit_warning_title">Figyelem</string>
-    <string name="storage_limit_reached_text">A fiók elérte tárolókapacitása maximumát. Nem küldhet
-vagy fogadhat további leveleket, hacsak nem töröl véglegesen néhány üzenetet vagy vásárol további
-tárhelyet.</string>
+    <string name="storage_limit_reached_text">A fiók elérte tárolókapacitása maximumát. Nem küldhet 
+        vagy fogadhat további leveleket, hacsak nem töröl véglegesen néhány üzenetet vagy vásárol további
+        tárhelyet.</string>
     <string name="storage_limit_approaching_text">90 százalékot ért el a tárolókapacitás foglaltsága.
-Fontolja meg, hogy helyet szabadít fel vagy további tárhelyet vásárol, mielőtt kifutna a szabad helyből.</string>
+        Fontolja meg, hogy helyet szabadít fel vagy további tárhelyet vásárol, mielőtt kifutna a szabad helyből.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Engedélyek</string>
-    <string name="need_storage_permissions_text">Melléklet hozzáadáshoz engedélyeznie kell
-a tárhely elérését.</string>
+    <string name="need_storage_permissions_text">Melléklet hozzáadáshoz engedélyeznie kell 
+        a tárhely elérését.</string>
     <string name="push_notifications_alert_title">Push értesítés riasztás</string>
     <string name="push_notifications_alert_subtitle">A ProtonMail push értesítések nem működnek a legújabb Google Play szolgáltatások nélkül.</string>
     <string name="app_locked">Az alkalmazás zárolt</string>
@@ -909,8 +892,8 @@ a tárhely elérését.</string>
     <string name="labels_manage">Címkék kezelése</string>
     <string name="folders_manage">Mappák kezelése</string>
     <string name="swiping_gesture">Csúsztatási műveletek</string>
-    <string name="swipe_action_right">Swipe right</string>
-    <string name="swipe_action_left">Swipe left</string>
+    <string name="swipe_action_right">Csúsztatás jobbra</string>
+    <string name="swipe_action_left">Csúsztatás balra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Válasszon műveletet a csúsztatáshoz</string>
     <string name="swipe_action_trash">Áthelyezés a Lomtárba</string>
@@ -981,23 +964,27 @@ a tárhely elérését.</string>
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
-</string>
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">A kép nem található</string>
     <string name="error_image_bad_url">Deformált kép url</string>
+    <string name="error_saving_try_again">Hiba történt az üzenet mentése közben. Próbálja meg újra.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Swipe gestures changed</string>
-    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
-    <string name="go_to_settings">Go to settings</string>
+    <string name="swipe_gestures_changed">Csúsztatás műveletek frissítve</string>
+    <string name="swipe_gestures_changed_message">A legutóbbi frissítés után a csúsztatás műveletek megváltoztak. Ha szeretné, visszaállíthatja a beállításoknál.</string>
+    <string name="go_to_settings">Beállítások megnyitása</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Helytelen Firebase API kulcs. A Push értesítések nem fognak működni.</string>
+    <string name="failed_saving_draft_online">Hiba történt a piszkozat mentése közben: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Nem nyitható meg az üzenet, miközben elküldés alatt van</string>
 </resources>

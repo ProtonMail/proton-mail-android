@@ -46,12 +46,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">登录失败</string>
     <string name="invalid_server_proof">无效的服务器信息</string>
     <string name="invalid_credentials">账号或密码错误</string>
+    <string name="incorrect_key_parameters">密钥参数错误</string>
     <string name="invalid_mailbox_password">无效的邮箱密码</string>
     <string name="not_signed_up">您没有注册ProtonMail安卓测试版</string>
     <string name="no_network">无网络连接</string>
     <string name="no_network_queued">网络尚未连接，邮件将稍后发送</string>
     <string name="update_app_title">需要更新</string>
     <string name="update_app">ProtonMail 需要更新才能使用</string>
+    <string name="you_are_offline">You are offline</string>
     <string name="api_offline_title">未能连接 ProtonMail API</string>
     <string name="api_offline">ProtonMail 目前不可用，请前往 https://protonstatus.com 或 https://twitter.com/protonmail 了解当前状况。</string>
     <string name="contact_saved">联系人已保存</string>
@@ -198,7 +200,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="share">分享</string>
     <string name="settings_not_saved_password">登录密码错误，设置未保存</string>
     <string name="settings_not_saved_email">通知邮箱无效，设置未保存</string>
-    <string name="enter">输入</string>
+    <string name="enter">确认</string>
     <string name="cancel">取消</string>
     <string name="close">关闭</string>
     <string name="change_password">更改密码</string>
@@ -277,7 +279,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">部分邮件删除失败，可能正在发送当中</string>
     <string name="respond_inline">纯文本引用</string>
     <string name="no_connectivity_detected">网络未连接。</string>
-    <string name="no_connectivity_detected_troubleshoot">网络未连接（<u>排查故障</u>）</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">正在连接...</string>
     <string name="sync_short">同步</string>
     <string name="draft_attachments_uploading">草稿仍在上传中...</string>
@@ -373,21 +375,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">退出账户 %s？</string>
     <string name="logout_question">确定要退出账户吗？</string>
     <string name="logout_question_next_account">确定退出当前账户并转到 %s 吗？</string>
-    <string name="upselling">升级/捐款</string>
     <string name="upselling_title">ProtonMail 免费且开源</string>
     <string name="upselling_subtitle">我们需要您的支持来继续改进 ProtonMail，推动隐私保护。</string>
-    <string name="upselling_donate_title">捐款</string>
     <string name="upselling_upgrade_title">开通 ProtonMail 增强版</string>
-    <string name="upselling_donate_subtitle">您的捐款能够帮助我们扩充服务器，并继续开发免费开源的 ProtonMail 软件。只有依靠整个社群的支持，我们才能继续向全世界提供 ProtonMail 服务。</string>
-    <string name="upgrade_donate">升级/捐款</string>
-    <string name="upselling_donate_pick_amount">选择捐款金额或直接输入</string>
-    <string name="amount_5">€5</string>
-    <string name="amount_15">€15</string>
-    <string name="amount_50">€50</string>
-    <string name="amount_100">€100</string>
-    <string name="donation_amount">输入捐款金额</string>
-    <string name="donate">捐款</string>
-    <string name="donate_paypal_bitcoin">使用 PayPal 或比特币捐款</string>
     <string name="upgrade_line1">包含免费版的所有功能</string>
     <string name="upgrade_line2">5 GB 存储空间</string>
     <string name="upgrade_line3">可使用您自己的域名</string>
@@ -451,8 +441,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">请选择支付方式</string>
     <string name="payment_success_title">支付成功！</string>
     <string name="payment_success_text">我们正在为您升级账户，请稍等片刻。感谢您的支持！</string>
-    <string name="donation_success_title">捐款完成！</string>
-    <string name="donation_success_text">您的支持对于 ProtonMail 至关重要。感谢您支持互联网隐私保护！</string>
     <string name="create_free_account">创建免费账户</string>
     <string name="storage_gb">%d GB 存储空间</string>
     <string name="storage_mb">%d MB 存储空间</string>
@@ -654,9 +642,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close_app">关闭应用</string>
     <string name="empty_subject">(无主题)</string>
     <string name="contacts_unknown">无名</string>
-    <string name="learn_more">
-        <u>详细了解</u>
-    </string>
+    <string name="learn_more"><u>详细了解</u></string>
     <string name="info">提示</string>
     <string name="error_can_not_send_from_this_address">若要使用 %s 地址发送邮件，请开通付费账户。</string>
     <string name="email_empty">邮箱地址缺失</string>
@@ -716,9 +702,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="expiration_error_add_msg_password">请为下列收件人设置邮件密码：</string>
     <string name="expiration_error_disable_pgp_sending">请关闭 PGP 以为下列收件人设置邮件有效期：</string>
     <string name="expiration_error_proceed">点击“仍然发送”向这些收件人发送没有有效期的邮件。</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a></string>
     <string name="channel_name_attachments">附件</string>
     <string name="channel_description_attachments">附件下载状态提醒</string>
     <string name="channel_name_emails">电子邮件</string>
@@ -787,7 +771,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="members">成员</string>
     <string name="max_emails_in_group_title">已达到群组电子邮件数目限制</string>
-    <string name="max_emails_in_group_subtitle">此群组的电子邮件数量已达到限制（%1$d），请先移除 %2$d 封邮件。</string>
     <string name="select_deselect_all">全选</string>
     <string name="contact_group_name_hint">填写群组名称</string>
     <string name="contact_group_change_color">更改颜色</string>
@@ -799,7 +782,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="save_group_validation_error">请填写群组名称</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">存储空间已达上限，无法继续收发电子邮件。
-点击此处了解详情。</string>
+        点击此处了解详情。</string>
     <string name="storage_limit_warning_title">警告</string>
     <string name="storage_limit_reached_text">您的存储空间已用尽，必须永久删除部分邮件或购买更多存储空间才能继续收发邮件。</string>
     <string name="storage_limit_approaching_text">您已使用了 90% 的存储空间。请考虑清理一些空间或购买更大存储量，以防空间耗尽。</string>
@@ -961,6 +944,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region errors -->
     <string name="error_image_not_found">图片未找到</string>
     <string name="error_image_bad_url">图片网址不正确</string>
+    <string name="error_saving_try_again">保存邮件失败，请重试。</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
@@ -969,4 +953,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_gestures_changed_message">程序升级导致滑动手势发生变化。您可以在设置中将其重置。</string>
     <string name="go_to_settings">前往设置</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">无效的 Firebase API 密钥。推送通知将无法使用。</string>
+    <string name="failed_saving_draft_online">为信息保存在线草稿失败：“%s”</string>
+    <string name="cannot_open_message_while_being_sent">无法打开正在发送中的信息</string>
 </resources>

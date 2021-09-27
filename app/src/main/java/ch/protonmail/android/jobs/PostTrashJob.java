@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -53,7 +53,7 @@ public class PostTrashJob extends ProtonMailCounterJob {
 
         int totalUnread = 0;
         for (String id : mMessageIds) {
-            Message message = messageDetailsRepository.findMessageById(id);
+            Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if (!message.isRead()) {
                     UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());
@@ -74,7 +74,7 @@ public class PostTrashJob extends ProtonMailCounterJob {
                     }
                     message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
                 }
-                messageDetailsRepository.saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageInDB(message);
 
             }
         }
@@ -89,7 +89,7 @@ public class PostTrashJob extends ProtonMailCounterJob {
 
     @Override
     public void onRun() throws Throwable {
-        mApi.labelMessages(new IDList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue()), mMessageIds));
+        getApi().labelMessages(new IDList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue()), mMessageIds));
     }
 
     @Override

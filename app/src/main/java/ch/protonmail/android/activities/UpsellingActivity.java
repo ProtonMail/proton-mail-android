@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,22 +20,19 @@ package ch.protonmail.android.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
@@ -49,63 +46,43 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
+import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.AvailablePlansResponse;
+import ch.protonmail.android.api.models.CheckSubscriptionResponse;
 import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.Plan;
+import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AvailablePlansEvent;
-import ch.protonmail.android.events.PaymentMethodEvent;
-import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.payment.CheckSubscriptionEvent;
-import ch.protonmail.android.events.payment.PaymentsStatusEvent;
+import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
-import ch.protonmail.android.jobs.payments.CheckSubscriptionJob;
-import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
-import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
-import ch.protonmail.android.jobs.payments.GetPaymentsStatusJob;
+import ch.protonmail.android.usecase.model.CheckSubscriptionResult;
+import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.viewmodel.UpsellingViewModel;
+import timber.log.Timber;
 
-/**
- * Created by dkadrikj on 6/28/16.
- */
 public class UpsellingActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_UPGRADE_CONTAINER = "EXTRA_OPEN_UPGRADE";
-    private static final int REQUEST_CODE_DONATE = 1;
     private static final int REQUEST_CODE_UPGRADE = 2;
 
     @BindView(R.id.upgrade_container)
     View upgradeContainer;
-    @BindView(R.id.donate_container)
-    View donateContainer;
     @BindView(R.id.main_container)
     View mainContainer;
     @BindView(R.id.expand_upgrade)
     View upgradeExpand;
     @BindView(R.id.contract_upgrade)
     View upgradeContract;
-    @BindView(R.id.expand_donate)
-    View donateExpand;
-    @BindView(R.id.contract_donate)
-    View donateContract;
     @BindView(R.id.upgrade_header_title)
     TextView upgradeHeaderTitle;
-    @BindView(R.id.amount_5)
-    Button btnAmount5;
-    @BindView(R.id.amount_15)
-    Button btnAmount15;
-    @BindView(R.id.amount_50)
-    Button btnAmount50;
-    @BindView(R.id.amount_100)
-    Button btnAmount100;
     @BindView(R.id.upgrade_header)
     View upgradeHeader;
-    @BindView(R.id.custom_amount)
-    EditText donateCustomAmountEditText;
     @BindView(R.id.upselling_progress_container)
     View upsellingProgress;
     @BindView(R.id.billing_info)
@@ -114,21 +91,11 @@ public class UpsellingActivity extends BaseActivity {
     TextView mPaymentOptions;
     @BindView(R.id.progress)
     View mProgress;
-    private State upgradeContainerState;
-    private State donateContainerState;
 
-    private int donationAmount;
-    private int donationAmountPosition;
-    View.OnTouchListener pressListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            resetAmountButtonsState();
-            v.setPressed(!v.isPressed());
-            donationAmount = getPresetChosenAmount();
-            donateCustomAmountEditText.setText(String.valueOf(donationAmount));
-            return true;
-        }
-    };
+    private UpsellingViewModel viewModel;
+
+    private State upgradeContainerState;
+
     private double selectedAnnualMonthlyPrice;
     private double selectedMonthlyPrice;
     private int fullAnnualMonthlyPriceCents;
@@ -150,17 +117,9 @@ public class UpsellingActivity extends BaseActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        viewModel = new ViewModelProvider(this).get(UpsellingViewModel.class);
         boolean openUpgrade = getIntent().getBooleanExtra(EXTRA_OPEN_UPGRADE_CONTAINER, false);
-        checkPaymentStatus();
         fetchPlan(Constants.CurrencyType.EUR);
-        donateContainerState = State.CLOSED;
-        btnAmount5.setOnTouchListener(pressListener);
-        btnAmount15.setOnTouchListener(pressListener);
-        btnAmount50.setOnTouchListener(pressListener);
-        btnAmount100.setOnTouchListener(pressListener);
-        btnAmount15.setPressed(true);
-        donationAmountPosition = 1;
-        donationAmount = getPresetChosenAmount();
         User user = mUserManager.getUser();
         Organization organization = ProtonMailApplication.getApplication().getOrganization();
         if (user != null && organization != null) {
@@ -180,13 +139,14 @@ public class UpsellingActivity extends BaseActivity {
             upgradeHeader.setOnClickListener(v -> onUpgradeHeaderClick());
         }
 
-        GetPaymentMethodsJob paymentMethodsJob = new GetPaymentMethodsJob();
-        mJobManager.addJobInBackground(paymentMethodsJob);
-    }
-
-    private void checkPaymentStatus() {
-        GetPaymentsStatusJob job = new GetPaymentsStatusJob();
-        mJobManager.addJobInBackground(job);
+        viewModel.getCreateSubscriptionResult().observe(
+                this,
+                this::onCreateSubscriptionResult
+        );
+        viewModel.getCheckSubscriptionResult().observe(
+                this,
+                this::onCheckSubscriptionEvent
+        );
     }
 
     private void fetchPlan(Constants.CurrencyType currency) {
@@ -218,8 +178,6 @@ public class UpsellingActivity extends BaseActivity {
         if (upsellingProgress != null) {
             upsellingProgress.setVisibility(View.GONE);
         }
-        resetAmountButtonsState();
-        setPressedByPosition();
     }
 
     @Override
@@ -232,25 +190,6 @@ public class UpsellingActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         ProtonMailApplication.getApplication().getBus().unregister(this);
-    }
-
-    private void setPressedByPosition() {
-        if (donationAmountPosition == 0) {
-            btnAmount5.setPressed(true);
-        } else if (donationAmountPosition == 1) {
-            btnAmount15.setPressed(true);
-        } else if (donationAmountPosition == 2) {
-            btnAmount50.setPressed(true);
-        } else if (donationAmountPosition == 3) {
-            btnAmount100.setPressed(true);
-        }
-    }
-
-    private void resetAmountButtonsState() {
-        btnAmount5.setPressed(false);
-        btnAmount15.setPressed(false);
-        btnAmount50.setPressed(false);
-        btnAmount100.setPressed(false);
     }
 
     @Override
@@ -270,35 +209,10 @@ public class UpsellingActivity extends BaseActivity {
     public void onUpgradeHeaderClick() {
         if (upgradeContainerState == State.CLOSED) {
             upgradeContainerState = State.OPENED;
-            donateContainerState = State.CLOSED;
             openUpgradeContainer();
         } else {
             upgradeContainerState = State.CLOSED;
-            donateContainerState = State.CLOSED;
             closeUpgradeContainer();
-        }
-    }
-
-    @OnClick(R.id.donate_paypal)
-    public void onDonatePaypalClicked() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.donate_paypal)));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            TextExtensions.showToast(this, R.string.no_browser_found, Toast.LENGTH_SHORT);
-        }
-    }
-
-    @OnClick(R.id.donate_header)
-    public void onDonateHeaderClick() {
-        if (donateContainerState == State.CLOSED) {
-            upgradeContainerState = State.CLOSED;
-            donateContainerState = State.OPENED;
-            openDonateContainer();
-        } else {
-            upgradeContainerState = State.CLOSED;
-            donateContainerState = State.CLOSED;
-            closeDonateContainer();
         }
     }
 
@@ -311,29 +225,11 @@ public class UpsellingActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.donate)
-    public void onDonateClicked() {
-        int amount;
-        String customAmount = donateCustomAmountEditText.getText().toString();
-        if (!TextUtils.isEmpty(customAmount)) {
-            amount = Integer.valueOf(customAmount);
-        } else {
-            amount = donationAmount;
-        }
-        if (amount <= 0) {
-            return;
-        }
-        Intent billingIntent = new Intent(this, BillingActivity.class);
-        billingIntent.putExtra(BillingActivity.EXTRA_AMOUNT, amount * 100); // amount in cents
-        billingIntent.putExtra(BillingActivity.EXTRA_BILLING_TYPE, Constants.BillingType.DONATE);
-        startActivityForResult(AppUtil.decorInAppIntent(billingIntent), REQUEST_CODE_DONATE);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            if (requestCode == REQUEST_CODE_DONATE || requestCode == REQUEST_CODE_UPGRADE) {
+            if (requestCode == REQUEST_CODE_UPGRADE) {
                 boolean success = extras.getBoolean(BillingActivity.EXTRA_SUCCESS);
                 if (success) {
                     Intent intent = new Intent();
@@ -373,115 +269,69 @@ public class UpsellingActivity extends BaseActivity {
         alert.show();
     }
 
-    private int getPresetChosenAmount() {
-        if (btnAmount5.isPressed()) {
-            donationAmountPosition = 0;
-            return 5;
-        }
-        if (btnAmount15.isPressed()) {
-            donationAmountPosition = 1;
-            return 15;
-        }
-        if (btnAmount50.isPressed()) {
-            donationAmountPosition = 2;
-            return 50;
-        }
-        if (btnAmount100.isPressed()) {
-            donationAmountPosition = 3;
-            return 100;
-        }
-        return 0;
-    }
 
     private void openUpgradeContainer() {
         upgradeContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
-        donateContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
         mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
         upgradeExpand.setVisibility(View.GONE);
         upgradeContract.setVisibility(View.VISIBLE);
-        donateExpand.setVisibility(View.VISIBLE);
-        donateContract.setVisibility(View.GONE);
-    }
-
-    private void openDonateContainer() {
-        donateContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
-        upgradeContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        donateExpand.setVisibility(View.GONE);
-        donateContract.setVisibility(View.VISIBLE);
-        if (!paidUser) {
-            upgradeExpand.setVisibility(View.VISIBLE);
-            upgradeContract.setVisibility(View.GONE);
-        }
     }
 
     private void closeUpgradeContainer() {
         upgradeContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        donateContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
         mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
         upgradeExpand.setVisibility(View.VISIBLE);
         upgradeContract.setVisibility(View.GONE);
     }
 
-    private void closeDonateContainer() {
-        donateContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        upgradeContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
-        donateExpand.setVisibility(View.VISIBLE);
-        donateContract.setVisibility(View.GONE);
-    }
+    private void onCheckSubscriptionEvent(CheckSubscriptionResult result) {
+        Timber.v("CheckSubscriptionEvent result:%s", result);
+        if (result instanceof CheckSubscriptionResult.Success) {
+            CheckSubscriptionResponse response = ((CheckSubscriptionResult.Success) result).getResponse();
 
-    @Subscribe
-    public void onPaymentsStatusEvent(PaymentsStatusEvent event) {
-        if (event.getStatus() == Status.FAILED) {
-            // TODO: show failed
-        } else {
-            if (!event.isStripeActive()) {
-                // TODO: show stripe not active
-            }
-        }
-    }
-
-    @Subscribe
-    public void onCheckSubscriptionEvent(CheckSubscriptionEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            if (event.getResponse().getAmountDue() == 0) {
+            if (response.getAmountDue() == 0) {
                 // prevent user from making illegal payment of value 0
-                CreateSubscriptionJob job = new CreateSubscriptionJob(0, Constants.CurrencyType.valueOf(event.getResponse().getCurrency()), null, Collections.singletonList(mSelectedPlanId), mCycle, null);
-                mJobManager.addJobInBackground(job);
+                viewModel.createSubscription(
+                        0,
+                        response.getCurrency(),
+                        mCycle,
+                        Collections.singletonList(mSelectedPlanId),
+                        null,
+                        null
+                );
             } else {
                 Intent billingIntent = new Intent(this, BillingActivity.class);
                 billingIntent.putExtra(BillingActivity.EXTRA_WINDOW_SIZE, getWindow().getDecorView().getHeight());
-                billingIntent.putExtra(BillingActivity.EXTRA_AMOUNT, event.getResponse().getAmountDue());
-                billingIntent.putExtra(BillingActivity.EXTRA_CURRENCY, event.getResponse().getCurrency());
+                billingIntent.putExtra(BillingActivity.EXTRA_AMOUNT, response.getAmountDue());
+                billingIntent.putExtra(BillingActivity.EXTRA_CURRENCY, response.getCurrency());
                 billingIntent.putExtra(BillingActivity.EXTRA_BILLING_TYPE, Constants.BillingType.UPGRADE);
                 billingIntent.putExtra(BillingActivity.EXTRA_SELECTED_PLAN_ID, mSelectedPlanId);
                 billingIntent.putExtra(BillingActivity.EXTRA_SELECTED_CYCLE, mCycle);
                 startActivityForResult(AppUtil.decorInAppIntent(billingIntent), REQUEST_CODE_UPGRADE);
             }
         } else {
-            TextExtensions.showToast(this, event.getResponse().getError());
+            ResponseBody response = ((CheckSubscriptionResult.Error) result).getResponse();
+            Timber.v("CheckSubscription Error %s", response);
+            if (response != null) {
+                TextExtensions.showToast(this, response.getError());
+            }
             if (upsellingProgress != null) {
                 upsellingProgress.setVisibility(View.GONE);
             }
         }
     }
 
-    @Subscribe
-    public void onPaymentMethodEvent(PaymentMethodEvent event) {
-
+    private void onCreateSubscriptionResult(CreateSubscriptionResult result) {
+        Timber.v("onPaymentMethodEvent %s", result);
         if (mProgressView != null) {
             mProgressView.setVisibility(View.GONE);
         }
 
-        switch (event.getStatus()) {
-            case SUCCESS: {
-                TextExtensions.showToast(this, R.string.upgrade_paid_user);
-                finish();
-                break;
-            }
-            default:
-                TextExtensions.showToast(this, event.getError());
+        if (result instanceof CreateSubscriptionResult.Success) {
+            TextExtensions.showToast(this, R.string.upgrade_paid_user);
+            finish();
+        } else if (result instanceof CreateSubscriptionResult.Error) {
+            TextExtensions.showToast(this, ((CreateSubscriptionResult.Error) result).getError());
         }
     }
 
@@ -642,8 +492,13 @@ public class UpsellingActivity extends BaseActivity {
         }
         List<String> planIds = new ArrayList<>();
         planIds.add(mSelectedPlanId);
-        CheckSubscriptionJob job = new CheckSubscriptionJob(null, planIds, mCurrency, mCycle);
-        mJobManager.addJobInBackground(job);
+        viewModel.checkSubscription(null, planIds, mCurrency, mCycle);
+    }
+
+    @Subscribe
+    public void onLogoutEvent(LogoutEvent event) {
+        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
+        finish();
     }
 
     private enum State {

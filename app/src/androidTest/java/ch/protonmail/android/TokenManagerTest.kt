@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -21,23 +21,19 @@ package ch.protonmail.android
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
 import ch.protonmail.android.api.TokenManager
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.LoginResponse
+import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.utils.crypto.Crypto
-import ch.protonmail.android.utils.crypto.OpenPGP
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Test
+import kotlin.test.Test
 
 @LargeTest
 internal class TokenManagerTest {
-
-    private val openPgp = OpenPGP()
 
     val username = "username"
     val accessToken = "9c196c6e621ddc7bd55609f274e6174ef7fe2e00"
@@ -75,7 +71,7 @@ internal class TokenManagerTest {
 
     @Test
     fun handle_login() {
-        val tokenManager = TokenManager.getInstance("user for access token", openPgp)
+        val tokenManager = TokenManager.getInstance("user for access token")
 
         tokenManager!!.handleLogin(loginResponse)
 
@@ -85,7 +81,7 @@ internal class TokenManagerTest {
 
     @Test
     fun clear_access_token() {
-        val tokenManager = TokenManager.getInstance(username, openPgp)
+        val tokenManager = TokenManager.getInstance(username)
 
         tokenManager!!.handleLogin(loginResponse)
 
@@ -96,7 +92,7 @@ internal class TokenManagerTest {
 
     @Test
     fun clear_token_manager_for_user() {
-        var tokenManager = TokenManager.getInstance(username, openPgp)
+        var tokenManager = TokenManager.getInstance(username)
 
         tokenManager!!.handleLogin(loginResponse)
 
@@ -105,7 +101,7 @@ internal class TokenManagerTest {
         assert(tokenManager.createRefreshBody().refreshToken.isNullOrBlank())
 
         // obtain TokenManager instance again after clearing
-        tokenManager = TokenManager.getInstance(username, openPgp)
+        tokenManager = TokenManager.getInstance(username)
 
         assertNull(tokenManager!!.authAccessToken)
         assert(tokenManager.createRefreshBody().refreshToken.isNullOrBlank())
@@ -113,7 +109,7 @@ internal class TokenManagerTest {
 
     @Test
     fun handle_refresh() {
-        val tokenManager = TokenManager.getInstance(username, openPgp)
+        val tokenManager = TokenManager.getInstance(username)
 
         tokenManager!!.handleLogin(loginResponse)
         tokenManager!!.handleRefresh(refreshResponse)

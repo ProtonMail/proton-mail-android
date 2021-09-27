@@ -22,9 +22,6 @@ import java.util.List;
 
 import ch.protonmail.android.jobs.helper.EmbeddedImage;
 
-/**
- * Created by dkadrikj on 7/16/16.
- */
 public class DownloadEmbeddedImagesEvent {
     private final Status status;
     private List<EmbeddedImage> images;

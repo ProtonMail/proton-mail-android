@@ -1,0 +1,17 @@
+[
+  {
+    "contactEmailId": "emailId",
+    "email": "first@pm.me",
+    "name": "firstcontact"
+  },
+  {
+    "contactEmailId": "emailId1",
+    "email": "second@pm.me",
+    "name": "secondcontact"
+  },
+  {
+    "contactEmailId": "emailId2",
+    "email": "third@pm.me",
+    "name": "thirdcontact"
+  }
+]

@@ -20,9 +20,13 @@ package ch.protonmail.android.uitests.testsHelper
 
 import android.content.Context
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.tests.BaseTest.Companion.artifactsPath
-import ch.protonmail.android.uitests.tests.BaseTest.Companion.automation
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
+import me.proton.core.test.android.instrumented.CoreTest.Companion.artifactsPath
+import me.proton.core.test.android.instrumented.CoreTest.Companion.automation
+import me.proton.core.test.android.instrumented.CoreTest.Companion.targetContext
+import me.proton.core.test.android.instrumented.CoreTest.Companion.testApp
+import me.proton.core.test.android.instrumented.CoreTest.Companion.testRailRunId
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import java.io.File
@@ -56,6 +60,6 @@ class TestExecutionWatcher : TestWatcher() {
         }
     }
 
-    private fun getRunId(): String = BaseTest.targetContext.getSharedPreferences(BaseTest.testApp, Context.MODE_PRIVATE)
-        .getString(BaseTest.testRailRunId, "")!!
+    private fun getRunId(): String = targetContext.getSharedPreferences(testApp, Context.MODE_PRIVATE)
+        .getString(testRailRunId, "")!!
 }

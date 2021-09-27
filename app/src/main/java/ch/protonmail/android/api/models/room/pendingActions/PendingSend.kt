@@ -31,20 +31,16 @@ const val COLUMN_PENDING_SEND_SENT = "sent"
 const val COLUMN_PENDING_SEND_LOCAL_DB_ID = "local_database_id"
 // endregion
 
-/**
- * Created by dkadrikj on 1.10.15.
- */
-
 @Entity(tableName = TABLE_PENDING_SEND)
-class PendingSend @JvmOverloads constructor(
-        @PrimaryKey
-        @ColumnInfo(name = COLUMN_PENDING_SEND_ID)
-        var id: String = "",
-        @ColumnInfo(name = COLUMN_PENDING_SEND_MESSAGE_ID)
-        var messageId: String? = null,
-        @ColumnInfo(name = COLUMN_PENDING_SEND_OFFLINE_MESSAGE_ID)
-        var offlineMessageId: String? = null,
-        @ColumnInfo(name = COLUMN_PENDING_SEND_SENT)
-        var sent: Boolean? = null,
-        @ColumnInfo(name = COLUMN_PENDING_SEND_LOCAL_DB_ID)
-        var localDatabaseId: Long = 0)
+data class PendingSend @JvmOverloads constructor(
+    @PrimaryKey
+    @ColumnInfo(name = COLUMN_PENDING_SEND_ID)
+    var id: String = "",
+    @ColumnInfo(name = COLUMN_PENDING_SEND_MESSAGE_ID)
+    var messageId: String? = null,
+    @ColumnInfo(name = COLUMN_PENDING_SEND_OFFLINE_MESSAGE_ID)
+    var offlineMessageId: String? = null,
+    @ColumnInfo(name = COLUMN_PENDING_SEND_SENT)
+    var sent: Boolean? = null,
+    @ColumnInfo(name = COLUMN_PENDING_SEND_LOCAL_DB_ID)
+    var localDatabaseId: Long = 0)

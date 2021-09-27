@@ -18,29 +18,29 @@
  */
 package ch.protonmail.android.uitests.tests.settings
 
-import androidx.test.filters.LargeTest
-import ch.protonmail.android.uitests.actions.settings.account.AccountSettingsRobot
+import ch.protonmail.android.uitests.robots.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.testsHelper.StringUtils.getAlphaNumericStringWithSpecialCharacters
 import ch.protonmail.android.uitests.testsHelper.TestData
-import org.junit.Before
-import org.junit.Test
+import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import org.junit.experimental.categories.Category
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@LargeTest
 class AccountSettingsTests : BaseTest() {
 
     private val accountSettingsRobot: AccountSettingsRobot = AccountSettingsRobot()
     private val loginRobot = LoginRobot()
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .menuDrawer()
             .settings()
-            .selectItemByValue(TestData.onePassUser.email)
+            .openUserAccountSettings(onePassUser)
     }
 
     @Test
@@ -50,25 +50,7 @@ class AccountSettingsTests : BaseTest() {
             .verify { subscriptionViewShown() }
     }
 
-    @Test
-    fun changeLoginPassword() {
-        accountSettingsRobot
-            .passwordManagement()
-            .changePassword(TestData.twoPassUser)
-            .verify {
-                accountSettingsOpened()
-                passwordChanged()
-            }
-    }
-
-    //TODO enable when multiple user login per test class will be supported
-    fun changeMailboxPassword() {
-        accountSettingsRobot
-            .passwordManagement()
-            .changeMailboxPassword(TestData.twoPassUser)
-            .verify { mailboxPasswordChanged() }
-    }
-
+    @Category(SmokeTest::class)
     @Test
     fun changeRecoveryEmail() {
         accountSettingsRobot
@@ -118,24 +100,27 @@ class AccountSettingsTests : BaseTest() {
     }
 
     @Test
-    fun createLabel() {
-        val labelName = getAlphaNumericStringWithSpecialCharacters()
+    fun switchMobileSignatureToggleOn3() {
         accountSettingsRobot
-            .foldersAndLabels()
-        // TODO enable after https://jira.protontech.ch/browse/MAILAND-750 will be fixed.
-//                .labelsManager()
-//                .addLabel(labelName)
-//                .verify { labelWithNameShown(labelName) }
+            .privacy()
+            .enableRequestLinkConfirmation()
     }
 
-    @Test
-    fun createFolder() {
-        val folderName = getAlphaNumericStringWithSpecialCharacters()
+    fun changeLoginPassword() {
         accountSettingsRobot
-            .foldersAndLabels()
-        // TODO enable after https://jira.protontech.ch/browse/MAILAND-750 will be fixed.
-//                .foldersManager()
-//                .addFolder(folderName)
-//                .verify { folderWithNameShown(folderName) }
+            .passwordManagement()
+            .changePassword(TestData.twoPassUser)
+            .verify {
+                accountSettingsOpened()
+                passwordChanged()
+            }
     }
+
+//    //TODO enable when multiple user login per test class will be supported
+//    fun changeMailboxPassword() {
+//        accountSettingsRobot
+//            .passwordManagement()
+//            .changeMailboxPassword(TestData.twoPassUser)
+//            .verify { mailboxPasswordChanged() }
+//    }
 }

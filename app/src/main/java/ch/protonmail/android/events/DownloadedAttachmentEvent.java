@@ -19,17 +19,31 @@
 package ch.protonmail.android.events;
 
 
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class DownloadedAttachmentEvent {
 
     private final Status status;
     private final String filename;
+    private final Uri attachmentUri;
     private final String attachmentId;
     private final String messageId;
     private final boolean offlineLoaded;
 
-    public DownloadedAttachmentEvent(Status status, String filename, String attachmentId, String messageId, boolean offlineLoaded){
+    public DownloadedAttachmentEvent(
+            Status status,
+            @NonNull String filename,
+            @Nullable Uri attachmentUri,
+            String attachmentId,
+            String messageId,
+            boolean offlineLoaded
+    ){
         this.status = status;
         this.filename = filename;
+        this.attachmentUri = attachmentUri;
         this.attachmentId = attachmentId;
         this.messageId = messageId;
         this.offlineLoaded = offlineLoaded;
@@ -39,8 +53,14 @@ public class DownloadedAttachmentEvent {
         return status;
     }
 
+    @NonNull
     public String getFilename(){
         return filename;
+    }
+
+    @Nullable
+    public Uri getAttachmentUri(){
+        return attachmentUri;
     }
 
     public String getAttachmentId() {

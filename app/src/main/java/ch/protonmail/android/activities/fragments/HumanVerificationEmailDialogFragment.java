@@ -38,9 +38,6 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 
-/**
- * Created by dkadrikj on 1/20/16.
- */
 public class HumanVerificationEmailDialogFragment extends HumanVerificationDialogFragment {
 
     private static final int MIN_CLICK_DIFF = 60000;
@@ -101,7 +98,6 @@ public class HumanVerificationEmailDialogFragment extends HumanVerificationDialo
         if (CommonExtensionsKt.isValidEmail(email)) {
             mSendCode.setClickable(false);
             mSendingEmailProgress.setVisibility(View.VISIBLE);
-//            mListener.sendVerificationCode(email, null);
         } else {
             TextExtensions.showToast(getContext(), R.string.invalid_email);
         }
@@ -116,7 +112,6 @@ public class HumanVerificationEmailDialogFragment extends HumanVerificationDialo
         token = mVerificationCode.getText().toString();
         if (isValidVerificationCode()) {
             mProgressBar.setVisibility(View.VISIBLE);
-//            mListener.createUser(Constants.Token.EMAIL, token);
         }
     }
 

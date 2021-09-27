@@ -1,166 +1,208 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.uitests.tests.contacts
 
-import androidx.test.filters.LargeTest
+import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
+import ch.protonmail.android.uitests.testsHelper.StringUtils.getEmailString
 import ch.protonmail.android.uitests.testsHelper.TestData
-import org.junit.Before
-import org.junit.FixMethodOrder
-import org.junit.Test
-import org.junit.runners.MethodSorters
+import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
+import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkGroupDoesNotExist
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import org.junit.experimental.categories.Category
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@LargeTest
 class ContactsTests : BaseTest() {
 
-    lateinit var contactsRobot: ContactsRobot
+    private lateinit var contactsRobot: ContactsRobot
     private val loginRobot = LoginRobot()
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         contactsRobot = loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .menuDrawer()
             .contacts()
     }
 
     @Test
-    fun contactListRefresh() {
+    fun createContact() {
+        val name = TestData.newContactName
+        val email = TestData.newEmailAddress
         contactsRobot
+            .addContact()
+            .setNameEmailAndSave(name, email)
             .openOptionsMenu()
             .refresh()
-            .verify { contactsRefreshed() }
+            .clickContactByEmail(email)
+            .deleteContact()
+            .verify { contactDoesNotExists(name, email) }
     }
 
+    @Category(SmokeTest::class)
+    @TestId("1420")
     @Test
-    fun addNewContact() {
-        contactsRobot
-            .addFab()
-            .addContact()
-            .insertContactName(TestData.newContactName)
-            .saveContact()
-            .verify { contactSaved() }
-    }
-
-
-    //TODO Check with developers as I'm getting java.lang.ArrayIndexOutOfBoundsException: during test run
     fun editContact() {
-        val contactName = "${TestData.newContactName} ${System.currentTimeMillis()}"
+        val name = TestData.newContactName
+        val email = TestData.newEmailAddress
+        val editedName = TestData.newContactName
+        val editedEmail = TestData.newEmailAddress
         contactsRobot
-            .addFab()
             .addContact()
-            .insertContactName(contactName)
-            .saveContact()
-            .chooseContact(contactName)
-            .contactDetails()
-            .editDisplayName(TestData.editContactName)
-            .editEmailAddress(TestData.editEmailAddress)
-            .saveContact()
-            .verify { contactSaved() }
+            .setNameEmailAndSave(name, email)
+            .openOptionsMenu()
+            .refresh()
+            .clickContactByEmail(email)
+            .editContact()
+            .editNameEmailAndSave(editedName, editedEmail)
+            .navigateUp()
+            .clickContactByEmail(editedEmail)
+            .deleteContact()
+            .verify { contactDoesNotExists(editedName, editedEmail) }
     }
 
-    // TODO Check with developers as I'm getting java.lang.ArrayIndexOutOfBoundsException: during test run
+    @TestId("21241")
+    @Test
     fun deleteContact() {
-        val deletedContact = ""
+        val name = TestData.newContactName
+        val email = TestData.newEmailAddress
         contactsRobot
-            .delete()
-            .confirmDelete()
-            .verify { contactDeleted(deletedContact) }
+            .addContact()
+            .setNameEmailAndSave(name, email)
+            .openOptionsMenu()
+            .refresh()
+            .clickContactByEmail(email)
+            .deleteContact()
+            .verify { contactDoesNotExists(name, email) }
     }
 
-    //TODO to be enabled when https://jira.protontech.ch/browse/MAILAND-662 is fixed
-    fun contactDetailSendMessage() {
-        contactsRobot
-            .chooseContactWithText("protonmail.com")
-            .composeButton()
-            .composeMessage(TestData.messageSubject, TestData.messageBody)
-            .send()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
-    }
-
+    @TestId("1421")
     @Test
-    fun addNewContactGroup() {
-        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
+    fun createGroup() {
+        val contactEmail = internalEmailTrustedKeys
+        val groupName = getEmailString()
+        val groupMembersCount =
+            targetContext.resources.getQuantityString(R.plurals.contact_group_members, 1, 1)
         contactsRobot
-            .addFab()
-            .addContactGroup()
-            .editGroupName(contactGroupName)
-            .saveGroup()
-            .verify { groupSaved() }
+            .addGroup()
+            .groupName(groupName)
+            .manageAddresses()
+            .addContactToGroup(contactEmail.email)
+            .done()
+            .openOptionsMenu()
+            .refresh()
+            .groupsView()
+            .clickGroupWithMembersCount(groupName, groupMembersCount)
+            .deleteGroup()
+            .groupsView()
+            .verify { checkGroupDoesNotExist(groupName, groupMembersCount) }
     }
 
+    @TestId("1422")
     @Test
-    fun contactGroupEdit() {
-        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
-        val editedGroupName = "${TestData.newGroupName} edited ${System.currentTimeMillis()}"
+    fun editGroup() {
+        val contactEmail = internalEmailTrustedKeys
+        val groupName = getEmailString()
+        val groupMembersCount =
+            targetContext.resources.getQuantityString(R.plurals.contact_group_members, 1, 1)
+        val newGroupName = getEmailString()
         contactsRobot
-            .addFab()
-            .addContactGroup()
-            .editGroupName(contactGroupName)
-            .saveGroup()
+            .addGroup()
+            .groupName(groupName)
+            .manageAddresses()
+            .addContactToGroup(contactEmail.email)
+            .done()
+            .openOptionsMenu()
+            .refresh()
             .groupsView()
-            .chooseGroup(contactGroupName)
-            .editFab()
-            .editGroupName(editedGroupName)
-            .saveGroup()
-            .verify { groupSaved() }
+            .clickGroup(groupName)
+            .edit()
+            .editNameAndSave(newGroupName)
+            .navigateUp()
+            .openOptionsMenu()
+            .refresh()
+            .groupsView()
+            .clickGroupWithMembersCount(newGroupName, groupMembersCount)
+            .deleteGroup()
+            .groupsView()
+            .verify { checkGroupDoesNotExist(newGroupName, groupMembersCount) }
     }
 
-    //TODO to be enabled when https://jira.protontech.ch/browse/MAILAND-662 is fixed
-    fun contactGroupSendMessage() {
-        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
-        contactsRobot
-            .addFab()
-            .addContactGroup()
-            .editGroupName(contactGroupName)
-            .saveGroup()
-            .groupsView()
-            .chooseGroup(contactGroupName)
-            .groupsView()
-            .composeToGroup()
-            .composeMessage(TestData.messageSubject, TestData.messageBody)
-            .send()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
-    }
-
+    @TestId("21240")
     @Test
     fun deleteGroup() {
-        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
+        val contactEmail = internalEmailTrustedKeys
+        val groupName = getEmailString()
+        val groupMembersCount =
+            targetContext.resources.getQuantityString(R.plurals.contact_group_members, 1, 1)
         contactsRobot
-            .addFab()
-            .addContactGroup()
-            .editGroupName(contactGroupName)
-            .saveGroup()
+            .addGroup()
+            .groupName(groupName)
+            .manageAddresses()
+            .addContactToGroup(contactEmail.email)
+            .done()
+            .openOptionsMenu()
+            .refresh()
             .groupsView()
-            .chooseGroup(contactGroupName)
-            .delete()
-            .confirmDelete()
-            .verify { groupDeleted(contactGroupName) }
+            .clickGroupWithMembersCount(groupName, groupMembersCount)
+            .deleteGroup()
+            .groupsView()
+            .verify { checkGroupDoesNotExist(groupName, groupMembersCount) }
+    }
+
+    @TestId("30833")
+    @Category(SmokeTest::class)
+    @Test
+    fun contactDetailSendMessage() {
+        val subject = TestData.messageSubject
+        val body = TestData.messageBody
+        contactsRobot
+            .contactsView()
+            .clickSendMessageToContact(internalEmailTrustedKeys.email)
+            .sendMessageToContact(subject, body)
+            .navigateUpToInbox()
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("1423")
+    @Test
+    fun contactGroupSendMessage() {
+        val subject = TestData.messageSubject
+        val body = TestData.messageBody
+        val groupName = "Second Group"
+        contactsRobot
+            .groupsView()
+            .clickSendMessageToGroup(groupName)
+            .sendMessageToGroup(subject, body)
+            .navigateUpToInbox()
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
     }
 }

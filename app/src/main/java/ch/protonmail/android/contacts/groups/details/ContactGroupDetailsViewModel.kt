@@ -18,31 +18,43 @@
  */
 package ch.protonmail.android.contacts.groups.details
 
-import android.annotation.SuppressLint
+import android.database.SQLException
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
-import ch.protonmail.android.contacts.groups.ContactGroupsBaseViewModel
+import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
-import com.jakewharton.rxrelay2.PublishRelay
-import retrofit2.HttpException
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlin.time.milliseconds
 
-/**
- * Created by kadrikj on 8/23/18. */
-class ContactGroupDetailsViewModel @Inject constructor(private val contactGroupDetailsRepository: ContactGroupDetailsRepository) : ContactGroupsBaseViewModel() {
+class ContactGroupDetailsViewModel @ViewModelInject constructor(
+    private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
+    private val deleteLabel: DeleteLabel
+) : ViewModel() {
 
     private lateinit var _contactLabel: ContactLabel
-    private lateinit var _data: List<ContactEmail>
     private val _contactGroupEmailsResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()
-    private val _filteringPublishSubject = PublishRelay.create<String>()
+    private val filteringChannel = BroadcastChannel<String>(1)
     private val _contactGroupEmailsEmpty: MutableLiveData<Event<String>> = MutableLiveData()
     private val _setupUIData = MutableLiveData<ContactLabel>()
-    private val _deleteGroupStatus: MutableLiveData<Event<Status>> = MutableLiveData()
+    private val _deleteLabelIds: MutableLiveData<List<String>> = MutableLiveData()
 
     init {
         initFiltering()
@@ -58,105 +70,96 @@ class ContactGroupDetailsViewModel @Inject constructor(private val contactGroupD
         get() = _setupUIData
 
     val deleteGroupStatus: LiveData<Event<Status>>
-        get() = _deleteGroupStatus
+        get() = _deleteLabelIds.switchMap {
+            processDeleteLiveData(it)
+        }
 
-    fun setData(contactLabel: ContactLabel?) {
-        contactLabel?.let {
-            this._contactLabel = contactLabel
-            getContactGroupEmails(contactLabel)
-            watchForContactGroup()
-            _setupUIData.postValue(contactLabel)
+    private fun processDeleteLiveData(contactsToDelete: List<String>): LiveData<Event<Status>> {
+        return liveData {
+            emitSource(
+                deleteLabel(contactsToDelete)
+                    .map { isSuccess ->
+                        if (isSuccess) {
+                            Event(Status.SUCCESS)
+                        } else {
+                            Event(Status.ERROR)
+                        }
+                    }
+            )
         }
     }
 
-    fun getData(): ContactLabel? = _contactLabel
-
-    @SuppressLint("CheckResult")
-    private fun watchForContactGroup() {
-        contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.ID)
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main())
-                .subscribe({
-                    _contactLabel = it
-                    if (::_data.isInitialized) {
-                        _contactGroupEmailsResult.postValue(_data)
-                    }
-                }, {
-                    _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
-
-                })
+    fun setData(contactLabel: ContactLabel?) {
+        contactLabel?.let { newContact ->
+            _contactLabel = newContact
+            getContactGroupEmails(newContact)
+            _setupUIData.value = newContact
+        }
     }
 
-    @SuppressLint("CheckResult")
+    fun getData(): ContactLabel = _contactLabel
+
     private fun getContactGroupEmails(contactLabel: ContactLabel) {
         contactGroupDetailsRepository.getContactGroupEmails(contactLabel.ID)
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main()).subscribe(
-                        {
-                            _data = it
-                            watchForContactGroup()
-                            _contactGroupEmailsResult.postValue(it)
-                        },
-                        {
-                            _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                        }
+            .onEach { list ->
+                updateContactGroup()
+                _contactGroupEmailsResult.postValue(list)
+            }
+            .catch { throwable ->
+                _contactGroupEmailsEmpty.value = Event(
+                    throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
                 )
+            }
+            .launchIn(viewModelScope)
     }
 
-    @SuppressLint("CheckResult")
+    private suspend fun updateContactGroup() {
+        runCatching { contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.ID) }
+            .fold(
+                onSuccess = { contactLabel ->
+                    Timber.v("ContactLabel: $contactLabel retrieved")
+                    contactLabel?.let { label ->
+                        _contactLabel = label
+                        _setupUIData.value = label
+                    }
+                },
+                onFailure = { throwable ->
+                    if (throwable is SQLException) {
+                        _contactGroupEmailsEmpty.value = Event(throwable.message ?: ErrorEnum.DEFAULT_ERROR.name)
+                    } else
+                        throw throwable
+                }
+            )
+    }
+
     private fun initFiltering() {
-        _filteringPublishSubject
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
-                .switchMap { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.ID, it) }
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main())
-                .subscribe(
-                        {
-                            _contactGroupEmailsResult.postValue(it)
-                        },
-                        {
-                            _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
-                        }
-                )
+        filteringChannel
+            .asFlow()
+            .debounce(300.milliseconds)
+            .distinctUntilChanged()
+            .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.ID, it) }
+            .catch {
+                _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
+            }
+            .onEach { list ->
+                Timber.v("Filtered emails list size: ${list.size}")
+                _contactGroupEmailsResult.postValue(list)
+            }
+            .launchIn(viewModelScope)
     }
 
     fun doFilter(filter: String) {
-        _filteringPublishSubject.accept(filter.trim())
+        viewModelScope.launch {
+            filteringChannel.send(filter.trim())
+        }
     }
 
-    @SuppressLint("CheckResult")
     fun delete() {
-        contactGroupDetailsRepository.delete(_contactLabel)
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe({
-                           val status = Status.SUCCESS
-                           _deleteGroupStatus.postValue(Event(status))
-                       }, {
-                           val status = Status.ERROR
-                           status.msg(
-                               if (it is HttpException) {
-                                   parseErrorApiResponse(it)
-                               } else
-                                   it.message
-                           )
-                           _deleteGroupStatus.postValue(Event(status))
-                       })
+        _deleteLabelIds.value = listOf(_contactLabel.ID)
     }
 
     enum class Status(var message: String?) {
-        SUCCESS("") {
-            override fun msg(msg: String?) {
-                message = msg
-            }
-        },
-        ERROR("") {
-            override fun msg(msg: String?) {
-                message = msg
-            }
-        };
-
-        abstract fun msg(msg: String?)
+        SUCCESS(""),
+        ERROR("");
     }
 }

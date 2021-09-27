@@ -25,9 +25,6 @@ import java.util.List;
 import ch.protonmail.android.api.models.room.contacts.ContactEmail;
 import ch.protonmail.android.api.utils.Fields;
 
-/**
- * Created by dkadrikj on 8/22/16.
- */
 public class ContactEmailsResponseV2 extends ResponseBody {
 
     @SerializedName(Fields.Contact.TOTAL)

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,31 +20,36 @@ package ch.protonmail.android.core
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.text.TextUtils
 import androidx.annotation.IntDef
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import ch.protonmail.android.R
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.UserSettings
-import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
+import ch.protonmail.android.api.models.MailSettings
+import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.UserInfo
+import ch.protonmail.android.api.models.UserSettings
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
+import ch.protonmail.android.di.BackupSharedPreferences
+import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.events.ForceSwitchedAccountEvent
+import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.squareup.otto.Produce
-import java.util.*
+import timber.log.Timber
+import java.util.HashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,6 +60,7 @@ const val LOGIN_STATE_TO_INBOX = 3
 
 const val PREF_PIN = "mailbox_pin"
 const val PREF_USERNAME = "username"
+
 /**
  * When user login successfully PREF_IS_LOGGED_IN  = true
  * When user logout PREF_IS_LOGGED_IN = false
@@ -79,16 +85,15 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
  * UserManager handles behavior of the current primary account, as well as some multi-account behaviors
  */
 @Singleton
-class UserManager(
-        private val prefs: SharedPreferences,
-        private val backupPrefs: SharedPreferences,
-        val context: Context
+class UserManager @Inject constructor(
+    val context: Context,
+    @DefaultSharedPreferences private val prefs: SharedPreferences,
+    @BackupSharedPreferences private val backupPrefs: SharedPreferences
 ) {
 
     private val userReferences = HashMap<String, User>()
     private var mCheckTimestamp: Float = 0.toFloat()
     private var mMailboxPassword: String? = null
-//    private var mMailboxPin: String? = null
     private val app: ProtonMailApplication = context.app
     private var mGeneratingKeyPair: Boolean = false
 
@@ -102,8 +107,10 @@ class UserManager(
                 AppUtil.postEventOnUi(mGenerateKeyPairEvent)
             }
             if (mCreateUserOnKeyPairGenerationFinish) {
-                LoginService.startCreateUser(mNewUserUsername, mNewUserPassword, mNewUserUpdateMe,
-                        mNewUserTokenType, mNewUserToken)
+                LoginService.startCreateUser(
+                    mNewUserUsername, mNewUserPassword, mNewUserUpdateMe,
+                    mNewUserTokenType, mNewUserToken
+                )
             } else {
                 mCreateUserOnKeyPairGenerationFinish = false
             }
@@ -172,7 +179,7 @@ class UserManager(
 
     val isFirstLogin: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) &&
-                prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
+            prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
 
     val isFirstMailboxLoad: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, true)
@@ -188,7 +195,7 @@ class UserManager(
      */
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     val username: String
-        get() = prefs.getString(PREF_USERNAME, "")
+        get() = prefs.getString(PREF_USERNAME, "")!!
 
     val incorrectPinAttempts: Int
         get() {
@@ -282,7 +289,6 @@ class UserManager(
      * @see MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC
      */
     init {
-        app.appComponent.inject(this)
         val prefs = app.defaultSharedPreferences
         val currentAppVersion = AppUtil.getAppVersionCode(app)
         val previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE)
@@ -321,11 +327,11 @@ class UserManager(
     }
 
     fun createUser(
-            username: String,
-            password: ByteArray,
-            updateMe: Boolean,
-            tokenType: Constants.TokenType,
-            token: String
+        username: String,
+        password: ByteArray,
+        updateMe: Boolean,
+        tokenType: Constants.TokenType,
+        token: String
     ) {
         if (this.privateKey == null && mGeneratingKeyPair) {
             mCreateUserOnKeyPairGenerationFinish = true
@@ -344,27 +350,31 @@ class UserManager(
     }
 
     fun login(
-            username: String,
-            password: ByteArray,
-            response: LoginInfoResponse?,
-            fallbackAuthVersion: Int,
-            signUp: Boolean
+        username: String,
+        password: ByteArray,
+        response: LoginInfoResponse?,
+        fallbackAuthVersion: Int,
+        signUp: Boolean
     ) {
-        LoginService.startLogin(username, password, response, fallbackAuthVersion, signUp)
+        LoginService.startLogin(
+            username, password, response, fallbackAuthVersion, signUp
+        )
     }
 
     fun twoFA(
-            username: String,
-            password: ByteArray,
-            twoFactor: String?,
-            infoResponse: LoginInfoResponse?,
-            loginResponse: LoginResponse?,
-            fallbackAuthVersion: Int,
-            signUp: Boolean,
-            isConnecting: Boolean
+        username: String,
+        password: ByteArray,
+        twoFactor: String?,
+        infoResponse: LoginInfoResponse?,
+        loginResponse: LoginResponse?,
+        fallbackAuthVersion: Int,
+        signUp: Boolean,
+        isConnecting: Boolean
     ) {
-        LoginService.start2FA(username, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
-                signUp, isConnecting)
+        LoginService.start2FA(
+            username, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
+            signUp, isConnecting
+        )
     }
 
     fun mailboxLogin(username: String, mailboxPassword: String, keySalt: String?, signUp: Boolean) {
@@ -380,11 +390,11 @@ class UserManager(
     }
 
     fun connectAccountLogin(
-            username: String,
-            password: ByteArray,
-            twoFactor: String?,
-            response: LoginInfoResponse?,
-            fallbackAuthVersion: Int
+        username: String,
+        password: ByteArray,
+        twoFactor: String?,
+        response: LoginInfoResponse?,
+        fallbackAuthVersion: Int
     ) {
         LoginService.startConnectAccount(username, password, twoFactor, response, fallbackAuthVersion)
     }
@@ -421,15 +431,16 @@ class UserManager(
         val accountManager = AccountManager.getInstance(context)
         val currentPrimary = this.username
         val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
-                ?: // fallback to "last user logout"
-                return logoutLastActiveAccount()
-        LogoutService.startLogout(false, username)
+            ?: // fallback to "last user logout"
+            return logoutLastActiveAccount()
+        Timber.v("logoutAccount new user:$nextLoggedInAccount")
+        LogoutService.startLogout(false, username = username)
         accountManager.onSuccessfulLogout(username)
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
+        switchToAccount(nextLoggedInAccount)
         setUsernameAndReload(nextLoggedInAccount)
         app.eventManager.clearState(username)
-        app.clearPaymentMethods()
     }
 
     @JvmOverloads
@@ -438,7 +449,8 @@ class UserManager(
         loginState = LOGIN_STATE_NOT_INITIALIZED
         AppUtil.deleteDatabases(app.applicationContext, username, clearDoneListener)
         saveBackupSettings()
-        LogoutService.startLogout(true, username)
+        // Passing FCM token already here to prevent it being deleted from shared prefs before worker starts
+        LogoutService.startLogout(true, username = username, fcmRegistrationId = FcmUtil.getFirebaseToken())
         setRememberMailboxLogin(false)
         firstLoginRemove()
         reset()
@@ -446,7 +458,6 @@ class UserManager(
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
         AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
-        app.clearPaymentMethods()
     }
 
     @JvmOverloads
@@ -455,7 +466,6 @@ class UserManager(
         if (username.isEmpty()) {
             return
         }
-        app.clearPaymentMethods()
         val nextLoggedInAccount = nextLoggedInAccountOtherThanCurrent
         val accountManager = AccountManager.getInstance(context)
         if (!accountManager.getLoggedInUsers().contains(username)) {
@@ -474,14 +484,15 @@ class UserManager(
             reset()
             tokenManager?.clear()
             AppUtil.deleteDatabases(app.applicationContext, username)
-            AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS, username))
+            AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             TokenManager.clearAllInstances()
         } else {
             accountManager.onSuccessfulLogout(username)
             AppUtil.deleteSecurePrefs(username, false)
             AppUtil.deleteDatabases(app.applicationContext, username)
             setUsernameAndReload(nextLoggedInAccount)
-            AppUtil.postEventOnUi(ForceSwitchedAccountEvent(nextLoggedInAccount, username))
+            val event = ForceSwitchedAccountEvent(nextLoggedInAccount, username)
+            ForceSwitchedAccountNotifier.notifier.postValue(event)
             TokenManager.clearInstance(username)
         }
     }
@@ -589,21 +600,21 @@ class UserManager(
 
     fun accessTokenExists(): Boolean {
         val exists = tokenManager?.let {
-            !TextUtils.isEmpty(it.authAccessToken)
+            it.authAccessToken?.isNotEmpty()
         }
-        return exists?: false
+        return exists ?: false
     }
 
     @JvmOverloads
     fun setUserInfo(
-            userInfo: UserInfo,
-            username: String? = null,
-            mailSettings: MailSettings,
-            userSettings: UserSettings,
-            addresses: List<Address>
+        userInfo: UserInfo,
+        username: String? = null,
+        mailSettings: MailSettings,
+        userSettings: UserSettings,
+        addresses: List<Address>
     ) {
         val user = userInfo.user
-        user.username = username?: this.username
+        user.username = username ?: this.username
         user.setAddressIdEmail()
         user.setAddresses(addresses)
         this.mailSettings = mailSettings
@@ -641,7 +652,7 @@ class UserManager(
     }
 
     fun getTokenManager(username: String): TokenManager? {
-        val tokenManager = TokenManager.getInstance(username, openPgp)
+        val tokenManager = TokenManager.getInstance(username)
         // make sure the private key is here
         tokenManager?.let {
             if (it.encPrivateKey.isNullOrBlank()) {
@@ -693,12 +704,12 @@ class UserManager(
 
 
     fun setSnoozeScheduled(
-            isOn: Boolean,
-            startTimeHour: Int,
-            startTimeMinute: Int,
-            endTimeHour: Int,
-            endTimeMinute: Int,
-            repeatingDays: String
+        isOn: Boolean,
+        startTimeHour: Int,
+        startTimeMinute: Int,
+        endTimeHour: Int,
+        endTimeMinute: Int,
+        repeatingDays: String
     ) {
         snoozeSettings!!.snoozeScheduled = isOn
         snoozeSettings!!.snoozeScheduledStartTimeHour = startTimeHour
@@ -717,7 +728,7 @@ class UserManager(
         snoozeSettings!!.save(username)
     }
 
-    private fun loadSettings(username : String){
+    private fun loadSettings(username: String) {
         if (username.isBlank()) {
             return
         }
@@ -729,5 +740,37 @@ class UserManager(
 
     fun removeEmptyUserReferences() {
         userReferences.remove("")
+    }
+
+    fun didReachLabelsThreshold(numberOfLabels: Int): Boolean = getMaxLabelsAllowed() < numberOfLabels
+
+    fun getMaxLabelsAllowed(): Int {
+        val accountTypes = app.resources.getStringArray(R.array.account_type_names).asList()
+        val maxLabelsPerPlanArray = app.resources.getIntArray(R.array.max_labels_per_plan).asList()
+        val organization = app.organization
+
+        var paidUser = false
+        var planName = accountTypes[0] // free
+
+        var maxLabelsAllowed = maxLabelsPerPlanArray[0] // free
+
+
+        if (organization != null) {
+            planName = organization.planName
+            paidUser = user.isPaidUser && organization.planName.isNullOrEmpty().not()
+        }
+        if (!paidUser) {
+            return maxLabelsAllowed
+        }
+
+        for (i in 1 until accountTypes.size) {
+            val accountName = accountTypes[i]
+            if (accountName.equals(planName, ignoreCase = true)) {
+                maxLabelsAllowed = maxLabelsPerPlanArray[i]
+                break
+            }
+        }
+
+        return maxLabelsAllowed
     }
 }

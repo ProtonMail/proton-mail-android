@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -36,14 +36,12 @@ import ch.protonmail.android.domain.entity.requireValid
  *
  * * [keys] can be empty if no [addresses] is set
  *
- * * [organizationPrivateKey] can and must be present only if [role] is [Role.ORGANIZATION_ADMIN]
- *
  * * [plans] contains at most 1 [Plan.Mail] and at most 1 [Plan.Vpn]
  *
  * @author Davide Farella
  */
 @Validated
-data class User( // TODO: consider naming UserInfo or simialar
+data class User( // TODO: consider naming UserInfo or similar
     val id: Id,
     val name: Name,
     val addresses: Addresses,
@@ -54,10 +52,6 @@ data class User( // TODO: consider naming UserInfo or simialar
      */
     val private: Boolean,
     val role: Role,
-    /**
-     * Key for the organization, available only if user is Admin of organization
-     */
-    val organizationPrivateKey: NotBlankString?,
     val currency: NotBlankString, // might not be worth to have an endless enum
     /**
      * Monetary credits for this user, this value is affected by [currency]
@@ -71,19 +65,31 @@ data class User( // TODO: consider naming UserInfo or simialar
     val dedicatedSpace: UserSpace
 
 ) : Validable by Validator<User>({
-    val checkAddresses = addresses.hasAddresses || plans.none { it is Plan.Mail }
 
-    val checkKeys = keys.hasKeys || !addresses.hasAddresses
+    // Addresses
+    require(addresses.hasAddresses || plans.none { it is Plan.Mail }) { "Mail plan but no addresses" }
 
-    val checkOrganization = role == Role.ORGANIZATION_ADMIN && organizationPrivateKey != null ||
-        role != Role.ORGANIZATION_ADMIN && organizationPrivateKey == null
+    // Keys
+    require(keys.hasKeys || !addresses.hasAddresses) { "Has addresses but no keys" }
 
-    val checkPlans = plans.count { it is Plan.Mail } <= 1 &&
-        plans.count { it is Plan.Vpn } <= 1
-
-    checkAddresses && checkKeys && checkOrganization && checkPlans
+    // Plans
+    require(plans.count { it is Plan.Mail } <= 1 &&
+        plans.count { it is Plan.Vpn } <= 1) {
+        "Has 2 or more plans of the same type"
+    }
 }) {
-    init { requireValid() }
+    init {
+        requireValid()
+    }
+
+    val isLegacy
+        get() = with(addresses.primary?.keys?.primaryKey) {
+            this?.signature == null && this?.token == null
+        }
+
+    fun findAddressById(addressId: Id): Address? {
+        return addresses.addresses.values.find { it.id == addressId }
+    }
 }
 
 sealed class Delinquent(val i: UInt, val mailRoutesAccessible: Boolean = true) {
@@ -102,4 +108,4 @@ enum class Role(val i: Int) {
 }
 
 // TODO can this entity be used on other spaces under a different name?
-data class UserSpace(val total: Bytes, val used: Bytes)
+data class UserSpace(val used: Bytes, val total: Bytes)

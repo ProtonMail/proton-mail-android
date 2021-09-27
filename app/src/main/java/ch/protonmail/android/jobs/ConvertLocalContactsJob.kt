@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,7 +20,9 @@ package ch.protonmail.android.jobs
 
 import android.database.Cursor
 import android.provider.ContactsContract
-import android.provider.ContactsContract.CommonDataKinds.*
+import android.provider.ContactsContract.CommonDataKinds.GroupMembership
+import android.provider.ContactsContract.CommonDataKinds.Phone
+import android.provider.ContactsContract.CommonDataKinds.StructuredPostal
 import android.text.TextUtils
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.ContactResponse
@@ -33,15 +35,20 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJo
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.api.segments.*
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.repositories.andorid.details.IAndroidContactDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.crypto.Crypto
 import ch.protonmail.android.views.models.LocalContact
 import ch.protonmail.android.views.models.LocalContactAddress
 import com.birbit.android.jobqueue.Params
@@ -53,7 +60,8 @@ import ezvcard.property.Email
 import ezvcard.property.Telephone
 import ezvcard.property.Uid
 import java.io.Serializable
-import java.util.*
+import java.util.ArrayList
+import java.util.UUID
 
 class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
 
@@ -64,7 +72,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
     }
 
     override fun onAdded() {
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.NO_NETWORK, false))
         }
     }
@@ -74,7 +82,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
 
         val contactsDatabase = ContactsDatabaseFactory.getInstance(
                 applicationContext).getDatabase()
-        val crypto = Crypto.forUser(mUserManager, mUserManager.username)
+        val crypto = Crypto.forUser(getUserManager(), getUserManager().username)
 
         val executionResults = ContactsDatabaseFactory.getInstance(applicationContext).runInTransaction<List<Int>> {
 
@@ -105,8 +113,10 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 vCard.uid = Uid("proton-android-" + UUID.randomUUID().toString())
                 vCard.setFormattedName(contactItem.name)
 
-                val contactData = ContactData(ContactData.generateRandomContactId(),
-                        contactItem.name)
+                val contactData = ContactData(
+                    ContactData.generateRandomContactId(),
+                    contactItem.name
+                )
 
                 val dbId = contactsDatabase.saveContactData(contactData)
                 var emailGroupCounter = 1
@@ -122,8 +132,10 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 }
                 for (address in localContact.addresses) {
                     val isEmpty = TextUtils.isEmpty(address.street) && TextUtils.isEmpty(
-                            address.city) && TextUtils.isEmpty(
-                            address.region) && TextUtils.isEmpty(address.postcode) && TextUtils.isEmpty(address.country)
+                        address.city
+                    ) && TextUtils.isEmpty(
+                        address.region
+                    ) && TextUtils.isEmpty(address.postcode) && TextUtils.isEmpty(address.country)
                     if (!isEmpty) {
                         val vCardAddress = Address()
                         vCardAddress.streetAddress = address.street
@@ -142,14 +154,15 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 val encryptedData = crypto.encrypt(vCardEncryptedData, false)
                 val encryptDataSignature = crypto.sign(vCardEncryptedData)
                 val contactEncryptedDataType3 = ContactEncryptedData(
-                        encryptedData.armored, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED)
+                    encryptedData.armored, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED
+                )
 
                 val contactEncryptedDataList = ArrayList<ContactEncryptedData>()
                 contactEncryptedDataList.add(contactEncryptedDataType2)
                 contactEncryptedDataList.add(contactEncryptedDataType3)
 
                 val body = CreateContact(contactEncryptedDataList)
-                val response = mApi.createContact(body)
+                val response = getApi().createContactBlocking(body)
 
                 @ContactEvent.Status val status = handleResponse(contactsDatabase, response!!, dbId, contactGroupIds)
                 if (status != ContactEvent.SUCCESS) {
@@ -163,8 +176,12 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
         if (executionResults.isEmpty()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.SUCCESS, false))
         } else {
-            AppUtil.postEventOnUi(ContactEvent(ContactEvent.NOT_ALL_SYNC, false,
-                    executionResults))
+            AppUtil.postEventOnUi(
+                ContactEvent(
+                    ContactEvent.NOT_ALL_SYNC, false,
+                    executionResults
+                )
+            )
         }
     }
 
@@ -182,16 +199,21 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 }
                 ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
                     name = data.getString(
-                            data.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    emails.add(data.getString(
-                            data.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)))
+                        data.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+                    )
+                    emails.add(
+                        data.getString(
+                            data.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)
+                        )
+                    )
                 }
                 StructuredPostal.CONTENT_ITEM_TYPE -> {
                     val street = data.getString(data.getColumnIndex(StructuredPostal.STREET))
                     val city = data.getString(data.getColumnIndex(StructuredPostal.CITY))
                     val region = data.getString(data.getColumnIndex(StructuredPostal.REGION))
                     val postcode = data.getString(
-                            data.getColumnIndex(StructuredPostal.POSTCODE))
+                        data.getColumnIndex(StructuredPostal.POSTCODE)
+                    )
                     val country = data.getString(data.getColumnIndex(StructuredPostal.COUNTRY))
                     addresses.add(LocalContactAddress(street, city, region, postcode, country))
                 }
@@ -212,11 +234,12 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
         val groups = mutableMapOf<Long, String>()
 
         val groupsCursor = ProtonMailApplication.getApplication().contentResolver.query(
-                ContactsContract.Groups.CONTENT_URI,
-                arrayOf(ContactsContract.Groups._ID, ContactsContract.Groups.TITLE),
-                String.format("%s = 0", ContactsContract.Groups.GROUP_VISIBLE),
-                null,
-                null)
+            ContactsContract.Groups.CONTENT_URI,
+            arrayOf(ContactsContract.Groups._ID, ContactsContract.Groups.TITLE),
+            String.format("%s = 0", ContactsContract.Groups.GROUP_VISIBLE),
+            null,
+            null
+        )
 
         groupsCursor?.use {
             it.moveToFirst()
@@ -239,7 +262,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
         var someGroupsAlreadyExist = false
 
         localGroups.forEach {
-            val response = mApi.createLabel(LabelBody(it.value, defaultColor, 1, false.makeInt(), Constants.LABEL_TYPE_CONTACT_GROUPS))
+            val response = getApi().createLabel(LabelBody(it.value, defaultColor, 1, false.makeInt(), Constants.LABEL_TYPE_CONTACT_GROUPS))
             if (response.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST) {
                 someGroupsAlreadyExist = true
             } else {
@@ -249,11 +272,11 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
         }
 
         if (someGroupsAlreadyExist) { // at least one local group already exist on server, we fetch all of them to get IDs
-            val serverGroups = mApi.fetchContactGroups()
-                    .map { it.contactGroups }
-                    .subscribeOn(ThreadSchedulers.io())
-                    .observeOn(ThreadSchedulers.io())
-                    .blockingGet()
+            val serverGroups = getApi().fetchContactGroups()
+                .map { it.contactGroups }
+                .subscribeOn(ThreadSchedulers.io())
+                .observeOn(ThreadSchedulers.io())
+                .blockingGet()
 
             localGroups.filterNot { result.containsKey(it.value) }.forEach { localGroupEntry ->
                 serverGroups.find { it.name == localGroupEntry.value }?.run {
@@ -279,16 +302,16 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
             val responses = response.responses
             for (contactResponse in responses) {
                 val contact = contactResponse.response.contact
-                contactsDatabase.saveAllContactsEmails(contact.emails!!)
+                contactsDatabase.saveAllContactsEmailsBlocking(contact.emails!!)
                 contactGroupIds.forEach { contactGroupId ->
                     val emailsList = contact.emails!!.map { it.contactEmailId }
-                    mApi.labelContacts(LabelContactsBody(contactGroupId, emailsList))
+                    getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
                             .doOnComplete {
                                 val joins = contactsDatabase.fetchJoins(contactGroupId) as ArrayList
                                 for (contactEmail in emailsList) {
                                     joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                                 }
-                                contactsDatabase.saveContactEmailContactLabel(joins)
+                                contactsDatabase.saveContactEmailContactLabelBlocking(joins)
                             }
                             .blockingAwait()
                 }

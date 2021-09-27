@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.Spannable;
@@ -65,7 +66,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -81,6 +81,7 @@ import com.squareup.otto.Subscribe;
 import com.tokenautocomplete.TokenCompleteTextView;
 
 import org.apache.http.protocol.HTTP;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -88,6 +89,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -110,7 +112,6 @@ import ch.protonmail.android.activities.mailbox.MailboxActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.MessageRecipientViewAdapter;
 import ch.protonmail.android.api.AccountManager;
-import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
@@ -129,13 +130,12 @@ import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.contacts.PostResult;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.events.AttachmentFailedEvent;
-import ch.protonmail.android.events.ConnectivityEvent;
+import ch.protonmail.android.crypto.AddressCrypto;
+import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
-import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
-import ch.protonmail.android.events.FetchEmailKeysEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.events.HumanVerifyOptionsEvent;
 import ch.protonmail.android.events.LogoutEvent;
@@ -147,9 +147,10 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
 import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
-import ch.protonmail.android.jobs.FetchPublicKeysJob;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
+import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Event;
@@ -157,16 +158,11 @@ import ch.protonmail.android.utils.HTMLTransformer.AbstractTransformer;
 import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer;
 import ch.protonmail.android.utils.HTMLTransformer.Transformer;
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer;
-import ch.protonmail.android.utils.Logger;
-import ch.protonmail.android.utils.MailTo;
+import ch.protonmail.android.utils.MailToData;
 import ch.protonmail.android.utils.MailToUtils;
 import ch.protonmail.android.utils.MessageUtils;
-import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.ServerTime;
 import ch.protonmail.android.utils.UiUtil;
-import ch.protonmail.android.utils.crypto.AddressCrypto;
-import ch.protonmail.android.utils.crypto.Crypto;
-import ch.protonmail.android.utils.crypto.TextCiphertext;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.SerializationUtils;
@@ -177,27 +173,29 @@ import ch.protonmail.android.views.ComposeEditText;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
+import ch.protonmail.android.views.PMWebView;
 import ch.protonmail.android.views.PMWebViewClient;
-import dagger.android.AndroidInjection;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function0;
 import timber.log.Timber;
 
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_CREATED_EVENT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
-public class ComposeMessageActivity extends BaseContactsActivity implements MessagePasswordButton.OnMessagePasswordChangedListener,
-        MessageExpirationView.OnMessageExpirationChangedListener, LoaderManager.LoaderCallbacks<Cursor>,
-        HumanVerificationCaptchaDialogFragment.IHumanVerificationListener, HasSupportFragmentInjector,
+@AndroidEntryPoint
+public class ComposeMessageActivity
+        extends BaseContactsActivity
+        implements MessagePasswordButton.OnMessagePasswordChangedListener,
+        MessageExpirationView.OnMessageExpirationChangedListener,
+        LoaderManager.LoaderCallbacks<Cursor>,
+        HumanVerificationCaptchaDialogFragment.IHumanVerificationListener,
         GroupRecipientsDialogFragment.IGroupRecipientsListener {
     //region extras
-    private static final String TAG_COMPOSE_MESSAGE_ACTIVITY = "ComposeMessageActivity";
     public static final String EXTRA_PARENT_ID = "parent_id";
     public static final String EXTRA_ACTION_ID = "action_id";
     public static final String EXTRA_MESSAGE_ID = "message_id";
@@ -306,11 +304,14 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     ComposeMessageViewModelFactory composeMessageViewModelFactory;
     private ComposeMessageViewModel composeMessageViewModel;
     @Inject
-    DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
-    @Inject
     MessageDetailsRepository messageDetailsRepository;
 
+    @Inject
+    DownloadEmbeddedAttachmentsWorker.Enqueuer attachmentsWorker;
+
     String composerInstanceId;
+
+    Menu menu;
 
     @Override
     protected int getLayoutId() {
@@ -339,7 +340,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         if (!checkIfUserLoggedIn()) {
             return;
@@ -362,7 +362,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         initRecipientsView(mBccRecipientsView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.BCC);
         mMessageTitleEditText.setSelection(mMessageTitleEditText.getText().length(), mMessageTitleEditText.getText().length());
 
-        mMessageBody = new WebView(this);
+        mMessageBody = new PMWebView(this);
         pmWebViewClient = new PMWebViewClient(mUserManager, this, true);
         mMessageBody.setWebViewClient(pmWebViewClient);
         mMessageBody.requestDisallowInterceptTouchEvent(true);
@@ -387,8 +387,8 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         Intent intent = getIntent();
         mAction = intent.getAction();
         final String type = intent.getType();
+        Bundle extras = intent.getExtras();
         if (savedInstanceState == null) {
-            Bundle extras = intent.getExtras();
             initialiseActivityOnFirstStart(intent, extras, type);
         } else {
             initialiseActivityOnFirstStart(intent, savedInstanceState, type);
@@ -396,11 +396,11 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         }
         try {
             if (Arrays.asList(Constants.MessageActionType.FORWARD, Constants.MessageActionType.REPLY, Constants.MessageActionType.REPLY_ALL)
-                    .contains(composeMessageViewModel.get_actionId())) {
+                    .contains(composeMessageViewModel.get_actionId()) || extras.getBoolean(EXTRA_MAIL_TO)) {
                 // upload attachments if using pgp/mime
                 composeMessageViewModel.setBeforeSaveDraft(composeMessageViewModel.getMessageDataResult().isPGPMime(), mComposeBodyEditText.getText().toString());
             }
-        } catch (Exception exc){
+        } catch (Exception exc) {
             Timber.tag("588").e(exc, "Exception on create (upload attachments)");
 
         }
@@ -420,7 +420,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             mSelectedAddressPosition = 0;
         }
 
-        if (!composeMessageViewModel.isPaidUser() && MessageUtils.isPmMeAddress(senderAddresses.get(mSelectedAddressPosition))) {
+        if (!composeMessageViewModel.isPaidUser() && MessageUtils.INSTANCE.isPmMeAddress(senderAddresses.get(mSelectedAddressPosition))) {
             composeMessageViewModel.setOldSenderAddressId(composeMessageViewModel.getMessageDataResult().getAddressId());
             mSelectedAddressPosition = composeMessageViewModel.getUserAddressByIdFromOnlySendAddresses();
             if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressEmailAlias())) {
@@ -436,8 +436,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         }
 
         mAddressesSpinner.setSelection(mSelectedAddressPosition);
-
-        getPingHandler().postDelayed(getPingRunnable(), 0);
 
         mAddressesSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
@@ -467,12 +465,20 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
 
         composeMessageViewModel.getDeleteResult().observe(ComposeMessageActivity.this, new CheckLocalMessageObserver());
         composeMessageViewModel.getOpenAttachmentsScreenResult().observe(ComposeMessageActivity.this, new AddAttachmentsObserver());
-        composeMessageViewModel.getMessageDraftResult().observe(ComposeMessageActivity.this, new OnDraftCreatedObserver(TextUtils.isEmpty(mAction)));
+        composeMessageViewModel.getSavingDraftError().observe(this, errorMessage ->
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
-            if (event != null) {
-                DraftCreatedEvent draftEvent = event.getContentIfNotHandled();
-                onDraftCreatedEvent(draftEvent);
+            if (mUpdateDraftPmMeChanged) {
+                composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+                mUpdateDraftPmMeChanged = false;
             }
+            disableSendButton(false);
+            onMessageLoaded(
+                    event,
+                    false,
+                    TextUtils.isEmpty(mAction) &&
+                            composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty()
+            );
         });
 
         composeMessageViewModel.getDbIdWatcher().observe(ComposeMessageActivity.this, new SendMessageObserver());
@@ -491,12 +497,19 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                                     DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
                 }
                 composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
-            } catch (Exception exc){
+            } catch (Exception exc) {
                 Timber.tag("588").e(exc, "Exception on fetch message details event");
             }
         });
 
+        composeMessageViewModel.getFetchKeyDetailsResult().observe(
+                this,
+                this::onFetchEmailKeysEvent
+        );
+
         composeMessageViewModel.getBuildingMessageCompleted().observe(this, new BuildObserver());
+
+        composeMessageViewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     private void initialiseActivityOnFirstStart(Intent intent, Bundle extras, String type) {
@@ -532,14 +545,15 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     }
                     String[] recipientEmails = extras.getStringArray(EXTRA_TO_RECIPIENTS);
                     if (recipientEmails != null && recipientEmails.length > 0) {
-                        addRecipientsToView(recipientEmails, mToRecipientsView);
+                        addStringRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mToRecipientsView);
                     }
                     mComposeBodyEditText.requestFocus();
                 } else {
                     checkPermissionsAndKeyboardToggle();
                 }
                 if (extras.containsKey(EXTRA_CC_RECIPIENTS)) {
-                    addRecipientsToView(extras.getStringArray(EXTRA_CC_RECIPIENTS), mCcRecipientsView);
+                    String[] recipientEmails = extras.getStringArray(EXTRA_CC_RECIPIENTS);
+                    addStringRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mCcRecipientsView);
                     mAreAdditionalRowsVisible = true;
                     focusRespondInline();
                 }
@@ -605,7 +619,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                         getString(R.string.original_message_divider),
                         getString(R.string.reply_prefix_on),
                         DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
-            } catch (Exception exc){
+            } catch (Exception exc) {
                 Timber.tag("588").e(exc, "Exception on initialise message body");
             }
         } else if (extras != null && extras.containsKey(EXTRA_MESSAGE_ID) && extras.getBoolean(EXTRA_REPLY_FROM_GCM, false)) {
@@ -614,7 +628,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             composeMessageViewModel.setSender(extras.getString(EXTRA_SENDER_NAME, ""), extras.getString(EXTRA_SENDER_ADDRESS, ""));
             composeMessageViewModel.startFetchMessageDetailJob(extras.getString(EXTRA_MESSAGE_ID, ""));
             setMessageBody();
-        } else if (extras == null || !extras.containsKey(EXTRA_MESSAGE_ID)) {
+        } else if (extras == null || (!extras.containsKey(EXTRA_MESSAGE_ID) && !extras.containsKey(STATE_DRAFT_ID))) {
             // compose new message here
             composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
             setMessageBody();
@@ -662,27 +676,26 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         return true;
     }
 
-    @Subscribe
-    public void onFetchAddressesKeysEvent(FetchEmailKeysEvent event) {
-        Status status = event.getStatus();
+    private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {
         mSendingPressed = false;
         mProgressView.setVisibility(View.GONE);
-        if (status == Status.SUCCESS) {
-            List<FetchEmailKeysEvent.EmailKeyResponse> responses = event.getResponse();
-            for (FetchEmailKeysEvent.EmailKeyResponse response : responses) {
-                Map<String, String> keys = response.getKeys();
-                Constants.RecipientLocationType location = response.getLocation();
-                if (location == Constants.RecipientLocationType.TO) {
-                    mToRecipientsView.setEmailPublicKey(keys);
-                } else if (location == Constants.RecipientLocationType.CC) {
-                    mCcRecipientsView.setEmailPublicKey(keys);
-                } else if (location == Constants.RecipientLocationType.BCC) {
-                    mBccRecipientsView.setEmailPublicKey(keys);
-                }
+        boolean isRetry = false;
+        for (FetchPublicKeysResult result : results) {
+            isRetry = isRetry || result.isSendRetryRequired();
+            Map<String, String> keys = result.getKeysMap();
+            Constants.RecipientLocationType location = result.getRecipientsType();
+            if (location == Constants.RecipientLocationType.TO) {
+                mToRecipientsView.setEmailPublicKey(keys);
+            } else if (location == Constants.RecipientLocationType.CC) {
+                mCcRecipientsView.setEmailPublicKey(keys);
+            } else if (location == Constants.RecipientLocationType.BCC) {
+                mBccRecipientsView.setEmailPublicKey(keys);
             }
-            if (event.isRetry()) {
-                sendMessage(false);
-            }
+        }
+
+        Timber.v("onFetchEmailKeysEvent size:%d isRetry:%s", results.size(), isRetry);
+        if (isRetry) {
+            sendMessage(false);
         }
     }
 
@@ -697,10 +710,8 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     .commitAllowingStateLoss();
         } else {
             Constants.TokenType method = Constants.TokenType.Companion.fromString(verificationMethods.get(0));
-            switch (method) {
-                case CAPTCHA:
-                    verificationOptionChose(Constants.TokenType.CAPTCHA, event.getToken());
-                    break;
+            if (method == Constants.TokenType.CAPTCHA) {
+                verificationOptionChose(Constants.TokenType.CAPTCHA, event.getToken());
             }
         }
     }
@@ -732,13 +743,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         }
     }
 
-    @Override
-    protected void onPause() {
-
-        UiUtil.hideKeyboard(this);
-        super.onPause();
-    }
-
     private int skipInitial;
     private TextWatcher typingListener = new TextWatcher() {
         @Override
@@ -747,13 +751,14 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        public void onTextChanged(CharSequence text, int start, int before, int count) {
             if (skipInitial < 2) {
                 skipInitial++;
                 return;
             }
             skipInitial++;
             composeMessageViewModel.setIsDirty(true);
+            composeMessageViewModel.autoSaveDraft(text.toString());
         }
 
         @Override
@@ -789,11 +794,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     }
 
     @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return fragmentDispatchingAndroidInjector;
-    }
-
-    @Override
     public void recipientsSelected(@NonNull ArrayList<MessageRecipient> recipients, @Nonnull Constants.RecipientLocationType location) {
         MessageRecipientView recipient = mToRecipientsView;
         if (location == Constants.RecipientLocationType.CC) {
@@ -804,24 +804,29 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         addRecipientsToView(recipients, recipient);
     }
 
-    protected class ConnectivityRetryListener extends RetryListener {
-        @Override
-        public void onClick(View v) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true);
-            Snackbar mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), ComposeMessageActivity.this);
-            mCheckForConnectivitySnack.show();
-            super.onClick(v);
-        }
+    @NotNull
+    private Function0<Unit> onConnectivityCheckRetry() {
+        return () -> {
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
+            composeMessageViewModel.checkConnectivityDelayed();
+            return null;
+        };
     }
 
-    @Subscribe
-    public void onConnectivityEvent(ConnectivityEvent event) {
-        if(!isDohOngoing) {
-            if (!event.hasConnection()) {
-                showNoConnSnack(new ConnectivityRetryListener(), this);
+    private void onConnectivityEvent(Constants.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", connectivity.name(), isDohOngoing);
+        if (!isDohOngoing) {
+            if (connectivity != Constants.ConnectionState.CONNECTED) {
+                networkSnackBarUtil.getNoConnectionSnackBar(
+                        mSnackLayout,
+                        mUserManager.getUser(),
+                        this,
+                        null,
+                        null,
+                        connectivity == Constants.ConnectionState.NO_INTERNET
+                ).show();
             } else {
-                mPingHasConnection = true;
-                hideNoConnSnack();
+                networkSnackBarUtil.hideAllSnackBars();
             }
         }
     }
@@ -829,14 +834,14 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     private void extractMailTo(Intent intent) {
         Uri mailtoUri = intent.getData();
         if (mailtoUri != null && MailToUtils.MAILTO_SCHEME.equals(mailtoUri.getScheme())) {
-            MailTo mailTo = MailToUtils.parseIntent(intent);
-            addRecipientsToView(mailTo.getAddressesArray(), mToRecipientsView);
+            MailToData mailToData = composeMessageViewModel.parseMailTo(intent.getDataString());
+            addStringRecipientsToView(mailToData.getAddresses(), mToRecipientsView);
         } else {
             try {
-                String[] emails = (String[]) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
-                addRecipientsToView(emails, mToRecipientsView);
+                ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
+                addStringRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
-                Logger.doLogException(TAG_COMPOSE_MESSAGE_ACTIVITY, "Extract mail to getting extra email", e);
+                Timber.e(e, "Extract mail to getting extra email");
             }
         }
     }
@@ -849,24 +854,30 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         Uri uri = Objects.requireNonNull(intent.getData());
         String stringUri = uri.toString();
         if (stringUri.startsWith(MailToUtils.MAILTO_SCHEME)) {
-            MailTo mailTo = MailToUtils.parseIntent(intent);
+            MailToData mailToData = composeMessageViewModel.parseMailTo(stringUri);
             // Set recipient
-            addRecipientsToView(mailTo.getAddressesArray(), mToRecipientsView);
+            addStringRecipientsToView(mailToData.getAddresses(), mToRecipientsView);
             // Set cc
-            addRecipientsToView(mailTo.getCcArray(), mCcRecipientsView);
+            if (!mailToData.getCc().isEmpty() || !mailToData.getBcc().isEmpty()) {
+                setAdditionalRowVisibility(true);
+                mAreAdditionalRowsVisible = true;
+            }
+            addStringRecipientsToView(mailToData.getCc(), mCcRecipientsView);
+            // Set bcc
+            addStringRecipientsToView(mailToData.getBcc(), mBccRecipientsView);
             // Set subject
-            mMessageTitleEditText.setText(mailTo.getSubject());
+            mMessageTitleEditText.setText(mailToData.getSubject());
             // Set body
             Editable oldBody = mComposeBodyEditText.getText();
-            Editable newBody = Editable.Factory.getInstance().newEditable(mailTo.getBody());
+            Editable newBody = Editable.Factory.getInstance().newEditable(mailToData.getBody());
             mComposeBodyEditText.setText(newBody.append(oldBody));
 
         } else {
             try {
-                String[] emails = (String[]) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
-                addRecipientsToView(emails, mToRecipientsView);
+                ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
+                addStringRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
-                Logger.doLogException(TAG_COMPOSE_MESSAGE_ACTIVITY, "Extract mail to getting extra email", e);
+                Timber.w(e, "Extract mail to getting extra email");
             }
         }
     }
@@ -898,7 +909,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         try {
             extractMailTo(intent);
         } catch (Exception e) {
-            Logger.doLogException(TAG_COMPOSE_MESSAGE_ACTIVITY, "Handle set text: extracting email", e);
+            Timber.w(e, "Handle set text: extracting email");
         }
         handleSendFileUri(uri);
     }
@@ -973,11 +984,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     }
 
     @Subscribe
-    public void onAttachmentFailedEvent(AttachmentFailedEvent event) {
-        TextExtensions.showToast(this, getString(R.string.attachment_failed) + " " + event.getMessageSubject() + " " + event.getAttachmentName(), Toast.LENGTH_SHORT);
-    }
-
-    @Subscribe
     public void onPostImportAttachmentEvent(PostImportAttachmentEvent event) {
         if (event == null || event.composerInstanceId == null || !event.composerInstanceId.equals(composerInstanceId)) {
             return;
@@ -995,18 +1001,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         }
     }
 
-    private void onDraftCreatedEvent(final DraftCreatedEvent event) {
-        String draftId = composeMessageViewModel.getDraftId();
-        if (event == null || !draftId.equals(event.getOldMessageId())) {
-            return;
-        }
-        composeMessageViewModel.onDraftCreated(event);
-        if (mUpdateDraftPmMeChanged) {
-            composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
-            mUpdateDraftPmMeChanged = false;
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -1017,8 +1011,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         if (askForPermission) {
             contactsPermissionHelper.checkPermission();
         }
-        composeMessageViewModel.insertPendingDraft();
-//        mToRecipientsView.invalidateRecipients();
     }
 
     @Override
@@ -1027,6 +1019,13 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         checkDelinquency();
         renderViews();
         AppUtil.clearNotifications(this);
+        composeMessageViewModel.checkConnectivity();
+    }
+
+    @Override
+    protected void onPause() {
+        UiUtil.hideKeyboard(this);
+        super.onPause();
     }
 
     @Override
@@ -1048,7 +1047,11 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             // get messageId from one of the attachments and use it to start DownloadEmbeddedAttachmentsWorker
             for (LocalAttachment localAttachment : embeddedAttachmentsList) {
                 if (!TextUtils.isEmpty(localAttachment.getMessageId())) {
-                    DownloadEmbeddedAttachmentsWorker.Companion.enqueue(localAttachment.getMessageId(), mUserManager.getUsername(),null);
+                    attachmentsWorker.enqueue(
+                            localAttachment.getMessageId(),
+                            mUserManager.getUsername(),
+                            null
+                    );
                     break;
                 }
             }
@@ -1058,7 +1061,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     @Override
     protected void onStop() {
         super.onStop();
-        composeMessageViewModel.removePendingDraft();
         askForPermission = true;
         ProtonMailApplication.getApplication().getBus().unregister(this);
         ProtonMailApplication.getApplication().getBus().unregister(composeMessageViewModel);
@@ -1111,11 +1113,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     getString(R.string.yes),
                     getString(R.string.cancel),
                     unit -> {
-                        String draftId = composeMessageViewModel.getDraftId();
-                        if (!TextUtils.isEmpty(draftId)) {
-                            composeMessageViewModel.deleteDraft();
-                        }
-                        mComposeBodyEditText.setIsDirty(false);
+                        composeMessageViewModel.deleteDraft();
                         finishActivity();
                         return unit;
                     },
@@ -1131,6 +1129,8 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.compose_message_menu, menu);
+        this.menu = menu;
+        disableSendButton(true);
         return true;
     }
 
@@ -1194,13 +1194,11 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                         unit -> {
                             UiUtil.hideKeyboard(this);
                             composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
-                            ProtonMailApplication.getApplication().resetDraftCreated();
                             return unit;
                         }, true);
             } else {
                 UiUtil.hideKeyboard(this);
                 composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
-                ProtonMailApplication.getApplication().resetDraftCreated();
             }
         }
     }
@@ -1232,7 +1230,9 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                         emailList.add(recipient.getEmailAddress());
                     }
                 }
-                composeMessageViewModel.startFetchPublicKeysJob(Arrays.asList(new FetchPublicKeysJob.PublicKeysBatchJob(emailList, location)), false);
+
+                FetchPublicKeysRequest emailKeysRequest = new FetchPublicKeysRequest(emailList, location, false);
+                composeMessageViewModel.startFetchPublicKeys(Collections.singletonList(emailKeysRequest));
                 GetSendPreferenceJob.Destination destination = GetSendPreferenceJob.Destination.TO;
                 if (recipientsView.equals(mCcRecipientsView)) {
                     destination = GetSendPreferenceJob.Destination.CC;
@@ -1298,7 +1298,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                 try {
                     message.setAddressID(user.getSenderAddressIdByEmail((String) mAddressesSpinner.getSelectedItem()));
                     message.setSenderName(user.getSenderAddressNameByEmail((String) mAddressesSpinner.getSelectedItem()));
-                } catch (Exception exc){
+                } catch (Exception exc) {
                     Timber.tag("588").e(exc, "Exception on fill message with user inputs");
                 }
             } else {
@@ -1366,22 +1366,28 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             List<String> ccMissingKeys = mCcRecipientsView.addressesWithMissingKeys();
             List<String> bccMissingKeys = mBccRecipientsView.addressesWithMissingKeys();
             boolean isValid = true;
-            List<FetchPublicKeysJob.PublicKeysBatchJob> jobs = new ArrayList<>();
+            List<FetchPublicKeysRequest> keysRequests = new ArrayList<>();
             if (!toMissingKeys.isEmpty()) {
-                jobs.add(new FetchPublicKeysJob.PublicKeysBatchJob(toMissingKeys, Constants.RecipientLocationType.TO));
+                keysRequests.add(
+                        new FetchPublicKeysRequest(toMissingKeys, Constants.RecipientLocationType.TO, true)
+                );
                 isValid = false;
             }
             if (!ccMissingKeys.isEmpty()) {
-                jobs.add(new FetchPublicKeysJob.PublicKeysBatchJob(ccMissingKeys, Constants.RecipientLocationType.CC));
+                keysRequests.add(
+                        new FetchPublicKeysRequest(ccMissingKeys, Constants.RecipientLocationType.CC, true)
+                );
                 isValid = false;
             }
             if (!bccMissingKeys.isEmpty()) {
-                jobs.add(new FetchPublicKeysJob.PublicKeysBatchJob(bccMissingKeys, Constants.RecipientLocationType.BCC));
+                keysRequests.add(
+                        new FetchPublicKeysRequest(bccMissingKeys, Constants.RecipientLocationType.BCC, true)
+                );
                 isValid = false;
             }
             if (!isValid) {
                 if (mNetworkUtil.isConnected()) {
-                    composeMessageViewModel.startFetchPublicKeysJob(jobs, true);
+                    composeMessageViewModel.startFetchPublicKeys(keysRequests);
                     mProgressView.setVisibility(View.VISIBLE);
                     mProgressSpinner.setVisibility(View.VISIBLE);
                     mSendingPressed = true;
@@ -1447,20 +1453,15 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_ADD_ATTACHMENTS && resultCode == RESULT_OK) {
+            Timber.d("ComposeMessageAct.onActivityResult Received add attachment response with result OK");
             askForPermission = false;
             addingMoreAttachments = false;
             ArrayList<LocalAttachment> resultAttachmentList = data.getParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST);
             ArrayList<LocalAttachment> listToSet = resultAttachmentList != null ? resultAttachmentList : new ArrayList<>();
             composeMessageViewModel.setAttachmentList(listToSet);
             composeMessageViewModel.setIsDirty(true);
-            String draftId = data.getStringExtra(AddAttachmentsActivity.EXTRA_DRAFT_ID);
             String oldDraftId = composeMessageViewModel.getDraftId();
-            if (!TextUtils.isEmpty(draftId) && !draftId.equals(oldDraftId)) {
-                composeMessageViewModel.setDraftId(draftId);
-                afterAttachmentsAdded();
-            } else if (!TextUtils.isEmpty(oldDraftId)) {
-                afterAttachmentsAdded();
-            }
+            afterAttachmentsAdded();
             composeMessageViewModel.setIsDirty(true);
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_VALIDATE_PIN) {
             // region pin results
@@ -1470,18 +1471,14 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     onPostImportAttachmentEvent((PostImportAttachmentEvent) attachmentExtra);
                 }
                 composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
-            } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT) || data.hasExtra(EXTRA_DRAFT_CREATED_EVENT)) {
+            } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT)) {
                 FetchMessageDetailEvent messageDetailEvent = (FetchMessageDetailEvent) data.getSerializableExtra(EXTRA_MESSAGE_DETAIL_EVENT);
                 FetchDraftDetailEvent draftDetailEvent = (FetchDraftDetailEvent) data.getSerializableExtra(EXTRA_DRAFT_DETAILS_EVENT);
-                DraftCreatedEvent draftCreatedEvent = (DraftCreatedEvent) data.getSerializableExtra(EXTRA_DRAFT_CREATED_EVENT);
                 if (messageDetailEvent != null) {
                     composeMessageViewModel.onFetchMessageDetailEvent(messageDetailEvent);
                 }
                 if (draftDetailEvent != null) {
                     onFetchDraftDetailEvent(draftDetailEvent);
-                }
-                if (draftCreatedEvent != null) {
-                    onDraftCreatedEvent(draftCreatedEvent);
                 }
             }
             mToRecipientsView.requestFocus();
@@ -1489,6 +1486,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             super.onActivityResult(requestCode, resultCode, data);
             // endregion
         } else {
+            Timber.w("ComposeMessageAct.onActivityResult Received result not handled", requestCode, resultCode);
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -1674,11 +1672,10 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         mMessageTitleEditText.setText(loadedMessage.getSubject());
         String messageBody = loadedMessage.getMessageBody();
         try {
-            TextDecryptionResult tct = crypto.decrypt(TextCiphertext.fromArmor(messageBody));
+            TextDecryptionResult tct = crypto.decrypt(new CipherText(messageBody));
             messageBody = tct.getDecryptedData();
         } catch (Exception e) {
-            //TODO fetchContactGroups in conditions of message being malformed in Inbox
-            e.printStackTrace();
+            Timber.w(e, "Decryption error");
         }
         composeMessageViewModel.setInitialMessageContent(messageBody);
         if (loadedMessage.isInline()) {
@@ -1716,6 +1713,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         composeMessageViewModel.onMessageLoaded(loadedMessage);
         renderViews();
         new SaveMassageTask(messageDetailsRepository, loadedMessage).execute();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false), 500);
     }
 
     private void setInlineContent(String messageBody, boolean clean, boolean isPlainText) {
@@ -1747,7 +1745,9 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         renderViews();
     }
 
-    private void addRecipientsToView(String[] recipients, MessageRecipientView messageRecipientView) {
+    private Map<MessageRecipientView, List<MessageRecipient>> pendingRecipients = new HashMap<>();
+
+    private void addStringRecipientsToView(List<String> recipients, MessageRecipientView messageRecipientView) {
         for (String recipient : recipients) {
             if (CommonExtensionsKt.isValidEmail(recipient)) {
                 messageRecipientView.addObject(new MessageRecipient("", recipient));
@@ -1757,8 +1757,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             }
         }
     }
-
-    private Map<MessageRecipientView, List<MessageRecipient>> pendingRecipients = new HashMap<>();
 
     private void addRecipientsToView(List<MessageRecipient> recipients, MessageRecipientView messageRecipientView) {
         if (!composeMessageViewModel.getSetupCompleteValue()) {
@@ -1867,6 +1865,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     @Subscribe
     public void onDownloadEmbeddedImagesEvent(DownloadEmbeddedImagesEvent event) {
         if (event.getStatus().equals(Status.SUCCESS)) {
+            Timber.v("onDownloadEmbeddedImagesEvent %s", event.getStatus());
             String content = composeMessageViewModel.getMessageDataResult().getContent();
             String css = AppUtil.readTxt(this, R.raw.editor);
             Transformer contentTransformer = new ViewportTransformer(UiUtil.getRenderWidth(getWindowManager()), css);
@@ -2054,7 +2053,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     composeMessageViewModel.setIsDirty(true);
                     String email = (String) mAddressesSpinner.getItemAtPosition(position);
                     boolean localAttachmentsListEmpty = composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty();
-                    if (!composeMessageViewModel.isPaidUser() && MessageUtils.isPmMeAddress(email)) {
+                    if (!composeMessageViewModel.isPaidUser() && MessageUtils.INSTANCE.isPmMeAddress(email)) {
                         mAddressesSpinner.setSelection(mSelectedAddressPosition);
                         Snackbar snack = Snackbar.make(mRootLayout, String.format(getString(R.string.error_can_not_send_from_this_address), email), Snackbar.LENGTH_LONG);
                         View snackView = snack.getView();
@@ -2109,7 +2108,8 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                             mComposeBodyEditText.setText(UiUtil.fromHtml(sb.toString().replace("\n", newline)));
                             composeMessageViewModel.processSignature(newSignature);
                         }
-//                        composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
+                        // Trigger Save Draft after changing sender to ensure attachments are encrypted with the right key
+                        composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
                     }
                 }
 
@@ -2129,22 +2129,13 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             if (!mNetworkUtil.isConnected()) {
                 sendingToast = R.string.sending_message_offline;
             }
-
-            TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
-            new Handler().postDelayed(ComposeMessageActivity.this::finishActivity, 500);
-        }
-    }
-
-    private class OnDraftCreatedObserver implements Observer<Message> {
-        private final boolean updateAttachments;
-
-        OnDraftCreatedObserver(boolean updateAttachments) {
-            this.updateAttachments = updateAttachments;
-        }
-
-        @Override
-        public void onChanged(@Nullable Message message) {
-            onMessageLoaded(message, false, updateAttachments && composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty());
+            if(dbId == null){
+                Timber.w("Error while saving message. DbId is null.");
+                TextExtensions.showToast(ComposeMessageActivity.this, R.string.error_saving_try_again);
+            } else {
+                TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
+                new Handler(Looper.getMainLooper()).postDelayed(ComposeMessageActivity.this::finishActivity, 500);
+            }
         }
     }
 
@@ -2154,7 +2145,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         public void onChanged(@Nullable List<LocalAttachment> attachments) {
             String draftId = composeMessageViewModel.getDraftId();
             Intent intent = AppUtil.decorInAppIntent(new Intent(ComposeMessageActivity.this, AddAttachmentsActivity.class));
-            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId) && !MessageUtils.isLocalMessageId(draftId));
+            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId) && !MessageUtils.INSTANCE.isLocalMessageId(draftId));
             intent.putParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST, new ArrayList<>(attachments));
             intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_ID, draftId);
             startActivityForResult(intent, REQUEST_CODE_ADD_ATTACHMENTS);
@@ -2215,7 +2206,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
 
             Message localMessage = messageEvent.getContentIfNotHandled();
             if (localMessage != null) {
-                composeMessageViewModel.setOfflineDraftSaved(false);
 
                 String aliasAddress = composeMessageViewModel.getMessageDataResult().getAddressEmailAlias();
                 MessageSender messageSender;
@@ -2231,8 +2221,8 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                         }
                         messageSender = new MessageSender(nonAliasAddress.getDisplayName(), nonAliasAddress.getEmail());
                     } catch (NullPointerException e) {
-                        Timber.d(e, "Inside "+this.getClass().getName() + " nonAliasAddress was null");
-                        messageSender = new MessageSender("","");
+                        Timber.d(e, "Inside " + this.getClass().getName() + " nonAliasAddress was null");
+                        messageSender = new MessageSender("", "");
                     }
                 }
                 localMessage.setSender(messageSender);
@@ -2245,7 +2235,8 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                 // draft
                 fillMessageFromUserInputs(localMessage, true);
                 localMessage.setExpirationTime(0);
-                composeMessageViewModel.saveDraft(localMessage, composeMessageViewModel.getParentId(), mNetworkUtil.isConnected());
+                composeMessageViewModel.saveDraft(localMessage, mNetworkUtil.isConnected());
+                new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false), 500);
                 if (userAction == UserAction.SAVE_DRAFT_EXIT) {
                     finishActivity();
                 }
@@ -2272,6 +2263,20 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         } else {
             mToRecipientsView.requestFocus();
             UiUtil.toggleKeyboard(this, mToRecipientsView);
+        }
+    }
+
+    private void disableSendButton(boolean disable) {
+        // Find the menu item you want to style
+        if (menu != null) {
+            MenuItem item = menu.getItem(0);
+            if (disable) {
+                item.setEnabled(false);
+                item.getIcon().setColorFilter(getResources().getColor(R.color.white_30), PorterDuff.Mode.MULTIPLY);
+            } else {
+                item.setEnabled(true);
+                item.getIcon().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.MULTIPLY);
+            }
         }
     }
 }

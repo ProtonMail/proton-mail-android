@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,13 +23,26 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 
 import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.utils.Fields;
+import ch.protonmail.android.mapper.bridge.AddressBridgeMapper;
 
+@Deprecated
+@kotlin.Deprecated(
+        message = "Replace with 'ch.protonmail.android.domain.entity.user.Address'.\n" +
+                "Where possible to have a proper DI use 'AddressBridgeMapper', otherwise the " +
+                "function 'toNewAddress'"
+)
 public class Address implements Parcelable {
+
+    private final static String GENERIC_DEPRECATION_MESSAGE = "Use from new Address entity " +
+            "'ch.protonmail.android.domain.entity.user.Address'\n" +
+            "Use 'toNewAddress' or replace the User directly";
 
     @SerializedName(Fields.Auth.ID)
     private String ID;
@@ -59,6 +72,33 @@ public class Address implements Parcelable {
     public Address() {
     }
 
+    public Address(
+            String ID,
+            String domainID,
+            String email,
+            int send,
+            int receive,
+            int status,
+            int type,
+            int order,
+            String displayName,
+            String signature,
+            int hasKeys,
+            List<ch.protonmail.android.api.models.Keys> keys
+    ) {
+        this.ID = ID;
+        DomainID = domainID;
+        Email = email;
+        Send = send;
+        Receive = receive;
+        Status = status;
+        Type = type;
+        Order = order;
+        DisplayName = displayName;
+        Signature = signature;
+        HasKeys = hasKeys;
+        Keys = keys;
+    }
 
     protected Address(Parcel in) {
         ID = in.readString();
@@ -88,14 +128,28 @@ public class Address implements Parcelable {
     };
 
     // region getters and setters
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getID() {
         return ID;
     }
 
+    @Nullable
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
+    public String getDomainId() {
+        return DomainID;
+    }
+
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getStatus() {
         return Status;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nThis must be get from parent Addresses entity")
     public int getOrder() {
         return Order;
     }
@@ -108,22 +162,32 @@ public class Address implements Parcelable {
         this.Email = email;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getEmail() {
         return Email;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public List<Keys> getKeys() {
         return Keys;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nNew field name:  'allowedToReceive'")
     public int getReceive() {
         return Receive;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getType() {
         return Type;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getDisplayName() {
         return DisplayName;
     }
@@ -140,6 +204,8 @@ public class Address implements Parcelable {
         Signature = signature;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nNew field name:  'allowedToSend'")
     public int getSend() {
         return Send;
     }
@@ -165,5 +231,13 @@ public class Address implements Parcelable {
         dest.writeString(Signature);
         dest.writeString(DomainID);
         dest.writeInt(HasKeys);
+    }
+
+    /**
+     * Convert this Address to new Address entity
+     * @return {@link ch.protonmail.android.domain.entity.user.Address}
+     */
+    public ch.protonmail.android.domain.entity.user.Address toNewAddress() {
+        return AddressBridgeMapper.buildDefault().toNewModel(this);
     }
 }

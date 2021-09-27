@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -40,7 +40,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -60,6 +60,7 @@ import butterknife.OnItemSelected;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.PaymentTokenApprovalActivity;
 import ch.protonmail.android.adapters.SimpleCountriesAdapter;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.CardDetails;
 import ch.protonmail.android.api.models.Countries;
 import ch.protonmail.android.api.models.Country;
@@ -74,33 +75,36 @@ import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.api.utils.ParseUtils;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.CreateUserEvent;
-import ch.protonmail.android.events.DonateEvent;
 import ch.protonmail.android.events.KeysSetupEvent;
 import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
-import ch.protonmail.android.events.PaymentMethodEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.events.payment.VerifyPaymentEvent;
+import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
+import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult;
 import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.CollectionExtensions;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.viewmodel.BillingViewModel;
 import ch.protonmail.android.views.PMWebView;
+import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_PAYMENT_TOKEN_STRING;
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_STATUS_STRING;
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.RESULT_CODE_ERROR;
 import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_CARD;
 import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_PAYPAL;
+import static ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponseKt.FIELD_HUMAN_VERIFICATION_TOKEN;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED;
 
-/**
- * Created by dkadrikj on 7/1/16.
- */
+@AndroidEntryPoint
 public class BillingFragment extends CreateAccountBaseFragment {
 
     private static final String ARGUMENT_AMOUNT = "ch.protonmail.android.ARG_AMOUNT";
@@ -160,29 +164,25 @@ public class BillingFragment extends CreateAccountBaseFragment {
      */
     private boolean hadConnection = false;
 
-    /** A {@link Snackbar} that shows when connectivity is not available */
+    /**
+     * A {@link Snackbar} that shows when connectivity is not available
+     */
     private Snackbar noConnectivitySnackBar;
 
     private SimpleCountriesAdapter mAdapter;
+
+    private IBillingListener billingListener;
 
     private Constants.BillingType billingType;
     private int amount;
     private Constants.CurrencyType currency;
     private String couponCode;
     private List<String> planIds;
-    private String cardNumber;
-    private String cardName;
-    private String cardCvc;
-    private String zip;
-    private String month;
-    private String year;
-    private String countryCode;
-    private String mFingerprint;
     private int cycle;
+    private String mFingerprint;
     private List<PaymentMethod> mPaymentMethods;
-
-    private BillingViewModel billingViewModel = null;
     private String paymentTokenForSubscription = null;
+    private BillingViewModel viewModel;
 
     private final int PAYMENT_SUCCESS_PAGE_TIMEOUT = 5000;
 
@@ -211,7 +211,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         planIds = new ArrayList<>();
         planIds.add(selectedPlanId);
         cycle = getArguments().getInt(ARGUMENT_CYCLE);
-        billingViewModel = ViewModelProviders.of(this).get(BillingViewModel.class);
+        viewModel = new ViewModelProvider(this).get(BillingViewModel.class);
     }
 
     @Nullable
@@ -261,24 +261,42 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
         // Set up no connectivity SnackBar
         noConnectivitySnackBar =
-                Snackbar.make(snackBarLayout, R.string.no_connectivity_detected_troubleshoot, Snackbar.LENGTH_INDEFINITE);
+                Snackbar.make(snackBarLayout, R.string.no_connectivity_detected, Snackbar.LENGTH_INDEFINITE);
         View snackBarView = noConnectivitySnackBar.getView();
         snackBarView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.red));
         TextView snackBarTextView =
                 snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
         snackBarTextView.setTextColor(Color.WHITE);
 
-        showPaymentMethods();
-
         rootView.findViewById(R.id.submit_picker_paypal).setVisibility(Constants.FeatureFlags.PAYPAL_PAYMENT ? View.VISIBLE : View.GONE);
 
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewModel.getCreateSubscriptionResult().observe(
+                getViewLifecycleOwner(),
+                this::onCreateSubscriptionResult
+        );
+
+        viewModel.getFetchPaymentMethodsResult().observe(
+                getViewLifecycleOwner(),
+                this::onPaymentMethodsFetched
+        );
+        viewModel.fetchPaymentMethodTypes();
+    }
+
+    private void onPaymentMethodsFetched(FetchPaymentMethodsResult result) {
+        Timber.v("Payment methods result:%s", result);
+        if (result instanceof FetchPaymentMethodsResult.Success) {
+            mPaymentMethods = ((FetchPaymentMethodsResult.Success) result).getPaymentMethods();
+            showPaymentMethods();
+        }
+    }
+
     private void showPaymentMethods() {
-
-        mPaymentMethods = ProtonMailApplication.getApplication().getPaymentMethods();
-
         if (mPaymentMethods != null && mPaymentMethods.size() > 0) {
             List<String> paymentMethodsStrings = new ArrayList<>();
             boolean payPalMethodExists = false;
@@ -297,33 +315,25 @@ public class BillingFragment extends CreateAccountBaseFragment {
             }
             ArrayAdapter<String> paymentMethodsAdapter = new ArrayAdapter<>(getContext(), R.layout.month_spinner_item, paymentMethodsStrings);
             mPaymentMethodsSpinner.setAdapter(paymentMethodsAdapter);
+
+            mPaymentMethodsLayout.setVisibility(View.VISIBLE);
+            mPickerLayout.setVisibility(View.GONE);
+        } else {
+            mPaymentMethodsLayout.setVisibility(View.GONE);
+            mPickerLayout.setVisibility(View.VISIBLE);
         }
 
-        if (mPaymentMethods != null && mPaymentMethods.size() > 0) {
-            mInputFormLayout.setVisibility(View.GONE);
-            mPaymentMethodsLayout.setVisibility(View.VISIBLE);
-            mPaypalLayout.setVisibility(View.GONE);
-            mPickerLayout.setVisibility(View.GONE);
-            mSuccessPageLayout.setVisibility(View.GONE);
-        } else {
-            mInputFormLayout.setVisibility(View.GONE);
-            mPaymentMethodsLayout.setVisibility(View.GONE);
-            mPaypalLayout.setVisibility(View.GONE);
-            mPickerLayout.setVisibility(View.VISIBLE);
-            mSuccessPageLayout.setVisibility(View.GONE);
-        }
+        mInputFormLayout.setVisibility(View.GONE);
+        mPaypalLayout.setVisibility(View.GONE);
+        mSuccessPageLayout.setVisibility(View.GONE);
 
     }
 
     private void showSuccessPage() {
 
-        if (billingType == Constants.BillingType.DONATE) {
-            paymentSuccessTitle.setText(R.string.donation_success_title);
-            paymentSuccessText.setText(R.string.donation_success_text);
-        } else {
-            paymentSuccessTitle.setText(R.string.payment_success_title);
-            paymentSuccessText.setText(R.string.payment_success_text);
-        }
+        paymentSuccessTitle.setText(R.string.payment_success_title);
+        paymentSuccessText.setText(R.string.payment_success_text);
+
 
         mProgressContainer.setVisibility(View.GONE);
         mInputFormLayout.setVisibility(View.GONE);
@@ -349,6 +359,15 @@ public class BillingFragment extends CreateAccountBaseFragment {
             submitButton.setEnabled(false);
             submitPaypalButton.setEnabled(false);
         }
+    }
+
+    public void setActivityListener(IBillingListener billingListener) {
+        this.billingListener = billingListener;
+    }
+
+    public void retryPaymentAfterCaptchaValidation(String token, String tokenType) {
+        mProgressContainer.setVisibility(View.VISIBLE);
+        viewModel.retryCreatePaymentToken(token, tokenType);
     }
 
     @OnClick(R.id.submit_picker_card)
@@ -404,9 +423,9 @@ public class BillingFragment extends CreateAccountBaseFragment {
     public void onSubmitPaymentMethodClicked() { // on screen with saved payment methods spinner
         int selectedPosition = mPaymentMethodsSpinner.getSelectedItemPosition();
         PaymentMethod paymentMethod = mPaymentMethods.get(selectedPosition);
-        if (billingType == Constants.BillingType.UPGRADE || billingType == Constants.BillingType.DONATE) {
+        if (billingType == Constants.BillingType.UPGRADE) {
             mProgressContainer.setVisibility(View.VISIBLE);
-            billingViewModel.createPaymentTokenFromPaymentMethodId(amount, currency, paymentMethod.getId()).observe(this, createPaymentTokenResponse -> {
+            viewModel.createPaymentTokenFromPaymentMethodId(amount, currency, paymentMethod.getId()).observe(this, createPaymentTokenResponse -> {
                 handleCreatePaymentTokenResponse(createPaymentTokenResponse, paymentMethod.getCardDetails().getPayer() == null ? PAYMENT_TYPE_CARD : PAYMENT_TYPE_PAYPAL);
             });
         }
@@ -414,21 +433,24 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
     @OnClick(R.id.submit)
     public void onSubmitClicked() { // on screen with Credit Card details
-        cardNumber = creditCardNumberEditText.getText().toString();
-        cardName = creditCardNameEditText.getText().toString();
+        String cardNumber = creditCardNumberEditText.getText().toString();
+        String cardName = creditCardNameEditText.getText().toString();
         int selectedCountryPosition = mCountriesSpinner.getSelectedItemPosition();
-        month = (String) mMonthsSpinner.getSelectedItem();
-        year = (String) mYearsSpinner.getSelectedItem();
+        String month = (String) mMonthsSpinner.getSelectedItem();
+        String year = (String) mYearsSpinner.getSelectedItem();
         int monthInt;
         int yearInt;
         try {
-            monthInt = Integer.valueOf(month);
-            yearInt = Integer.valueOf(year);
+            monthInt = Integer.parseInt(month);
+            yearInt = Integer.parseInt(year);
         } catch (java.lang.NumberFormatException e) {
             monthInt = 0;
             yearInt = 0;
         }
         boolean inputValid = validateInput(cardNumber, cardName, selectedCountryPosition, monthInt, yearInt);
+        String cardCvc;
+        String zip;
+        String countryCode;
         if (inputValid) {
             mProgressContainer.setVisibility(View.VISIBLE);
             cardCvc = cvcNumberEditText.getText().toString();
@@ -436,10 +458,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
             countryCode = mAdapter.getItem(selectedCountryPosition).getCountryCode();
         } else {
             return;
-        }
-        String fingerprint = mFingerprint;
-        if ("0".equals(mFingerprint)) {
-            fingerprint = "";
         }
 
         // we need to create PaymentToken first
@@ -455,7 +473,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         paymentDetails.put(Fields.Payment.ZIP, zip);
         PaymentType cardPaymentType = new PaymentType.Card(paymentDetails);
 
-        billingViewModel.createPaymentToken(amount, currency, cardPaymentType).observe(this, createPaymentTokenResponse -> {
+        viewModel.createPaymentToken(amount, currency, cardPaymentType).observe(this, createPaymentTokenResponse -> {
             handleCreatePaymentTokenResponse(createPaymentTokenResponse, PAYMENT_TYPE_CARD);
         });
     }
@@ -472,7 +490,12 @@ public class BillingFragment extends CreateAccountBaseFragment {
                 CreatePaymentTokenErrorResponse errorResponse = (CreatePaymentTokenErrorResponse) createPaymentTokenResponse;
                 if (!errorResponse.getEventConsumed()) {
                     errorResponse.setEventConsumed(true);
-                    showPaymentError(null, errorResponse.getError());
+                    if (errorResponse.getCode() == RESPONSE_CODE_ERROR_VERIFICATION_NEEDED) {
+                        mProgressContainer.setVisibility(View.GONE);
+                        billingListener.onRequestCaptchaVerification((String) errorResponse.getDetails().get(FIELD_HUMAN_VERIFICATION_TOKEN));
+                    } else {
+                        showPaymentError(null, errorResponse.getError());
+                    }
                 }
             } else if (createPaymentTokenResponse instanceof CreatePaymentTokenSuccessResponse) {
                 CreatePaymentTokenSuccessResponse successResponse = ((CreatePaymentTokenSuccessResponse) createPaymentTokenResponse);
@@ -489,8 +512,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
         mProgressContainer.setVisibility(View.VISIBLE);
 
-        BillingViewModel billingViewModel = ViewModelProviders.of(this).get(BillingViewModel.class);
-        billingViewModel.createPaymentToken(amount, currency, PaymentType.PayPal.INSTANCE).observe(this, createPaymentTokenResponse -> {
+        viewModel.createPaymentToken(amount, currency, PaymentType.PayPal.INSTANCE).observe(this, createPaymentTokenResponse -> {
             handleCreatePaymentTokenResponse(createPaymentTokenResponse, PAYMENT_TYPE_PAYPAL);
         });
     }
@@ -511,21 +533,17 @@ public class BillingFragment extends CreateAccountBaseFragment {
                         paymentTokenForSubscription = token;
                         break;
                     case UPGRADE:
-                        mListener.createSubscriptionForPaymentToken(token, amount, currency, couponCode, planIds, cycle);
-                        break;
-                    case DONATE:
-                        mListener.donateForPaymentToken(amount, currency, token);
-                        mProgressContainer.setVisibility(View.VISIBLE);
+                        viewModel.createSubscriptionForPaymentToken(token, amount, currency, planIds, cycle, couponCode);
                         break;
                 }
                 break;
             case FAILED:
             case NOT_SUPPORTED:
-                showPaymentMethods();
+                viewModel.fetchPaymentMethodTypes();
                 showPaymentError(null, getString(R.string.payment_approval_unknown_error_description));
                 break;
             case CONSUMED:
-                showPaymentMethods();
+                viewModel.fetchPaymentMethodTypes();
                 showPaymentError(null, getString(R.string.payment_approval_consumed_error_description));
                 break;
         }
@@ -535,10 +553,10 @@ public class BillingFragment extends CreateAccountBaseFragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_CODE_PAYMENT_APPROVAL) {
             if (resultCode == Activity.RESULT_CANCELED) {
-                showPaymentMethods();
+                viewModel.fetchPaymentMethodTypes();
                 showPaymentError(null, getString(R.string.payment_approval_cancel_error_description));
             } else if (resultCode == RESULT_CODE_ERROR) {
-                showPaymentMethods();
+                viewModel.fetchPaymentMethodTypes();
                 showPaymentError(null, getString(R.string.payment_approval_unknown_error_description));
             } else if (resultCode == Activity.RESULT_OK) {
                 String tokenStatus = data.getStringExtra(EXTRA_RESULT_STATUS_STRING);
@@ -566,7 +584,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
             Map<String, Object> detailsObjMap = event.getResponse().getDetails();
             Map<String, String> errorDetails =
                     CollectionExtensions.filterValues(detailsObjMap, String.class);
-            mListener.onBillingError(error, ParseUtils.Companion.compileSingleErrorMessage(errorDetails));
+            mListener.onBillingError(error, ParseUtils.INSTANCE.compileSingleErrorMessage(errorDetails));
 
         } else if (event.getStatus() == Status.SUCCESS) {
             mListener.onBillingCompleted();
@@ -606,18 +624,10 @@ public class BillingFragment extends CreateAccountBaseFragment {
         }
         ProtonMailApplication.getApplication().resetMailboxLoginEvent();
         mProgressBar.setVisibility(View.GONE);
-        switch (event.status) {
-            case SUCCESS: {
-                String fingerprint = mFingerprint;
-                if ("0".equals(mFingerprint)) {
-                    fingerprint = "";
-                }
-                mListener.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, couponCode, planIds, cycle);
-            }
-            break;
-            default:
-                handleLoginStatus(event.status);
-                break;
+        if (event.status == AuthStatus.SUCCESS) {
+            viewModel.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, planIds, cycle, couponCode);
+        } else {
+            handleLoginStatus(event.status);
         }
     }
 
@@ -626,43 +636,29 @@ public class BillingFragment extends CreateAccountBaseFragment {
         super.onKeysSetupEvent(event);
     }
 
-    @Subscribe
-    public void onPaymentMethodEvent(PaymentMethodEvent event) {
-        switch (event.getStatus()) {
-            case SUCCESS: {
-
-                showSuccessPage();
-
-                new Handler().postDelayed(() -> {
-
-                    if (billingType == Constants.BillingType.CREATE) {
-                        // inform user creation completed
-                        mListener.fetchOrganization();
-                        mListener.startAddressSetup();
-                    } else if (billingType == Constants.BillingType.UPGRADE) {
-                        // create organization
-                        mListener.fetchOrganization();
-                    }
-
-                }, PAYMENT_SUCCESS_PAGE_TIMEOUT);
-
-                break;
-            }
-            default:
-                mProgressContainer.setVisibility(View.GONE);
-                showPaymentError(event.getError(), event.getErrorDescription());
-                break;
-        }
-    }
-
-    @Subscribe
-    public void onDonateEvent(DonateEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
+    private void onCreateSubscriptionResult(CreateSubscriptionResult result) {
+        Timber.v("CreateSubscriptionResult %s", result);
+        if (result instanceof CreateSubscriptionResult.Success) {
             showSuccessPage();
-            new Handler().postDelayed(() -> mListener.donateDone(), PAYMENT_SUCCESS_PAGE_TIMEOUT);
-        } else {
+
+            new Handler().postDelayed(() -> {
+
+                if (billingType == Constants.BillingType.CREATE) {
+                    // inform user creation completed
+                    mListener.fetchOrganization();
+                    mListener.startAddressSetup();
+                } else if (billingType == Constants.BillingType.UPGRADE) {
+                    // create organization
+                    mListener.fetchOrganization();
+                }
+
+            }, PAYMENT_SUCCESS_PAGE_TIMEOUT);
+        } else if (result instanceof CreateSubscriptionResult.Error) {
             mProgressContainer.setVisibility(View.GONE);
-            showPaymentError(event.getError(), event.getErrorDescription());
+            showPaymentError(
+                    ((CreateSubscriptionResult.Error) result).getError(),
+                    ((CreateSubscriptionResult.Error) result).getErrorDescription()
+            );
         }
     }
 
@@ -688,7 +684,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         View dialogView;
         if (billingType == Constants.BillingType.CREATE) {
             dialogView = inflater.inflate(R.layout.layout_payment_error_create_account, null);
-        } else if (billingType == Constants.BillingType.UPGRADE || billingType == Constants.BillingType.DONATE) {
+        } else if (billingType == Constants.BillingType.UPGRADE) {
             dialogView = inflater.inflate(R.layout.layout_payment_error_upgrade, null);
         } else {
             return;
@@ -712,7 +708,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         btnAnotherCard.setOnClickListener(v -> {
             alert.cancel();
             clearFields();
-            showPaymentMethods();
+            viewModel.fetchPaymentMethodTypes();
         });
 
         if (btnFreeAccount != null) {
@@ -820,4 +816,9 @@ public class BillingFragment extends CreateAccountBaseFragment {
         }
     }
 
+    public interface IBillingListener {
+        ProtonMailApiManager getProtonMailApiManager();
+
+        void onRequestCaptchaVerification(String token);
+    }
 }

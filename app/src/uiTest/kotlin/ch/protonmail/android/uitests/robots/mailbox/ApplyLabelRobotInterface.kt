@@ -18,21 +18,55 @@
  */
 package ch.protonmail.android.uitests.robots.mailbox
 
+import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withLabelName
+import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.type
+
 interface ApplyLabelRobotInterface {
 
-    fun labelName(name: String) {
-        //TODO add implementation
+    fun addLabel(name: String): Any {
+        labelName(name)
+            .add()
+        return this
     }
 
-    fun selectExistingByName(name: String) {
-        //TODO add implementation
+    fun labelName(name: String): ApplyLabelRobotInterface {
+        UIActions.wait
+            .forViewWithIdAndParentId(R.id.label_name, R.id.add_label_container)
+            .type(name)
+        return this
     }
 
-    fun selectAlsoArchive() {
-        //TODO add implementation
+    fun selectLabelByName(name: String): ApplyLabelRobotInterface {
+        UIActions.wait.forViewWithId(R.id.labels_list_view)
+        UIActions.wait.forViewWithText(name)
+        UIActions.listView.clickListItemChildByTextAndId(
+            withLabelName(name),
+            R.id.label_check,
+            R.id.labels_list_view
+        )
+        return this
     }
 
-    fun apply() {
-        //TODO add implementation
+    fun checkAlsoArchiveCheckBox(): ApplyLabelRobotInterface {
+        UIActions.wait.forViewWithId(R.id.also_archive).click()
+        return this
+    }
+
+    fun apply(): Any {
+        UIActions.wait.forViewWithId(R.id.done).click()
+        return this
+    }
+
+    fun applyAndArchive(): Any {
+        apply()
+        return this
+    }
+
+    fun add() {
+        UIActions.wait.forViewWithId(R.id.done).click()
     }
 }

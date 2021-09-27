@@ -18,50 +18,52 @@
  */
 package ch.protonmail.android.uitests.testsHelper.testRail
 
+import android.util.Log
+import ch.protonmail.android.beta.test.BuildConfig
+import me.proton.core.test.android.instrumented.CoreTest.Companion.testTag
 import org.json.simple.JSONObject
 import java.io.IOException
-import java.util.*
+import java.util.HashMap
 
 object TestRailService {
 
-    var TESTRAIL_PROJECT_ID = ""
-    var TESTRAIL_USERNAME = ""
-    var TESTRAIL_PASSWORD = ""
     private const val RAILS_ENGINE_URL = "https://proton.testrail.io/"
     private const val androidSuiteId = "23"
+    private const val failedStatus = 5
 
     fun createTestRun(): String {
         val client = APIClient(RAILS_ENGINE_URL)
-        client.user = TESTRAIL_USERNAME
-        client.password = TESTRAIL_PASSWORD
+        client.user = BuildConfig.TESTRAIL_USERNAME
+        client.password = BuildConfig.TESTRAIL_PASSWORD
         val data = HashMap<Any?, Any?>()
         data["name"] = "Test Run"
         data["suite_id"] = androidSuiteId
         var newRun: JSONObject? = null
         try {
-            newRun = client.sendPost("add_run/$TESTRAIL_PROJECT_ID", data) as JSONObject
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: APIException) {
-            e.printStackTrace()
+            newRun = client.sendPost("add_run/${BuildConfig.TESTRAIL_PROJECT_ID}", data) as JSONObject
+        } catch (t: Throwable) {
+            Log.d(testTag, "Error while sending a request to TestRail: ${t.message}")
         }
         val id = newRun!!["id"] as Long
         return id.toString()
     }
 
     @Throws(APIException::class, IOException::class)
-    fun addResultForTestCase(testCaseId: String, status: Int,
-                             error: String, testRunId: String) {
+    fun addResultForTestCase(testCaseId: String, status: Int, error: String, testRunId: String) {
         val client = APIClient(RAILS_ENGINE_URL)
-        client.user = TESTRAIL_USERNAME
-        client.password = TESTRAIL_PASSWORD
         val data = HashMap<Any?, Any?>()
+        client.user = BuildConfig.TESTRAIL_USERNAME
+        client.password = BuildConfig.TESTRAIL_PASSWORD
         data["status_id"] = status
-        if (status == 5) {
-            data["comment"] = error;
+        if (status == failedStatus) {
+            data["comment"] = error
         } else {
-            data["comment"] = "Test Passed.";
+            data["comment"] = "Test Passed."
         }
-        client.sendPost("add_result_for_case/$testRunId/$testCaseId", data)
+        try {
+            client.sendPost("add_result_for_case/$testRunId/$testCaseId", data)
+        } catch (t: Throwable) {
+            Log.d(testTag, "Error while sending a request to TestRail: ${t.message}")
+        }
     }
 }

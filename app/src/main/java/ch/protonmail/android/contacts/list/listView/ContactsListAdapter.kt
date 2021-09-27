@@ -44,19 +44,21 @@ class ContactsListAdapter(
     val getSelectedItems get() = selectedItems
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        (holder).bind(
+        holder.bind(
             items[position],
             onContactGroupClickListener,
-            onContactGroupSelect
+            onContactGroupSelect,
+            position
         )
     }
 
     private fun ViewHolder.bind(
         contactItem: ContactItem,
         clickListener: (ContactItem) -> Unit,
-        onContactGroupSelect: (() -> Unit)?
+        onContactGroupSelect: (() -> Unit)?,
+        position: Int
     ) {
-        val rowType = getItemType(adapterPosition)
+        val rowType = getItemType(position)
         val result = itemView as? ContactListItemView ?: when (rowType) {
             ItemType.HEADER -> ContactListItemView.ContactsHeaderView(context)
             ItemType.CONTACT -> ContactListItemView.ContactView(context)
@@ -111,15 +113,11 @@ class ContactsListAdapter(
     }
 
     private fun getItemType(position: Int): ItemType {
-        return if (position == 0) {
+        val contactItem = items[position]
+        return if (contactItem.contactId == "-1") {
             ItemType.HEADER
-        } else {
-            val previousContactItem = items[position - 1]
-            val contactItem = items[position]
-            if (previousContactItem.isProtonMailContact && !contactItem.isProtonMailContact) {
-                ItemType.HEADER
-            } else ItemType.CONTACT
-        }
+        } else
+            ItemType.CONTACT
     }
 
     override fun getItemViewType(position: Int) = getItemType(position).ordinal
@@ -131,32 +129,25 @@ class ContactsListAdapter(
         }
     }
 
-    fun setChecked(position:Int,checked:Boolean) {
-        items[position].isChecked=checked
-        notifyDataSetChanged()
-    }
-
     fun setData(items: List<ContactItem>) {
         this.items = items
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount(): Int = items.size
 
     fun endSelectionMode() {
         selectedItems?.forEach {
             if (items.contains(it)) {
                 items.find { contactItem -> (contactItem == it) }?.isChecked =
-                        false
+                    false
             }
         }
         selectedItems = null
         notifyDataSetChanged()
     }
 
-    private fun selectDeselectItems(selectedItems : MutableSet<ContactItem>, contactItem : ContactItem) {
+    private fun selectDeselectItems(selectedItems: MutableSet<ContactItem>, contactItem: ContactItem) {
         if (selectedItems.contains(contactItem)) {
             selectedItems.remove(contactItem)
             contactItem.isChecked = false

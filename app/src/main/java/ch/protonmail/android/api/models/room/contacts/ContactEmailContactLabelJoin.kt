@@ -18,8 +18,11 @@
  */
 package ch.protonmail.android.api.models.room.contacts
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
+import androidx.room.Index
 import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ID
 
 // region constants
@@ -28,23 +31,33 @@ const val COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID = "labelId"
 const val COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = "emailId"
 // endregion
 
-/**
- * Created by kadrikj on 8/30/18.
- */
+@Entity(
+    tableName = TABLE_CONTACT_EMAILS_LABELS_JOIN,
+    primaryKeys = [
+        COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID,
+        COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = ContactEmail::class,
+            childColumns = [COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID],
+            parentColumns = [COLUMN_CONTACT_EMAILS_ID], onDelete = CASCADE
+        ),
 
-@Entity(tableName = TABLE_CONTACT_EMAILS_LABELS_JOIN,
-        primaryKeys = [(COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID), (COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID)],
-        foreignKeys = [
-            (ForeignKey(entity = ContactEmail::class, childColumns = [COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID],
-                    parentColumns = [COLUMN_CONTACT_EMAILS_ID], onDelete = CASCADE)),
-            (ForeignKey(entity = ContactLabel::class, childColumns = [COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID],
-                    parentColumns = [COLUMN_LABEL_ID], onDelete = CASCADE))
-        ],
-        indices = [Index(COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID),
-            Index(COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID)])
+        ForeignKey(
+            entity = ContactLabel::class,
+            childColumns = [COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID],
+            parentColumns = [COLUMN_LABEL_ID], onDelete = CASCADE
+        )
+    ],
+    indices = [
+        Index(COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID),
+        Index(COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID)
+    ]
+)
 data class ContactEmailContactLabelJoin constructor(
-        @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID)
-        var emailId: String,
-        @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID)
-        var labelId: String
+    @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID)
+    val emailId: String,
+    @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID)
+    val labelId: String
 )

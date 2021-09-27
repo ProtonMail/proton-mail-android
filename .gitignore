@@ -20,6 +20,7 @@ config/detekt/reports/
 # Gradle files
 .gradle/
 build/
+scripts/extract_dependencies/raw_dependencies.txt
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -37,6 +38,9 @@ app/schemas/
 privateConfig/
 sentry.properties
 
+# Google services .json files
+app/google-services.json
+app/src/beta/google-services.json
 
 
 # # # # # # # # #
@@ -51,10 +55,15 @@ sentry.properties
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries/**
+.idea/assetWizardSettings.xml
+.idea/deploymentTargetDropDown.xml
 # Do not exclude project Dictionary
 !.idea/**/dictionaries/project.xml
 .idea/**/shelf
 .idea/runConfigurations.xml
+.idea/misc.xml
+# SonarLint reports
+.idea/sonarlint/issuestore
 
 # Generated files
 .idea/**/contentModel.xml
@@ -118,6 +127,3 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-# # # # # # # # #
-# IDEA SETTINGS #
-# # # # # # # # #

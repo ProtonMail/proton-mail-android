@@ -20,10 +20,6 @@ package ch.protonmail.android.events.verification;
 
 import ch.protonmail.android.events.Status;
 
-/**
- * Created by dino on 12/26/16.
- */
-
 public class PostHumanVerificationEvent {
 
     private final Status status;

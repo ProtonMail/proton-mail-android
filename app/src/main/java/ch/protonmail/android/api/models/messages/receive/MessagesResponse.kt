@@ -25,13 +25,13 @@ class MessagesResponse : ResponseBody() {
     var totalPages: Int = 0
     var Total: Int = 0
     @SerializedName("Messages")
-    lateinit var serverMessages: List<ServerMessage>
+    var serverMessages: List<ServerMessage>? = null
 
     val messages by lazy {
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
         val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
 
-        serverMessages.map(messageFactory::createMessage)
+        serverMessages?.map(messageFactory::createMessage) ?: emptyList()
     }
 }

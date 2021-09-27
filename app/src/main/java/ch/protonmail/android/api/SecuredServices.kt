@@ -1,24 +1,23 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.api
 
-import android.util.Log
 import ch.protonmail.android.api.segments.address.AddressService
 import ch.protonmail.android.api.segments.attachment.AttachmentService
 import ch.protonmail.android.api.segments.authentication.AuthenticationService
@@ -35,20 +34,9 @@ import ch.protonmail.android.api.segments.reset.ResetService
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsService
 import ch.protonmail.android.api.segments.settings.user.UserSettingsService
 import ch.protonmail.android.api.segments.user.UserService
-import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.utils.crypto.OpenPGP
 import retrofit2.Retrofit
-import javax.inject.Inject
 
 class SecuredServices(private val retrofit: Retrofit) {
-
-    @Inject
-    lateinit var openPgp: OpenPGP
-
-    init {
-        ProtonMailApplication.getApplication().appComponent.inject(this)
-        Log.d("SecuredServices", "init called")
-    }
 
     val address: AddressService by createService(AddressService::class.java)
 

@@ -23,18 +23,17 @@ import android.os.AsyncTask
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails
 
-/**
- * Created by Kamil Rajtar on 22.08.18.
- */
-class ExtractFullContactDetailsTask(private val contactsDatabase:ContactsDatabase,
-									private val contactId:String,
-									private val callback:(FullContactDetails?)->Unit):AsyncTask<Void,Void,FullContactDetails>() {
+class ExtractFullContactDetailsTask(
+    private val contactsDatabase: ContactsDatabase,
+    private val contactId: String,
+    private val callback: (FullContactDetails?) -> Unit
+) : AsyncTask<Void, Void, FullContactDetails>() {
 
-	override fun doInBackground(vararg voids:Void):FullContactDetails? {
-		return contactsDatabase.findFullContactDetailsById(contactId)
-	}
+    override fun doInBackground(vararg voids: Void): FullContactDetails? {
+        return contactsDatabase.findFullContactDetailsById(contactId)
+    }
 
-	override fun onPostExecute(fullContactDetails:FullContactDetails?) {
-		callback(fullContactDetails)
-	}
+    override fun onPostExecute(fullContactDetails: FullContactDetails?) {
+        callback(fullContactDetails)
+    }
 }

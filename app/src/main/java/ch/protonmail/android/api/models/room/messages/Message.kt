@@ -1,25 +1,24 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.api.models.room.messages
 
 import android.provider.BaseColumns
-import android.text.TextUtils
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
@@ -37,17 +36,18 @@ import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.crypto.CipherText
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.crypto.AddressCrypto
-import ch.protonmail.android.utils.crypto.Crypto
 import ch.protonmail.android.utils.crypto.KeyInformation
-import ch.protonmail.android.utils.crypto.TextCiphertext
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.StringEscapeUtils
+import timber.log.Timber
 import java.io.Serializable
 import java.util.ArrayList
-import java.util.Arrays
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import javax.mail.internet.InternetHeaders
@@ -90,8 +90,10 @@ const val COLUMN_MESSAGE_ACCESS_TIME = "AccessTime"
 const val COLUMN_MESSAGE_DELETED = "Deleted"
 // endregion
 
-@Entity(tableName = TABLE_MESSAGES,
-        indices = [Index(value = [COLUMN_MESSAGE_ID], unique = true), Index(value = [COLUMN_MESSAGE_LOCATION])])
+@Entity(
+    tableName = TABLE_MESSAGES,
+    indices = [Index(value = [COLUMN_MESSAGE_ID], unique = true), Index(value = [COLUMN_MESSAGE_LOCATION])]
+)
 data class Message @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_MESSAGE_ID)
     var messageId: String? = null,
@@ -113,7 +115,7 @@ data class Message @JvmOverloads constructor(
     var isStarred: Boolean? = null,
     @ColumnInfo(name = COLUMN_MESSAGE_NUM_ATTACHMENTS)
     var numAttachments: Int = 0,
-    //TODO merge methods
+    // TODO merge methods
     @ColumnInfo(name = COLUMN_MESSAGE_IS_ENCRYPTED)
     var messageEncryption: MessageEncryption? = null,
     @ColumnInfo(name = COLUMN_MESSAGE_EXPIRATION_TIME)
@@ -182,7 +184,7 @@ data class Message @JvmOverloads constructor(
     var hasInvalidSignature: Boolean = false
 
     @Ignore
-    var embeddedImagesArray = listOf<String>()
+    var embeddedImageIds = listOf<String>()
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = BaseColumns._ID)
@@ -202,8 +204,9 @@ data class Message @JvmOverloads constructor(
         get() = sender?.name
         set(senderName) {
             sender = sender?.copy(name = senderName) ?: MessageSender(
-                    senderName,
-                    null)
+                senderName,
+                null
+            )
         }
 
     @Ignore
@@ -220,42 +223,47 @@ data class Message @JvmOverloads constructor(
     val replyToEmails: List<String>
         get() {
             return replyTos
-                    ?.asSequence()
-                    ?.filterNot { TextUtils.isEmpty(it.emailAddress) }
-                    ?.map { it.emailAddress }
-                    ?.toList()
-                    ?: Arrays.asList(sender?.emailAddress!!)
+                .asSequence()
+                .filter { it.emailAddress.isNotEmpty() }
+                .map { it.emailAddress }
+                .toList()
         }
     val toListString
-        get() = MessageUtils.getListString(toList)
+        get() = MessageUtils.toContactString(toList)
 
     val toListStringGroupsAware
-        get() = MessageUtils.getListStringGroupAware(toList)
+        get() = MessageUtils.toContactsAndGroupsString(toList)
 
     val ccListString
-        get() = MessageUtils.getListString(ccList)
+        get() = MessageUtils.toContactString(ccList)
 
     val bccListString: String
-        get() = MessageUtils.getListString(bccList)
+        get() = MessageUtils.toContactString(bccList)
 
     fun locationFromLabel(): Constants.MessageLocationType =
-            allLabelIDs
-                    .asSequence()
-                    .filter { it.length <= 2 }
-                    .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-                    .fold(Constants.MessageLocationType.STARRED) { location, newLocation ->
-                        if (newLocation !in listOf(Constants.MessageLocationType.STARRED,
-                                        Constants.MessageLocationType.ALL_MAIL,
-                                        Constants.MessageLocationType.INVALID) &&
-                                newLocation.messageLocationTypeValue < location.messageLocationTypeValue) {
-                            newLocation
-                        } else if (newLocation in listOf(Constants.MessageLocationType.DRAFT,
-                                        Constants.MessageLocationType.SENT)) {
-                            newLocation
-                        } else {
-                            location
-                        }
-                    }
+        allLabelIDs
+            .asSequence()
+            .filter { it.length <= 2 }
+            .map { Constants.MessageLocationType.fromInt(it.toInt()) }
+            .fold(Constants.MessageLocationType.STARRED) { location, newLocation ->
+                if (newLocation !in listOf(
+                        Constants.MessageLocationType.STARRED,
+                        Constants.MessageLocationType.ALL_MAIL,
+                        Constants.MessageLocationType.INVALID
+                    ) &&
+                    newLocation.messageLocationTypeValue < location.messageLocationTypeValue
+                ) {
+                    newLocation
+                } else if (newLocation in listOf(
+                        Constants.MessageLocationType.DRAFT,
+                        Constants.MessageLocationType.SENT
+                    )
+                ) {
+                    newLocation
+                } else {
+                    location
+                }
+            }
 
     @Ignore
     var isBeingSent: Boolean = false
@@ -276,7 +284,7 @@ data class Message @JvmOverloads constructor(
 
     fun writeTo(message: Message) {
         message.messageBody = messageBody
-        message.embeddedImagesArray = embeddedImagesArray
+        message.embeddedImageIds = embeddedImageIds
         message.numAttachments = numAttachments
         val attachments = Attachments
         attachments.forEach { attachment ->
@@ -306,7 +314,7 @@ data class Message @JvmOverloads constructor(
             val match = matcher.group()
             embedded.add(match.removePrefix("cid:"))
         }
-        embeddedImagesArray = embedded
+        embeddedImageIds = embedded
 
     }
 
@@ -316,17 +324,17 @@ data class Message @JvmOverloads constructor(
         location = locationFromLabel().messageLocationTypeValue
     }
 
-    fun getIsEncrypted(): MessageEncryption? {
-        return messageEncryption
-    }
+    fun getIsEncrypted(): MessageEncryption? = messageEncryption
 
     @Deprecated("Use getMessageEncryption()")
-    fun isEncrypted(): Boolean {
-        return messageEncryption!!.isEndToEndEncrypted
-    }
+    fun isEncrypted(): Boolean = messageEncryption!!.isEndToEndEncrypted
 
     @WorkerThread
-    fun attachments(messagesDatabase: MessagesDatabase): List<Attachment> {
+    fun attachmentsBlocking(messagesDatabase: MessagesDatabase): List<Attachment> = runBlocking {
+        attachments(messagesDatabase)
+    }
+
+    suspend fun attachments(messagesDatabase: MessagesDatabase): List<Attachment> {
         if (isPGPMime) {
             return this.Attachments
         }
@@ -382,7 +390,8 @@ data class Message @JvmOverloads constructor(
     }
 
     private fun decryptMime(addressCrypto: AddressCrypto, keys: List<ByteArray>? = null) {
-        val mimeDecryptor = addressCrypto.decryptMime(TextCiphertext.fromArmor(messageBody))
+        val messageBody = checkNotNull(messageBody)
+        val mimeDecryptor = addressCrypto.decryptMime(CipherText(messageBody))
         var body: String? = null
         var mimetype: String? = null
         var exception: Exception? = null
@@ -444,22 +453,24 @@ data class Message @JvmOverloads constructor(
         }
         val messageBody = messageBody
         try {
+            // We assert that 'messageBody' is not null here, because otherwise 'decrypt' would throw anyway
+            messageBody!!
             if (isPGPMime) {
                 decryptMime(addressCrypto, keys)
                 return
             }
             val tct = if (verKeys != null) {
-                val fromArmor = TextCiphertext.fromArmor(messageBody)
+                val fromArmor = CipherText(messageBody)
                 addressCrypto.decrypt(fromArmor, keys, time)
             } else {
-                addressCrypto.decrypt(TextCiphertext.fromArmor(messageBody))
+                addressCrypto.decrypt(CipherText(messageBody))
             }
             val hasSense = verKeys != null && verKeys.isNotEmpty() && tct.hasSignature()
             hasValidSignature = hasSense && tct.isSignatureValid
             hasInvalidSignature = hasSense && !tct.isSignatureValid
             decryptedMessage = tct.decryptedData
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.i(e, "decrypt error verkeys size: ${verKeys?.size}, keys size: ${keys.size}")
             decryptedBody = messageBody
             decryptedHTML = messageBody
             throw e
@@ -479,10 +490,10 @@ data class Message @JvmOverloads constructor(
     }
 
     fun searchForLocation(location: Int) = allLabelIDs
-            .asSequence()
-            .filter { it.length <= 2 }
-            .map { Integer.valueOf(it) }
-            .contains(location)
+        .asSequence()
+        .filter { it.length <= 2 }
+        .map { Integer.valueOf(it) }
+        .contains(location)
 
     fun setAttachmentList(attachmentList: List<Attachment>) {
         Attachments = attachmentList
@@ -512,16 +523,15 @@ data class Message @JvmOverloads constructor(
     fun calculateLocation() {
         location = locationFromLabel().messageLocationTypeValue
         isStarred = allLabelIDs
-                .asSequence()
-                .filter { it.length <= 2 }
-                .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-                .contains(Constants.MessageLocationType.STARRED)
+            .asSequence()
+            .filter { it.length <= 2 }
+            .map { Constants.MessageLocationType.fromInt(it.toInt()) }
+            .contains(Constants.MessageLocationType.STARRED)
     }
 
     @WorkerThread
-    fun checkIfAttHeadersArePresent(messagesDatabase: MessagesDatabase): Boolean {
-        return attachments(messagesDatabase).asSequence().map(Attachment::headers).any { it == null }
-    }
+    fun checkIfAttHeadersArePresent(messagesDatabase: MessagesDatabase): Boolean =
+        attachmentsBlocking(messagesDatabase).asSequence().map(Attachment::headers).any { it == null }
 
     fun getList(recipientType: RecipientType): List<MessageRecipient> {
         return when (recipientType) {
@@ -530,6 +540,8 @@ data class Message @JvmOverloads constructor(
             RecipientType.BCC -> bccList
         }
     }
+
+    fun isSenderEmailAlias() = senderEmail.contains("+")
 
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT

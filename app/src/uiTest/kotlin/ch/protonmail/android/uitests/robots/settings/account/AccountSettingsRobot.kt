@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.actions.settings.account
+package ch.protonmail.android.uitests.robots.settings.account
 
 import androidx.annotation.IdRes
 import androidx.test.espresso.Espresso.onView
@@ -25,14 +25,12 @@ import androidx.test.espresso.contrib.RecyclerViewActions.actionOnHolderItem
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
-import ch.protonmail.android.uitests.robots.settings.account.DefaultEmailAddressRobot
-import ch.protonmail.android.uitests.robots.settings.account.DisplayNameAndSignatureRobot
-import ch.protonmail.android.uitests.robots.settings.account.LabelsAndFoldersRobot
-import ch.protonmail.android.uitests.robots.settings.account.PasswordManagementRobot
-import ch.protonmail.android.uitests.robots.settings.account.RecoveryEmailRobot
-import ch.protonmail.android.uitests.robots.settings.account.SubscriptionRobot
+import ch.protonmail.android.uitests.robots.settings.SettingsRobot
+import ch.protonmail.android.uitests.robots.settings.account.labelsandfolders.LabelsAndFoldersRobot
+import ch.protonmail.android.uitests.robots.settings.account.privacy.PrivacySettingsRobot
+import ch.protonmail.android.uitests.robots.settings.account.swipinggestures.SwipingGesturesSettingsRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [AccountSettingsRobot] class contains actions and verifications for
@@ -48,6 +46,11 @@ class AccountSettingsRobot {
     fun passwordManagement(): PasswordManagementRobot {
         clickOnSettingsItemWithHeader(R.string.password_manager)
         return PasswordManagementRobot()
+    }
+
+    fun privacy(): PrivacySettingsRobot {
+        clickOnSettingsItemWithHeader(R.string.privacy)
+        return PrivacySettingsRobot()
     }
 
     fun recoveryEmail(): RecoveryEmailRobot {
@@ -70,6 +73,16 @@ class AccountSettingsRobot {
         return LabelsAndFoldersRobot()
     }
 
+    fun navigateUpToSettings(): SettingsRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return SettingsRobot()
+    }
+
+    fun swipingGestures(): SwipingGesturesSettingsRobot {
+        clickOnSettingsItemWithHeader(R.string.swiping_gesture)
+        return SwipingGesturesSettingsRobot()
+    }
+
     private fun clickOnSettingsItemWithHeader(@IdRes stringId: Int) {
         val header = stringFromResource(stringId)
         onView(withId(R.id.settingsRecyclerView))
@@ -82,15 +95,15 @@ class AccountSettingsRobot {
     class Verify {
 
         fun accountSettingsOpened() {
-            UIActions.wait.untilViewWithTextAndParentIdAppears(R.string.account_settings, R.id.toolbar)
+            UIActions.wait.forViewWithTextAndParentId(R.string.account_settings, R.id.toolbar)
         }
 
         fun passwordChanged() {
-            UIActions.check.toastMessageIsDisplayed(R.string.new_login_password_saved)
+            //UIActions.check.toastMessageIsDisplayed(R.string.new_login_password_saved)
         }
 
         fun mailboxPasswordChanged() {
-            UIActions.check.toastMessageIsDisplayed(R.string.new_mailbox_password_saved)
+            //UIActions.check.toastMessageIsDisplayed(R.string.new_mailbox_password_saved)
         }
     }
 

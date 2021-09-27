@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -27,7 +27,11 @@ import android.graphics.Typeface
 import android.os.Build
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.view.*
+import android.view.LayoutInflater
+import android.view.ScaleGestureDetector
+import android.view.View
+import android.view.ViewConfiguration
+import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.LinearLayout
@@ -45,9 +49,12 @@ import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListe
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.*
+import ch.protonmail.android.utils.DateUtil
+import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
+import ch.protonmail.android.views.PMWebView
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.AttachmentsView
 import ch.protonmail.android.views.messageDetails.LoadContentButton
@@ -57,8 +64,9 @@ import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.message_details_header_item.view.*
 import kotlinx.android.synthetic.main.message_details_item.view.*
 import kotlinx.android.synthetic.main.view_attachments_message_details.view.*
+import me.proton.core.util.kotlin.takeIfNotEmpty
 import org.apache.http.protocol.HTTP.UTF_8
-import java.util.*
+import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 
 // region constants
@@ -74,9 +82,8 @@ class MessageDetailsAdapter(
         private val wvScrollView: RecyclerView,
         private var pmWebViewClient: PMWebViewClient,
         private val onLoadEmbeddedImagesCLick: (() -> Unit)?,
-        private val onDisplayImagesCLick: (() -> Unit)?)
-
-    : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
+        private val onDisplayImagesCLick: (() -> Unit)?
+): ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { context.getSystemService<ClipboardManager>() }
@@ -228,7 +235,9 @@ class MessageDetailsAdapter(
             // Copy Subject to Clipboard at long press
             itemView.messageTitle.setOnLongClickListener {
                 clipboardManager?.let {
-                    it.primaryClip = ClipData.newPlainText(context.getString(R.string.email_subject), itemView.messageTitle.text)
+                    it.setPrimaryClip(
+                        ClipData.newPlainText(context.getString(R.string.email_subject), itemView.messageTitle.text)
+                    )
                     context.showToast(R.string.subject_copied, Toast.LENGTH_SHORT)
                     true
                 } ?: false
@@ -254,34 +263,33 @@ class MessageDetailsAdapter(
 
     open inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
 
-        fun bind(
-                context: Context,
-                position: Int,
-                message: Message
-        ) {
+        fun bind(context: Context, position: Int, message: Message) {
 
             // Looks like some devices are not able to create a WebView in some conditions.
             // Show Toast and redirect to the proper page.
-            val webView: WebView
-            try {
-                webView = WebView(context)
-            } catch (t: Throwable) {
+            val webView = try {
+                PMWebView(context)
+            } catch (ignored: Throwable) {
                 (context as FragmentActivity).redirectToChrome()
                 return
             }
             configureWebView(webView, pmWebViewClient)
             setUpScrollListener(webView, messageInfoView, itemView.messageWebViewContainer)
 
-            var messageBodyWebView = webView
-            messageBodyWebView.invalidate()
-            (context as MessageDetailsActivity).registerForContextMenu(messageBodyWebView)
+            webView.invalidate()
+            (context as MessageDetailsActivity).registerForContextMenu(webView)
             itemView.messageWebViewContainer.removeAllViews()
-            itemView.messageWebViewContainer.addView(messageBodyWebView)
+            itemView.messageWebViewContainer.addView(webView)
 
-            visibleItems!![position].messageWebView = messageBodyWebView
+            visibleItems!![position].messageWebView = webView
 
-            // FIXME: team check if this is OK?!
-            messageBodyWebView.loadDataWithBaseURL(Constants.DUMMY_URL_PREFIX, if (content.isEmpty()) message.decryptedHTML else content, "text/html", UTF_8, "")
+            webView.loadDataWithBaseURL(
+                Constants.DUMMY_URL_PREFIX,
+                content.takeIfNotEmpty() ?: message.decryptedHTML!!,
+                "text/html",
+                UTF_8,
+                ""
+            )
         }
     }
 
@@ -308,7 +316,13 @@ class MessageDetailsAdapter(
 
         contentItem.content = contentData
         if (contentItem.isInit()) {
-            contentItem.messageWebView.loadDataWithBaseURL(Constants.DUMMY_URL_PREFIX, if (content.isEmpty()) message.decryptedHTML else content, "text/html", UTF_8, "")
+            contentItem.messageWebView.loadDataWithBaseURL(
+                Constants.DUMMY_URL_PREFIX,
+                if (content.isEmpty()) message.decryptedHTML!! else content,
+                "text/html",
+                UTF_8,
+                ""
+            )
         } else {
             setItems(arrayListOf(messageItem, contentItem))
         }
@@ -357,6 +371,7 @@ class MessageDetailsAdapter(
         webViewParams.setMargins(0, 0, 0, 0)
         webView.layoutParams = webViewParams
         webView.webViewClient = pmWebViewClient
+        webView.tag = "messageWebView"
         val webSettings = webView.settings
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING

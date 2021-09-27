@@ -26,10 +26,15 @@ import org.commonmark.renderer.text.TextContentRenderer;
 
 import java.util.Collections;
 
+import javax.inject.Inject;
+
+import timber.log.Timber;
+
 public class HTMLToMDConverter {
 
     private Remark remark;
 
+    @Inject
     public HTMLToMDConverter() {
         Options protonMailFlavoredOptions = new Options() {{
             abbreviations = false;
@@ -51,16 +56,16 @@ public class HTMLToMDConverter {
         // remove trailing spaces we do not need them.
         try {
             return remark.convert(html).replaceAll(" *\n", "\n");
-        } catch (StackOverflowError e) {
-            // noop
+        } catch (StackOverflowError exception) {
+            Timber.w(exception);
         }
         try {
             // the workaround below is for slow performance devices which Remark throws stack overflow exception
             Parser parser = Parser.builder().build();
             TextContentRenderer renderer = TextContentRenderer.builder().build();
             return renderer.render(parser.parse(html));
-        } catch (Exception e) {
-            // noop
+        } catch (Exception exception) {
+            Timber.w(exception);
         }
         return "";
     }

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,24 +23,21 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.Fragment
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.SecureEditText
-import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
-import javax.inject.Inject
+import com.squareup.otto.Subscribe
 
 // region constants
 const val EXTRA_PIN_SET = "extra_pin_set"
 const val EXTRA_PIN = "extra_pin"
 // endregion
 
-/**
+/*
  * Created by dkadrikj on 3/27/16.
  */
 
@@ -50,14 +47,11 @@ enum class PinAction {
     VALIDATE
 }
 
-class CreatePinActivity : BaseActivity(), PinFragmentViewModel.IPinCreationListener,
-        SecureEditText.ISecurePINListener, HasSupportFragmentInjector {
+class CreatePinActivity : BaseActivity(),
+    PinFragmentViewModel.IPinCreationListener,
+    SecureEditText.ISecurePINListener {
 
     private val fragmentContainer by lazy { findViewById<ViewGroup>(R.id.fragmentContainer) }
-    @Inject
-    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
-
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
 
     override fun shouldCheckForAutoLogout(): Boolean = false
 
@@ -66,7 +60,6 @@ class CreatePinActivity : BaseActivity(), PinFragmentViewModel.IPinCreationListe
     override fun isPreventingScreenshots(): Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         if (fragmentContainer != null) {
@@ -119,5 +112,11 @@ class CreatePinActivity : BaseActivity(), PinFragmentViewModel.IPinCreationListe
 
     override fun onPinMaxDigitReached() {
         // noop
+    }
+
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

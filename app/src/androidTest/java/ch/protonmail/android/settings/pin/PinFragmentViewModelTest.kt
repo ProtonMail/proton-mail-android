@@ -26,7 +26,7 @@ import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * Created by dkadrikj on 3/15/19. */

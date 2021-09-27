@@ -18,74 +18,155 @@
  */
 package ch.protonmail.android.uitests.tests.inbox
 
-import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.longClickedMessageDate
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.longClickedMessageText
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.longClickedMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageDate
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageText
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.swipeLeftMessageDate
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.swipeLeftMessageText
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
-import org.junit.Before
-import org.junit.FixMethodOrder
-import org.junit.Test
-import org.junit.runners.MethodSorters
-import java.util.*
+import ch.protonmail.android.uitests.testsHelper.TestData.externalGmailPGPEncrypted
+import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSigned
+import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import ch.protonmail.android.uitests.testsHelper.mailer.Mail
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@LargeTest
 class InboxTests : BaseTest() {
 
     private lateinit var inboxRobot: InboxRobot
     private val loginRobot = LoginRobot()
+    private lateinit var subject: String
+    private lateinit var body: String
+    private lateinit var pgpEncryptedBody: String
+    private lateinit var pgpSignedBody: String
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
-        inboxRobot = loginRobot.loginUser(TestData.onePassUser)
+        subject = TestData.messageSubject
+        body = TestData.messageBody
+        pgpEncryptedBody = TestData.pgpEncryptedText
+        pgpSignedBody = TestData.pgpSignedText
+        inboxRobot = loginRobot.loginUser(onePassUser)
     }
 
+    @TestId("29746")
     @Test
-    fun deleteMessageLongClick() {
+    fun receiveMessageFromGmail() {
+        val from = externalGmailPGPEncrypted
+        val to = onePassUser
+        Mail.gmail.from(from).to(to).withSubject(subject).withBody(body).send()
         inboxRobot
-            .longClickMessageOnPosition(0)
-            .moveToTrash()
-            .verify {
-                messageDeleted(longClickedMessageText, longClickedMessageDate)
-            }
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .verify { messageWebViewContainerShown() }
     }
 
+    @TestId("29747")
     @Test
-    fun deleteMessageWithSwipe() {
+    fun receiveMessageFromOutlook() {
+        val from = externalOutlookPGPSigned
+        val to = onePassUser
+        Mail.outlook.from(from).to(to).withSubject(subject).withBody(body).send()
         inboxRobot
-            .deleteMessageWithSwipe(0)
-            .verify {
-                messageDeleted(swipeLeftMessageText, swipeLeftMessageDate)
-            }
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .verify { messageWebViewContainerShown() }
     }
 
+    @TestId("1486")
+    @Test
+    fun receiveMessageOnPmMe() {
+        val from = externalOutlookPGPSigned
+        val to = onePassUser
+        Mail.outlook.from(from).to(to).withSubject(subject).withBody(body).sendToPmMe()
+        inboxRobot
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .verify { messageWebViewContainerShown() }
+    }
+
+    @TestId("1487")
+    @Test
+    fun receiveMessageWithAttachmentOnPmMe() {
+        loginRobot
+            .loginUser(onePassUser)
+            .menuDrawer()
+            .accountsList()
+            .manageAccounts()
+            .addAccount()
+            .connectTwoPassAccount(TestData.twoPassUser)
+            .compose()
+            .sendMessageWithFileAttachment(onePassUser.pmMe, subject, body)
+            .menuDrawer()
+            .accountsList()
+            .switchToAccount(onePassUser.email)
+            .inbox()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("1304")
+    @Test
+    fun receiveExternalPGPEncryptedMessage() {
+        val from = externalGmailPGPEncrypted
+        val to = onePassUser
+        Mail.gmail.from(from).to(to).withSubject(subject).withBody(pgpEncryptedBody).send()
+        inboxRobot
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .verify { pgpEncryptedMessageDecrypted() }
+    }
+
+    @TestId("1302")
+    @Test
+    fun receiveExternalPGPSignedMessage() {
+        val from = externalOutlookPGPSigned
+        val to = onePassUser
+        Mail.outlook.from(from).to(to).withSubject(subject).withBody(pgpSignedBody).send()
+        inboxRobot
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .verify { pgpSignedMessageDecrypted() }
+    }
+
+    @TestId("1307")
+    @Test
+    fun receiveMessageFromPMUser() {
+        loginRobot
+            .loginUser(onePassUser)
+            .menuDrawer()
+            .accountsList()
+            .manageAccounts()
+            .addAccount()
+            .connectTwoPassAccount(TestData.twoPassUser)
+            .compose()
+            .sendMessage(onePassUser.email, subject, body)
+            .menuDrawer()
+            .accountsList()
+            .switchToAccount(onePassUser.email)
+            .inbox()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("29724")
     @Test
     fun deleteMultipleMessages() {
         inboxRobot
+            .menuDrawer()
+            .sent()
             .longClickMessageOnPosition(0)
             .selectMessage(1)
             .moveToTrash()
             .verify {
-                messageDeleted(longClickedMessageText, longClickedMessageDate)
-                messageDeleted(selectedMessageText, selectedMessageDate)
+                messageDeleted(longClickedMessageSubject, longClickedMessageDate)
+                messageDeleted(selectedMessageSubject, selectedMessageDate)
             }
     }
 
-    @Test
-    fun starMessageWithSwipe() {
-        inboxRobot
-            .swipeLeftMessageAtPosition(0)
-            .verify { messageStarred() }
-    }
-
+    @TestId("29726")
     @Test
     fun changeMessageFolder() {
         val folder = "Folder 1"
@@ -97,123 +178,30 @@ class InboxTests : BaseTest() {
             .moveToExistingFolder(folder)
             .menuDrawer()
             .labelOrFolder(folder)
-            .verify { messageMoved(longClickedMessageText) }
-    }
-
-    //TODO create a bug - app hangs in loading state after trying to empty the trash folder
-    fun emptyTrash() {
-        inboxRobot
-            .menuDrawer()
-            .trash()
-            .moreOptions()
-            .emptyFolder()
-            .confirm()
-            .verify { folderEmpty() }
+            .verify { messageWithSubjectExists(longClickedMessageSubject) }
     }
 
     @Test
     fun messageDetailsViewHeaders() {
         inboxRobot
-            .selectMessage(0)
+            .menuDrawer()
+            .sent()
+            .clickMessageByPosition(0)
             .moreOptions()
             .viewHeaders()
             .verify { messageHeadersDisplayed() }
     }
 
+    @TestId("29722")
     @Test
-    fun saveDraft() {
-        val draftSubject = "Draft ${TestData.messageSubject}"
+    fun deleteMessageLongClick() {
         inboxRobot
-            .compose()
-            .draftSubjectBody(draftSubject)
-            .navigateUpToInbox()
-            .confirmDraftSaving()
             .menuDrawer()
-            .drafts()
-            .verify { draftMessageSaved(draftSubject) }
-    }
-
-    @Test
-    fun saveDraftWithAttachment() {
-        val draftSubject = "Draft ${TestData.messageSubject}"
-        inboxRobot
-            .compose()
-            .draftSubjectBodyAttachment(draftSubject)
-            .navigateUpToInbox()
-            .confirmDraftSaving()
-            .menuDrawer()
-            .drafts()
-            .verify { draftWithAttachmentSaved(draftSubject) }
-    }
-
-    //TODO to be enabled when https://jira.protontech.ch/browse/MAILAND-662 is fixed
-    fun searchDraftMessageAndSend() {
-//        inboxRobot
-//            .searchBar()
-//            .searchMessageText("Draft")
-//            .openDraftMessage()
-//            .toRecipient(TestData.composerData().internalEmailAddressTrustedKeys)
-//            .editSubject(TestData.composerData().messageSubject)
-//            .send()
-//            .verify {
-//                sendingMessageToastShown()
-//                messageSentToastShown()
-//            }
-    }
-
-    @Test
-    fun reply() {
-        inboxRobot
-            .selectMessage(0)
-            .reply()
-            .editBodyAndSend("Robot Reply ")
+            .sent()
+            .longClickMessageOnPosition(0)
+            .moveToTrash()
             .verify {
-                messageSentToastShown()
+                messageDeleted(longClickedMessageSubject, longClickedMessageDate)
             }
-    }
-
-    @Test
-    fun replyMessageWithAttachment() {
-        inboxRobot
-            .menuDrawer()
-            .labelOrFolder("Attachments")
-            .selectMessage(Random().nextInt(5))
-            .verifyMessageContainsAttachment()
-            .reply()
-            .editBodyAndSend("Robot Reply With Attachment ")
-            .verify { messageSentToastShown() }
-    }
-
-    @Test
-    fun replyAll() {
-        inboxRobot
-            .menuDrawer()
-            .sent()
-            .selectMessage(0)
-            .replyAll()
-            .editBodyAndSend("Robot ReplyAll ")
-            .verify { messageSentToastShown() }
-    }
-
-    @Test
-    fun forwardMessage() {
-        inboxRobot
-            .menuDrawer()
-            .sent()
-            .selectMessage(0)
-            .forward()
-            .sendMessageToInternalTrustedAddress()
-            .verify { }
-    }
-
-    @Test
-    fun forwardMessageWithAttachment() {
-        inboxRobot
-            .menuDrawer()
-            .labelOrFolder("Attachments")
-            .selectMessage(Random().nextInt(5))
-            .forward()
-            .sendMessageToInternalTrustedAddress()
-            .verify { }
     }
 }

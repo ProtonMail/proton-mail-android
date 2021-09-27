@@ -188,65 +188,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:layout_height="match_parent"
                     android:layout_above="@id/upgrade_info" />
             </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/donate_header"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@color/white"
-                android:clickable="true"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp">
-
-                <ImageView
-                    android:id="@+id/expand_donate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_expand_more_upselling"
-                    android:tint="@color/rain_gray"
-                    android:visibility="visible" />
-
-                <ImageView
-                    android:id="@+id/contract_donate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_gravity="center_vertical"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_expand_less_upselling"
-                    android:tint="@color/rain_gray"
-                    android:visibility="gone" />
-
-                <ch.protonmail.android.views.CustomFontTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:gravity="center_vertical|start"
-                    android:paddingStart="@dimen/fields_default_space_medium"
-                    android:paddingEnd="@dimen/fields_default_space_medium"
-                    android:text="@string/upselling_donate_title"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/h2"
-                    android:textAlignment="viewStart"
-                    app:fontName="Roboto-Bold.ttf" />
-
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/donate_container"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0"
-                android:background="@color/white"
-                android:orientation="vertical">
-
-                <include layout="@layout/layout_donate_container" />
-            </LinearLayout>
         </LinearLayout>
 
         <RelativeLayout

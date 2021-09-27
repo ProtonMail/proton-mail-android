@@ -22,7 +22,5 @@ import ch.protonmail.android.api.models.ResponseBody
 
 interface ConnectivityApiSpec {
 
-    fun ping(): ResponseBody
-
     suspend fun pingAsync(): ResponseBody
 }

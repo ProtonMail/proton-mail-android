@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -48,8 +48,8 @@ public class GetCurrenciesPlansJob extends ProtonMailBaseJob {
         List<AvailablePlansResponse> allPlans = new ArrayList<>();
 
         for (Constants.CurrencyType currency : currencies) {
-            final AvailablePlansResponse monthlyPlans = mApi.fetchAvailablePlans(currency.name(), Constants.PaymentCycleType.MONTHLY.getPaymentCycleTypeValue());
-            final AvailablePlansResponse yearlyPlans = mApi.fetchAvailablePlans(currency.name(), Constants.PaymentCycleType.YEARLY.getPaymentCycleTypeValue());
+            final AvailablePlansResponse monthlyPlans = getApi().fetchAvailablePlans(currency.name(), Constants.PaymentCycleType.MONTHLY.getPaymentCycleTypeValue());
+            final AvailablePlansResponse yearlyPlans = getApi().fetchAvailablePlans(currency.name(), Constants.PaymentCycleType.YEARLY.getPaymentCycleTypeValue());
             allPlans.add(monthlyPlans);
             allPlans.add(yearlyPlans);
         }

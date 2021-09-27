@@ -18,17 +18,21 @@
  */
 package ch.protonmail.android.api.segments.contact
 
+import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.ContactsDataResponse
-import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.CreateContactBody
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
 import ch.protonmail.android.api.models.DeleteContactResponse
-import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.UpdateContactResponseV2
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
+import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
+import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
+import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -39,31 +43,37 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
-import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
-
 interface ContactService {
+
     @GET("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun contacts(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): Call<ContactsDataResponse>
+    suspend fun contacts(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): ContactsDataResponse
 
     @GET("contacts/emails")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun contactsEmails(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): Call<ContactEmailsResponseV2>
+    fun contactsEmailsCall(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): Call<ContactEmailsResponseV2>
+
+    @GET("contacts/emails")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun contactsEmails(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): ContactEmailsResponseV2
 
     @GET("contacts/emails")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun contactsEmailsByLabelId(@Query("Page") page: Int, @Query("LabelID") labelId: String): Observable<ContactEmailsResponseV2>
 
     @GET("contacts/{contact_id}")
-    fun contactById(@Path("contact_id") contactId: String): Call<FullContactDetailsResponse>
+    fun contactByIdBlocking(@Path("contact_id") contactId: String): Call<FullContactDetailsResponse>
+
+    @GET("contacts/{contact_id}")
+    suspend fun contactById(@Path("contact_id") contactId: String): FullContactDetailsResponse
 
     @POST("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createContact(@Body contactsBody: CreateContactBody): Call<ContactResponse>
+    fun createContactBlocking(@Body contactsBody: CreateContactBody): Call<ContactResponse>
+
+    @POST("contacts")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun createContact(@Body contactsBody: CreateContactBody): ContactResponse
 
     @PUT("contacts/{contact_id}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -71,7 +81,11 @@ interface ContactService {
 
     @PUT("contacts/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun deleteContact(@Body contactId: IDList): Single<DeleteContactResponse>
+    fun deleteContactSingle(@Body contactId: IDList): Single<DeleteContactResponse>
+
+    @PUT("contacts/delete")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun deleteContact(@Body contactId: IDList): DeleteContactResponse
 
     @DELETE("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -83,5 +97,9 @@ interface ContactService {
 
     @PUT("contacts/emails/unlabel")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun unlabelContactEmails(@Body labelContactsBody: LabelContactsBody): Completable
+    fun unlabelContactEmailsCompletable(@Body labelContactsBody: LabelContactsBody): Completable
+
+    @PUT("contacts/emails/unlabel")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun unlabelContactEmails(@Body labelContactsBody: LabelContactsBody)
 }

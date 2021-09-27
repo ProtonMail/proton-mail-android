@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -37,14 +37,15 @@ internal class SentryTree : Timber.Tree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
 
-        if (priority >= Log.INFO) {
-            Log.println(priority, tag, message)
-        }
-
         if (priority >= Log.WARN) {
             val event = EventBuilder().apply {
-                withMessage(message)
                 tag?.let { withTag(TAG_LOG, it) }
+                if (t is DetailedException) {
+                    for (extra in t.extras) {
+                        withExtra(extra.key, extra.value)
+                    }
+                }
+                withMessage(obfuscateEmails(message))
                 withTag(TAG_APP_VERSION, AppUtil.getAppVersion())
                 withTag(TAG_SDK_VERSION, "${Build.VERSION.SDK_INT}")
                 withTag(TAG_DEVICE_MODEL, Build.MODEL)
@@ -61,7 +62,7 @@ internal class SentryTree : Timber.Tree() {
     }
 
     fun obfuscateEmails(string: String): String =
-        string.replace(EmailAddress.VALIDATION_REGEX.toRegex()) {
+        string.replace(EmailAddress.VALIDATION_REGEX) {
             val (id, host) = it.value.split("@")
             val limit = id.length - 3
             val replacement = id.mapIndexed { i: Int, c: Char ->

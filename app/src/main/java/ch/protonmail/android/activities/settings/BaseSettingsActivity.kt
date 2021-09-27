@@ -24,17 +24,32 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.provider.Settings.*
+import android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS
+import android.provider.Settings.EXTRA_APP_PACKAGE
+import android.provider.Settings.EXTRA_CHANNEL_ID
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.*
+import ch.protonmail.android.activities.AccountSettingsActivity
+import ch.protonmail.android.activities.AccountTypeActivity
+import ch.protonmail.android.activities.BaseConnectivityActivity
+import ch.protonmail.android.activities.ChangePasswordActivity
+import ch.protonmail.android.activities.DefaultAddressActivity
+import ch.protonmail.android.activities.EXTRA_CURRENT_ACTION
+import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
+import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_VALUE
+import ch.protonmail.android.activities.EXTRA_SWIPE_ID
+import ch.protonmail.android.activities.EditSettingsItemActivity
+import ch.protonmail.android.activities.SettingsItem
+import ch.protonmail.android.activities.SnoozeNotificationsActivity
+import ch.protonmail.android.activities.SwipeChooserActivity
+import ch.protonmail.android.activities.SwipeType
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
@@ -55,26 +70,24 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.AttachmentFailedEvent
-import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.events.FetchLabelsEvent
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.jobs.OnFirstLoginJob
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
-import java.util.*
+import timber.log.Timber
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.collections.ArrayList
+import javax.inject.Inject
 
 // region constants
 const val EXTRA_CURRENT_MAILBOX_LOCATION = "Extra_Current_Mailbox_Location"
@@ -82,6 +95,11 @@ const val EXTRA_CURRENT_MAILBOX_LABEL_ID = "Extra_Current_Mailbox_Label_ID"
 // endregion
 
 abstract class BaseSettingsActivity : BaseConnectivityActivity() {
+
+    val viewModel: ConnectivityBaseViewModel by viewModels()
+
+    @Inject
+    lateinit var launchInitialDataFetch: LaunchInitialDataFetch
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -119,7 +137,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     init {
         settingsAdapter.onItemClick = { settingItem ->
 
-            if (!settingItem.isSection && (settingItem.settingType==SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN || settingItem.settingType==SettingsItemUiModel.SettingsItemTypeEnum.BUTTON)) {
+            if (!settingItem.isSection && (settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN || settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.BUTTON)) {
                 selectItem(settingItem.settingId)
             }
         }
@@ -130,15 +148,15 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         ProtonMailApplication.getApplication().bus.register(this)
     }
 
-    override fun onStop() {
-        super.onStop()
-        ProtonMailApplication.getApplication().bus.unregister(this)
-    }
-
     override fun onResume() {
         super.onResume()
         user = mUserManager.user
-        settingsAdapter.notifyDataSetChanged()
+        viewModel.checkConnectivity()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -175,7 +193,15 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
         user = mUserManager.user
 
-        mDisplayName = if (user.getDisplayNameForAddress(user.addressId)?.isEmpty()!!) user.defaultAddress.email else user.getDisplayNameForAddress(user.addressId)!!
+        mDisplayName = if (user.getDisplayNameForAddress(user.addressId)?.isEmpty()!!)
+            user.defaultAddress.email
+        else
+            user.getDisplayNameForAddress(user.addressId)!!
+
+        viewModel.hasConnectivity.observe(
+            this,
+            { onConnectivityEvent(it) }
+        )
     }
 
     override fun setContentView(layoutResID: Int) {
@@ -281,36 +307,46 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 startActivity(labelsManagerIntent)
             }
             SettingsEnum.FOLDERS_MANAGER -> {
-                val foldersManagerIntent = AppUtil.decorInAppIntent(Intent(this, LabelsManagerActivity::class.java))
+                val foldersManagerIntent = AppUtil.decorInAppIntent(
+                    Intent(
+                        this,
+                        LabelsManagerActivity::class.java
+                    )
+                )
                 foldersManagerIntent.putExtra(EXTRA_MANAGE_FOLDERS, true)
                 startActivity(foldersManagerIntent)
             }
             SettingsEnum.SWIPING_GESTURE -> {
                 val swipeGestureIntent = Intent(this, EditSettingsItemActivity::class.java)
                 swipeGestureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.SWIPE)
-                startActivityForResult(AppUtil.decorInAppIntent(swipeGestureIntent), SettingsEnum.SWIPING_GESTURE.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(swipeGestureIntent),
+                    SettingsEnum.SWIPING_GESTURE.ordinal
+                )
             }
             SettingsEnum.SWIPE_LEFT -> {
                 val swipeLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
                 swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.leftSwipeAction)
                 swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
-                startActivityForResult(AppUtil.decorInAppIntent(swipeLeftChooserIntent),
-                        SettingsEnum.SWIPE_LEFT.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(swipeLeftChooserIntent),
+                    SettingsEnum.SWIPE_LEFT.ordinal
+                )
             }
             SettingsEnum.SWIPE_RIGHT -> {
                 val rightLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
                 rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.rightSwipeAction)
                 rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
-                startActivityForResult(AppUtil.decorInAppIntent(rightLeftChooserIntent),
-                        SettingsEnum.SWIPE_RIGHT.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(rightLeftChooserIntent),
+                    SettingsEnum.SWIPE_RIGHT.ordinal
+                )
             }
             SettingsEnum.LOCAL_STORAGE_LIMIT -> {
                 val attachmentStorageIntent = Intent(this, AttachmentStorageActivity::class.java)
                 attachmentStorageIntent.putExtra(AttachmentStorageActivity.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE, mAttachmentStorageValue)
                 startActivityForResult(AppUtil.decorInAppIntent(attachmentStorageIntent), SettingsEnum.LOCAL_STORAGE_LIMIT.ordinal)
             }
-
-
             SettingsEnum.PUSH_NOTIFICATION -> {
                 val privateNotificationsIntent = AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 privateNotificationsIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.PUSH_NOTIFICATIONS)
@@ -350,13 +386,23 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 showToast(R.string.processing_request, gravity = Gravity.CENTER)
                 if (canClick.getAndSet(false)) {
                     run {
-                        AppUtil.clearStorage(contactsDatabase, messagesDatabase, searchDatabase,
-                                notificationsDatabase, countersDatabase, attachmentMetadataDatabase,
-                                pendingActionsDatabase, true)
-                        mJobManager.addJobInBackground(OnFirstLoginJob(true))
+                        AppUtil.clearStorage(
+                            contactsDatabase,
+                            messagesDatabase,
+                            searchDatabase,
+                            notificationsDatabase,
+                            countersDatabase,
+                            attachmentMetadataDatabase,
+                            pendingActionsDatabase,
+                            true
+                        )
+                        launchInitialDataFetch()
                         mJobManager.addJobInBackground(FetchByLocationJob(mMailboxLocation, mLabelId, true, null, false))
                     }
                 }
+            }
+            else -> {
+                Timber.v("Unhandled setting: ${settingsId.toUpperCase(Locale.ENGLISH)} selection")
             }
         }
     }
@@ -391,6 +437,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply { editTextListener = listener }
     }
 
+    protected fun setEditTextChangeListener(settingType: SettingsEnum, listener: (String) -> Unit) {
+        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            ?.apply { editTextChangeListener = listener }
+    }
+
     protected fun setValue(settingType: SettingsEnum, settingValueNew: String) {
         settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply { settingValue = settingValueNew }
     }
@@ -423,30 +474,32 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         }
     }
 
-
-    @Subscribe
-    fun onConnectivityEvent(event: ConnectivityEvent) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(callback = this)
+    private fun onConnectivityEvent(connectivity: Constants.ConnectionState) {
+        Timber.v("onConnectivityEvent hasConnection:${connectivity.name}")
+        if (connectivity != Constants.ConnectionState.CONNECTED) {
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                mSnackLayout,
+                mUserManager.user,
+                this,
+                { onConnectivityCheckRetry() },
+                isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
+            ).show()
         } else {
-            mPingHasConnection = true
-            hideNoConnSnack()
+            networkSnackBarUtil.hideAllSnackBars()
         }
+    }
+
+    private fun onConnectivityCheckRetry() {
+        networkSnackBarUtil.getCheckingConnectionSnackBar(
+            mSnackLayout
+        ).show()
+
+        viewModel.checkConnectivityDelayed()
     }
 
     @Subscribe
     fun onMailSettingsEvent(event: MailSettingsEvent) {
         loadMailSettings()
-    }
-
-    @Subscribe
-    fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
-        showToast(getString(R.string.attachment_failed) + " " + event.messageSubject + " " + event.attachmentName, Toast.LENGTH_SHORT)
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 
     open fun onLabelsLoadedEvent(event: FetchLabelsEvent) {

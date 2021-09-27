@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,6 +20,7 @@ package ch.protonmail.android.activities.multiuser
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
@@ -40,11 +41,12 @@ import ch.protonmail.android.utils.moveToMailbox
 import ch.protonmail.android.utils.moveToMailboxLogout
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.squareup.otto.Subscribe
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_account_manager.*
 import kotlinx.android.synthetic.main.toolbar_white.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class AccountManagerActivity : BaseActivity() {
 
     @Inject
@@ -67,7 +69,6 @@ class AccountManagerActivity : BaseActivity() {
     override fun getLayoutId() = R.layout.activity_account_manager
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         toolbar.setNavigationIcon(R.drawable.ic_close)
@@ -110,7 +111,7 @@ class AccountManagerActivity : BaseActivity() {
     private fun closeAndMoveToLogin(result: Boolean) {
         if (result && !movingToMailbox) {
             movingToMailbox = true
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 moveToMailboxLogout()
             }, 500)
         }

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -40,23 +40,30 @@ import ch.protonmail.android.contacts.groups.details.EXTRA_CONTACT_GROUP
 import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserActivity
 import ch.protonmail.android.contacts.groups.edit.chooser.ColorChooserFragment
 import ch.protonmail.android.contacts.groups.edit.chooser.EXTRA_CONTACT_EMAILS
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
-import dagger.android.AndroidInjection
+import ch.protonmail.android.utils.moveToLogin
+import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_edit_create_contact_group_header.*
-import java.util.*
+import java.util.ArrayList
+import java.util.HashSet
+import java.util.Random
 import javax.inject.Inject
 
 // region constants
 private const val REQUEST_CODE_ADDRESSES = 1
 // endregion
 
-/**
+/*
  * Created by kadrikj on 9/5/18.
  */
 
+@AndroidEntryPoint
 class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.IColorChooserListener {
     override fun colorChosen(color: String) {
         contactGroupEditCreateViewModel.setGroupColor(color)
@@ -75,7 +82,6 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         R.layout.activity_create_contact_group
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         contactGroupEditCreateViewModel = ViewModelProviders.of(this, contactGroupEditCreateViewModelFactory)
@@ -104,21 +110,31 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         startObserving()
     }
 
+    override fun onStart() {
+        super.onStart()
+        ProtonMailApplication.getApplication().bus.register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ProtonMailApplication.getApplication().bus.unregister(this)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.done_menu, menu)
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> onBackPressed()
             R.id.action_save -> {
                 progress.visibility = View.VISIBLE
-                contactGroupEditCreateViewModel.contactGroupUpdateResult.observe(this, Observer {
+                contactGroupEditCreateViewModel.contactGroupUpdateResult.observe(this, {
                     progress.visibility = View.GONE
                     it?.getContentIfNotHandled()?.let {
                         val status = it.status
-                        when(status) {
+                        when (status) {
                             Status.FAILED -> showToast(it.message ?: getString(R.string.error))
                             Status.SUCCESS -> {
                                 showToast(R.string.contact_group_saved)
@@ -266,5 +282,11 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         val currentSelection = random.nextInt(colorOptions.size)
         val colorId = colorOptions[currentSelection]
         return String.format("#%06X", 0xFFFFFF and colorId)
+    }
+
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

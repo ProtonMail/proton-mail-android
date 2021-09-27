@@ -24,11 +24,13 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * Created by Kamil Rajtar on 15.08.18.
  */
-internal class OnAttachmentDownloadCallback(private val storagePermissionHelper: PermissionHelper,
-											private val attachmentToDownloadId: AtomicReference<String>) : Function1<String, Unit> {
+internal class OnAttachmentDownloadCallback(
+    private val storagePermissionHelper: PermissionHelper,
+    private val attachmentToDownloadId: AtomicReference<String?>
+) : (String) -> Unit {
 
-	override fun invoke(attachmentId:String) {
-		attachmentToDownloadId.set(attachmentId)
-		storagePermissionHelper.checkPermission()
-	}
+    override fun invoke(attachmentId: String) {
+        attachmentToDownloadId.set(attachmentId)
+        storagePermissionHelper.checkPermission()
+    }
 }

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -49,12 +49,12 @@ public class PostUnreadJob extends ProtonMailEndlessJob {
         Constants.MessageLocationType messageLocation = Constants.MessageLocationType.INVALID;
         boolean starred = false;
         for (String id : mMessageIds) {
-            final Message message = messageDetailsRepository.findMessageById(id);
+            final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 starred = message.isStarred() !=null && message.isStarred();
                 messageLocation = Constants.MessageLocationType.Companion.fromInt(message.getLocation());
                 message.setIsRead(false);
-                messageDetailsRepository.saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageInDB(message);
             }
         }
 
@@ -81,6 +81,6 @@ public class PostUnreadJob extends ProtonMailEndlessJob {
     @Override
     public void onRun() throws Throwable {
         List<String> messageIds = new ArrayList<>(mMessageIds);
-        mApi.markMessageAsUnRead(new IDList(messageIds));
+        getApi().markMessageAsUnRead(new IDList(messageIds));
     }
 }

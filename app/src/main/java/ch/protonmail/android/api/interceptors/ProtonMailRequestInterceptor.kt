@@ -22,45 +22,24 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import timber.log.Timber
 import java.io.IOException
-import java.net.ConnectException
 
 /**
  * ProtonMailRequestInterceptor intercepts every request and if HTTP response status is 401
  * It try to refresh token and make original request again with refreshed access token
  */
-
-// region constants
-// private const val FIVE_SECONDS_IN_MILLIS = 5000L
-private const val TAG = "ProtonMailRequestInterceptor"
-
-// endregion
 class ProtonMailRequestInterceptor private constructor(
-        userManager: UserManager,
-        jobManager: JobManager,
-        networkUtil: QueueNetworkUtil
-) : BaseRequestInterceptor(userManager, jobManager, networkUtil) {
-
-    companion object {
-        @Volatile
-        private var INSTANCE: ProtonMailRequestInterceptor? = null
-
-        fun getInstance(userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil):
-                ProtonMailRequestInterceptor =
-                INSTANCE ?: synchronized(this) {
-                    INSTANCE
-                            ?: buildInstance(userManager, jobManager, networkUtil).also { INSTANCE = it }
-                }
-
-        private fun buildInstance(userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil) =
-                ProtonMailRequestInterceptor(userManager, jobManager, networkUtil)
-
-    }
+    userManager: UserManager,
+    jobManager: JobManager,
+    networkUtil: QueueNetworkUtil,
+    userNotifier: UserNotifier
+) : BaseRequestInterceptor(userManager, jobManager, networkUtil, userNotifier) {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -70,31 +49,52 @@ class ProtonMailRequestInterceptor private constructor(
         // try the request
         var response: Response? = null
         try {
-
-            Timber.tag(TAG).d(TAG, "Intercept: advancing request with url: " + request.url())
+            requestCount++
+            Timber.d("Intercept: advancing request with url: " + request.url())
             response = chain.proceed(request)
 
         } catch (exception: IOException) {
-            // checkForProxy()
-            Timber.tag(TAG).d("Intercept: IOException with url: " + request.url())
-            AppUtil.postEventOnUi(ConnectivityEvent(false))
-            networkUtils.setCurrentlyHasConnectivity(false)
-        } catch (exception: ConnectException) {
-            exception.printStackTrace()
-        } catch (exception: Exception) {
-            exception.printStackTrace()
+            Timber.d(exception, "Intercept: IOException with url: " + request.url())
+            networkUtils.retryPingAsPreviousRequestWasInconclusive()
         }
 
+        requestCount--
         if (response == null) {
             return chain.proceed(request)
         } else {
-            networkUtils.setCurrentlyHasConnectivity(true)
+            networkUtils.setCurrentlyHasConnectivity()
             AppUtil.postEventOnUi(ConnectivityEvent(true))
         }
 
-        // check if expired token, otherwise just pass the original response on
-        val reAuthResponse = checkIfTokenExpired(chain, request, response)
+        // check validity of response (DoH expiration and error codes)
+        checkResponse(response)
+        return response
+    }
 
-        return reAuthResponse ?: response
+    companion object {
+
+        var requestCount = 0
+
+        @Volatile
+        private var INSTANCE: ProtonMailRequestInterceptor? = null
+
+        fun getInstance(
+            userManager: UserManager,
+            jobManager: JobManager,
+            networkUtil: QueueNetworkUtil,
+            userNotifier: UserNotifier
+        ): ProtonMailRequestInterceptor =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE
+                    ?: buildInstance(userManager, jobManager, networkUtil, userNotifier).also { INSTANCE = it }
+            }
+
+        private fun buildInstance(
+            userManager: UserManager,
+            jobManager: JobManager,
+            networkUtil: QueueNetworkUtil,
+            userNotifier: UserNotifier
+        ) = ProtonMailRequestInterceptor(userManager, jobManager, networkUtil, userNotifier)
+
     }
 }

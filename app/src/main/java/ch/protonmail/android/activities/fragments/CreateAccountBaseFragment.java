@@ -420,11 +420,7 @@ public abstract class CreateAccountBaseFragment extends BaseFragment implements 
 
         void createVerificationPaymentForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken);
 
-        void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle);
-
         void onPaymentOptionChosen(Constants.CurrencyType currency, int amount, String planId, int cycle);
-
-        void donateForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken);
 
         Constants.CurrencyType getCurrency();
 
@@ -450,8 +446,6 @@ public abstract class CreateAccountBaseFragment extends BaseFragment implements 
          * @param fragment The fragment to be added.
          */
         void replaceFragment(Fragment fragment, String backstackName);
-
-        void donateDone();
 
         void getAvailableDomains();
 

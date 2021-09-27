@@ -18,12 +18,10 @@
  */
 package ch.protonmail.android.activities
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -44,16 +42,20 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AuthStatus
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.isValidEmail
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.CustomFontEditText
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
+import timber.log.Timber
 
 // region constants
 const val EXTRA_SETTINGS_ITEM_TYPE = "EXTRA_SETTINGS_ITEM_TYPE"
@@ -73,6 +75,7 @@ enum class SettingsItem {
     BACKGROUND_SYNC
 }
 
+@AndroidEntryPoint
 class EditSettingsItemActivity : BaseSettingsActivity() {
 
     private var settingsItemType: SettingsItem = SettingsItem.DISPLAY_NAME_AND_SIGNATURE
@@ -84,9 +87,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     private var initializedRemote = false
     private var initializedEbedded = false
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_edit_settings_item
-    }
+    override fun getLayoutId(): Int = R.layout.activity_edit_settings_item
 
     override fun onStop() {
         super.onStop()
@@ -104,14 +105,13 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         renderViews()
     }
 
-
     private val isValidNewConfirmEmail: Boolean
         get() {
             val newRecoveryEmail = newRecoveryEmail!!.text.toString().trim()
             val newConfirmRecoveryEmail = newRecoveryEmailConfirm!!.text.toString().trim()
-            return if (TextUtils.isEmpty(newRecoveryEmail) && TextUtils.isEmpty(newConfirmRecoveryEmail)) {
+            return if (newRecoveryEmail.isEmpty() && newConfirmRecoveryEmail.isEmpty()) {
                 true
-            } else (newRecoveryEmail == newConfirmRecoveryEmail && newRecoveryEmail.isValidEmail())
+            } else newRecoveryEmail == newConfirmRecoveryEmail && newRecoveryEmail.isValidEmail()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,14 +143,13 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         }
     }
 
-    @SuppressLint("LogNotTimber")
     override fun renderViews() {
 
         when (settingsItemType) {
             SettingsItem.RECOVERY_EMAIL -> {
                 settingsRecyclerViewParent.visibility = View.GONE
                 recoveryEmailValue = settingsItemValue
-                if (!TextUtils.isEmpty(recoveryEmailValue)) {
+                if (!recoveryEmailValue.isNullOrEmpty()) {
                     (currentRecoveryEmail as TextView).text = recoveryEmailValue
                 } else {
                     (currentRecoveryEmail as TextView).text = getString(R.string.not_set)
@@ -164,9 +163,8 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 mSelectedAddress = user.addresses[0]
                 val newAddressId = user.defaultAddress.id
-                val currentSignature = mSelectedAddress.signature
 
-                if (!TextUtils.isEmpty(mDisplayName)) {
+                if (mDisplayName.isNotEmpty()) {
                     setValue(SettingsEnum.DISPLAY_NAME, mDisplayName)
                 }
 
@@ -189,37 +187,51 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                         mUserManager.user = user
                         mDisplayName = newDisplayName
 
-                        val job = UpdateSettingsJob(displayChanged = displayChanged, newDisplayName = newDisplayName, addressId = newAddressId)
+                        val job = UpdateSettingsJob(
+                            displayChanged = displayChanged,
+                            newDisplayName = newDisplayName,
+                            addressId = newAddressId
+                        )
                         mJobManager.addJobInBackground(job)
                     }
                 }
 
-                if (!TextUtils.isEmpty(currentSignature)) {
-                    setValue(SettingsEnum.SIGNATURE, currentSignature!!)
+                val currentSignature = mSelectedAddress.signature
+                if (!currentSignature.isNullOrEmpty()) {
+                    setValue(SettingsEnum.SIGNATURE, currentSignature)
                 }
                 setEnabled(SettingsEnum.SIGNATURE, user.isShowSignature)
 
 
                 val currentMobileSignature = user.mobileSignature
-                if (!TextUtils.isEmpty(currentMobileSignature)) {
-                    setValue(SettingsEnum.MOBILE_SIGNATURE, currentMobileSignature!!)
+                if (!currentMobileSignature.isNullOrEmpty()) {
+                    Timber.v("set mobileSignature $currentMobileSignature")
+                    setValue(SettingsEnum.MOBILE_SIGNATURE, currentMobileSignature)
                 }
                 if (user.isPaidUserSignatureEdit) {
                     setEnabled(SettingsEnum.MOBILE_SIGNATURE, user.isShowMobileSignature)
                 } else {
                     setEnabled(SettingsEnum.MOBILE_SIGNATURE, true)
-                    setSettingDisabled(SettingsEnum.MOBILE_SIGNATURE, true, getString(R.string.mobile_signature_is_premium))
+                    setSettingDisabled(
+                        SettingsEnum.MOBILE_SIGNATURE,
+                        true,
+                        getString(R.string.mobile_signature_is_premium)
+                    )
                 }
 
                 setEditTextListener(SettingsEnum.SIGNATURE) {
                     val newSignature = (it as CustomFontEditText).text.toString()
-                    val signatureChanged = newSignature != currentSignature
+                    val isSignatureChanged = newSignature != currentSignature
 
                     user.save()
                     mUserManager.user = user
 
-                    if (signatureChanged) {
-                        val job = UpdateSettingsJob(signatureChanged = signatureChanged, newSignature = newSignature, addressId = newAddressId)
+                    if (isSignatureChanged) {
+                        val job = UpdateSettingsJob(
+                            signatureChanged = isSignatureChanged,
+                            newSignature = newSignature,
+                            addressId = newAddressId
+                        )
                         mJobManager.addJobInBackground(job)
                     }
                 }
@@ -233,9 +245,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setEditTextListener(SettingsEnum.MOBILE_SIGNATURE) {
                     val newMobileSignature = (it as CustomFontEditText).text.toString()
-                    val mobileSignatureChanged = newMobileSignature != currentMobileSignature
+                    val isMobileSignatureChanged = newMobileSignature != currentMobileSignature
 
-                    if (mobileSignatureChanged) {
+                    if (isMobileSignatureChanged) {
+                        Timber.v("save mobileSignature $newMobileSignature")
                         user.mobileSignature = newMobileSignature
 
                         user.save()
@@ -243,6 +256,12 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     }
                 }
 
+                setEditTextChangeListener(SettingsEnum.MOBILE_SIGNATURE) { newMobileSignature ->
+                    Timber.v("text change save mobileSignature $newMobileSignature")
+                    user.mobileSignature = newMobileSignature
+                    user.save()
+                    mUserManager.user = user
+                }
 
                 setToggleListener(SettingsEnum.MOBILE_SIGNATURE) { _: View, isChecked: Boolean ->
                     user.isShowMobileSignature = isChecked
@@ -250,7 +269,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     user.save()
                     mUserManager.user = user
                 }
-
 
                 actionBarTitle = R.string.display_name_n_signature
             }
@@ -282,7 +300,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setEnabled(SettingsEnum.SHOW_REMOTE_IMAGES, mailSettings.showImages == 1 || mailSettings.showImages == 3)
                 setToggleListener(SettingsEnum.SHOW_REMOTE_IMAGES) { view: View, isChecked: Boolean ->
-                    if(view.isPressed && isChecked != (mailSettings.showImages == 1 || mailSettings.showImages == 3)) {initializedRemote = false}
+                    if (view.isPressed && isChecked != (mailSettings.showImages == 1 || mailSettings.showImages == 3)) {
+                        initializedRemote = false
+                    }
 
                     if (!initializedRemote) {
                         if (isChecked && mailSettings.showImages == 0) {
@@ -302,7 +322,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setEnabled(SettingsEnum.SHOW_EMBEDDED_IMAGES, mailSettings.showImages == 2 || mailSettings.showImages == 3)
                 setToggleListener(SettingsEnum.SHOW_EMBEDDED_IMAGES) { view: View, isChecked: Boolean ->
-                    if(view.isPressed && isChecked != (mailSettings.showImages == 2 || mailSettings.showImages == 3)) {initializedEbedded = false}
+                    if (view.isPressed && isChecked != (mailSettings.showImages == 2 || mailSettings.showImages == 3)) {
+                        initializedEbedded = false
+                    }
 
                     if (!initializedEbedded) {
                         if (isChecked && mailSettings.showImages == 0) {
@@ -366,10 +388,14 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 actionBarTitle = R.string.settings_background_sync
             }
             SettingsItem.SWIPE -> {
-                setValue(SettingsEnum.SWIPE_LEFT,
-                        getString(SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].actionDescription))
-                setValue(SettingsEnum.SWIPE_RIGHT,
-                        getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription))
+                setValue(
+                    SettingsEnum.SWIPE_LEFT,
+                    getString(SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].actionDescription)
+                )
+                setValue(
+                    SettingsEnum.SWIPE_RIGHT,
+                    getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription)
+                )
                 actionBarTitle = R.string.swiping_gesture
             }
             SettingsItem.LABELS_AND_FOLDERS -> {
@@ -395,7 +421,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 actionBarTitle = R.string.push_notifications
             }
             SettingsItem.COMBINED_CONTACTS -> {
-                setValue(SettingsEnum.COMBINED_CONTACTS, getString(R.string.turn_combined_contacts_on))
+                setValue(
+                    SettingsEnum.COMBINED_CONTACTS,
+                    getString(R.string.turn_combined_contacts_on)
+                )
                 setEnabled(SettingsEnum.COMBINED_CONTACTS, user.combinedContacts)
 
                 setToggleListener(SettingsEnum.COMBINED_CONTACTS) { _: View, isChecked: Boolean ->
@@ -410,7 +439,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 actionBarTitle = R.string.combined_contacts
             }
             SettingsItem.CONNECTIONS_VIA_THIRD_PARTIES -> {
-                setValue(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, getString(R.string.allow_secure_connections_via_third_parties_settings_description))
+                setValue(
+                    SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES,
+                    getString(R.string.allow_secure_connections_via_third_parties_settings_description)
+                )
                 setEnabled(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, user.allowSecureConnectionsViaThirdParties)
 
                 setToggleListener(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES) { _: View, isChecked: Boolean ->
@@ -446,9 +478,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         if (this !is ViewGroup || childCount == 0) return listOf(this)
 
         return children
-                .toList()
-                .flatMap { it.getAllViews() }
-                .plus(this as View)
+            .toList()
+            .flatMap { it.getAllViews() }
+            .plus(this as View)
     }
 
     private fun saveAndFinish() {
@@ -492,7 +524,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             val user = mUserManager.user
             if (settingsItemType == SettingsItem.RECOVERY_EMAIL) {
                 settingsItemValue = recoveryEmailValue
-                if (TextUtils.isEmpty(recoveryEmailValue)) {
+                if (recoveryEmailValue.isNullOrEmpty()) {
                     mUserManager.userSettings!!.notificationEmail = resources.getString(R.string.not_set)
                 } else {
                     mUserManager.userSettings!!.notificationEmail = recoveryEmailValue
@@ -555,7 +587,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             if (hasTwoFactor) {
                 twoFactorString = twoFactorCode.text.toString()
             }
-            if (TextUtils.isEmpty(passString) || TextUtils.isEmpty(twoFactorString) && hasTwoFactor) {
+            if (passString.isEmpty() || twoFactorString.isEmpty() && hasTwoFactor) {
                 showToast(R.string.password_not_valid, Toast.LENGTH_SHORT)
                 newRecoveryEmail.setText("")
                 newRecoveryEmailConfirm.setText("")
@@ -585,5 +617,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         }
         alert.setCanceledOnTouchOutside(false)
         alert.show()
+    }
+
+    @Subscribe
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

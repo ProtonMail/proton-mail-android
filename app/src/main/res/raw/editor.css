@@ -1,214 +1,266 @@
-/*
- editor.css
- ProtonMail
- 
- Created by Jason Stockman on 7/21/15.
- */
-article,aside,details,figcaption,figure,footer,header,hgroup,nav,section,summary {
-    display: block;
+/* for HTML 5 */
+article,
+aside,
+datalist,
+details,
+dialog,
+figure,
+footer,
+header,
+main,
+menu,
+nav,
+section {
+  display: block;
 }
 
-audio,canvas,video {
-    display: inline-block;
+audio,
+canvas,
+progress,
+video {
+  display: inline-block;
 }
 
-audio:not([controls]) {
-    display: none;
-    height: 0;
-}
-
-[hidden] {
-    display: none;
+abbr,
+mark,
+meter,
+time,
+output {
+  display: inline;
 }
 
 html {
-    font-size: 100%;
+  box-sizing: border-box;
 }
 
-button,html,input,select,textarea {
-    font-family: "San Francisco", "Roboto-Regular",sans-serif;
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
 }
 
-body {
-    font-family: "San Francisco", "Roboto-Regular",Helvetica,Arial,sans-serif;
-    font-weight: 400;
-    margin: 0;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 1rem;
-    color: #505061;
-    word-break: break-word;
+html,
+body,
+blockquote,
+ul,
+ol,
+form,
+button,
+figure {
+  margin: 0;
+  padding: 0;
 }
 
-/*div,*/
-/*span {*/
-/*    font-size: 1em !important;*/
-/*}*/
-
-blockquote {
-    padding: 0 0 0 0.6rem !important;
-    margin: 0 !important;
-    border: 1px solid #ccc !important;
-    border-width: 0 0 0 1px !important;
-    -webkit-margin-before: 1rem !important;
-    -webkit-margin-after: 2rem !important;
-    -webkit-margin-start: 0 !important;
-    -webkit-margin-end: 0 !important;
+button,
+progress {
+  border: 0;
 }
 
-blockquote blockquote blockquote {
-    padding: 0 !important;
-    border: none !important;
+p,
+ul,
+ol,
+dl,
+blockquote,
+pre,
+menu,
+td,
+th {
+  font-size: 1em;
+  line-height: 1.5;
+  margin: 1.5em 0;
 }
 
-a:focus {
-    outline: dotted thin;
+input,
+select,
+textarea,
+optgroup,
+button {
+  font: inherit;
 }
 
-a:active,a:hover {
-    outline: 0;
+img,
+iframe {
+  vertical-align: middle;
 }
 
-h1 {
-    font-size: 2em;
-    margin: .67em 0;
-}
-
-h2 {
-    font-size: 1.5em;
-    margin: .83em 0;
-}
-
-h3 {
-    font-size: 1.17em;
-    margin: 1em 0;
-}
-
-h4 {
-    font-size: 1em;
-    margin: 1.33em 0;
-}
-
-h5 {
-    font-size: .83em;
-    margin: 1.67em 0;
-}
-
-h6 {
-    font-size: .75em;
-    margin: 2.33em 0;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    line-height: 120%;
-}
-
-abbr[title] {
-    border-bottom: 1px dotted;
-}
-
-b,strong {
-    font-weight: 700;
-}
-
-dfn {
-    font-style: italic;
-}
-
-mark {
-    background: #ff0;
-    color: #000;
-}
-
-p,pre {
-    margin: 1em 0;
-}
-
-code,kbd,pre,samp {
-    font-family: monospace,serif;
-    font-size: 1em;
-}
-
-pre {
-    white-space: pre;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-q {
-    quotes: none;
-}
-
-q:after,q:before {
-    content: "";
-    content: none;
-}
-
-small {
-    font-size: 80%;
-}
-
-sub,sup {
-    font-size: 75%;
-    line-height: 0;
-    position: relative;
-    vertical-align: baseline;
-}
-
-sup {
-    top: -.5em;
-}
-
-sub {
-    bottom: -.25em;
-}
-
-dl,menu,ol,ul {
-    margin: 1em 0;
+ul,
+ol,
+menu {
+  padding-left: 2em;
 }
 
 dd {
-    margin: 0 0 0 40px;
+  margin-left: 2em;
 }
 
-menu,ol,ul {
-    padding: 0 0 0 40px;
+b,
+strong {
+  font-weight: bold;
 }
 
-nav ol,nav ul {
-    list-style: none;
+pre,
+code,
+kbd,
+samp {
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", "Menlo", monospace,
+    monospace;
+  font-size: 1em;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+mark {
+  background-color: var(--bgcolor-mark, #ff0);
+  color: var(--color-mark, currentColor);
+  font-weight: bold;
+}
+
+small {
+  font-size: 80%;
+}
+
+a:link img,
+a:visited img,
+img {
+  border-style: none;
+}
+
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+abbr[title] {
+  border-bottom: dotted 1px;
+  cursor: help;
+  text-decoration: none;
+}
+
+code,
+pre,
+samp {
+  white-space: pre-wrap;
+}
+
+code {
+  line-height: 1;
+}
+
+dfn {
+  font-style: italic;
+}
+
+h1,
+.h1 {
+  display: block;
+  font-size: 2em;
+  line-height: 1.5;
+  margin: 0.75em 0;
+  font-weight: normal;
+}
+
+h2,
+.h2 {
+  display: block;
+  font-size: 1.5em;
+  line-height: 1;
+  margin: 0.5em 0;
+  font-weight: normal;
+}
+
+h3,
+.h3 {
+  display: block;
+  font-size: 1.1875em;
+  line-height: 1.2631578947;
+  margin: 1.2631578947em 0;
+  font-weight: normal;
+}
+
+h4,
+.h4 {
+  display: block;
+  font-size: 1em;
+  line-height: 1.5;
+  margin: 1.5em 0;
+  font-weight: normal;
+}
+
+h5,
+.h5 {
+  display: block;
+  font-size: 0.8125em;
+  line-height: 1.8461538462;
+  margin: 1.8461538462em 0;
+  font-weight: normal;
+}
+
+h6,
+.h6 {
+  display: block;
+  font-size: 0.75em;
+  line-height: 2;
+  margin: 2em 0;
+  font-weight: normal;
+}
+
+body {
+  font-size: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  padding: 1rem;
+  line-height: 1.5;
+	overflow-wrap: break-word;
+  color: var(--color-main-area, #262a33);
+}
+
+q {
+  quotes: none;
+}
+
+q::after,
+q::before {
+  content: none;
+}
+
+a:focus {
+  outline: dotted thin;
+}
+
+a:active,
+a:hover {
+  outline: 0;
 }
 
 img {
-    border: 0;
-    -ms-interpolation-mode: bicubic;
-    max-width: 100%;
+  border: 0;
+  max-width: 100%;
+}
 
 table img {
-    max-width: none;
+  max-width: none;
 }
 
-svg:not(:root) {
-    overflow: hidden;
+blockquote {
+  padding: 0.2em 1.2em !important;
+  margin: 0 !important;
+  border: 3px solid #657ee4 !important;
+  border-width: 0 0 0 3px !important;
 }
 
-figure,form {
-    margin: 0;
+blockquote blockquote {
+  font-size: 1em;
 }
 
-fieldset {
-    border: 1px solid silver;
-    margin: 0 2px;
-    padding: .35em .625em .75em;
+blockquote blockquote blockquote {
+  padding: 0 !important;
+  border: none !important;
 }
 
-legend {
-    border: 0;
-    padding: 0;
-    white-space: normal;
-}
-
-
-.pm_font_larger {
-    font-size: 1.8em;
+[hidden] {
+  display: none;
 }

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -51,7 +51,7 @@ import ch.protonmail.android.utils.moveToMailbox
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
 import com.squareup.otto.Subscribe
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_connect_account.*
 import kotlinx.android.synthetic.main.connect_account_progress.*
 import javax.inject.Inject
@@ -60,26 +60,13 @@ import javax.inject.Inject
  * This activity handles the first step towards connecting an account,
  * where username and password should be provided.
  */
+@AndroidEntryPoint
 class ConnectAccountActivity : ConnectAccountBaseActivity() {
-
-    override fun removeAccount(username: String) {
-        viewModel.removeAccount(username)
-    }
-
-    override fun resetState() {
-        // noop
-    }
-
-    override fun unsubscribeFromEvents() {
-        ProtonMailApplication.getApplication().bus.unregister(this)
-    }
 
     override val togglePasswordView: ToggleButton
         get() = toggleViewPassword
     override val passwordEditView: EditText
         get() = password
-
-    override fun getLayoutId(): Int = R.layout.activity_connect_account
 
     private var disableBack = false
     private var twoFactorDialog: AlertDialog? = null
@@ -93,8 +80,21 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         ViewModelProviders.of(this, viewModelFactory).get(ConnectAccountViewModel::class.java)
     }
 
+    override fun removeAccount(username: String) {
+        viewModel.removeAccount(username)
+    }
+
+    override fun resetState() {
+        // noop
+    }
+
+    override fun getLayoutId(): Int = R.layout.activity_connect_account
+
+    override fun unsubscribeFromEvents() {
+        ProtonMailApplication.getApplication().bus.unregister(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         AlarmReceiver().cancelAlarm(this)
@@ -121,7 +121,10 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             val tokenManager = mUserManager.getTokenManager(it)
             val accountManager = AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext)
             val isLoggedIn = accountManager.getLoggedInUsers().contains(it)
-            if (tokenManager != null && !tokenManager.scope.toLowerCase().split(" ").contains(Constants.TOKEN_SCOPE_FULL) && isLoggedIn) {
+            if (tokenManager != null &&
+                !tokenManager.scope.toLowerCase().split(" ").contains(Constants.TOKEN_SCOPE_FULL) &&
+                isLoggedIn
+            ) {
                 mUserManager.logoutAccount(it)
             }
         }
@@ -132,8 +135,10 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         ProtonMailApplication.getApplication().resetLogin2FAEvent()
         hideProgress()
         enableInput(true)
-        showTwoFactorDialog(event.username, event.password, event.infoResponse,
-                event.loginResponse, event.fallbackAuthVersion)
+        showTwoFactorDialog(
+            event.username, event.password, event.infoResponse,
+            event.loginResponse, event.fallbackAuthVersion
+        )
     }
 
     @Subscribe
@@ -142,10 +147,11 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             AuthStatus.SUCCESS -> {
                 ProtonMailApplication.getApplication().resetLoginInfoEvent()
                 viewModel.login(
-                        username = event.username,
-                        password = event.password,
-                        response = event.response,
-                        fallbackAuthVersion = event.fallbackAuthVersion)
+                    username = event.username,
+                    password = event.password,
+                    response = event.response,
+                    fallbackAuthVersion = event.fallbackAuthVersion
+                )
             }
             AuthStatus.NO_NETWORK -> {
                 showToast(R.string.no_network)
@@ -193,7 +199,6 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             }
             AuthStatus.INVALID_CREDENTIAL -> {
                 hideProgress()
-                showToast(R.string.invalid_credentials)
             }
             AuthStatus.INVALID_SERVER_PROOF -> {
                 hideProgress()
@@ -201,15 +206,19 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             }
             AuthStatus.FAILED -> {
                 if (event.isRedirectToSetup) {
-                    showInfoDialog(this, getString(R.string.login_failure),
-                            getString(R.string.login_failure_missing_keys), null)
+                    showInfoDialog(
+                        this, getString(R.string.login_failure),
+                        getString(R.string.login_failure_missing_keys), null
+                    )
                 }
                 hideProgress()
             }
             AuthStatus.CANT_CONNECT -> {
                 hideProgress()
-                showInfoDialog(this@ConnectAccountActivity, getString(R.string.connect_account_limit_title),
-                        getString(R.string.connect_account_limit_subtitle)) {
+                showInfoDialog(
+                    this@ConnectAccountActivity, getString(R.string.connect_account_limit_title),
+                    getString(R.string.connect_account_limit_subtitle)
+                ) {
                     saveLastInteraction()
                     moveToMailbox()
                     finish()
@@ -251,11 +260,11 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
     }
 
     private fun showTwoFactorDialog(
-            username: String,
-            password: ByteArray,
-            response: LoginInfoResponse?,
-            loginResponse: LoginResponse?,
-            fallbackAuthVersion: Int
+        username: String,
+        password: ByteArray,
+        response: LoginInfoResponse?,
+        loginResponse: LoginResponse?,
+        fallbackAuthVersion: Int
     ) {
         twoFactorDialog?.let {
             if (it.isShowing) {
@@ -263,27 +272,35 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             }
         }
 
-        twoFactorDialog = DialogUtils.show2FADialog(this, {
-            UiUtil.hideKeyboard(this)
-            progress.visibility = View.VISIBLE
-            twoFA(username, password, it, response, loginResponse, fallbackAuthVersion)
-            ProtonMailApplication.getApplication().resetLoginInfoEvent()
-        }, {
-            UiUtil.hideKeyboard(this@ConnectAccountActivity)
-            ProtonMailApplication.getApplication().resetLoginInfoEvent()
-            mUserManager.logoutAccount(username)
-        })
+        twoFactorDialog = DialogUtils.show2FADialog(
+            this,
+            {
+                UiUtil.hideKeyboard(this)
+                progress.visibility = View.VISIBLE
+                twoFA(username, password, it, response, loginResponse, fallbackAuthVersion)
+                ProtonMailApplication.getApplication().resetLoginInfoEvent()
+            },
+            {
+                UiUtil.hideKeyboard(this@ConnectAccountActivity)
+                ProtonMailApplication.getApplication().resetLoginInfoEvent()
+                mUserManager.logoutAccount(username)
+            }
+        )
     }
 
     private fun twoFA(
-            username: String,
-            password: ByteArray,
-            twoFactor: String,
-            infoResponse: LoginInfoResponse?,
-            loginResponse: LoginResponse?,
-            fallbackAuthVersion: Int) {
-        mUserManager.twoFA(username, password, twoFactor, infoResponse, loginResponse, signUp = false,
-                isConnecting = true, fallbackAuthVersion = fallbackAuthVersion)
+        username: String,
+        password: ByteArray,
+        twoFactor: String,
+        infoResponse: LoginInfoResponse?,
+        loginResponse: LoginResponse?,
+        fallbackAuthVersion: Int
+    ) {
+        mUserManager.twoFA(
+            username, password, twoFactor, infoResponse, loginResponse, signUp = false,
+
+            isConnecting = true, fallbackAuthVersion = fallbackAuthVersion
+        )
     }
 
     private fun hideProgress() {
@@ -298,8 +315,8 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         password.isFocusableInTouchMode = enable
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> {
                 moveToMailbox()
                 saveLastInteraction()

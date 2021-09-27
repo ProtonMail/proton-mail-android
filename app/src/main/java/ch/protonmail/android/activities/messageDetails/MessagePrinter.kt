@@ -32,15 +32,15 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.utils.DateUtil
-import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.extensions.showToast
+import timber.log.Timber
 
-/**
- * Created by Kamil Rajtar on 09.08.18.
- */
-internal class MessagePrinter(private val context: Context,
-                              private val resources: Resources,
-                              private val printManager: PrintManager) {
+internal class MessagePrinter(
+    private val context: Context,
+    private val resources: Resources,
+    private val printManager: PrintManager,
+    private val loadRemoteImages: Boolean
+) {
 
     private fun StringBuilder.appendRecipientsList(recipients: List<MessageRecipient>, @StringRes header: Int) {
         if (recipients.isEmpty()) {
@@ -58,6 +58,7 @@ internal class MessagePrinter(private val context: Context,
     fun printMessage(message: Message, bodyString: String) {
         val webView = WebView(context)
         webView.webViewClient = PrinterWebViewClient(message)
+        webView.settings.blockNetworkImage = !loadRemoteImages
         val messageString = StringBuilder("<p>")
         val imagePath = "file:///android_asset/logo_print.png"
         messageString.append("<img src=\"$imagePath\" height=\"42\"")
@@ -105,7 +106,7 @@ internal class MessagePrinter(private val context: Context,
                 try {
                     printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())
                 } catch (e: Exception) {
-                    Logger.doLogException(e)
+                    Timber.e(e)
                     context.showToast(R.string.print_error)
                 }
             }

@@ -18,7 +18,13 @@
  */
 package ch.protonmail.android.api.segments.contact
 
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.ContactEmailsResponseV2
+import ch.protonmail.android.api.models.ContactResponse
+import ch.protonmail.android.api.models.ContactsDataResponse
+import ch.protonmail.android.api.models.CreateContact
+import ch.protonmail.android.api.models.CreateContactV2BodyItem
+import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import io.reactivex.Completable
@@ -28,33 +34,39 @@ import java.io.IOException
 
 interface ContactApiSpec {
 
-    @Throws(IOException::class)
-    fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse?
+    suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse
 
-    @Throws(IOException::class)
-    fun fetchContactEmails(pageSize : Int) : List<ContactEmailsResponseV2?>
+    suspend fun fetchContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2
 
     @Throws(IOException::class)
     fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2>
 
     @Throws(IOException::class)
-    fun fetchContactDetails(contactId: String): FullContactDetailsResponse?
+    fun fetchContactDetailsBlocking(contactId: String): FullContactDetailsResponse?
+
+    suspend fun fetchContactDetails(contactId: String): FullContactDetailsResponse
 
     @Throws(Exception::class)
-    fun fetchContactDetails(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?>
+    fun fetchContactDetailsBlocking(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?>
 
     @Throws(IOException::class)
-    fun createContact(body: CreateContact): ContactResponse?
+    fun createContactBlocking(body: CreateContact): ContactResponse?
+
+    suspend fun createContact(body: CreateContact): ContactResponse?
 
     @Throws(IOException::class)
     fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse?
 
     @Throws(IOException::class)
-    fun deleteContact(contactIds: IDList) : Single<DeleteContactResponse>
+    fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse>
+
+    suspend fun deleteContact(contactIds: IDList): DeleteContactResponse
 
     @Throws(IOException::class)
     fun labelContacts(labelContactsBody: LabelContactsBody): Completable
 
     @Throws(IOException::class)
-    fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable
+    fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable
+
+    suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody)
 }

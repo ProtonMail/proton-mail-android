@@ -19,16 +19,20 @@
 package ch.protonmail.android.api.segments.address
 
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.address.*
+import ch.protonmail.android.api.models.address.AddressSetupBody
+import ch.protonmail.android.api.models.address.AddressSetupResponse
+import ch.protonmail.android.api.models.address.AddressesResponse
 import java.io.IOException
 
 interface AddressApiSpec {
 
     @Throws(IOException::class)
-    fun fetchAddresses() : AddressesResponse
+    fun fetchAddressesBlocking(): AddressesResponse
+
+    suspend fun fetchAddresses(): AddressesResponse
 
     @Throws(IOException::class)
-    fun fetchAddresses(username : String) : AddressesResponse
+    fun fetchAddressesBlocking(username: String): AddressesResponse
 
     @Throws(IOException::class)
     fun updateAlias(addressIds: List<String>): ResponseBody
