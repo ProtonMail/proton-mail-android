@@ -65,7 +65,6 @@ import ch.protonmail.android.activities.NavigationActivity
 import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.mailbox.RefreshEmptyViewTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.adapters.messages.MailboxItemViewHolder.MessageViewHolder
@@ -1184,8 +1183,6 @@ internal class MailboxActivity :
         mailboxViewModel.refreshMessages()
     }
 
-    private fun now() = System.currentTimeMillis() / 1000
-
     private fun switchToMailboxLocation(newLocation: Int) {
         val newMessageLocationType = fromInt(newLocation)
         setElevationOnToolbarAndStatusView(false)
@@ -1202,13 +1199,6 @@ internal class MailboxActivity :
         mailboxRecyclerView.clearFocus()
         mailboxRecyclerView.scrollToPosition(0)
         setUpMailboxActionsView()
-        RefreshEmptyViewTask(
-            WeakReference(this),
-            counterDao,
-            messagesDatabase,
-            newMessageLocationType,
-            mailboxLabelId
-        ).execute()
     }
 
     private fun switchToMailboxCustomLocation(
@@ -1394,14 +1384,6 @@ internal class MailboxActivity :
             }
             mailboxActivity.closeDrawer()
             mailboxActivity.mailboxRecyclerView.scrollToPosition(0)
-
-            RefreshEmptyViewTask(
-                this.mailboxActivity,
-                mailboxActivity.counterDao,
-                mailboxActivity.messagesDatabase,
-                locationToSet,
-                labelId
-            ).execute()
         }
     }
 

@@ -23,16 +23,14 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
-import ch.protonmail.android.data.local.CounterDao
-import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,9 +50,10 @@ class DatabaseProvider @Inject constructor(
     fun provideContactDao(userId: UserId): ContactDao =
         ContactDatabase.getInstance(context, userId).getDao()
 
+    // TODO remove once the usage in ClearUserData use-case is removed
     // Counter
-    fun provideCounterDao(userId: UserId): CounterDao =
-        CounterDatabase.getInstance(context, userId).getDao()
+    internal fun provideUnreadCounterDao(userId: UserId) =
+        MessageDatabase.getInstance(context, userId).getUnreadCounterDao()
 
     // Message
     fun provideMessageDao(userId: UserId): MessageDao =

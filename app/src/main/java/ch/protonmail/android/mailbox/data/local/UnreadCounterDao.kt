@@ -54,4 +54,7 @@ internal abstract class UnreadCounterDao : BaseDao<UnreadCounterEntity>() {
     suspend fun insertOrUpdate(counters: Collection<UnreadCounterEntity>) {
         insertOrUpdate(*counters.toTypedArray())
     }
+
+    @Query("DELETE FROM $UNREAD_COUNTER_TABLE_NAME")
+    abstract fun clear()
 }

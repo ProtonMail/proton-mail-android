@@ -19,20 +19,27 @@
 package ch.protonmail.android.api.segments.event
 
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.api.models.LatestEventResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
+import ch.protonmail.android.api.utils.Fields
+import ch.protonmail.android.event.data.remote.model.EventResponse
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.Tag
 
 interface EventService {
 
     @GET("events/{eventId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun check(@Path("eventId") eventId: String, @Tag idTag: UserIdTag): EventResponse
+    suspend fun check(
+        @Path("eventId") eventId: String,
+        @Tag idTag: UserIdTag,
+        @Query(Fields.Events.MESSAGE_COUNTS) shouldFetchMessageCounts: Boolean = true,
+        @Query(Fields.Events.CONVERSATION_COUNTS) shouldFetchConversationCounts: Boolean = true
+    ): EventResponse
 
     @GET("events/latest")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

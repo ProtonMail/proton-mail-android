@@ -65,7 +65,6 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 
@@ -75,7 +74,7 @@ internal class EventHandler @AssistedInject constructor(
     private val unreadCounterDao: UnreadCounterDao,
     private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
     private val userManager: UserManager,
-    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
+    messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val changeToConversations: HandleChangeToConversations,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
@@ -91,7 +90,6 @@ internal class EventHandler @AssistedInject constructor(
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
     private val contactDao = databaseProvider.provideContactDao(userId)
-    private val counterDao = databaseProvider.provideCounterDao(userId)
     private val messageDao = databaseProvider.provideMessageDao(userId)
     private val pendingActionDao = databaseProvider.providePendingActionDao(userId)
 
@@ -127,12 +125,6 @@ internal class EventHandler @AssistedInject constructor(
             clearMessagesCache()
             clearAttachmentsCache()
             clearLabelsCache()
-        }
-        counterDao.run {
-            clearUnreadLocationsTable()
-            clearUnreadLabelsTable()
-            clearTotalLocationsTable()
-            clearTotalLabelsTable()
         }
         launchInitialDataFetch(
             userId,
@@ -228,7 +220,8 @@ internal class EventHandler @AssistedInject constructor(
 
         val mailSettings = response.mailSettingsUpdates
         val labels = response.labelUpdates
-        val counts = response.messageCounts
+        val messageCounts = response.messageCounts
+        val conversationCounts = response.conversationCounts
         val addresses = response.addresses
 
         if (labels != null) {
@@ -261,8 +254,11 @@ internal class EventHandler @AssistedInject constructor(
             // Core is the source of truth. Workaround: Force refresh Core.
             fetchUserAddressesWorkerEnqueuer(userId)
         }
-        if (counts != null) {
-            writeUnreadUpdates(counts)
+        if (messageCounts != null) {
+            writeUnreadCountersUpdates(messageCounts, Type.MESSAGES)
+        }
+        if (conversationCounts != null) {
+            writeUnreadCountersUpdates(conversationCounts, Type.CONVERSATIONS)
         }
     }
 
@@ -623,9 +619,8 @@ internal class EventHandler @AssistedInject constructor(
         }
     }
 
-    private fun writeUnreadUpdates(messageCounts: List<CountsApiModel>) {
-        val databaseModels = messageCounts
-            .map(apiToDatabaseUnreadCounterMapper) { toDatabaseModel(it, userId, Type.MESSAGES) }
+    private fun writeUnreadCountersUpdates(messageCounts: List<CountsApiModel>, type: Type) {
+        val databaseModels = apiToDatabaseUnreadCounterMapper.toDatabaseModels(messageCounts, userId, type)
         runBlocking {
             unreadCounterDao.insertOrUpdate(databaseModels)
         }

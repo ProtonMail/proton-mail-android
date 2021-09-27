@@ -33,9 +33,6 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Test suite for [UnreadCounterDao]
- */
 @RunWith(AndroidJUnit4::class)
 class UnreadCounterDaoTest {
 
@@ -94,10 +91,9 @@ class UnreadCounterDaoTest {
         dao.insertOrUpdate(input)
         val result = dao.observeMessagesUnreadCounters(input.userId)
             .first()
-            .first()
 
         // then
-        assertEquals(input, result)
+        assertEquals(listOf(input), result)
     }
 
     @Test
@@ -109,10 +105,9 @@ class UnreadCounterDaoTest {
         dao.insertOrUpdate(input)
         val result = dao.observeConversationsUnreadCounters(input.userId)
             .first()
-            .first()
 
         // then
-        assertEquals(input, result)
+        assertEquals(listOf(input), result)
     }
 
     @Test
@@ -125,14 +120,12 @@ class UnreadCounterDaoTest {
         dao.insertOrUpdate(first, second)
         val firstResult = dao.observeUnreadCounters(first.userId, first.type)
             .first()
-            .first()
         val secondResult = dao.observeUnreadCounters(second.userId, second.type)
-            .first()
             .first()
 
         // then
-        assertEquals(first, firstResult)
-        assertEquals(second, secondResult)
+        assertEquals(listOf(first), firstResult)
+        assertEquals(listOf(second), secondResult)
     }
 
     @Test
@@ -145,14 +138,12 @@ class UnreadCounterDaoTest {
         dao.insertOrUpdate(first, second)
         val firstResult = dao.observeUnreadCounters(first.userId, first.type)
             .first()
-            .first()
         val secondResult = dao.observeUnreadCounters(second.userId, second.type)
-            .first()
             .first()
 
         // then
-        assertEquals(first, firstResult)
-        assertEquals(second, secondResult)
+        assertEquals(listOf(first), firstResult)
+        assertEquals(listOf(second), secondResult)
     }
 
     @Test
@@ -183,9 +174,8 @@ class UnreadCounterDaoTest {
         dao.insertOrUpdate(second)
         val result = dao.observeUnreadCounters(first.userId, first.type)
             .first()
-            .first()
 
         // then
-        assertEquals(second, result)
+        assertEquals(listOf(second), result)
     }
 }
