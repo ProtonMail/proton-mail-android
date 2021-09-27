@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.repository
 
+import android.content.Context
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
@@ -108,6 +109,8 @@ class MessageRepositoryTest {
 
     private val postToLocationWorker = mockk<MoveMessageToLocationWorker.Enqueuer>()
 
+    private val contextMock = mockk<Context>()
+
     private val testUserName = "userName1"
     private val testUserId = UserId(testUserName)
     private val message1 = Message(messageId = "1")
@@ -133,8 +136,9 @@ class MessageRepositoryTest {
         userManager = userManager,
         jobManager = jobManager,
         connectivityManager = networkConnectivityManager,
-        labelRepository,
-        postToLocationWorker
+        labelRepository = labelRepository,
+        moveMessageToLocationWorker = postToLocationWorker,
+        context = contextMock
     )
 
     @Test

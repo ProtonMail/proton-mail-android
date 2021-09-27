@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.repository
 
+import android.content.Context
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -29,6 +30,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.NoProtonStoreMapper
 import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
@@ -85,7 +87,8 @@ internal class MessageRepository @Inject constructor(
     private val jobManager: JobManager,
     connectivityManager: NetworkConnectivityManager,
     private val labelRepository: LabelRepository,
-    private var moveMessageToLocationWorker: MoveMessageToLocationWorker.Enqueuer
+    private var moveMessageToLocationWorker: MoveMessageToLocationWorker.Enqueuer,
+    private val context: Context
 ) {
 
     private val allMessagesStore by lazy {
@@ -368,7 +371,7 @@ internal class MessageRepository @Inject constructor(
         userId: UserId,
         newCustomLocationId: String? = null // for custom folder locations
     ) {
-        val counterDao = databaseProvider.provideCounterDao(userId)
+        val counterDao = CounterDatabase.getInstance(context, userId).getDao()
         val messagesDao = databaseProvider.provideMessageDao(userId)
         var totalUnread = 0
         for (id in messageIds) {
