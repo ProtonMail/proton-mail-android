@@ -40,7 +40,7 @@ fun initVersions() {
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
     `ktx version` =                             "1.5.0-rc02"    // Released: May 24, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
-    `material version` =                        "1.3.0"         // Released: Feb 04, 2021
+    `material version` =                        "1.4.0"         // Released: Jul 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
     `android-room version` =                    "2.3.0"         // Released: Apr 21, 2021
     `android-work version` =                    "2.5.0"         // Released: Jan 27, 2021
