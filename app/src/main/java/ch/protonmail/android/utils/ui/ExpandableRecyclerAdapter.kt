@@ -35,7 +35,8 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     RecyclerView.Adapter<ExpandableRecyclerAdapter<T>.ViewHolder>() {
 
     protected var allItems: MutableList<T> = ArrayList()
-    protected var visibleItems: MutableList<T>? = ArrayList()
+`    public var visibleItems: MutableList<T> = ArrayList()
+        protected set
     private var indexList: MutableList<Int> = ArrayList()
     private var expandMap = SparseIntArray()
 
@@ -43,11 +44,11 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
 
     override fun getItemId(i: Int) = i.toLong()
 
-    override fun getItemCount() = if (visibleItems == null) 0 else visibleItems!!.size
+    override fun getItemCount() = visibleItems.size
 
     fun getItem(i: Int): T? {
         return try {
-            visibleItems!![i]
+            visibleItems[i]
         } catch (e: Exception) {
             Timber.w(e, e.localizedMessage)
             null
@@ -93,7 +94,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         while (i < allItems.size && allItems[i].itemType != TYPE_HEADER) {
             insert++
             count++
-            visibleItems!!.add(insert, allItems[i])
+            visibleItems.add(insert, allItems[i])
             indexList.add(insert, i)
             i++
         }
@@ -115,7 +116,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         var i = index + 1
         while (i < allItems.size && allItems[i].itemType != TYPE_HEADER) {
             count++
-            visibleItems!!.removeAt(position + 1)
+            visibleItems.removeAt(position + 1)
             indexList.removeAt(position + 1)
             i++
         }
@@ -136,7 +137,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     }
 
     override fun getItemViewType(position: Int): Int {
-        return visibleItems!![position].itemType
+        return visibleItems[position].itemType
     }
 
     fun setItems(items: MutableList<T>) {
@@ -161,7 +162,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         val allItemsPosition = indexList[visiblePosition]
 
         allItems.removeAt(allItemsPosition)
-        visibleItems!!.removeAt(visiblePosition)
+        visibleItems.removeAt(visiblePosition)
 
         incrementIndexList(allItemsPosition, visiblePosition, -1)
         incrementExpandMapAfter(allItemsPosition, -1)
@@ -202,7 +203,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     }
 
     private fun collapseAllExcept(position: Int) {
-        for (i in visibleItems!!.indices.reversed()) {
+        for (i in visibleItems.indices.reversed()) {
             if (i != position && getItemViewType(i) == TYPE_HEADER) {
                 if (isExpanded(i)) {
                     collapseItems(i, true)
@@ -212,7 +213,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     }
 
     fun expandAll() {
-        for (i in visibleItems!!.indices.reversed()) {
+        for (i in visibleItems.indices.reversed()) {
             if (getItemViewType(i) == TYPE_HEADER) {
                 if (!isExpanded(i)) {
                     expandItems(i, true)

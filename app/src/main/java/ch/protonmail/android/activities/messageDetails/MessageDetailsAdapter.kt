@@ -24,7 +24,7 @@ import android.content.Context
 import android.os.Build
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
-import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -67,14 +67,24 @@ import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
-import java.util.ArrayList
 
 /**
- * Used to force the "message content" webview to have a fixed size while animating (expanding  / collapsing)
- * a message in a conversation. This is needed to ensure a smooth animation
+ * After this delay the message body height will change from a fixed size, used when loading the message body, to
+ * WRAP_CONTENT. This is needed because:
+ * - when the message in a conversation is initially loading, we use a fixed size in order to put top of the message
+ * on top of the screen- otherwise, when the message body is finally loaded, it will be hidden below the screen; with
+ * this approach, after the message body is loaded, it will appear in the user's view,
+ * - we need to add an artificial delay before we switch from the fixed height to WRAP_CONTENT in order to allow the
+ * message body to be loaded in the webview- otherwise, if we change the height too quickly, the message body won't
+ * have time to fully load and the message body will be shown below the screen when it finally loads.
+ *
+ * This approach has some drawbacks:
+ * - we assume how long the message body loading will take- if it's longer than the value defined below, we will run
+ * into the same issue as described above,
+ * - shorter messages will visibly collapse (from the fixed height to WRAP_CONTENT) after this delay, potentially
+ * leading to the whole list shift downwards.
  */
-private const val MESSAGE_CONTENT_FIXED_SIZE_DP = 200F
-private const val EXPAND_MESSAGE_ANIMATION_DELAY_MS = 200L
+private const val WRAP_MESSAGE_CONTENT_DELAY_MS = 500L
 
 private const val ITEM_NOT_FOUND_INDEX = -1
 
@@ -96,23 +106,19 @@ internal class MessageDetailsAdapter(
     private var exclusiveLabelsPerMessage: HashMap<String, List<Label>> = hashMapOf()
     private var nonExclusiveLabelsPerMessage: HashMap<String, List<LabelChipUiModel>> = hashMapOf()
 
-    private val constrainedMessageHeightPx by lazy {
-        TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            MESSAGE_CONTENT_FIXED_SIZE_DP,
-            context.resources.displayMetrics
-        ).toInt()
+    private val messageLoadingSpinnerTopMargin by lazy {
+        context.resources.getDimension(R.dimen.padding_m).toInt()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_HEADER) {
             (holder as HeaderViewHolder).bind(
-                visibleItems!![position].message
+                visibleItems[position].message
             )
         } else {
             (holder as ItemViewHolder).bind(
                 position,
-                visibleItems!![position]
+                visibleItems[position]
             )
         }
     }
@@ -132,6 +138,8 @@ internal class MessageDetailsAdapter(
                 parent,
                 false
             )
+
+            setMessageBodyLoadingHeight(itemView.messageWebViewContainer)
 
             val webView = setupMessageBodyWebView(itemView)
             itemView.messageWebViewContainer.removeAllViews()
@@ -153,9 +161,16 @@ internal class MessageDetailsAdapter(
     }
 
     private fun createMessageBodyProgressBar(): ProgressBar {
-        val messageBodyProgress = ProgressBar(context)
-        messageBodyProgress.id = R.id.item_message_body_progress_view_id
-        return messageBodyProgress
+        return ProgressBar(context).apply {
+            id = R.id.item_message_body_progress_view_id
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.CENTER_HORIZONTAL
+                setMargins(0, messageLoadingSpinnerTopMargin, 0, 0)
+            }
+        }
     }
 
     private fun showingMoreThanOneMessage() = messages.size > 1
@@ -246,15 +261,15 @@ internal class MessageDetailsAdapter(
         private fun isMessageBodyExpanded() = isExpanded(layoutPosition)
 
         private fun isLastItemHeader(): Boolean {
-            val lastHeaderItem = visibleItems?.last { it.itemType == TYPE_HEADER }
-            return layoutPosition == visibleItems?.indexOf(lastHeaderItem)
+            val lastHeaderItem = visibleItems.last { it.itemType == TYPE_HEADER }
+            return layoutPosition == visibleItems.indexOf(lastHeaderItem)
         }
     }
 
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
         holder.itemView.messageWebViewContainer?.let {
-            constrainMessageContentHeight(it)
+            setMessageBodyLoadingHeight(it)
             resetWebViewContent(it)
         }
 
@@ -289,6 +304,10 @@ internal class MessageDetailsAdapter(
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
+            if (!listItem.messageFormattedHtml.isNullOrEmpty() && webView.progress == 100) {
+                wrapMessageContentHeightWithDelay(itemView.messageWebViewContainer)
+            }
+
             if (listItem.messageFormattedHtml == null) {
                 Timber.v("Load body for message: ${message.messageId} at position $position, loc: ${message.location}")
                 onLoadMessageBody(message)
@@ -309,10 +328,6 @@ internal class MessageDetailsAdapter(
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
             setupReplyActionsView(message)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
-
-            itemView.messageWebViewContainer.postDelayed(EXPAND_MESSAGE_ANIMATION_DELAY_MS) {
-                expandMessageContentHeight(itemView.messageWebViewContainer)
-            }
         }
 
         private fun messageHasNoQuotedPart(listItem: MessageDetailsListItem) =
@@ -383,12 +398,12 @@ internal class MessageDetailsAdapter(
                     it.showDecryptionError = false
                     it.messageFormattedHtml = null
                 }
-                val item = visibleItems!![position]
+                val item = visibleItems[position]
                 onLoadEmbeddedImagesClicked(item.message, item.embeddedImageIds)
             }
 
             displayRemoteContentButton.setOnClickListener {
-                val item = visibleItems!![position]
+                val item = visibleItems[position]
                 val webView = itemView.messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id)
 
                 if (webView != null && webView.contentHeight > 0) {
@@ -401,7 +416,7 @@ internal class MessageDetailsAdapter(
             }
 
             editDraftButton.setOnClickListener {
-                val item = visibleItems!![position]
+                val item = visibleItems[position]
                 onEditDraftClicked(item.message)
             }
         }
@@ -425,7 +440,7 @@ internal class MessageDetailsAdapter(
         attachments: List<Attachment>,
         embeddedImageIds: List<String>
     ) {
-        val item: MessageDetailsListItem? = visibleItems?.firstOrNull {
+        val item: MessageDetailsListItem? = visibleItems.firstOrNull {
             it.itemType == TYPE_ITEM && it.message.messageId == messageId
         }
         if (item == null) {
@@ -447,7 +462,7 @@ internal class MessageDetailsAdapter(
         // Note that this message is being referenced to from both the header and the item.
         item.message.Unread = false
 
-        visibleItems?.indexOf(item)?.let { changedItemIndex ->
+        visibleItems.indexOf(item).let { changedItemIndex ->
             // Update both the message and its header to ensure the "read" status is shown
             val messageHeaderIndex = changedItemIndex - 1
             notifyItemRangeChanged(messageHeaderIndex, 2)
@@ -469,9 +484,9 @@ internal class MessageDetailsAdapter(
     }
 
     private fun expandLastNonDraftItem() {
-        val lastNonDraftHeaderIndex = visibleItems?.indexOfLast {
+        val lastNonDraftHeaderIndex = visibleItems.indexOfLast {
             !it.message.isDraft() && it.itemType == TYPE_HEADER
-        } ?: return
+        }
 
         if (lastNonDraftHeaderIndex == ITEM_NOT_FOUND_INDEX) {
             return
@@ -565,16 +580,20 @@ internal class MessageDetailsAdapter(
         webView?.loadUrl("about:blank")
     }
 
-    private fun constrainMessageContentHeight(messageWebViewContainer: LinearLayout) {
-        val params = messageWebViewContainer.layoutParams
-        params.height = constrainedMessageHeightPx
-        messageWebViewContainer.layoutParams = params
+    private fun setMessageBodyLoadingHeight(messageWebViewContainer: LinearLayout) {
+        messageWebViewContainer.layoutParams.height = (context.resources.displayMetrics.heightPixels * 0.7).toInt()
     }
 
-    private fun expandMessageContentHeight(messageWebViewContainer: LinearLayout) {
+    private fun wrapMessageContentHeight(messageWebViewContainer: LinearLayout) {
         val params = messageWebViewContainer.layoutParams
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT
         messageWebViewContainer.layoutParams = params
+    }
+
+    private fun wrapMessageContentHeightWithDelay(messageWebViewContainer: LinearLayout) {
+        messageWebViewContainer.postDelayed(WRAP_MESSAGE_CONTENT_DELAY_MS) {
+            wrapMessageContentHeight(messageWebViewContainer)
+        }
     }
 
     private fun setUpSpamScoreView(spamScore: Int, spamScoreView: TextView) {
