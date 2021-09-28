@@ -1,8 +1,8 @@
 # Model class naming conventions
 
-* Status: Discussed and agreed in principle
+* Status: Accepted
 * Deciders: Marino, Zorica, Stefanija, Davide, Tomasz, Maciej
-* Date: 20/08/2021
+* Date: 20/09/2021
 
 
 ## Context and Problem Statement
