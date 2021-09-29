@@ -38,9 +38,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.toList
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.plus
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -86,6 +88,8 @@ internal class MessageRenderer(
      */
     val results: Flow<RenderedMessage> get() =
         resultsChannel.consumeAsFlow()
+
+    private val renderedMessagesCache = mutableMapOf<String, RenderedMessage>()
 
     private val messagesBodiesById = mutableMapOf<String, String>()
     // keep track of ids of the already inlined images across the threads
@@ -243,6 +247,36 @@ internal class MessageRenderer(
         addToQueue(MessageEmbeddedImages(messageId, images))
     }
 
+    /**
+     * Set [EmbeddedImage]s to be inlined in the message with the given [messageId]
+     *
+     * @throws IllegalStateException if no message body has been set for the message
+     *  @see setMessageBody
+     */
+    suspend fun setImagesAndProcess(messageId: String, images: List<EmbeddedImage>): RenderedMessage {
+        return coroutineScope {
+            val fromCache = renderedMessagesCache.remove(messageId)
+
+            if (fromCache != null) {
+                return@coroutineScope fromCache
+            } else {
+                val cacheJob = launch {
+                    setImagesAndStartProcess(messageId, images)
+                    for (result in resultsChannel) {
+                        renderedMessagesCache[result.messageId] = result
+                    }
+                }
+                var renderedMessage: RenderedMessage? = renderedMessagesCache.remove(messageId)
+                while (renderedMessage == null) {
+                    renderedMessage = renderedMessagesCache.remove(messageId)
+                    delay(1)
+                }
+                cacheJob.cancel()
+                return@coroutineScope renderedMessage
+            }
+        }
+    }
+
     private fun addToQueue(messageImages: MessageEmbeddedImages) {
         queues.getOrPut(messageImages.messageId) {
             actor {
@@ -330,14 +364,14 @@ private fun Document.findImageElements(id: String): Elements? {
  * Parses a document as [String] and returns a [Document] model
  */
 internal interface DocumentParser {
-    operator fun invoke(body: String): Document
+    suspend operator fun invoke(body: String): Document
 }
 
 /**
  * Default implementation of [DocumentParser]
  */
 internal class DefaultDocumentParser @Inject constructor() : DocumentParser {
-    override fun invoke(body: String): Document = Jsoup.parse(body).flatten()
+    override suspend fun invoke(body: String): Document = Jsoup.parse(body).flatten()
 }
 // endregion
 
