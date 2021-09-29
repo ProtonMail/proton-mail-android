@@ -35,13 +35,10 @@ import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.utils.extensions.forEachAsync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.plus
@@ -56,18 +53,16 @@ import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-private const val DEBOUNCE_DELAY_MILLIS = 500L
-
 /**
  * A class that will inline the images in the message's body.
  *
  * ## Input
  * For start the process, these functions must be called
  * * [setMessageBody]
- * * [setImagesAndStartProcess]
+ * * [setImagesAndProcess]
  *
  * ## Output
- * The results will be delivered by [results]
+ * [setImagesAndProcess] will return [RenderedMessage]
  *
  *
  * Implements [CoroutineScope] by the constructor scope
@@ -83,12 +78,6 @@ internal class MessageRenderer(
     scope: CoroutineScope
 ) : CoroutineScope by scope + dispatchers.Comp {
 
-    /**
-     * Emits the results of Inlining process
-     */
-    val results: Flow<RenderedMessage> get() =
-        resultsChannel.consumeAsFlow()
-
     private val renderedMessagesCache = mutableMapOf<String, RenderedMessage>()
 
     private val messagesBodiesById = mutableMapOf<String, String>()
@@ -96,10 +85,6 @@ internal class MessageRenderer(
     private val inlinedImagesIdsByMessageId = mutableMapOf<String, MutableList<String>>()
 
     // region Actors
-
-    // one queue for each message id
-    private val queues = mutableMapOf<String, SendChannel<MessageEmbeddedImages>>()
-
     private val resultsChannel = Channel<RenderedMessage>()
 
     /**
@@ -226,25 +211,13 @@ internal class MessageRenderer(
 
     /**
      * Set the [messageBody] for the message with the given [messageId]
-     * The [messageBody] will be used when [setImagesAndStartProcess] is called for a message with the same [messageId]
+     * The [messageBody] will be used when [setImagesAndProcess] is called for a message with the same [messageId]
      *
      * @param messageBody [String] representation of the HTML message's body
      */
     fun setMessageBody(messageId: String, messageBody: String) {
         messagesBodiesById[messageId] = messageBody
         inlinedImagesIdsByMessageId[messageId]?.clear()
-    }
-
-    /**
-     * Set [EmbeddedImage]s to be inlined in the message with the given [messageId] and start the inlining process
-     * Result will be delivered through [results]
-     *
-     * @throws IllegalStateException if no message body has been set for the message
-     *  @see setMessageBody
-     */
-    fun setImagesAndStartProcess(messageId: String, images: List<EmbeddedImage>) {
-        checkNotNull(messagesBodiesById[messageId]) { "No message body set for id: $messageId" }
-        addToQueue(MessageEmbeddedImages(messageId, images))
     }
 
     /**
@@ -261,7 +234,8 @@ internal class MessageRenderer(
                 return@coroutineScope fromCache
             } else {
                 val cacheJob = launch {
-                    setImagesAndStartProcess(messageId, images)
+                    checkNotNull(messagesBodiesById[messageId]) { "No message body set for id: $messageId" }
+                    imageCompressor.send(MessageEmbeddedImages(messageId, images))
                     for (result in resultsChannel) {
                         renderedMessagesCache[result.messageId] = result
                     }
@@ -275,19 +249,6 @@ internal class MessageRenderer(
                 return@coroutineScope renderedMessage
             }
         }
-    }
-
-    private fun addToQueue(messageImages: MessageEmbeddedImages) {
-        queues.getOrPut(messageImages.messageId) {
-            actor {
-                for (messageEmbeddedImages in channel) {
-                    imageCompressor.send(messageEmbeddedImages)
-                    // Workaround that ignore values for the next half second, since ViewModel is emitting
-                    // too many times
-                    delay(DEBOUNCE_DELAY_MILLIS)
-                }
-            }
-        }.trySend(messageImages)
     }
 
     private fun getInlinedImagesIds(messageId: String): List<String> =

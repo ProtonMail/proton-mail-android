@@ -21,7 +21,6 @@ package ch.protonmail.android.activities.messageDetails
 
 import android.graphics.Bitmap
 import android.util.Base64
-import app.cash.turbine.test
 import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import io.mockk.coEvery
@@ -90,23 +89,6 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun emitsResultForASingleImagesSetSent() = coroutinesTest {
-        // given
-        val messageRenderer = buildRenderer()
-        val imageSet = buildEmbeddedImages(idsRange = 1..3)
-        createFilesFor(imageSet)
-        messageRenderer.setMessageBody(TEST_MESSAGE_ID, EMPTY_STRING)
-
-        // when
-        messageRenderer.results.test {
-
-            // then
-            messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet)
-            expectItem()
-        }
-    }
-
-    @Test
     fun returnsResultForASingleImagesSetSent() = coroutinesTest {
         // given
         val messageRenderer = buildRenderer()
@@ -119,48 +101,6 @@ internal class MessageRendererTest : CoroutinesTest {
 
         // then
         assertEquals(RenderedMessage(TEST_MESSAGE_ID, TEST_DOCUMENT_CONTENT), result)
-    }
-
-    @Test
-    fun doesNotEmitResultForImagesSentWithTooShortDelayForTheSameMessage() = coroutinesTest {
-        // given
-        val messageRenderer = buildRenderer()
-        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
-        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
-        createFilesFor(imageSet1, imageSet2)
-
-        // when
-        messageRenderer.results.test {
-
-            // then
-            messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet1)
-            expectItem()
-
-            messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet2)
-            expectNoEvents()
-        }
-    }
-
-    @Test
-    fun emitsResultForEveryImagesSentWithTooShortDelayForDifferentMessages() = coroutinesTest {
-        // given
-        val messageRenderer = buildRenderer()
-        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
-        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
-        createFilesFor(imageSet1, imageSet2)
-        messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, EMPTY_STRING)
-        messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, EMPTY_STRING)
-
-        // when
-        messageRenderer.results.test {
-
-            // then
-            messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID_1, imageSet1)
-            expectItem()
-
-            messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID_2, imageSet2)
-            expectItem()
-        }
     }
 
     @Test
@@ -249,28 +189,6 @@ internal class MessageRendererTest : CoroutinesTest {
     }
 
     @Test
-    fun emitsResultForEveryImageSentWithRightDelay() = coroutinesTest {
-        // given
-        val messageRenderer = buildRenderer()
-        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
-        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
-        createFilesFor(imageSet1, imageSet2)
-
-        // when
-        messageRenderer.results.test {
-
-            // then
-            messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet1)
-            expectItem()
-
-            advanceUntilIdle()
-
-            messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet2)
-            expectItem()
-        }
-    }
-
-    @Test
     fun correctlyInlineImagesInTheMessage() = coroutinesTest {
         // given
         val messageRenderer = buildRenderer()
@@ -296,12 +214,10 @@ internal class MessageRendererTest : CoroutinesTest {
 
         // when
         messageRenderer.setMessageBody(TEST_MESSAGE_ID, messageBody)
-        messageRenderer.results.test {
-            messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet)
+        val result = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet)
 
-            // then
-            assertEquals(expected, expectItem())
-        }
+        // then
+        assertEquals(expected, result)
     }
 
     @Test
@@ -315,7 +231,7 @@ internal class MessageRendererTest : CoroutinesTest {
         every { mockImageDecoder(any(), any()) } returns mockBitmap
 
         // when
-        messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet)
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet)
 
         // then
         verify(exactly = imageSet.size) { mockBitmap.compress(any(), any(), any()) }
@@ -333,9 +249,9 @@ internal class MessageRendererTest : CoroutinesTest {
         every { mockImageDecoder(any(), any()) } returns mockBitmap
 
         // when
-        messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet1)
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet1)
         advanceUntilIdle()
-        messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID, imageSet2)
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet2)
 
         // then
         verify(exactly = imageSet2.size) { mockBitmap.compress(any(), any(), any()) }
@@ -357,21 +273,21 @@ internal class MessageRendererTest : CoroutinesTest {
         val expectedImagesProcessedCount = imageSet1.size + imageSet2.size
 
         // when
-        messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID_1, imageSet1)
-        messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID_2, imageSet2)
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_1, imageSet1)
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, imageSet2)
 
         // then
         verify(exactly = expectedImagesProcessedCount) { mockBitmap.compress(any(), any(), any()) }
     }
 
     @Test(expected = IllegalStateException::class)
-    fun setImagesAndStartProcessThrowsExceptionIfNoMessageBodySetForGivenMessageId() = coroutinesTest {
+    fun setImagesAndProcessThrowsExceptionIfNoMessageBodySetForGivenMessageId() = coroutinesTest {
         // given
         val messageRenderer = buildRenderer()
 
         // when
         messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, EMPTY_STRING)
-        messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID_2, emptyList())
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, emptyList())
     }
 
     @Test
@@ -395,15 +311,12 @@ internal class MessageRendererTest : CoroutinesTest {
         // when
         messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, TEST_MESSAGE_BODY_1)
         messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, TEST_MESSAGE_BODY_2)
-        messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID_1, imageSet)
-        messageRenderer.setImagesAndStartProcess(TEST_MESSAGE_ID_2, imageSet)
+        val result1 = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_1, imageSet)
+        val result2 = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, imageSet)
 
-        messageRenderer.results.test {
-
-            // then
-            assertEquals(expectedFirstRenderedMessage, expectItem())
-            assertEquals(expectedSecondRenderedMessage, expectItem())
-        }
+        // then
+        assertEquals(expectedFirstRenderedMessage, result1)
+        assertEquals(expectedSecondRenderedMessage, result2)
     }
 
     private fun buildMockDocument(

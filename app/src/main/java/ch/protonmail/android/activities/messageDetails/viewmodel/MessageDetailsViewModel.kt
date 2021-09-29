@@ -223,16 +223,6 @@ internal class MessageDetailsViewModel @Inject constructor(
                 emitConversationUiItem(it)
             }
             .launchIn(viewModelScope)
-
-        messageRenderer.results.onEach { renderedMessage ->
-            val updatedMessage = updateUiModelMessageWithFormattedHtml(
-                renderedMessage.messageId,
-                renderedMessage.renderedHtmlBody
-            )
-            Timber.v("Update rendered HTML message id: ${updatedMessage?.messageId}")
-            _messageRenderedWithImages.value = updatedMessage
-            areImagesDisplayed = true
-        }.launchIn(viewModelScope)
     }
 
     private fun getMessageFlow(userId: UserId): Flow<ConversationUiModel?> =
@@ -486,9 +476,19 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun onEmbeddedImagesDownloaded(event: DownloadEmbeddedImagesEvent) {
-        Timber.v("onEmbeddedImagesDownloaded status: ${event.status} images size: ${event.images.size}")
-        val messageId = event.images.first().messageId
-        messageRenderer.setImagesAndStartProcess(messageId, event.images)
+        viewModelScope.launch {
+            Timber.v("onEmbeddedImagesDownloaded status: ${event.status} images size: ${event.images.size}")
+            val messageId = event.images.first().messageId
+            val renderedMessage = messageRenderer.setImagesAndProcess(messageId, event.images)
+
+            val updatedMessage = updateUiModelMessageWithFormattedHtml(
+                renderedMessage.messageId,
+                renderedMessage.renderedHtmlBody
+            )
+            Timber.v("Update rendered HTML message id: ${updatedMessage?.messageId}")
+            _messageRenderedWithImages.value = updatedMessage
+            areImagesDisplayed = true
+        }
     }
 
 
