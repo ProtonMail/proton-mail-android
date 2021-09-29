@@ -1,0 +1,39 @@
+# Using the Labels module as an architectural reference
+
+* Status: Accepted
+* Deciders: Marino, Zorica, Stefanija, Davide, Tomasz, Maciej
+* Date: 08/09/2021
+
+
+
+## Context and Problem Statement
+
+We have been discussing the desired architecture for the application, because currently there are many
+different patterns used across and no clear layer division. So clearing app dependencies, layer division
+and an approach to that is important to make the app more maintainable and stable.
+
+## Decision Outcome
+
+* The "Labels" module will be used as a reference of the way we want to architect the application.
+* Separation of layers should follow the “clean architecture” software design.
+* We should have a Data Layer, Domain Layer and Presentation Layer.
+  * Data Layer has further separation to Local data and Remote Data.
+    * Local data containing: Local data model and the corresponding Dao. (Refer to ADR 0006-model-class-naming-conventions).
+    * Remote data containing: Remote data model and the communication with the BE (Refer to ADR 0006-model-class-naming-conventions).
+    * Repository implementation goes into the data layer.
+  * Domain Layer should consist of Domain data model and use cases that perform actions on the data.
+    * Repository interface goes into the domain layer.
+  * Presentation Layer should consist of UI data model, ViewModel and the Activity.
+* Mappers go in the higher layers of the models they are targeting, data layer or presentation layer,
+ no mappers in domain layer. ( e.g. data + domain = data, domain + presentation = presentation).
+* The decided layers should be within “feature” packages / modules, so each feature would have its own layer separation.
+
+## Consequences
+
+Labels should be an example of our target architecture and its structure should at all times reflect our
+target architecture and any decision taken in the future. Any significant changes to it's structure should go
+though team approval. Other features in the app should use Labels as example, aiming toward reflecting
+the architecture achieved with the Labels module.
+
+
+
