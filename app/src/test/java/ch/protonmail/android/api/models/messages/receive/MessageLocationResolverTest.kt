@@ -25,235 +25,329 @@ import ch.protonmail.android.data.local.model.Label
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
+import org.junit.experimental.runners.Enclosed
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import kotlin.test.assertEquals
 
+@RunWith(Enclosed::class)
 class MessageLocationResolverTest {
 
-    private val messageDao = mockk<MessageDao>()
+    class NonParametrizedMessageLocationResolverTest {
 
-    private val messageFactory = MessageLocationResolver(messageDao)
+        private val messageDao = mockk<MessageDao>()
+        private val messageLocationResolver = MessageLocationResolver(messageDao)
 
-    @Test
-    fun verifyLocationIsCorrectlyResolvedFromLabelsWithMultipleInputs() {
+        @Test
+        fun verifyLocationIsCorrectlyResolvedFromLabelsWithMultipleInputs() {
 
-        // given
-        val testLabelIds = listOf(
-            "5",
-            "6",
-            "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
-        )
-        val expected = Constants.MessageLocationType.ARCHIVE
+            // given
+            val testLabelIds = listOf(
+                "5",
+                "6",
+                "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
+            )
+            val expected = Constants.MessageLocationType.ARCHIVE
 
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
 
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun verifyThatDraftsAreProperlyResolvedFromLabelsWithMultipleInputs() {
-
-        // given
-        val testLabelIds = listOf(
-            "1",
-            "5",
-            "8"
-        )
-        val expected = Constants.MessageLocationType.DRAFT
-
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
-
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun verifyThatSingleAllLocationIsInvalid() {
-
-        // given
-        val testLabelIds = listOf(
-            "5"
-        )
-        val expected = Constants.MessageLocationType.ALL_MAIL
-
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
-
-        // then
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun verifyLocationIsCorrectlyResolvedFromLabelsWithJustOneValueNotAll() {
-
-        // given
-        val testLabelIds = listOf(
-            "4"
-        )
-        val expected = Constants.MessageLocationType.SPAM
-
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
-
-        // then
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun verifyLocationIsCorrectlyResolvedFromEmptyLabelsList() {
-
-        // given
-        val testLabelIds = emptyList<String>()
-        val expected = Constants.MessageLocationType.INBOX
-
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
-
-        // then
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun verifyThatSingleLabelFolderLocationIsParsedProperly() {
-
-        // given
-        val testLabelIds = listOf(
-            "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
-        )
-        val expected = Constants.MessageLocationType.LABEL_FOLDER
-        val testLabel = mockk<Label> {
-            every { exclusive } returns true
+            assertEquals(expected, result)
         }
-        every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+        @Test
+        fun verifyThatDraftsAreProperlyResolvedFromLabelsWithMultipleInputs() {
 
-        // then
-        assertEquals(expected, result)
-    }
+            // given
+            val testLabelIds = listOf(
+                "1",
+                "5",
+                "8"
+            )
+            val expected = Constants.MessageLocationType.DRAFT
 
-    @Test
-    fun verifyThatSingleLabelLocationIsParsedProperly() {
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
 
-        // given
-        val testLabelIds = listOf(
-            "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
-        )
-        val expected = Constants.MessageLocationType.LABEL
-        val testLabel = mockk<Label> {
-            every { exclusive } returns false
+            assertEquals(expected, result)
         }
-        every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+        @Test
+        fun verifyThatSingleAllLocationIsInvalid() {
 
-        // then
-        assertEquals(expected, result)
-    }
+            // given
+            val testLabelIds = listOf(
+                "5"
+            )
+            val expected = Constants.MessageLocationType.ALL_MAIL
 
-    @Test
-    fun verifyThatLabelFolderLocationWithAllLocationIsParsedProperly() {
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
 
-        // given
-        val testLabelIds = listOf(
-            "5",
-            "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
-        )
-        val expected = Constants.MessageLocationType.LABEL_FOLDER
-        val testLabel = mockk<Label> {
-            every { exclusive } returns true
+            // then
+            assertEquals(expected, result)
         }
-        every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+        @Test
+        fun verifyLocationIsCorrectlyResolvedFromLabelsWithJustOneValueNotAll() {
 
-        // then
-        assertEquals(expected, result)
-    }
+            // given
+            val testLabelIds = listOf(
+                "4"
+            )
+            val expected = Constants.MessageLocationType.SPAM
 
-    @Test
-    fun verifyThatLabelFolderLocationWithAllLocationAndStarredIsParsedProperly() {
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
 
-        // given
-        val testLabelIds = listOf(
-            "5",
-            "10",
-            "KixlLFyrSj5yTKHwMrhJjKEwSQ3MW7nxyIMplCGpaH8jL5mamO1oYM9Djo2S6pAm8EQmJ3CYMmo4Jpg_ax-LWw==",
-            "hk3g-efDXUe5pZKWzIkPPYKueFyAu9UCYRlD2ej-auBnu8gSC2g6hC0OVSkZm_3zdKkZdvLZBtRwydhjvUi-Wg=="
-        )
-        val expected = Constants.MessageLocationType.LABEL_FOLDER
-        val testLabel = mockk<Label> {
-            every { exclusive } returns true
+            // then
+            assertEquals(expected, result)
         }
-        every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+        @Test
+        fun verifyLocationIsCorrectlyResolvedFromEmptyLabelsList() {
 
-        // then
-        assertEquals(expected, result)
-    }
+            // given
+            val testLabelIds = emptyList<String>()
+            val expected = Constants.MessageLocationType.INBOX
 
-    @Test
-    fun verifyThatTheOrderingOfCustomFolderIdsAndStandardLocationsHasNoImpactOnTheLocationParsing() {
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
 
-        // given
-        val testLabelIds = listOf(
-            "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg==",
-            "5",
-            "6"
-        )
-        val expected = Constants.MessageLocationType.ARCHIVE
-
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
-
-        // then
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun verifyThatLabelFolderLocationWithAllLocationAndLabelIsParsedProperly() {
-        // given
-        val exclusiveLabelId = "hk3g-efDXUe5pZKWzIkPPYKueFyAu9UCYRlD2ej-auBnu8gSC2g6hC0OVSkZm_3zdKkZdvLZBtRwydhjvUi-Wg=="
-        val nonExclusiveLabelId = "KixlLFyrSj5yTKHwMrhJjKEwSQ3MW7nxyIMplCGpaH8jL5mamO1oYM9Djo2S6pAm8EQmJ3CYMmo4Jpg_ax-LWw=="
-        val testLabelIds = listOf(
-            "5",
-            nonExclusiveLabelId,
-            exclusiveLabelId
-        )
-        val expected = Constants.MessageLocationType.LABEL_FOLDER
-        val exclusiveLabel = mockk<Label> {
-            every { exclusive } returns true
+            // then
+            assertEquals(expected, result)
         }
-        val nonExclusiveLabel = mockk<Label> {
-            every { exclusive } returns false
+
+        @Test
+        fun verifyThatSingleLabelFolderLocationIsParsedProperly() {
+
+            // given
+            val testLabelIds = listOf(
+                "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
+            )
+            val expected = Constants.MessageLocationType.LABEL_FOLDER
+            val testLabel = mockk<Label> {
+                every { exclusive } returns true
+            }
+            every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
+
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
+
+            // then
+            assertEquals(expected, result)
         }
-        every { messageDao.findLabelByIdBlocking(exclusiveLabelId) } returns exclusiveLabel
-        every { messageDao.findLabelByIdBlocking(nonExclusiveLabelId) } returns nonExclusiveLabel
 
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+        @Test
+        fun verifyThatSingleLabelLocationIsParsedProperly() {
 
-        // then
-        assertEquals(expected, result)
+            // given
+            val testLabelIds = listOf(
+                "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
+            )
+            val expected = Constants.MessageLocationType.LABEL
+            val testLabel = mockk<Label> {
+                every { exclusive } returns false
+            }
+            every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
+
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
+
+            // then
+            assertEquals(expected, result)
+        }
+
+        @Test
+        fun verifyThatLabelFolderLocationWithAllLocationIsParsedProperly() {
+
+            // given
+            val testLabelIds = listOf(
+                "5",
+                "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
+            )
+            val expected = Constants.MessageLocationType.LABEL_FOLDER
+            val testLabel = mockk<Label> {
+                every { exclusive } returns true
+            }
+            every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
+
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
+
+            // then
+            assertEquals(expected, result)
+        }
+
+        @Test
+        fun verifyThatLabelFolderLocationWithAllLocationAndStarredIsParsedProperly() {
+
+            // given
+            val testLabelIds = listOf(
+                "5",
+                "10",
+                "KixlLFyrSj5yTKHwMrhJjKEwSQ3MW7nxyIMplCGpaH8jL5mamO1oYM9Djo2S6pAm8EQmJ3CYMmo4Jpg_ax-LWw==",
+                "hk3g-efDXUe5pZKWzIkPPYKueFyAu9UCYRlD2ej-auBnu8gSC2g6hC0OVSkZm_3zdKkZdvLZBtRwydhjvUi-Wg=="
+            )
+            val expected = Constants.MessageLocationType.LABEL_FOLDER
+            val testLabel = mockk<Label> {
+                every { exclusive } returns true
+            }
+            every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
+
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
+
+            // then
+            assertEquals(expected, result)
+        }
+
+        @Test
+        fun verifyThatTheOrderingOfCustomFolderIdsAndStandardLocationsHasNoImpactOnTheLocationParsing() {
+
+            // given
+            val testLabelIds = listOf(
+                "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg==",
+                "5",
+                "6"
+            )
+            val expected = Constants.MessageLocationType.ARCHIVE
+
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
+
+            // then
+            assertEquals(expected, result)
+        }
+
+        @Test
+        fun verifyThatLabelFolderLocationWithAllLocationAndLabelIsParsedProperly() {
+            // given
+            val exclusiveLabelId =
+                "hk3g-efDXUe5pZKWzIkPPYKueFyAu9UCYRlD2ej-auBnu8gSC2g6hC0OVSkZm_3zdKkZdvLZBtRwydhjvUi-Wg=="
+            val nonExclusiveLabelId =
+                "KixlLFyrSj5yTKHwMrhJjKEwSQ3MW7nxyIMplCGpaH8jL5mamO1oYM9Djo2S6pAm8EQmJ3CYMmo4Jpg_ax-LWw=="
+            val testLabelIds = listOf(
+                "5",
+                nonExclusiveLabelId,
+                exclusiveLabelId
+            )
+            val expected = Constants.MessageLocationType.LABEL_FOLDER
+            val exclusiveLabel = mockk<Label> {
+                every { exclusive } returns true
+            }
+            val nonExclusiveLabel = mockk<Label> {
+                every { exclusive } returns false
+            }
+            every { messageDao.findLabelByIdBlocking(exclusiveLabelId) } returns exclusiveLabel
+            every { messageDao.findLabelByIdBlocking(nonExclusiveLabelId) } returns nonExclusiveLabel
+
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
+
+            // then
+            assertEquals(expected, result)
+        }
+
+        @Test
+        fun verifyThatOnlyAllAndStaredIsResolvedToStarred() {
+
+            // given
+            val testLabelIds = listOf(
+                "5",
+                "10"
+            )
+            val expected = Constants.MessageLocationType.STARRED
+
+            // when
+            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
+
+            // then
+            assertEquals(expected, result)
+        }
     }
 
-    @Test
-    fun verifyThatOnlyAllAndStaredIsResolvedToStarred() {
+    @RunWith(Parameterized::class)
+    class InvalidMessageLocationResolverTest(
+        private val resolvedLocationId: String
+    ) {
 
-        // given
-        val testLabelIds = listOf(
-            "5",
-            "10"
+        private val messageDao = mockk<MessageDao>()
+        private val messageLocationResolver = MessageLocationResolver(messageDao)
+
+        @Test(expected = IllegalArgumentException::class)
+        fun verifyResolvingInvalidLocationThrowsAnException() {
+            // given
+            val invalidMessageLocation = listOf(resolvedLocationId)
+
+            // when
+            messageLocationResolver.resolveLocationFromLabels(invalidMessageLocation)
+        }
+
+        companion object {
+
+            @JvmStatic
+            @Parameterized.Parameters
+            fun data(): Collection<Array<Any>> {
+                return invalidLocations.map { messageLocationType ->
+                    arrayOf(messageLocationType.messageLocationTypeValue.toString())
+                }
+            }
+        }
+    }
+
+    @RunWith(Parameterized::class)
+    class ValidMessageLocationResolverTest(
+        private val resolvedLocationId: String,
+        private val expectedMessageLocationType: Constants.MessageLocationType,
+    ) {
+
+        private val messageDao = mockk<MessageDao>()
+        private val messageLocationResolver = MessageLocationResolver(messageDao)
+
+        @Test
+        fun verifyValidLocationIsResolved() {
+            // when
+            val resolvedLocation = messageLocationResolver.resolveLocationFromLabels(listOf(resolvedLocationId))
+
+            // then
+            assertEquals(expectedMessageLocationType, resolvedLocation)
+        }
+
+        companion object {
+
+            @JvmStatic
+            @Parameterized.Parameters
+            fun data(): Collection<Array<Any>> {
+                return validLocations.map { messageLocationType ->
+                    arrayOf(
+                        messageLocationType.messageLocationTypeValue.toString(),
+                        messageLocationType
+                    )
+                }
+            }
+        }
+    }
+
+    private companion object {
+
+        val validLocations = listOf(
+            Constants.MessageLocationType.INBOX,
+            Constants.MessageLocationType.ALL_DRAFT,
+            Constants.MessageLocationType.ALL_SENT,
+            Constants.MessageLocationType.TRASH,
+            Constants.MessageLocationType.SPAM,
+            Constants.MessageLocationType.ARCHIVE,
+            Constants.MessageLocationType.SENT,
+            Constants.MessageLocationType.DRAFT,
         )
-        val expected = Constants.MessageLocationType.STARRED
-
-        // when
-        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
-
-        // then
-        assertEquals(expected, result)
+        val invalidLocations = Constants.MessageLocationType.values()
+            .toList()
+            .minus(validLocations)
+            .minus(
+                listOf(
+                    Constants.MessageLocationType.STARRED,
+                    Constants.MessageLocationType.LABEL_FOLDER,
+                    Constants.MessageLocationType.ALL_MAIL
+                )
+            )
     }
 }

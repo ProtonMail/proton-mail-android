@@ -118,7 +118,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     private val oneConversationStore by lazy {
         StoreBuilder.from(
             fetcher = Fetcher.of(api::fetchConversation),
-            sourceOfTruth = SourceOfTruth.Companion.of(
+            sourceOfTruth = SourceOfTruth.of(
                 reader = ::observeConversationFromDatabase,
                 writer = { params: GetOneConversationParameters, output: ConversationResponse ->
                     val messages = output.messages.map(messageFactory::createMessage)

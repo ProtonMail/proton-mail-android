@@ -278,7 +278,7 @@ internal class MessageRepository @Inject constructor(
     private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {
         val dao = databaseProvider.provideMessageDao(params.userId)
 
-        // We threat Sent as a Label, since when we send a message to ourself it should be in both Sent and Inbox, but
+        // We treat Sent as a Label, since when we send a message to ourself it should be in both Sent and Inbox, but
         //  it can have only one location, which is Inbox
         fun sentAsLabelId() =
             MessageLocationType.SENT.asLabelId()
