@@ -22,13 +22,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clipToPadding="false">
 
     <View
         android:id="@+id/messagesDividerView"
         android:layout_width="0dp"
-        android:layout_height="4dp"
-        android:background="@drawable/list_divider"
+        android:layout_height="8dp"
+        android:background="@color/background_secondary"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,6 +39,7 @@
         android:id="@+id/headerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:elevation="@dimen/elevation_s"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/messagesDividerView" />
@@ -45,8 +47,8 @@
     <View
         android:id="@+id/lastConversationMessageCollapsedDivider"
         android:layout_width="0dp"
-        android:layout_height="4dp"
-        android:background="@drawable/list_divider"
+        android:layout_height="8dp"
+        android:background="@color/background_secondary"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerView"

@@ -62,6 +62,7 @@ import ch.protonmail.android.utils.ui.TYPE_ITEM
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
+import ch.protonmail.android.views.messageDetails.ReplyActionsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
@@ -88,7 +89,7 @@ internal class MessageDetailsAdapter(
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
     private val onEditDraftClicked: (Message) -> Unit,
-    private val onReplyMessageClicked: (Message) -> Unit,
+    private val onReplyMessageClicked: (Constants.MessageActionType, Message) -> Unit,
     private val onMoreMessageActionsClicked: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
@@ -144,6 +145,9 @@ internal class MessageDetailsAdapter(
                 itemView.messageWebViewContainer.addView(detailsMessageActions)
             }
 
+            val replyActionsView = createReplyActionsView()
+            itemView.messageWebViewContainer.addView(replyActionsView)
+
             ItemViewHolder(itemView)
         }
     }
@@ -160,6 +164,13 @@ internal class MessageDetailsAdapter(
         val detailsMessageActions = MessageDetailsActionsView(context)
         detailsMessageActions.id = R.id.item_message_body_actions_layout_id
         return detailsMessageActions
+    }
+
+    private fun createReplyActionsView(): ReplyActionsView {
+        val replyActionsView = ReplyActionsView(context)
+        replyActionsView.id = R.id.item_message_body_reply_actions_layout_id
+        replyActionsView.isVisible = false
+        return replyActionsView
     }
 
     private fun setupMessageBodyWebView(itemView: View): WebView? {
@@ -296,6 +307,7 @@ internal class MessageDetailsAdapter(
             setUpViewDividers()
 
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
+            setupReplyActionsView(message)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
 
             itemView.messageWebViewContainer.postDelayed(EXPAND_MESSAGE_ANIMATION_DELAY_MS) {
@@ -314,13 +326,7 @@ internal class MessageDetailsAdapter(
             val messageActionsView: MessageDetailsActionsView =
                 itemView.messageWebViewContainer.findViewById(R.id.item_message_body_actions_layout_id) ?: return
 
-            val replyMode = if (message.toList.size + message.ccList.size > 1) {
-                MessageDetailsActionsView.ReplyMode.REPLY_ALL
-            } else {
-                MessageDetailsActionsView.ReplyMode.REPLY
-            }
             val uiModel = MessageDetailsActionsView.UiModel(
-                replyMode,
                 messageHtmlWithQuotedHistory.isNullOrEmpty(),
                 message.isDraft()
             )
@@ -330,8 +336,24 @@ internal class MessageDetailsAdapter(
                 loadHtmlDataIntoWebView(webView, messageHtmlWithQuotedHistory.orEmpty())
                 showHistoryButton.isVisible = false
             }
-            messageActionsView.onReplyClicked { onReplyMessageClicked(message) }
             messageActionsView.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
+        }
+
+        private fun setupReplyActionsView(message: Message) {
+            val replyActionsView: ReplyActionsView =
+                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id) ?: return
+
+            replyActionsView.bind(message.toList.size + message.ccList.size > 1)
+
+            replyActionsView.onReplyActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.REPLY, message)
+            }
+            replyActionsView.onReplyAllActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.REPLY_ALL, message)
+            }
+            replyActionsView.onForwardActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.FORWARD, message)
+            }
         }
 
         private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String) {
@@ -591,6 +613,10 @@ internal class MessageDetailsAdapter(
             }
 
             this.blockRemoteResources(!isAutoShowRemoteImages)
+
+            val replyActionsView: ReplyActionsView =
+                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id)
+            replyActionsView.isVisible = true
 
             super.onPageFinished(view, url)
         }

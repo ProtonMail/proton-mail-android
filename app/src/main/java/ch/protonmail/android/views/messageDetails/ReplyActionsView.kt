@@ -17,55 +17,59 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.details.presentation.view
+package ch.protonmail.android.views.messageDetails
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
+import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import ch.protonmail.android.R
-import ch.protonmail.android.databinding.MessageDetailsActionsBinding
+import ch.protonmail.android.databinding.LayoutMessageDetailsReplyActionsBinding
 
-class MessageDetailsActionsView @JvmOverloads constructor(
+/**
+ * A view containing reply, reply all and forward actions
+ */
+class ReplyActionsView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val showHistoryButton: Button
-    private val moreActionsButton: ImageButton
+    private val replyButton: FrameLayout
+    private val replyAllButton: FrameLayout
+    private val forwardButton: FrameLayout
 
     init {
-        setPadding(context.resources.getDimensionPixelSize(R.dimen.padding_m))
+        setPadding(context.resources.getDimensionPixelSize(R.dimen.padding_l))
+        clipToPadding = false
 
-        val binding = MessageDetailsActionsBinding.inflate(
+        val binding = LayoutMessageDetailsReplyActionsBinding.inflate(
             LayoutInflater.from(context),
             this
         )
-        showHistoryButton = binding.detailsButtonShowHistory
-        moreActionsButton = binding.detailsButtonMoreActions
+
+        replyButton = binding.replyButton
+        replyAllButton = binding.replyAllButton
+        forwardButton = binding.forwardButton
     }
 
-    fun bind(uiModel: UiModel) {
-        showHistoryButton.isVisible = !uiModel.hideShowHistory
-        this.isVisible = !uiModel.hideAllActions
+    fun bind(shouldShowReplyAllAction: Boolean) {
+        replyAllButton.isVisible = shouldShowReplyAllAction
     }
 
-    fun onShowHistoryClicked(callback: (View) -> Unit) {
-        showHistoryButton.setOnClickListener { callback(it) }
+    fun onReplyActionClicked(callback: (View) -> Unit) {
+        replyButton.setOnClickListener { callback(it) }
     }
 
-    fun onMoreActionsClicked(callback: (View) -> Unit) {
-        moreActionsButton.setOnClickListener { callback(it) }
+    fun onReplyAllActionClicked(callback: (View) -> Unit) {
+        replyAllButton.setOnClickListener { callback(it) }
     }
 
-    data class UiModel(
-        val hideShowHistory: Boolean,
-        val hideAllActions: Boolean
-    )
+    fun onForwardActionClicked(callback: (View) -> Unit) {
+        forwardButton.setOnClickListener { callback(it) }
+    }
 }

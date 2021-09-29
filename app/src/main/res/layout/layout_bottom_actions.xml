@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
@@ -18,71 +17,74 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/interaction_strong">
+    android:background="@color/background_norm"
+    android:elevation="@dimen/elevation_m">
+
+    <View
+        style="@style/ViewSeparatorHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/firstActionImageButton"
         android:layout_width="@dimen/message_details_actions_button_size"
         android:layout_height="@dimen/message_details_actions_button_size"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/secondActionImageButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_reply"
-        app:tint="@color/icon_inverted" />
+        android:src="@drawable/ic_envelope_dot"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/secondActionImageButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/secondActionImageButton"
         android:layout_width="@dimen/message_details_actions_button_size"
         android:layout_height="@dimen/message_details_actions_button_size"
-        app:layout_constraintLeft_toRightOf="@id/firstActionImageButton"
-        app:layout_constraintRight_toLeftOf="@id/thirdActionImageButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_envelope_dot"
-        app:tint="@color/icon_inverted" />
+        android:src="@drawable/ic_trash"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/thirdActionImageButton"
+        app:layout_constraintStart_toEndOf="@id/firstActionImageButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/thirdActionImageButton"
         android:layout_width="@dimen/message_details_actions_button_size"
         android:layout_height="@dimen/message_details_actions_button_size"
-        app:layout_constraintLeft_toRightOf="@id/secondActionImageButton"
-        app:layout_constraintRight_toLeftOf="@id/fourthActionImageButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_trash"
-        app:tint="@color/icon_inverted" />
+        android:src="@drawable/ic_folder_move"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/fourthActionImageButton"
+        app:layout_constraintStart_toEndOf="@id/secondActionImageButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/fourthActionImageButton"
         android:layout_width="@dimen/message_details_actions_button_size"
         android:layout_height="@dimen/message_details_actions_button_size"
-        app:layout_constraintLeft_toRightOf="@id/thirdActionImageButton"
-        app:layout_constraintRight_toLeftOf="@id/moreActionImageButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/ic_label"
-        app:tint="@color/icon_inverted" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/moreActionImageButton"
+        app:layout_constraintStart_toEndOf="@id/thirdActionImageButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/moreActionImageButton"
         android:layout_width="@dimen/message_details_actions_button_size"
         android:layout_height="@dimen/message_details_actions_button_size"
-        app:layout_constraintLeft_toRightOf="@id/fourthActionImageButton"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/ic_three_dots_horizontal"
-        app:tint="@color/icon_inverted" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fourthActionImageButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -89,25 +89,12 @@
         android:maxLines="1"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@id/senderInitialView"
-        app:layout_constraintEnd_toStartOf="@id/lockIconTextView"
+        app:layout_constraintEnd_toStartOf="@id/collapsedMessageViews"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/forwardedImageView"
         app:layout_constraintTop_toTopOf="@id/senderInitialView"
         tools:text="@tools:sample/full_names" />
-
-    <TextView
-        android:id="@+id/lockIconTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/message_details_header_margin_normal"
-        android:layout_marginEnd="@dimen/message_details_header_margin_normal"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
-        app:layout_constraintEnd_toStartOf="@id/messageDetailsIcons"
-        app:layout_constraintStart_toEndOf="@id/senderNameTextView"
-        app:layout_constraintTop_toTopOf="@id/senderNameTextView"
-        tools:text="@string/lock_default" />
 
     <ch.protonmail.android.details.presentation.view.CollapsedMessageViews
         android:id="@+id/collapsedMessageViews"
@@ -128,8 +115,21 @@
         android:layout_marginStart="@dimen/message_details_header_margin_small"
         android:layout_marginEnd="@dimen/message_details_header_margin_small"
         app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
-        app:layout_constraintEnd_toStartOf="@id/locationImageView"
+        app:layout_constraintEnd_toStartOf="@id/lockIconTextView"
         app:layout_constraintTop_toTopOf="@id/senderNameTextView" />
+
+    <TextView
+        android:id="@+id/lockIconTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/message_details_header_margin_normal"
+        android:layout_marginEnd="@dimen/message_details_header_margin_normal"
+        android:layout_marginTop="@dimen/message_details_header_margin_small"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
+        app:layout_constraintEnd_toStartOf="@id/locationImageView"
+        app:layout_constraintTop_toTopOf="@id/senderNameTextView"
+        tools:text="@string/lock_default" />
 
     <ImageView
         android:id="@+id/locationImageView"
@@ -380,16 +380,6 @@
         app:layout_constraintTop_toBottomOf="@id/storageTextView"
         tools:text="End-to-end encrypted and signed message" />
 
-    <TextView
-        android:id="@+id/learnMoreTextView"
-        style="@style/Proton.Text.DefaultSmall.Interaction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sender_lock_learn_more"
-        android:textColorLink="@color/cornflower_blue"
-        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
-        app:layout_constraintTop_toBottomOf="@id/encryptionInfoTextView" />
-
     <androidx.constraintlayout.widget.Group
         android:id="@+id/collapsedHeaderGroup"
         android:layout_width="wrap_content"
@@ -406,7 +396,7 @@
         app:constraint_referenced_ids="senderEmailTextView, lockIconExtendedTextView,
         encryptionInfoTextView, locationExtendedImageView, locationTextView,
         calendarImageView, timeDateExtendedTextView, storageImageView,
-        storageTextView, learnMoreTextView"
+        storageTextView"
         tools:visibility="visible" />
 
 </merge>

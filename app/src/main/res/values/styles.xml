@@ -141,20 +141,21 @@
     </style>
 
     <style name="ActionButtons">
-        <item name="android:layout_margin">@dimen/padding_m</item>
+        <item name="android:layout_margin">@dimen/margin_m</item>
         <item name="android:clickable">true</item>
         <item name="android:background">@drawable/shape_background_action_sheet_buttons</item>
-        <item name="android:drawablePadding">@dimen/padding_l</item>
+        <item name="android:drawablePadding">@dimen/padding_s</item>
         <item name="android:elevation">@dimen/elevation_s</item>
         <item name="android:focusable">true</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingTop">@dimen/padding_l</item>
-        <item name="android:paddingBottom">@dimen/padding_l</item>
-        <item name="android:paddingStart">@dimen/padding_m</item>
-        <item name="android:paddingEnd">@dimen/padding_m</item>
+        <item name="android:paddingTop">@dimen/padding_m</item>
+        <item name="android:paddingBottom">@dimen/padding_m</item>
+        <item name="android:paddingStart">@dimen/padding_l</item>
+        <item name="android:paddingEnd">@dimen/padding_l</item>
         <item name="android:textColor">@color/cornflower_blue</item>
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
-        <item name="android:lines">2</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
         <item name="drawableTint">@color/cornflower_blue</item>
     </style>
 
@@ -199,6 +200,19 @@
         <item name="android:textSize">@dimen/settings_pin_font_size</item>
         <item name="android:textColor">@color/cornflower_blue</item>
         <item name="android:background">@color/transparent</item>
+    </style>
+
+    <style name="ReplyButtonTextStyle">
+        <item name="android:textAppearance">@style/Proton.Text.DefaultSmall</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:breakStrategy">balanced</item>
+    </style>
+
+    <style name="ReplyButtonStyle">
+        <item name="android:background">@drawable/ripple_reply_actions</item>
+        <item name="android:elevation">@dimen/elevation_s</item>
     </style>
     <!-- endregion -->
 

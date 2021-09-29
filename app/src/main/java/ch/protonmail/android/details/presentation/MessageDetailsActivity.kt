@@ -584,54 +584,47 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 openedFolderLabelId ?: openedFolderLocationId.toString(),
                 getCurrentSubject(),
                 getMessagesFrom(message.sender?.name),
-                message.isStarred ?: false
+                message.isStarred ?: false,
+                viewModel.doesConversationHaveMoreThanOneMessage()
             )
                 .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
         }
 
         val actionsUiModel = BottomActionsView.UiModel(
-            if (message.toList.size + message.ccList.size > 1) R.drawable.ic_reply_all else R.drawable.ic_reply,
             R.drawable.ic_envelope_dot,
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_trash_empty else R.drawable.ic_trash,
+            R.drawable.ic_folder_move,
             R.drawable.ic_label
         )
         messageDetailsActionsView.bind(actionsUiModel)
         messageDetailsActionsView.setOnFourthActionClickListener {
-            showLabelsManager()
+            showLabelsActionSheet(LabelsActionSheet.Type.LABEL)
         }
         messageDetailsActionsView.setOnThirdActionClickListener {
+            showLabelsActionSheet(LabelsActionSheet.Type.FOLDER)
+        }
+        messageDetailsActionsView.setOnSecondActionClickListener {
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) {
                 viewModel.delete()
             } else viewModel.moveLastMessageToTrash()
             onBackPressed()
         }
-        messageDetailsActionsView.setOnSecondActionClickListener {
+        messageDetailsActionsView.setOnFirstActionClickListener {
             onBackPressed()
             viewModel.markUnread()
         }
-        messageDetailsActionsView.setOnFirstActionClickListener {
-            onReplyMessage(message)
-        }
     }
 
-    private fun showLabelsManager() {
+    private fun showLabelsActionSheet(labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL) {
         LabelsActionSheet.newInstance(
             messageIds = listOf(messageOrConversationId),
             currentFolderLocationId = openedFolderLocationId,
+            labelActionSheetType = labelActionSheetType,
             actionSheetTarget =
             if (viewModel.isConversationEnabled()) ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
             else ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
-    }
-
-    private fun onReplyMessage(message: Message) {
-        val messageAction = if (message.toList.size + message.ccList.size > 1) {
-            Constants.MessageActionType.REPLY_ALL
-        } else {
-            Constants.MessageActionType.REPLY
-        }
-        executeMessageAction(messageAction, message.messageId)
     }
 
     private fun displayToolbarData(conversation: ConversationUiModel) {
@@ -870,8 +863,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         storagePermissionHelper.checkPermission()
     }
 
-    private fun onReplyMessageClicked(message: Message) {
-        onReplyMessage(message)
+    private fun onReplyMessageClicked(messageAction: Constants.MessageActionType, message: Message) {
+        executeMessageAction(messageAction, message.messageId)
     }
 
     private fun onShowMessageActionSheet(message: Message) {

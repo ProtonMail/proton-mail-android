@@ -27,6 +27,7 @@
     <item name="item_message_body_web_view_id" type="id" />
     <item name="item_message_body_progress_view_id" type="id" />
     <item name="item_message_body_actions_layout_id" type="id" />
+    <item name="item_message_body_reply_actions_layout_id" type="id" />
 
     <item name="monday" type="id" />
     <item name="tuesday" type="id" />
