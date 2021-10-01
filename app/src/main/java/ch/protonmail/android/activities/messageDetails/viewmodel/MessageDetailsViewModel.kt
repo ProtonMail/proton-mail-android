@@ -85,6 +85,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -479,13 +480,23 @@ internal class MessageDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             Timber.v("onEmbeddedImagesDownloaded status: ${event.status} images size: ${event.images.size}")
             val messageId = event.images.first().messageId
-            val renderedMessage = messageRenderer.setImagesAndProcess(messageId, event.images)
+            val renderedMessage = try {
+                messageRenderer.setImagesAndProcess(messageId, event.images)
+            } catch (e: IllegalStateException) {
+                if (e is CancellationException) throw e
+                Timber.e(e)
+                return@launch
+            }
 
             val updatedMessage = updateUiModelMessageWithFormattedHtml(
                 renderedMessage.messageId,
                 renderedMessage.renderedHtmlBody
-            )
-            Timber.v("Update rendered HTML message id: ${updatedMessage?.messageId}")
+            ) ?: run {
+                Timber.e("Cannot update message with formatted html. Message id: $messageId")
+                return@launch
+            }
+
+            Timber.v("Update rendered HTML message id: ${updatedMessage.messageId}")
             _messageRenderedWithImages.value = updatedMessage
             areImagesDisplayed = true
         }
