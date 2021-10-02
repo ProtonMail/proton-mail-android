@@ -392,7 +392,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="upgrade_line3">Verwenden Sie Ihre eigene Domain</string>
     <string name="upgrade_line4">Bis zu 5 Aliasnamen</string>
     <string name="upgrade_line5">Vorrangiger Kunden-Support</string>
-    <string name="upgrade">Aktualisieren</string>
+    <string name="upgrade">Upgrade</string>
     <string name="payment_options">Zahlungsoptionen</string>
     <string name="other_plans">Für einen Tarif mit mehr Speichervolumen, aktualisieren Sie ProtonMail über die Webmail-Oberfläche.</string>
     <string name="upgrade_paid_user">Vielen Dank, dass Sie ProtonMail finanziell unterstützen!</string>
