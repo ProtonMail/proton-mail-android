@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Izen ittwawegelhen seg tazwara ar tagara</string>
     <string name="sender_lock_internal_verified">Izen ittwawegelhen seg tazwara ar tagara yekka-d seg tansa yettusneqden</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Issin ugar</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ittwawegelhen seg tazwara ar tagara</string>
     <string name="composer_lock_internal_pinned">Ittwawegelhen seg tazwara ar tagara ar tansa yettusneqden</string>

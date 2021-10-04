@@ -645,7 +645,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Wiadomość zaszyfrowana end-to-end</string>
     <string name="sender_lock_internal_verified">Wiadomość zaszyfrowana end-to-end od zweryfikowanego adresu</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Dowiedz się więcej</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Zaszyfrowane end-to-end</string>
     <string name="composer_lock_internal_pinned">Zaszyfrowana end-to-end do zweryfikowanego adresu</string>

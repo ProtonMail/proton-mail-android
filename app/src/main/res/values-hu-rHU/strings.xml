@@ -628,7 +628,6 @@ Svájci székhellyel</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Végpontok közt titkosított üzenet</string>
     <string name="sender_lock_internal_verified">Végpontok közt titkosított, ellenőrzött címről</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">További információk</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Végpontok közt titkosított</string>
     <string name="composer_lock_internal_pinned">Végpontok közt titkosított, ellenőrzött címre</string>

@@ -618,7 +618,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">端到端加密郵件</string>
     <string name="sender_lock_internal_verified">來自已驗證電子郵件地址的端到端加密郵件</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">取得更多資訊</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">端到端加密</string>
     <string name="composer_lock_internal_pinned">以端到端加密寄送到已驗證電子郵件地址</string>

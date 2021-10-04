@@ -645,7 +645,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-End šifrovaná zpráva</string>
     <string name="sender_lock_internal_verified">End-to-end šifrovaná zpráva z ověřené adresy</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Více informací</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-End šifrováno</string>
     <string name="composer_lock_internal_pinned">Zašifrováno End-to-end k ověřenému příjemci</string>

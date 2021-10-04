@@ -646,7 +646,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Наскрізно зашифроване повідомлення</string>
     <string name="sender_lock_internal_verified">Наскрізно зашифроване повідомлення з надійної адреси</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Докладніше</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Наскрізно зашифровано</string>
     <string name="composer_lock_internal_pinned">Наскрізно зашифровано для надійної адреси</string>

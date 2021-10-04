@@ -311,7 +311,7 @@
     <string name="draft_label_message_uploading">Nachricht wird gesendet …</string>
     <string name="attachment_failed">Hochladen des Anhangs der Nachricht fehlgeschlagen </string>
     <string name="attaching_photo_failed">Anhängen der Fotos fehlgeschlagen</string>
-    <string name="empty_message">Nachricht leeren</string>
+    <string name="empty_message">Nachricht ohne Inhalt</string>
     <string name="dismiss">Verwerfen</string>
     <string name="new_message_arrived">Neue Nachricht!</string>
     <string name="please_choose_color">Bitte eine Farbe wählen</string>
@@ -627,7 +627,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Ende-zu-Ende verschlüsselte Nachricht</string>
     <string name="sender_lock_internal_verified">Ende-zu-Ende verschlüsselte Nachricht von bestätigter E-Mail-Adresse</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Mwehr erfahren</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ende-zu-Ende verschlüsselt</string>
     <string name="composer_lock_internal_pinned">Ende-zu-Ende verschlüsselt zum verifizierten Empfänger</string>

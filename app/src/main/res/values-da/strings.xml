@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-end krypteret besked</string>
     <string name="sender_lock_internal_verified">End-to-end krypteret besked fra bekræftet adresse</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Få mere at vide</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end-kryptering</string>
     <string name="composer_lock_internal_pinned">End-to-end krypteret for at bekræfte adresse</string>
@@ -869,7 +868,7 @@
     <string name="local_storage">Lokal lagerpladsgrænse</string>
     <string name="storage_value">%1$d MB (%2$.2f MB forbrugt)</string>
     <!-- endregion -->
-    <string name="app_settings">App settings</string>
+    <string name="app_settings">App-indstillinger</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push-notifikationer</string>
     <string name="extended_notifications">Udvidede notifikationer</string>
@@ -891,11 +890,11 @@
     <string name="turn_combined_contacts_on">Slå funktionen til for at autoudfylde e-mailadresser vha. kontakter fra alle dine indloggede konti.</string>
     <string name="local_cache_management">Lokal cache</string>
     <string name="cache_cleared">Lokal cache er opfrisket</string>
-    <string name="empty_data">Clear data</string>
+    <string name="empty_data">Ryd data</string>
     <!-- endregion -->
     <string name="enabled">Aktiv</string>
     <string name="disabled">Inaktiv</string>
-    <string name="app_info">App information</string>
+    <string name="app_info">App-information</string>
     <string name="app_version">App-version</string>
     <!-- endregion -->
     <!-- region Multi Account -->

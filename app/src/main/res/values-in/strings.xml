@@ -621,7 +621,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Pesan terenkripsi end-to-end</string>
     <string name="sender_lock_internal_verified">Pesan terenkripsi end-to-end dari alamat terverifikasi</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Pelajari lebih lanjut</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Dienkripsi end-to-end</string>
     <string name="composer_lock_internal_pinned">Terenkripsi end-to-end ke alamat terverifikasi</string>

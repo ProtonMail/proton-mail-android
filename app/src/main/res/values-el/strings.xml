@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Μήνυμα κρυπτογραφημένο από άκρο σε άκρο</string>
     <string name="sender_lock_internal_verified">Από άκρη σε άκρη κρυπτογραφημένο μήνυμα, από επαληθευμένη διεύθυνση</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Μάθετε περισσότερα</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Κρυπτογραφημένο από άκρο σε άκρο</string>
     <string name="composer_lock_internal_pinned">Κρυπτογραφημένο από άκρο σε άκρο σε επαληθευμένη διεύθυνση</string>

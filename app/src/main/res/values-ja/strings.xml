@@ -618,7 +618,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">エンドツーエンド暗号化されたメッセージ</string>
     <string name="sender_lock_internal_verified">検証済みアドレスからの、エンドツーエンド暗号化されたメッセージ</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">詳細</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">エンドツーエンド暗号化</string>
     <string name="composer_lock_internal_pinned">検証済みアドレスへの、エンドツーエンド暗号化による送信</string>
