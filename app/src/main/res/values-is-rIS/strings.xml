@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Enda-í-enda dulrituð skilaboð</string>
     <string name="sender_lock_internal_verified">Enda-í-enda dulrituð skilaboð frá sannvottuðu tölvupóstfangi</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Kanna nánar</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Enda-í-enda dulritað</string>
     <string name="composer_lock_internal_pinned">Enda-í-enda dulritað til sannvottaðs tölvupóstfangs</string>

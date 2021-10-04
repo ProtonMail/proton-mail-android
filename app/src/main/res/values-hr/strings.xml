@@ -636,7 +636,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-end šifrirane poruke</string>
     <string name="sender_lock_internal_verified">End-to-end šifrirana poruka od potvrđene adrese</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Saznajte više</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-End šifriranje</string>
     <string name="composer_lock_internal_pinned">End-to-end šifiranje za potvrđenu adresu</string>

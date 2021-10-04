@@ -645,7 +645,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Сообщение, зашифрованное сквозным методом</string>
     <string name="sender_lock_internal_verified">Сообщение, зашифрованное сквозным методом; с проверенного адреса</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Подробнее</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Зашифровано сквозным методом</string>
     <string name="composer_lock_internal_pinned">Зашифровано сквозным методом для проверенного адреса</string>

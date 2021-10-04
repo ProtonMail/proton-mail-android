@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Uçtan uca şifreli mesaj</string>
     <string name="sender_lock_internal_verified">Doğrulanmış adresten uçtan uca şifreli ileti</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Daha fazla bilgi edin</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Uçtan uca şifreli</string>
     <string name="composer_lock_internal_pinned">Doğrulanmış adrese uçtan uca şifreli</string>
@@ -865,7 +864,7 @@
     <string name="local_storage">Yerel depolama sınırı</string>
     <string name="storage_value">%1$d MB (%2$.2f MB kullanıldı)</string>
     <!-- endregion -->
-    <string name="app_settings">Uygulama Ayarları</string>
+    <string name="app_settings">Uygulama ayarları</string>
     <!-- region App Settings -->
     <string name="push_notifications">Anlık bildirimler</string>
     <string name="extended_notifications">Genişletilmiş Bildirimler</string>
@@ -891,7 +890,7 @@
     <!-- endregion -->
     <string name="enabled">Etkin</string>
     <string name="disabled">Devre dışı</string>
-    <string name="app_info">Uygulama Bilgisi</string>
+    <string name="app_info">Uygulama bilgisi</string>
     <string name="app_version">Uygulama sürümü</string>
     <!-- endregion -->
     <!-- region Multi Account -->

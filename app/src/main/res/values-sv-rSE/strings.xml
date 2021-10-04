@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-end-krypterat meddelande</string>
     <string name="sender_lock_internal_verified">End-to-end-krypterat meddelande från verifierad adress</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Läs mer</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end-krypterat</string>
     <string name="composer_lock_internal_pinned">End-to-end krypterad till verifierad mottagare</string>

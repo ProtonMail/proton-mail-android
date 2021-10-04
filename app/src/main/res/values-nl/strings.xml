@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-end versleuteld bericht</string>
     <string name="sender_lock_internal_verified">End-to-end versleuteld bericht van geverifieerd e-mailadres</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Meer informatie</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end versleuteld</string>
     <string name="composer_lock_internal_pinned">End-to-end versleuteld naar geverifieerde ontvanger</string>
@@ -734,11 +733,11 @@
         Overweeg om wat ruimte vrij te maken of schaf extra opslagruimte aan voordat u ruimte tekortkomt.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Rechten</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
-    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
-        access to storage.</string>
-    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_storage_permissions_add_attachment_text">Om bijlagen toe te voegen moet u
+        toegang tot opslag toestaan.</string>
+    <string name="need_storage_permissions_download_attachment_text">Om bijlagen toe te downloaden moet u
+        toegang tot opslag toestaan.</string>
+    <string name="need_contacts_permissions_text">Om contacten te importeren moet u toegang tot contacten toestaan.</string>
     <string name="push_notifications_alert_title">Pushmelding</string>
     <string name="push_notifications_alert_subtitle">Pushmeldingen voor ProtonMail werken niet zonder bijgewerkte Google Play-diensten.</string>
     <string name="app_locked">App vergrendeld</string>
@@ -969,12 +968,12 @@
     <string name="contacts_send_group_message">Groepsbericht verzenden</string>
     <string name="inbox_this_folder_is_empty">Deze map is leeg</string>
     <string name="inbox_nothing_to_see_here">Niets te zien hier</string>
-    <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
-    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
-    <string name="edit_draft">Edit draft</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
-    <string name="details_show_history">Show history</string>
-    <string name="could_not_complete_action">Could not complete the action</string>
+    <string name="inbox_could_not_retrieve_messages">Kon uw berichten niet ophalen</string>
+    <string name="inbox_pull_down_to_retry">Trek omlaag om opnieuw te proberen</string>
+    <string name="edit_draft">Concept bewerken</string>
+    <string name="primary_user_error">Kon niet upgraden, er ging iets mis.</string>
+    <string name="details_show_history">Toon geschiedenis</string>
+    <string name="could_not_complete_action">Kon de actie niet voltooien</string>
     <string name="decryption_of_message_failed">Ontsleutelingsfout: decodering van de gecodeerde inhoud van dit bericht is mislukt.</string>
     <string name="labels_selected_limit_reached">Limiet bereikt</string>
 </resources>

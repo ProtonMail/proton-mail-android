@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Message chiffré de bout en bout</string>
     <string name="sender_lock_internal_verified">Message chiffré de bout en bout à partir d\'une adresse vérifiée</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">En savoir plus</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Chiffré de bout en bout</string>
     <string name="composer_lock_internal_pinned">Chiffré de bout en bout vers une adresse vérifiée</string>

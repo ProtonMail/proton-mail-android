@@ -627,7 +627,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Mensaje cifrado de extremo a extremo</string>
     <string name="sender_lock_internal_verified">Mensaje cifrado de extremo a extremo de dirección verificada</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Más información</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Cifrado de extremo a extremo</string>
     <string name="composer_lock_internal_pinned">Cifrado de extremo a extremo al destinatario verificado</string>

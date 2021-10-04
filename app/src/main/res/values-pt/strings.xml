@@ -626,7 +626,6 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Mensagem encriptada de ponta-a-ponta</string>
     <string name="sender_lock_internal_verified">Mensagem de endereço verificado encriptada ponta-a-ponta</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Saiba mais</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Encriptação ponta-a-ponta</string>
     <string name="composer_lock_internal_pinned">Encriptada ponta-a-ponta para endereço verificado</string>
