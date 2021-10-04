@@ -61,6 +61,7 @@ import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostSpamJob
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -618,10 +619,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         )
         messageDetailsActionsView.bind(actionsUiModel)
         messageDetailsActionsView.setOnFourthActionClickListener {
-            showLabelsActionSheet(LabelsActionSheet.Type.LABEL)
+            showLabelsActionSheet(LabelType.MESSAGE_LABEL)
         }
         messageDetailsActionsView.setOnThirdActionClickListener {
-            showLabelsActionSheet(LabelsActionSheet.Type.FOLDER)
+            showLabelsActionSheet(LabelType.FOLDER)
         }
         messageDetailsActionsView.setOnSecondActionClickListener {
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) {
@@ -647,11 +648,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         recyclerViewLinearLayoutManager.scrollToPositionWithOffset(messageHeaderIndexToScrollTo, 0)
     }
 
-    private fun showLabelsActionSheet(labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL) {
+    private fun showLabelsActionSheet(labelActionSheetType: LabelType = LabelType.MESSAGE_LABEL) {
         LabelsActionSheet.newInstance(
             messageIds = listOf(messageOrConversationId),
             currentFolderLocationId = openedFolderLocationId,
-            labelActionSheetType = labelActionSheetType,
+            labelType = labelActionSheetType,
             actionSheetTarget =
             if (viewModel.isConversationEnabled()) ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
             else ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
