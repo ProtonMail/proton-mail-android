@@ -354,12 +354,18 @@ class NotificationServer @Inject constructor(
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.id)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, message?.subject)
+            .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        val stackBuilder = TaskStackBuilder.create(context)
-            .addParentStack(MessageDetailsActivity::class.java)
-            .addNextIntent(contentIntent)
+        val backIntent = Intent(context, MailboxActivity::class.java)
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
-        val contentPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentPendingIntent = PendingIntent.getActivities(
+            context,
+            messageId.hashCode(),
+            arrayOf(backIntent, contentIntent),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         // Create Action Intent's
         val archiveIntent = context.buildArchiveIntent(messageId)
@@ -534,8 +540,7 @@ class NotificationServer @Inject constructor(
         val contentIntent = context.getMailboxActivityIntent(userId, Constants.MessageLocationType.DRAFT)
 
         val stackBuilder = TaskStackBuilder.create(context)
-            .addParentStack(MailboxActivity::class.java)
-            .addNextIntent(contentIntent)
+            .addNextIntentWithParentStack(contentIntent)
 
         val contentPendingIntent = stackBuilder.getPendingIntent(
             userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED,
