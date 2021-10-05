@@ -69,22 +69,10 @@ import org.apache.http.protocol.HTTP
 import timber.log.Timber
 
 /**
- * After this delay the message body height will change from a fixed size, used when loading the message body, to
- * WRAP_CONTENT. This is needed because:
- * - when the message in a conversation is initially loading, we use a fixed size in order to put top of the message
- * on top of the screen- otherwise, when the message body is finally loaded, it will be hidden below the screen; with
- * this approach, after the message body is loaded, it will appear in the user's view,
- * - we need to add an artificial delay before we switch from the fixed height to WRAP_CONTENT in order to allow the
- * message body to be loaded in the webview- otherwise, if we change the height too quickly, the message body won't
- * have time to fully load and the message body will be shown below the screen when it finally loads.
- *
- * This approach has some drawbacks:
- * - we assume how long the message body loading will take- if it's longer than the value defined below, we will run
- * into the same issue as described above,
- * - shorter messages will visibly collapse (from the fixed height to WRAP_CONTENT) after this delay, potentially
- * leading to the whole list shift downwards.
+ * The delay after which we check if we can switch from a fixed message content height to WRAP_CONTENT. This behaviour
+ * is needed in order to keep the message header attached to the top of the screen while the content is being loaded.
  */
-private const val WRAP_MESSAGE_CONTENT_DELAY_MS = 500L
+private const val WRAP_MESSAGE_CONTENT_DELAY_MS = 100L
 
 private const val ITEM_NOT_FOUND_INDEX = -1
 
@@ -110,15 +98,21 @@ internal class MessageDetailsAdapter(
         context.resources.getDimension(R.dimen.padding_m).toInt()
     }
 
+    private val notLastMessageLoadingHeight by lazy {
+        context.resources.getDimension(R.dimen.constrained_message_content_view_size).toInt()
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_HEADER) {
             (holder as HeaderViewHolder).bind(
                 visibleItems[position].message
             )
         } else {
+            val isLastNonDraftItemInTheList = position == visibleItems.indexOfLast { !it.message.isDraft() }
             (holder as ItemViewHolder).bind(
                 position,
-                visibleItems[position]
+                visibleItems[position],
+                isLastNonDraftItemInTheList
             )
         }
     }
@@ -139,8 +133,6 @@ internal class MessageDetailsAdapter(
                 false
             )
 
-            setMessageBodyLoadingHeight(itemView.messageWebViewContainer)
-
             val webView = setupMessageBodyWebView(itemView)
             itemView.messageWebViewContainer.removeAllViews()
             itemView.messageWebViewContainer.addView(webView)
@@ -156,7 +148,22 @@ internal class MessageDetailsAdapter(
             val replyActionsView = createReplyActionsView()
             itemView.messageWebViewContainer.addView(replyActionsView)
 
+            setInitialMessageBodyHeight(itemView.messageWebViewContainer)
+
             ItemViewHolder(itemView)
+        }
+    }
+
+    private fun setInitialMessageBodyHeight(messageWebViewContainer: LinearLayout) {
+        val isMultiMessageConversation = visibleItems.size > 2
+        // For single message conversations, we don't need to artificially expand the height while loading, as the
+        // top of the only message will always be attached to the top of the screen. For multi-message conversations,
+        // we need to expand it to make sure it occupies enough space on the screen to stay attached to the top
+        // until the content is loaded.
+        if (isMultiMessageConversation) {
+            setMessageContentExpandedLoadingHeight(messageWebViewContainer)
+        } else {
+            setMessageContentFixedLoadingHeight(messageWebViewContainer)
         }
     }
 
@@ -269,7 +276,6 @@ internal class MessageDetailsAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
         holder.itemView.messageWebViewContainer?.let {
-            setMessageBodyLoadingHeight(it)
             resetWebViewContent(it)
         }
 
@@ -280,7 +286,7 @@ internal class MessageDetailsAdapter(
 
     inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
 
-        fun bind(position: Int, listItem: MessageDetailsListItem) {
+        fun bind(position: Int, listItem: MessageDetailsListItem, isLastNonDraftItemInTheList: Boolean) {
             val message = listItem.message
             Timber.v("Bind item: ${message.messageId}, isDownloaded: ${message.isDownloaded}")
             val attachmentsView = itemView.attachmentsView
@@ -304,10 +310,6 @@ internal class MessageDetailsAdapter(
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
-            if (!listItem.messageFormattedHtml.isNullOrEmpty() && webView.progress == 100) {
-                wrapMessageContentHeightWithDelay(itemView.messageWebViewContainer)
-            }
-
             if (listItem.messageFormattedHtml == null) {
                 Timber.v("Load body for message: ${message.messageId} at position $position, loc: ${message.location}")
                 onLoadMessageBody(message)
@@ -328,6 +330,8 @@ internal class MessageDetailsAdapter(
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
             setupReplyActionsView(message)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
+
+            setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
         }
 
         private fun messageHasNoQuotedPart(listItem: MessageDetailsListItem) =
@@ -429,6 +433,29 @@ internal class MessageDetailsAdapter(
             val showAttachmentsDivider = itemView.attachmentsView.visibility == View.VISIBLE &&
                 itemView.expirationInfoView.visibility != View.VISIBLE
             itemView.attachmentsDividerView.isVisible = showAttachmentsDivider
+        }
+
+        private fun setMessageContentHeight(
+            listItem: MessageDetailsListItem,
+            isLastNonDraftItemInTheList: Boolean
+        ) {
+            when {
+                !listItem.messageFormattedHtml.isNullOrEmpty() -> {
+                    // We want to wrap the message content of the last non-draft item in the list only when the content
+                    // has been loaded, to make the message header stay attached to the top of the list
+                    // (if we wrap too quickly, the list will scroll down)
+                    if (isLastNonDraftItemInTheList) {
+                        wrapMessageContentHeightWhenContentLoaded(itemView.messageWebViewContainer)
+                    } else {
+                        wrapMessageContentHeight(itemView.messageWebViewContainer)
+                    }
+                }
+                // For messages in the middle of a conversation, that are not initially expanded when opening
+                // a conversation, we use a fixed height while loading
+                !isLastNonDraftItemInTheList -> {
+                    setMessageContentFixedLoadingHeight(itemView.messageWebViewContainer)
+                }
+            }
         }
     }
 
@@ -580,7 +607,13 @@ internal class MessageDetailsAdapter(
         webView?.loadUrl("about:blank")
     }
 
-    private fun setMessageBodyLoadingHeight(messageWebViewContainer: LinearLayout) {
+    private fun setMessageContentFixedLoadingHeight(messageWebViewContainer: LinearLayout) {
+        val params = messageWebViewContainer.layoutParams
+        params.height = notLastMessageLoadingHeight
+        messageWebViewContainer.layoutParams = params
+    }
+
+    private fun setMessageContentExpandedLoadingHeight(messageWebViewContainer: LinearLayout) {
         messageWebViewContainer.layoutParams.height = (context.resources.displayMetrics.heightPixels * 0.7).toInt()
     }
 
@@ -590,9 +623,17 @@ internal class MessageDetailsAdapter(
         messageWebViewContainer.layoutParams = params
     }
 
-    private fun wrapMessageContentHeightWithDelay(messageWebViewContainer: LinearLayout) {
+    private fun wrapMessageContentHeightWhenContentLoaded(messageWebViewContainer: LinearLayout) {
         messageWebViewContainer.postDelayed(WRAP_MESSAGE_CONTENT_DELAY_MS) {
-            wrapMessageContentHeight(messageWebViewContainer)
+            val webView = messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id)
+            // We want to keep waiting until the content is actually loaded before wrapping the height to
+            // avoid wrapping to quickly (this could result in the message being scrolled behind the screen instead
+            // of staying in the user's view)
+            if (webView.contentHeight != 0) {
+                wrapMessageContentHeight(messageWebViewContainer)
+            } else {
+                wrapMessageContentHeightWhenContentLoaded(messageWebViewContainer)
+            }
         }
     }
 

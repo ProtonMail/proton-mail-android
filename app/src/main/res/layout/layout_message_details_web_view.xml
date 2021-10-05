@@ -153,7 +153,7 @@
         android:layout_height="@dimen/constrained_message_content_view_size"
         android:focusableInTouchMode="true"
         android:descendantFocusability="blocksDescendants"
-        android:animateLayoutChanges="true"
+        android:animateLayoutChanges="false"
         app:layout_constraintTop_toBottomOf="@id/decryptionErrorView"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical" />

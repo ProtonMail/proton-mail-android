@@ -35,7 +35,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     RecyclerView.Adapter<ExpandableRecyclerAdapter<T>.ViewHolder>() {
 
     protected var allItems: MutableList<T> = ArrayList()
-`    public var visibleItems: MutableList<T> = ArrayList()
+    public var visibleItems: MutableList<T> = ArrayList()
         protected set
     private var indexList: MutableList<Int> = ArrayList()
     private var expandMap = SparseIntArray()
@@ -196,29 +196,5 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         }
 
         indexList = newIndexList
-    }
-
-    fun collapseAll() {
-        collapseAllExcept(-1)
-    }
-
-    private fun collapseAllExcept(position: Int) {
-        for (i in visibleItems.indices.reversed()) {
-            if (i != position && getItemViewType(i) == TYPE_HEADER) {
-                if (isExpanded(i)) {
-                    collapseItems(i, true)
-                }
-            }
-        }
-    }
-
-    fun expandAll() {
-        for (i in visibleItems.indices.reversed()) {
-            if (getItemViewType(i) == TYPE_HEADER) {
-                if (!isExpanded(i)) {
-                    expandItems(i, true)
-                }
-            }
-        }
     }
 }
