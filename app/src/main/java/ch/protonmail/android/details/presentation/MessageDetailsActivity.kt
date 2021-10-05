@@ -37,6 +37,7 @@ import android.webkit.WebView.HitTestResult
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -560,6 +561,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 expandedToolbarTitleTextView.visibility = View.INVISIBLE
                 expandedToolbarMessagesCountTextView.isVisible = false
             }
+
+            ViewCompat.setElevation(appBarLayout, resources.getDimensionPixelSize(R.dimen.elevation_m).toFloat())
         }
 
         appBarLayout.addOnOffsetChangedListener(onOffsetChangedListener)
