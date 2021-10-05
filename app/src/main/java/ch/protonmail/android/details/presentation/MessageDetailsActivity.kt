@@ -36,6 +36,7 @@ import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.getSystemService
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
@@ -83,6 +84,7 @@ import timber.log.Timber
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.math.abs
+
 
 private const val TITLE_ANIMATION_THRESHOLD = 0.9
 private const val TITLE_ANIMATION_DURATION = 200L
@@ -334,6 +336,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             anchorViewId = R.id.messageDetailsActionsView,
             isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
         ).show()
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(messageDetailsView)
+        constraintSet.connect(
+            R.id.coordinatorLayout, ConstraintSet.BOTTOM, R.id.layout_no_connectivity_info, ConstraintSet.TOP, 0
+        )
+        constraintSet.applyTo(messageDetailsView)
     }
 
     private fun onConnectivityCheckRetry() {
@@ -347,6 +355,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private fun hideNoConnSnackExtended() {
         networkSnackBarUtil.hideNoConnectionSnackBar()
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(messageDetailsView)
+        constraintSet.connect(
+            R.id.coordinatorLayout, ConstraintSet.BOTTOM, R.id.messageDetailsActionsView, ConstraintSet.TOP, 0
+        )
+        constraintSet.applyTo(messageDetailsView)
     }
 
     private fun listenForConnectivityEvent() {
