@@ -429,8 +429,8 @@ internal class MailboxViewModel @Inject constructor(
                 labelId = labelId
             ),
             observeLabels(userId).asLoadMoreFlow()
-        ) { conversations, labels ->
-            emit(conversations to labels)
+        ) { messages, labels ->
+            emit(messages to labels)
         }.loadMoreMap { pair ->
             val labels = pair.second
             when (val result = pair.first) {
