@@ -98,7 +98,7 @@ internal class MessageDetailsAdapter(
         context.resources.getDimension(R.dimen.padding_m).toInt()
     }
 
-    private val notLastMessageLoadingHeight by lazy {
+    private val messageContentFixedLoadingHeight by lazy {
         context.resources.getDimension(R.dimen.constrained_message_content_view_size).toInt()
     }
 
@@ -609,7 +609,7 @@ internal class MessageDetailsAdapter(
 
     private fun setMessageContentFixedLoadingHeight(messageWebViewContainer: LinearLayout) {
         val params = messageWebViewContainer.layoutParams
-        params.height = notLastMessageLoadingHeight
+        params.height = messageContentFixedLoadingHeight
         messageWebViewContainer.layoutParams = params
     }
 
