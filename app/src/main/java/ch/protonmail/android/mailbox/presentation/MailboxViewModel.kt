@@ -532,8 +532,11 @@ internal class MailboxViewModel @Inject constructor(
 
         Timber.v("messagesToMailboxItems labels: $labelIds")
 
-        val labels = (labelsList ?: labelRepository.findLabels(labelIds))
-            .toLabelChipUiModels()
+        val labels = labelsList?.toLabelChipUiModels()
+            ?: labelIds
+                .chunked(Constants.MAX_SQL_ARGUMENTS)
+                .flatMap { labelChunk -> labelRepository.findLabels(labelChunk) }
+                .toLabelChipUiModels()
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)
