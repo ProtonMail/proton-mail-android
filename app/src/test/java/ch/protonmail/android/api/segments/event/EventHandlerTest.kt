@@ -72,7 +72,8 @@ class EventHandlerTest {
         launchInitialDataFetch = mockk(),
         messageFactory = mockk(),
         userId = testUserId(),
-        externalScope = TestCoroutineScope()
+        externalScope = TestCoroutineScope(),
+        messageFlagsToEncryptionMapper = mockk()
     )
 
     @Test

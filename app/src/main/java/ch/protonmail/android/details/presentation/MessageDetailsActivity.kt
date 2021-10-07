@@ -53,6 +53,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
+import ch.protonmail.android.details.presentation.mapper.MessageEncryptionUiModelMapper
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
@@ -95,6 +96,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     @Inject
     lateinit var messageBodyParser: MessageBodyParser
+
+    @Inject
+    lateinit var messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper
 
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
@@ -207,6 +211,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageDetailsRecyclerView,
             messageBodyParser,
             mUserManager,
+            messageEncryptionUiModelMapper,
             ::onLoadEmbeddedImagesClicked,
             ::onDisplayRemoteContentClicked,
             ::onLoadMessageBody,

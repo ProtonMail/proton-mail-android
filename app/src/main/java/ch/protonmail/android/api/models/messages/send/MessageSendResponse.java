@@ -25,6 +25,7 @@ import ch.protonmail.android.api.models.messages.receive.MessageLocationResolver
 import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
 import ch.protonmail.android.data.local.model.Message;
+import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper;
 
 public class MessageSendResponse extends ResponseBody {
     private ServerMessage Sent;
@@ -34,7 +35,13 @@ public class MessageSendResponse extends ResponseBody {
         final AttachmentFactory attachmentFactory = new AttachmentFactory();
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
         final MessageLocationResolver messageLocationResolver = new MessageLocationResolver(null);
-        final MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory, messageLocationResolver);
+        final MessageFlagsToEncryptionMapper messageFlagsMapper = new MessageFlagsToEncryptionMapper();
+        final MessageFactory messageFactory = new MessageFactory(
+                attachmentFactory,
+                messageSenderFactory,
+                messageLocationResolver,
+                messageFlagsMapper
+        );
         return messageFactory.createMessage(Sent);
     }
 

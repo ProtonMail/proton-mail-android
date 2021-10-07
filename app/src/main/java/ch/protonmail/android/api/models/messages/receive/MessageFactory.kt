@@ -24,6 +24,7 @@ import ch.protonmail.android.api.models.factories.checkIfSet
 import ch.protonmail.android.api.models.factories.parseBoolean
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.data.MessageFlagsToEncryptionMapper
 import ch.protonmail.android.utils.MessageUtils
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,7 +32,8 @@ import javax.inject.Inject
 class MessageFactory @Inject constructor(
     private val attachmentFactory: IAttachmentFactory,
     private val messageSenderFactory: MessageSenderFactory,
-    private val messageLocationResolver: MessageLocationResolver
+    private val messageLocationResolver: MessageLocationResolver,
+    private val messageFlagsToEncryptionMapper: MessageFlagsToEncryptionMapper
 ) {
 
     fun createDraftApiRequest(message: Message): DraftBody = DraftBody(message.toApiPayload())
@@ -58,7 +60,7 @@ class MessageFactory @Inject constructor(
                 .contains(Constants.MessageLocationType.STARRED),
             folderLocation = serverMessage.FolderLocation,
             numAttachments = serverMessage.NumAttachments,
-            messageEncryption = MessageUtils.calculateEncryption(serverMessage.Flags),
+            messageEncryption = messageFlagsToEncryptionMapper.flagsToMessageEncryption(serverMessage.Flags),
             expirationTime = serverMessage.ExpirationTime,
             isReplied = serverMessage.Flags and MessageFlag.REPLIED.value == MessageFlag.REPLIED.value,
             isRepliedAll = serverMessage.Flags and MessageFlag.REPLIED_ALL.value == MessageFlag.REPLIED_ALL.value,

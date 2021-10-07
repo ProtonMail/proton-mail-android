@@ -677,13 +677,13 @@
     <string name="sender_lock_pgp_encrypted">PGP-encrypted message</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-encrypted message from verified address</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-signed message from verified address</string> <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end encrypted message</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">End-to-end encrypted message from verified address</string>
     <string name="sender_lock_unknown_scheme" translatable="false">Unknown encryption scheme</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end encrypted</string>
     <string name="composer_lock_internal_pinned">End-to-end encrypted to verified address</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP-signed</string>
     <string name="composer_lock_no_scheme" translatable="false"></string>
     <string name="composer_lock_unknown_scheme" translatable="false">Unknown encryption scheme</string>

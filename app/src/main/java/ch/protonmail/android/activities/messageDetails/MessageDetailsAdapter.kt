@@ -50,8 +50,10 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
+import ch.protonmail.android.details.domain.model.SignatureVerification
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
+import ch.protonmail.android.details.presentation.mapper.MessageEncryptionUiModelMapper
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
 import ch.protonmail.android.ui.model.LabelChipUiModel
@@ -82,6 +84,7 @@ internal class MessageDetailsAdapter(
     private val messageDetailsRecyclerView: RecyclerView,
     private val messageBodyParser: MessageBodyParser,
     private val userManager: UserManager,
+    private val messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper,
     private val onLoadEmbeddedImagesClicked: (Message, List<String>) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
@@ -223,8 +226,19 @@ internal class MessageDetailsAdapter(
 
         fun bind(message: Message) {
             val messageDetailsHeaderView = itemView.headerView
+            val signatureVerification = when {
+                message.hasValidSignature -> SignatureVerification.SUCCESSFUL
+                message.hasInvalidSignature -> SignatureVerification.FAILED
+                else -> SignatureVerification.UNKNOWN
+            }
+            val messageEncryptionStatus = messageEncryptionUiModelMapper.messageEncryptionToUiModel(
+                message.messageEncryption,
+                signatureVerification,
+                message.isSent
+            )
             messageDetailsHeaderView.bind(
                 message,
+                messageEncryptionStatus,
                 exclusiveLabelsPerMessage[message.messageId] ?: listOf(),
                 nonExclusiveLabelsPerMessage[message.messageId] ?: listOf(),
                 ::onHeaderCollapsed

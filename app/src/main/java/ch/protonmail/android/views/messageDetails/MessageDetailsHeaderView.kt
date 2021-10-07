@@ -43,6 +43,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.model.MessageEncryptionUiModel
 import ch.protonmail.android.details.presentation.view.CollapsedMessageViews
 import ch.protonmail.android.details.presentation.view.MessageDetailsHeaderIcons
 import ch.protonmail.android.ui.model.LabelChipUiModel
@@ -50,7 +51,6 @@ import ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.ui.locks.SenderLockIcon
 import ch.protonmail.android.views.messagesList.SenderInitialView
 
 private const val HYPHEN = "-"
@@ -179,6 +179,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
     fun bind(
         message: Message,
+        messageEncryptionUiModel: MessageEncryptionUiModel,
         exclusiveLabels: List<Label>,
         nonExclusiveLabels: List<LabelChipUiModel>,
         onHeaderCollapsed: () -> Unit
@@ -207,12 +208,11 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             expandedHeaderGroup.addView(labelsImageView)
         }
 
-        val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
-        lockIconTextView.text = context.getText(senderLockIcon.icon)
-        lockIconTextView.setTextColor(senderLockIcon.color)
-        lockIconExtendedTextView.text = context.getText(senderLockIcon.icon)
-        lockIconExtendedTextView.setTextColor(senderLockIcon.color)
-        encryptionInfoTextView.text = context.getText(senderLockIcon.tooltip)
+        lockIconTextView.text = context.getText(messageEncryptionUiModel.lockIcon)
+        lockIconTextView.setTextColor(context.getColor(messageEncryptionUiModel.lockIconColor))
+        lockIconExtendedTextView.text = context.getText(messageEncryptionUiModel.lockIcon)
+        lockIconExtendedTextView.setTextColor(context.getColor(messageEncryptionUiModel.lockIconColor))
+        encryptionInfoTextView.text = context.getText(messageEncryptionUiModel.tooltip)
 
         val messageLocation = message.location
         getIconForMessageLocation(Constants.MessageLocationType.fromInt(messageLocation))?.let { icon ->
