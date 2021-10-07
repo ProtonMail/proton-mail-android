@@ -82,7 +82,7 @@ data class Addresses(
      * @return [Address] with lower `Order` ( entry.key )
      *   `null` if there are no addresses
      */
-    val primary get() = addresses.minBy { it.key }?.value
+    val primary get() = addresses.minByOrNull { it.key }?.value
     val hasAddresses get() = addresses.isNotEmpty()
 
     /**

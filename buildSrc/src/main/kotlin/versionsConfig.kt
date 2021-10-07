@@ -23,9 +23,9 @@ import studio.forface.easygradle.dsl.android.*
 fun initVersions() {
 
     // region Kotlin
-    `kotlin version` =                          "1.4.32"        // Released: Mar 22, 2021
-    `coroutines version` =                      "1.5.0"         // Released: May 14, 2021
-    `serialization version` =                   "1.1.0"         // Released: Feb 20, 2021
+    `kotlin version` =                          "1.5.31"        // Released: Sep 20, 2021
+    `coroutines version` =                      "1.5.2"         // Released: Sep 02, 2021
+    `serialization version` =                   "1.2.2"         // Released: Jul 08, 2021
     // endregion
 
     // region Android
@@ -38,7 +38,7 @@ fun initVersions() {
     `espresso version` =                        "3.4.0-beta01"  // Released: May 15, 2021
     `hilt-android version` =                    "2.37"          // Released: Jun 10, 2021
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
-    `ktx version` =                             "1.5.0-rc02"    // Released: May 24, 2021
+    `ktx version` =                             "1.6.0"         // Released: Jul 04, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.4.0"         // Released: Jul 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
