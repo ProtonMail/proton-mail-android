@@ -114,6 +114,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
 
+    private val recyclerViewLinearLayoutManager = LinearLayoutManager(this)
+
     override fun getLayoutId(): Int = R.layout.activity_message_details
 
     override fun storagePermissionGranted() {
@@ -145,6 +147,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         AppUtil.clearNotifications(this, currentUser.id)
         supportActionBar?.title = null
         initAdapters()
+        initRecyclerView()
         val recipientUsername = messageRecipientUsername
         if (recipientUsername != null && currentUser.name.s != recipientUsername) {
             val userId = checkNotNull(messageRecipientUserId) { "Username found in extras, but user id" }
@@ -212,6 +215,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             ::onReplyMessageClicked,
             ::onShowMessageActionSheet
         )
+    }
+
+    private fun initRecyclerView() {
+        messageDetailsRecyclerView.layoutManager = recyclerViewLinearLayoutManager
+        messageDetailsRecyclerView.adapter = messageExpandableAdapter
     }
 
     private fun onLoadMessageBody(message: Message) {
@@ -489,12 +497,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private inner class ConversationUiModelObserver : Observer<ConversationUiModel> {
 
         override fun onChanged(conversation: ConversationUiModel) {
-            try {
-                val lastNonDraftMessage = conversation.messages.last { it.isDraft().not() }
+            val lastNonDraftMessage = conversation.messages.lastOrNull { it.isDraft().not() }
+            if (lastNonDraftMessage != null) {
                 setupLastMessageActionsListener(lastNonDraftMessage)
-                Timber.v("New decrypted message ${lastNonDraftMessage.messageId}")
-            } catch (exception: NoSuchElementException) {
-                Timber.d(exception, "Conversation contains only drafts, disabling the bottom action bar")
+            } else {
                 messageDetailsActionsView.isVisible = false
             }
 
@@ -503,26 +509,18 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             Timber.v("setMessage conversations size: ${conversation.messages.size}")
             messageExpandableAdapter.setMessageData(conversation)
-            if (viewModel.refreshedKeys) {
-                if (isAutoShowRemoteImages) {
-                    viewModel.remoteContentDisplayed()
-                }
-                messageDetailsRecyclerView.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
-                messageDetailsRecyclerView.adapter = messageExpandableAdapter
+            if (viewModel.refreshedKeys && isAutoShowRemoteImages) {
+                viewModel.remoteContentDisplayed()
             }
             viewModel.triggerVerificationKeyLoading()
 
             progress.visibility = View.GONE
             invalidateOptionsMenu()
+
+            // Scroll to the last message if there is more than one message,
+            // i.e. the item count is greater than 2 (header and body)
             if (shouldScrollToPosition && messageExpandableAdapter.itemCount > 2) {
-                // Scroll to the last message if there is more than one message,
-                // i.e. the item count is greater than 2 (header and body)
-                appBarLayout.setExpanded(false, true)
-                // delay for better scrolling experience
-                messageDetailsRecyclerView.postDelayed(
-                    { messageDetailsRecyclerView.smoothScrollToPosition(messageExpandableAdapter.itemCount - 1) },
-                    500
-                )
+                scrollToTheExpandedMessage(lastNonDraftMessage)
                 shouldScrollToPosition = false
             }
             viewModel.renderingPassed = true
@@ -630,6 +628,18 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             onBackPressed()
             viewModel.markUnread()
         }
+    }
+
+    private fun scrollToTheExpandedMessage(messageToScrollTo: Message?) {
+        val messageBodyIndexToScrollTo = if (messageToScrollTo == null) {
+            messageExpandableAdapter.itemCount - 1
+        } else {
+            messageExpandableAdapter.visibleItems.indexOfLast{
+                it.message == messageToScrollTo
+            }
+        }
+        val messageHeaderIndexToScrollTo = messageBodyIndexToScrollTo - 1
+        recyclerViewLinearLayoutManager.scrollToPositionWithOffset(messageHeaderIndexToScrollTo, 0)
     }
 
     private fun showLabelsActionSheet(labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL) {
