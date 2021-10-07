@@ -369,18 +369,18 @@ internal class MailboxViewModel @Inject constructor(
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
-        return loadMoreCombineTransform<GetConversationsResult, List<Label>, Pair<GetConversationsResult, List<Label>>>(
+        return loadMoreCombineTransform<List<Label>, GetConversationsResult, Pair<List<Label>, GetConversationsResult>>(
+            observeLabels(userId),
             observeConversationsByLocation(
                 userId,
                 locationId
-            ),
-            observeLabels(userId).asLoadMoreFlow()
+            )
         ) { conversations, labels ->
             emit(conversations to labels)
         }
             .loadMoreMap { pair ->
-                val labels = pair.second
-                when (val result = pair.first) {
+                val labels = pair.first
+                when (val result = pair.second) {
                     is GetConversationsResult.Success -> {
                         val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
                         isFirstData = false
@@ -422,18 +422,18 @@ internal class MailboxViewModel @Inject constructor(
         Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
-        return loadMoreCombineTransform<GetMessagesResult, List<Label>, Pair<GetMessagesResult, List<Label>>>(
+        return loadMoreCombineTransform<List<Label>, GetMessagesResult, Pair<List<Label>, GetMessagesResult>>(
+            observeLabels(userId),
             observeMessagesByLocation(
                 userId = userId,
                 mailboxLocation = location,
                 labelId = labelId
-            ),
-            observeLabels(userId).asLoadMoreFlow()
+            )
         ) { messages, labels ->
             emit(messages to labels)
         }.loadMoreMap { pair ->
-            val labels = pair.second
-            when (val result = pair.first) {
+            val labels = pair.first
+            when (val result = pair.second) {
                 is GetMessagesResult.Success -> {
                     val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
                     isFirstData = false
