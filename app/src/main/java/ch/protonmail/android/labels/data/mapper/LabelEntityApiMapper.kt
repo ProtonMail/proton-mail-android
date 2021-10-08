@@ -40,7 +40,7 @@ class LabelEntityApiMapper @Inject constructor() : Mapper<LabelApiModel, LabelEn
         parentId = model.parentId ?: EMPTY_STRING,
         expanded = model.expanded ?: 0,
         sticky = model.sticky ?: 0,
-        notify = model.notify
+        notify = model.notify ?: 0
     )
 
     fun toApiModel(labelEntity: LabelEntity) = LabelApiModel(

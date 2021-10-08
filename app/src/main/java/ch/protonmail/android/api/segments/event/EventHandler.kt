@@ -43,10 +43,12 @@ import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.data.mapper.LabelEventApiMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -89,7 +91,8 @@ internal class EventHandler @AssistedInject constructor(
     @Assisted val userId: UserId,
     private val externalScope: CoroutineScope,
     private val messageFlagsToEncryptionMapper: MessageFlagsToEncryptionMapper,
-    private val labelRepository: LabelRepository
+    private val labelRepository: LabelRepository,
+    private val labelEventApiMapper: LabelEventApiMapper
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
@@ -553,7 +556,7 @@ internal class EventHandler @AssistedInject constructor(
                         id = LabelId(id),
                         name = name,
                         color = color,
-                        type = labelType,
+                        type = requireNotNull(LabelType.fromIntOrNull(labelType)),
                         path = path,
                         parentId = parentId ?: EMPTY_STRING,
                     )
@@ -564,7 +567,7 @@ internal class EventHandler @AssistedInject constructor(
 
                 ActionType.UPDATE -> externalScope.launch {
                     val label = labelRepository.findLabel(LabelId(item.id))
-                    writeLabel(label, item)
+                    writeLabel(label, labelEventApiMapper.toApiModel(item))
                 }
 
                 ActionType.DELETE -> {

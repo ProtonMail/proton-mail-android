@@ -74,7 +74,8 @@ class EventHandlerTest {
         userId = testUserId(),
         externalScope = TestCoroutineScope(),
         messageFlagsToEncryptionMapper = mockk(),
-        labelRepository = mockk()
+        labelRepository = mockk(),
+        labelEventApiMapper = mockk()
     )
 
     @Test

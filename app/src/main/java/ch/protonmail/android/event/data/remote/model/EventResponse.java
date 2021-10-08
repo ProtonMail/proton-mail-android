@@ -34,7 +34,7 @@ import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsFactory;
 import ch.protonmail.android.data.local.model.ServerFullContactDetails;
-import ch.protonmail.android.labels.data.remote.model.LabelApiModel;
+import ch.protonmail.android.labels.data.remote.model.LabelEventModel;
 import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel;
 
 public class EventResponse extends ResponseBody {
@@ -235,7 +235,7 @@ public class EventResponse extends ResponseBody {
         @SerializedName(Fields.Events.ACTION)
         private int action;
         @SerializedName(Fields.Events.LABEL)
-        private LabelApiModel label;
+        private LabelEventModel label;
 
         public String getID() {
             return id;
@@ -245,7 +245,7 @@ public class EventResponse extends ResponseBody {
             return action;
         }
 
-        public LabelApiModel getLabel() {
+        public LabelEventModel getLabel() {
             return label;
         }
     }

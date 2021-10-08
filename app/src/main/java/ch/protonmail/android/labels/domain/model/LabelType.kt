@@ -36,5 +36,14 @@ enum class LabelType(val typeInt: Int) {
     CONTACT_GROUP(LABEL_TYPE_ID_CONTACT_GROUP),
 
     @SerialName(LABEL_TYPE_ID_FOLDER.toString())
-    FOLDER(LABEL_TYPE_ID_FOLDER)
+    FOLDER(LABEL_TYPE_ID_FOLDER);
+
+    companion object {
+
+        fun fromIntOrNull(typeInt: Int): LabelType? {
+            return values().find {
+                it.typeInt == typeInt
+            }
+        }
+    }
 }
