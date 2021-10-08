@@ -63,7 +63,7 @@ internal class PostLabelWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val labelName = getLabelNameParam() ?: return Result.failure()
         val color = getLabelColorParam() ?: return Result.failure()
-        val type = getTypeParam()
+        val type = getTypeParam().takeIf { it != -1 } ?: return Result.failure()
 
         return when (val response = createOrUpdateLabel(labelName, color, type)) {
             is ApiResult.Success -> {
@@ -119,7 +119,7 @@ internal class PostLabelWorker @AssistedInject constructor(
 
     private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 
-    private fun getTypeParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, LabelType.MESSAGE_LABEL.typeInt)
+    private fun getTypeParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, -1)
 
     private fun getLabelColorParam() = inputData.getString(KEY_INPUT_DATA_LABEL_COLOR)
 
