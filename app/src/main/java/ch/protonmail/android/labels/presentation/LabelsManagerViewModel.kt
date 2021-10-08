@@ -75,17 +75,15 @@ internal class LabelsManagerViewModel @Inject constructor(
 
     /** Triggered when a selection has changed */
     private val selectedLabelIds = MutableLiveData(mutableSetOf<String>())
-    private var deleteLabelIds = MutableLiveData<List<String>>()
-    private var updateSaveTrigger = MutableSharedFlow<Unit>(replay = 1)
+    private var deleteLabelIds = MutableSharedFlow<List<String>>(extraBufferCapacity = 1)
+    private var updateSaveTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     /** Triggered when [selectedLabelIds] has changed */
     val hasSelectedLabels = ViewStateStore.from(selectedLabelIds.map { it.isNotEmpty() }).lock
 
-    val hasSuccessfullyDeletedMessages: LiveData<Boolean>
-        get() = deleteLabelIds.switchMap {
-            liveData {
-                emitSource(deleteLabels(it.map { LabelId(it) }).asLiveData())
-            }
+    val hasSuccessfullyDeletedMessages: Flow<Boolean>
+        get() = deleteLabelIds.flatMapLatest { ids ->
+            deleteLabels(ids.map(::LabelId))
         }
 
     /**
@@ -152,7 +150,7 @@ internal class LabelsManagerViewModel @Inject constructor(
 
     /** Delete all Labels which id is in [selectedLabelIds] */
     fun deleteSelectedLabels() {
-        deleteLabelIds.value = selectedLabelIds.mapValue { it }
+        deleteLabelIds.tryEmit(selectedLabelIds.mapValue { it })
         selectedLabelIds.clear()
     }
 

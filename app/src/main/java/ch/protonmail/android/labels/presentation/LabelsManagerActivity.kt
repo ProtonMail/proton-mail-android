@@ -174,10 +174,11 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         viewModel.hasSelectedLabels.observeData { delete_labels.isEnabled = it }
 
         // Observe deleted labels
-        viewModel.hasSuccessfullyDeletedMessages.observe(
-            this,
-            { onLabelDeletedEvent(it) }
-        )
+        viewModel.hasSuccessfullyDeletedMessages
+            .onEach {
+                onLabelDeletedEvent(it)
+            }
+            .launchIn(lifecycleScope)
 
         viewModel.createUpdateFlow
             .onEach {
