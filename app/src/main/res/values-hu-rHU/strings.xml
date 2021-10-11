@@ -626,12 +626,12 @@ Svájci székhellyel</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP titkosított üzenet, ellenőrzött címről</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP aláírt üzenet, ellenőrzött címről</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Végpontok közt titkosított üzenet</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">Végpontok közt titkosított, ellenőrzött címről</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Végpontok közt titkosított</string>
     <string name="composer_lock_internal_pinned">Végpontok közt titkosított, ellenőrzött címre</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-titkosított</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP-aláírt</string>
     <string name="recipient_not_found_and_removed">A címzett nem található és eltávolításra került: %s</string>
     <string name="recipient_error_and_removed">Hiba a címzett információinak lekérésre közben, ezért eltávolításra került: %s</string>

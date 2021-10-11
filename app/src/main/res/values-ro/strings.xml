@@ -633,12 +633,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Mesaj criptat cu PGP de la adresă verificată</string>
     <string name="sender_lock_pgp_signed_verified_sender">Mesaj semnat cu PGP de la adresă verificată</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Mesaj criptat în ambele părți</string>
+    <string name="sender_lock_internal">Mesaj criptat și semnat de la un capăt la altul</string>
     <string name="sender_lock_internal_verified">Mesaj criptat în ambele părți de la adresă verificată</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Criptat în ambele părți</string>
     <string name="composer_lock_internal_pinned">Criptat în ambele părți spre adresă verificată</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Criptat cu PGP</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Criptat cu PGP spre destinatar verificat</string>
     <string name="composer_lock_pgp_signed">Semnat cu PGP</string>
     <string name="recipient_not_found_and_removed">Destinatarul %s nu a fost găsit și a fost eliminat.</string>
     <string name="recipient_error_and_removed">A apărut o eroare în timpul preluării informațiilor destinatarului, iar destinatarul %s a fost eliminat.</string>

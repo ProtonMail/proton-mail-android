@@ -616,12 +616,12 @@
     <string name="sender_lock_pgp_encrypted_verified">検証済みアドレスからのPGP暗号化メッセージ</string>
     <string name="sender_lock_pgp_signed_verified_sender">検証済みアドレスからのPGP署名付きメッセージ（暗号化なし）</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">エンドツーエンド暗号化されたメッセージ</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">検証済みアドレスからの、エンドツーエンド暗号化されたメッセージ</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">エンドツーエンド暗号化</string>
     <string name="composer_lock_internal_pinned">検証済みアドレスへの、エンドツーエンド暗号化による送信</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP暗号化済み（署名付き）</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP署名のみ（暗号化なし）</string>
     <string name="recipient_not_found_and_removed">宛先が見つかりません：%sは削除されています</string>
     <string name="recipient_error_and_removed">宛先の情報の受信中に問題が発生しました。宛先が削除されています：%s</string>

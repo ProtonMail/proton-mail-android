@@ -644,12 +644,12 @@
     <string name="sender_lock_pgp_encrypted_verified">PGP-зашифроване повідомлення з надійної адреси</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-підписане повідомлення з надійної адреси</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Наскрізно зашифроване повідомлення</string>
+    <string name="sender_lock_internal">Наскрізно зашифроване і підписане повідомлення</string>
     <string name="sender_lock_internal_verified">Наскрізно зашифроване повідомлення з надійної адреси</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Наскрізно зашифровано</string>
     <string name="composer_lock_internal_pinned">Наскрізно зашифровано для надійної адреси</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-зашифровано</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Зашифровано PGP для перевіреного отримувача</string>
     <string name="composer_lock_pgp_signed">PGP-підписано</string>
     <string name="recipient_not_found_and_removed">Не вдається знайти отримувача: %s було вилучено</string>
     <string name="recipient_error_and_removed">Сталася помилка при отриманні подробиць про отримувача, тому його було вилучено: %s</string>

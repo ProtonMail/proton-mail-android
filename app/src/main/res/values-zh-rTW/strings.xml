@@ -616,12 +616,12 @@
     <string name="sender_lock_pgp_encrypted_verified">來自已驗證電子郵件地址的 PGP 加密郵件</string>
     <string name="sender_lock_pgp_signed_verified_sender">來自已驗證電子郵件地址的 PGP 簽署郵件</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">端到端加密郵件</string>
+    <string name="sender_lock_internal">端對端加密並簽署郵件</string>
     <string name="sender_lock_internal_verified">來自已驗證電子郵件地址的端到端加密郵件</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">端到端加密</string>
     <string name="composer_lock_internal_pinned">以端到端加密寄送到已驗證電子郵件地址</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP 加密</string>
+    <string name="composer_lock_pgp_encrypted_pinned">經 PGP 加密寄送給已驗證收件人</string>
     <string name="composer_lock_pgp_signed">PGP 簽章</string>
     <string name="recipient_not_found_and_removed">找不到收件者：%s 並且已被移除</string>
     <string name="recipient_error_and_removed">取得收件者資訊時出錯，收件者已被移除：%s</string>

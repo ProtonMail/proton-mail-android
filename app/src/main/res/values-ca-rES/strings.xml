@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Missatge PGP xifrat de direcció verificada</string>
     <string name="sender_lock_pgp_signed_verified_sender">Missatge signat per PGP d\'una adreça verificada</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Missatge encriptat extrem a extrem</string>
+    <string name="sender_lock_internal">Missatge signat i xifrat d\'extrem a extrem</string>
     <string name="sender_lock_internal_verified">Missatge encriptat extrem a extrem d\'una adreça verificada</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Encriptat extrem a extrem</string>
     <string name="composer_lock_internal_pinned">D\'extrem a extrem encriptada a l\'adreça verificada</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encriptat</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Xifrat PGP al destinatari verificat</string>
     <string name="composer_lock_pgp_signed">Signat amb PGP</string>
     <string name="recipient_not_found_and_removed">No s\'ha pogut trobar el destinatari: %s i s\'ha eliminat</string>
     <string name="recipient_error_and_removed">S\'ha produït un error en recuperar la informació del destinatari i es va eliminar el destinatari: %s</string>

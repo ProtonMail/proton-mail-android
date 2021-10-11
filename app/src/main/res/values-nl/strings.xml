@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">PGP-versleuteld bericht van geverifieerd e-mailadres</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-ondertekend bericht van geverifieerd e-mailadres</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end versleuteld bericht</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">End-to-end versleuteld bericht van geverifieerd e-mailadres</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end versleuteld</string>
     <string name="composer_lock_internal_pinned">End-to-end versleuteld naar geverifieerde ontvanger</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-versleuteld</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP-ondertekend</string>
     <string name="recipient_not_found_and_removed">Ontvanger kan niet worden gevonden: %s en het is verwijderd</string>
     <string name="recipient_error_and_removed">Er is een fout opgetreden bij het ophalen van de gegevens van de ontvanger en de ontvanger is verwijderd: %s</string>

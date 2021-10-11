@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Izen ittuwegelhen s PGP yekka-d seg tansa yettusneqden</string>
     <string name="sender_lock_pgp_signed_verified_sender">Izen ittuzemlen s PGP yekka-d seg tansa yettusneqden</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Izen ittwawegelhen seg tazwara ar tagara</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">Izen ittwawegelhen seg tazwara ar tagara yekka-d seg tansa yettusneqden</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ittwawegelhen seg tazwara ar tagara</string>
     <string name="composer_lock_internal_pinned">Ittwawegelhen seg tazwara ar tagara ar tansa yettusneqden</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Awgelhen-PGP</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP-s uzmul</string>
     <string name="recipient_not_found_and_removed">Recipient could not be found: %s and it has been removed</string>
     <string name="recipient_error_and_removed">An error occurred while retrieving recipient information and the recipient has been removed: %s</string>

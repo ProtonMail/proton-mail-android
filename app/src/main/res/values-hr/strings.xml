@@ -634,12 +634,12 @@
     <string name="sender_lock_pgp_encrypted_verified">PGP-šifrirana poruka od potvrđene adrese</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-potpisana poruka od potvrđene adrese</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end šifrirane poruke</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">End-to-end šifrirana poruka od potvrđene adrese</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-End šifriranje</string>
     <string name="composer_lock_internal_pinned">End-to-end šifiranje za potvrđenu adresu</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP šifrirano</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP potpisano</string>
     <string name="recipient_not_found_and_removed">Primatelj nije pronađen: %s i uklonjen je</string>
     <string name="recipient_error_and_removed">Došlo je do pogreške prilikom dohvaćanja informacija o primatelju i primatelj je uklonjen: %s</string>

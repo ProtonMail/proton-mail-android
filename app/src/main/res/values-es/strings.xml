@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Mensaje PGP-cifrado de dirección verificada</string>
     <string name="sender_lock_pgp_signed_verified_sender">Mensaje PGP-firmado de dirección verificada</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Mensaje cifrado de extremo a extremo</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">Mensaje cifrado de extremo a extremo de dirección verificada</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Cifrado de extremo a extremo</string>
     <string name="composer_lock_internal_pinned">Cifrado de extremo a extremo al destinatario verificado</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-cifrado</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP-firmado</string>
     <string name="recipient_not_found_and_removed">No se encontró al destinatario: %s y eso se ha eliminado</string>
     <string name="recipient_error_and_removed">Ocurrió un error al recuperar la información del destinatario así que ha sido borrado: %s</string>

@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Κρυπτογραφημένο μήνυμα με PGP απο επαληθευμένη διεύθυνση</string>
     <string name="sender_lock_pgp_signed_verified_sender">Μήνυμα υπογεγραμμένο με PGP, απο επαληθευμένη διεύθυνση</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Μήνυμα κρυπτογραφημένο από άκρο σε άκρο</string>
+    <string name="sender_lock_internal">Κρυπτογραφημένο και υπογεγραμμένο μήνυμα από άκρο σε άκρο</string>
     <string name="sender_lock_internal_verified">Από άκρη σε άκρη κρυπτογραφημένο μήνυμα, από επαληθευμένη διεύθυνση</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Κρυπτογραφημένο από άκρο σε άκρο</string>
     <string name="composer_lock_internal_pinned">Κρυπτογραφημένο από άκρο σε άκρο σε επαληθευμένη διεύθυνση</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-κρυπτογραφημένο</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP κρυπτογραφημένο σε επαληθευμένο παραλήπτη</string>
     <string name="composer_lock_pgp_signed">Υπογεγραμμένο με PGP</string>
     <string name="recipient_not_found_and_removed">Δεν ήταν δυνατή η εύρεση του παραλήπτη: %s και έχει αφαιρεθεί</string>
     <string name="recipient_error_and_removed">Παρουσιάστηκε σφάλμα κατά την ανάκτηση των πληροφοριών του παραλήπτη και ο παραλήπτης αφαιρέθηκε: %s</string>

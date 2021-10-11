@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">PGP-dulrituð skilaboð frá sannvottuðu tölvupóstfangi</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-undirrituð skilaboð frá sannvottuðu tölvupóstfangi</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Enda-í-enda dulrituð skilaboð</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">Enda-í-enda dulrituð skilaboð frá sannvottuðu tölvupóstfangi</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Enda-í-enda dulritað</string>
     <string name="composer_lock_internal_pinned">Enda-í-enda dulritað til sannvottaðs tölvupóstfangs</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-dulritað</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP-undirritað</string>
     <string name="recipient_not_found_and_removed">Gat ekki fundið viðtakanda: %s og hann hefur verið fjarlægður</string>
     <string name="recipient_error_and_removed">Villa kom upp við að ná í upplýsingar um tengilið enda hefur hann verið fjarlægður: %s</string>

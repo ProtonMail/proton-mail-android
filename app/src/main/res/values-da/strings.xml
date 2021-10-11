@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">PGP-krypteret besked fra bekræftet adresse</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-signeret besked fra bekræftet adresse</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end krypteret besked</string>
+    <string name="sender_lock_internal">End-to-end krypteret og signeret besked</string>
     <string name="sender_lock_internal_verified">End-to-end krypteret besked fra bekræftet adresse</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end-kryptering</string>
     <string name="composer_lock_internal_pinned">End-to-end krypteret for at bekræfte adresse</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-krypteret</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-krypteret til verificeret modtager</string>
     <string name="composer_lock_pgp_signed">PGP-signeret</string>
     <string name="recipient_not_found_and_removed">Modtager %s ikke fundet, adresse fjernet</string>
     <string name="recipient_error_and_removed">En fejl opstod under hentning af modtageroplysninger, og modtageren er blevet fjernet: %s</string>

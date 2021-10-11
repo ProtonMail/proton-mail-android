@@ -643,12 +643,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Zpráva šifrovaná pomocí PGP z ověřené adresy</string>
     <string name="sender_lock_pgp_signed_verified_sender">Zpráva podepsaná pomocí PGP z ověřené adresy</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-End šifrovaná zpráva</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">End-to-end šifrovaná zpráva z ověřené adresy</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-End šifrováno</string>
     <string name="composer_lock_internal_pinned">Zašifrováno End-to-end k ověřenému příjemci</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Šifrované pomocí PGP</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">Podepsané pomocí PGP</string>
     <string name="recipient_not_found_and_removed">Příjemce nebyl nalezen: %s byl odstraněn</string>
     <string name="recipient_error_and_removed">Došlo k chybě při načítání informací o příjemci, příjemce byl odstraněn: %s</string>
@@ -902,7 +902,7 @@
     <string name="local_storage">Local storage limit</string>
     <string name="storage_value">%1$d MB (využíváte %2$.2f MB)</string>
     <!-- endregion -->
-    <string name="app_settings">App settings</string>
+    <string name="app_settings">Nastavení aplikace</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push Notifikace</string>
     <string name="extended_notifications">Rozšířená oznámení</string>
@@ -924,11 +924,11 @@
     <string name="turn_combined_contacts_on">Zapněte tuto funkci pro automatické vyplňování e-mailových adres pomocí kontaktů ze všech vašich přihlášených účtů.</string>
     <string name="local_cache_management">Místní mezipaměť</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
-    <string name="empty_data">Clear data</string>
+    <string name="empty_data">Smazat data</string>
     <!-- endregion -->
     <string name="enabled">Povoleno</string>
     <string name="disabled">Zakázáno</string>
-    <string name="app_info">App information</string>
+    <string name="app_info">O aplikaci</string>
     <string name="app_version">Verze aplikace</string>
     <!-- endregion -->
     <!-- region Multi Account -->

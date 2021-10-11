@@ -48,7 +48,7 @@
     <string name="set_msg_password_info">Setel sandi untuk mengenkripsi pesan ini bagi pengguna non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Pelajari lebih lanjut</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Kata sandi pesan</string>
-    <string name="set_msg_password_msg_password_hint">panjang karakter 8 - 21</string>
+    <string name="set_msg_password_msg_password_hint">panjang 8 hingga 21 karakter</string>
     <string name="set_msg_password_repeat_password_title">Ulangi kata sandi</string>
     <string name="set_msg_password_repeat_password_hint">Sandi harus cocok</string>
     <string name="set_msg_password_password_hint_title">Petunjuk kata sandi</string>
@@ -312,7 +312,7 @@
     <string name="dismiss">Abaikan</string>
     <string name="new_message_arrived">Pesan baru!</string>
     <string name="please_choose_color">Silakan pilih warna</string>
-    <string name="display_images">Tampilkan konten jarak jauh</string>
+    <string name="display_images">Tampilkan remote content</string>
     <string name="retry">Coba lagi</string>
     <string name="saving_failed_no_conn">Gagal menyimpan, tidak ada koneksi</string>
     <string name="close_engagement">tutup tur</string>
@@ -619,12 +619,12 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="sender_lock_pgp_encrypted_verified">Pesan terenkripsi PGP dari alamat terverifikasi</string>
     <string name="sender_lock_pgp_signed_verified_sender">Pesan yang ditandatangani PGP dari alamat yang terverifikasi</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Pesan terenkripsi end-to-end</string>
+    <string name="sender_lock_internal">Pesan bertanda dan terenkripsi dua arah</string>
     <string name="sender_lock_internal_verified">Pesan terenkripsi end-to-end dari alamat terverifikasi</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Dienkripsi end-to-end</string>
     <string name="composer_lock_internal_pinned">Terenkripsi end-to-end ke alamat terverifikasi</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Terenkripsi PGP</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Terenkripsi PGP ke penerima terverifikasi</string>
     <string name="composer_lock_pgp_signed">Ditandatangani PGP</string>
     <string name="recipient_not_found_and_removed">Penerima tidak dapat ditemukan: %s dan telah dihapus</string>
     <string name="recipient_error_and_removed">Kesalahan saat mengambil informasi penerima dan penerima telah dihapus: %s</string>
@@ -765,7 +765,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="mobile_footer_info">Footer ini ditambahkan setelah tanda tangan Anda</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Tunda</string>
-    <string name="notifications_snooze">Notifications snooze</string>
+    <string name="notifications_snooze">Tunda notifikasi</string>
     <string-array name="quick_snooze_values">
         <item>30 menit</item>
         <item>1 jam</item>
@@ -854,7 +854,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="app_settings">Pengaturan aplikasi</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push notifications</string>
+    <string name="push_notifications">Notifikasi dari server</string>
     <string name="extended_notifications">Notifikasi diperpanjang</string>
     <string name="extended_notifications_description">Aktifkan fitur ini untuk melihat pengirim\nemail dalam notifikasi.</string>
     <string name="notification_settings">Pengaturan Pemberitahuan</string>
@@ -870,7 +870,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="app_language">Bahasa aplikasi</string>
     <string name="custom_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="auto_detect">Deteksi otomatis</string>
-    <string name="combined_contacts">Combined contacts</string>
+    <string name="combined_contacts">Kontak gabungan</string>
     <string name="turn_combined_contacts_on">Aktifkan fitur ini untuk otomatis melengkapi alamat email menggunakan kontak dari semua akun masuk anda.</string>
     <string name="local_cache_management">Cache lokal</string>
     <string name="cache_cleared">Cache lokal telah dikosongkan</string>
@@ -925,7 +925,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Kesalahan memuat percakapan, silakan coba lagi</string>
+    <string name="error_loading_conversations">Terdapat kesalahan dalam memuat percakapan, silakan coba lagi</string>
     <string name="star">Bintang</string>
     <string name="unstar">Hapus Bintang</string>
     <string name="star_unstar">Bintangi/Hapus Bintang</string>
@@ -949,13 +949,13 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contacts_call">Panggilan</string>
     <string name="contacts_send_group_message">Kirim pesan grup</string>
     <string name="inbox_this_folder_is_empty">Folder ini kosong</string>
-    <string name="inbox_nothing_to_see_here">Tidak ada yang bisa dilihat di sini</string>
+    <string name="inbox_nothing_to_see_here">Tidak ada apa-apa di sini</string>
     <string name="inbox_could_not_retrieve_messages">Tidak dapat mengambil pesan Anda</string>
     <string name="inbox_pull_down_to_retry">Silakan tarik ke bawah untuk coba ulang</string>
     <string name="edit_draft">Edit draf</string>
     <string name="primary_user_error">Tidak dapat meningkatkan, ada yang salah.</string>
     <string name="details_show_history">Tampilkan riwayat</string>
     <string name="could_not_complete_action">Tidak dapat menyelesaikan tindakan</string>
-    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
+    <string name="decryption_of_message_failed">Dekripsi gagal: dekripsi konten di pesan ini gagal.</string>
     <string name="labels_selected_limit_reached">Batas tercapai</string>
 </resources>

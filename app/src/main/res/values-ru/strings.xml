@@ -643,12 +643,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Сообщение, зашифрованное PGP; с проверенного адреса</string>
     <string name="sender_lock_pgp_signed_verified_sender">Сообщение, подписанное PGP; с проверенного адреса</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Сообщение, зашифрованное сквозным методом</string>
+    <string name="sender_lock_internal">Зашифрованное сквозным шифрованием и подписанное сообщение</string>
     <string name="sender_lock_internal_verified">Сообщение, зашифрованное сквозным методом; с проверенного адреса</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Зашифровано сквозным методом</string>
     <string name="composer_lock_internal_pinned">Зашифровано сквозным методом для проверенного адреса</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Зашифровано PGP</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Зашифровано PGP для проверенного получателя</string>
     <string name="composer_lock_pgp_signed">Подписано PGP</string>
     <string name="recipient_not_found_and_removed">Получатель не может быть найден: адрес %s был удалён</string>
     <string name="recipient_error_and_removed">Произошла ошибка при получении сведений о получателе и получатель был удалён: %s</string>
