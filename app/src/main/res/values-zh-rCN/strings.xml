@@ -83,7 +83,7 @@
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">加密邮件</string>
-    <string name="secure_email_swiss">来自瑞士的\n加密邮箱服务</string>
+    <string name="secure_email_swiss">来自瑞士的\n加密邮箱</string>
     <string name="decrypt">解密</string>
     <string name="sign_in">登录</string>
     <string name="sign_out">退出账户</string>
@@ -615,12 +615,12 @@
     <string name="sender_lock_pgp_encrypted_verified">来自已验证地址的 PGP 加密邮件</string>
     <string name="sender_lock_pgp_signed_verified_sender">来自已验证地址的 PGP 签名邮件</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">端到端加密邮件</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">来自已验证地址的端到端加密邮件</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">经过端到端加密</string>
     <string name="composer_lock_internal_pinned">经过端到端加密发往已验证的地址</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP 加密</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">经过 PGP 签名</string>
     <string name="recipient_not_found_and_removed">找不到收件人 %s，已将其移除</string>
     <string name="recipient_error_and_removed">获取收件人 %s 的信息时出错，已将其移除</string>

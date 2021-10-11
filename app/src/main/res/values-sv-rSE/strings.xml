@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">PGP-krypterat meddelande från verifierad adress</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-signerat meddelande från verifierad adress</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end-krypterat meddelande</string>
+    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
     <string name="sender_lock_internal_verified">End-to-end-krypterat meddelande från verifierad adress</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end-krypterat</string>
     <string name="composer_lock_internal_pinned">End-to-end krypterad till verifierad mottagare</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-krypterat</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
     <string name="composer_lock_pgp_signed">PGP-signerat</string>
     <string name="recipient_not_found_and_removed">Mottagaren kunde inte hittas: %s och den har därför tagits bort</string>
     <string name="recipient_error_and_removed">Ett fel uppstod vid hämtning av mottagarinformation och mottagaren har därför tagits bort: %s</string>

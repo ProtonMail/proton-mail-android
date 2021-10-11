@@ -643,12 +643,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Wiadomość zaszyfrowana PGP od zweryfikowanego adresu</string>
     <string name="sender_lock_pgp_signed_verified_sender">Wiadomość podpisana PGP od zweryfikowanego adresu</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Wiadomość zaszyfrowana end-to-end</string>
+    <string name="sender_lock_internal">Wiadomość zaszyfrowana end-to-end i podpisana</string>
     <string name="sender_lock_internal_verified">Wiadomość zaszyfrowana end-to-end od zweryfikowanego adresu</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Zaszyfrowane end-to-end</string>
     <string name="composer_lock_internal_pinned">Zaszyfrowana end-to-end do zweryfikowanego adresu</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Zaszyfrowana PGP</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Zaszyfrowana PGP do zweryfikowanego odbiorcy</string>
     <string name="composer_lock_pgp_signed">Podpisana PGP</string>
     <string name="recipient_not_found_and_removed">Odbiorca %s nie został znaleziony i został usunięty</string>
     <string name="recipient_error_and_removed">Wystąpił błąd podczas pobierania informacji o odbiorcy i został on usunięty: %s</string>

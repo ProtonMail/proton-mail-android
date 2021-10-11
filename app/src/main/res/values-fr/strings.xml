@@ -625,12 +625,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Message chiffré par PGP provenant d\'une adresse vérifiée</string>
     <string name="sender_lock_pgp_signed_verified_sender">Message signé avec PGP provenant d\'une adresse vérifiée</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Message chiffré de bout en bout</string>
+    <string name="sender_lock_internal">Message signé et chiffré de bout en bout</string>
     <string name="sender_lock_internal_verified">Message chiffré de bout en bout à partir d\'une adresse vérifiée</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Chiffré de bout en bout</string>
     <string name="composer_lock_internal_pinned">Chiffré de bout en bout vers une adresse vérifiée</string>
-    <string name="composer_lock_pgp_encrypted_pinned">Chiffré par PGP</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Chiffrement PGP vers un destinataire vérifié</string>
     <string name="composer_lock_pgp_signed">Signé par PGP</string>
     <string name="recipient_not_found_and_removed">%s : le destinataire est introuvable et a été supprimé</string>
     <string name="recipient_error_and_removed">Une erreur s’est produite lors de la récupération des informations du destinataire et le destinataire a été supprimé : %s</string>

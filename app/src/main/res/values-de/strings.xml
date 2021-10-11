@@ -392,7 +392,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="log_out">%s abmelden?</string>
     <string name="logout_question">Möchten Sie sich wirklich abmelden?</string>
     <string name="logout_question_next_account">Sie werden zu %s weitergeleitet.</string>
-    <string name="upgrade">Aktualisieren</string>
+    <string name="upgrade">Upgrade</string>
     <string name="country">Land</string>
     <string name="set_cont">Speichern und Weiter</string>
     <string name="error">Fehler</string>
@@ -625,12 +625,12 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="sender_lock_pgp_encrypted_verified">PGP-verschlüsselte Nachricht von bestätigter E-Mail-Adresse</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-signierte Nachricht von bestätigter E-Mail-Adresse</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Ende-zu-Ende verschlüsselte Nachricht</string>
+    <string name="sender_lock_internal">Ende-zu-Ende verschlüsselte und signierte Nachricht</string>
     <string name="sender_lock_internal_verified">Ende-zu-Ende verschlüsselte Nachricht von bestätigter E-Mail-Adresse</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ende-zu-Ende verschlüsselt</string>
     <string name="composer_lock_internal_pinned">Ende-zu-Ende verschlüsselt zum verifizierten Empfänger</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-verschlüsselt</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-verschlüsselt an bestätigten Empfänger</string>
     <string name="composer_lock_pgp_signed">PGP-signiert</string>
     <string name="recipient_not_found_and_removed">Empfänger konnte nicht gefunden werden: %s wurde entfernt</string>
     <string name="recipient_error_and_removed">Fehler beim Abrufen von Empfängerinformationen. Der Empfänger „%s” wurde entfernt.</string>
