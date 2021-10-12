@@ -242,7 +242,6 @@ internal class MessageActionSheetViewModel @Inject constructor(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                         primaryUserId,
-                        location,
                         locationId
                     )
                     if (result is ConversationsActionResult.Error) {
@@ -278,7 +277,6 @@ internal class MessageActionSheetViewModel @Inject constructor(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
                         primaryUserId,
-                        location,
                         locationId
                     )
                     if (result is ConversationsActionResult.Error) {

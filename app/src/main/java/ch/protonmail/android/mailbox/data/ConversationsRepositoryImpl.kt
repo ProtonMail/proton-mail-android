@@ -97,6 +97,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     private val labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer,
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer,
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer,
+    private val markUnreadLatestNonDraftMessageInLocation: MarkUnreadLatestNonDraftMessageInLocation,
     connectivityManager: NetworkConnectivityManager
 ) : ConversationsRepository {
 
@@ -198,7 +199,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             conversationDao.updateNumUnreadMessages(conversationId, 0)
             // All the messages from the conversation are marked as read
-            getAllMessagesFromAConversation(conversationId).forEach { message ->
+            getAllConversationMessagesSortedByNewest(conversationId).forEach { message ->
                 yield()
                 messageDao.saveMessage(message.apply { setIsRead(true) })
             }
@@ -210,7 +211,6 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     override suspend fun markUnread(
         conversationIds: List<String>,
         userId: UserId,
-        location: Constants.MessageLocationType,
         locationId: String
     ): ConversationsActionResult {
         markConversationsUnreadWorker.enqueue(conversationIds, locationId, userId)
@@ -222,16 +222,8 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                 return ConversationsActionResult.Error
             }
             conversationDao.updateNumUnreadMessages(conversationId, conversation.numUnread + 1)
-
-            // Only the latest unread message from the current location is marked as unread
-            getAllMessagesFromAConversation(conversationId).forEach { message ->
-                yield()
-                if (message.isRead) {
-                    Timber.v("Make message ${message.messageId} read")
-                    messageDao.saveMessage(message.apply { setIsRead(false) })
-                    return@forEachConversation
-                }
-            }
+            val conversationMessages = getAllConversationMessagesSortedByNewest(conversationId)
+            markUnreadLatestNonDraftMessageInLocation(conversationMessages, locationId, userId)
         }
 
         return ConversationsActionResult.Success
@@ -248,7 +240,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             Timber.v("Star conversation $conversationId")
             var lastMessageTime = 0L
-            val starredMessages = getAllMessagesFromAConversation(conversationId).map { message ->
+            val starredMessages = getAllConversationMessagesSortedByNewest(conversationId).map { message ->
                 yield()
                 message.addLabels(listOf(starredLabelId))
                 message.isStarred = true
@@ -276,7 +268,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             Timber.v("UnStar conversation $conversationId")
-            val unstarredMessages = getAllMessagesFromAConversation(conversationId).map { message ->
+            val unstarredMessages = getAllConversationMessagesSortedByNewest(conversationId).map { message ->
                 yield()
                 message.removeLabels(listOf(starredLabelId))
                 message.isStarred = false
@@ -303,7 +295,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             Timber.v("Move conversation $conversationId to folder: $folderId")
             var lastMessageTime = 0L
-            val messagesToUpdate = getAllMessagesFromAConversation(conversationId).map { message ->
+            val messagesToUpdate = getAllConversationMessagesSortedByNewest(conversationId).map { message ->
                 yield()
                 val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
                 val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
@@ -354,7 +346,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         deleteConversationsRemoteWorker.enqueue(conversationIds, currentFolderId, userId)
 
         conversationIds.forEach { conversationId ->
-            val messagesFromConversation = getAllMessagesFromAConversation(conversationId)
+            val messagesFromConversation = getAllConversationMessagesSortedByNewest(conversationId)
             // The delete action deletes the messages that are in the current mailbox folder
             val messagesToDelete = messagesFromConversation.filter {
                 currentFolderId in it.allLabelIDs
@@ -385,7 +377,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            val labeledMessages = messageDao.findAllMessagesInfoFromConversation(conversationId).map { message ->
+            val labeledMessages = messageDao.findAllConversationMessagesSortedByNewest(conversationId).map { message ->
                 yield()
                 message.addLabels(listOf(labelId))
                 lastMessageTime = max(lastMessageTime, message.time)
@@ -410,7 +402,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         unlabelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
 
         conversationIds.forEach { conversationId ->
-            val unlabeledMessages = messageDao.findAllMessagesInfoFromConversation(conversationId).map { message ->
+            val unlabeledMessages = messageDao.findAllConversationMessagesSortedByNewest(conversationId).map { message ->
                 yield()
                 message.removeLabels(listOf(labelId))
                 return@map message
@@ -446,8 +438,8 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun getAllMessagesFromAConversation(conversationId: String): List<Message> =
-        messageDao.findAllMessagesInfoFromConversation(conversationId).onEach { message ->
+    private suspend fun getAllConversationMessagesSortedByNewest(conversationId: String): List<Message> =
+        messageDao.findAllConversationMessagesSortedByNewest(conversationId).onEach { message ->
             message.attachments = message.attachments(messageDao)
         }
 

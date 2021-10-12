@@ -287,7 +287,6 @@ internal class MessageDetailsViewModel @Inject constructor(
                     listOf(messageOrConversationId),
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                     userManager.requireCurrentUserId(),
-                    location,
                     mailboxLocationId ?: location.messageLocationTypeValue.toString()
                 )
             } else {

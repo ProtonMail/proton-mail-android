@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
@@ -84,7 +83,6 @@ interface ConversationsRepository {
     suspend fun markUnread(
         conversationIds: List<String>,
         userId: UserId,
-        location: Constants.MessageLocationType,
         locationId: String
     ): ConversationsActionResult
 
