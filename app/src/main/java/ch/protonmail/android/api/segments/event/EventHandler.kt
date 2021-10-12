@@ -502,6 +502,13 @@ class EventHandler @AssistedInject constructor(
 
         AddressKeyActivationWorker.activateAddressKeysIfNeeded(context, eventAddresses, username)
         user.setAddresses(addresses)
+
+        val isAccountMigrated = addresses.any { address ->
+            address.keys.any { key ->
+                key.signature != null && key.token != null
+            }
+        }
+        user.legacyAccount = !isAccountMigrated
     }
 
     private fun writeContactsUpdates(contactsDatabase: ContactsDatabase, events: List<EventResponse.ContactEventBody>) {

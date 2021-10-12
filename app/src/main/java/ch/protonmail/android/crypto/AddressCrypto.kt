@@ -35,6 +35,8 @@ import ch.protonmail.libs.core.utils.encodeToBase64String
 import com.proton.gopenpgp.armor.Armor
 import com.proton.gopenpgp.constants.Constants
 import com.proton.gopenpgp.crypto.KeyRing
+import com.proton.gopenpgp.crypto.PGPMessage
+import com.proton.gopenpgp.crypto.PGPSignature
 import com.proton.gopenpgp.crypto.PlainMessage
 import com.proton.gopenpgp.crypto.SessionKey
 import com.squareup.inject.assisted.Assisted
@@ -73,9 +75,6 @@ class AddressCrypto @AssistedInject constructor(
     override val passphrase: ByteArray?
         get() = passphraseFor(requirePrimaryKey())
 
-    private val AddressKey.isPrimary get() =
-        this == addressKeys.primaryKey
-
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
     protected override val AddressKey.privateKey: PgpField.PrivateKey
         get() = privateKey
@@ -85,43 +84,51 @@ class AddressCrypto @AssistedInject constructor(
         val token = key.token
         val signature = key.signature
 
-        return if (token == null || signature == null) {
-            mailboxPassword
+        if (token == null || signature == null) {
+            return mailboxPassword
+        }
 
-        } else {
-            val errorMessage = "Failed getting passphrase for key ${key.id.s}, " +
-                "primary = ${key.isPrimary}, " +
-                "has activation = ${key.activation != null}"
-
-            val armoredPrivateKey = userManager.getTokenManager(userManager.username)?.encPrivateKey
-            armoredPrivateKey?.let {
-                val decryptedToken = openPgp.decryptMessage(token.string, armoredPrivateKey, mailboxPassword)
-                val validSignature = verifySignature(it, decryptedToken, signature.string, errorMessage)
-                require(validSignature)
-
-                decryptedToken.toByteArray(Charsets.UTF_8)
+        val pgpMessage = GoOpenPgpCrypto.newPGPMessageFromArmored(token.string)
+        userManager.user.keys.forEach { userKey ->
+            val userKeyRing = GoOpenPgpCrypto.newKeyRing(
+                GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey).unlock(mailboxPassword)
+            )
+            decryptToken(
+                pgpMessage,
+                userKeyRing
+            )?.let { decryptedToken ->
+                if (verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)) {
+                    return decryptedToken
+                }
             }
         }
+        Timber.e("Failed getting passphrase for key (id = ${key.id.s}) using user keys")
+        return null
     }
 
+    private fun decryptToken(
+        token: PGPMessage,
+        userKeyRing: KeyRing
+    ): ByteArray? = runCatching {
+        userKeyRing.decrypt(token, null, 0).data
+    }.getOrNull()
+
     private fun verifySignature(
-        armoredPrivateKey: String,
-        decryptedToken: String,
-        signature: String,
-        errorMessage: String
+        userKeyRing: KeyRing,
+        decryptedToken: ByteArray,
+        signature: PgpField.Signature,
+        userKeyId: String,
+        addressKeyId: String
     ) = runCatching {
-        val armoredSignature = GoOpenPgpCrypto.newPGPSignatureFromArmored(signature)
-        val unlockedArmoredKey = GoOpenPgpCrypto.newKeyFromArmored(armoredPrivateKey).unlock(mailboxPassword)
-        val verificationKeyRing = GoOpenPgpCrypto.newKeyRing(unlockedArmoredKey)
-        verificationKeyRing.verifyDetached(
+        userKeyRing.verifyDetached(
             PlainMessage(decryptedToken),
-            armoredSignature,
+            PGPSignature(signature.string),
             GoOpenPgpCrypto.getUnixTime()
         )
     }.fold(
         onSuccess = { true },
         onFailure = {
-            Timber.w(it, errorMessage)
+            Timber.e(it, "Verification of token for address key (id = $addressKeyId) with user key (id = $userKeyId) failed")
             false
         }
     )

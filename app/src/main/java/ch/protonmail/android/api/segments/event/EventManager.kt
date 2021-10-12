@@ -31,10 +31,8 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// region constants
 private const val PREF_NEXT_EVENT_ID = "latest_event_id"
 const val PREF_LATEST_EVENT = "latest_event"
-// endregion
 
 /**
  * EventManager manages the fetching of the proper events and delegates their handling.
