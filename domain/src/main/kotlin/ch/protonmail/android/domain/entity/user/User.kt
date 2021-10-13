@@ -86,14 +86,6 @@ data class User( // TODO: consider naming UserInfo or similar
         requireValid()
     }
 
-    val isLegacy
-        get() = with(addresses.primary?.keys?.primaryKey) {
-            this?.signature == null && this?.token == null
-        }
-
-    fun isPaidMailUser() =
-        Plan.Mail.Paid in plans
-
     fun findAddressById(addressId: AddressId): Address? =
         addresses.addresses.values.find { it.id == addressId }
 }
