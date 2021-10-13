@@ -77,7 +77,7 @@ class AddressCrypto @AssistedInject constructor(
     protected override val AddressKey.privateKey: PgpField.PrivateKey
         get() = privateKey
 
-    protected override fun passphraseFor(key: AddressKey): ByteArray? {
+    override fun passphraseFor(key: AddressKey): ByteArray? {
         // This is for smart-cast support
         val token = key.token
         val signature = key.signature
