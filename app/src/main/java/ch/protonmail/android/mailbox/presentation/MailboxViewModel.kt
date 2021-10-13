@@ -45,6 +45,7 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
+import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -126,7 +127,8 @@ internal class MailboxViewModel @Inject constructor(
     private val deleteConversations: DeleteConversations,
     private val observeLabels: ObserveLabels,
     private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
-    private val getMailSettings: GetMailSettings
+    private val getMailSettings: GetMailSettings,
+    private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -552,7 +554,11 @@ internal class MailboxViewModel @Inject constructor(
                 messageData = messageData,
                 isDeleted = message.deleted,
                 labels = labelChipUiModels,
-                recipients = message.toListStringGroupsAware,
+                recipients = message.toList.joinToString {
+                    getCorrespondentDisplayName(
+                        messageRecipientToCorrespondentMapper.toDomainModel(it), contacts
+                    )
+                },
                 isDraft = isDraft
             )
             mailboxUiItem

@@ -47,6 +47,7 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -67,8 +68,6 @@ import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
-import ch.protonmail.android.utils.MessageUtils
-import ch.protonmail.android.utils.MessageUtils.toContactsAndGroupsString
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.EntryPoints
 import io.mockk.Runs
@@ -143,6 +142,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val getMailSettings: GetMailSettings = mockk()
 
+    private val messageRecipientToCorrespondentMapper = MessageRecipientToCorrespondentMapper()
+
     private lateinit var viewModel: MailboxViewModel
 
     private val loadingState = MailboxState.Loading
@@ -202,7 +203,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             deleteConversations = deleteConversations,
             observeLabels = mockk(),
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
-            getMailSettings = getMailSettings
+            getMailSettings = getMailSettings,
+            messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper
         )
     }
 
@@ -246,7 +248,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     fun messagesToMailboxMapsSenderNameToMessageSenderNameWhenSenderEmailDoesNotExistInContacts() =
         runBlockingTest {
             // Given
-            val recipients = listOf(MessageRecipient("recipientName", "recipient@pm.ch"))
             val messages = listOf(
                 Message().apply {
                     messageId = "messageId"
@@ -257,9 +258,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("contactId", "anotherContact@pm.me", "anotherContactName"))
             )
-            mockk<MessageUtils> {
-                every { toContactsAndGroupsString(recipients) } returns "recipientName"
-            }
 
             val expected = MailboxUiItem(
                 itemId = "messageId",
@@ -311,9 +309,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         } returns flowOf(
             listOf(ContactEmail("contactId", senderEmailAddress, contactName))
         )
-        mockk<MessageUtils> {
-            every { toContactsAndGroupsString(recipients) } returns "recipientName"
-        }
+
         every { conversationModeEnabled(any()) } returns false
         val expected = MailboxUiItem(
             itemId = "messageId",
@@ -360,9 +356,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     subject = "subject"
                 }
             )
-            mockk<MessageUtils> {
-                every { toContactsAndGroupsString(recipients) } returns "recipientName"
-            }
             every { conversationModeEnabled(any()) } returns false
 
             val expected = MailboxUiItem(
@@ -401,7 +394,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     fun messagesToMailboxMapsSenderNameToMessageSenderEmailWhenSenderEmailDoesNotExistInContactsAndSenderNameIsEmpty() =
         runBlockingTest {
             // Given
-            val recipients = listOf(MessageRecipient("recipientName", "recipient@pm.ch"))
             val messages = listOf(
                 Message().apply {
                     messageId = "messageId"
@@ -409,9 +401,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     subject = "subject"
                 }
             )
-            mockk<MessageUtils> {
-                every { toContactsAndGroupsString(recipients) } returns "recipientName"
-            }
             every { conversationModeEnabled(any()) } returns false
 
             // Then
@@ -447,6 +436,58 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         }
 
     @Test
+    fun messagesToMailboxMapsRecipientNameToContactNameWhenRecipientEmailExistsInContactsList() = runBlockingTest {
+        // Given
+        val contactName = "contactNameTest"
+        val recipientEmailAddress = "recipient@pm.ch"
+        val recipients = listOf(MessageRecipient("recipientName", recipientEmailAddress))
+        val messages = listOf(
+            Message().apply {
+                messageId = "messageId"
+                subject = "subject"
+                toList = recipients
+            }
+        )
+        coEvery {
+            contactsRepository.findContactsByEmail(match { emails -> emails.contains(recipientEmailAddress) })
+        } returns flowOf(
+            listOf(ContactEmail("contactId", recipientEmailAddress, contactName))
+        )
+
+        every { conversationModeEnabled(any()) } returns false
+        val expected = MailboxUiItem(
+            itemId = "messageId",
+            senderName = "",
+            subject = "subject",
+            lastMessageTimeMs = 0,
+            hasAttachments = false,
+            isStarred = false,
+            isRead = true,
+            expirationTime = 0,
+            messagesCount = null,
+            messageData = MessageData(
+                location = INVALID.messageLocationTypeValue,
+                isReplied = false,
+                isRepliedAll = false,
+                isForwarded = false,
+                isInline = false
+            ),
+            isDeleted = false,
+            labels = emptyList(),
+            recipients = "recipientName",
+            isDraft = false
+        ).toMailboxState()
+
+        // When
+        viewModel.mailboxState.test {
+            // Then
+            assertEquals(loadingState, expectItem())
+            messagesResponseChannel.send(GetMessagesResult.Success(messages))
+            assertEquals(expected, expectItem())
+        }
+    }
+
+    @Test
     fun messagesToMailboxMapsAllFieldsOfMailboxUiItemFromMessageCorrectly() = runBlockingTest {
         // Given
         val recipients = listOf(MessageRecipient("recipientName", "recipient@pm.ch"))
@@ -470,9 +511,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 isInline = false
             }
         )
-        mockk<MessageUtils> {
-            every { toContactsAndGroupsString(recipients) } returns "recipientName"
-        }
         every { conversationModeEnabled(any()) } returns false
 
         val expected = MailboxUiItem(
@@ -497,9 +535,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 LabelChipUiModel(LabelId("0"), Name("label 0"), null),
                 LabelChipUiModel(LabelId("2"), Name("label 2"), null)
             ),
-            recipients = toContactsAndGroupsString(
-                recipients
-            ),
+            recipients = "recipientName",
             isDraft = false
         ).toMailboxState()
 
@@ -1000,9 +1036,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     allLabelIDs = listOf(ALL_DRAFT_LABEL_ID, DRAFT_LABEL_ID)
                 }
             )
-            mockk<MessageUtils> {
-                every { toContactsAndGroupsString(recipients) } returns "recipientName"
-            }
             every { conversationModeEnabled(any()) } returns false
 
             // Then
