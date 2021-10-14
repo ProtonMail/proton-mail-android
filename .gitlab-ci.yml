@@ -21,6 +21,7 @@ stages:
   - manual-release
   - analyze
   - build
+  - startReview
   - test
   - bot-i18n
   - bot-release
@@ -293,6 +294,30 @@ include:
   - project: 'agarroux/publish-github'
     ref: master
     file: '/jobs/release.gitlab-ci.yml'
+
+  - project: 'ProtonVPN/android/android-app-new'
+    ref: development
+    file: '/appetize-integration.yml'
+
+
+startReview:
+  before_script:
+    - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
+    - export REVIEW_APP_ARTIFACT_PATH="app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk"
+    - echo ${REVIEW_APP_ARTIFACT_PATH}
+  extends: .startReview
+  only:
+    - merge_requests
+
+stopReview:
+  extends: .stopReview
+  rules:
+    # The cleanup is always manual on a Merge Request
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+      allow_failure: true
+    # But it's not needed when not on a Merge Request
+    - when: never
 
 i18n-sync-crowdin:
   stage: bot-i18n
