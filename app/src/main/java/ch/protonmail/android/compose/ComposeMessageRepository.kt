@@ -191,7 +191,7 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun getSendPreference(emailList: List<String>, destination: GetSendPreferenceJob.Destination) {
-        jobManager.addJobInBackground(GetSendPreferenceJob(contactDao, emailList, destination))
+        jobManager.addJobInBackground(GetSendPreferenceJob(emailList, destination))
     }
 
     fun resignContactJob(

@@ -234,6 +234,4 @@ interface ContactDao {
         clearContactEmailsCache()
         saveAllContactsEmails(allContactEmails)
     }
-
-    //endregion
 }

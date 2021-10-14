@@ -25,7 +25,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -93,19 +93,24 @@ data class ContactEmail @JvmOverloads constructor(
 }
 
 class ContactEmailConverter {
+
+    private val gson by lazy {
+        GsonBuilder().disableHtmlEscaping().create()
+    }
+
     @TypeConverter
     fun contactEmailLabelsToString(contactEmailLabels: List<String>?): String? {
         if (contactEmailLabels.orEmpty().isEmpty()) {
             return ""
         }
-        return Gson().toJson(contactEmailLabels)
+        return gson.toJson(contactEmailLabels)
     }
 
     @TypeConverter
     fun stringToContactEmailLabels(value: String?): List<String>? {
-        if (value.orEmpty().isEmpty()) {
+        if (value.isNullOrEmpty()) {
             return ArrayList()
         }
-        return Gson().fromJson(value, Array<String>::class.java).asList()
+        return gson.fromJson(value, Array<String>::class.java).asList()
     }
 }

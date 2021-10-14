@@ -169,9 +169,7 @@ import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PMWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
-import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
 import me.proton.core.accountmanager.domain.AccountManager;
 import me.proton.core.domain.entity.UserId;
 import me.proton.core.user.domain.entity.AddressId;
@@ -243,6 +241,7 @@ public class ComposeMessageActivity
     private String mAction;
     private boolean mUpdateDraftPmMeChanged;
     private boolean largeBody;
+    private boolean mSendingInProgress;
 
     private ComposeMessageViewModel composeMessageViewModel;
     @Inject
@@ -673,15 +672,6 @@ public class ComposeMessageActivity
             recipient = bccRecipientView;
         }
         addRecipientsToView(recipients, recipient);
-    }
-
-    @NonNull
-    private Function0<Unit> onConnectivityCheckRetry() {
-        return () -> {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, binding.composerBottomAppBar.getId()).show();
-            composeMessageViewModel.checkConnectivityDelayed();
-            return null;
-        };
     }
 
     private void onConnectivityEvent(Constants.ConnectionState connectivity) {
@@ -1698,8 +1688,6 @@ public class ComposeMessageActivity
             mEmbeddedImagesTask.execute();
         }
     }
-
-    private boolean mSendingInProgress;
 
     private void loadPMContacts() {
         if (mUserManager.getCurrentLegacyUser().getCombinedContacts()) {
