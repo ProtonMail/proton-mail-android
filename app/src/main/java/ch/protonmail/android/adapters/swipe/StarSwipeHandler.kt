@@ -22,15 +22,13 @@ import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostUnstarJob
-import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Job
 
 class StarSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(
         message: SimpleMessage,
-        currentLocation: String,
-        labelRepository: LabelRepository
+        currentLocation: String
     ): Job {
         return if (!message.isStarred) {
             PostStarJob(listOf(message.messageId))
@@ -42,8 +40,7 @@ class StarSwipeHandler : ISwipeHandler {
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String,
-        labelRepository: LabelRepository
+        currentLocation: String
     ): Job {
         return if (message.isStarred) {
             PostStarJob(listOf(message.messageId))

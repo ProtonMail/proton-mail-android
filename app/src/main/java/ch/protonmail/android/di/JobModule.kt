@@ -24,6 +24,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchMailSettingsWorker
@@ -36,6 +37,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.user.domain.UserAddressManager
 import timber.log.Timber
 import javax.inject.Singleton
 
@@ -95,6 +97,7 @@ interface JobEntryPoint {
     fun messageDetailsRepository(): MessageDetailsRepository
     fun queueNetworkUtil(): QueueNetworkUtil
     fun userManager(): UserManager
-    fun userAddressManager(): me.proton.core.user.domain.UserAddressManager
+    fun userAddressManager(): UserAddressManager
     fun fetchMailSettingsWorkerEnqueuer(): FetchMailSettingsWorker.Enqueuer
+    fun labelRepository(): LabelRepository
 }

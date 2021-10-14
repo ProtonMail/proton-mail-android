@@ -21,6 +21,8 @@ package ch.protonmail.android.adapters.swipe;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.JobManager;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -29,12 +31,11 @@ import javax.inject.Singleton;
 
 import ch.protonmail.android.api.models.SimpleMessage;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.labels.domain.LabelRepository;
 
 @Singleton
 public class SwipeProcessor {
 
-    private Map<SwipeAction, ISwipeHandler> handlers = new EnumMap<>(SwipeAction.class);
+    private final Map<SwipeAction, ISwipeHandler> handlers = new EnumMap<>(SwipeAction.class);
 
     @Inject
     public SwipeProcessor() {
@@ -45,18 +46,25 @@ public class SwipeProcessor {
         handlers.put(swipeAction, swipeHandler);
     }
 
-    public void handleSwipe(SwipeAction swipeAction, SimpleMessage message, JobManager jobManager, String currentLocation, LabelRepository labelRepository) {
+    public void handleSwipe(@NotNull SwipeAction swipeAction,
+                            @NotNull SimpleMessage message,
+                            @NotNull JobManager jobManager,
+                            @NotNull String currentLocation) {
         ISwipeHandler handler = handlers.get(swipeAction);
         if (handler != null) {
-            Job job = handler.handleSwipe(message, currentLocation, labelRepository);
+            Job job = handler.handleSwipe(message, currentLocation);
             jobManager.addJobInBackground(job);
         }
     }
 
-    public void handleUndo(SwipeAction swipeAction, SimpleMessage message, JobManager jobManager, Constants.MessageLocationType messageLocation, String currentLocation, LabelRepository labelRepository) {
+    public void handleUndo(@NotNull SwipeAction swipeAction,
+                           @NotNull SimpleMessage message,
+                           @NotNull JobManager jobManager,
+                           @NotNull Constants.MessageLocationType messageLocation,
+                           @NotNull String currentLocation) {
         ISwipeHandler handler = handlers.get(swipeAction);
         if (handler != null) {
-            Job job = handler.handleUndo(message, messageLocation, currentLocation, labelRepository);
+            Job job = handler.handleUndo(message, messageLocation, currentLocation);
             jobManager.addJobInBackground(job);
         }
     }

@@ -32,7 +32,6 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.labels.domain.LabelRepository;
 import ch.protonmail.android.labels.domain.model.Label;
 import ch.protonmail.android.labels.domain.model.LabelId;
 import ch.protonmail.android.labels.domain.model.LabelType;
@@ -42,13 +41,11 @@ import timber.log.Timber;
 public class MoveToFolderJob extends ProtonMailBaseJob {
     private List<String> mMessageIds;
     private String mLabelId;
-    private final LabelRepository labelRepository;
 
-    public MoveToFolderJob(List<String> messageIds, String labelId, LabelRepository labelRepository) {
+    public MoveToFolderJob(List<String> messageIds, String labelId) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_LABEL));
         this.mMessageIds = messageIds;
         this.mLabelId = labelId;
-        this.labelRepository = labelRepository;
     }
 
     @Override
@@ -97,7 +94,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
             message.setLocation(Constants.MessageLocationType.LABEL_FOLDER.getMessageLocationTypeValue());
         }
 
-        message.setFolderLocation(labelRepository);
+        message.setFolderLocation(getLabelRepository());
         Timber.d("Move message id: %s, location: %s, labels: %s", message.getMessageId(), message.getLocation(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
@@ -108,7 +105,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         ArrayList<String> labelsToRemove = new ArrayList<>();
 
         for (String labelId : oldLabels) {
-            Label label = labelRepository.findLabelBlocking(new LabelId(labelId));
+            Label label = getLabelRepository().findLabelBlocking(new LabelId(labelId));
             // find folders
             if (label != null && (label.getType() == LabelType.FOLDER) && !label.getId().equals(mLabelId)) {
                 labelsToRemove.add(labelId);

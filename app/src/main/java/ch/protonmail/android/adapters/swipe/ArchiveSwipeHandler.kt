@@ -23,27 +23,24 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Job
 
 class ArchiveSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(
         message: SimpleMessage,
-        currentLocation: String,
-        labelRepository: LabelRepository
+        currentLocation: String
     ): Job = PostArchiveJob(listOf(message.messageId), listOf(currentLocation))
 
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String,
-        labelRepository: LabelRepository
+        currentLocation: String
     ): Job {
         return if (messageLocation == Constants.MessageLocationType.LABEL_FOLDER) {
-            MoveToFolderJob(listOf(message.messageId), currentLocation, labelRepository)
+            MoveToFolderJob(listOf(message.messageId), currentLocation)
         } else {
-            PostInboxJob(listOf(message.messageId), labelRepository)
+            PostInboxJob(listOf(message.messageId))
         }
     }
 }

@@ -53,6 +53,7 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
     protected fun getQueueNetworkUtil() = entryPoint.queueNetworkUtil()
     protected fun getUserManager() = entryPoint.userManager()
     protected fun getUserAddressManager() = entryPoint.userAddressManager()
+    protected fun getLabelRepository() = entryPoint.labelRepository()
 
     override fun onAdded() {}
 

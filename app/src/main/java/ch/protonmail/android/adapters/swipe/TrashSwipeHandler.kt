@@ -25,28 +25,25 @@ import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostDraftJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Job
 
 class TrashSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(
         message: SimpleMessage,
-        currentLocation: String,
-        labelRepository: LabelRepository
+        currentLocation: String
     ): Job =
-        PostTrashJobV2(listOf(message.messageId), currentLocation, labelRepository)
+        PostTrashJobV2(listOf(message.messageId), currentLocation)
 
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String,
-        labelRepository: LabelRepository
+        currentLocation: String
     ): Job = when (messageLocation) {
-        Constants.MessageLocationType.INBOX -> PostInboxJob(listOf(message.messageId), labelRepository)
+        Constants.MessageLocationType.INBOX -> PostInboxJob(listOf(message.messageId))
         Constants.MessageLocationType.ARCHIVE -> PostArchiveJob(listOf(message.messageId))
         Constants.MessageLocationType.LABEL_FOLDER -> MoveToFolderJob(
-            listOf(message.messageId), currentLocation, labelRepository
+            listOf(message.messageId), currentLocation
         )
         else -> PostDraftJob(listOf(message.messageId))
     }

@@ -25,7 +25,6 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
@@ -52,9 +51,6 @@ class NotificationReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
-
-    @Inject
-    lateinit var labelRepository: LabelRepository
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
@@ -88,7 +84,7 @@ class NotificationReceiver : BroadcastReceiver() {
         withContext(Dispatchers.Default) {
             val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
             if (message != null) {
-                val job: Job = PostTrashJobV2(listOf(message.messageId), null, labelRepository)
+                val job: Job = PostTrashJobV2(listOf(message.messageId), null)
                 jobManager.addJobInBackground(job)
             }
         }

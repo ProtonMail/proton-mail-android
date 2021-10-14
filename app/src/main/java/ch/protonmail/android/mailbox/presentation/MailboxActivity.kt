@@ -102,7 +102,6 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
@@ -187,9 +186,6 @@ internal class MailboxActivity :
 
     @Inject
     lateinit var isConversationModeEnabled: ConversationModeEnabled
-
-    @Inject
-    lateinit var labelRepository: LabelRepository
 
     @Inject
     @DefaultSharedPreferences
@@ -1484,15 +1480,16 @@ internal class MailboxActivity :
                 else -> throw IllegalArgumentException("Unrecognised direction: $direction")
             }
             val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], currentMailboxLocation)
+            val currentLocationId = mailboxLabelId ?: mailboxLocation.messageLocationTypeValue.toString()
             if (isConversationModeEnabled(mailboxLocation)) {
                 mailboxViewModel.handleConversationSwipe(
                     swipeAction,
                     mailboxItem.itemId,
                     mailboxLocation,
-                    mailboxLabelId ?: mailboxLocation.messageLocationTypeValue.toString()
+                    currentLocationId
                 )
             } else {
-                mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, mailboxLabelId, labelRepository)
+                mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, currentLocationId)
             }
             if (undoSnack != null && undoSnack!!.isShownOrQueued) {
                 undoSnack!!.dismiss()
@@ -1503,7 +1500,7 @@ internal class MailboxActivity :
                 getString(swipeAction.actionDescription),
                 {
                     mSwipeProcessor.handleUndo(
-                        swipeAction, messageSwiped, mJobManager, mailboxLocation, mailboxLabelId, labelRepository
+                        swipeAction, messageSwiped, mJobManager, mailboxLocation, currentLocationId
                     )
                     mailboxAdapter.notifyDataSetChanged()
                 },

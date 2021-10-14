@@ -22,21 +22,18 @@ import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
-import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Job
 
 class MarkReadSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(
         message: SimpleMessage,
-        currentLocation: String,
-        labelRepository: LabelRepository
+        currentLocation: String
     ): Job = PostReadJob(listOf(message.messageId))
 
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String,
-        labelRepository: LabelRepository
+        currentLocation: String
     ): Job = PostUnreadJob(listOf(message.messageId))
 }
