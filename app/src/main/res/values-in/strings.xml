@@ -379,24 +379,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="log_out">Keluar %s?</string>
     <string name="logout_question">Yakin ingin keluar?</string>
     <string name="logout_question_next_account">Anda akan pindah ke %s.</string>
-    <string name="upselling">Tingkatkan/Donasi</string>
     <string name="upselling_title">ProtonMail gratis dan open source</string>
     <string name="upselling_subtitle">Kami membutuhkan dukungan Anda untuk terus melindungi privasi dan meningkatkan ProtonMail</string>
-    <string name="upselling_donate_title">Donasi</string>
-    <string name="upselling_upgrade_title">Tingkatkan ke ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Sumbangan Anda akan membantu kami menambah
-    kapasitas dan terus mengembangkan ProtonMail sebagai perangkat lunak bebas dan open source. Hanya dengan
-    dukungan komunitas, kami dapat terus menyediakan ProtonMail kepada orang-orang di
-    seluruh dunia.</string>
-    <string name="upgrade_donate">Tingkatkan/Donasi</string>
-    <string name="upselling_donate_pick_amount">Pilih jumlah donasi atau masukkan jumlah berapapun</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Masukkan jumlah donasi</string>
-    <string name="donate">Donasi</string>
-    <string name="donate_paypal_bitcoin">Donasi via PayPal atau Bitcoin</string>
     <string name="upgrade_line1">Semuanya disertakan dalam paket Gratis kami</string>
     <string name="upgrade_line2">Penyimpanan 5 GB</string>
     <string name="upgrade_line3">Gunakan domain Anda sendiri</string>
@@ -463,8 +447,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="payment_picker_disclaimer">Pilih metode pembayaran</string>
     <string name="payment_success_title">Pembayaran Berhasil!</string>
     <string name="payment_success_text">Kami sekarang meningkatkan akun Anda, mohon tunggu sebentar. Terima kasih atas dukungan Anda!</string>
-    <string name="donation_success_title">Sumbangan terkirim!</string>
-    <string name="donation_success_text">Dukungan Anda memastikan ProtonMail terus ada. Terima kasih sudah mendukung privasi Internet!</string>
     <string name="create_free_account">Buat akun gratis</string>
     <string name="storage_gb">Penyimpanan %d GB</string>
     <string name="storage_mb">Penyimpanan %d MB</string>

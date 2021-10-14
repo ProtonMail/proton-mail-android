@@ -26,8 +26,8 @@ import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.time.seconds
 
 class FetchContactsData @Inject constructor(
     private val fetchContactsDataWorker: FetchContactsDataWorker.Enqueuer,
@@ -35,7 +35,7 @@ class FetchContactsData @Inject constructor(
 ) {
 
     operator fun invoke(): LiveData<Boolean> {
-        fetchContactsEmailsWorker.enqueue(2.seconds.toLongMilliseconds())
+        fetchContactsEmailsWorker.enqueue(TimeUnit.SECONDS.toMillis(2))
             .filter { it?.state?.isFinished == true }
             .map { workInfo ->
                 Timber.v("Finished contacts emails worker State ${workInfo.state}")

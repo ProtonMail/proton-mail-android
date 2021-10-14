@@ -302,7 +302,7 @@
         <activity
             android:name=".activities.UpsellingActivity"
             android:exported="false"
-            android:label="@string/upgrade_donate"
+            android:label="@string/upgrade"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity

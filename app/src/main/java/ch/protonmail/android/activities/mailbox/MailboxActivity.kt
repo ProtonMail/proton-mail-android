@@ -242,6 +242,7 @@ class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
+    val currentLocation get() = mailboxLocationMain
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -708,6 +709,11 @@ class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         handler.postDelayed(FetchMessagesRetryRunnable(this), 3.seconds.toLongMilliseconds())
         mailboxViewModel.checkConnectivityDelayed()
+    }
+
+    override fun onDohFailed() {
+        super.onDohFailed()
+        showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
     }
 
     private fun checkRegistration() {
@@ -1372,7 +1378,10 @@ class MailboxActivity :
                     getString(R.string.delete_messages),
                     getString(R.string.confirm_destructive_action)
                 ) {
-                    mailboxViewModel.deleteMessages(messageIds)
+                    mailboxViewModel.deleteMessages(
+                        messageIds,
+                        currentLocation.value?.messageLocationTypeValue.toString()
+                    )
                     mode.finish()
                 }
             R.id.mark_read -> job = PostReadJob(messageIds)
@@ -1504,6 +1513,7 @@ class MailboxActivity :
 
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
+        mailboxViewModel.checkConnectivity()
         if (!spinner_layout.isRefreshing) {
             fetchUpdates(true)
         }

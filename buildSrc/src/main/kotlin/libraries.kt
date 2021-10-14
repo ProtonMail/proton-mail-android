@@ -58,6 +58,7 @@ fun DependencyHandler.playServices(moduleSuffix: String, version: String = `play
 // endregion
 
 // region Test
+val DependencyHandler.`assert4k` get() =                    forface(module = "assert4k-jvm") version `assert4k version`
 val DependencyHandler.`assertJ` get() =                     dependency("org.assertj", module = "assertj-core") version `assertJ version`
 val DependencyHandler.`hamcrest` get() =                    dependency("org.hamcrest", module = "hamcrest-library") version `hamcrest version`
 // endregion

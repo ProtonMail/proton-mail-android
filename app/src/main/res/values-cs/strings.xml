@@ -397,24 +397,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">Log out %s?</string>
     <string name="logout_question">Opravdu se chcete odhlásit?</string>
     <string name="logout_question_next_account">Opravdu se chcete odhlásit z aktuálního účtu a pokračovat s %s?</string>
-    <string name="upselling">Přejít na vyšší verzi/Přispět</string>
     <string name="upselling_title">ProtonMail je zdarma a open source</string>
     <string name="upselling_subtitle">Potřebujeme Vaši podporu, abychom mohli i nadále chránit soukromí a vylepšovat služby ProtonMail</string>
-    <string name="upselling_donate_title">Přispět</string>
     <string name="upselling_upgrade_title">Rozšířit na ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Váš příspěvek nám pomůže navýšit
-    naše kapacity a nadále vyvíjet ProtonMail jako bezplatný open source software. Jenom díky 
-    podpoře komunity jsme schopni ProtonMail nadále poskytovat lidem po celém 
-    světě.</string>
-    <string name="upgrade_donate">Přejít na vyšší verzi/Přispět</string>
-    <string name="upselling_donate_pick_amount">Vyberte výši příspěvku nebo zadejte libovolnou částku</string>
-    <string name="amount_5">5 eur</string>
-    <string name="amount_15">15 eur</string>
-    <string name="amount_50">50 eur</string>
-    <string name="amount_100">100 eur</string>
-    <string name="donation_amount">Vyberte částku příspěvku</string>
-    <string name="donate">Přispět</string>
-    <string name="donate_paypal_bitcoin">Přispet pomocí PayPal nebo Bitcoin</string>
     <string name="upgrade_line1">Zahrnuto ve verzi zdarma</string>
     <string name="upgrade_line2">Úložiště o velikosti 5 Gb</string>
     <string name="upgrade_line3">Použijte svou vlastní doménu</string>
@@ -480,8 +465,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Vyberte způsob platby</string>
     <string name="payment_success_title">Platba proběhla úspěšně!</string>
     <string name="payment_success_text">We are now upgrading your account, please wait a moment. Thank you for your support!</string>
-    <string name="donation_success_title">Donation Success!</string>
-    <string name="donation_success_text">Your support is essential to keeping ProtonMail running. Thank you for supporting internet privacy!</string>
     <string name="create_free_account">Založit účet zdarma</string>
     <string name="storage_gb">Úložiště o velikosti %d GB</string>
     <string name="storage_mb">Úložiště o velikosti %d Mb</string>

@@ -45,10 +45,14 @@ import ch.protonmail.android.api.models.messages.send.MessageSendPackage
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.core.apiError
+import ch.protonmail.android.core.messageId
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
+import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -176,8 +180,8 @@ class SendMessageWorkerTest : CoroutinesTest {
             assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
             assertEquals(securityOptions, actualMessageSecurityOptions?.deserialize(MessageSecurityOptions.serializer()))
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
-            assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
-            assertEquals(20000, workSpec.backoffDelayDuration)
+            assertEquals(BackoffPolicy.LINEAR, workSpec.backoffPolicy)
+            assertEquals(10000, workSpec.backoffDelayDuration)
             verify { workManager.getWorkInfoByIdLiveData(any()) }
         }
     }
@@ -217,11 +221,32 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun workerTriesFindingTheMessageByMessageIdWhenMessageIsNotFoundByDatabaseId() = runBlockingTest {
+        val messageDbId = 23712L
+        val messageId = "8322224-1341"
+        val message = Message(messageId = messageId)
+        val createdDraftId = "createdDraftId"
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns null
+        coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns null
+        coEvery { saveDraft.invoke(any()) } returns SaveDraftResult.Success(createdDraftId)
+
+        worker.doWork()
+
+        verify { userNotifier wasNot Called }
+        val paramsSlot = slot<SaveDraft.SaveDraftParameters>()
+        coVerify { saveDraft.invoke(capture(paramsSlot)) }
+        assertEquals(message, paramsSlot.captured.message)
+    }
+
+    @Test
     fun workerNotifiesUserAndFailsWhenMessageIsNotFoundInTheDatabase() = runBlockingTest {
         val messageDbId = 2373L
         val messageId = "8322223"
         givenFullValidInput(messageDbId, messageId)
         coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns null
+        coEvery { messageDetailsRepository.findMessageById(messageId) } returns null
         every { context.getString(R.string.message_drafted) } returns "error message 9214"
 
         val result = worker.doWork()
@@ -259,6 +284,32 @@ class SendMessageWorkerTest : CoroutinesTest {
         assertEquals(
             ListenableWorker.Result.failure(
                 workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "DraftCreationFailed")
+            ),
+            result
+        )
+    }
+
+    @Test
+    fun workerFailsWithoutNotifyingUserWhenSaveDraftFailsWithMessageAlreadySentError() = runBlockingTest {
+        val messageDbId = 2835L
+        val messageId = "823473"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 004"
+        }
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns SaveDraftResult.MessageAlreadySent
+        every { parameters.runAttemptCount } returns 0
+
+        val result = worker.doWork()
+
+        verify { pendingActionsDao.deletePendingSendByMessageId("823473") }
+        verify { userNotifier wasNot Called }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "MessageAlreadySent")
             ),
             result
         )
@@ -655,7 +706,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
         every { packageFactory.generatePackages(any(), any(), any(), any()) } throws exception
-        every { parameters.runAttemptCount } returns 2
+        every { parameters.runAttemptCount } returns 1
         mockkStatic(Timber::class)
 
         val result = worker.doWork()
@@ -663,7 +714,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         assertEquals(ListenableWorker.Result.Retry(), result)
         verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
-        verify { Timber.w("Failed building MessageSendBody for API request, exception $exception") }
+        verify { Timber.d(exception, "Send Message Worker failed with error = FailureBuildingApiRequest. Retrying...") }
         unmockkStatic(Timber::class)
     }
 
@@ -930,14 +981,13 @@ class SendMessageWorkerTest : CoroutinesTest {
         verify { userNotifier.showSendMessageError(userErrorMessage, subject) }
         verify { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
         verify {
-            Timber.e("Send Message API call failed for messageId $savedDraftMessageId with error $apiError")
+            Timber.e(
+                DetailedException()
+                    .apiError(8237, "Detailed API error explanation")
+                    .messageId("923842"),
+                "Send Message API call failed for messageId $savedDraftMessageId with error $apiError"
+            )
         }
-        assertEquals(
-            ListenableWorker.Result.failure(
-                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "ApiRequestReturnedBadBodyCode")
-            ),
-            result
-        )
         unmockkStatic(Timber::class)
     }
 
@@ -998,3 +1048,4 @@ class SendMessageWorkerTest : CoroutinesTest {
         }
     }
 }
+

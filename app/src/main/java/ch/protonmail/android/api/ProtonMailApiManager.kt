@@ -36,7 +36,6 @@ import ch.protonmail.android.api.models.CreateSubscriptionBody
 import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.DirectEnabledResponse
-import ch.protonmail.android.api.models.DonateBody
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetPaymentTokenResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
@@ -80,6 +79,7 @@ import ch.protonmail.android.api.models.address.AddressesResponse
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
+import ch.protonmail.android.api.models.messages.delete.MessageDeletePayload
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.api.models.messages.receive.LabelsResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
@@ -307,7 +307,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun markMessageAsUnRead(messageIds: IDList) = api.markMessageAsUnRead(messageIds)
 
-    override suspend fun deleteMessage(messageIds: IDList) = api.deleteMessage(messageIds)
+    override suspend fun deleteMessage(messageDeletePayload: MessageDeletePayload) =
+        api.deleteMessage(messageDeletePayload)
 
     override fun emptyDrafts() = api.emptyDrafts()
 
@@ -362,8 +363,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
         api.checkSubscription(body)
-
-    override fun donate(body: DonateBody): ResponseBody? = api.donate(body)
 
     override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
         api.createUpdateSubscription(body)

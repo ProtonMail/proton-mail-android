@@ -36,16 +36,21 @@ import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_ALREADY_SENT
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
+import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.core.apiError
+import ch.protonmail.android.core.messageId
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -53,7 +58,9 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.notifier.UserNotifier
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -70,7 +77,7 @@ internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM = "keySaveDraftErrorR
 internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID = "keySaveDraftSuccessResultDbId"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
-private const val SAVE_DRAFT_MAX_RETRIES = 3
+private const val SAVE_DRAFT_MAX_RETRIES = 1
 
 class CreateDraftWorker @WorkerInject constructor(
     @Assisted context: Context,
@@ -97,9 +104,9 @@ class CreateDraftWorker @WorkerInject constructor(
                 createDraftRequest.parentID = parentId
                 createDraftRequest.action = getInputActionType().messageActionTypeValue
                 val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
-                val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
+                    ?: fetchParentMessage(parentId)
 
-                buildParentAttachmentsKeyPacketsMap(attachments, senderAddress).forEach {
+                buildParentAttachmentsKeyPacketsMap(parentMessage.Attachments, senderAddress).forEach {
                     createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
                 }
             }
@@ -128,7 +135,10 @@ class CreateDraftWorker @WorkerInject constructor(
         }.fold(
             onSuccess = { response ->
                 if (response.code != Constants.RESPONSE_CODE_OK) {
-                    Timber.e("Create Draft Worker Failed with bad response code: $response")
+                    Timber.e(
+                        DetailedException().apiError(response.code, response.error),
+                        "Create Draft Worker Failed with bad response"
+                    )
                     userNotifier.showPersistentError(response.error, createDraftRequest.message.subject)
                     return failureWithError(CreateDraftWorkerErrors.BadResponseCodeError)
                 }
@@ -140,11 +150,22 @@ class CreateDraftWorker @WorkerInject constructor(
                     workDataOf(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to response.messageId)
                 )
             },
-            onFailure = {
-                retryOrFail(it.message, createDraftRequest.message.subject)
+            onFailure = { throwable ->
+                if (throwable is HttpException) {
+                    val responseBody: ResponseBody? = Gson().fromJson(
+                        throwable.response()?.errorBody()?.string(), ResponseBody::class.java
+                    )
+                    if (responseBody?.code == RESPONSE_CODE_MESSAGE_ALREADY_SENT) {
+                        return failureWithError(CreateDraftWorkerErrors.MessageAlreadySent)
+                    }
+                }
+
+                return retryOrFail(throwable.messageId(messageId), createDraftRequest.message.subject)
             }
         )
     }
+
+    private fun fetchParentMessage(parentId: String) = apiManager.messageDetail(messageId = parentId).message
 
     private fun buildMessageAttachmentsKeyPacketsMap(
         attachments: List<Attachment>,
@@ -190,13 +211,13 @@ class CreateDraftWorker @WorkerInject constructor(
         messageDetailsRepository.saveMessageLocally(apiDraft)
     }
 
-    private fun retryOrFail(error: String?, messageSubject: String?): Result {
+    private fun retryOrFail(throwable: Throwable, messageSubject: String?): Result {
         if (runAttemptCount < SAVE_DRAFT_MAX_RETRIES) {
-            Timber.d("Create Draft Worker API call FAILED with error = $error. Retrying...")
+            Timber.d(throwable, "Create Draft Worker API call FAILED with error. Retrying...")
             return Result.retry()
         }
-        Timber.e("Create Draft Worker API call failed all the retries. error = $error. FAILING")
-        userNotifier.showPersistentError(error.orEmpty(), messageSubject)
+        Timber.e(throwable, "Create Draft Worker API call failed all the retries. error. FAILING")
+        userNotifier.showPersistentError(throwable.message.orEmpty(), messageSubject)
         return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 
@@ -315,7 +336,7 @@ class CreateDraftWorker @WorkerInject constructor(
                         KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID to previousSenderAddressId
                     )
                 )
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.LINEAR, TEN_SECONDS, TimeUnit.SECONDS)
                 .build()
 
             val uniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId}"

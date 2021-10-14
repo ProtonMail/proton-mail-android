@@ -187,6 +187,7 @@ class NetworkConfigurator @Inject constructor(
             userManager.user.usingDefaultApi = true
             isRunning = false
             callback?.stopDohSignal()
+            callback?.onDohFailed()
         }
     }
 

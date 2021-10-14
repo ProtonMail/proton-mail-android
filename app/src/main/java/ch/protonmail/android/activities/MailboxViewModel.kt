@@ -226,9 +226,9 @@ class MailboxViewModel @ViewModelInject constructor(
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
     }
 
-    fun deleteMessages(messageIds: List<String>) =
+    fun deleteMessages(messageIds: List<String>, currentLabelId: String?) =
         viewModelScope.launch {
-            val deleteMessagesResult = deleteMessage(messageIds)
+            val deleteMessagesResult = deleteMessage(messageIds, currentLabelId)
             _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
         }
 

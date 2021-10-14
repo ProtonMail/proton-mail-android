@@ -22,5 +22,6 @@ package ch.protonmail.android.worker.drafts
 enum class CreateDraftWorkerErrors {
     MessageNotFound,
     ServerError,
-    BadResponseCodeError
+    BadResponseCodeError,
+    MessageAlreadySent
 }

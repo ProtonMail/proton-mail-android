@@ -107,6 +107,7 @@ internal class MessageRendererTest : CoroutinesTest {
 
             val count = 2
             val consumer: (String) -> Unit = mockk(relaxed = true)
+            val expectedDebounceTime = 500L
 
             with(renderer) {
                 launch(Unconfined) {
@@ -114,7 +115,7 @@ internal class MessageRendererTest : CoroutinesTest {
                 }
                 repeat(count) {
                     images.offer(mockEmbeddedImages)
-                    advanceTimeBy(MessageRenderer.DebounceDelay.toLongMilliseconds())
+                    advanceTimeBy(expectedDebounceTime)
                 }
                 advanceUntilIdle()
                 renderedBody.close()

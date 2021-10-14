@@ -383,24 +383,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">Log out %s?</string>
     <string name="logout_question">Är du säker på att du vill logga ut?</string>
     <string name="logout_question_next_account">Är du säker på att du vill logga ut med nuvarande konto och fortsätta med %s?</string>
-    <string name="upselling">Uppgradera/donera</string>
     <string name="upselling_title">ProtonMail är gratis och open-source</string>
     <string name="upselling_subtitle">Vi behöver ditt stöd för att fortsätta skydda integriteten och förbättra ProtonMail</string>
-    <string name="upselling_donate_title">Donera</string>
     <string name="upselling_upgrade_title">Uppgradera till ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Din donation hjälper oss att
-    utöka kapacitet och fortsätta att utveckla ProtonMail som fri och öppen källkodsprogramvara. Det är
-    endast genom communitys stöd vi kan fortsätta tillhandahålla ProtonMail till människor runt om i
-    världen.</string>
-    <string name="upgrade_donate">Uppgradera/donera</string>
-    <string name="upselling_donate_pick_amount">Välj belopp att donera eller ange valfritt belopp</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Ange belopp att donera</string>
-    <string name="donate">Donera</string>
-    <string name="donate_paypal_bitcoin">Donera via PayPal eller Bitcoin</string>
     <string name="upgrade_line1">Allt som ingår i gratis-planen</string>
     <string name="upgrade_line2">5 GB lagring</string>
     <string name="upgrade_line3">Använd din egen domän</string>
@@ -465,8 +450,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Vänligen välj betalnings metod</string>
     <string name="payment_success_title">Betalningen lyckades!</string>
     <string name="payment_success_text">Kontot håller på att uppgraderas, vänligen vänta. Tack för din förståelse!</string>
-    <string name="donation_success_title">Donation lyckades!</string>
-    <string name="donation_success_text">Ditt stöd är mycket viktigt att hålla ProtonMail igång. Tack för att du stödjer internetsekretess!</string>
     <string name="create_free_account">Skapa ett gratiskonto</string>
     <string name="storage_gb">%d GB lagringsutrymme</string>
     <string name="storage_mb">%d MB lagringsutrymme</string>

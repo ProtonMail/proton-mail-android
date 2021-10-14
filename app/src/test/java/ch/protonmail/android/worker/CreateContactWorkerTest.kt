@@ -36,12 +36,14 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
@@ -72,6 +74,9 @@ class CreateContactWorkerTest {
     @RelaxedMockK
     private lateinit var workManager: WorkManager
 
+    @MockK
+    private lateinit var fileHelper: FileHelper
+
     @InjectMockKs
     private lateinit var worker: CreateContactWorker
 
@@ -80,6 +85,7 @@ class CreateContactWorkerTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        coEvery { fileHelper.readStringFromFilePath(any()) } returns "vCardString"
     }
 
     @Test
@@ -93,7 +99,7 @@ class CreateContactWorkerTest {
 
         val constraints = requestSlot.captured.workSpec.constraints
         val inputData = requestSlot.captured.workSpec.input
-        val actualEncryptedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA)
+        val actualEncryptedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH)
         val actualSignedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
         assertEquals(encryptedData, actualEncryptedData)
         assertEquals(signedData, actualSignedData)
@@ -237,7 +243,7 @@ class CreateContactWorkerTest {
     }
 
     private fun givenEncryptedContactDataParamsIsValid(encryptedContactData: String? = "encrypted-data") {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA) } answers { encryptedContactData!! }
+        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH) } answers { encryptedContactData!! }
     }
 
     private fun givenSignedContactDataParamsIsValid(signedContactData: String? = "signed-data") {

@@ -20,6 +20,7 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.annotation.TargetApi
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -67,6 +68,7 @@ import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
+import ch.protonmail.android.utils.ProtonCalendarUtils
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
@@ -100,6 +102,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val dispatchers: DispatcherProvider,
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
+    private val protonCalendarUtils: ProtonCalendarUtils,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -125,6 +128,9 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private var _embeddedImagesAttachments: ArrayList<Attachment> = ArrayList()
     private var _embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
+
+    // stores ICalendar Attachment ID to open with Proton Calendar in case it has to be downloaded asynchronously
+    private var protonCalendarAttachmentId: String? = null
 
     // region properties and data
     private val requestPending = AtomicBoolean(false)
@@ -500,20 +506,16 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             val metadata = attachmentMetadataDatabase
                 .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
             Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
-            if (metadata != null) {
-                val uri = metadata.uri
-                if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
-                    if (uri.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
-                        copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
-                    } else {
-                        viewAttachment(context, metadata.name, uri)
-                    }
+            val uri = metadata?.uri
+            // extra check if user has not deleted the file
+            if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
+                if (uri.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
+                    copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri, attachmentToDownloadId)
                 } else {
-                    Timber.v("No file attachment id: $attachmentToDownloadId downloading again")
-                    attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                    viewAttachment(context, metadata.name, uri, attachmentToDownloadId)
                 }
             } else {
-                Timber.v("No metadata found for attachment id: $attachmentToDownloadId")
+                Timber.d("Attachment id: $attachmentToDownloadId file not available, uri: $uri ")
                 attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
             }
         }
@@ -526,7 +528,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private fun copyAttachmentToDownloadsAndDisplay(
         context: Context,
         filename: String,
-        uri: Uri
+        uri: Uri,
+        attachmentId: String
     ) {
         val newUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getCopiedUriFromQ(filename, uri, context)
@@ -535,7 +538,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
 
         Timber.v("Copied attachment file from ${uri.path} to ${newUri?.path}")
-        viewAttachment(context, filename, newUri)
+        viewAttachment(context, filename, newUri, attachmentId)
     }
 
     @TargetApi(Build.VERSION_CODES.Q)
@@ -566,8 +569,37 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         )
     }
 
-    fun viewAttachment(context: Context, filename: String?, uri: Uri?) =
-        downloadUtils.viewAttachment(context, filename, uri)
+    fun viewAttachment(context: Context, filename: String?, uri: Uri?, attachmentId: String) {
+
+        val senderEmail = message.value?.senderEmail
+        val recipientEmail = protonCalendarUtils.extractRecipientEmail(message.value?.header ?: "")
+
+        if (senderEmail != null && recipientEmail != null && shouldViewInProtonCalendar(attachmentId)) {
+            downloadUtils.viewAttachmentWithProtonCalendar(context, filename, uri, senderEmail, recipientEmail)
+        } else {
+            downloadUtils.viewAttachment(context, filename, uri)
+        }
+    }
+
+    private fun shouldViewInProtonCalendar(attachmentId: String): Boolean {
+        return (protonCalendarAttachmentId == attachmentId).also {
+            protonCalendarAttachmentId = null // always reset temporary AttachmentID
+        }
+    }
+
+    fun shouldShowProtonCalendarButton(packageManager: PackageManager): Boolean =
+        protonCalendarUtils.shouldShowProtonCalendarButton(packageManager)
+
+    /**
+     * @return [true] ProtonCalendar is installed, [false] not installed and we've opened PlayStore
+     */
+    fun handleProtonCalendarButtonClick(attachmentId: String): Boolean {
+        return if (protonCalendarUtils.openPlayStoreIfNotInstalled()) {
+            // Proton Calendar is installed, we should open explicit intent
+            protonCalendarAttachmentId = attachmentId
+            true
+        } else false
+    }
 
     fun remoteContentDisplayed() {
         remoteContentDisplayed = true
@@ -644,7 +676,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     fun deleteMessage(messageId: String) {
         viewModelScope.launch {
-            deleteMessageUseCase(listOf(messageId))
+            deleteMessageUseCase(listOf(messageId), Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString())
         }
     }
 

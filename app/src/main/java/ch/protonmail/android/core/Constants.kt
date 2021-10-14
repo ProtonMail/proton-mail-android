@@ -311,8 +311,7 @@ object Constants {
 
     enum class BillingType {
         CREATE,
-        UPGRADE,
-        DONATE
+        UPGRADE
     }
 
     enum class TokenType(val tokenTypeValue: String) {
@@ -392,6 +391,7 @@ object Constants {
     }
 
     enum class ConnectionState {
+        PING_NEEDED,
         CONNECTED,
         NO_INTERNET,
         CANT_REACH_SERVER;

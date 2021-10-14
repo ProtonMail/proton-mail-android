@@ -55,7 +55,7 @@ internal const val KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING = "keyUploadA
 internal const val KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR = "keyUploadAttachmentResultError"
 
 private const val UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX = "uploadAttachmentUniqueWorkName"
-private const val UPLOAD_ATTACHMENTS_MAX_RETRIES = 3
+private const val UPLOAD_ATTACHMENTS_MAX_RETRIES = 1
 
 class UploadAttachments @WorkerInject constructor(
     @Assisted context: Context,
@@ -214,7 +214,7 @@ class UploadAttachments @WorkerInject constructor(
                         KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING to isMessageSending
                     )
                 )
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
+                .setBackoffCriteria(BackoffPolicy.LINEAR, TEN_SECONDS, TimeUnit.SECONDS)
                 .build()
 
             workManager.enqueueUniqueWork(

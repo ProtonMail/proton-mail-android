@@ -39,18 +39,18 @@ fun initVersions() {
     `espresso version` =                        "3.4.0-alpha02" // Released: Oct 20, 2020
     `hilt-android version` =                    "2.29.1-alpha"  // Released: Sep 10, 2020
     `hilt-androidx version` =                   "1.0.0-alpha02" // Released: Jul 26, 2020
-    `ktx version` =                             "1.2.0-rc01"    // Released: Nov 23, 2019
+    `ktx version` =                             "1.5.0-rc01"    // Released: Mar 24, 2021
     `lifecycle version` =                       "2.2.0-rc03"    // Released: Dec 05, 2019
-    `material version` =                        "1.1.0-beta02"  // Released: Nov 10, 2019
+    `material version` =                        "1.3.0"         // Released: Feb 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
     `android-room version` =                    "2.2.6"         // Released: Dec 16, 2020
-    `android-work version` =                    "2.4.0"         // Released: Aug 19, 2020
+    `android-work version` =                    "2.5.0"         // Released: Jan 27, 2021
 
     `android-test version` =                    "1.3.1-alpha02" // Released: Oct 20, 2020
     // endregion
 
     // region Others
-    `assert4k version` =                        "0.5.7"         // Released: Aug 15, 2020
+    `assert4k version` =                        "0.7.1"         // Released: May 04, 2021
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
     `dagger version` =                          "2.28.3"        // Released: Jul 18, 2020
 

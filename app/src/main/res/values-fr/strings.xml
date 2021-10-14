@@ -385,24 +385,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">Déconnecter %s ?</string>
     <string name="logout_question">Êtes-vous sûr de vouloir vous déconnecter ?</string>
     <string name="logout_question_next_account">Vous passerez à %s.</string>
-    <string name="upselling">Abonnement / Don</string>
     <string name="upselling_title">ProtonMail est gratuit et open source</string>
     <string name="upselling_subtitle">Nous avons besoin de votre soutien pour continuer à protéger la vie privée et améliorer ProtonMail</string>
-    <string name="upselling_donate_title">Faire un don</string>
     <string name="upselling_upgrade_title">Passer à ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Votre don nous aidera à augmenter
-    la capacité de ProtonMail et à poursuivre son développement en tant que logiciel gratuit et open source. C\'est uniquement grâce
-    au soutien de la communauté que nous sommes en mesure de continuer à fournir ProtonMail aux personnes 
-    du monde entier.</string>
-    <string name="upgrade_donate">Abonnement / Don</string>
-    <string name="upselling_donate_pick_amount">Sélectionnez le montant du don ou saisissez n\'importe quel autre montant</string>
-    <string name="amount_5">5 €</string>
-    <string name="amount_15">15 €</string>
-    <string name="amount_50">50 €</string>
-    <string name="amount_100">100 €</string>
-    <string name="donation_amount">Saisissez le montant du don</string>
-    <string name="donate">Faire un don</string>
-    <string name="donate_paypal_bitcoin">Faire un don via PayPal ou Bitcoin</string>
     <string name="upgrade_line1">Tout ce qui est inclus dans notre offre Free</string>
     <string name="upgrade_line2">5 Go d\'espace de stockage</string>
     <string name="upgrade_line3">Utilisez votre propre nom de domaine</string>
@@ -469,8 +454,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Veuillez sélectionner un mode de paiement</string>
     <string name="payment_success_title">Paiement réussi !</string>
     <string name="payment_success_text">Nous mettons à jour votre compte, veuillez patienter un instant. Merci pour votre soutien !</string>
-    <string name="donation_success_title">Don réussi !</string>
-    <string name="donation_success_text">Votre soutien est essentiel au bon fonctionnement de ProtonMail. Merci de nous aider dans notre combat pour la protection de la vie privée sur Internet !</string>
     <string name="create_free_account">Créer un compte gratuit</string>
     <string name="storage_gb">%d Go de stockage</string>
     <string name="storage_mb">%d Mo de stockage</string>

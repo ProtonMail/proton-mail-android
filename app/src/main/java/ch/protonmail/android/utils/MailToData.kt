@@ -16,24 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models;
+@file:JvmName("MailToUtils") // Name for Java
+@file:Suppress("FunctionName")
 
-import com.google.gson.annotations.SerializedName;
+package ch.protonmail.android.utils
 
-import ch.protonmail.android.api.utils.Fields;
-import ch.protonmail.android.core.Constants;
+import android.net.Uri
 
-public class DonateBody {
-    @SerializedName(Fields.Payment.AMOUNT)
-    public int amount;
-    @SerializedName(Fields.Payment.CURRENCY)
-    public String currency;
-    @SerializedName(Fields.Payment.PAYMENT)
-    public PaymentBody payment;
+// region constants
+/**
+ * [String] scheme for mailto
+ * We don't use [android.net.MailTo.MAILTO_SCHEME] since is "mailto:" but [Uri.getScheme] does not
+ * include the semicolon ':'
+ */
+const val MAILTO_SCHEME = "mailto"
 
-    public DonateBody(String paymentToken, int amount, Constants.CurrencyType currency) {
-        this.amount = amount;
-        this.currency = currency.name();
-        this.payment = new TokenPaymentBody(paymentToken);
-    }
-}
+/** A replacement to [android.net.MailTo] that is pretty broken */
+data class MailToData(
+    val addresses: List<String>,
+    val cc: List<String>,
+    val subject: String,
+    val body: String,
+    val bcc: List<String> = emptyList()
+)

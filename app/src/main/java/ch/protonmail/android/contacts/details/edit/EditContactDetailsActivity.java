@@ -40,7 +40,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -57,8 +56,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -119,13 +116,12 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 import timber.log.Timber;
 
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE0;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE2;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE3;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE3_PATH;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_EMAIL;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_FLOW;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_LOCAL_CONTACT;
@@ -157,8 +153,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     VCardLinearLayout mEncryptedDataOther;
     @BindView(R.id.encrypted_data_note)
     VCardLinearLayout mEncryptedDataNote;
-    @BindView(R.id.upgradeEncryptedStub)
-    ViewStub mUpgradeEncryptedDataStub;
     @BindView(R.id.scroll_parent)
     ScrollView mScrollParentView;
     @BindView(R.id.addPhotoBtn)
@@ -199,14 +193,22 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         return intent;
     }
 
-    public static void startEditContactActivity(@NonNull Activity context, String contactId, int requestCode, String vCardType0, String vCardType2, String vCardType3) {
+    public static void startEditContactActivity(
+            @NonNull Activity context,
+            String contactId,
+            int requestCode,
+            String vCardType0,
+            String vCardType2,
+            String vCardType3FilePath
+    ) {
         final Intent intent = AppUtil.decorInAppIntent(
                 new Intent(context, EditContactDetailsActivity.class));
         intent.putExtra(EXTRA_FLOW, FLOW_EDIT_CONTACT)
                 .putExtra(EXTRA_CONTACT, contactId)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE0, vCardType0)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE2, vCardType2)
-                .putExtra(EXTRA_CONTACT_VCARD_TYPE3, vCardType3);
+                .putExtra(EXTRA_CONTACT_VCARD_TYPE3_PATH, vCardType3FilePath);
+
         context.startActivityForResult(intent, requestCode);
     }
 
@@ -243,7 +245,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 Arrays.asList(getResources().getStringArray(R.array.vcard_option_other)),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE0),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE2),
-                extras.getString(EXTRA_CONTACT_VCARD_TYPE3));
+                extras.getString(EXTRA_CONTACT_VCARD_TYPE3_PATH));
 
         viewModel.getSetupComplete().observe(this, setupCompleteObserver);
 
@@ -288,7 +290,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     photoCardViewWrapper.setVisibility(View.VISIBLE);
                     contactInitials.setVisibility(View.GONE);
-                    contactPhoto.setImageBitmap(bitmap);
+                    // resize bitmap to prevent problems with too big images
+                    contactPhoto.setImageBitmap(resizeBitmap(bitmap));
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -299,8 +302,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             photoCardViewWrapper.setVisibility(View.VISIBLE);
             contactInitials.setVisibility(View.GONE);
-            contactPhoto.setImageBitmap(thumbnail);
+            contactPhoto.setImageBitmap(resizeBitmap(thumbnail));
         }
+    }
+
+    private Bitmap resizeBitmap(Bitmap bitmap) {
+        int imageSize = getResources().getDimensionPixelSize(R.dimen.image_width);
+        return Bitmap.createScaledBitmap(bitmap, imageSize, imageSize, true);
     }
 
     @Override
@@ -795,15 +803,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         }
     }
 
-    @NotNull
-    private Function0<Unit> onConnectivityCheckRetry() {
-        return () -> {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
-            viewModel.checkConnectivityDelayed();
-            return null;
-        };
-    }
-
     @Subscribe
     public void onMailSettingsEvent(MailSettingsEvent event) {
         loadMailSettings();
@@ -896,10 +895,12 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
 
         @Override
         public void afterTextChanged(Editable s) {
@@ -925,12 +926,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         viewModel.getSetupNewContactFlow().observe(this, setupNewContactObserver);
         viewModel.getSetupEditContactFlow().observe(this, setupEditContactObserver);
         viewModel.getSetupConvertContactFlow().observe(this, setupConvertContactObserver);
-        viewModel.getFreeUserEvent().observe(this, unit -> {
-            View upgradeView = mUpgradeEncryptedDataStub.inflate();
-            upgradeView.findViewById(R.id.upgrade).setOnClickListener(mUpgradeClickListener);
-
-            new Handler().postDelayed(() -> enableControls(false, mEncryptedDataContainer), 10);
-        });
         viewModel.getProfilePicture().observe(this, observer -> {
             observer.doOnData(bitmap -> {
                 photoCardViewWrapper.setVisibility(View.VISIBLE);
@@ -1246,20 +1241,4 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
     // endregion
 
-    private void enableControls(boolean enable, View v){
-
-        if (!(v instanceof ViewGroup)) {
-            ArrayList<View> viewArrayList = new ArrayList<View>();
-            viewArrayList.add(v);
-            v.setEnabled(enable);
-            v.setFocusable(enable);
-            return ;
-        }
-
-        ViewGroup vg = (ViewGroup) v;
-        for (int i = 0; i < vg.getChildCount(); i++) {
-            View child = vg.getChildAt(i);
-            enableControls(enable, child);
-        }
-    }
 }

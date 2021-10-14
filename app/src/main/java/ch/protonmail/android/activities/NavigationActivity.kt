@@ -152,6 +152,9 @@ abstract class NavigationActivity :
     }
 
     @Inject
+    lateinit var accountManager: AccountManager
+
+    @Inject
     lateinit var databaseProvider: DatabaseProvider
 
     private val navigationViewModel by resettableLazy(lazyManager) {
@@ -284,7 +287,13 @@ abstract class NavigationActivity :
         drawerToggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer
         )
-        drawerLayout.setStatusBarBackgroundColor(UiUtil.scaleColor(getColorCompat(R.color.dark_purple), 0.6f, true))
+        drawerLayout.setStatusBarBackgroundColor(
+            UiUtil.scaleColor(
+                ContextCompat.getColor(this, R.color.dark_purple),
+                0.6f,
+                true
+            )
+        )
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
 
         setUpInitialDrawerItems(mUserManager.user)
@@ -420,7 +429,7 @@ abstract class NavigationActivity :
             if (hasPin) {
                 add(Primary.Static(Type.LOCK, R.string.lock_the_app, R.drawable.notification_icon))
             }
-            add(Primary.Static(Type.UPSELLING, R.string.upselling, R.drawable.cubes))
+            add(Primary.Static(Type.UPSELLING, R.string.upgrade, R.drawable.cubes))
             add(Primary.Static(Type.SIGNOUT, R.string.logout, R.drawable.signout))
         }.toList()
     }

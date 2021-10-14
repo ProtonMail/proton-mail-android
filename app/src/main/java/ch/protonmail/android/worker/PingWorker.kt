@@ -34,6 +34,8 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.events.ConnectivityEvent
+import ch.protonmail.android.utils.AppUtil
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber

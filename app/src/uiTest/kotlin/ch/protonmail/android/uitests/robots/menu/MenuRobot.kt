@@ -181,7 +181,7 @@ class MenuRobot {
         val settingsText = stringFromResource(R.string.settings)
         val contactsText = stringFromResource(R.string.contacts)
         val reportBugsText = stringFromResource(R.string.report_bugs)
-        val upgradeDonateText = stringFromResource(R.string.upgrade_donate)
+        val upgradeDonateText = stringFromResource(R.string.upgrade)
         val draftsText = stringFromResource(R.string.drafts)
         val sentText = stringFromResource(R.string.sent)
         val logoutText = stringFromResource(R.string.logout)

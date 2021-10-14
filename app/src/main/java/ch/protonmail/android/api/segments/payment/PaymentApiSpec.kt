@@ -25,7 +25,6 @@ import ch.protonmail.android.api.models.CreatePaymentTokenBody
 import ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponse
 import ch.protonmail.android.api.models.CreateSubscriptionBody
 import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
-import ch.protonmail.android.api.models.DonateBody
 import ch.protonmail.android.api.models.GetPaymentTokenResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.PaymentMethodResponse
@@ -48,9 +47,6 @@ interface PaymentApiSpec {
     suspend fun fetchPaymentsStatus(): PaymentsStatusResponse
 
     suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse
-
-    @Throws(IOException::class)
-    fun donate(body: DonateBody): ResponseBody?
 
     suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
 

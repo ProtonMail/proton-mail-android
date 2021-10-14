@@ -25,6 +25,7 @@ import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
+import ch.protonmail.android.api.models.messages.delete.MessageDeletePayload
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
@@ -55,7 +56,7 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun markMessageAsUnRead(messageIds: IDList)
 
-    suspend fun deleteMessage(messageIds: IDList): DeleteContactResponse
+    suspend fun deleteMessage(messageDeletePayload: MessageDeletePayload): DeleteContactResponse
 
     @Throws(IOException::class)
     fun emptyDrafts()

@@ -2,7 +2,7 @@
 
 # Default excluded files are `` ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**'] ``
 build:
-  maxIssues: 6412
+  maxIssues: 6885
   excludeCorrectable: false
   weights:
   # complexity: 2
@@ -644,7 +644,7 @@ style:
     maxJumpCount: 2
   MagicNumber:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**', '**/*.kts']
     ignoreNumbers: ['-1', '0', '1', '2']
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: true

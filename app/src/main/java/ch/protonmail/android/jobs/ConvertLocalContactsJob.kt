@@ -113,8 +113,10 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 vCard.uid = Uid("proton-android-" + UUID.randomUUID().toString())
                 vCard.setFormattedName(contactItem.name)
 
-                val contactData = ContactData(ContactData.generateRandomContactId(),
-                        contactItem.name)
+                val contactData = ContactData(
+                    ContactData.generateRandomContactId(),
+                    contactItem.name
+                )
 
                 val dbId = contactsDatabase.saveContactData(contactData)
                 var emailGroupCounter = 1
@@ -130,8 +132,10 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 }
                 for (address in localContact.addresses) {
                     val isEmpty = TextUtils.isEmpty(address.street) && TextUtils.isEmpty(
-                            address.city) && TextUtils.isEmpty(
-                            address.region) && TextUtils.isEmpty(address.postcode) && TextUtils.isEmpty(address.country)
+                        address.city
+                    ) && TextUtils.isEmpty(
+                        address.region
+                    ) && TextUtils.isEmpty(address.postcode) && TextUtils.isEmpty(address.country)
                     if (!isEmpty) {
                         val vCardAddress = Address()
                         vCardAddress.streetAddress = address.street
@@ -150,7 +154,8 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 val encryptedData = crypto.encrypt(vCardEncryptedData, false)
                 val encryptDataSignature = crypto.sign(vCardEncryptedData)
                 val contactEncryptedDataType3 = ContactEncryptedData(
-                        encryptedData.armored, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED)
+                    encryptedData.armored, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED
+                )
 
                 val contactEncryptedDataList = ArrayList<ContactEncryptedData>()
                 contactEncryptedDataList.add(contactEncryptedDataType2)
@@ -171,8 +176,12 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
         if (executionResults.isEmpty()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.SUCCESS, false))
         } else {
-            AppUtil.postEventOnUi(ContactEvent(ContactEvent.NOT_ALL_SYNC, false,
-                    executionResults))
+            AppUtil.postEventOnUi(
+                ContactEvent(
+                    ContactEvent.NOT_ALL_SYNC, false,
+                    executionResults
+                )
+            )
         }
     }
 
@@ -190,16 +199,21 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 }
                 ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
                     name = data.getString(
-                            data.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    emails.add(data.getString(
-                            data.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)))
+                        data.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+                    )
+                    emails.add(
+                        data.getString(
+                            data.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)
+                        )
+                    )
                 }
                 StructuredPostal.CONTENT_ITEM_TYPE -> {
                     val street = data.getString(data.getColumnIndex(StructuredPostal.STREET))
                     val city = data.getString(data.getColumnIndex(StructuredPostal.CITY))
                     val region = data.getString(data.getColumnIndex(StructuredPostal.REGION))
                     val postcode = data.getString(
-                            data.getColumnIndex(StructuredPostal.POSTCODE))
+                        data.getColumnIndex(StructuredPostal.POSTCODE)
+                    )
                     val country = data.getString(data.getColumnIndex(StructuredPostal.COUNTRY))
                     addresses.add(LocalContactAddress(street, city, region, postcode, country))
                 }
@@ -220,11 +234,12 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
         val groups = mutableMapOf<Long, String>()
 
         val groupsCursor = ProtonMailApplication.getApplication().contentResolver.query(
-                ContactsContract.Groups.CONTENT_URI,
-                arrayOf(ContactsContract.Groups._ID, ContactsContract.Groups.TITLE),
-                String.format("%s = 0", ContactsContract.Groups.GROUP_VISIBLE),
-                null,
-                null)
+            ContactsContract.Groups.CONTENT_URI,
+            arrayOf(ContactsContract.Groups._ID, ContactsContract.Groups.TITLE),
+            String.format("%s = 0", ContactsContract.Groups.GROUP_VISIBLE),
+            null,
+            null
+        )
 
         groupsCursor?.use {
             it.moveToFirst()
@@ -258,10 +273,10 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
 
         if (someGroupsAlreadyExist) { // at least one local group already exist on server, we fetch all of them to get IDs
             val serverGroups = getApi().fetchContactGroups()
-                    .map { it.contactGroups }
-                    .subscribeOn(ThreadSchedulers.io())
-                    .observeOn(ThreadSchedulers.io())
-                    .blockingGet()
+                .map { it.contactGroups }
+                .subscribeOn(ThreadSchedulers.io())
+                .observeOn(ThreadSchedulers.io())
+                .blockingGet()
 
             localGroups.filterNot { result.containsKey(it.value) }.forEach { localGroupEntry ->
                 serverGroups.find { it.name == localGroupEntry.value }?.run {

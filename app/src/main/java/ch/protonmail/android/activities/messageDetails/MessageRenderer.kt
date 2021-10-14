@@ -43,7 +43,8 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.sqrt
-import kotlin.time.milliseconds
+
+private const val DEBOUNCE_DELAY_MILLIS = 500L
 
 /**
  * A class that will inline the images in the message's body.
@@ -82,7 +83,7 @@ internal class MessageRenderer(
             imageCompressor.send(embeddedImages)
             // Workaround that ignore values for the next half second, since ViewModel is emitting
             // too many times
-            delay(DebounceDelay)
+            delay(DEBOUNCE_DELAY_MILLIS)
         }
     }
 
@@ -226,9 +227,6 @@ internal class MessageRenderer(
             MessageRenderer(dispatchers, messageDirectory(messageId), documentParser, imageDecoder, scope)
     }
 
-    companion object {
-        val DebounceDelay = 500.milliseconds
-    }
 }
 
 // region constants
