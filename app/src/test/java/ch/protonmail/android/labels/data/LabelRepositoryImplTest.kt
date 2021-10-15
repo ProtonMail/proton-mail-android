@@ -26,6 +26,7 @@ import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.mapper.FolderWithChildrenMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
@@ -51,6 +52,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -73,6 +75,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
             api,
             labelMapper,
             labelDomainMapper,
+            FolderWithChildrenMapper(TestDispatcherProvider),
             networkConnectivityManager,
             applyMessageLabelWorker,
             removeMessageLabelWorker,

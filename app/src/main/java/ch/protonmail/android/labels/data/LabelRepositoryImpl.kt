@@ -26,6 +26,7 @@ import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.mapper.FolderWithChildrenMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
@@ -33,6 +34,7 @@ import ch.protonmail.android.labels.data.remote.worker.DeleteLabelsWorker
 import ch.protonmail.android.labels.data.remote.worker.PostLabelWorker
 import ch.protonmail.android.labels.data.remote.worker.RemoveMessageLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.FolderWithChildren
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -53,6 +55,7 @@ internal class LabelRepositoryImpl @Inject constructor(
     private val api: ProtonMailApi,
     private val labelApiMapper: LabelEntityApiMapper,
     private val labelDomainMapper: LabelEntityDomainMapper,
+    private val folderWithChildrenMapper: FolderWithChildrenMapper,
     private val networkConnectivityManager: NetworkConnectivityManager,
     private val applyMessageLabelWorker: ApplyMessageLabelWorker.Enqueuer,
     private val removeMessageLabelWorker: RemoveMessageLabelWorker.Enqueuer,
@@ -61,24 +64,22 @@ internal class LabelRepositoryImpl @Inject constructor(
 ) : LabelRepository {
 
     override fun observeAllLabels(userId: UserId, shallRefresh: Boolean): Flow<List<Label>> =
-        labelDao.observeAllLabels(userId)
-            .onStart {
-                if (shallRefresh && networkConnectivityManager.isInternetConnectionPossible()) {
-                    Timber.v("Fetching fresh labels")
-                    fetchAndSaveAllLabels(userId)
-                }
-            }
-            .mapToLabel()
+        observeAllLabelEntities(userId, shallRefresh)
+            .mapToLabels()
             .onEach {
                 Timber.v("Emitting new labels size: ${it.size} user: $userId")
             }
+
+    override fun observeAllFoldersWithChildren(userId: UserId, shallRefresh: Boolean): Flow<List<FolderWithChildren>> =
+        observeAllLabelEntities(userId, shallRefresh)
+            .mapToFoldersWithChildren()
 
     override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<Label> =
         observeAllLabels(userId, shallRefresh).first()
 
     override fun observeLabels(labelsIds: List<LabelId>): Flow<List<Label>> =
         labelDao.observeLabelsById(labelsIds)
-            .mapToLabel()
+            .mapToLabels()
 
     override suspend fun findLabels(labelsIds: List<LabelId>): List<Label> =
         observeLabels(labelsIds).first()
@@ -104,7 +105,7 @@ internal class LabelRepositoryImpl @Inject constructor(
 
     override fun observeContactGroups(userId: UserId): Flow<List<Label>> =
         labelDao.observeLabelsByType(userId, LabelType.CONTACT_GROUP)
-            .mapToLabel()
+            .mapToLabels()
 
     override suspend fun findContactGroups(userId: UserId): List<Label> =
         labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP)
@@ -112,7 +113,7 @@ internal class LabelRepositoryImpl @Inject constructor(
 
     override fun observeSearchContactGroups(labelName: String, userId: UserId): Flow<List<Label>> =
         labelDao.observeSearchLabelsByNameAndType(userId, labelName, LabelType.CONTACT_GROUP)
-            .mapToLabel()
+            .mapToLabels()
 
     override suspend fun findLabelByName(labelName: String, userId: UserId): Label? =
         labelDao.findLabelByName(userId, labelName)?.let {
@@ -158,6 +159,15 @@ internal class LabelRepositoryImpl @Inject constructor(
         labelDao.deleteContactGroups(userId)
     }
 
+    private fun observeAllLabelEntities(userId: UserId, shallRefresh: Boolean): Flow<List<LabelEntity>> =
+        labelDao.observeAllLabels(userId)
+            .onStart {
+                if (shallRefresh && networkConnectivityManager.isInternetConnectionPossible()) {
+                    Timber.v("Fetching fresh labels")
+                    fetchAndSaveAllLabels(userId)
+                }
+            }
+
     private suspend fun fetchAndSaveAllLabels(
         userId: UserId
     ): List<LabelEntity> = coroutineScope {
@@ -200,10 +210,14 @@ internal class LabelRepositoryImpl @Inject constructor(
         labelId
     ).asFlow()
 
-    private fun Flow<List<LabelEntity>>.mapToLabel() = map { entities ->
+    private fun Flow<List<LabelEntity>>.mapToLabels(): Flow<List<Label>> = map { entities ->
         entities.map { entity ->
             labelDomainMapper.toLabel(entity)
         }
+    }
+
+    private fun Flow<List<LabelEntity>>.mapToFoldersWithChildren(): Flow<List<FolderWithChildren>> = map { entities ->
+        folderWithChildrenMapper.toFoldersWithChildren(entities)
     }
 
 }
