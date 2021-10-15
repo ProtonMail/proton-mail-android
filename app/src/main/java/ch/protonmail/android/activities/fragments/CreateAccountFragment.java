@@ -151,6 +151,7 @@ public class CreateAccountFragment extends CreateAccountBaseFragment implements 
         mRootLayout.getViewTreeObserver().addOnGlobalLayoutListener(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),R.layout.simple_spinner_item, domains);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mDomainsSpinner.setEnabled(false);
         mDomainsSpinner.setAdapter(adapter);
         mDomainsSpinner.setOnItemSelectedListener(this);
         setUsernameEditTextPadding();
@@ -197,6 +198,7 @@ public class CreateAccountFragment extends CreateAccountBaseFragment implements 
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),R.layout.simple_spinner_item, domains);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mDomainsSpinner.setEnabled(false);
         mDomainsSpinner.setAdapter(adapter);
         setUsernameEditTextPadding();
     }

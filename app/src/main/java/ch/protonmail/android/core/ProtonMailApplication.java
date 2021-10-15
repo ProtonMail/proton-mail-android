@@ -18,6 +18,15 @@
  */
 package ch.protonmail.android.core;
 
+import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
+import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
+import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -119,15 +128,6 @@ import io.sentry.android.AndroidSentryClientFactory;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
-import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
-import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
-import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
-
 @HiltAndroidApp
 public class ProtonMailApplication extends Application implements androidx.work.Configuration.Provider {
 
@@ -163,7 +163,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private boolean mUpdateOccurred;
     private AllCurrencyPlans mAllCurrencyPlans;
     private Organization mOrganization;
-    private List<String> mAvailableDomains;
     private String mCurrentLocale;
     private boolean mChangedSystemTimeDate;
     private AlertDialog forceUpgradeDialog;
@@ -400,9 +399,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     @Subscribe
     public void onAvailableDomainsEvent(AvailableDomainsEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            this.mAvailableDomains = event.getDomains();
-        }
     }
 
     @Subscribe
