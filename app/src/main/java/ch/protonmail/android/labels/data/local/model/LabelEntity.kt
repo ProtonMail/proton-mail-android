@@ -58,26 +58,37 @@ internal const val COLUMN_LABEL_STICKY = "sticky"
     ]
 )
 data class LabelEntity(
+
     @ColumnInfo(name = COLUMN_LABEL_ID)
     val id: LabelId,
+
     @ColumnInfo(name = COLUMN_LABEL_USER_ID)
     val userId: UserId,
+
     @ColumnInfo(name = COLUMN_LABEL_NAME)
     val name: String,
+
     @ColumnInfo(name = COLUMN_LABEL_COLOR)
     val color: String,
+
     @ColumnInfo(name = COLUMN_LABEL_ORDER)
     val order: Int,
+
     @ColumnInfo(name = COLUMN_LABEL_TYPE)
     val type: LabelType,
+
     @ColumnInfo(name = COLUMN_LABEL_PATH)
     val path: String,
+
     @ColumnInfo(name = COLUMN_LABEL_PARENT_ID)
     val parentId: String,
+
     @ColumnInfo(name = COLUMN_LABEL_EXPANDED)
     val expanded: Int,
+
     @ColumnInfo(name = COLUMN_LABEL_STICKY)
     val sticky: Int,
+
     @ColumnInfo(name = COLUMN_LABEL_NOTIFY)
     val notify: Int,
 )
