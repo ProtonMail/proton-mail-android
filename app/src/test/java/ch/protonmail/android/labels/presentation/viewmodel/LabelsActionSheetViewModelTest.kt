@@ -32,7 +32,6 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
@@ -41,6 +40,7 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -124,6 +124,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         id = LabelId(labelId1),
         name = title,
         color = color,
+        order = 0,
         type = LabelType.MESSAGE_LABEL,
         path = EMPTY_STRING,
         parentId = EMPTY_STRING
@@ -133,6 +134,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         id = LabelId(labelId2),
         name = title,
         color = color,
+        order = 0,
         type = LabelType.FOLDER,
         path = EMPTY_STRING,
         parentId = EMPTY_STRING
@@ -406,6 +408,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
                 id = LabelId("$index"),
                 name = "title $index",
                 color = color,
+                order = 0,
                 type = LabelType.MESSAGE_LABEL,
                 path = EMPTY_STRING,
                 parentId = EMPTY_STRING

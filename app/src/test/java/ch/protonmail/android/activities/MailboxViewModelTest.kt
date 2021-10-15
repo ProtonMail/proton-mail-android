@@ -187,6 +187,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 id = LabelId("$it"),
                 name = "label $it",
                 color = testColorInt.toString(),
+                order = 0,
                 type = LabelType.MESSAGE_LABEL,
                 path = "a/b",
                 parentId = "parentId",
@@ -537,8 +538,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 listOf(LabelId("0"), LabelId("2"))
             )
         } returns listOf(
-            Label(LabelId("0"), "label 0", "blue", LabelType.MESSAGE_LABEL, "", ""),
-            Label(LabelId("2"), "label 2", "blue", LabelType.MESSAGE_LABEL, "", "")
+            Label(LabelId("0"), "label 0", "blue", 0, LabelType.MESSAGE_LABEL, "", ""),
+            Label(LabelId("2"), "label 2", "blue", 0, LabelType.MESSAGE_LABEL, "", "")
         )
 
         val expected = MailboxUiItem(
@@ -1071,10 +1072,10 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 )
             } returns listOf(
                 Label(
-                    LabelId(ALL_DRAFT_LABEL_ID), "label 1", "blue", LabelType.MESSAGE_LABEL, "", "",
+                    LabelId(ALL_DRAFT_LABEL_ID), "label 1", "blue", 0, LabelType.MESSAGE_LABEL, "", "",
                 ),
                 Label(
-                    LabelId(DRAFT_LABEL_ID), "label 8", "blue", LabelType.MESSAGE_LABEL, "", "",
+                    LabelId(DRAFT_LABEL_ID), "label 8", "blue", 0, LabelType.MESSAGE_LABEL, "", "",
                 )
             )
 

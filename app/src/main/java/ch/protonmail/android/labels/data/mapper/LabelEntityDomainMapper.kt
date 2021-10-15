@@ -31,6 +31,7 @@ class LabelEntityDomainMapper @Inject constructor() : Mapper<LabelEntity, Label>
         id = model.id,
         name = model.name,
         color = model.color,
+        order = model.order,
         type = model.type,
         path = model.path,
         parentId = model.parentId
@@ -41,7 +42,7 @@ class LabelEntityDomainMapper @Inject constructor() : Mapper<LabelEntity, Label>
         userId = userId,
         name = model.name,
         color = model.color,
-        order = 0,
+        order = model.order,
         type = model.type,
         path = model.path,
         parentId = model.parentId,

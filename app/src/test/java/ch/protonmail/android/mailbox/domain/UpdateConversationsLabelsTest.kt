@@ -48,6 +48,7 @@ class UpdateConversationsLabelsTest {
             id = LabelId("label$count"),
             name = "name$count",
             color = "color",
+            order = 0,
             type = if (count > 2) LabelType.FOLDER else LabelType.MESSAGE_LABEL,
             testPath,
             testParentId,

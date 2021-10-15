@@ -61,11 +61,11 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val list1 = listOf(contactEmail1, contactEmail2)
         val contactLabel1 =
             Label(
-                labelId1, "name1", "color1", LabelType.MESSAGE_LABEL, "a/b", "parentId"
+                labelId1, "name1", "color1", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         val contactLabel2 =
             Label(
-                labelId2, "name2", "color2", LabelType.MESSAGE_LABEL, "a/b", "parentId"
+                labelId2, "name2", "color2", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         every { repository.observeContactEmails(contactId) } returns flowOf(list1)
         coEvery { repository.getContactGroupsLabelForId(contactEmailId1) } returns listOf(contactLabel1)
@@ -100,15 +100,15 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val list2 = listOf(contactEmail3)
         val contactLabel1 =
             Label(
-                labelId1, "name1", "color1", LabelType.MESSAGE_LABEL, "a/b", "parentId"
+                labelId1, "name1", "color1", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         val contactLabel2 =
             Label(
-                labelId2, "name2", "color2", LabelType.MESSAGE_LABEL, "a/b", "parentId"
+                labelId2, "name2", "color2", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         val contactLabel3 =
             Label(
-                labelId3, "name3", "color3", LabelType.MESSAGE_LABEL, "a/b", "parentId"
+                labelId3, "name3", "color3", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         every { repository.observeContactEmails(contactId) } returns flow {
             emit(list1)

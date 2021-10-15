@@ -62,6 +62,7 @@ class GetLabelsByTypeTest {
         testLabelId1,
         testLabelName1,
         testColor,
+        0,
         sheetType,
         testPath,
         testParentId
@@ -70,6 +71,7 @@ class GetLabelsByTypeTest {
         testLabelId2,
         testLabelName2,
         testColor,
+        0,
         sheetType2,
         testPath,
         testParentId

@@ -162,6 +162,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             id = LabelId(requireNotNull(contactGroupItem?.contactId)),
             name = name,
             color = String.format(Locale.getDefault(), "#%06X", 0xFFFFFF and (contactGroupItem?.color ?: 0)),
+            order = 0,
             type = LabelType.CONTACT_GROUP,
             path = "",
             parentId = ""
@@ -199,6 +200,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             id = LabelId(EMPTY_STRING),
             name = name,
             color = String.format(Locale.getDefault(), "#%06X", 0xFFFFFF and (contactGroupItem?.color ?: 0)),
+            order = 0,
             type = LabelType.CONTACT_GROUP,
             path = "",
             parentId = ""

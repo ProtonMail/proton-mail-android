@@ -97,7 +97,7 @@ class ContactGroupEditCreateRepositoryTest {
         // given
         val contactGroupId = "contact-group-id"
         val contactLabel = Label(
-            LabelId(contactGroupId), "name", "color", testType, testPath, testParentId
+            LabelId(contactGroupId), "name", "color", 1, testType, testPath, testParentId
         )
 
         val labelResponse =
@@ -133,6 +133,7 @@ class ContactGroupEditCreateRepositoryTest {
             LabelId(contactGroupId),
             "name",
             "color",
+            0,
             testType,
             testPath,
             testParentId
@@ -156,6 +157,7 @@ class ContactGroupEditCreateRepositoryTest {
                 LabelId(contactGroupId),
                 "name",
                 "color",
+                0,
                 testType,
                 testPath,
                 testParentId,
@@ -178,6 +180,7 @@ class ContactGroupEditCreateRepositoryTest {
                 LabelId("labelID"),
                 "name",
                 "color",
+                1,
                 LabelType.CONTACT_GROUP,
                 testPath,
                 testParentId,
@@ -199,7 +202,7 @@ class ContactGroupEditCreateRepositoryTest {
     fun whenCreateContactGroupApiCallFailsThenCreateContactGroupWorkerIsCalled() = runBlockingTest {
         val contactLabel =
             Label(
-                LabelId(""), "name", "color", LabelType.CONTACT_GROUP, "a/b", "ParentId"
+                LabelId(""), "name", "color", 0, LabelType.CONTACT_GROUP, "a/b", "ParentId"
             )
         val error = "Test API Error"
         val protonErrorData = ApiResult.Error.ProtonData(123, error)

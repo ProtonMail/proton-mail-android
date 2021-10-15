@@ -546,19 +546,14 @@ internal class EventHandler @AssistedInject constructor(
             val item = event.label
             when (ActionType.fromInt(event.type)) {
                 ActionType.CREATE -> {
-                    val labelType = item.type
-                    val id = item.id
-                    val name = item.name
-                    val color = item.color
-                    val path = item.path
-                    val parentId = item.parentId
                     val label = Label(
-                        id = LabelId(id),
-                        name = name,
-                        color = color,
-                        type = requireNotNull(LabelType.fromIntOrNull(labelType)),
-                        path = path,
-                        parentId = parentId ?: EMPTY_STRING,
+                        id = LabelId(item.id),
+                        name = item.name,
+                        color = item.color,
+                        order = item.order ?: 0,
+                        type = requireNotNull(LabelType.fromIntOrNull(item.type)),
+                        path = item.path,
+                        parentId = item.parentId ?: EMPTY_STRING,
                     )
                     externalScope.launch {
                         labelRepository.saveLabel(label, userId)

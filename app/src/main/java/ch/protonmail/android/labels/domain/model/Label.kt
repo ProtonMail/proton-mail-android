@@ -23,6 +23,7 @@ data class Label(
     val id: LabelId,
     val name: String,
     val color: String,
+    val order: Int,
     val type: LabelType,
     val path: String,
     val parentId: String,

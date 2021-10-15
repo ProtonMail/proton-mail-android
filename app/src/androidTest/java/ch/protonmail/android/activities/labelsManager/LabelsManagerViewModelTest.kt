@@ -103,7 +103,13 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
 
             // Add single label
             val label = Label(
-                LabelId("1"), EMPTY_STRING, EMPTY_STRING, MESSAGE_LABEL, EMPTY_STRING, EMPTY_STRING
+                id = LabelId("1"),
+                name = EMPTY_STRING,
+                color = EMPTY_STRING,
+                order = 0,
+                type = MESSAGE_LABEL,
+                path = EMPTY_STRING,
+                parentId = EMPTY_STRING
             )
             labelRepository.saveLabel(label, userId)
             delay(50) // Wait for async delivery

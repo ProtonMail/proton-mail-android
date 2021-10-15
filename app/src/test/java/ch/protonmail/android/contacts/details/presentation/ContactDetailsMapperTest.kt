@@ -71,7 +71,7 @@ class ContactDetailsMapperTest {
     private val groupName1 = "name1"
     private val contactLabel =
         Label(
-            groupId1, groupName1, "color", LabelType.MESSAGE_LABEL, "a/b", "parentId"
+            groupId1, groupName1, "color", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
         )
     private val fetchContactGroupResult = FetchContactGroupsResult(
         listOf(contactLabel)
