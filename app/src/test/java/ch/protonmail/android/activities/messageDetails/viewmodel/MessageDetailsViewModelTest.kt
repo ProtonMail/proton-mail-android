@@ -42,6 +42,7 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
+import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -72,7 +73,6 @@ import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -172,7 +172,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private var messageRendererFactory = mockk<MessageRenderer.Factory> {
         every { create(any()) } returns mockk(relaxed = true) {
-            every { renderedMessage } returns Channel()
+            coEvery { setImagesAndProcess(any(), any()) } answers {
+                RenderedMessage(firstArg(), secondArg())
+            }
         }
     }
 

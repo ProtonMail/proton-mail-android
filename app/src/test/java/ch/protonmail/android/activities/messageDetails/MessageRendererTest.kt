@@ -19,22 +19,24 @@
 
 package ch.protonmail.android.activities.messageDetails
 
+import android.graphics.Bitmap
 import android.util.Base64
 import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.jobs.helper.EmbeddedImage
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.plus
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.util.kotlin.EMPTY_STRING
+import org.jsoup.nodes.Document
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.AfterTest
@@ -42,40 +44,43 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Test class for [MessageRenderer]
- * @author Davide Farella
- */
+private const val TEST_MESSAGE_ID = "message id"
+private const val TEST_MESSAGE_ID_1 = "message 1"
+private const val TEST_MESSAGE_ID_2 = "message 2"
+private const val TEST_MESSAGE_BODY = "Message body"
+private const val TEST_MESSAGE_BODY_1 = "Message body 1"
+private const val TEST_MESSAGE_BODY_2 = "Message body 2"
+private const val TEST_DOCUMENT_CONTENT = "document"
+
 internal class MessageRendererTest : CoroutinesTest {
 
     @get:Rule
     val folder: TemporaryFolder = TemporaryFolder()
         .also { it.create() }
 
-    private val mockImageDecoder: ImageDecoder = mockk(relaxed = true)
-
-    private val mockDocumentParser: DocumentParser = mockk(relaxed = true)
-
-    private val mockEmbeddedImages = (1..10).map {
-        mockk<EmbeddedImage>(relaxed = true) {
-            every { localFileName } returns "$it"
-            every { contentId } returns "id"
-            every { encoding } returns ""
-            every { messageId } returns "messageId-1"
-        }
+    private val mockImageDecoder: ImageDecoder = mockk {
+        every { this@mockk(any(), any()) } returns buildMockBitmap()
     }
+
+    private val mockDocumentParser: DocumentParser = mockk {
+        coEvery { this@mockk(any()) } returns buildMockDocument()
+    }
+
+    private fun CoroutineScope.buildRenderer() =
+        MessageRenderer(
+            dispatchers = dispatchers,
+            documentParser = mockDocumentParser,
+            bitmapImageDecoder = mockImageDecoder,
+            attachmentsDirectory = folder.root,
+            scope = this + Job()
+        ).apply {
+            setMessageBody(TEST_MESSAGE_ID, TEST_MESSAGE_BODY)
+        }
 
     @BeforeTest
     fun setUp() {
         mockkStatic(Base64::class)
-
-        // As the same MessageRenderer instance can be called for different messages
-        // So the SUT saves images in a folder named as the messageId (which is the same for all embedded images in a list)
-        folder.newFolder(mockEmbeddedImages.first().messageId)
-        for (image in mockEmbeddedImages) {
-            val file = folder.newFile("${image.messageId}/${image.localFileName}")
-            file.writeText("_")
-        }
+        every { Base64.encodeToString(any(), any()) } returns "string"
     }
 
     @AfterTest
@@ -83,101 +88,320 @@ internal class MessageRendererTest : CoroutinesTest {
         unmockkStatic(Base64::class)
     }
 
-    private fun CoroutineScope.Renderer() =
-        MessageRenderer(dispatchers, mockDocumentParser, mockImageDecoder, folder.root, this)
-            .apply { messageBody = "" }
-
     @Test
-    fun `renderedBody doesn't emit for images sent with too short delay`() = coroutinesTest {
-        every { Base64.encodeToString(any(), any()) } returns "string"
+    fun returnsResultForASingleImagesSetSent() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet = buildEmbeddedImages(idsRange = 1..3)
+        createFilesFor(imageSet)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID, EMPTY_STRING)
 
-        val scope = this + Job()
-        val messageRenderer = scope.Renderer()
+        // when
+        val result = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet)
 
-        val count = 2
-        val consumer: (RenderedMessage) -> Unit = mockk(relaxed = true)
-
-        with(messageRenderer) {
-            launch(Unconfined) {
-                renderedMessage.consumeEach(consumer)
-            }
-            repeat(count) {
-                images.offer(mockEmbeddedImages)
-            }
-            advanceUntilIdle()
-            renderedMessage.close()
-            scope.cancel()
-        }
-
-        verify(exactly = 1) { consumer(any()) }
+        // then
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID, TEST_DOCUMENT_CONTENT), result)
     }
 
     @Test
-    fun `renderedBody emits for every image sent with right delay`() = coroutinesTest {
-        every { Base64.encodeToString(any(), any()) } returns "string"
+    fun returnsResultForEachMessageSequentially() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
+        createFilesFor(imageSet1, imageSet2)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, EMPTY_STRING)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, EMPTY_STRING)
 
-        val scope = this + Job()
-        val messageRenderer = scope.Renderer()
+        // when
+        val result1 = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_1, imageSet1)
+        val result2 = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, imageSet2)
 
-        val count = 2
-        val consumer: (RenderedMessage) -> Unit = mockk(relaxed = true)
-        val expectedDebounceTime = 500L
-
-        with(messageRenderer) {
-            launch(Unconfined) {
-                renderedMessage.consumeEach(consumer)
-            }
-            repeat(count) {
-                images.offer(mockEmbeddedImages)
-                // By setting a new body we reset messageRender internal "inlinedImageIds" list as it would otherwise
-                // prevent the second emission since the contentIds were already inlined.
-                messageBody = "new message body"
-                advanceTimeBy(expectedDebounceTime)
-            }
-            advanceUntilIdle()
-            renderedMessage.close()
-            scope.cancel()
-        }
-
-        verify(exactly = count) { consumer(any()) }
+        // then
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID_1, TEST_DOCUMENT_CONTENT), result1)
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID_2, TEST_DOCUMENT_CONTENT), result2)
     }
 
     @Test
-    fun messageRendererRendersImagesForDifferentMessagesByChangingTheMessageBody() = coroutinesTest {
-        // Render images for the first message
-        // Given
-        val scope = this + Job()
-        val messageRenderer = scope.Renderer()
-        val firstMessageBody = "first message body"
-        val secondMessageBody = "second message body"
-        messageRenderer.messageBody = firstMessageBody
-        every { Base64.encodeToString(any(), any()) } returns "base64EncodedImageData"
-        every { mockDocumentParser.invoke(firstMessageBody) } returns mockk(relaxed = true) {
-            every { this@mockk.toString() } returns "First message body with inlined images"
+    fun returnsResultForEachMessageInParallel() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
+        createFilesFor(imageSet1, imageSet2)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, EMPTY_STRING)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, EMPTY_STRING)
+
+        // when
+        val result1Deferred = async { messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_1, imageSet1) }
+        val result2Deferred = async { messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, imageSet2) }
+
+        // then
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID_1, TEST_DOCUMENT_CONTENT), result1Deferred.await())
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID_2, TEST_DOCUMENT_CONTENT), result2Deferred.await())
+    }
+
+    @Test
+    fun returnsResultForEachMessageInParallelWithDifferentExecutionTimes() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
+        createFilesFor(imageSet1, imageSet2)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, TEST_MESSAGE_BODY_1)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, TEST_MESSAGE_BODY_2)
+
+        coEvery { mockDocumentParser(TEST_MESSAGE_BODY_1) } coAnswers  {
+            delay(500)
+            buildMockDocument()
+        }
+        coEvery { mockDocumentParser(TEST_MESSAGE_BODY_2) } coAnswers  {
+            delay(1)
+            buildMockDocument()
         }
 
-        // When
-        messageRenderer.images.offer(mockEmbeddedImages)
-        advanceTimeBy(500)
+        // when
+        val result1Deferred = async { messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_1, imageSet1) }
+        val result2Deferred = async { messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, imageSet2) }
 
-        // Then
-        val expected = RenderedMessage("messageId-1", "First message body with inlined images")
-        val actual = messageRenderer.renderedMessage.tryReceive().getOrNull()
-        assertEquals(expected, actual)
+        // then
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID_1, TEST_DOCUMENT_CONTENT), result1Deferred.await())
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID_2, TEST_DOCUMENT_CONTENT), result2Deferred.await())
+    }
 
-        // Render images for a second message
-        // Given
-        every { mockDocumentParser.invoke(secondMessageBody) } returns mockk(relaxed = true) {
-            every { this@mockk.toString() } returns "Second message body with inlined images"
+    @Test
+    fun returnsResultForEachMessageWithReversedOrder() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 4..7)
+        createFilesFor(imageSet1, imageSet2)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, EMPTY_STRING)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, EMPTY_STRING)
+
+        // when
+        val result2 = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, imageSet2)
+        val result1 = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_1, imageSet1)
+
+        // then
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID_1, TEST_DOCUMENT_CONTENT), result1)
+        assertEquals(RenderedMessage(TEST_MESSAGE_ID_2, TEST_DOCUMENT_CONTENT), result2)
+    }
+
+    @Test
+    fun correctlyInlineImagesInTheMessage() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet = buildEmbeddedImages(idsRange = 1..2)
+        val messageBody = """
+            This is the first picture:
+            img[src=${imageSet[0].contentId}]
+            And this is another picture:
+            img[src=${imageSet[1].contentId}]
+        """.trimIndent()
+
+        setBase64EncodeToStringToIncrementalResult()
+        setMockDocumentParserToReplaceStringsInMessage(messageBody)
+        createFilesFor(imageSet)
+
+        val expectedMessageBody = """
+            This is the first picture:
+            data:;,image 1
+            And this is another picture:
+            data:;,image 2
+        """.trimIndent()
+        val expected = RenderedMessage(TEST_MESSAGE_ID, expectedMessageBody)
+
+        // when
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID, messageBody)
+        val result = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet)
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun correctlyCompressesTheImages() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet = buildEmbeddedImages(idsRange = 1..3)
+        createFilesFor(imageSet)
+
+        val mockBitmap = buildMockBitmap()
+        every { mockImageDecoder(any(), any()) } returns mockBitmap
+
+        // when
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet)
+
+        // then
+        verify(exactly = imageSet.size) { mockBitmap.compress(any(), any(), any()) }
+    }
+
+    @Test
+    fun skipsImagesAlreadyProcessedForTheSameMessage() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 1..5)
+        createFilesFor(imageSet1, imageSet2)
+
+        val mockBitmap = buildMockBitmap()
+        every { mockImageDecoder(any(), any()) } returns mockBitmap
+
+        // when
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet1)
+        advanceUntilIdle()
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID, imageSet2)
+
+        // then
+        verify(exactly = imageSet2.size) { mockBitmap.compress(any(), any(), any()) }
+    }
+
+    @Test
+    fun doesNotSkipImagesAlreadyProcessedForAnotherMessage() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet1 = buildEmbeddedImages(idsRange = 1..3)
+        val imageSet2 = buildEmbeddedImages(idsRange = 1..5)
+        createFilesFor(imageSet1, imageSet2)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, EMPTY_STRING)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, EMPTY_STRING)
+
+        val mockBitmap = buildMockBitmap()
+        every { mockImageDecoder(any(), any()) } returns mockBitmap
+
+        val expectedImagesProcessedCount = imageSet1.size + imageSet2.size
+
+        // when
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_1, imageSet1)
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, imageSet2)
+
+        // then
+        verify(exactly = expectedImagesProcessedCount) { mockBitmap.compress(any(), any(), any()) }
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun setImagesAndProcessThrowsExceptionIfNoMessageBodySetForGivenMessageId() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+
+        // when
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, EMPTY_STRING)
+        messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, emptyList())
+    }
+
+    @Test
+    fun rendersImagesForDifferentMessages() = coroutinesTest {
+        // given
+        val messageRenderer = buildRenderer()
+        val imageSet = buildEmbeddedImages(idsRange = 1..10)
+        createFilesFor(imageSet)
+
+        val firstMessageBodyWithInlinedImages = "$TEST_MESSAGE_BODY_1 with inlined images"
+        val secondMessageBodyWithInlinedImages = "$TEST_MESSAGE_BODY_2 with inlined images"
+
+        coEvery { mockDocumentParser(TEST_MESSAGE_BODY_1) } returns
+            buildMockDocument(content = firstMessageBodyWithInlinedImages)
+        coEvery { mockDocumentParser(TEST_MESSAGE_BODY_2) } returns
+            buildMockDocument(content = secondMessageBodyWithInlinedImages)
+
+        val expectedFirstRenderedMessage = RenderedMessage(TEST_MESSAGE_ID_1, firstMessageBodyWithInlinedImages)
+        val expectedSecondRenderedMessage = RenderedMessage(TEST_MESSAGE_ID_2, secondMessageBodyWithInlinedImages)
+
+        // when
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_1, TEST_MESSAGE_BODY_1)
+        messageRenderer.setMessageBody(TEST_MESSAGE_ID_2, TEST_MESSAGE_BODY_2)
+        val result1 = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_1, imageSet)
+        val result2 = messageRenderer.setImagesAndProcess(TEST_MESSAGE_ID_2, imageSet)
+
+        // then
+        assertEquals(expectedFirstRenderedMessage, result1)
+        assertEquals(expectedSecondRenderedMessage, result2)
+    }
+
+    private fun buildMockDocument(
+        content: String = TEST_DOCUMENT_CONTENT,
+        block: Document.() -> Unit = {}
+    ): Document =
+        mockk(relaxed = true) {
+            every { this@mockk.toString() } returns content
+            block()
         }
-        messageRenderer.messageBody = secondMessageBody
 
-        // When
-        messageRenderer.images.offer(mockEmbeddedImages)
+    private fun buildMockDocumentWithReplaceFeature(documentString: String) = buildMockDocument document@{
+        var document = documentString
+        every { this@document.select(any<String>()) } answers {
+            val query = firstArg<String>()
 
-        // Then
-        val secondMessageExpected = RenderedMessage("messageId-1", "Second message body with inlined images")
-        val secondMessageActual = messageRenderer.renderedMessage.tryReceive().getOrNull()
-        assertEquals(secondMessageExpected, secondMessageActual)
+            mockk(relaxed = true) elements@{
+                every { this@elements.attr(any(), any()) } answers {
+                    document = document.replace(query, secondArg())
+                    this@elements
+                }
+            }
+        }
+        every { this@document.toString() } answers { document }
+    }
+
+    private fun buildMockBitmap(): Bitmap =
+        mockk {
+            every { compress(any(), any(), any()) } returns true
+        }
+
+    private fun buildEmbeddedImages(
+        messageId: String = "message id",
+        idsRange: IntRange = 0..10
+    ): List<EmbeddedImage> = idsRange.map {
+        EmbeddedImage(
+            attachmentId = "attachment $it",
+            fileName = "file $it",
+            key = EMPTY_STRING,
+            contentType = EMPTY_STRING,
+            encoding = EMPTY_STRING,
+            contentId = "content $it",
+            mimeData = null,
+            size = 10,
+            messageId = messageId,
+            localFileName = "local file $it"
+        )
+    }
+
+    private fun createFilesFor(vararg imageSets: List<EmbeddedImage>) {
+        val messagesIdsToFilesNames = imageSets.map { imageSet ->
+            // Group by message id
+            imageSet.groupBy { image -> image.messageId }
+                // Take only file names
+                .mapValues { (_, imageList) -> imageList.map { image -> image.localFileName } }
+        }.mergeMaps()
+
+        for ((messageId, filesNames) in messagesIdsToFilesNames) {
+            folder.newFolder(messageId)
+            for (fileName in filesNames) {
+                runCatching { // ignore pre-existent files
+                    val file = folder.newFile("$messageId/$fileName")
+                    file.writeText("_")
+                }
+            }
+        }
+    }
+
+    private fun <K, V> Collection<Map<K, List<V>>>.mergeMaps(): Map<K, List<V>> {
+        val keys = flatMap { map -> map.keys }
+        // Take values of each maps, for the given key
+        return keys.associateWith { key ->
+            // Take values of each maps, for the given key
+            flatMap { map ->
+                map[key] ?: emptyList()
+            }
+        }
+    }
+
+    private fun setBase64EncodeToStringToIncrementalResult() {
+        var count = 0
+        every { Base64.encodeToString(any(), any()) } answers { "image ${++count}" }
+    }
+
+    private fun setMockDocumentParserToReplaceStringsInMessage(message: String) {
+        coEvery { mockDocumentParser(any()) } returns buildMockDocumentWithReplaceFeature(message)
     }
 }

@@ -23,6 +23,12 @@ package ch.protonmail.android.activities.messageDetails
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import ch.protonmail.android.details.domain.model.EmbeddedImageWithContent
+import ch.protonmail.android.details.domain.model.EmbeddedImageWithOutputStream
+import ch.protonmail.android.details.domain.model.MessageBodyDocument
+import ch.protonmail.android.details.domain.model.MessageEmbeddedImages
+import ch.protonmail.android.details.domain.model.MessageEmbeddedImagesWithContent
+import ch.protonmail.android.details.domain.model.MessageEmbeddedImagesWithOutputStream
 import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.di.AttachmentsDirectory
 import ch.protonmail.android.jobs.helper.EmbeddedImage
@@ -31,7 +37,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.toList
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.plus
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -45,17 +53,22 @@ import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-private const val DEBOUNCE_DELAY_MILLIS = 500L
-
 /**
  * A class that will inline the images in the message's body.
- * Implement [CoroutineScope] by the constructor scope
+ *
+ * ## Input
+ * For start the process, these functions must be called
+ * * [setMessageBody]
+ * * [setImagesAndProcess]
+ *
+ * ## Output
+ * [setImagesAndProcess] will return [RenderedMessage]
+ *
+ *
+ * Implements [CoroutineScope] by the constructor scope
  *
  * @param scope [CoroutineScope] which this class inherit from, this should be our `ViewModel`s
  * scope, so when `ViewModel` is cleared all the coroutines for this class will be canceled
- *
- *
- * @author Davide Farella
  */
 internal class MessageRenderer(
     private val dispatchers: DispatcherProvider,
@@ -65,30 +78,14 @@ internal class MessageRenderer(
     scope: CoroutineScope
 ) : CoroutineScope by scope + dispatchers.Comp {
 
-    /** The [String] html of the message body */
-    var messageBody: String? = null
-        set(value) {
-            field = value
-            // Clear inlined images to ensure when messageBody changes the loading of images doesn't get blocked
-            // (messageBody changing means we're loading images for another message in the same conversation)
-            inlinedImageIds.clear()
-        }
+    private val renderedMessagesCache = mutableMapOf<String, RenderedMessage>()
 
-    /** A [Channel] for receive new [EmbeddedImage] images to inline in [document] */
-    val images = actor<List<EmbeddedImage>> {
-        for (embeddedImages in channel) {
-            imageCompressor.send(embeddedImages)
-            // Workaround that ignore values for the next half second, since ViewModel is emitting
-            // too many times
-            delay(DEBOUNCE_DELAY_MILLIS)
-        }
-    }
+    private val messagesBodiesById = mutableMapOf<String, String>()
+    // keep track of ids of the already inlined images across the threads
+    private val inlinedImagesIdsByMessageId = mutableMapOf<String, MutableList<String>>()
 
-    /** A [Channel] that will emits message body [String] with inlined images */
-    val renderedMessage = Channel<RenderedMessage>()
-
-    /** [List] for keep track of ids of the already inlined images across the threads */
-    private val inlinedImageIds = mutableListOf<String>()
+    // region Actors
+    private val resultsChannel = Channel<RenderedMessage>()
 
     /**
      * Actor that will compress images.
@@ -98,9 +95,9 @@ internal class MessageRenderer(
      * and each task will collect and process items - concurrently - from `imageSelector` until it's
      * empty.
      */
-    private val imageCompressor = actor<List<EmbeddedImage>> {
-        for (embeddedImages in channel) {
-            val outputs = Channel<ImageStream>(capacity = embeddedImages.size)
+    private val imageCompressor = actor<MessageEmbeddedImages> {
+        for ((messageId, embeddedImages) in channel) {
+            val outputsChannel = Channel<EmbeddedImageWithOutputStream>(capacity = embeddedImages.size)
 
             /** This [Channel] works as a queue for handle [EmbeddedImage]s concurrently */
             val imageSelector = Channel<EmbeddedImage>(capacity = embeddedImages.size)
@@ -110,7 +107,7 @@ internal class MessageRenderer(
                 val contentId = embeddedImage.contentId.formatContentId()
 
                 // Skip if we don't have a content id or already rendered
-                if (contentId.isNotBlank() && contentId !in inlinedImageIds)
+                if (contentId.isNotBlank() && contentId !in getInlinedImagesIds(messageId))
                     imageSelector.send(embeddedImage)
             }
 
@@ -145,44 +142,42 @@ internal class MessageRenderer(
                     }
 
                     // Add the processed image to outputs
-                    outputs.send(embeddedImage to compressed)
+                    outputsChannel.send(EmbeddedImageWithOutputStream(embeddedImage, compressed))
                 }
             }
 
             imageSelector.close()
-            outputs.close()
-            imageStringifier.send(outputs.toList())
+            outputsChannel.close()
+            imageStringifier.send(MessageEmbeddedImagesWithOutputStream(messageId, outputsChannel.toList()))
         }
     }
 
     /** Actor that will stringify images */
-    private val imageStringifier = actor<List<ImageStream>> {
-        for (imageStreams in channel) {
+    private val imageStringifier = actor<MessageEmbeddedImagesWithOutputStream> {
+        for ((messageId, imagesWithStreams) in channel) {
 
-            val imageStrings = imageStreams.map { imageStream ->
-                val (embeddedImage, stream) = imageStream
-                embeddedImage to Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
+            val imageStrings = imagesWithStreams.map { imageWithStream ->
+                val content = Base64.encodeToString(imageWithStream.stream.toByteArray(), Base64.DEFAULT)
+                EmbeddedImageWithContent(imageWithStream.image, content)
             }
-            imageInliner.send(imageStrings)
+            imageInliner.send(MessageEmbeddedImagesWithContent(messageId, imageStrings))
         }
     }
 
     /** Actor that will inline images into [Document] */
-    private val imageInliner = actor<List<ImageString>> {
-        for (imageStrings in channel) {
+    private val imageInliner = actor<MessageEmbeddedImagesWithContent> {
+        for ((messageId, imagesWithContents) in channel) {
+            val messageBody = messagesBodiesById.getValue(messageId)
+            val document = documentParser(messageBody)
 
-            // Document is parsed for each emission because `messageBody`
-            // field can change when switching messages in a conversation
-            val document = documentParser(messageBody!!)
+            for (imageWithContent in imagesWithContents) {
 
-            for (imageString in imageStrings) {
-
-                val (embeddedImage, image64) = imageString
+                val (embeddedImage, image64) = imageWithContent
                 val contentId = embeddedImage.contentId.formatContentId()
 
                 // Skip if we don't have a content id or already rendered
-                if (contentId.isBlank() || contentId in inlinedImageIds) continue
-                idsListUpdater.send(contentId)
+                if (contentId.isBlank() || contentId in getInlinedImagesIds(messageId)) continue
+                idsListUpdater.send(messageId to contentId)
 
                 val encoding = embeddedImage.encoding.formatEncoding()
                 val contentType = embeddedImage.contentType.formatContentType()
@@ -191,22 +186,74 @@ internal class MessageRenderer(
                     ?.attr("src", "data:$contentType;$encoding,$image64")
             }
 
-            // Extract the message ID for which embedded images are being loaded
-            // to pass it back to the caller along with the rendered body
-            val messageId = imageStrings.firstOrNull()?.first?.messageId ?: continue
-            renderedMessage.send(RenderedMessage(messageId, document.toString()))
+            documentStringifier.send(MessageBodyDocument(messageId, document))
         }
     }
 
-    /** `CoroutineContext` for [idsListUpdater] for update [inlinedImageIds] of a single thread */
-    private val idsListContext = newSingleThreadContext("idsListContext")
-
-    /** Actor that will update [inlinedImageIds] */
-    private val idsListUpdater = actor<String>(idsListContext) {
-        for (id in channel) inlinedImageIds += id
+    /** Actor that will stringify the Document of the message body */
+    private val documentStringifier = actor<MessageBodyDocument> {
+        for ((messageId, document) in channel) {
+            resultsChannel.send(RenderedMessage(messageId, document.toString()))
+        }
     }
 
-    /** @return [File] directory for the current message */
+    /** `CoroutineContext` for [idsListUpdater] for update [inlinedImagesIdsByMessageId] of a single thread */
+    private val idsListContext = newSingleThreadContext("idsListContext")
+
+    /** Actor that will update [inlinedImagesIdsByMessageId] */
+    private val idsListUpdater = actor<Pair<String, String>>(idsListContext) {
+        for ((messageId, imageId) in channel) {
+            inlinedImagesIdsByMessageId.getOrPut(messageId) { mutableListOf() }
+                .add(imageId)
+        }
+    }
+    // endregion
+
+    /**
+     * Set the [messageBody] for the message with the given [messageId]
+     * The [messageBody] will be used when [setImagesAndProcess] is called for a message with the same [messageId]
+     *
+     * @param messageBody [String] representation of the HTML message's body
+     */
+    fun setMessageBody(messageId: String, messageBody: String) {
+        messagesBodiesById[messageId] = messageBody
+        inlinedImagesIdsByMessageId[messageId]?.clear()
+    }
+
+    /**
+     * Set [EmbeddedImage]s to be inlined in the message with the given [messageId]
+     *
+     * @throws IllegalStateException if no message body has been set for the message
+     *  @see setMessageBody
+     */
+    suspend fun setImagesAndProcess(messageId: String, images: List<EmbeddedImage>): RenderedMessage {
+        return coroutineScope {
+            val fromCache = renderedMessagesCache.remove(messageId)
+
+            if (fromCache != null) {
+                return@coroutineScope fromCache
+            } else {
+                val cacheJob = launch {
+                    checkNotNull(messagesBodiesById[messageId]) { "No message body set for id: $messageId" }
+                    imageCompressor.send(MessageEmbeddedImages(messageId, images))
+                    for (result in resultsChannel) {
+                        renderedMessagesCache[result.messageId] = result
+                    }
+                }
+                var renderedMessage: RenderedMessage? = renderedMessagesCache.remove(messageId)
+                while (renderedMessage == null) {
+                    renderedMessage = renderedMessagesCache.remove(messageId)
+                    delay(1)
+                }
+                cacheJob.cancel()
+                return@coroutineScope renderedMessage
+            }
+        }
+    }
+
+    private fun getInlinedImagesIds(messageId: String): List<String> =
+        inlinedImagesIdsByMessageId[messageId] ?: emptyList()
+
     private fun messageDirectory(messageId: String) = File(attachmentsDirectory, messageId)
 
     /**
@@ -232,10 +279,10 @@ internal class MessageRenderer(
 
 // region constants
 /** A count of bytes representing the maximum total size of the images to inline */
-private const val MAX_IMAGES_TOTAL_SIZE = 9437184 // 9 MB
+private const val MAX_IMAGES_TOTAL_SIZE = 9_437_184 // 9 MB
 
 /** A count of bytes representing the maximum size of a single images to inline */
-private const val MAX_IMAGE_SINGLE_SIZE = 1048576 // 1 MB
+private const val MAX_IMAGE_SINGLE_SIZE = 1_048_576 // 1 MB
 
 /** Max number of concurrent workers. It represents the available processors */
 private val WORKERS_COUNT get() = Runtime.getRuntime().availableProcessors()
@@ -246,11 +293,6 @@ private const val ID_PLACEHOLDER = "%id"
 /** [Array] of html attributes that could contain an image */
 private val IMAGE_ATTRIBUTES =
     arrayOf("img[src=$ID_PLACEHOLDER]", "img[src=cid:$ID_PLACEHOLDER]", "img[rel=$ID_PLACEHOLDER]")
-// endregion
-
-// region typealiases
-private typealias ImageStream = Pair<EmbeddedImage, ByteArrayOutputStream>
-private typealias ImageString = Pair<EmbeddedImage, String>
 // endregion
 
 // region extensions
@@ -283,14 +325,14 @@ private fun Document.findImageElements(id: String): Elements? {
  * Parses a document as [String] and returns a [Document] model
  */
 internal interface DocumentParser {
-    operator fun invoke(body: String): Document
+    suspend operator fun invoke(body: String): Document
 }
 
 /**
  * Default implementation of [DocumentParser]
  */
 internal class DefaultDocumentParser @Inject constructor() : DocumentParser {
-    override fun invoke(body: String): Document = Jsoup.parse(body).flatten()
+    override suspend fun invoke(body: String): Document = Jsoup.parse(body).flatten()
 }
 // endregion
 

@@ -55,8 +55,8 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.details.presentation.model.MessageBodyState
+import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
@@ -85,6 +85,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -223,18 +224,6 @@ internal class MessageDetailsViewModel @Inject constructor(
                 emitConversationUiItem(it)
             }
             .launchIn(viewModelScope)
-
-        viewModelScope.launch {
-            for (renderedMessage in messageRenderer.renderedMessage) {
-                val updatedMessage = updateUiModelMessageWithFormattedHtml(
-                    renderedMessage.messageId,
-                    renderedMessage.renderedHtmlBody
-                )
-                Timber.v("Update rendered HTML message id: ${updatedMessage?.messageId}")
-                _messageRenderedWithImages.value = updatedMessage
-                areImagesDisplayed = true
-            }
-        }
     }
 
     private fun getMessageFlow(userId: UserId): Flow<ConversationUiModel?> =
@@ -488,8 +477,29 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun onEmbeddedImagesDownloaded(event: DownloadEmbeddedImagesEvent) {
-        Timber.v("onEmbeddedImagesDownloaded status: ${event.status} images size: ${event.images.size}")
-        messageRenderer.images.offer(event.images)
+        viewModelScope.launch {
+            Timber.v("onEmbeddedImagesDownloaded status: ${event.status} images size: ${event.images.size}")
+            val messageId = event.images.first().messageId
+            val renderedMessage = try {
+                messageRenderer.setImagesAndProcess(messageId, event.images)
+            } catch (e: IllegalStateException) {
+                if (e is CancellationException) throw e
+                Timber.e(e)
+                return@launch
+            }
+
+            val updatedMessage = updateUiModelMessageWithFormattedHtml(
+                renderedMessage.messageId,
+                renderedMessage.renderedHtmlBody
+            ) ?: run {
+                Timber.e("Cannot update message with formatted html. Message id: $messageId")
+                return@launch
+            }
+
+            Timber.v("Update rendered HTML message id: ${updatedMessage.messageId}")
+            _messageRenderedWithImages.value = updatedMessage
+            areImagesDisplayed = true
+        }
     }
 
 
@@ -675,6 +685,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         css: String,
         defaultErrorMessage: String
     ): String {
+        val messageId = requireNotNull(message.messageId) { "message id is null" }
         val formattedHtml = try {
             val contentTransformer = DefaultTransformer()
                 .pipe(ViewportTransformer(windowWidth, css))
@@ -687,7 +698,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         updateUiModelMessageWithFormattedHtml(message.messageId, formattedHtml, message.decryptedBody)
         // Set the body of the message currently being displayed in messageRenderer to allow embedded images loading
-        messageRenderer.messageBody = formattedHtml
+        messageRenderer.setMessageBody(messageId, formattedHtml)
         return formattedHtml
     }
 
