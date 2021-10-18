@@ -45,7 +45,8 @@
     <string name="composer_subject">Oggetto:</string>
     <string name="composer_to">A:</string>
     <string name="set_msg_password_title">Imposta password</string>
-    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per utenti non protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Per saperne di più</a></string>
+    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per utenti non protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Per saperne di più</a>
+    </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Password messaggio</string>
     <string name="set_msg_password_msg_password_hint">da 4 a 21 caratteri</string>
@@ -280,7 +281,8 @@
     <string name="cont">Continua</string>
     <string name="reply_prefix_on">On</string>
     <string name="terms_and_conditions">Utilizzando ProtonMail, accetti i nostri\n
-        <a href="https://protonmail.com/terms-and-conditions">termini e condizioni</a> e l\'<a href="https://protonmail.com/privacy-policy"> informativa sulla privacy</a></string>
+        <a href="https://protonmail.com/terms-and-conditions">termini e condizioni</a> e l\'<a href="https://protonmail.com/privacy-policy"> informativa sulla privacy</a>
+    </string>
     <string name="labels_title_apply">Applica etichette</string>
     <string name="labels_title_add">Aggiungi etichetta</string>
     <string name="labels_title">Etichette</string>
@@ -351,7 +353,8 @@
     </string-array>
     <string name="delete_label_confirmation_title">Eliminare le etichette selezionate?</string>
     <string name="delete_folder_confirmation_title">Eliminare le cartelle selezionate?</string>
-    <string name="delete_label_confirmation_message">Le email qui contenute saranno trovate in <b>Tutte le email</b></string>
+    <string name="delete_label_confirmation_message">Le email qui contenute saranno trovate in <b>Tutte le email</b>
+    </string>
     <string name="enter_pin">Immetta il PIN per sbloccare la sua casella email</string>
     <string name="enter_pin_message_details">Inserisca il suo PIN per sbloccare il suo messaggio</string>
     <string name="enter_current_pin">Inserisca il suo PIN attuale</string>
@@ -560,7 +563,8 @@
     <string name="update_folder">Aggiorna cartella</string>
     <string name="spam_score_100">Questa email sembra provenire da un indirizzo ProtonMail, ma arriva dall\'esterno del nostro sistema e ha fallito i nostri requisiti d\'autenticazione. Potrebbe essere falsificata o inoltrata scorrettamente!</string>
     <string name="spam_score_101">Questa email ha fallito l\'autenticazione del proprio dominio. Potrebbe essere falsa o non correttamente inoltrata!</string>
-    <string name="spam_score_102">Questo messaggio potrebbe essere un tentativo di phishing. Per favore, controlla il mittente e il contenuto per verificare che siano veritieri. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MAGGIORI INFORMAZIONI</a></string>
+    <string name="spam_score_102">Questo messaggio potrebbe essere un tentativo di phishing. Per favore, controlla il mittente e il contenuto per verificare che siano veritieri. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MAGGIORI INFORMAZIONI</a>
+    </string>
     <string name="print_from_template">Da: %s</string>
     <string name="print_to_template">A: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -578,7 +582,9 @@
     <string name="empty_subject">(Nessun Oggetto)</string>
     <string name="empty_recipients">(Nessun destinatario)</string>
     <string name="contacts_unknown">Sconosciuto</string>
-    <string name="learn_more"><u>Per saperne di più</u></string>
+    <string name="learn_more">
+        <u>Per saperne di più</u>
+    </string>
     <string name="info">Informazioni</string>
     <string name="error_can_not_send_from_this_address">Effettui l\'upgrade ad un piano a pagamento per inviare dal suo indirizzo %s.</string>
     <string name="email_empty">Indirizzo email mancante</string>
@@ -630,7 +636,7 @@
     <!-- Composer locks -->
     <string name="composer_lock_internal">Crittografia end-to-end</string>
     <string name="composer_lock_internal_pinned">Destinatario crittografato end-to-end verificato</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Destinatario crittografato PGP verificato</string>
     <string name="composer_lock_pgp_signed">Firmato con PGP</string>
     <string name="recipient_not_found_and_removed">Il destinatario non può essere trovato: %s ed è stato rimosso</string>
     <string name="recipient_error_and_removed">Si è verificato un errore durante il recupero delle informazioni del destinatario, il quale è stato rimosso: %s</string>
@@ -639,7 +645,9 @@
     <string name="expiration_error_add_msg_password">Aggiungi una password al messaggio per i seguenti destinatari:</string>
     <string name="expiration_error_disable_pgp_sending">Disabilita l\'invio con PGP per abilitare la scadenza per i seguenti destinatari:</string>
     <string name="expiration_error_proceed">Tocca invia ugualmente per inviare senza scadenza a questi destinatari.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">APPROFONDISCI</a></string>
+    <string name="expiration_error_learn_more">
+        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">APPROFONDISCI</a>
+    </string>
     <string name="channel_name_attachments">Allegati</string>
     <string name="channel_description_attachments">Informa riguardo lo stato di download degli allegati</string>
     <string name="channel_name_emails">Email</string>
@@ -882,7 +890,8 @@
     <string name="connections_via_third_parties">Percorso alternativo</string>
     <string name="allow_secure_connections_via_third_parties">Consenti routing alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Nel caso in cui i siti Proton siano bloccati, questa impostazione consente all\'app di provare l\'instradamento di rete alternativo per raggiungere Proton, che può essere utile per aggirare i firewall o problemi di rete. Consigliamo di mantenere questa impostazione per una maggiore affidabilità.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Nel caso in cui i siti Proton siano bloccati, questa impostazione consente all\'app di provare l\'instradamento di rete alternativo per raggiungere Proton, che può essere utile per aggirare i firewall o problemi di rete. Consigliamo di mantenere questa impostazione per una maggiore affidabilità. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Per saperne di più</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Nel caso in cui i siti Proton siano bloccati, questa impostazione consente all\'app di provare l\'instradamento di rete alternativo per raggiungere Proton, che può essere utile per aggirare i firewall o problemi di rete. Consigliamo di mantenere questa impostazione per una maggiore affidabilità. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Per saperne di più</a>
+    </string>
     <string name="app_language">Lingua dell\'app</string>
     <string name="custom_language_dialog_title">Seleziona la lingua dell\'app</string>
     <string name="auto_detect">Riconoscimento automatico</string>

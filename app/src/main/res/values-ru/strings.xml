@@ -45,7 +45,8 @@
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
     <string name="set_msg_password_title">Задать пароль</string>
-    <string name="set_msg_password_info">Задайте пароль для шифрования этого сообщения для пользователей не использующих protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Подробнее</a></string>
+    <string name="set_msg_password_info">Задайте пароль для шифрования этого сообщения для пользователей не использующих protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Подробнее</a>
+    </string>
     <string name="set_msg_password_info_icon_description">Информация</string>
     <string name="set_msg_password_msg_password_title">Пароль сообщения</string>
     <string name="set_msg_password_msg_password_hint">от 4 до 21 символов</string>
@@ -292,7 +293,8 @@
     <string name="cont">Продолжить</string>
     <string name="reply_prefix_on">В</string>
     <string name="terms_and_conditions">Используя ProtonMail, вы соглашаетесь с нашими\n
-        <a href="https://protonmail.com/terms-and-conditions">условиями и положениями</a> и <a href="https://protonmail.com/privacy-policy">политикой конфиденциальности</a></string>
+        <a href="https://protonmail.com/terms-and-conditions">условиями и положениями</a> и <a href="https://protonmail.com/privacy-policy">политикой конфиденциальности</a>
+    </string>
     <string name="labels_title_apply">Назначить ярлыки</string>
     <string name="labels_title_add">Добавить ярлык</string>
     <string name="labels_title">Ярлыки</string>
@@ -363,7 +365,8 @@
     </string-array>
     <string name="delete_label_confirmation_title">Удалить выбранные ярлыки?</string>
     <string name="delete_folder_confirmation_title">Удалить выбранные папки?</string>
-    <string name="delete_label_confirmation_message">Письма, содержащиеся здесь, будут найдены во <b>Всех письмах</b></string>
+    <string name="delete_label_confirmation_message">Письма, содержащиеся здесь, будут найдены во <b>Всех письмах</b>
+    </string>
     <string name="enter_pin">Введите ваш PIN-код, чтобы разблокировать почтовый ящик</string>
     <string name="enter_pin_message_details">Введите ваш PIN-код для разблокировки письма</string>
     <string name="enter_current_pin">Введите ваш текущий PIN-код</string>
@@ -578,7 +581,8 @@
     <string name="update_folder">Обновить папку</string>
     <string name="spam_score_100">Похоже, источником этого письма является адрес, относящийся к ProtonMail, но само письмо пришло извне нашей системы и не прошло проверку на соответствие нашим требованиям подтверждения подлинности. Оно может быть поддельным, либо было переслано ненадлежащим образом!</string>
     <string name="spam_score_101">Это письмо не соответствует требованиям подтверждения подлинности своего домена. Оно может быть поддельным, либо было переслано ненадлежащим образом!</string>
-    <string name="spam_score_102">Это сообщение может быть попыткой фишинга. Пожалуйста, проверьте отправителя и содержимое, чтобы оценить их подлинность. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ПОДРОБНЕЕ</a></string>
+    <string name="spam_score_102">Это сообщение может быть попыткой фишинга. Пожалуйста, проверьте отправителя и содержимое, чтобы оценить их подлинность. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ПОДРОБНЕЕ</a>
+    </string>
     <string name="print_from_template">От: %s</string>
     <string name="print_to_template">Кому: %s;  </string>
     <string name="print_cc_template">Копия: %s;  </string>
@@ -596,7 +600,9 @@
     <string name="empty_subject">(Без темы)</string>
     <string name="empty_recipients">(Нет получателей)</string>
     <string name="contacts_unknown">Неизвестно</string>
-    <string name="learn_more"><u>Узнать больше</u></string>
+    <string name="learn_more">
+        <u>Узнать больше</u>
+    </string>
     <string name="info">Информация</string>
     <string name="error_can_not_send_from_this_address">Перейдите на платный тариф для отправки с вашего адреса %s.</string>
     <string name="email_empty">Адрес электронной почты отсутствует</string>
@@ -657,7 +663,9 @@
     <string name="expiration_error_add_msg_password">Пожалуйста, добавьте пароль сообщения для следующих получателей:</string>
     <string name="expiration_error_disable_pgp_sending">Пожалуйста, отключите PGP-отправку для включения срока действия для следующих получателей:</string>
     <string name="expiration_error_proceed">Нажмите \"Всё равно отправить\", чтобы отправить без срока действия этим получателям.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ПОДРОБНЕЕ</a></string>
+    <string name="expiration_error_learn_more">
+        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ПОДРОБНЕЕ</a>
+    </string>
     <string name="channel_name_attachments">Вложения</string>
     <string name="channel_description_attachments">Сообщает о состоянии скачивания вложения</string>
     <string name="channel_name_emails">Эл. письма</string>
@@ -916,7 +924,8 @@
     <string name="connections_via_third_parties">Альтернативная маршрутизация</string>
     <string name="allow_secure_connections_via_third_parties">Разрешить альтернативную маршрутизацию</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">В случае блокировки сайтов Proton эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию, чтобы достигнуть Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Для большей надёжности мы рекомендуем оставить эту настройку включённой.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">В случае блокировки сайтов Proton эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию, чтобы достигнуть Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Для большей надёжности мы рекомендуем оставить эту настройку включённой. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Подробнее</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">В случае блокировки сайтов Proton эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию, чтобы достигнуть Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Для большей надёжности мы рекомендуем оставить эту настройку включённой. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Подробнее</a>
+    </string>
     <string name="app_language">Язык приложения</string>
     <string name="custom_language_dialog_title">Выберите язык приложения</string>
     <string name="auto_detect">Автоопределение</string>
