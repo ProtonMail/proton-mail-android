@@ -21,7 +21,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/background_norm"
     android:descendantFocusability="beforeDescendants"
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true"
@@ -123,8 +123,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                         android:id="@+id/contact_display_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/padding_s"
                         android:layout_marginHorizontal="@dimen/padding_l"
+                        android:layout_marginVertical="@dimen/padding_s"
                         android:hint="@string/contact_display_name"
                         app:label="@string/contact_display_name" />
 
@@ -159,7 +159,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:id="@+id/encrypted_contact_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/placeholder_gray">
+                    android:background="@color/background_secondary">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -170,7 +170,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                         android:paddingTop="@dimen/padding_m"
                         android:paddingEnd="@dimen/padding_l"
                         android:paddingBottom="@dimen/padding_m"
-                        android:background="@color/placeholder_gray"
                         android:text="@string/encrypted_contact_details" />
 
                 </FrameLayout>

@@ -17,22 +17,21 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
-<RelativeLayout
-	android:id="@+id/loading_more"
+<RelativeLayout android:id="@+id/loading_more"
 	android:layout_width="match_parent"
 	android:layout_height="@dimen/loading_more_height"
 	android:visibility="visible"
-	android:background="@android:color/white"
+	android:background="@color/background_norm"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <ProgressBar
-            android:layout_width="@dimen/loading_more_progress_indicator_size"
-            android:layout_height="@dimen/loading_more_progress_indicator_size"
-            android:layout_centerInParent="true" />
+	<ProgressBar
+		android:layout_width="@dimen/loading_more_progress_indicator_size"
+		android:layout_height="@dimen/loading_more_progress_indicator_size"
+		android:layout_centerInParent="true" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/divider_height"
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/divider_height"
             android:layout_alignParentBottom="true"
             android:background="@color/fog_gray"
             android:visibility="gone"/>
