@@ -215,7 +215,7 @@ class ContactDetailsAdapter(
         private fun setNickNameData(
             item: ContactDetailsUiItem.Nickname
         ) {
-            textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
+            textViewContactDetailsItemHeader.text = if (item.type.isNullOrBlank().not()) {
                 item.type
             } else {
                 textViewContactDetailsItemHeader.context.getString(R.string.vcard_other_option_nickname)

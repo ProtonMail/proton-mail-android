@@ -59,7 +59,7 @@ sealed class ContactDetailsUiItem {
 
     data class Nickname(
         val value: String,
-        val type: String
+        val type: String?
     ) : ContactDetailsUiItem()
 
     data class Birthday(
