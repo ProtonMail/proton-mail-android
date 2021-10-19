@@ -20,8 +20,8 @@
 package ch.protonmail.android.labels.data.mapper
 
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.domain.model.FolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.Mapper
@@ -29,23 +29,33 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
-class FolderWithChildrenMapper @Inject constructor(
+class LabelOrFolderWithChildrenMapper @Inject constructor(
     private val dispatchers: DispatcherProvider
-) : Mapper<Collection<LabelEntity>, Collection<FolderWithChildren>> {
+) : Mapper<Collection<LabelEntity>, Collection<LabelOrFolderWithChildren>> {
 
-    suspend fun toFoldersWithChildren(labels: Collection<LabelEntity>): List<FolderWithChildren> {
+    suspend fun toLabelsAndFoldersWithChildren(labels: Collection<LabelEntity>): List<LabelOrFolderWithChildren> {
         return withContext(dispatchers.Comp) {
             val mutableList = labels
-                .filter { it.type == LabelType.FOLDER }
                 .toMutableList()
-            toFoldersWithChildren(mutableList, parentId = EMPTY_STRING)
+            toLabels(mutableList) + toFoldersWithChildren(mutableList, parentId = EMPTY_STRING)
+        }
+    }
+
+    private fun toLabels(mutableList: MutableList<LabelEntity>): List<LabelOrFolderWithChildren.Label> {
+        val messageLabels = mutableList.pullIf { it.type == LabelType.MESSAGE_LABEL }
+        return messageLabels.map { labelEntity ->
+            LabelOrFolderWithChildren.Label(
+                id = labelEntity.id,
+                name = labelEntity.name,
+                color = labelEntity.color
+            )
         }
     }
 
     private fun toFoldersWithChildren(
         mutableList: MutableList<LabelEntity>,
         parentId: String
-    ): List<FolderWithChildren> {
+    ): List<LabelOrFolderWithChildren.Folder> {
         val rootFolders = mutableList.pullIf { it.parentId == parentId }
         return rootFolders.map { label ->
             val children = toFoldersWithChildren(mutableList, label.id.id)
@@ -53,7 +63,7 @@ class FolderWithChildrenMapper @Inject constructor(
         }
     }
 
-    private fun toFolderWithoutChildren(label: LabelEntity) = FolderWithChildren(
+    private fun toFolderWithoutChildren(label: LabelEntity) = LabelOrFolderWithChildren.Folder(
         id = label.id,
         name = label.name,
         color = label.color,

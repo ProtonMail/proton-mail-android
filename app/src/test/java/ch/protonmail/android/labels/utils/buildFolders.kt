@@ -19,12 +19,13 @@
 
 package ch.protonmail.android.labels.utils
 
-import ch.protonmail.android.labels.domain.model.FolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren.Folder
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 /**
- * Create an hierarchy of [FolderWithChildren] in DSL style
+ * Create an hierarchy of [LabelOrFolderWithChildren.Folder] in DSL style
  * Example
  * ```kotlin
  * buildFolders {
@@ -39,7 +40,7 @@ import me.proton.core.util.kotlin.EMPTY_STRING
  * }
  * ```
  */
-fun buildFolders(block: FolderBuilder.() -> Unit): List<FolderWithChildren> {
+fun buildFolders(block: FolderBuilder.() -> Unit): List<Folder> {
     val folderBuilder = FolderBuilder(EMPTY_STRING)
     folderBuilder.block()
     return folderBuilder.result
@@ -47,17 +48,17 @@ fun buildFolders(block: FolderBuilder.() -> Unit): List<FolderWithChildren> {
 
 class FolderBuilder(private val parent: String) {
 
-    val result: MutableList<FolderWithChildren> = mutableListOf()
+    val result: MutableList<Folder> = mutableListOf()
 
     operator fun String.unaryPlus() {
         result += buildFolder(this, parent, emptyList())
     }
 
-    operator fun FolderWithChildren.unaryPlus() {
+    operator fun Folder.unaryPlus() {
         result += this
     }
 
-    operator fun String.invoke(block: FolderBuilder.() -> Unit): FolderWithChildren {
+    operator fun String.invoke(block: FolderBuilder.() -> Unit): Folder {
         val folderBuilder = FolderBuilder(this)
         folderBuilder.block()
         return buildFolder(this, parent, folderBuilder.result)
@@ -67,8 +68,8 @@ class FolderBuilder(private val parent: String) {
 private fun buildFolder(
     name: String,
     parent: String,
-    children: Collection<FolderWithChildren>
-) = FolderWithChildren(
+    children: Collection<Folder>
+) = Folder(
     id = LabelId(name),
     name = name,
     color = EMPTY_STRING,

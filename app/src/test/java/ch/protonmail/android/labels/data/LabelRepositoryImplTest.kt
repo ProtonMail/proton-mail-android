@@ -26,9 +26,9 @@ import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.FolderWithChildrenMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.data.mapper.LabelOrFolderWithChildrenMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
@@ -75,7 +75,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
             api,
             labelMapper,
             labelDomainMapper,
-            FolderWithChildrenMapper(TestDispatcherProvider),
+            LabelOrFolderWithChildrenMapper(TestDispatcherProvider),
             networkConnectivityManager,
             applyMessageLabelWorker,
             removeMessageLabelWorker,

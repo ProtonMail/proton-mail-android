@@ -20,13 +20,27 @@
 package ch.protonmail.android.labels.domain.model
 
 /**
- * Representation of a [Label] of [LabelType.FOLDER], with its relative children
+ * Representation of a [Label] of [LabelType.FOLDER] or [LabelType.MESSAGE_LABEL], with its relative children
  */
-data class FolderWithChildren(
-    val id: LabelId,
-    val name: String,
-    val color: String,
-    val path: String,
-    val parentId: LabelId?,
-    val children: Collection<FolderWithChildren>
-)
+sealed class LabelOrFolderWithChildren {
+
+    abstract val id: LabelId
+    abstract val name: String
+    abstract val color: String
+
+    data class Label(
+        override val id: LabelId,
+        override val name: String,
+        override val color: String
+    ) : LabelOrFolderWithChildren()
+
+    data class Folder(
+        override val id: LabelId,
+        override val name: String,
+        override val color: String,
+        val path: String,
+        val parentId: LabelId?,
+        val children: Collection<Folder>
+    ) : LabelOrFolderWithChildren()
+
+}

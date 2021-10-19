@@ -26,17 +26,17 @@ import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.data.mapper.FolderWithChildrenMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.data.mapper.LabelOrFolderWithChildrenMapper
 import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
 import ch.protonmail.android.labels.data.remote.worker.DeleteLabelsWorker
 import ch.protonmail.android.labels.data.remote.worker.PostLabelWorker
 import ch.protonmail.android.labels.data.remote.worker.RemoveMessageLabelWorker
 import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.labels.domain.model.FolderWithChildren
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -55,7 +55,7 @@ internal class LabelRepositoryImpl @Inject constructor(
     private val api: ProtonMailApi,
     private val labelApiMapper: LabelEntityApiMapper,
     private val labelDomainMapper: LabelEntityDomainMapper,
-    private val folderWithChildrenMapper: FolderWithChildrenMapper,
+    private val labelOrFolderWithChildrenMapper: LabelOrFolderWithChildrenMapper,
     private val networkConnectivityManager: NetworkConnectivityManager,
     private val applyMessageLabelWorker: ApplyMessageLabelWorker.Enqueuer,
     private val removeMessageLabelWorker: RemoveMessageLabelWorker.Enqueuer,
@@ -64,15 +64,20 @@ internal class LabelRepositoryImpl @Inject constructor(
 ) : LabelRepository {
 
     override fun observeAllLabels(userId: UserId, shallRefresh: Boolean): Flow<List<Label>> =
-        observeAllLabelEntities(userId, shallRefresh)
+        labelDao.observeAllLabels(userId)
+            .onStartFetchAndSaveAllLabels(userId, shallRefresh)
             .mapToLabels()
             .onEach {
                 Timber.v("Emitting new labels size: ${it.size} user: $userId")
             }
 
-    override fun observeAllFoldersWithChildren(userId: UserId, shallRefresh: Boolean): Flow<List<FolderWithChildren>> =
-        observeAllLabelEntities(userId, shallRefresh)
-            .mapToFoldersWithChildren()
+    override fun observeAllLabelsAndFoldersWithChildren(
+        userId: UserId,
+        shallRefresh: Boolean
+    ): Flow<List<LabelOrFolderWithChildren>> =
+        labelDao.observeLabelsByType(userId, LabelType.MESSAGE_LABEL, LabelType.FOLDER)
+            .onStartFetchAndSaveAllLabels(userId, shallRefresh)
+            .mapToLabelsWithChildren()
 
     override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<Label> =
         observeAllLabels(userId, shallRefresh).first()
@@ -108,7 +113,7 @@ internal class LabelRepositoryImpl @Inject constructor(
             .mapToLabels()
 
     override suspend fun findContactGroups(userId: UserId): List<Label> =
-        labelDao.findLabelsByType(userId, LabelType.CONTACT_GROUP)
+        labelDao.findLabelsByTypes(userId, LabelType.CONTACT_GROUP)
             .map { labelDomainMapper.toLabel(it) }
 
     override fun observeSearchContactGroups(labelName: String, userId: UserId): Flow<List<Label>> =
@@ -159,14 +164,12 @@ internal class LabelRepositoryImpl @Inject constructor(
         labelDao.deleteContactGroups(userId)
     }
 
-    private fun observeAllLabelEntities(userId: UserId, shallRefresh: Boolean): Flow<List<LabelEntity>> =
-        labelDao.observeAllLabels(userId)
-            .onStart {
-                if (shallRefresh && networkConnectivityManager.isInternetConnectionPossible()) {
-                    Timber.v("Fetching fresh labels")
-                    fetchAndSaveAllLabels(userId)
-                }
-            }
+    private fun <T> Flow<T>.onStartFetchAndSaveAllLabels(userId: UserId, shallRefresh: Boolean) = onStart {
+        if (shallRefresh && networkConnectivityManager.isInternetConnectionPossible()) {
+            Timber.v("Fetching fresh labels")
+            fetchAndSaveAllLabels(userId)
+        }
+    }
 
     private suspend fun fetchAndSaveAllLabels(
         userId: UserId
@@ -216,8 +219,8 @@ internal class LabelRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun Flow<List<LabelEntity>>.mapToFoldersWithChildren(): Flow<List<FolderWithChildren>> = map { entities ->
-        folderWithChildrenMapper.toFoldersWithChildren(entities)
+    private fun Flow<List<LabelEntity>>.mapToLabelsWithChildren(): Flow<List<LabelOrFolderWithChildren>> = map { entities ->
+        labelOrFolderWithChildrenMapper.toLabelsAndFoldersWithChildren(entities)
     }
 
 }

@@ -21,8 +21,8 @@ package ch.protonmail.android.labels.data.mapper
 
 import android.os.Debug
 import ch.protonmail.android.labels.data.local.model.LabelEntity
-import ch.protonmail.android.labels.domain.model.FolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
@@ -36,9 +36,9 @@ import kotlin.test.Test
 
 @Suppress("PrivatePropertyName") // `_` for readability purpose on big numbers
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-class FolderWithChildrenMapperBenchmarks {
+class LabelOrFolderWithChildrenMapperBenchmarks {
 
-    private val mapper = FolderWithChildrenMapper(TestDispatcherProvider)
+    private val mapper = LabelOrFolderWithChildrenMapper(TestDispatcherProvider)
 
     private lateinit var data50parents100children: List<LabelEntity>
     private lateinit var data200parents800children: List<LabelEntity>
@@ -87,10 +87,10 @@ class FolderWithChildrenMapperBenchmarks {
         shouldPrintOutput: Boolean = false
     ) {
         // when
-        var result: List<FolderWithChildren>
+        var result: List<LabelOrFolderWithChildren>
         val time = measureTimeMillis {
             Debug.startMethodTracing(traceName)
-            result = mapper.toFoldersWithChildren(input)
+            result = mapper.toLabelsAndFoldersWithChildren(input)
             Debug.stopMethodTracing()
         }
 
@@ -118,10 +118,10 @@ class FolderWithChildrenMapperBenchmarks {
     )
 }
 
-fun List<FolderWithChildren>.prettyPrint(): String =
+fun List<LabelOrFolderWithChildren>.prettyPrint(): String =
     joinToString(separator = ",\n") { it.prettyPrint() }
 
-private fun Collection<FolderWithChildren>.joinToString(hasParent: Boolean): String {
+private fun Collection<LabelOrFolderWithChildren>.joinToString(hasParent: Boolean): String {
     return if (isEmpty()) {
         EMPTY_STRING
     } else {
@@ -131,7 +131,7 @@ private fun Collection<FolderWithChildren>.joinToString(hasParent: Boolean): Str
     }
 }
 
-private fun FolderWithChildren.prettyPrint(): String {
+private fun LabelOrFolderWithChildren.prettyPrint(): String {
     val name = "name: $name"
     val parent = if (parentId == null) EMPTY_STRING else " - parent: $parentId"
     return "$name$parent${children.joinToString(parentId != null)}"

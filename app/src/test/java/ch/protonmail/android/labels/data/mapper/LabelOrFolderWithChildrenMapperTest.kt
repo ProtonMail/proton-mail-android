@@ -21,6 +21,7 @@ package ch.protonmail.android.labels.data.mapper
 
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.utils.buildFolders
 import kotlinx.coroutines.test.runBlockingTest
@@ -32,12 +33,12 @@ import kotlin.test.assertEquals
 
 private val TEST_USER_ID = UserId("user")
 
-class FolderWithChildrenMapperTest {
+class LabelOrFolderWithChildrenMapperTest {
 
-    private val mapper = FolderWithChildrenMapper(TestDispatcherProvider)
+    private val mapper = LabelOrFolderWithChildrenMapper(TestDispatcherProvider)
 
     @Test
-    fun takesOnlyFolders() = runBlockingTest {
+    fun takesBothFoldersAndLabels() = runBlockingTest {
         // given
         val first = "first"
         val second = "second"
@@ -45,10 +46,10 @@ class FolderWithChildrenMapperTest {
             buildLabelEntity(first, LabelType.FOLDER),
             buildLabelEntity(second, LabelType.MESSAGE_LABEL),
         )
-        val expected = buildFolders { +first }
+        val expected = listOf(buildLabel(second)) + buildFolders { +first }
 
         // when
-        val result = mapper.toFoldersWithChildren(input)
+        val result = mapper.toLabelsAndFoldersWithChildren(input)
 
         // then
         assertEquals(expected, result)
@@ -70,7 +71,7 @@ class FolderWithChildrenMapperTest {
         }
 
         // when
-        val result = mapper.toFoldersWithChildren(input)
+        val result = mapper.toLabelsAndFoldersWithChildren(input)
 
         // then
         assertEquals(expected, result)
@@ -96,7 +97,7 @@ class FolderWithChildrenMapperTest {
         }
 
         // when
-        val result = mapper.toFoldersWithChildren(input)
+        val result = mapper.toLabelsAndFoldersWithChildren(input)
 
         // then
         assertEquals(expected, result)
@@ -160,7 +161,7 @@ class FolderWithChildrenMapperTest {
         }
 
         // when
-        val result = mapper.toFoldersWithChildren(input)
+        val result = mapper.toLabelsAndFoldersWithChildren(input)
 
         // then
         assertEquals(expected, result)
@@ -183,7 +184,7 @@ class FolderWithChildrenMapperTest {
         }
 
         // when
-        val result = mapper.toFoldersWithChildren(input)
+        val result = mapper.toLabelsAndFoldersWithChildren(input)
 
         // then
         assertEquals(expected, result)
@@ -205,5 +206,11 @@ class FolderWithChildrenMapperTest {
         expanded = 0,
         sticky = 0,
         notify = 0
+    )
+
+    private fun buildLabel(name: String) = LabelOrFolderWithChildren.Label(
+        id = LabelId(name),
+        name = name,
+        color = EMPTY_STRING
     )
 }
