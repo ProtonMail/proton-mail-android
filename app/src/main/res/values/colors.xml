@@ -110,7 +110,6 @@
     <color name="switch_settings_item">#9199CA</color>
     <color name="switch_settings_item_highlight">#656FAB</color>
     <color name="alias_inactive">#828282</color>
-    <color name="contact_encrypted_data">#FAFAFA</color>
     <color name="edit_contact">#757575</color>
     <array name="account_type_colors">
         <item>@color/free</item>
