@@ -2,7 +2,6 @@ package ch.protonmail.android.di
 
 import android.content.Context
 import ch.protonmail.android.api.ProtonMailApiClient
-import ch.protonmail.android.utils.CoreLogger
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -20,16 +19,17 @@ import me.proton.core.network.data.NetworkManager
 import me.proton.core.network.data.NetworkPrefs
 import me.proton.core.network.data.ProtonCookieStore
 import me.proton.core.network.data.client.ClientIdProviderImpl
+import me.proton.core.network.data.client.ExtraHeaderProviderImpl
 import me.proton.core.network.domain.ApiClient
 import me.proton.core.network.domain.NetworkManager
 import me.proton.core.network.domain.NetworkPrefs
 import me.proton.core.network.domain.client.ClientIdProvider
+import me.proton.core.network.domain.client.ExtraHeaderProvider
 import me.proton.core.network.domain.humanverification.HumanVerificationListener
 import me.proton.core.network.domain.humanverification.HumanVerificationProvider
 import me.proton.core.network.domain.server.ServerTimeListener
 import me.proton.core.network.domain.session.SessionListener
 import me.proton.core.network.domain.session.SessionProvider
-import me.proton.core.util.kotlin.Logger
 import javax.inject.Singleton
 
 @Module
@@ -39,10 +39,6 @@ object NetworkModule {
     @Provides
     @ClientSecret
     fun provideClientSecret(): String = ""
-
-    @Provides
-    @Singleton
-    fun provideCoreLogger(): Logger = CoreLogger()
 
     @Provides
     @Singleton
@@ -57,7 +53,6 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideApiManagerFactory(
-        logger: Logger,
         apiClient: ApiClient,
         clientIdProvider: ClientIdProvider,
         serverTimeListener: ServerTimeListener,
@@ -76,7 +71,6 @@ object NetworkModule {
         apiClient,
         clientIdProvider,
         serverTimeListener,
-        logger,
         networkManager,
         networkPrefs,
         sessionProvider,
@@ -117,6 +111,12 @@ object NetworkModule {
             // for both Core PGPCrypto and deprecated OpenPGP.
             // openPGP.updateTime(epochSeconds)
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideExtraHeaderProvider(): ExtraHeaderProvider = ExtraHeaderProviderImpl().apply {
+        // BuildConfig.PROXY_TOKEN?.takeIfNotBlank()?.let { addHeaders("X-atlas-secret" to it) }
     }
 }
 

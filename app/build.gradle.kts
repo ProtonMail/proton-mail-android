@@ -310,6 +310,7 @@ dependencies {
         `Proton-human-verification`,
         `Proton-payment`,
         `Proton-plan`,
+        `Proton-contact`,
         `Proton-country`,
         `Proton-payment`,
         `Proton-plan`,

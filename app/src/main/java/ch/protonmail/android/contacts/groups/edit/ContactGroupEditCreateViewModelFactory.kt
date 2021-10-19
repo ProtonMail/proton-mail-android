@@ -26,10 +26,8 @@ class ContactGroupEditCreateViewModelFactory @Inject constructor(
     private val contactGroupEditCreateViewModel: ContactGroupEditCreateViewModel
 ) : ViewModelProvider.NewInstanceFactory() {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ContactGroupEditCreateViewModel::class.java)) {
-            return contactGroupEditCreateViewModel as T
-        }
-        throw IllegalArgumentException("Unknown class name")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        require(modelClass.isAssignableFrom(ContactGroupEditCreateViewModel::class.java))
+        return contactGroupEditCreateViewModel as T
     }
 }

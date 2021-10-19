@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
-import me.proton.core.crypto.common.keystore.decryptWith
+import me.proton.core.crypto.common.keystore.decrypt
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.key.domain.extension.primary
@@ -104,7 +104,7 @@ fun UserManager.getLegacyAddressesBlocking(userId: UserId): List<Address> =
 @Throws(ApiException::class)
 fun User.getMailboxPassword(coreKeyStoreCrypto: KeyStoreCrypto): ByteArray? {
     val passphrase = keys.primary()?.privateKey?.passphrase
-    val decryptedPassphrase = passphrase?.decryptWith(coreKeyStoreCrypto)
+    val decryptedPassphrase = passphrase?.decrypt(coreKeyStoreCrypto)
     return decryptedPassphrase?.array
 }
 

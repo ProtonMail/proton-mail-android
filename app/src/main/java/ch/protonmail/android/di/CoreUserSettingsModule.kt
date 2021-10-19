@@ -23,21 +23,31 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.network.data.ApiProvider
-import me.proton.core.plan.data.repository.PlansRepositoryImpl
-import me.proton.core.plan.domain.SupportedPaidPlans
-import me.proton.core.plan.domain.repository.PlansRepository
+import me.proton.core.usersettings.data.db.OrganizationDatabase
+import me.proton.core.usersettings.data.db.UserSettingsDatabase
+import me.proton.core.usersettings.data.repository.OrganizationRepositoryImpl
+import me.proton.core.usersettings.data.repository.UserSettingsRepositoryImpl
+import me.proton.core.usersettings.domain.repository.OrganizationRepository
+import me.proton.core.usersettings.domain.repository.UserSettingsRepository
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object CorePlanModule {
-
-    @Provides
-    @SupportedPaidPlans
-    fun provideClientSupportedPaidPlanIds(): List<String> = listOf("plus")
+object CoreUserSettingsModule {
 
     @Provides
     @Singleton
-    fun providePlansRepository(apiProvider: ApiProvider): PlansRepository =
-        PlansRepositoryImpl(apiProvider)
+    fun provideUserSettingsRepository(
+        db: UserSettingsDatabase,
+        apiProvider: ApiProvider
+    ): UserSettingsRepository =
+        UserSettingsRepositoryImpl(db, apiProvider)
+
+    @Provides
+    @Singleton
+    fun provideOrganizationRepository(
+        db: OrganizationDatabase,
+        apiProvider: ApiProvider
+    ): OrganizationRepository =
+        OrganizationRepositoryImpl(db, apiProvider)
 }

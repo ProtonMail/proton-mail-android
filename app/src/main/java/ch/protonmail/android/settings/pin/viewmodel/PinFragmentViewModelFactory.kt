@@ -27,10 +27,8 @@ class PinFragmentViewModelFactory @Inject constructor(
 ) :
     ViewModelProvider.NewInstanceFactory() {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(PinFragmentViewModel::class.java)) {
-            return pinFragmentViewModel as T
-        }
-        throw IllegalArgumentException("Unknown class name")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        require(modelClass.isAssignableFrom(PinFragmentViewModel::class.java))
+        return pinFragmentViewModel as T
     }
 }

@@ -25,7 +25,7 @@ import me.proton.core.util.kotlin.LoggerLogTag
 import org.jetbrains.annotations.NonNls
 import timber.log.Timber
 
-class CoreLogger : Logger {
+class CoreTimberLogger : Logger {
     override fun e(tag: String, e: Throwable) =
         Timber.tag(tag).e(e)
 
