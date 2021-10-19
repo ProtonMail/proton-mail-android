@@ -718,7 +718,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         return message
     }
 
-    fun moveLastMessageToTrash() {
+    fun moveToTrash() {
         viewModelScope.launch {
             val primaryUserId = userManager.requireCurrentUserId()
             if (isConversationEnabled()) {

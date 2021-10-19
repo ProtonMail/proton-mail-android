@@ -704,7 +704,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         // when
         observeMessageFlow.tryEmit(message)
-        viewModel.moveLastMessageToTrash()
+        viewModel.moveToTrash()
 
         // then
         coVerify(exactly = 1) {
@@ -738,7 +738,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // when
         userIdFlow.tryEmit(testUserId2)
         observeConversationFlow.tryEmit(conversationResult)
-        viewModel.moveLastMessageToTrash()
+        viewModel.moveToTrash()
 
         // then
         coVerify(exactly = 1) {
@@ -776,7 +776,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // when
         userIdFlow.tryEmit(testUserId2)
         observeConversationFlow.tryEmit(conversationResult)
-        viewModel.moveLastMessageToTrash()
+        viewModel.moveToTrash()
 
         // then
         coVerify(exactly = 1) {
