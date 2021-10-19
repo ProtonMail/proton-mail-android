@@ -78,7 +78,7 @@
     <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">¿Descartar los cambios?</string>
-    <string name="dialog_discard_changes_message">Se perderán todos los datos que no se hayan guardado.</string>
+    <string name="dialog_discard_changes_message">Se perderán todos los cambios que no se hayan guardado.</string>
     <string name="discard">Descartar</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->

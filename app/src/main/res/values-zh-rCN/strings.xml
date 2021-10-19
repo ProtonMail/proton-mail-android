@@ -311,7 +311,7 @@
     <string name="dismiss">关闭</string>
     <string name="new_message_arrived">收到新邮件！</string>
     <string name="please_choose_color">请选择颜色</string>
-    <string name="display_images">显示外链图像</string>
+    <string name="display_images">显示外链内容</string>
     <string name="retry">重试</string>
     <string name="saving_failed_no_conn">保存失败，网络已断开</string>
     <string name="close_engagement">关闭导览</string>
