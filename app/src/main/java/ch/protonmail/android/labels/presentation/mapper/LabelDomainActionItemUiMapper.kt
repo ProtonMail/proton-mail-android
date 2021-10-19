@@ -22,7 +22,7 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
-import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import me.proton.core.domain.arch.Mapper
@@ -37,18 +37,35 @@ import javax.inject.Inject
  */
 class LabelDomainActionItemUiMapper @Inject constructor(
     context: Context
-) : Mapper<Label, LabelActonItemUiModel> {
+) : Mapper<LabelOrFolderWithChildren, List<LabelActonItemUiModel>> {
 
     private val useFolderColor: Boolean = true
 
     private val defaultIconColor = context.getColor(R.color.icon_norm)
 
-    fun toActionItemUi(
-        label: Label,
+    fun toUiModels(
+        label: LabelOrFolderWithChildren,
+        currentLabelsSelection: List<String>
+    ): List<LabelActonItemUiModel> {
+
+        val parent = toUiModel(
+            label = label,
+            currentLabelsSelection = currentLabelsSelection,
+            folderLevel = 0
+        )
+        return listOf(parent)
+    }
+
+    private fun toUiModel(
+        label: LabelOrFolderWithChildren,
         currentLabelsSelection: List<String>,
-        labelType: LabelType
+        folderLevel: Int,
     ): LabelActonItemUiModel {
 
+        val labelType = when (label) {
+            is LabelOrFolderWithChildren.Label -> LabelType.MESSAGE_LABEL
+            is LabelOrFolderWithChildren.Folder -> LabelType.FOLDER
+        }
         val iconRes = when (labelType) {
             LabelType.MESSAGE_LABEL -> R.drawable.circle_labels_selection
             LabelType.FOLDER ->
@@ -70,6 +87,7 @@ class LabelDomainActionItemUiMapper @Inject constructor(
             title = label.name,
             titleRes = null,
             colorInt = colorInt,
+            folderLevel = folderLevel,
             isChecked = isChecked,
             labelType = labelType
         )

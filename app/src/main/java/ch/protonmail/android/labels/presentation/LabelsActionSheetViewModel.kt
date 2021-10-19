@@ -29,6 +29,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
+import ch.protonmail.android.labels.domain.usecase.GetLabelsOrFolderWithChildrenByType
 import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
@@ -45,8 +46,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
@@ -58,6 +61,8 @@ private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
 internal class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getLabelsByType: GetLabelsByType,
+    private val getLabelsOrFolderWithChildrenByType: GetLabelsOrFolderWithChildrenByType,
+    private val accountManager: AccountManager,
     private val userManager: UserManager,
     private val updateMessageLabels: UpdateMessageLabels,
     private val updateConversationsLabels: UpdateConversationsLabelsWorker.Enqueuer,
@@ -95,13 +100,13 @@ internal class LabelsActionSheetViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val allLabels = getLabelsByType(labelsSheetType)
+            val userId = accountManager.getPrimaryUserId().filterNotNull().first()
+            val allLabels = getLabelsOrFolderWithChildrenByType(userId, labelsSheetType)
 
-            val savedModels = allLabels.map { label ->
-                labelDomainUiMapper.toActionItemUi(
+            val savedModels = allLabels.flatMap { label ->
+                labelDomainUiMapper.toUiModels(
                     label,
-                    getCheckedLabelsForAllMailboxItems(messageIds),
-                    labelsSheetType
+                    getCheckedLabelsForAllMailboxItems(messageIds)
                 )
             }
 

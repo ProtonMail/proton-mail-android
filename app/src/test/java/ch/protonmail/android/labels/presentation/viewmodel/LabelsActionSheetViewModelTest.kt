@@ -32,6 +32,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
+import ch.protonmail.android.labels.domain.usecase.GetLabelsOrFolderWithChildrenByType
 import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
@@ -55,7 +56,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -78,6 +81,14 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     @MockK
     private lateinit var getLabelsByType: GetLabelsByType
+
+    private val getLabelsOrFolderWithChildrenByType: GetLabelsOrFolderWithChildrenByType = mockk {
+        coEvery { this@mockk(any(), any()) } returns emptyList()
+    }
+
+    private val accountManager: AccountManager = mockk {
+        every { getPrimaryUserId() } returns flowOf(userId)
+    }
 
     @MockK
     private lateinit var savedStateHandle: SavedStateHandle
@@ -190,17 +201,19 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coEvery { conversationModeEnabled(any()) } returns false
 
         viewModel = LabelsActionSheetViewModel(
-            savedStateHandle,
-            getLabelsByType,
-            userManager,
-            updateMessageLabels,
-            updateConversationsLabels,
-            moveMessagesToFolder,
-            moveConversationsToFolder,
-            conversationModeEnabled,
-            messageRepository,
-            conversationsRepository,
-            labelDomainUiMapper,
+            savedStateHandle = savedStateHandle,
+            getLabelsByType = getLabelsByType,
+            getLabelsOrFolderWithChildrenByType = getLabelsOrFolderWithChildrenByType,
+            accountManager = accountManager,
+            userManager = userManager,
+            updateMessageLabels = updateMessageLabels,
+            updateConversationsLabels = updateConversationsLabels,
+            moveMessagesToFolder = moveMessagesToFolder,
+            moveConversationsToFolder = moveConversationsToFolder,
+            conversationModeEnabled = conversationModeEnabled,
+            messageRepository = messageRepository,
+            conversationsRepository = conversationsRepository,
+            labelDomainUiMapper = labelDomainUiMapper
         )
     }
 
@@ -303,17 +316,19 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             val buildAListOfMoreThanOneHundredSelectedLabels = buildAListOfMoreThanOneHundredSelectedLabels()
             coEvery { getLabelsByType.invoke(any()) } returns buildAListOfMoreThanOneHundredSelectedLabels
             val labelsActionSheetViewModel = LabelsActionSheetViewModel(
-                savedStateHandle,
-                getLabelsByType,
-                userManager,
-                updateMessageLabels,
-                updateConversationsLabels,
-                moveMessagesToFolder,
-                moveConversationsToFolder,
-                conversationModeEnabled,
-                messageRepository,
-                conversationsRepository,
-                labelDomainUiMapper
+                savedStateHandle = savedStateHandle,
+                getLabelsByType = getLabelsByType,
+                getLabelsOrFolderWithChildrenByType = getLabelsOrFolderWithChildrenByType,
+                accountManager = accountManager,
+                userManager = userManager,
+                updateMessageLabels = updateMessageLabels,
+                updateConversationsLabels = updateConversationsLabels,
+                moveMessagesToFolder = moveMessagesToFolder,
+                moveConversationsToFolder = moveConversationsToFolder,
+                conversationModeEnabled = conversationModeEnabled,
+                messageRepository = messageRepository,
+                conversationsRepository = conversationsRepository,
+                labelDomainUiMapper = labelDomainUiMapper
             )
 
             // when
