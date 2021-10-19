@@ -45,7 +45,8 @@
     <string name="composer_subject">Ämne:</string>
     <string name="composer_to">Till:</string>
     <string name="set_msg_password_title">Ange lösenord</string>
-    <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Läs mer</a></string>
+    <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Läs mer</a>
+    </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
     <string name="set_msg_password_msg_password_hint">4 till 21 tecken långt</string>
@@ -177,7 +178,7 @@
     <string name="reply_all">Svara alla</string>
     <string name="forward">Vidarebefordra</string>
     <string name="subject">Ämne</string>
-    <string name="email_subject">E-post ämne</string>
+    <string name="email_subject">Email subject</string>
     <string name="define_message_password">Meddelandelösenord</string>
     <string name="confirm_message_password">Bekräfta lösenord</string>
     <string name="define_password_hint">Definiera ledtråd (Valfritt)</string>
@@ -280,7 +281,8 @@
     <string name="cont">Fortsätt</string>
     <string name="reply_prefix_on">På</string>
     <string name="terms_and_conditions">Genom att använda ProtonMail godkänner du våra\n
-        <a href="https://protonmail.com/terms-and-conditions">villkor</a> och vår <a href="https://protonmail.com/privacy-policy">integritetspolicy</a></string>
+        <a href="https://protonmail.com/terms-and-conditions">villkor</a> och vår <a href="https://protonmail.com/privacy-policy">integritetspolicy</a>
+    </string>
     <string name="labels_title_apply">Applicera etiketter</string>
     <string name="labels_title_add">Lägg till etikett</string>
     <string name="labels_title">Etiketter</string>
@@ -351,7 +353,8 @@
     </string-array>
     <string name="delete_label_confirmation_title">Ta bort valda etiketter?</string>
     <string name="delete_folder_confirmation_title">Ta bort valda mappar?</string>
-    <string name="delete_label_confirmation_message">De e-postmeddelanden som finns här hittar du i <b>All E-post</b></string>
+    <string name="delete_label_confirmation_message">De e-postmeddelanden som finns här hittar du i <b>All E-post</b>
+    </string>
     <string name="enter_pin">Ange PIN-kod för att låsa upp inkorgen</string>
     <string name="enter_pin_message_details">Ange PIN-kod för att låsa upp ditt meddelande</string>
     <string name="enter_current_pin">Ange nuvarande PIN-kod</string>
@@ -560,15 +563,16 @@
     <string name="update_folder">Uppdatera mapp</string>
     <string name="spam_score_100">Detta e-post verkar vara från en ProtonMail-adress men kom från utanför vårt system och misslyckades våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefodrat!</string>
     <string name="spam_score_101">Detta mail har misslyckats med sin domäns autentiseringskrav. Det kan vara falskt eller felaktigt vidarebefordrat!</string>
-    <string name="spam_score_102">Det här meddelandet kan vara ett phishing-försök. Kontrollera avsändare och innehåll att se till att de är legitima. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">Läs mer</a></string>
+    <string name="spam_score_102">Det här meddelandet kan vara ett phishing-försök. Kontrollera avsändare och innehåll att se till att de är legitima. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">Läs mer</a>
+    </string>
     <string name="print_from_template">Från: %s</string>
-    <string name="print_to_template">Till: %s;  </string>
-    <string name="print_cc_template">Kopia: %s;  </string>
-    <string name="print_bcc_template">Hemlig kopia: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="signature_error">Verifieringsfel</string>
     <string name="signature_error_desc">Verifiering av detta innehållets signatur misslyckades</string>
     <string name="address">Adress: </string>
-    <string name="address_street">Gatuadress</string>
+    <string name="address_street">Street</string>
     <string name="address_city">Ort</string>
     <string name="address_region">Region (län)</string>
     <string name="address_postcode">Postnummer</string>
@@ -578,13 +582,15 @@
     <string name="empty_subject">(Inget ämne)</string>
     <string name="empty_recipients">(Inga mottagare)</string>
     <string name="contacts_unknown">Okänd</string>
-    <string name="learn_more"><u>Läs mer</u></string>
+    <string name="learn_more">
+        <u>Läs mer</u>
+    </string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Uppgradera till en betald plan för att skicka från din %s-adress.</string>
     <string name="email_empty">E-postadressen saknas</string>
     <string name="add_contact_details">Lägg till kontaktinformation</string>
     <string name="encrypted_contact_details">Krypterade kontaktuppgifter</string>
-    <string name="convert_question">Ladda up lokala kontakter</string>
+    <string name="convert_question">Upload local contacts</string>
     <string name="convert_question_subtitle">Detta kommer att ladda upp lokala kontakter på din enhet till ProtonMails kontaktlista. Du kommer sedan kunna komma åt dessa kontakter på dina andra enheter via ProtonMail.</string>
     <string name="refresh_contacts">Uppdatera</string>
     <string name="upload">Ladda upp</string>
@@ -639,7 +645,9 @@
     <string name="expiration_error_add_msg_password">Lägg till ett lösenord för meddelandet för följande mottagare:</string>
     <string name="expiration_error_disable_pgp_sending">Avaktivera PGP-skickande för att kunna aktivera förfallotid för följande mottagare:</string>
     <string name="expiration_error_proceed">Klicka skicka ändå för att skicka utan förfallotid till dessa mottagare.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LÄS MER</a></string>
+    <string name="expiration_error_learn_more">
+        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LÄS MER</a>
+    </string>
     <string name="channel_name_attachments">Bilagor</string>
     <string name="channel_description_attachments">Visar nedladdningsstatus för bifogad fil</string>
     <string name="channel_name_emails">E-postmeddelanden</string>
@@ -864,7 +872,7 @@
     <string name="local_storage">Lokal lagringsgräns</string>
     <string name="storage_value">%1$d MB (%2$.2f MB använt)</string>
     <!-- endregion -->
-    <string name="app_settings">App settings</string>
+    <string name="app_settings">App-inställningar</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push notifications</string>
     <string name="extended_notifications">Utökade notifieringar</string>
@@ -878,7 +886,8 @@
     <string name="connections_via_third_parties">Alternative routing</string>
     <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
+    </string>
     <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Välj app-språk</string>
     <string name="auto_detect">Identifiera automatiskt</string>

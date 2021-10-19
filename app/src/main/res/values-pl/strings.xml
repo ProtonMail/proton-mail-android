@@ -45,7 +45,8 @@
     <string name="composer_subject">Temat:</string>
     <string name="composer_to">Do:</string>
     <string name="set_msg_password_title">Ustaw hasło</string>
-    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Dowiedz się więcej</a></string>
+    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Dowiedz się więcej</a>
+    </string>
     <string name="set_msg_password_info_icon_description">Informacje</string>
     <string name="set_msg_password_msg_password_title">Hasło wiadomości</string>
     <string name="set_msg_password_msg_password_hint">od 4 do 21 znaków</string>
@@ -292,7 +293,8 @@
     <string name="cont">Kontynuuj</string>
     <string name="reply_prefix_on">‎</string>
     <string name="terms_and_conditions">Korzystając z poczty ProtonMail, akceptujesz nasz\n
-        <a href="https://protonmail.com/terms-and-conditions">regulamin</a> oraz <a href="https://protonmail.com/privacy-policy">politykę prywatności</a></string>
+        <a href="https://protonmail.com/terms-and-conditions">regulamin</a> oraz <a href="https://protonmail.com/privacy-policy">politykę prywatności</a>
+    </string>
     <string name="labels_title_apply">Zastosuj etykiety</string>
     <string name="labels_title_add">Dodaj etykietę</string>
     <string name="labels_title">Etykiety</string>
@@ -363,7 +365,8 @@
     </string-array>
     <string name="delete_label_confirmation_title">Usunąć zaznaczone etykiety?</string>
     <string name="delete_folder_confirmation_title">Usunąć zaznaczone foldery?</string>
-    <string name="delete_label_confirmation_message">Przypisane wiadomości znajdziesz w folderze <b>Wszystkie wiadomości</b></string>
+    <string name="delete_label_confirmation_message">Przypisane wiadomości znajdziesz w folderze <b>Wszystkie wiadomości</b>
+    </string>
     <string name="enter_pin">Wpisz kod PIN, aby odblokować skrzynkę</string>
     <string name="enter_pin_message_details">Wpisz kod PIN, aby odblokować wiadomość</string>
     <string name="enter_current_pin">Wpisz aktualny kod PIN</string>
@@ -578,7 +581,8 @@
     <string name="update_folder">Aktualizacja folderu</string>
     <string name="spam_score_100">Ta wiadomość wydaje się pochodzić z adresu ProtonMail, ale pochodzi spoza naszego systemu i nie spełnia kryteriów uwierzytelniania. Może być sfałszowana lub nieprawidłowo przesłana!</string>
     <string name="spam_score_101">Ta wiadomość nie spełnia wymogów weryfikacyjnych domeny nadawcy. Może być sfałszowana lub nieprawidłowo przesłana!</string>
-    <string name="spam_score_102">Ta wiadomość może być próbą wyłudzenia informacji. Upewnij się, czy nadawca wiadomości i jej treść są wiarygodne. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">DOWIEDZ SIĘ WIĘCEJ</a></string>
+    <string name="spam_score_102">Ta wiadomość może być próbą wyłudzenia informacji. Upewnij się, czy nadawca wiadomości i jej treść są wiarygodne. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">DOWIEDZ SIĘ WIĘCEJ</a>
+    </string>
     <string name="print_from_template">Od: %s</string>
     <string name="print_to_template">Do: %s;  </string>
     <string name="print_cc_template">DW: %s;  </string>
@@ -596,7 +600,9 @@
     <string name="empty_subject">(Brak tematu)</string>
     <string name="empty_recipients">(brak odbiorców)</string>
     <string name="contacts_unknown">Nieznany</string>
-    <string name="learn_more"><u>Dowiedz się więcej</u></string>
+    <string name="learn_more">
+        <u>Dowiedz się więcej</u>
+    </string>
     <string name="info">Informacje</string>
     <string name="error_can_not_send_from_this_address">Ulepsz do płatnego planu, aby wysyłać wiadomości z adresu %s.</string>
     <string name="email_empty">Brak adresu e-mail</string>
@@ -657,7 +663,9 @@
     <string name="expiration_error_add_msg_password">Wpisz hasło wiadomości dla następujących odbiorców:</string>
     <string name="expiration_error_disable_pgp_sending">Wyłącz wysyłanie poprzez PGP, aby włączyć wygasanie dla następujących odbiorców:</string>
     <string name="expiration_error_proceed">Wybierz \"wyślij mimo to\", aby wysłać bez wygasania do tych odbiorców.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">DOWIEDZ SIĘ WIĘCEJ</a></string>
+    <string name="expiration_error_learn_more">
+        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">DOWIEDZ SIĘ WIĘCEJ</a>
+    </string>
     <string name="channel_name_attachments">Załączniki</string>
     <string name="channel_description_attachments">Informuje o statusie pobierania załączników</string>
     <string name="channel_name_emails">Wiadomości</string>
@@ -914,7 +922,8 @@
     <string name="connections_via_third_parties">Alternatywne przekierowanie połączenia</string>
     <string name="allow_secure_connections_via_third_parties">Zezwalaj na alternatywne przekierowanie połączenia</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">W przypadku zablokowania dostępu do stron Proton, ta konfiguracja pozwoli aplikacji wypróbować alternatywne połączenia sieciowe, które mogą przywrócić ten dostęp. Ta funkcja może być przydatna podczas problemów z siecią lub w celu ominięcia zapór. Zalecamy włączenie tego ustawienia dla zapewnienia większej niezawodności.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">W przypadku zablokowania dostępu do stron Proton, ta konfiguracja pozwoli aplikacji wypróbować alternatywne połączenia sieciowe, które mogą przywrócić ten dostęp. Ta funkcja może być przydatna podczas problemów z siecią lub w celu ominięcia zapór. Zalecamy włączenie tego ustawienia dla zapewnienia większej niezawodności. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Dowiedz się więcej</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">W przypadku zablokowania dostępu do stron Proton, ta konfiguracja pozwoli aplikacji wypróbować alternatywne połączenia sieciowe, które mogą przywrócić ten dostęp. Ta funkcja może być przydatna podczas problemów z siecią lub w celu ominięcia zapór. Zalecamy włączenie tego ustawienia dla zapewnienia większej niezawodności. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Dowiedz się więcej</a>
+    </string>
     <string name="app_language">Język aplikacji</string>
     <string name="custom_language_dialog_title">Wybierz język aplikacji</string>
     <string name="auto_detect">Automatyczne wykrywanie</string>

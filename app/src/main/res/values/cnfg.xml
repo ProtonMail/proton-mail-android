@@ -36,32 +36,33 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </array>
     <string name="default_delimiter" translatable="false">:</string>
     <string name="sentry_url" translatable="false">https://%1$s@%2$s</string>
-    <array name="custom_language_labels">
+    <array name="custom_language_labels" translatable="false">
         <item>English</item>
         <item>Català</item>
         <item>Čeština</item>
         <item>Dansk</item>
         <item>Deutsch</item>
-        <item>Español</item>
+        <item>Ελληνικά</item>
+        <item>Español (España)</item>
         <item>Français</item>
         <item>Hrvatski</item>
         <item>Magyar</item>
-        <item>bahasa Indonesia</item>
+        <item>Bahasa (Indonesia)</item>
         <item>íslenska</item>
         <item>Italiano</item>
-        <item>Taqbaylit</item>
         <item>日本語</item>
-        <item>Dutch</item>
+        <item>Taqbaylit</item>
+        <item>Nederlands</item>
         <item>Polski</item>
-        <item>Português</item>
-        <item>Português do Brasil</item>
+        <item>Português (Portugal)</item>
+        <item>Português (Brasil)</item>
         <item>Română</item>
         <item>Русский</item>
         <item>Svenska</item>
         <item>Türkçe</item>
         <item>Українська</item>
-        <item>简体中文</item>
         <item>繁體中文</item>
+        <item>简体中文</item>
     </array>
     <array name="custom_language_values" translatable="false">
         <item>en</item>
@@ -69,6 +70,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>cs</item>
         <item>da</item>
         <item>de</item>
+        <item>el</item>
         <item>es</item>
         <item>fr</item>
         <item>hr</item>
@@ -76,8 +78,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>in</item>
         <item>is_IS</item>
         <item>it</item>
-        <item>kab</item>
         <item>ja</item>
+        <item>kab</item>
         <item>nl</item>
         <item>pl</item>
         <item>pt</item>
@@ -87,8 +89,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>sv_SE</item>
         <item>tr</item>
         <item>uk</item>
-        <item>zh_CN</item>
         <item>zh_TW</item>
+        <item>zh_CN</item>
     </array>
     <array name="app_lock_values">
         ​
