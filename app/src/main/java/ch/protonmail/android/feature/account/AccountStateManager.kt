@@ -63,6 +63,7 @@ import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
+import me.proton.core.accountmanager.presentation.onSessionForceLogout
 import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onAddAccountResult
@@ -139,6 +140,7 @@ internal class AccountStateManager @Inject constructor(
      */
     private fun observeAccountStateWithInternalLifecycle() {
         observeAccountManager(lifecycle)
+            .onSessionForceLogout { userManager.lock(it.userId) }
             .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
             .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
             .onAccountRemoved { onAccountDisabled(it) }
