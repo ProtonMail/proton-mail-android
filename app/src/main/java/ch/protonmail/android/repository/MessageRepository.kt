@@ -316,7 +316,7 @@ internal class MessageRepository @Inject constructor(
         }
     }
 
-    private suspend fun saveMessage(userId: UserId, message: Message): Message {
+    suspend fun saveMessage(userId: UserId, message: Message): Message {
         message.saveBodyToFileIfNeeded()
         val messageDao = databaseProvider.provideMessageDao(userId)
         messageDao.saveMessage(message)

@@ -662,7 +662,6 @@ internal class MailboxViewModel @Inject constructor(
                     ids,
                     ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
                     userId,
-                    location,
                     locationId
                 )
             }
@@ -683,7 +682,6 @@ internal class MailboxViewModel @Inject constructor(
                     ids,
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                     userId,
-                    location,
                     locationId
                 )
             }

@@ -326,7 +326,6 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
                 listOf(conversationId),
                 markReadAction,
                 userId,
-                location,
                 location.messageLocationTypeValue.toString()
             )
         } returns ConversationsActionResult.Success
@@ -340,7 +339,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
-        coVerify { changeConversationsReadStatus.invoke(listOf(conversationId), markReadAction, userId, location, location.messageLocationTypeValue.toString()) }
+        coVerify {
+            changeConversationsReadStatus.invoke(
+                listOf(conversationId),
+                markReadAction,
+                userId,
+                location.messageLocationTypeValue.toString()
+            )
+        }
         verify { messageRepository wasNot Called }
     }
 
@@ -358,7 +364,6 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
                 listOf(conversationId),
                 markReadAction,
                 userId,
-                location,
                 location.messageLocationTypeValue.toString()
             )
         } returns ConversationsActionResult.Error
@@ -449,7 +454,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expectedResult = MessageActionSheetAction.CouldNotCompleteActionError
         every { conversationModeEnabled(any()) } returns true
         coEvery {
-            changeConversationsReadStatus.invoke(any(), any(), any(), any(), any())
+            changeConversationsReadStatus.invoke(any(), any(), any(), any())
         } returns ConversationsActionResult.Error
 
         // when

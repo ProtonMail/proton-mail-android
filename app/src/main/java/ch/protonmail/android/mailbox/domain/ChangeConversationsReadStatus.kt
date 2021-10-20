@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
@@ -35,13 +34,12 @@ class ChangeConversationsReadStatus @Inject constructor(
         conversationIds: List<String>,
         action: Action,
         userId: UserId,
-        location: Constants.MessageLocationType,
         locationId: String
     ): ConversationsActionResult {
         return if (action == Action.ACTION_MARK_READ) {
             conversationsRepository.markRead(conversationIds, userId)
         } else {
-            conversationsRepository.markUnread(conversationIds, userId, location, locationId)
+            conversationsRepository.markUnread(conversationIds, userId, locationId)
         }
     }
 

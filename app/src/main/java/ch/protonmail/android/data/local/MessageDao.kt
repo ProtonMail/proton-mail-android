@@ -228,7 +228,7 @@ abstract class MessageDao : BaseDao<Message>() {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
     )
-    abstract suspend fun findAllMessagesInfoFromConversation(conversationId: String): List<Message>
+    abstract suspend fun findAllConversationMessagesSortedByNewest(conversationId: String): List<Message>
 
     suspend fun saveMessage(message: Message): Long {
         Timber.d(

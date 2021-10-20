@@ -26,50 +26,34 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Test the behavior of [ChangeConversationsReadStatus]
- */
 class ChangeConversationsReadStatusTest {
 
     private val conversationsRepository = mockk<ConversationsRepository>()
 
-    private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
-
-    @BeforeTest
-    fun setUp() {
-        changeConversationsReadStatus = ChangeConversationsReadStatus(
-            conversationsRepository
-        )
-    }
+    private val changeConversationsReadStatus = ChangeConversationsReadStatus(conversationsRepository)
 
     @Test
     fun verifyMarkReadIsCalledWhenReadActionIsReceived() {
         runBlockingTest {
             // given
-            val conversation1 = "conversation1"
-            val conversation2 = "conversation2"
-            val conversationIds = listOf(conversation1, conversation2)
-            val userId = UserId("id")
             coEvery {
-                conversationsRepository.markRead(conversationIds, userId)
+                conversationsRepository.markRead(TestData.Conversation.ids, TestData.User.id)
             } returns ConversationsActionResult.Success
 
             // when
             changeConversationsReadStatus(
-                conversationIds,
+                TestData.Conversation.ids,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
-                userId,
-                Constants.MessageLocationType.ARCHIVE,
-                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+                TestData.User.id,
+                TestData.Conversation.locationId
             )
 
             // then
             coVerify {
-                conversationsRepository.markRead(conversationIds, userId)
+                conversationsRepository.markRead(TestData.Conversation.ids, TestData.User.id)
             }
         }
     }
@@ -78,25 +62,29 @@ class ChangeConversationsReadStatusTest {
     fun verifyMarkUnreadIsCalledWhenUnreadActionIsReceived() {
         runBlockingTest {
             // given
-            val conversation1 = "conversation1"
-            val conversation2 = "conversation2"
-            val conversationIds = listOf(conversation1, conversation2)
             coEvery {
-                conversationsRepository.markUnread(conversationIds, any(), any(), any())
+                conversationsRepository.markUnread(
+                    TestData.Conversation.ids,
+                    TestData.User.id,
+                    TestData.Conversation.locationId
+                )
             } returns ConversationsActionResult.Success
 
             // when
             changeConversationsReadStatus(
-                conversationIds,
+                TestData.Conversation.ids,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                UserId("id"),
-                Constants.MessageLocationType.ARCHIVE,
-                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+                TestData.User.id,
+                TestData.Conversation.locationId
             )
 
             // then
             coVerify {
-                conversationsRepository.markUnread(conversationIds, any(), any(), any())
+                conversationsRepository.markUnread(
+                    TestData.Conversation.ids,
+                    TestData.User.id,
+                    TestData.Conversation.locationId
+                )
             }
         }
     }
@@ -105,22 +93,17 @@ class ChangeConversationsReadStatusTest {
     fun verifyUseCaseReturnsSuccessResultWhenRepositoryReturnsSuccessResult() {
         runBlockingTest {
             // given
-            val conversation1 = "conversation1"
-            val conversation2 = "conversation2"
-            val conversationIds = listOf(conversation1, conversation2)
-            val userId = UserId("id")
             val expectedResult = ConversationsActionResult.Success
             coEvery {
-                conversationsRepository.markRead(conversationIds, userId)
+                conversationsRepository.markRead(TestData.Conversation.ids, TestData.User.id)
             } returns ConversationsActionResult.Success
 
             // when
             val result = changeConversationsReadStatus(
-                conversationIds,
+                TestData.Conversation.ids,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
-                userId,
-                Constants.MessageLocationType.ARCHIVE,
-                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+                TestData.User.id,
+                TestData.Conversation.locationId
             )
 
             // then
@@ -132,25 +115,37 @@ class ChangeConversationsReadStatusTest {
     fun verifyUseCaseReturnsErrorResultWhenRepositoryReturnsErrorResult() {
         runBlockingTest {
             // given
-            val conversation1 = "conversation1"
-            val conversation2 = "conversation2"
-            val conversationIds = listOf(conversation1, conversation2)
             val expectedResult = ConversationsActionResult.Error
             coEvery {
-                conversationsRepository.markUnread(conversationIds, any(), any(), any())
+                conversationsRepository.markUnread(
+                    TestData.Conversation.ids,
+                    TestData.User.id,
+                    TestData.Conversation.locationId
+                )
             } returns ConversationsActionResult.Error
 
             // when
             val result = changeConversationsReadStatus(
-                conversationIds,
+                TestData.Conversation.ids,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                UserId("id"),
-                Constants.MessageLocationType.ARCHIVE,
-                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+                TestData.User.id,
+                TestData.Conversation.locationId
             )
 
             // then
             assertEquals(expectedResult, result)
         }
+    }
+}
+
+private object TestData {
+    object User {
+        val id = UserId("id")
+    }
+    object Conversation {
+        const val ID_1 = "conversation1"
+        const val ID_2 = "conversation2"
+        val ids = listOf(ID_1, ID_2)
+        val locationId = Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
     }
 }

@@ -24,7 +24,6 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.ServerMessage
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.local.MessageDao
@@ -233,6 +232,9 @@ class ConversationsRepositoryImplTest : ArchTest {
     private val connectivityManager: NetworkConnectivityManager = mockk {
         every { isInternetConnectionPossible() } returns true
     }
+    private val markUnreadLatestNonDraftMessageInLocation: MarkUnreadLatestNonDraftMessageInLocation = mockk {
+        coEvery { this@mockk.invoke(any(), any(), any()) } just runs
+    }
 
     private val conversationsRepository = ConversationsRepositoryImpl(
         conversationDao = conversationDao,
@@ -255,7 +257,8 @@ class ConversationsRepositoryImplTest : ArchTest {
         labelConversationsRemoteWorker = labelConversationsRemoteWorker,
         unlabelConversationsRemoteWorker = unlabelConversationsRemoteWorker,
         deleteConversationsRemoteWorker = deleteConversationsRemoteWorker,
-        connectivityManager = connectivityManager
+        connectivityManager = connectivityManager,
+        markUnreadLatestNonDraftMessageInLocation = markUnreadLatestNonDraftMessageInLocation
     )
 
     @Test
@@ -687,7 +690,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             val conversationIds = listOf(conversationId, conversationId1)
             val message = Message()
             coEvery { conversationDao.updateNumUnreadMessages(any(), 0) } just runs
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             coEvery { messageDao.saveMessage(any()) } returns 123
             val expectedResult = ConversationsActionResult.Success
 
@@ -711,7 +714,7 @@ class ConversationsRepositoryImplTest : ArchTest {
         runBlockingTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
-            val mailboxLocation = Constants.MessageLocationType.ARCHIVE
+            val mailboxLocation = MessageLocationType.ARCHIVE
             val locationId = MessageLocationType.ARCHIVE.asLabelId()
             val message = Message(
                 location = mailboxLocation.messageLocationTypeValue
@@ -719,18 +722,19 @@ class ConversationsRepositoryImplTest : ArchTest {
             val message2 = Message(
                 location = mailboxLocation.messageLocationTypeValue
             )
+            val conversationMessagesList = listOf(message, message2)
             val unreadMessages = 0
             coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { numUnread } returns unreadMessages
                 }
             coEvery { conversationDao.updateNumUnreadMessages(any(), unreadMessages + 1) } just runs
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message2)
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns conversationMessagesList
             coEvery { messageDao.saveMessage(any()) } returns 123
             val expectedResult = ConversationsActionResult.Success
 
             // when
-            val result = conversationsRepository.markUnread(conversationIds, UserId("id"), mailboxLocation, locationId)
+            val result = conversationsRepository.markUnread(conversationIds, UserId("id"), locationId)
 
             // then
             coVerify {
@@ -738,7 +742,11 @@ class ConversationsRepositoryImplTest : ArchTest {
                 conversationDao.updateNumUnreadMessages(conversationId1, unreadMessages + 1)
             }
             coVerify(exactly = 2) {
-                messageDao.saveMessage(message)
+                markUnreadLatestNonDraftMessageInLocation(
+                    conversationMessagesList,
+                    locationId,
+                    testUserId
+                )
             }
             assertEquals(expectedResult, result)
         }
@@ -749,13 +757,12 @@ class ConversationsRepositoryImplTest : ArchTest {
         runBlockingTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
-            val mailboxLocation = Constants.MessageLocationType.ARCHIVE
             val locationId = MessageLocationType.ARCHIVE.asLabelId()
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
             // when
-            val result = conversationsRepository.markUnread(conversationIds, UserId("id"), mailboxLocation, locationId)
+            val result = conversationsRepository.markUnread(conversationIds, UserId("id"), locationId)
 
             // then
             assertEquals(expectedResult, result)
@@ -787,7 +794,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 }
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             val expectedResult = ConversationsActionResult.Success
 
             // when
@@ -823,7 +830,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             )
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             val expectedResult = ConversationsActionResult.Error
 
             // when
@@ -860,7 +867,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
             coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             val expectedResult = ConversationsActionResult.Success
 
             // when
@@ -889,7 +896,7 @@ class ConversationsRepositoryImplTest : ArchTest {
         runBlockingTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns mockk(relaxed = true)
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns mockk(relaxed = true)
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
@@ -922,7 +929,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             val label: Label = mockk {
                 every { exclusive } returns false
             }
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             coEvery { messageDao.findLabelById(any()) } returns label
             coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
@@ -967,7 +974,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             val label: Label = mockk {
                 every { exclusive } returns false
             }
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOf(message, message)
             coEvery { messageDao.findLabelById(any()) } returns label
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
@@ -1003,7 +1010,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 mockk {
                     every { labels } returns conversationLabels
                 }
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOfMessages
             coEvery { messageDao.saveMessages(listOfMessages) } just runs
 
             // when
@@ -1030,7 +1037,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 LabelContextDatabaseModel("5", 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel("0", 0, 2, 123, 123, 0)
             )
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOfMessages
             coEvery { conversationDao.findConversation(testUserId.id, any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
@@ -1050,7 +1057,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             val expected = Message(
                 allLabelIDs = listOf(labelId),
                 // Needed because the addition of labels will change location to "LABEL" since 'labelId' it's the only label
-                location = Constants.MessageLocationType.LABEL.messageLocationTypeValue
+                location = MessageLocationType.LABEL.messageLocationTypeValue
             )
             coVerify(exactly = 2) { messageDao.saveMessages(listOf(expected, expected)) }
             coVerify { conversationDao.updateLabels(conversationId1, any()) }
@@ -1070,7 +1077,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 every { addLabels(any()) } just runs
             }
             val listOfMessages = listOf(message, message)
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOfMessages
             coEvery { conversationDao.findConversation(testUserId.id, any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
@@ -1097,7 +1104,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 LabelContextDatabaseModel("0", 0, 2, 123, 123, 0),
                 LabelContextDatabaseModel("labelId", 0, 2, 123, 123, 0)
             )
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOfMessages
             coEvery { conversationDao.findConversation(testUserId.id, any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
@@ -1113,7 +1120,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             val expected = Message(
                 allLabelIDs = emptyList(),
                 // Needed because the removal of labels will change location, defalting to INBOX if no labels
-                location = Constants.MessageLocationType.INBOX.messageLocationTypeValue
+                location = MessageLocationType.INBOX.messageLocationTypeValue
             )
             coVerify(exactly = 2) {
                 messageDao.saveMessages(listOf(expected, expected))
@@ -1138,7 +1145,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 every { removeLabels(any()) } just runs
             }
             val listOfMessages = listOf(message, message)
-            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
+            coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOfMessages
             coEvery { conversationDao.findConversation(testUserId.id, any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
