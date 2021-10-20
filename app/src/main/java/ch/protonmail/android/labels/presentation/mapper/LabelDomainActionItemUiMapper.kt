@@ -94,11 +94,14 @@ class LabelDomainActionItemUiMapper @Inject constructor(
             is LabelOrFolderWithChildren.Label -> LabelType.MESSAGE_LABEL
             is LabelOrFolderWithChildren.Folder -> LabelType.FOLDER
         }
-        val iconRes = when (labelType) {
-            LabelType.MESSAGE_LABEL -> R.drawable.circle_labels_selection
-            LabelType.FOLDER ->
-                if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
-            LabelType.CONTACT_GROUP -> throw IllegalArgumentException("Contacts are currently unsupported")
+        val iconRes = when (label) {
+            is LabelOrFolderWithChildren.Label -> R.drawable.circle_labels_selection
+            is LabelOrFolderWithChildren.Folder ->
+                if (useFolderColor) {
+                    if (label.children.isEmpty()) R.drawable.ic_folder_filled else R.drawable.ic_folder_multiple_filled
+                } else {
+                    if (label.children.isEmpty()) R.drawable.ic_folder else R.drawable.ic_folder_multiple
+                }
         }
 
         val colorInt = if (useFolderColor) {

@@ -151,24 +151,24 @@ class LabelDomainActionItemUiMapperTest {
         val thirdFirstSecond = "third.first.second"
         val thirdSecond = "third.second"
         val input = buildFolders {
-            +first {
-                +firstFirst
+            folder(first) {
+                folder(firstFirst)
             }
-            +second
-            +third {
-                +thirdFirst {
-                    +thirdFirstFirst
-                    +thirdFirstSecond
+            folder(second)
+            folder(third) {
+                folder(thirdFirst) {
+                    folder(thirdFirstFirst)
+                    folder(thirdFirstSecond)
                 }
-                +thirdSecond
+                folder(thirdSecond)
             }
         }
         val expected = listOf(
-            buildActionItem(name = first, folderLevel = 0),
+            buildActionItem(name = first, folderLevel = 0, hasChildren = true),
             buildActionItem(name = firstFirst, folderLevel = 1),
             buildActionItem(name = second, folderLevel = 0),
-            buildActionItem(name = third, folderLevel = 0),
-            buildActionItem(name = thirdFirst, folderLevel = 1),
+            buildActionItem(name = third, folderLevel = 0, hasChildren = true),
+            buildActionItem(name = thirdFirst, folderLevel = 1, hasChildren = true),
             buildActionItem(name = thirdFirstFirst, folderLevel = 2),
             buildActionItem(name = thirdFirstSecond, folderLevel = 2),
             buildActionItem(name = thirdSecond, folderLevel = 1)
@@ -199,7 +199,7 @@ class LabelDomainActionItemUiMapperTest {
         every { Color.parseColor(blueString) } returns blueInt
 
         val expected = listOf(
-            buildActionItem(name = parent, folderLevel = 0, colorInt = redInt),
+            buildActionItem(name = parent, folderLevel = 0, hasChildren = true, colorInt = redInt),
             buildActionItem(name = child, folderLevel = 1, colorInt = blueInt),
         )
 
@@ -228,7 +228,7 @@ class LabelDomainActionItemUiMapperTest {
         }
 
         val expected = listOf(
-            buildActionItem(name = parent, folderLevel = 0, colorInt = redInt),
+            buildActionItem(name = parent, folderLevel = 0, hasChildren = true, colorInt = redInt),
             buildActionItem(name = child, folderLevel = 1, colorInt = redInt),
         )
 
@@ -254,7 +254,7 @@ class LabelDomainActionItemUiMapperTest {
         }
 
         val expected = listOf(
-            buildActionItem(name = parent, folderLevel = 0, colorInt = 0),
+            buildActionItem(name = parent, folderLevel = 0, hasChildren = true, colorInt = 0),
             buildActionItem(name = child, folderLevel = 1, colorInt = 0),
         )
 
@@ -287,12 +287,13 @@ class LabelDomainActionItemUiMapperTest {
     private fun buildActionItem(
         name: String,
         folderLevel: Int,
+        hasChildren: Boolean = false,
         colorInt: Int = TEST_COLOR_INT
     ) = LabelActonItemUiModel(
         labelId = LabelId(name),
         title = name,
         folderLevel = folderLevel,
-        iconRes = R.drawable.ic_folder_filled,
+        iconRes = if (hasChildren) R.drawable.ic_folder_multiple_filled else R.drawable.ic_folder_filled,
         colorInt = colorInt,
         labelType = LabelType.FOLDER
     )
