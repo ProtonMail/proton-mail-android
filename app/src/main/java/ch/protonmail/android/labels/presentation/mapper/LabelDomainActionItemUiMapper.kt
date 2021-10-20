@@ -37,26 +37,37 @@ import javax.inject.Inject
  */
 class LabelDomainActionItemUiMapper @Inject constructor(
     context: Context
-) : Mapper<LabelOrFolderWithChildren, List<LabelActonItemUiModel>> {
+) : Mapper<Collection<LabelOrFolderWithChildren>, List<LabelActonItemUiModel>> {
 
     private val useFolderColor: Boolean = true
 
     private val defaultIconColor = context.getColor(R.color.icon_norm)
 
     fun toUiModels(
-        label: LabelOrFolderWithChildren,
+        labels: Collection<LabelOrFolderWithChildren>,
         currentLabelsSelection: List<String>
+    ): List<LabelActonItemUiModel> = labels.flatMap { labelToUiModels(it, currentLabelsSelection, 0) }
+
+    private fun labelToUiModels(
+        label: LabelOrFolderWithChildren,
+        currentLabelsSelection: List<String>,
+        folderLevel: Int
     ): List<LabelActonItemUiModel> {
 
-        val parent = toUiModel(
+        val parent = labelToUiModel(
             label = label,
             currentLabelsSelection = currentLabelsSelection,
-            folderLevel = 0
+            folderLevel = folderLevel
         )
-        return listOf(parent)
+        val children = if (label is LabelOrFolderWithChildren.Folder) {
+            label.children.flatMap { labelToUiModels(it, currentLabelsSelection, folderLevel + 1) }
+        } else {
+            emptyList()
+        }
+        return listOf(parent) + children
     }
 
-    private fun toUiModel(
+    private fun labelToUiModel(
         label: LabelOrFolderWithChildren,
         currentLabelsSelection: List<String>,
         folderLevel: Int,

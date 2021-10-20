@@ -39,5 +39,5 @@ data class LabelActonItemUiModel(
     @ColorInt val colorInt: Int = Color.BLACK,
     val folderLevel: Int = 0,
     val isChecked: Boolean? = null,
-    val labelType: LabelType = LabelType.MESSAGE_LABEL
+    val labelType: LabelType
 )

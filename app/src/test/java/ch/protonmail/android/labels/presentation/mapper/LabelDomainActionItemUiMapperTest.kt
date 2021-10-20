@@ -26,6 +26,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
+import ch.protonmail.android.labels.utils.buildFolders
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -63,10 +64,12 @@ class LabelDomainActionItemUiMapperTest {
     fun labelIsMappedCorrectly() {
 
         // given
-        val label = LabelOrFolderWithChildren.Label(
-            id = TEST_LABEL_ID,
-            name = TEST_LABEL_NAME,
-            color = EMPTY_STRING,
+        val input = listOf(
+            LabelOrFolderWithChildren.Label(
+                id = TEST_LABEL_ID,
+                name = TEST_LABEL_NAME,
+                color = EMPTY_STRING,
+            )
         )
         val expected = listOf(
             LabelActonItemUiModel(
@@ -82,7 +85,7 @@ class LabelDomainActionItemUiMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(label, emptyList())
+        val result = mapper.toUiModels(input, emptyList())
 
         // then
         assertEquals(expected, result)
@@ -92,11 +95,11 @@ class LabelDomainActionItemUiMapperTest {
     fun labelIsCheckedCorrectly() {
 
         // given
-        val label = buildLabel()
+        val input = listOf(buildLabel())
         val currentLabelsIds = listOf(TEST_LABEL_ID.id)
 
         // when
-        val result = mapper.toUiModels(label, currentLabelsIds)
+        val result = mapper.toUiModels(input, currentLabelsIds)
 
         // then
         assertEquals(true, result.first().isChecked)
@@ -106,13 +109,15 @@ class LabelDomainActionItemUiMapperTest {
     fun singleFolderIsMapperCorrectly() {
 
         // given
-        val label = LabelOrFolderWithChildren.Folder(
-            id = TEST_LABEL_ID,
-            name = TEST_LABEL_NAME,
-            color = EMPTY_STRING,
-            path = TEST_LABEL_NAME,
-            parentId = null,
-            children = emptyList()
+        val input = listOf(
+            LabelOrFolderWithChildren.Folder(
+                id = TEST_LABEL_ID,
+                name = TEST_LABEL_NAME,
+                color = EMPTY_STRING,
+                path = TEST_LABEL_NAME,
+                parentId = null,
+                children = emptyList()
+            )
         )
         val expected = listOf(
             LabelActonItemUiModel(
@@ -128,7 +133,49 @@ class LabelDomainActionItemUiMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(label, emptyList())
+        val result = mapper.toUiModels(input, emptyList())
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun nestedFoldersAreMappedCorrectly() {
+        // given
+        val first = "first"
+        val firstFirst = "first.first"
+        val second = "second"
+        val third = "third"
+        val thirdFirst = "third.first"
+        val thirdFirstFirst = "third.first.first"
+        val thirdFirstSecond = "third.first.second"
+        val thirdSecond = "third.second"
+        val input = buildFolders {
+            +first {
+                +firstFirst
+            }
+            +second
+            +third {
+                +thirdFirst {
+                    +thirdFirstFirst
+                    +thirdFirstSecond
+                }
+                +thirdSecond
+            }
+        }
+        val expected = listOf(
+            buildActionItem(name = first, folderLevel = 0),
+            buildActionItem(name = firstFirst, folderLevel = 1),
+            buildActionItem(name = second, folderLevel = 0),
+            buildActionItem(name = third, folderLevel = 0),
+            buildActionItem(name = thirdFirst, folderLevel = 1),
+            buildActionItem(name = thirdFirstFirst, folderLevel = 2),
+            buildActionItem(name = thirdFirstSecond, folderLevel = 2),
+            buildActionItem(name = thirdSecond, folderLevel = 1)
+        )
+
+        // when
+        val result = mapper.toUiModels(input, emptyList())
 
         // then
         assertEquals(expected, result)
@@ -138,5 +185,17 @@ class LabelDomainActionItemUiMapperTest {
         id = TEST_LABEL_ID,
         name = TEST_LABEL_NAME,
         color = EMPTY_STRING
+    )
+
+    private fun buildActionItem(
+        name: String,
+        folderLevel: Int
+    ) = LabelActonItemUiModel(
+        labelId = LabelId(name),
+        title = name,
+        folderLevel = folderLevel,
+        iconRes = R.drawable.ic_folder_filled,
+        colorInt = TEST_COLOR_INT,
+        labelType = LabelType.FOLDER
     )
 }

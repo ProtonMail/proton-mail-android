@@ -103,12 +103,8 @@ internal class LabelsActionSheetViewModel @Inject constructor(
             val userId = accountManager.getPrimaryUserId().filterNotNull().first()
             val allLabels = getLabelsOrFolderWithChildrenByType(userId, labelsSheetType)
 
-            val savedModels = allLabels.flatMap { label ->
-                labelDomainUiMapper.toUiModels(
-                    label,
-                    getCheckedLabelsForAllMailboxItems(messageIds)
-                )
-            }
+            val savedModels = labelDomainUiMapper
+                .toUiModels(allLabels, getCheckedLabelsForAllMailboxItems(messageIds))
 
             labelsMutableFlow.value = getAllModels(
                 if (actionSheetTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN ||
