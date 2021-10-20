@@ -25,25 +25,26 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.api.utils.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.entity.LabelId
+import ch.protonmail.android.domain.asLoadMoreFlow
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
-import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -55,6 +56,7 @@ import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
@@ -92,7 +94,6 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
-import me.proton.core.util.kotlin.invoke
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
@@ -103,6 +104,7 @@ const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
 private const val STARRED_LABEL_ID = "10"
 private const val MIN_MESSAGES_TO_SHOW_COUNT = 2
+private typealias ApplyRemoveLabelsPair = Pair<List<String>, List<String>>
 
 @HiltViewModel
 internal class MailboxViewModel @Inject constructor(
@@ -169,10 +171,12 @@ internal class MailboxViewModel @Inject constructor(
     val drawerLabels: Flow<DrawerFoldersAndLabelsSectionUiModel> = combine(
         mutableUserId,
         mutableRefreshFlow.onStart { emit(false) }
-    ) { userId, _ -> userId }
-        .flatMapLatest { userId -> observeLabels(userId) }
+    ) { userId, isRefresh -> userId to isRefresh }
+        .flatMapLatest { userIdPair -> observeLabels(userIdPair.first, userIdPair.second) }
         .map { labels ->
-            drawerFoldersAndLabelsSectionUiModelMapper { labels.toUiModel() }
+            drawerFoldersAndLabelsSectionUiModelMapper.toUiModel(
+                labels.filter { it.type != LabelType.CONTACT_GROUP }
+            )
         }
 
     val unreadCounters: Flow<List<UnreadCounter>> = combine(
@@ -302,14 +306,14 @@ internal class MailboxViewModel @Inject constructor(
 
                     if (message != null) {
                         val currentLabelsIds = message.labelIDsNotIncludingLocations
-                        val labels = getAllLabelsByIds(currentLabelsIds)
+                        val labels = getAllLabelsByIds(currentLabelsIds, userManager.requireCurrentUserId())
                         val applyRemoveLabels = resolveMessageLabels(
                             message, ArrayList(checkedLabelIds),
                             ArrayList(unchangedLabels),
                             labels
                         )
-                        val apply = applyRemoveLabels?.labelsToApply
-                        val remove = applyRemoveLabels?.labelsToRemove
+                        val apply = applyRemoveLabels?.first
+                        val remove = applyRemoveLabels?.second
                         apply?.forEach {
                             var labelsToApply: MutableList<String>? = labelsToApplyMap[it]
                             if (labelsToApply == null) {
@@ -353,7 +357,7 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     fun messagesToMailboxItemsBlocking(messages: List<Message>) = runBlocking {
-        return@runBlocking messagesToMailboxItems(messages)
+        return@runBlocking messagesToMailboxItems(messages, null)
     }
 
     private fun conversationsAsMailboxItems(
@@ -365,42 +369,49 @@ internal class MailboxViewModel @Inject constructor(
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
-        return observeConversationsByLocation(
-            userId,
-            locationId
-        ).loadMoreMap { result ->
-            when (result) {
-                is GetConversationsResult.Success -> {
-                    val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
-                    isFirstData = false
-
-                    MailboxState.Data(
-                        conversationsToMailboxItems(result.conversations, locationId),
-                        isFreshData = hasReceivedFirstApiRefresh != null,
-                        shouldResetPosition = shouldResetPosition
-                    )
-                }
-                is GetConversationsResult.DataRefresh -> {
-                    if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
-                    else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
-
-                    MailboxState.DataRefresh(
-                        lastFetchedItemsIds = result.lastFetchedConversations.map { it.id }
-                    )
-                }
-                is GetConversationsResult.Error -> {
-                    hasReceivedFirstApiRefresh = false
-
-                    MailboxState.Error(
-                        error = "Failed getting conversations",
-                        throwable = result.throwable,
-                        isOffline = result.isOffline
-                    )
-                }
-                is GetConversationsResult.Loading ->
-                    MailboxState.Loading
-            }
+        return loadMoreCombineTransform<List<Label>, GetConversationsResult, Pair<List<Label>, GetConversationsResult>>(
+            observeLabels(userId),
+            observeConversationsByLocation(
+                userId,
+                locationId
+            )
+        ) { conversations, labels ->
+            emit(conversations to labels)
         }
+            .loadMoreMap { pair ->
+                val labels = pair.first
+                when (val result = pair.second) {
+                    is GetConversationsResult.Success -> {
+                        val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
+                        isFirstData = false
+
+                        MailboxState.Data(
+                            conversationsToMailboxItems(result.conversations, locationId, labels),
+                            isFreshData = hasReceivedFirstApiRefresh != null,
+                            shouldResetPosition = shouldResetPosition
+                        )
+                    }
+                    is GetConversationsResult.DataRefresh -> {
+                        if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
+                        else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
+
+                        MailboxState.DataRefresh(
+                            lastFetchedItemsIds = result.lastFetchedConversations.map { it.id }
+                        )
+                    }
+                    is GetConversationsResult.Error -> {
+                        hasReceivedFirstApiRefresh = false
+
+                        MailboxState.Error(
+                            error = "Failed getting conversations",
+                            throwable = result.throwable,
+                            isOffline = result.isOffline
+                        )
+                    }
+                    is GetConversationsResult.Loading ->
+                        MailboxState.Loading
+                }
+            }
     }
 
     private fun messagesAsMailboxItems(
@@ -411,18 +422,24 @@ internal class MailboxViewModel @Inject constructor(
         Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
-        return observeMessagesByLocation(
-            userId = userId,
-            mailboxLocation = location,
-            labelId = labelId
-        ).loadMoreMap { result ->
-            when (result) {
+        return loadMoreCombineTransform<List<Label>, GetMessagesResult, Pair<List<Label>, GetMessagesResult>>(
+            observeLabels(userId),
+            observeMessagesByLocation(
+                userId = userId,
+                mailboxLocation = location,
+                labelId = labelId
+            )
+        ) { messages, labels ->
+            emit(messages to labels)
+        }.loadMoreMap { pair ->
+            val labels = pair.first
+            when (val result = pair.second) {
                 is GetMessagesResult.Success -> {
                     val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
                     isFirstData = false
 
                     MailboxState.Data(
-                        items = messagesToMailboxItems(result.messages),
+                        items = messagesToMailboxItems(result.messages, labels),
                         isFreshData = hasReceivedFirstApiRefresh != null,
                         shouldResetPosition = shouldResetPosition
                     )
@@ -452,13 +469,10 @@ internal class MailboxViewModel @Inject constructor(
 
     private suspend fun conversationsToMailboxItems(
         conversations: List<Conversation>,
-        locationId: String
+        locationId: String,
+        labels: List<Label>
     ): List<MailboxUiItem> {
-        // Note for future: Get userId from Conversation (should contain it).
-        val userId = userManager.currentUserId ?: return emptyList()
-
         val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.findAllLabels(userId).first()
 
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {
@@ -467,7 +481,7 @@ internal class MailboxViewModel @Inject constructor(
 
             val conversationLabelsIds = conversation.labels.map { it.id }
             val labelChipUiModels = labels
-                .filter { it.id in conversationLabelsIds }
+                .filter { it.id.id in conversationLabelsIds }
                 .toLabelChipUiModels()
 
             val isDraft = conversationContainsSingleDraftMessage(conversation)
@@ -507,10 +521,8 @@ internal class MailboxViewModel @Inject constructor(
             }
         }
 
-    private suspend fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
+    private suspend fun messagesToMailboxItems(messages: List<Message>, labelsList: List<Label>?): List<MailboxUiItem> {
         Timber.v("messagesToMailboxItems size: ${messages.size}")
-        // Note for future: Get userId from Message (should contain it).
-        val userId = userManager.currentUserId ?: return emptyList()
 
         val emails = messages.map { message -> message.senderEmail }.distinct()
         val contacts = emails
@@ -518,10 +530,13 @@ internal class MailboxViewModel @Inject constructor(
             .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first() }
         val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { LabelId(it) }
 
-        val labels = labelIds
-            .chunked(Constants.MAX_SQL_ARGUMENTS)
-            .flatMap { labelChunk -> labelRepository.findLabels(userId, labelChunk).first() }
-            .toLabelChipUiModels()
+        Timber.v("messagesToMailboxItems labels: $labelIds")
+
+        val labels = labelsList?.toLabelChipUiModels()
+            ?: labelIds
+                .chunked(Constants.MAX_SQL_ARGUMENTS)
+                .flatMap { labelChunk -> labelRepository.findLabels(labelChunk) }
+                .toLabelChipUiModels()
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)
@@ -587,20 +602,23 @@ internal class MailboxViewModel @Inject constructor(
             ?: correspondent.address
     }
 
-    private fun getAllLabelsByIds(labelIds: List<String>) =
-        messageDetailsRepository.findAllLabelsWithIds(labelIds)
+    private suspend fun getAllLabelsByIds(labelIds: List<String>, userId: UserId) =
+        messageDetailsRepository.findLabelsWithIds(labelIds)
 
     private fun resolveMessageLabels(
         message: Message,
         checkedLabelIds: MutableList<String>,
         unchangedLabels: List<String>,
         currentContactLabels: List<Label>?
-    ): ApplyRemoveLabels? {
+    ): ApplyRemoveLabelsPair? {
         val labelsToRemove = ArrayList<String>()
 
         currentContactLabels?.forEach {
-            val labelId = it.id
-            if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(labelId) && !it.exclusive) {
+            val labelId = it.id.id
+            if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(
+                    labelId
+                ) && it.type == LabelType.MESSAGE_LABEL
+            ) {
                 labelsToRemove.add(labelId)
             } else if (checkedLabelIds.contains(labelId)) {
                 checkedLabelIds.remove(labelId)
@@ -624,7 +642,7 @@ internal class MailboxViewModel @Inject constructor(
             messageDetailsRepository.saveMessage(message)
         }
 
-        return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
+        return ApplyRemoveLabelsPair(checkedLabelIds, labelsToRemove)
     }
 
     fun deleteAction(
@@ -643,11 +661,11 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
-        filterNot { it.exclusive }.map { label ->
+        filter { it.type == LabelType.MESSAGE_LABEL }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 
-            LabelChipUiModel(LabelId(label.id), Name(label.name), labelColor)
+            LabelChipUiModel(label.id, Name(label.name), labelColor)
         }
 
     fun markRead(
@@ -721,7 +739,8 @@ internal class MailboxViewModel @Inject constructor(
                 moveMessagesToFolder(
                     ids,
                     destinationFolderId,
-                    currentLocation.messageLocationTypeValue.toString()
+                    currentLocation.messageLocationTypeValue.toString(),
+                    userId
                 )
             }
         }

@@ -31,12 +31,9 @@ import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
 import ch.protonmail.android.api.cookie.ProtonCookieStore
-import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
-import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.IAttachmentFactory
-import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.attachments.Armorer
 import ch.protonmail.android.attachments.OpenPgpArmorer
@@ -47,8 +44,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.data.local.model.ContactLabel
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.BuildInfo
@@ -72,6 +67,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import me.proton.core.accountmanager.domain.SessionManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.server.ServerTimeListener
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.File
@@ -224,9 +220,6 @@ object ApplicationModule {
     @Provides
     fun connectivityManager(context: Context): ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-    @Provides
-    fun contactLabelFactory(): IConverterFactory<ServerLabel, ContactLabel> = ContactLabelFactory()
 
     @Provides
     fun buildInfo() = BuildInfo(

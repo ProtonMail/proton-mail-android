@@ -20,6 +20,7 @@ package ch.protonmail.android.contacts.details
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.exceptions.BadImageUrlError
 import ch.protonmail.android.exceptions.ImageNotFoundError
 import ch.protonmail.android.exceptions.errorStateGenerator
@@ -54,6 +55,8 @@ internal class ContactDetailsViewModelOldTest :
     CoroutinesTest,
     ViewStateStoreTest by viewStateStoreTest(errorStateGenerator) {
 
+    private val userManager = mockk<UserManager>()
+
     @Test
     fun `getBitmapFromURL handles timeout`() = coroutinesTest {
 
@@ -68,7 +71,8 @@ internal class ContactDetailsViewModelOldTest :
                     }
                 }
             },
-            contactDetailsRepository = mockk()
+            contactDetailsRepository = mockk(),
+            userManager
         )
 
         // WHEN
@@ -86,7 +90,8 @@ internal class ContactDetailsViewModelOldTest :
         val viewModel = ContactDetailsViewModelOld(
             dispatchers,
             downloadFile = mockk(),
-            contactDetailsRepository = mockk()
+            contactDetailsRepository = mockk(),
+            userManager
         )
 
         // WHEN
@@ -102,9 +107,10 @@ internal class ContactDetailsViewModelOldTest :
         val viewModel = ContactDetailsViewModelOld(
             dispatchers,
             downloadFile = mockk {
-                coEvery { invoke(url = any()) } answers  { throw FileNotFoundException() }
+                coEvery { invoke(url = any()) } answers { throw FileNotFoundException() }
             },
-            contactDetailsRepository = mockk()
+            contactDetailsRepository = mockk(),
+            userManager
         )
 
         // WHEN
@@ -125,7 +131,8 @@ internal class ContactDetailsViewModelOldTest :
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } returns mockk()
             },
-            contactDetailsRepository = mockk()
+            contactDetailsRepository = mockk(),
+            userManager
         )
 
         // WHEN

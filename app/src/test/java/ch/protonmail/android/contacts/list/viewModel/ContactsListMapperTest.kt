@@ -21,11 +21,13 @@ package ch.protonmail.android.contacts.list.viewModel
 
 import android.graphics.Color
 import ch.protonmail.android.R
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -44,6 +46,7 @@ class ContactsListMapperTest {
     private val name2 = "Perro Caliente Comer Manana"
     private val email1 = "email1@abc.com"
     private val email2 = "email2@abc.com"
+    private val testPath = "test/path123"
     private val contactItem1 = ContactItem(
         isProtonMailContact = true,
         name = name1,
@@ -193,11 +196,15 @@ class ContactsListMapperTest {
         // given
         val testId = "ID1"
         val testName = "name1"
-        val label1 = ContactLabel(testId, testName, "green", 1, 0, false, 2)
+
+        val label1 =
+            ContactLabelUiModel(
+                LabelId(testId), testName, "green", LabelType.MESSAGE_LABEL, testPath, "parentId", 1
+            )
         val expected = ContactGroupListItem(
             contactId = testId,
             name = testName,
-            contactEmailsCount = 0,
+            contactEmailsCount = 1,
             color = testColorInt,
         )
 
@@ -216,8 +223,11 @@ class ContactsListMapperTest {
         val testId2 = "ID2"
         val testName = "name1"
         val testName2 = "name2"
-        val label1 = ContactLabel(testId, testName, "green", 1, 0, false, 2)
-        val label2 = ContactLabel(testId2, testName2, "yellow", 1, 0, false, 2)
+        val label1 =
+            ContactLabelUiModel(LabelId(testId), testName, "green", LabelType.MESSAGE_LABEL, testPath, "", 0)
+        val label2 = ContactLabelUiModel(
+            LabelId(testId2), testName2, "yellow", LabelType.MESSAGE_LABEL, testPath, "0", 0
+        )
         val listItem1 = ContactGroupListItem(
             contactId = testId,
             name = testName,

@@ -32,8 +32,8 @@ import ch.protonmail.android.api.segments.device.DeviceApi
 import ch.protonmail.android.api.segments.device.DeviceApiSpec
 import ch.protonmail.android.api.segments.key.KeyApi
 import ch.protonmail.android.api.segments.key.KeyApiSpec
-import ch.protonmail.android.api.segments.label.LabelApi
-import ch.protonmail.android.api.segments.label.LabelApiSpec
+import ch.protonmail.android.labels.data.remote.LabelApi
+import ch.protonmail.android.labels.data.remote.LabelApiSpec
 import ch.protonmail.android.api.segments.message.MessageApi
 import ch.protonmail.android.api.segments.message.MessageApiSpec
 import ch.protonmail.android.api.segments.organization.OrganizationApi
@@ -137,7 +137,7 @@ class ProtonMailApi private constructor(
             val keyApi = KeyApi(services.key)
             val messageApi = MessageApi(services.message)
             val conversationApi = ConversationApi(services.conversation)
-            val labelApi = LabelApi(services.label)
+            val labelApi = LabelApi(apiProvider)
             val organizationApi = OrganizationApi(apiProvider)
             val paymentApi = PaymentApi(services.payment, paymentPubService)
             val reportApi = ReportApi(apiProvider)

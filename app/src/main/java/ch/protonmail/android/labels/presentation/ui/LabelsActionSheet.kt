@@ -32,10 +32,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
+import ch.protonmail.android.labels.presentation.LabelsActionAdapter
+import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
-import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionAdapter
-import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -62,10 +63,10 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     ): View {
         _binding = FragmentLabelsActionSheetBinding.inflate(inflater)
 
-        val actionSheetType = arguments?.getSerializable(EXTRA_ARG_ACTION_SHEET_TYPE) as Type
+        val actionSheetType = arguments?.getSerializable(EXTRA_ARG_ACTION_SHEET_TYPE) as LabelType
 
         with(binding.actionSheetHeader) {
-            val title = if (actionSheetType == Type.FOLDER) {
+            val title = if (actionSheetType == LabelType.FOLDER) {
                 getString(R.string.move_to)
             } else {
                 getString(R.string.label_as)
@@ -76,7 +77,7 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
                 dismiss()
             }
 
-            if (actionSheetType == Type.LABEL) {
+            if (actionSheetType == LabelType.MESSAGE_LABEL) {
                 setRightActionClickListener {
                     viewModel.onDoneClicked(binding.switchLabelsSheetArchive.isChecked)
                 }
@@ -89,7 +90,7 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
         }
 
         with(binding.layoutLabelsSheetArchiveSwitch) {
-            isVisible = actionSheetType == Type.LABEL
+            isVisible = actionSheetType == LabelType.MESSAGE_LABEL
             setOnClickListener {
                 binding.switchLabelsSheetArchive.toggle()
             }
@@ -185,14 +186,14 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
         fun newInstance(
             messageIds: List<String>,
             currentFolderLocationId: Int,
-            labelActionSheetType: Type = Type.LABEL,
+            labelType: LabelType = LabelType.MESSAGE_LABEL,
             actionSheetTarget: ActionSheetTarget
         ): LabelsActionSheet {
 
             return LabelsActionSheet().apply {
                 arguments = bundleOf(
                     EXTRA_ARG_MESSAGES_IDS to messageIds,
-                    EXTRA_ARG_ACTION_SHEET_TYPE to labelActionSheetType,
+                    EXTRA_ARG_ACTION_SHEET_TYPE to labelType,
                     EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId,
                     EXTRA_ARG_ACTION_TARGET to actionSheetTarget
                 )
@@ -200,8 +201,4 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
         }
     }
 
-    enum class Type(val typeInt: Int) {
-        LABEL(0), // default
-        FOLDER(1)
-    }
 }

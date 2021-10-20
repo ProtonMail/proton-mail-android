@@ -31,7 +31,6 @@ object Constants {
     const val DUMMY_URL_PREFIX = "http://androidlinksfix.protonmail.com"
 
     // Mail domains
-    const val MAIL_DOMAIN_CH = "protonmail.ch"
     const val MAIL_DOMAIN_COM = "protonmail.com"
     const val MAIL_DOMAIN_PM_ME = "pm.me"
     //endregion
@@ -72,11 +71,6 @@ object Constants {
     const val MIME_TYPE_PLAIN_TEXT = "text/plain"
     const val MIME_TYPE_UNKNOWN_FILE = "application/octet-stream"
     const val MIME_TYPE_MULTIPART_MIXED = "multipart/mixed"
-
-    // Label types
-    const val LABEL_TYPE_MESSAGE = 1
-    const val LABEL_TYPE_CONTACT_GROUPS = 2
-    const val LABEL_TYPE_MESSAGE_FOLDERS = 3 // from labels API v4
 
     // Response codes
     const val RESPONSE_CODE_OK = 1000

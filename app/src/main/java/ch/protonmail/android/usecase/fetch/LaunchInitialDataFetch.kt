@@ -22,10 +22,10 @@ package ch.protonmail.android.usecase.fetch
 import android.content.Context
 import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.core.Constants
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import ch.protonmail.android.worker.FetchMailSettingsWorker
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -47,7 +47,6 @@ class LaunchInitialDataFetch @Inject constructor(
         shouldRefreshContacts: Boolean = true
     ) {
         Timber.v("LaunchInitialDataFetch started")
-        MessagesService.startFetchLabels(context, userId)
         MessagesService.startFetchFirstPage(
             context,
             userId,

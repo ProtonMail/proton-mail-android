@@ -21,15 +21,14 @@ package ch.protonmail.android.drawer.presentation.mapper
 
 import android.graphics.Color
 import ch.protonmail.android.R
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.AQUA_BASE_V3_COLOR
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.SAGE_BASE_V3_COLOR
+import ch.protonmail.android.labels.domain.model.Label
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import me.proton.core.util.kotlin.EMPTY_STRING
-import me.proton.core.util.kotlin.invoke
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -79,7 +78,7 @@ class DrawerLabelUiModelMapperTest {
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummyParsedColor, result.icon.colorInt)
@@ -93,7 +92,7 @@ class DrawerLabelUiModelMapperTest {
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummyIconInvertedColor, result.icon.colorInt)
@@ -107,7 +106,7 @@ class DrawerLabelUiModelMapperTest {
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummyIconInvertedColor, result.icon.colorInt)
@@ -121,7 +120,7 @@ class DrawerLabelUiModelMapperTest {
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummyAquaBaseColor, result.icon.colorInt)
@@ -135,7 +134,7 @@ class DrawerLabelUiModelMapperTest {
         }
 
         // when
-        val result = mapper { input.toUiModel() }
+        val result = mapper.toUiModel(input)
 
         // then
         assertEquals(dummySageBaseColor, result.icon.colorInt)

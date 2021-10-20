@@ -21,15 +21,15 @@ package ch.protonmail.android.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import ch.protonmail.android.data.ProtonMailConverters
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.AttachmentTypesConverter
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.ConversationTypesConverter
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
-import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import me.proton.core.data.room.db.CommonConverters
 
@@ -38,18 +38,17 @@ import me.proton.core.data.room.db.CommonConverters
         Attachment::class,
         ConversationDatabaseModel::class,
         Message::class,
-        Label::class,
-        UnreadCounterEntity::class
+        UnreadCounterEntity::class,
     ],
-    version = 12
+    version = 13
 )
 @TypeConverters(
     value = [
         CommonConverters::class,
-
         AttachmentTypesConverter::class,
         MessagesTypesConverter::class,
-        ConversationTypesConverter::class
+        ConversationTypesConverter::class,
+        ProtonMailConverters::class
     ]
 )
 internal abstract class MessageDatabase : RoomDatabase() {

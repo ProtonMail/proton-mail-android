@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
+import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
@@ -30,10 +31,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.toConversationUiModel
@@ -43,9 +42,11 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.details.presentation.model.RenderedMessage
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
@@ -55,6 +56,7 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
@@ -69,8 +71,10 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.spyk
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -87,6 +91,7 @@ import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.UUID
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -126,7 +131,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val testSenderContactEmail = ContactEmail(
         "defaultMockContactEmailId", "defaultMockContactEmailAddress", "defaultMockContactName"
     )
-    private val contactsRepository: ContactsRepository = mockk(relaxed = true) {
+    private val contactsRepository: ContactsRepository = mockk {
         coEvery { findContactEmailByEmail(any()) } returns testSenderContactEmail
     }
 
@@ -182,8 +187,12 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private lateinit var viewModel: MessageDetailsViewModel
 
+    private val testColorInt = 871
+
     @BeforeTest
     fun setUp() {
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
         viewModel = MessageDetailsViewModel(
             messageDetailsRepository,
             messageRepository,
@@ -209,6 +218,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             verifyConnection,
             networkConfigurator,
         )
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(Color::class)
     }
 
     @Test
@@ -314,8 +328,30 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun shouldLoadMessageWithLabelsWhenLabelsPresent() = runBlockingTest {
-        val allLabels = (1..5).map { Label(id = "id$it", name = "name$it", color = "", exclusive = it > 2) }
-        val allLabelIds = allLabels.map { LabelId(it.id) }
+        val labels = (1..2).map {
+            Label(
+                id = LabelId("id$it"),
+                "name$it",
+                testColorInt.toString(),
+                0,
+                LabelType.MESSAGE_LABEL,
+                EMPTY_STRING,
+                "parent",
+            )
+        }
+        val folders = (3..5).map {
+            Label(
+                id = LabelId("id$it"),
+                "name$it",
+                testColorInt.toString(),
+                0,
+                LabelType.FOLDER,
+                EMPTY_STRING,
+                "parent",
+            )
+        }
+        val allLabels = labels + folders
+        val allLabelIds = allLabels.map { it.id }
         val message = buildMessage(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = false,
@@ -328,12 +364,12 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         )
         val nonExclusiveLabels = hashMapOf(
             INPUT_ITEM_DETAIL_ID to allLabels.take(2).map {
-                LabelChipUiModel(LabelId(it.id), Name(it.name), color = null)
+                LabelChipUiModel(it.id, Name(it.name), color = testColorInt)
             }
         )
         val exclusiveLabels = hashMapOf(INPUT_ITEM_DETAIL_ID to allLabels.takeLast(3))
         every {
-            labelRepository.findLabels(testId1, allLabelIds)
+            labelRepository.observeLabels(allLabelIds)
         } returns flowOf(allLabels)
         coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
 
@@ -520,7 +556,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun loadMessageBodyEmitsInputMessageWhenBodyIsAlreadyDecrypted() = runBlockingTest {
         val decryptedMessageHtml = "<html>Decrypted message body HTML</html>"
-        val message = buildMessage().apply { decryptedHTML =  decryptedMessageHtml }
+        val message = buildMessage().apply { decryptedHTML = decryptedMessageHtml }
 
         val decryptedMessage = viewModel.loadMessageBody(message).first()
 
@@ -591,7 +627,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             inputMessageLocation.messageLocationTypeValue
         every { savedStateHandle.get<String>(EXTRA_MAILBOX_LABEL_ID) } returns null
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
+        val conversationResult =
+            DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
         coEvery { messageRepository.findMessage(any(), MESSAGE_ID_ONE) } returns conversationMessage
         coEvery { messageRepository.markUnRead(listOf(MESSAGE_ID_ONE)) } just runs
@@ -674,7 +711,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder.invoke(
                 listOf(inputConversationId),
                 Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
-                message.folderLocation ?: EMPTY_STRING
+                message.folderLocation ?: EMPTY_STRING,
+                testUserId1
             )
         }
         coVerify(exactly = 0) {
@@ -714,6 +752,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder.invoke(
                 any(),
                 any(),
+                any(),
                 any()
             )
         }
@@ -729,7 +768,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
+        val conversationResult =
+            DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
         coEvery { messageRepository.findMessage(any(), MESSAGE_ID_ONE) } returns conversationMessage
 
@@ -750,7 +790,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder.invoke(
                 any(),
                 any(),
-                any()
+                any(),
+                testUserId1
             )
         }
 
@@ -767,6 +808,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             inputMessageLocation.messageLocationTypeValue
         every { userManager.requireCurrentUserId() } returns testId1
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
+
         val message = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
             folderLocation = inputMessageLocation.name
@@ -844,7 +886,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
+        val conversationResult =
+            DataResult.Success(ResponseSource.Local, buildConversationWithOneMessage(CONVERSATION_ID))
         val conversationMessage = buildMessage()
         coEvery { messageRepository.findMessage(any(), MESSAGE_ID_ONE) } returns conversationMessage
 

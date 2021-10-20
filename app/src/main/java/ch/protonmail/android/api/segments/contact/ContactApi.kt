@@ -37,8 +37,7 @@ import io.reactivex.Single
 import java.io.IOException
 
 class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpec {
-    @Throws(IOException::class)
-    override fun labelContacts(labelContactsBody: LabelContactsBody): Completable =
+    override suspend fun labelContacts(labelContactsBody: LabelContactsBody) =
         service.labelContacts(labelContactsBody)
 
     @Throws(IOException::class)

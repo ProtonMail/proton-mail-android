@@ -18,19 +18,27 @@
  */
 package ch.protonmail.android.contacts.details
 
-import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
-import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.verify
+import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -42,25 +50,46 @@ class ContactGroupsRepositoryTest {
     @get:Rule
     val testSchedulerRule = TestSchedulerRule()
 
-    @RelaxedMockK
-    private lateinit var protonMailApi: ProtonMailApiManager
+    @MockK
+    private lateinit var labelRepository: LabelRepository
 
-    @RelaxedMockK
-    private lateinit var contactDao: ContactDao
+    @MockK
+    private lateinit var accountManager: AccountManager
+
+    @MockK
+    private lateinit var contactRepository: ContactsRepository
+
+    private val dispatcherProvider = TestDispatcherProvider
 
     @InjectMockKs
     private lateinit var contactGroupsRepository: ContactGroupsRepository
 
-    private val dispatcherProvider = TestDispatcherProvider
+    private val testUserId = UserId("testUserId")
 
-    private val label1 = ContactLabel("a", "aa")
-    private val label2 = ContactLabel("b", "bb")
-    private val label3 = ContactLabel("c", "cc")
-    private val label4 = ContactLabel("d", "dd")
+    private val label1 = Label(
+        id = LabelId("a"),
+        name = "aa",
+        color = "testColor",
+        order = 0,
+        type = LabelType.MESSAGE_LABEL,
+        path = "a/b",
+        parentId = "parentId",
+    )
+
+    private val label1UiModel = ContactLabelUiModel(
+        id = LabelId("a"),
+        name = "aa",
+        color = "testColor",
+        type = LabelType.MESSAGE_LABEL,
+        path = "a/b",
+        parentId = "parentId",
+        contactEmailsCount = 1
+    )
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
     }
 
     @Test
@@ -69,14 +98,16 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { labelRepository.observeSearchContactGroups(searchTerm, testUserId) } returns flowOf(
+                dbContactsList
+            )
+            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, result)
+            assertEquals(listOf(label1UiModel), result)
         }
     }
 
@@ -86,14 +117,16 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { labelRepository.observeSearchContactGroups(searchTerm, testUserId) } returns flowOf(
+                dbContactsList
+            )
+            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, result)
+            assertEquals(listOf(label1UiModel), result)
         }
     }
 
@@ -103,24 +136,36 @@ class ContactGroupsRepositoryTest {
             // given
             val searchTerm = "search"
             val dbContactsList = listOf(label1)
-            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { labelRepository.observeSearchContactGroups(searchTerm, testUserId) } returns flowOf(
+                dbContactsList
+            )
+            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, result)
+            assertEquals(listOf(label1UiModel), result)
         }
     }
 
     @Test
-    fun saveContactGroupStoresGivenContactGroupInDatabase() {
-        val contactGroup = ContactLabel("Id", "name", "color")
+    fun saveContactGroupStoresGivenContactGroupInDatabase() = runBlockingTest {
+        val userId = UserId("testUserId")
+        val contactGroup = Label(
+            id = LabelId("Id"),
+            name = "name",
+            color = "color",
+            order = 0,
+            type = LabelType.MESSAGE_LABEL,
+            path = "a/b",
+            parentId = "parentId",
+        )
+        coEvery { labelRepository.saveLabel(any(), any()) } just Runs
 
-        contactGroupsRepository.saveContactGroup(contactGroup)
+        contactGroupsRepository.saveContactGroup(contactGroup, userId)
 
-        verify { contactDao.saveContactGroupLabel(contactGroup) }
+        coVerify { labelRepository.saveLabel(contactGroup, userId) }
     }
 
 }

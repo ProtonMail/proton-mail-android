@@ -88,7 +88,7 @@ internal class CounterDaoTest {
 
     @Test
     fun findUnreadLocationByIdShouldReturnNull() {
-        val actual = database.findUnreadLocationById(5)
+        val actual = database.findUnreadLocationByIdBlocking(5)
         Assert.assertNull(actual)
     }
 }

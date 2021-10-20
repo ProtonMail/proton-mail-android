@@ -32,7 +32,7 @@ import retrofit2.http.Tag
 
 interface EventService {
 
-    @GET("events/{eventId}")
+    @GET("v4/events/{eventId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun check(
         @Path("eventId") eventId: String,
@@ -41,7 +41,7 @@ interface EventService {
         @Query(Fields.Events.CONVERSATION_COUNTS) shouldFetchConversationCounts: Boolean = true
     ): EventResponse
 
-    @GET("events/latest")
+    @GET("v4/events/latest")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun latestId(@Tag idTag: UserIdTag): LatestEventResponse
 }

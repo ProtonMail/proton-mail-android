@@ -20,15 +20,18 @@ package ch.protonmail.android.adapters.swipe;
 
 import com.birbit.android.jobqueue.Job;
 
+import org.jetbrains.annotations.NotNull;
+
 import ch.protonmail.android.api.models.SimpleMessage;
 import ch.protonmail.android.core.Constants;
 
-/**
- * Created by dkadrikj on 9.7.15.
- */
 public interface ISwipeHandler {
 
-    Job handleSwipe(SimpleMessage message, String currentLocation);
+    @NotNull
+    Job handleSwipe(@NotNull SimpleMessage message, @NotNull String currentLocation);
 
-    Job handleUndo(SimpleMessage message, Constants.MessageLocationType messageLocation, String currentLocation);
+    @NotNull
+    Job handleUndo(@NotNull SimpleMessage message,
+                   @NotNull Constants.MessageLocationType messageLocation,
+                   @NotNull String currentLocation);
 }

@@ -24,7 +24,9 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsRe
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -65,9 +67,12 @@ class ContactDetailsMapperTest {
         vDecryptedCardType3 = null,
     )
 
-    private val groupId1 = "ID1"
+    private val groupId1 = LabelId("ID1")
     private val groupName1 = "name1"
-    private val contactLabel = ContactLabel(groupId1, groupName1, "color", 1, 0, false, 2)
+    private val contactLabel =
+        Label(
+            groupId1, groupName1, "color", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
+        )
     private val fetchContactGroupResult = FetchContactGroupsResult(
         listOf(contactLabel)
     )

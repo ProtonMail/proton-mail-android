@@ -38,7 +38,6 @@ import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.events.NoResultsEvent
 import ch.protonmail.android.events.SearchResultEvent
@@ -126,13 +125,7 @@ internal class SearchActivity : BaseActivity() {
                 startActivity(intent)
             }
         }
-        messageDetailsRepository.getAllLabelsLiveData().observe(
-            this
-        ) { labels: List<Label>? ->
-            if (labels != null) {
-                adapter.setLabels(labels)
-            }
-        }
+
     }
 
     private fun showSearchResults(items: List<MailboxUiItem>) {

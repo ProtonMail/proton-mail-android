@@ -24,6 +24,7 @@ import android.util.Base64
 import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import ch.protonmail.android.core.Constants
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -31,7 +32,8 @@ import kotlin.reflect.KClass
 
 open class DatabaseFactory<T : RoomDatabase>(
     private val databaseClass: KClass<T>,
-    private val baseDatabaseName: String
+    private val baseDatabaseName: String,
+    private vararg val migrations: Migration
 ) {
 
     private val cache = mutableMapOf<UserId, T>()
@@ -66,6 +68,7 @@ open class DatabaseFactory<T : RoomDatabase>(
 
         return Room.databaseBuilder(context.applicationContext, databaseClass.java, baseFileName)
             .fallbackToDestructiveMigration()
+            .addMigrations(*migrations)
             .build()
     }
 

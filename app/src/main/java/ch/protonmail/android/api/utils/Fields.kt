@@ -32,16 +32,6 @@ object Fields {
         const val COUNTS = "Counts"
     }
 
-    object Label {
-        const val NAME = "Name"
-        const val COLOR = "Color"
-        const val DISPLAY = "Display"
-        const val ORDER = "Order"
-        const val EXCLUSIVE = "Exclusive"
-        const val TYPE = "Type"
-        const val NOTIFY = "Notify"
-    }
-
     object Payment {
         const val TYPE = "Type"
         const val DETAILS = "Details"

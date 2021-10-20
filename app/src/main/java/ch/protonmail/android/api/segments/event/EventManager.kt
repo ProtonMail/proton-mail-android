@@ -153,7 +153,7 @@ internal class EventManager @Inject constructor(
         Timber.d("EventManager handler handleRefresh")
         synchronized(this) {
             lockState(handler.userId)
-            handler.handleRefresh()
+            handler.handleRefresh(handler.userId)
         }
     }
 

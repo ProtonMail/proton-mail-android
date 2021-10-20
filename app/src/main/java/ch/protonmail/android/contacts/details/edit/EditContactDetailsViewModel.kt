@@ -24,19 +24,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.details.ContactDetailsViewModelOld
-import ch.protonmail.android.contacts.details.domain.FetchContactDetails
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.create.CreateContact
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.FileHelper
-import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
 import ch.protonmail.android.views.models.LocalContact
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ezvcard.Ezvcard
@@ -56,7 +55,6 @@ import ezvcard.property.Role
 import ezvcard.property.Title
 import ezvcard.property.Uid
 import ezvcard.property.Url
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -86,9 +84,8 @@ class EditContactDetailsViewModel @Inject constructor(
     private val verifyConnection: VerifyConnection,
     private val createContact: CreateContact,
     private val fileHelper: FileHelper,
-    workManager: WorkManager,
-    fetchContactDetails: FetchContactDetails
-) : ContactDetailsViewModelOld(dispatchers, downloadFile, editContactDetailsRepository) {
+    userManager: UserManager
+) : ContactDetailsViewModelOld(dispatchers, downloadFile, editContactDetailsRepository, userManager) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -131,7 +128,6 @@ class EditContactDetailsViewModel @Inject constructor(
     private var _vCardCustomProperties: List<RawProperty>? = null
     private lateinit var _vCardSigned: VCard
     private lateinit var _vCardEncrypted: VCard
-    private lateinit var _mapEmailGroupsIds: Map<ContactEmail, List<ContactLabel>>
 
     // endregion
     // region default options
@@ -316,9 +312,9 @@ class EditContactDetailsViewModel @Inject constructor(
 
             when (flowType) {
                 FLOW_EDIT_CONTACT -> {
-                    val mapEmailGroupsIds = getContactGroupsForEmailsList(allContactEmails, allContactGroups)
+                    val mapContactIdGroupsIds = getContactIdsForEmailsList(allContactEmails, allContactGroups)
                     editContactDetailsRepository.updateContact(
-                        _contactId, contactName, emails, _vCardEncrypted, _vCardSigned, mapEmailGroupsIds
+                        _contactId, contactName, emails, _vCardEncrypted, _vCardSigned, mapContactIdGroupsIds
                     )
                 }
                 FLOW_CONVERT_CONTACT,
@@ -357,22 +353,19 @@ class EditContactDetailsViewModel @Inject constructor(
         _changed = false
     }
 
-    fun fetchContactGroupsForEmails() {
-        viewModelScope.launch {
-            _mapEmailGroupsIds = getContactGroupsForEmailsList(allContactEmails, allContactGroups)
-        }
-    }
-
-    private suspend fun getContactGroupsForEmailsList(
+    private suspend fun getContactIdsForEmailsList(
         contactEmails: List<ContactEmail>,
-        contactGroups: List<ContactLabel>
-    ): Map<ContactEmail, List<ContactLabel>> = withContext(dispatchers.Comp) {
-        val contactsMap = mutableMapOf<ContactEmail, List<ContactLabel>>()
+        contactGroups: List<ContactLabelUiModel>
+    ): Map<String, List<LabelId>> = withContext(dispatchers.Comp) {
+        val contactsMap = mutableMapOf<String, List<LabelId>>()
         contactEmails.map { contactEmail ->
             val groupsForThisEmail = contactGroups.filter { group ->
-                contactEmail.labelIds?.contains(group.ID) ?: false
+                contactEmail.labelIds?.contains(group.id.id) ?: false
             }
-            contactsMap[contactEmail] = groupsForThisEmail
+            contactEmail.contactId?.let { contactId ->
+                contactsMap[contactId] = groupsForThisEmail.map { it.id }
+            }
+
         }
         return@withContext contactsMap
     }
@@ -381,16 +374,6 @@ class EditContactDetailsViewModel @Inject constructor(
 
     fun checkConnectivity() {
         _verifyConnectionTrigger.value = Unit
-    }
-
-    /**
-     * Check connectivity with a delay allowing snack bar to be displayed.
-     */
-    fun checkConnectivityDelayed() {
-        viewModelScope.launch {
-            delay(NETWORK_CHECK_DELAY)
-            checkConnectivity()
-        }
     }
 
     data class EditContactCardsHolder(

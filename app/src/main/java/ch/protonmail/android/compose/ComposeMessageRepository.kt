@@ -23,34 +23,34 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.SendPreference
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
@@ -61,18 +61,12 @@ class ComposeMessageRepository @Inject constructor(
     private var messageDao: MessageDao,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val accountManager: AccountManager,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val labelRepository: LabelRepository,
+    private val contactRepository: ContactsRepository
 ) {
 
     val lazyManager = resettableManager()
-
-    /**
-     * Reloads all statically required dependencies when currently active user changes.
-     */
-    fun reloadDependenciesForUser(userId: UserId) {
-        messageDetailsRepository.reloadDependenciesForUser(userId)
-        messageDao = databaseProvider.provideMessageDao(userId)
-    }
 
     private val contactDao by resettableLazy(lazyManager) {
         databaseProvider.provideContactDao(userManager.requireCurrentUserId())
@@ -87,35 +81,33 @@ class ComposeMessageRepository @Inject constructor(
         listOfDaos
     }
 
-    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Observable<List<ContactLabel>> {
-        var tempContactDao: ContactDao = contactDao
-        if (combinedContacts) {
-            tempContactDao = contactDaos[userId]!!
-        }
-        return tempContactDao.findContactGroupsObservable()
-            .flatMap { list ->
-                Observable.fromIterable(list)
-                    .map {
-                        it.contactEmailsCount = tempContactDao.countContactEmailsByLabelIdBlocking(it.ID)
-                        it
-                    }
-                    .toList()
-                    .toFlowable()
+    /**
+     * Reloads all statically required dependencies when currently active user changes.
+     */
+    fun reloadDependenciesForUser(userId: UserId) {
+        messageDetailsRepository.reloadDependenciesForUser(userId)
+        messageDao = databaseProvider.provideMessageDao(userId)
+    }
+
+    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Flow<List<ContactLabelUiModel>> {
+        return labelRepository.observeContactGroups(userId)
+            .map { list ->
+                list.map { entity ->
+                    ContactLabelUiModel(
+                        id = entity.id,
+                        name = entity.name,
+                        color = entity.color,
+                        type = entity.type,
+                        path = entity.path,
+                        parentId = entity.parentId,
+                        contactEmailsCount = contactRepository.countContactEmailsByLabelId(entity.id)
+                    )
+                }
             }
-            .toObservable()
     }
 
-    fun getContactGroupFromDB(groupName: String): Single<ContactLabel> {
-        return contactDao.findContactGroupByNameAsync(groupName)
-    }
-
-    fun getContactGroupEmails(groupId: String): Observable<List<ContactEmail>> {
-        return contactDao.findAllContactsEmailsByContactGroupAsyncObservable(groupId).toObservable()
-    }
-
-    fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> {
-        return contactDao.findAllContactsEmailsByContactGroupBlocking(groupId)
-    }
+    suspend fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> =
+        contactDao.observeAllContactsEmailsByContactGroup(groupId).first()
 
     suspend fun getAttachments(message: Message, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {
@@ -144,7 +136,7 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun startFetchMessageDetail(messageId: String) {
-        jobManager.addJobInBackground(FetchMessageDetailJob(messageId))
+        jobManager.addJobInBackground(FetchMessageDetailJob(messageId, labelRepository))
     }
 
     suspend fun createAttachmentList(
@@ -189,19 +181,17 @@ class ComposeMessageRepository @Inject constructor(
 
     fun findAllMessageRecipients(userId: UserId) = contactDaos[userId]!!.findAllMessageRecipients()
 
-    fun markMessageRead(messageId: String) {
-        GlobalScope.launch(Dispatchers.IO) {
-            messageDetailsRepository.findMessageByIdBlocking(messageId)?.let { savedMessage ->
-                val read = savedMessage.isRead
-                if (!read) {
-                    jobManager.addJobInBackground(PostReadJob(listOf(savedMessage.messageId)))
-                }
+    suspend fun markMessageRead(messageId: String) {
+        messageDetailsRepository.findMessageById(messageId).first()?.let { savedMessage ->
+            val read = savedMessage.isRead
+            if (!read) {
+                jobManager.addJobInBackground(PostReadJob(listOf(savedMessage.messageId)))
             }
         }
     }
 
     fun getSendPreference(emailList: List<String>, destination: GetSendPreferenceJob.Destination) {
-        jobManager.addJobInBackground(GetSendPreferenceJob(contactDao, emailList, destination))
+        jobManager.addJobInBackground(GetSendPreferenceJob(emailList, destination))
     }
 
     fun resignContactJob(

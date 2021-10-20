@@ -18,68 +18,26 @@
  */
 package ch.protonmail.android.contacts.groups.details
 
-import androidx.work.WorkManager
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
-import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
-import ch.protonmail.android.worker.PostLabelWorker
-import io.reactivex.Observable
-import io.reactivex.Single
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import me.proton.core.util.kotlin.toInt
-import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 class ContactGroupDetailsRepository @Inject constructor(
-    private val api: ProtonMailApiManager,
-    private val databaseProvider: DatabaseProvider,
-    private val workManager: WorkManager,
-    private val userManager: UserManager
+    private val labelRepository: LabelRepository,
+    private val contactRepository: ContactsRepository
 ) {
 
-    private val contactDao by lazy {
-        Timber.v("Instantiating contactDao in ContactGroupDetailsRepository")
-        databaseProvider.provideContactDao(userManager.requireCurrentUserId())
-    }
+    fun observeContactGroupDetails(id: String): Flow<Label?> =
+        labelRepository.observeLabel(LabelId(id))
 
-    fun findContactGroupDetailsBlocking(id: String): Single<ContactLabel> =
-        contactDao.findContactGroupByIdAsync(id)
+    fun observeContactGroupEmails(groupLabelId: String): Flow<List<ContactEmail>> =
+        contactRepository.observeAllContactEmailsByContactGroupId(groupLabelId)
 
-    suspend fun findContactGroupDetails(id: String): ContactLabel? =
-        contactDao.findContactGroupById(id).first()
+    fun filterContactGroupEmails(groupLabelId: String, filter: String): Flow<List<ContactEmail>> =
+        contactRepository.observeFilterContactEmailsByContactGroup(groupLabelId, filter)
 
-    fun getContactGroupEmailsBlocking(id: String): Observable<List<ContactEmail>> {
-        return contactDao.findAllContactsEmailsByContactGroupAsyncObservable(id)
-            .toObservable()
-    }
-
-    fun getContactGroupEmails(id: String): Flow<List<ContactEmail>> =
-        contactDao.findAllContactsEmailsByContactGroup(id)
-
-    fun filterContactGroupEmails(id: String, filter: String): Flow<List<ContactEmail>> =
-        contactDao.filterContactsEmailsByContactGroup(id, "%$filter%")
-
-    fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
-        val contactLabelConverterFactory = ContactLabelFactory()
-        val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
-        return api.createLabelCompletable(labelBody.labelBody)
-            .doOnSuccess { label -> contactDao.saveContactGroupLabel(label) }
-            .doOnError { throwable ->
-                if (throwable is IOException) {
-                    PostLabelWorker.Enqueuer(workManager).enqueue(
-                        contactLabel.name,
-                        contactLabel.color,
-                        contactLabel.display,
-                        contactLabel.exclusive.toInt(),
-                        false,
-                        contactLabel.ID
-                    )
-                }
-            }
-    }
 }

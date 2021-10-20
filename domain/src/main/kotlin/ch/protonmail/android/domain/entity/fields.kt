@@ -72,15 +72,6 @@ data class EmailAddress(val s: String) : Validable by RegexValidator(s, VALIDATI
 }
 
 /**
- * Entity representing a LabelId
- * [Validable] by [NotBlankStringValidator]
- */
-@Validated
-data class LabelId(val id: String) : Validable by NotBlankStringValidator(id) {
-    init { requireValid() }
-}
-
-/**
  * Entity representing a generic name
  * [Validable] by [NotBlankStringValidator]
  */

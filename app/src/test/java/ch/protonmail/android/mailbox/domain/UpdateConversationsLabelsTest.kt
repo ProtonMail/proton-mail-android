@@ -19,13 +19,15 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import ch.protonmail.android.data.LabelRepository
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.domain.usecase.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.Test
@@ -38,6 +40,20 @@ class UpdateConversationsLabelsTest {
 
     private val conversationsRepository = mockk<ConversationsRepository>()
     private val labelRepository = mockk<LabelRepository>()
+    private val testPath = "a/bpath"
+    private val testParentId = "parentIdForTests"
+
+    private val allLabels = (1..3).map { count ->
+        Label(
+            id = LabelId("label$count"),
+            name = "name$count",
+            color = "color",
+            order = 0,
+            type = if (count > 2) LabelType.FOLDER else LabelType.MESSAGE_LABEL,
+            testPath,
+            testParentId,
+        )
+    }
 
     private val updateConversationsLabels = UpdateConversationsLabels(
         conversationsRepository,
@@ -53,13 +69,20 @@ class UpdateConversationsLabelsTest {
             val label1 = "label1"
             val label2 = "label2"
             val label3 = "label3"
-            val allLabels = (1..3).map { Label(id = "label$it", name = "name$it", color = "", exclusive = it > 2) }
             val selectedLabels = listOf(label1, label2)
             coEvery {
                 labelRepository.findAllLabels(userId)
-            } returns flowOf(allLabels)
-            coEvery { conversationsRepository.label(conversationIds, userId, any()) } returns ConversationsActionResult.Success
-            coEvery { conversationsRepository.unlabel(conversationIds, userId, any()) } returns ConversationsActionResult.Success
+            } returns allLabels
+            coEvery {
+                conversationsRepository.label(
+                    conversationIds, userId, any()
+                )
+            } returns ConversationsActionResult.Success
+            coEvery {
+                conversationsRepository.unlabel(
+                    conversationIds, userId, any()
+                )
+            } returns ConversationsActionResult.Success
 
             // when
             updateConversationsLabels.invoke(conversationIds, userId, selectedLabels)
@@ -85,12 +108,11 @@ class UpdateConversationsLabelsTest {
             val userId = UserId("userId")
             val label1 = "label1"
             val label2 = "label2"
-            val allLabels = (1..3).map { Label(id = "label$it", name = "name$it", color = "", exclusive = it > 2) }
             val selectedLabels = listOf(label1, label2)
             val expectedResult = ConversationsActionResult.Error
             coEvery {
                 labelRepository.findAllLabels(userId)
-            } returns flowOf(allLabels)
+            } returns allLabels
             coEvery {
                 conversationsRepository.label(conversationIds, userId, any())
             } returns ConversationsActionResult.Success

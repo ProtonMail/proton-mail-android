@@ -19,22 +19,28 @@
 
 package ch.protonmail.android.labels.presentation.viewmodel
 
+import android.content.Context
 import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.labels.data.remote.worker.UpdateConversationsLabelsWorker
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.domain.usecase.GetAllLabels
-import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.domain.usecase.UpdateLabels
+import ch.protonmail.android.labels.domain.usecase.GetLabelsByType
+import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
+import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
+import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
-import ch.protonmail.android.mailbox.domain.worker.UpdateConversationsLabelsWorker
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -47,10 +53,14 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.util.kotlin.EMPTY_STRING
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -61,13 +71,13 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var moveMessagesToFolder: MoveMessagesToFolder
 
     @MockK
-    private lateinit var updateLabels: UpdateLabels
+    private lateinit var updateMessageLabels: UpdateMessageLabels
 
     @MockK
     private lateinit var userManager: UserManager
 
     @MockK
-    private lateinit var getAllLabels: GetAllLabels
+    private lateinit var getLabelsByType: GetLabelsByType
 
     @MockK
     private lateinit var savedStateHandle: SavedStateHandle
@@ -87,49 +97,82 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @MockK
     private lateinit var updateConversationsLabels: UpdateConversationsLabelsWorker.Enqueuer
 
+    private val defaultColorInt = 890
+    private val testColorInt = 123
+    private val context: Context = mockk {
+        every { getColor(any()) } returns defaultColorInt
+    }
+    val userId = UserId("userId")
+
+    private val labelDomainUiMapper = LabelDomainActionItemUiMapper(context)
+
     private lateinit var viewModel: LabelsActionSheetViewModel
 
     private val messageId1 = "messageId1"
     private val labelId1 = "labelId1"
     private val labelId2 = "labelId2"
-    private val iconRes = 123
+    private val iconRes = R.drawable.circle_labels_selection
     private val title = "title"
-    private val titleRes = 321
-    private val colorInt = Color.YELLOW
+    private val titleRes = null
+    private val color = "YELLOW"
+    private val colorInt = testColorInt
     private val message1 = mockk<Message> {
         every { messageId } returns messageId1
         every { labelIDsNotIncludingLocations } returns listOf(labelId1)
     }
-    private val model1label = LabelActonItemUiModel(
-        labelId1,
+    private val label1 = Label(
+        id = LabelId(labelId1),
+        name = title,
+        color = color,
+        order = 0,
+        type = LabelType.MESSAGE_LABEL,
+        path = EMPTY_STRING,
+        parentId = EMPTY_STRING
+    )
+
+    private val label2 = Label(
+        id = LabelId(labelId2),
+        name = title,
+        color = color,
+        order = 0,
+        type = LabelType.FOLDER,
+        path = EMPTY_STRING,
+        parentId = EMPTY_STRING
+    )
+
+    private val model1UiLabel = LabelActonItemUiModel(
+        LabelId(labelId1),
         iconRes,
         title,
         titleRes,
         colorInt,
-        true
+        true,
+        LabelType.MESSAGE_LABEL
     )
-    private val model2folder = LabelActonItemUiModel(
-        labelId2,
+    private val model2UiFolder = LabelActonItemUiModel(
+        LabelId(labelId2),
         iconRes,
         title,
         titleRes,
         colorInt,
         false,
-        LabelsActionSheet.Type.FOLDER.typeInt
+        LabelType.FOLDER
     )
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
 
         every { savedStateHandle.get<List<String>>(LabelsActionSheet.EXTRA_ARG_MESSAGES_IDS) } returns listOf(
             messageId1
         )
         every {
-            savedStateHandle.get<LabelsActionSheet.Type>(
+            savedStateHandle.get<LabelType>(
                 LabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
             )
-        } returns LabelsActionSheet.Type.LABEL
+        } returns LabelType.MESSAGE_LABEL
 
         every {
             savedStateHandle.get<Int>(LabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
@@ -139,23 +182,29 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
         } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
-        coEvery { getAllLabels.invoke(any(), any(), any()) } returns listOf(model1label, model2folder)
+        coEvery { getLabelsByType.invoke(any()) } returns listOf(label1)
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
-
+        every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(any()) } returns false
 
         viewModel = LabelsActionSheetViewModel(
             savedStateHandle,
-            getAllLabels,
+            getLabelsByType,
             userManager,
-            updateLabels,
+            updateMessageLabels,
             updateConversationsLabels,
             moveMessagesToFolder,
             moveConversationsToFolder,
             conversationModeEnabled,
             messageRepository,
-            conversationsRepository
+            conversationsRepository,
+            labelDomainUiMapper,
         )
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(Color::class)
     }
 
     @Test
@@ -165,11 +214,12 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val shallMoveToArchive = true
         val inboxLocationId = "0"
         val archiveLocationId = "6"
-        coEvery { updateLabels.invoke(any(), any()) } just Runs
+        coEvery { updateMessageLabels.invoke(any(), any()) } returns mockk()
         coEvery {
             moveMessagesToFolder(
                 listOf(messageId1), Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
-                Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+                Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                userId
             )
         } just Runs
 
@@ -177,12 +227,13 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         viewModel.onDoneClicked(shallMoveToArchive)
 
         // then
-        coVerify { updateLabels.invoke(any(), any()) }
+        coVerify { updateMessageLabels.invoke(any(), any()) }
         coVerify {
             moveMessagesToFolder(
                 listOf(messageId1),
                 archiveLocationId,
-                inboxLocationId
+                inboxLocationId,
+                userId
             )
         }
         assertEquals(ManageLabelActionResult.LabelsSuccessfullySaved, viewModel.actionsResult.value)
@@ -208,16 +259,31 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyThatWhenOnLabelClickedIsCalledForLabelTypeAndNumberOfSelectedLabelsIsLessThanThresholdDefaultIsEmitted() = runBlockingTest {
+    fun verifyThatWhenOnLabelClickedIsCalledForLabelTypeAndNumberOfSelectedLabelsIsLessThanThresholdDefaultIsEmitted() =
+        runBlockingTest {
+
+            // given
+            coEvery { userManager.didReachLabelsThreshold(any()) } returns false
+
+            // when
+            viewModel.onLabelClicked(model1UiLabel)
+
+            // then
+            assertEquals(listOf(model1UiLabel.copy(isChecked = false)), viewModel.labels.value)
+            assertEquals(ManageLabelActionResult.Default, viewModel.actionsResult.value)
+        }
+
+    @Test
+    fun verifyThatAfterOnLabelIsClickedForLabelTypeStandardLabelsAreAdded() = runBlockingTest {
 
         // given
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
 
         // when
-        viewModel.onLabelClicked(model1label)
+        viewModel.onLabelClicked(model1UiLabel)
 
         // then
-        assertEquals(listOf(model1label.copy(isChecked = false)), viewModel.labels.value)
+        assertEquals(listOf(model1UiLabel.copy(isChecked = false)), viewModel.labels.value)
         assertEquals(ManageLabelActionResult.Default, viewModel.actionsResult.value)
     }
 
@@ -226,23 +292,30 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // given
             val maximumLabelsSelectedThreshold = 100
+            val testMessage = mockk<Message> {
+                every { messageId } returns messageId1
+                every { labelIDsNotIncludingLocations } returns (0..maximumLabelsSelectedThreshold).map { "$it" }
+            }
+            coEvery { messageRepository.findMessageById(any()) } returns testMessage
             val expectedResult = ManageLabelActionResult.ErrorLabelsThresholdReached(maximumLabelsSelectedThreshold)
-            coEvery { getAllLabels.invoke(any(), any(), any()) } returns buildAListOfMoreThanOneHundredSelectedLabels()
+            val buildAListOfMoreThanOneHundredSelectedLabels = buildAListOfMoreThanOneHundredSelectedLabels()
+            coEvery { getLabelsByType.invoke(any()) } returns buildAListOfMoreThanOneHundredSelectedLabels
             val labelsActionSheetViewModel = LabelsActionSheetViewModel(
                 savedStateHandle,
-                getAllLabels,
+                getLabelsByType,
                 userManager,
-                updateLabels,
+                updateMessageLabels,
                 updateConversationsLabels,
                 moveMessagesToFolder,
                 moveConversationsToFolder,
                 conversationModeEnabled,
                 messageRepository,
-                conversationsRepository
+                conversationsRepository,
+                labelDomainUiMapper
             )
 
             // when
-            labelsActionSheetViewModel.onLabelClicked(model1label)
+            labelsActionSheetViewModel.onLabelClicked(model1UiLabel)
 
             // then
             assertEquals(expectedResult, labelsActionSheetViewModel.actionsResult.value)
@@ -254,17 +327,17 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // given
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
-        coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+        coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
         coEvery { conversationModeEnabled(any()) } returns false
         every {
             savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
         } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
         // when
-        viewModel.onLabelClicked(model2folder)
+        viewModel.onLabelClicked(model2UiFolder)
 
         // then
-        coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
+        coVerify { moveMessagesToFolder.invoke(any(), any(), any(), any()) }
         assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(true), viewModel.actionsResult.value)
     }
 
@@ -273,8 +346,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
 
             // given
-            coEvery { userManager.currentUserId } returns UserId("userId")
-            coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+            coEvery { userManager.currentUserId } returns userId
+            coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
             coEvery { conversationModeEnabled(any()) } returns true
             every {
                 savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
@@ -282,7 +355,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             coEvery { moveConversationsToFolder.invoke(any(), any(), any()) } returns ConversationsActionResult.Success
 
             // when
-            viewModel.onLabelClicked(model2folder)
+            viewModel.onLabelClicked(model2UiFolder)
 
             // then
             coVerify { moveConversationsToFolder(any(), any(), any()) }
@@ -294,14 +367,14 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyThatWhenLabelIsClickedForFolderTypeWithConversationModeEnabledAndMoveConversationsToFolderReturnsErrorResultErrorMovingToFolderIsEmitted() =
         runBlockingTest {
             // given
-            coEvery { userManager.currentUserId } returns UserId("userId")
+            coEvery { userManager.currentUserId } returns userId
             coEvery { conversationModeEnabled(any()) } returns true
             coEvery {
                 moveConversationsToFolder.invoke(any(), any(), any())
             } returns ConversationsActionResult.Error
 
             // when
-            viewModel.onLabelClicked(model2folder)
+            viewModel.onLabelClicked(model2UiFolder)
 
             // then
             assertEquals(ManageLabelActionResult.ErrorMovingToFolder, viewModel.actionsResult.value)
@@ -312,36 +385,35 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
 
             // given
-            coEvery { userManager.currentUserId } returns UserId("userId")
-            coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+
+            coEvery { userManager.currentUserId } returns userId
+            coEvery { moveMessagesToFolder.invoke(any(), any(), any(), userId) } just Runs
             coEvery { conversationModeEnabled(any()) } returns true
             every {
                 savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
             } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
             // when
-            viewModel.onLabelClicked(model2folder)
+            viewModel.onLabelClicked(model2UiFolder)
 
             // then
-            coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
+            coVerify { moveMessagesToFolder.invoke(any(), any(), any(), any()) }
             coVerify { moveConversationsToFolder wasNot Called }
             assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(false), viewModel.actionsResult.value)
         }
 
-    private fun buildAListOfMoreThanOneHundredSelectedLabels(): List<LabelActonItemUiModel> {
-        val labels = mutableListOf<LabelActonItemUiModel>()
-        for (index in 0..100) {
-            labels.add(
-                LabelActonItemUiModel(
-                    labelId = "$index",
-                    iconRes = R.drawable.circle_labels_selection,
-                    title = "title $index",
-                    titleRes = null,
-                    isChecked = true,
-                    labelType = LabelsActionSheet.Type.LABEL.typeInt
-                )
+    private fun buildAListOfMoreThanOneHundredSelectedLabels(): List<Label> {
+        return (0..100).map { index ->
+            Label(
+                id = LabelId("$index"),
+                name = "title $index",
+                color = color,
+                order = 0,
+                type = LabelType.MESSAGE_LABEL,
+                path = EMPTY_STRING,
+                parentId = EMPTY_STRING
             )
         }
-        return labels
+
     }
 }

@@ -21,18 +21,29 @@ package ch.protonmail.android.api.segments.contact
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
+import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.remote.model.LabelsResponse
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
@@ -46,12 +57,34 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
     private lateinit var api: ProtonMailApiManager
 
     @MockK
+    private lateinit var dbProvider: DatabaseProvider
+
+    @MockK
+    private lateinit var accountManager: AccountManager
+
+    @MockK
     private lateinit var contactDao: ContactDao
+
+    @MockK
+    private lateinit var labelsMapper: LabelEntityApiMapper
+
+    @MockK
+    private lateinit var labelRepository: LabelRepository
+
+    private val labelsDomainMapper = LabelEntityDomainMapper()
+
+    private val testUserId = UserId("TestUser")
+    private val testPath = "a/bcPath"
+    private val testParentId = "parentIdForTests"
+    private val testType = LabelType.MESSAGE_LABEL
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        manager = ContactEmailsManager(api, contactDao)
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
+        every { dbProvider.provideContactDao(any()) } returns contactDao
+        manager =
+            ContactEmailsManager(api, dbProvider, accountManager, labelsMapper, labelsDomainMapper, labelRepository)
     }
 
     @Test
@@ -59,27 +92,54 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         // given
         val pageSize = Constants.CONTACTS_PAGE_SIZE
         val labelId1 = "labelId1"
-        val contactLabel = ContactLabel(labelId1)
-        val contactLabelList = listOf(contactLabel)
+        val labelName1 = "labelName1"
+        val labelColor = "labelColor11"
+        val label = LabelApiModel(
+            id = labelId1,
+            name = labelName1,
+            path = testPath,
+            color = labelColor,
+            type = testType,
+            notify = 0,
+            order = 0,
+            expanded = null,
+            sticky = null,
+            parentId = testParentId
+        )
+        val labelList = listOf(label)
+        val apiResult = ApiResult.Success(LabelsResponse(labelList))
+        val contactLabel = LabelEntity(
+            id = LabelId(labelId1),
+            userId = testUserId,
+            name = labelName1,
+            color = labelColor,
+            order = 0,
+            type = testType,
+            parentId = testParentId,
+            path = testPath,
+            expanded = 0,
+            sticky = 0,
+            notify = 0,
+        )
         val contactEmailId = "emailId1"
         val labelIds = listOf(labelId1)
         val contactEmail = ContactEmail(contactEmailId, "test1@abc.com", "name1", labelIds = labelIds)
         val newContactEmails = listOf(contactEmail)
-        val join1 = ContactEmailContactLabelJoin(contactEmailId, labelId1)
-        val newJoins = listOf(join1)
-        coEvery { api.fetchContactGroupsList() } returns contactLabelList
+        coEvery { api.getContactGroups(testUserId) } returns apiResult
         val emailsResponse = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails
             every { total } returns 0
         }
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
-        coEvery { contactDao.insertNewContactsAndLabels(newContactEmails, contactLabelList, newJoins) } returns Unit
+        coEvery { labelRepository.saveLabels(any(), any()) } returns Unit
+        coEvery { contactDao.insertNewContacts(newContactEmails) } returns Unit
+        every { labelsMapper.toEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
 
         // then
-        coVerify { contactDao.insertNewContactsAndLabels(newContactEmails, contactLabelList, newJoins) }
+        coVerify { contactDao.insertNewContacts(newContactEmails) }
     }
 
     @Test
@@ -87,8 +147,34 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         // given
         val pageSize = 2
         val labelId1 = "labelId1"
-        val contactLabel = ContactLabel(labelId1)
-        val contactLabelList = listOf(contactLabel)
+        val labelName1 = "labelName1"
+        val labelColor = "labelColor11"
+        val label = LabelApiModel(
+            id = labelId1,
+            name = labelName1,
+            path = "",
+            color = labelColor,
+            type = LabelType.MESSAGE_LABEL,
+            notify = 0,
+            order = 0,
+            expanded = null,
+            sticky = null
+        )
+        val labelList = listOf(label)
+        val contactLabel = LabelEntity(
+            id = LabelId(labelId1),
+            userId = testUserId,
+            name = labelName1,
+            color = labelColor,
+            order = 0,
+            type = testType,
+            expanded = 0,
+            parentId = testParentId,
+            path = testPath,
+            sticky = 0,
+            notify = 0
+        )
+        val apiResult = ApiResult.Success(LabelsResponse(labelList))
         val contactEmailId1 = "emailId1"
         val contactEmailId2 = "emailId2"
         val contactEmailId3 = "emailId3"
@@ -103,14 +189,8 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val newContactEmails1 = listOf(contactEmail1, contactEmail2)
         val newContactEmails2 = listOf(contactEmail3, contactEmail4)
         val newContactEmails3 = listOf(contactEmail5)
-        val join1 = ContactEmailContactLabelJoin(contactEmailId1, labelId1)
-        val join2 = ContactEmailContactLabelJoin(contactEmailId2, labelId1)
-        val join3 = ContactEmailContactLabelJoin(contactEmailId3, labelId1)
-        val join4 = ContactEmailContactLabelJoin(contactEmailId4, labelId1)
-        val join5 = ContactEmailContactLabelJoin(contactEmailId5, labelId1)
         val allContactEmails = listOf(contactEmail1, contactEmail2, contactEmail3, contactEmail4, contactEmail5)
-        val newJoins = listOf(join1, join2, join3, join4, join5)
-        coEvery { api.fetchContactGroupsList() } returns contactLabelList
+        coEvery { api.getContactGroups(any()) } returns apiResult
         val emailsResponse1 = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails1
             every { total } returns allContactEmails.size
@@ -126,13 +206,15 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(0, pageSize) } returns emailsResponse1
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
-        coEvery { contactDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, newJoins) } returns Unit
+        coEvery { labelRepository.saveLabels(any(), any()) } returns Unit
+        coEvery { contactDao.insertNewContacts(allContactEmails) } returns Unit
+        every { labelsMapper.toEntity(any(), testUserId) } returns contactLabel
 
         // when
         manager.refresh(pageSize)
 
         // then
-        coVerify { contactDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, newJoins) }
+        coVerify { contactDao.insertNewContacts(allContactEmails) }
     }
 
 }

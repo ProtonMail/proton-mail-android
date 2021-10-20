@@ -89,7 +89,6 @@ import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.di.DefaultSharedPreferences
@@ -103,6 +102,8 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -136,6 +137,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.util.android.sharedpreferences.get
@@ -285,7 +287,6 @@ internal class MailboxActivity :
 
         mailboxViewModel.pendingSendsLiveData.observe(this, mailboxAdapter::setPendingForSendingList)
         mailboxViewModel.pendingUploadsLiveData.observe(this, mailboxAdapter::setPendingUploadsList)
-        messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
 
         mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this) { isSuccess ->
             Timber.v("Delete message status is success $isSuccess")
@@ -549,7 +550,6 @@ internal class MailboxActivity :
         mailboxViewModel.setNewUserId(currentUserId)
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
-        messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account
@@ -1161,7 +1161,7 @@ internal class MailboxActivity :
         LabelsActionSheet.newInstance(
             messageIds = messageIds,
             currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
-            labelActionSheetType = LabelsActionSheet.Type.FOLDER,
+            labelType = LabelType.FOLDER,
             actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
@@ -1213,7 +1213,8 @@ internal class MailboxActivity :
             labelId,
             isFolder,
             newLocation,
-            labelName
+            labelName,
+            userManager.requireCurrentUserId()
         ).execute()
     }
 
@@ -1353,12 +1354,15 @@ internal class MailboxActivity :
         private val labelId: String,
         private val isFolder: Boolean,
         private val newLocation: Int,
-        private val labelName: String?
+        private val labelName: String?,
+        private val userId: UserId
     ) : AsyncTask<Unit, Unit, Label?>() {
 
         override fun doInBackground(vararg params: Unit): Label? {
-            val labels = messageDetailsRepository.findAllLabelsWithIds(listOf(labelId))
-            return if (labels.isEmpty()) null else labels[0]
+            return runBlocking {
+                val labels = messageDetailsRepository.findLabelsWithIds(listOf(labelId))
+                if (labels.isEmpty()) null else labels[0]
+            }
         }
 
         override fun onPostExecute(label: Label?) {
@@ -1476,15 +1480,16 @@ internal class MailboxActivity :
                 else -> throw IllegalArgumentException("Unrecognised direction: $direction")
             }
             val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], currentMailboxLocation)
+            val currentLocationId = mailboxLabelId ?: mailboxLocation.messageLocationTypeValue.toString()
             if (isConversationModeEnabled(mailboxLocation)) {
                 mailboxViewModel.handleConversationSwipe(
                     swipeAction,
                     mailboxItem.itemId,
                     mailboxLocation,
-                    mailboxLabelId ?: mailboxLocation.messageLocationTypeValue.toString()
+                    currentLocationId
                 )
             } else {
-                mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, mailboxLabelId)
+                mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, currentLocationId)
             }
             if (undoSnack != null && undoSnack!!.isShownOrQueued) {
                 undoSnack!!.dismiss()
@@ -1494,7 +1499,9 @@ internal class MailboxActivity :
                 findViewById(R.id.drawer_layout),
                 getString(swipeAction.actionDescription),
                 {
-                    mSwipeProcessor.handleUndo(swipeAction, messageSwiped, mJobManager, mailboxLocation, mailboxLabelId)
+                    mSwipeProcessor.handleUndo(
+                        swipeAction, messageSwiped, mJobManager, mailboxLocation, currentLocationId
+                    )
                     mailboxAdapter.notifyDataSetChanged()
                 },
                 false
@@ -1554,8 +1561,8 @@ internal class MailboxActivity :
 
         override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
             super.onSelectedChanged(viewHolder, actionState)
-            val isSwiping = actionState == ItemTouchHelper.ACTION_STATE_SWIPE;
-            mailboxSwipeRefreshLayout.isEnabled = isSwiping.not();
+            val isSwiping = actionState == ItemTouchHelper.ACTION_STATE_SWIPE
+            mailboxSwipeRefreshLayout.isEnabled = isSwiping.not()
         }
     }
 

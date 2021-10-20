@@ -33,7 +33,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
-import ch.protonmail.android.core.UserManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import timber.log.Timber
@@ -45,14 +44,12 @@ import javax.inject.Inject
 class FetchContactsEmailsWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-    private val userManager: UserManager,
-    private val contactEmailsManagerFactory: ContactEmailsManager.AssistedFactory
+    private val contactEmailsManager: ContactEmailsManager
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
-        val currentUserId = userManager.currentUserId ?: return failure()
 
-        return runCatching { contactEmailsManagerFactory.create(currentUserId).refresh() }
+        return runCatching { contactEmailsManager.refresh() }
             .fold(
                 onSuccess = {
                     success()

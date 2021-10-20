@@ -31,7 +31,9 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsRe
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.utils.FileHelper
 import io.mockk.coEvery
 import io.mockk.every
@@ -95,6 +97,10 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val testColorInt = 321
 
+    private val testPath = "a/bpath"
+    private val testParentId = "parentIdForTests"
+    private val testType =  LabelType.CONTACT_GROUP
+
     @BeforeTest
     fun setUp() {
         mockkStatic(Color::class)
@@ -111,9 +117,17 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         // given
         val contactId = "contactId1"
         every { fetchContactDetails(contactId) } returns flowOf(fetchContactResult)
-        val groupId1 = "ID1"
+        val groupId1 = LabelId("ID1")
         val groupName1 = "name1"
-        val contactLabel = ContactLabel(groupId1, groupName1, "color", 1, 0, false, 2)
+        val contactLabel = Label(
+            groupId1,
+            groupName1,
+            "color",
+            0,
+            testType,
+            testPath,
+            testParentId,
+        )
         val fetchContactGroupResult = FetchContactGroupsResult(
             listOf(contactLabel)
         )
@@ -156,9 +170,18 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { fetchContactDetails(contactId) } returns flow {
             throw exception
         }
-        val groupId1 = "ID1"
+        val groupId1 = LabelId("ID1")
         val groupName1 = "name1"
-        val contactLabel = ContactLabel(groupId1, groupName1, "color", 1, 0, false, 2)
+        val contactLabel =
+            Label(
+                groupId1,
+                groupName1,
+                "color",
+                0,
+                testType,
+                testPath,
+                testParentId,
+            )
         val fetchContactGroupResult = FetchContactGroupsResult(
             listOf(contactLabel)
         )

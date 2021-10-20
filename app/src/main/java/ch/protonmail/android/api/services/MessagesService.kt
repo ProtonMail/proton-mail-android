@@ -23,18 +23,16 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
@@ -44,8 +42,6 @@ import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
-private const val ACTION_FETCH_MESSAGE_LABELS = "ACTION_FETCH_MESSAGE_LABELS"
-private const val ACTION_FETCH_CONTACT_GROUPS_LABELS = "ACTION_FETCH_CONTACT_GROUPS_LABELS"
 private const val ACTION_FETCH_MESSAGES_BY_PAGE = "ACTION_FETCH_MESSAGES_BY_PAGE"
 
 private const val EXTRA_USER_ID = "extra.user.id"
@@ -57,7 +53,7 @@ private const val EXTRA_REFRESH_MESSAGES = "refreshMessages"
 
 
 @AndroidEntryPoint
-class MessagesService : JobIntentService() {
+internal class MessagesService : JobIntentService() {
 
     @Inject
     internal lateinit var mApi: ProtonMailApiManager
@@ -72,7 +68,10 @@ class MessagesService : JobIntentService() {
     internal lateinit var mNetworkResults: NetworkResults
 
     @Inject
-    lateinit var contactEmailsManagerFactory: ContactEmailsManager.AssistedFactory
+    lateinit var contactEmailsManager: ContactEmailsManager
+
+    @Inject
+    lateinit var labelsRepository: LabelRepository
 
     @Inject
     lateinit var messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory
@@ -110,8 +109,6 @@ class MessagesService : JobIntentService() {
                     )
                 }
             }
-            ACTION_FETCH_MESSAGE_LABELS -> handleFetchLabels()
-            ACTION_FETCH_CONTACT_GROUPS_LABELS -> handleFetchContactGroups()
         }
     }
 
@@ -160,34 +157,6 @@ class MessagesService : JobIntentService() {
         }
     }
 
-    private fun handleFetchContactGroups() {
-        val userId = userManager.currentUserId
-
-        if (userId == null) {
-            Timber.i("No logged in user")
-            return
-        }
-
-        try {
-            contactEmailsManagerFactory.create(userId).refreshBlocking()
-        } catch (e: Exception) {
-            Timber.w(e, "handleFetchContactGroups has failed")
-        }
-    }
-
-    private fun handleFetchLabels() {
-        try {
-            val currentUserId = userManager.requireCurrentUserId()
-            val db = MessageDatabase.getInstance(applicationContext, currentUserId).getDao()
-            val labelList = mApi.fetchLabels(UserIdTag(currentUserId)).labels
-            db.saveAllLabels(labelList)
-            AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
-        } catch (error: Exception) {
-            Timber.w(error, "handleFetchLabels has failed")
-            AppUtil.postEventOnUi(FetchLabelsEvent(Status.FAILED))
-        }
-    }
-
     // TODO extract common logic from handleResult methods
     private fun handleResult(
         messages: MessagesResponse?,
@@ -206,8 +175,6 @@ class MessagesService : JobIntentService() {
         try {
             var unixTime = 0L
             val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDb = messagesDbFactory.getDao()
             val actionsDb = actionsDbFactory.getDao()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
@@ -216,7 +183,7 @@ class MessagesService : JobIntentService() {
                 val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
                 msg.setLabelIDs(msg.getEventLabelIDs())
                 msg.location = location.messageLocationTypeValue
-                msg.setFolderLocation(messagesDb)
+                msg.setFolderLocation(labelsRepository)
                 if (savedMessage != null) {
                     if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
                         return@map null
@@ -239,7 +206,7 @@ class MessagesService : JobIntentService() {
                     }
                     msg.isInline = savedMessage.isInline
                     savedMessage.location = location.messageLocationTypeValue
-                    savedMessage.setFolderLocation(messagesDb)
+                    savedMessage.setFolderLocation(labelsRepository)
                     val attachments = savedMessage.attachments
                     if (attachments.isNotEmpty()) {
                         msg.setAttachmentList(attachments)
@@ -280,8 +247,6 @@ class MessagesService : JobIntentService() {
         try {
             var unixTime = 0L
             val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDb = messagesDbFactory.getDao()
             val actionsDb = actionsDbFactory.getDao()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
@@ -290,7 +255,7 @@ class MessagesService : JobIntentService() {
                 val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
                 msg.setLabelIDs(msg.getEventLabelIDs())
                 msg.location = location.messageLocationTypeValue
-                msg.setFolderLocation(messagesDb)
+                msg.setFolderLocation(labelsRepository)
                 if (savedMessage != null) {
                     if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
                         return@map null
@@ -311,7 +276,7 @@ class MessagesService : JobIntentService() {
                     msg.isInline = savedMessage.isInline
                     msg.mimeType = savedMessage.mimeType
                     savedMessage.location = location.messageLocationTypeValue
-                    savedMessage.setFolderLocation(messagesDb)
+                    savedMessage.setFolderLocation(labelsRepository)
                     val attachments = savedMessage.attachments
                     if (attachments.isNotEmpty()) {
                         msg.setAttachmentList(attachments)
@@ -333,26 +298,6 @@ class MessagesService : JobIntentService() {
     }
 
     companion object {
-
-        fun startFetchLabels(
-            context: Context,
-            userId: UserId
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_MESSAGE_LABELS)
-                .putExtra(EXTRA_USER_ID, userId.id)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
-        fun startFetchContactGroups(
-            context: Context,
-            userId: UserId
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_CONTACT_GROUPS_LABELS)
-                .putExtra(EXTRA_USER_ID, userId.id)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
 
         /**
          * Load initial page and detail of every message it fetch

@@ -121,12 +121,12 @@ import ch.protonmail.android.compose.presentation.ui.MessageRecipientArrayAdapte
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.contacts.PostResult;
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
-import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.MessageSender;
@@ -169,9 +169,7 @@ import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PMWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
-import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
 import me.proton.core.accountmanager.domain.AccountManager;
 import me.proton.core.domain.entity.UserId;
 import me.proton.core.user.domain.entity.AddressId;
@@ -243,6 +241,7 @@ public class ComposeMessageActivity
     private String mAction;
     private boolean mUpdateDraftPmMeChanged;
     private boolean largeBody;
+    private boolean mSendingInProgress;
 
     private ComposeMessageViewModel composeMessageViewModel;
     @Inject
@@ -673,15 +672,6 @@ public class ComposeMessageActivity
             recipient = bccRecipientView;
         }
         addRecipientsToView(recipients, recipient);
-    }
-
-    @NonNull
-    private Function0<Unit> onConnectivityCheckRetry() {
-        return () -> {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, binding.composerBottomAppBar.getId()).show();
-            composeMessageViewModel.checkConnectivityDelayed();
-            return null;
-        };
     }
 
     private void onConnectivityEvent(Constants.ConnectionState connectivity) {
@@ -1608,7 +1598,7 @@ public class ComposeMessageActivity
         for (Map.Entry<String, List<MessageRecipient>> entry : groupedRecipients.entrySet()) {
             List<MessageRecipient> groupRecipients = entry.getValue();
             String groupName = entry.getKey();
-            ContactLabel group = composeMessageViewModel.getContactGroupByName(groupName);
+            ContactLabelUiModel group = composeMessageViewModel.getContactGroupByName(groupName);
             if (group != null) {
                 String name = String.format(getString(R.string.composer_group_count_of), groupName, group.getContactEmailsCount(), group.getContactEmailsCount());
                 if (groupRecipients.size() != group.getContactEmailsCount()) {
@@ -1698,8 +1688,6 @@ public class ComposeMessageActivity
             mEmbeddedImagesTask.execute();
         }
     }
-
-    private boolean mSendingInProgress;
 
     private void loadPMContacts() {
         if (mUserManager.getCurrentLegacyUser().getCombinedContacts()) {

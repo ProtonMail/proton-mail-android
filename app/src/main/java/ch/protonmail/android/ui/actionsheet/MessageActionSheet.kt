@@ -38,6 +38,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
@@ -143,7 +144,10 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         super.onDestroyView()
     }
 
-    private fun updateViewState(state: MessageActionSheetState, binding: FragmentMessageActionSheetBinding) {
+    private fun updateViewState(
+        state: MessageActionSheetState,
+        binding: FragmentMessageActionSheetBinding
+    ) {
         when (state) {
             is MessageActionSheetState.Data -> {
                 setupMoveSectionState(binding, state.moveSectionState)
@@ -321,7 +325,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         }
 
         binding.textViewDetailsActionsMoveTo.setOnClickListener {
-            viewModel.showLabelsManager(messageIds, currentLocation, LabelsActionSheet.Type.FOLDER)
+            viewModel.showLabelsManager(messageIds, currentLocation, LabelType.FOLDER)
             dismiss()
         }
     }
@@ -406,14 +410,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private fun showManageLabelsActionSheet(
         messageIds: List<String>,
-        labelActionSheetType: LabelsActionSheet.Type,
+        labelType: LabelType,
         currentFolderLocationId: Int,
         actionSheetTarget: ActionSheetTarget
     ) {
         LabelsActionSheet.newInstance(
             messageIds,
             currentFolderLocationId,
-            labelActionSheetType,
+            labelType,
             actionSheetTarget
         )
             .show(parentFragmentManager, LabelsActionSheet::class.qualifiedName)

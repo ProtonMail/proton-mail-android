@@ -28,6 +28,11 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.labels.data.remote.worker.LabelConversationsRemoteWorker
+import ch.protonmail.android.labels.data.remote.worker.UnlabelConversationsRemoteWorker
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
@@ -41,10 +46,8 @@ import ch.protonmail.android.mailbox.data.mapper.ConversationsResponseToConversa
 import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
-import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
-import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
@@ -83,6 +86,7 @@ private const val MAX_LOCATION_ID_LENGTH = 2
 internal class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
+    private val labelsRepository: LabelRepository,
     private val unreadCounterDao: UnreadCounterDao,
     private val api: ProtonMailApiManager,
     responseToConversationsMapper: ConversationsResponseToConversationsMapper,
@@ -131,7 +135,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                     Timber.v("Stored new conversation id: ${conversation.id}")
                 },
                 delete = { params ->
-                    conversationDao.deleteConversation(params.userId.id, params.conversationId,)
+                    conversationDao.deleteConversation(params.userId.id, params.conversationId)
                 }
             )
         ).build()
@@ -471,7 +475,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     private suspend fun getLabelIdsForRemovingWhenMovingToFolder(labelIds: Collection<String>): Collection<String> {
         return labelIds.filter { labelId ->
             val isLabelExclusive = if (labelId.length > MAX_LOCATION_ID_LENGTH) {
-                messageDao.findLabelById(labelId)?.exclusive ?: false
+                labelsRepository.findLabel(LabelId(labelId))?.type == LabelType.FOLDER
             } else {
                 true
             }

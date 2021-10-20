@@ -266,7 +266,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             enableScreenshotProtector();
         }
         app.setAppInBackground(false);
-        NetworkConfigurator.Companion.setNetworkConfiguratorCallback(this);
+        networkConfigurator.setNetworkConfiguratorCallback(this);
 
         accountStateManager.setHumanVerificationOrchestrator(humanVerificationOrchestrator);
     }
@@ -274,6 +274,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Override
     protected void onPause() {
         app.setAppInBackground(true);
+        networkConfigurator.removeNetworkConfiguratorCallback();
         super.onPause();
     }
 

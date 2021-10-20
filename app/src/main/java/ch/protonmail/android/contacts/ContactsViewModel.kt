@@ -31,7 +31,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class ContactsViewModel @Inject constructor(
+internal class ContactsViewModel @Inject constructor(
     private val userManager: UserManager,
     private val fetchContactsData: FetchContactsData,
     verifyConnection: VerifyConnection,

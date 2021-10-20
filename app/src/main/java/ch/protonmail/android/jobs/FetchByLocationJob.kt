@@ -18,10 +18,8 @@
  */
 package ch.protonmail.android.jobs
 
-import ch.protonmail.android.api.services.MessagesService.Companion.startFetchContactGroups
 import ch.protonmail.android.api.services.MessagesService.Companion.startFetchFirstPage
 import ch.protonmail.android.api.services.MessagesService.Companion.startFetchFirstPageByLabel
-import ch.protonmail.android.api.services.MessagesService.Companion.startFetchLabels
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType
 import com.birbit.android.jobqueue.Params
@@ -34,9 +32,8 @@ import timber.log.Timber
 class FetchByLocationJob(
     val location: MessageLocationType,
     val labelId: String?,
-    val includeLabels: Boolean,
     val uuid: String?,
-    val refreshMessages: Boolean
+    private val refreshMessages: Boolean
 ) : ProtonMailBaseJob(Params(Priority.MEDIUM).groupBy(Constants.JOB_GROUP_MESSAGE)) {
 
     override fun onRun() {
@@ -55,10 +52,6 @@ class FetchByLocationJob(
             }
             else -> {
                 startFetchFirstPage(applicationContext, userId, location, false, uuid, refreshMessages)
-                if (includeLabels) {
-                    startFetchLabels(applicationContext, userId)
-                    startFetchContactGroups(applicationContext, userId)
-                }
             }
         }
     }

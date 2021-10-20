@@ -27,14 +27,16 @@ import com.birbit.android.jobqueue.Job
 
 class SpamSwipeHandler : ISwipeHandler {
 
-    override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
-        return PostSpamJob(listOf(message.messageId), currentLocation)
-    }
+    override fun handleSwipe(
+        message: SimpleMessage,
+        currentLocation: String
+    ): Job =
+        PostSpamJob(listOf(message.messageId), currentLocation)
 
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String?
+        currentLocation: String
     ): Job {
         return if (messageLocation == Constants.MessageLocationType.LABEL_FOLDER) {
             MoveToFolderJob(listOf(message.messageId), currentLocation)

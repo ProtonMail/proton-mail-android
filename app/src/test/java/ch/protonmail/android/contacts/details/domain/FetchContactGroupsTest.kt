@@ -22,7 +22,9 @@ package ch.protonmail.android.contacts.details.domain
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -51,14 +53,20 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val contactId = "ContactId1"
         val contactEmailId1 = "ContactEmailId1"
         val contactEmailId2 = "ContactEmailId2"
-        val labelId1 = "labelId1"
-        val labelId2 = "labelId2"
-        val labelIds = listOf(labelId1)
+        val labelId1 = LabelId("labelId1")
+        val labelId2 = LabelId("labelId2")
+        val labelIds = listOf(labelId1.id)
         val contactEmail1 = ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds)
         val contactEmail2 = ContactEmail(contactEmailId2, "test2@abc.com", "name1", labelIds = labelIds)
         val list1 = listOf(contactEmail1, contactEmail2)
-        val contactLabel1 = ContactLabel(labelId1, "name1", "color1", 1, 0, false, 2)
-        val contactLabel2 = ContactLabel(labelId2, "name2", "color2", 1, 0, false, 2)
+        val contactLabel1 =
+            Label(
+                labelId1, "name1", "color1", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
+            )
+        val contactLabel2 =
+            Label(
+                labelId2, "name2", "color2", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
+            )
         every { repository.observeContactEmails(contactId) } returns flowOf(list1)
         coEvery { repository.getContactGroupsLabelForId(contactEmailId1) } returns listOf(contactLabel1)
         coEvery { repository.getContactGroupsLabelForId(contactEmailId2) } returns listOf(contactLabel2)
@@ -81,18 +89,27 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val contactEmailId1 = "ContactEmailId1"
         val contactEmailId2 = "ContactEmailId2"
         val contactEmailId3 = "ContactEmailId3"
-        val labelId1 = "labelId1"
-        val labelId2 = "labelId2"
-        val labelId3 = "labelId3"
-        val labelIds = listOf(labelId1)
+        val labelId1 = LabelId("labelId1")
+        val labelId2 = LabelId("labelId2")
+        val labelId3 = LabelId("labelId3")
+        val labelIds = listOf(labelId1.id)
         val contactEmail1 = ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds)
         val contactEmail2 = ContactEmail(contactEmailId2, "test2@abc.com", "name2", labelIds = labelIds)
         val contactEmail3 = ContactEmail(contactEmailId3, "test3@abc.com", "name3", labelIds = labelIds)
         val list1 = listOf(contactEmail1, contactEmail2)
         val list2 = listOf(contactEmail3)
-        val contactLabel1 = ContactLabel(labelId1, "name1", "color1", 1, 0, false, 0)
-        val contactLabel2 = ContactLabel(labelId2, "name2", "color2", 1, 0, false, 1)
-        val contactLabel3 = ContactLabel(labelId3, "name3", "color3", 1, 0, false, 2)
+        val contactLabel1 =
+            Label(
+                labelId1, "name1", "color1", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
+            )
+        val contactLabel2 =
+            Label(
+                labelId2, "name2", "color2", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
+            )
+        val contactLabel3 =
+            Label(
+                labelId3, "name3", "color3", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
+            )
         every { repository.observeContactEmails(contactId) } returns flow {
             emit(list1)
             emit(list2)

@@ -93,7 +93,7 @@ interface ContactService {
 
     @PUT("contacts/emails/label")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun labelContacts(@Body labelContactsBody: LabelContactsBody): Completable
+    suspend fun labelContacts(@Body labelContactsBody: LabelContactsBody)
 
     @PUT("contacts/emails/unlabel")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

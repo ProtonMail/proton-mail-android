@@ -22,8 +22,8 @@ package ch.protonmail.android.ui.dialog
 import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -90,9 +90,12 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     private lateinit var viewModel: MessageActionSheetViewModel
 
+    private val testUserId = UserId("testUser")
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
         viewModel = MessageActionSheetViewModel(
             savedStateHandle,
             deleteMessage,
@@ -116,7 +119,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val labelId2 = "labelId2"
         val messageIds = listOf(messageId1, messageId2)
         val currentLocation = Constants.MessageLocationType.INBOX
-        val labelsSheetType = LabelsActionSheet.Type.LABEL
+        val labelsSheetType = LabelType.MESSAGE_LABEL
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
@@ -153,7 +156,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val labelId2 = "labelId2"
         val messageIds = listOf(messageId1, messageId2)
         val currentLocation = Constants.MessageLocationType.INBOX
-        val labelsSheetType = LabelsActionSheet.Type.FOLDER
+        val labelsSheetType = LabelType.FOLDER
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
@@ -175,7 +178,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
         // when
-        viewModel.showLabelsManager(messageIds, currentLocation, LabelsActionSheet.Type.FOLDER)
+        viewModel.showLabelsManager(messageIds, currentLocation, LabelType.FOLDER)
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
@@ -207,7 +210,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageId = "messageId1"
         val expected = MessageActionSheetAction.DismissActionSheet(false)
         every { conversationModeEnabled(any()) } returns true
-        every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+        coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -220,7 +223,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
-        verify { moveMessagesToFolder.invoke(listOf(messageId), "0", "6") }
+        coVerify { moveMessagesToFolder.invoke(listOf(messageId), "0", "6", testUserId) }
     }
 
     @Test
@@ -229,7 +232,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageId = "messageId2"
         val expected = MessageActionSheetAction.DismissActionSheet(true)
         every { conversationModeEnabled(any()) } returns false
-        every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+        coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
@@ -242,7 +245,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
-        verify { moveMessagesToFolder.invoke(listOf(messageId), "0", "4") }
+        coVerify { moveMessagesToFolder.invoke(listOf(messageId), "0", "4", testUserId) }
     }
 
     @Test
@@ -272,7 +275,11 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
-        coEvery { changeConversationsStarredStatus.invoke(listOf(conversationId), userId, unstarAction) } returns ConversationsActionResult.Success
+        coEvery {
+            changeConversationsStarredStatus.invoke(
+                listOf(conversationId), userId, unstarAction
+            )
+        } returns ConversationsActionResult.Success
 
         // when
         viewModel.unStarMessage(

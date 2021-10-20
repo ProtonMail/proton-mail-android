@@ -30,13 +30,14 @@ import ch.protonmail.android.api.models.IDList;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
-import ch.protonmail.android.data.local.MessageDao;
-import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.data.local.model.Label;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import ch.protonmail.android.labels.domain.model.Label;
+import ch.protonmail.android.labels.domain.model.LabelId;
+import ch.protonmail.android.labels.domain.model.LabelType;
 import timber.log.Timber;
 
+@Deprecated // replaced with [PostToLocationWorker]
 public class MoveToFolderJob extends ProtonMailBaseJob {
     private List<String> mMessageIds;
     private String mLabelId;
@@ -62,31 +63,28 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
             }
         }
 
-        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.increment(totalUnread);
-        counterDao.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
     }
 
     private boolean markMessageLocally(CounterDao counterDao, Message message) {
         boolean unreadIncrease = false;
 
-        MessageDao messageDao = MessageDatabase.Factory
-                .getInstance(getApplicationContext(), getUserId())
-                .getDao();
 
         if (!TextUtils.isEmpty(mLabelId)) {
             message.addLabels(Collections.singletonList(mLabelId));
-            removeOldFolderIds(message, messageDao);
+            removeOldFolderIds(message);
         }
 
         if (!message.isRead()) {
-            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
+            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(message.getLocation());
             if (unreadLocationCounter != null) {
                 unreadLocationCounter.decrement();
-                counterDao.insertUnreadLocation(unreadLocationCounter);
+                counterDao.insertUnreadLocationBlocking(unreadLocationCounter);
             }
             unreadIncrease = true;
         }
@@ -96,20 +94,20 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
             message.setLocation(Constants.MessageLocationType.LABEL_FOLDER.getMessageLocationTypeValue());
         }
 
-        message.setFolderLocation(messageDao);
+        message.setFolderLocation(getLabelRepository());
         Timber.d("Move message id: %s, location: %s, labels: %s", message.getMessageId(), message.getLocation(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }
 
-    private void removeOldFolderIds(Message message, MessageDao messageDao) {
+    private void removeOldFolderIds(Message message) {
         List<String> oldLabels = message.getAllLabelIDs();
         ArrayList<String> labelsToRemove = new ArrayList<>();
 
         for (String labelId : oldLabels) {
-            Label label = messageDao.findLabelByIdBlocking(labelId);
+            Label label = getLabelRepository().findLabelBlocking(new LabelId(labelId));
             // find folders
-            if (label != null && label.getExclusive() && !label.getId().equals(mLabelId)) {
+            if (label != null && (label.getType() == LabelType.FOLDER) && !label.getId().equals(mLabelId)) {
                 labelsToRemove.add(labelId);
             }
         }

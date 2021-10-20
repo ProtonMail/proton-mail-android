@@ -68,7 +68,6 @@ private const val CHANNEL_ID_ACCOUNT = "account"
 private const val CHANNEL_ID_ATTACHMENTS = "attachments"
 private const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
 private const val NOTIFICATION_GROUP_ID_EMAIL = 99
-private const val NOTIFICATION_ID_VERIFICATION = 2
 private const val NOTIFICATION_ID_LOGGED_OUT = 3
 // endregion
 

@@ -22,46 +22,55 @@ import android.database.SQLException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
-import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.usecase.delete.DeleteLabel
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.time.milliseconds
+import kotlin.time.toDuration
 
 @HiltViewModel
 class ContactGroupDetailsViewModel @Inject constructor(
     private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
-    private val deleteLabel: DeleteLabel,
-    private val contactsMapper: ContactsListMapper
+    private val deleteLabels: DeleteLabels,
+    private val contactsMapper: ContactsListMapper,
+    private val contactRepository: ContactsRepository
 ) : ViewModel() {
 
     private lateinit var _contactLabel: ContactGroupListItem
+    private val _contactGroupItemFlow = MutableStateFlow<ContactGroupListItem?>(null)
     private val _contactGroupEmailsResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()
-    private val filteringChannel = BroadcastChannel<String>(1)
+    private val filteringChannel = MutableSharedFlow<String>(replay = 1)
     private val _contactGroupEmailsEmpty: MutableLiveData<Event<String>> = MutableLiveData()
     private val _setupUIData = MutableLiveData<ContactGroupListItem>()
     private val _deleteLabelIds: MutableLiveData<List<String>> = MutableLiveData()
 
     init {
         initFiltering()
+        initGroupsObserving()
+        initGroupLabelObserving()
     }
 
     val contactGroupEmailsResult: LiveData<List<ContactEmail>>
@@ -81,7 +90,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
     private fun processDeleteLiveData(contactsToDelete: List<String>): LiveData<Event<Status>> {
         return liveData {
             emitSource(
-                deleteLabel(contactsToDelete)
+                deleteLabels(contactsToDelete.map { LabelId(it) })
                     .map { isSuccess ->
                         if (isSuccess) {
                             Event(Status.SUCCESS)
@@ -89,6 +98,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
                             Event(Status.ERROR)
                         }
                     }
+                    .asLiveData()
             )
         }
     }
@@ -96,50 +106,16 @@ class ContactGroupDetailsViewModel @Inject constructor(
     fun setData(contactLabel: ContactGroupListItem?) {
         contactLabel?.let { newContact ->
             _contactLabel = newContact
-            getContactGroupEmails(newContact)
+            _contactGroupItemFlow.tryEmit(contactLabel)
             _setupUIData.value = newContact
         }
     }
 
     fun getData(): ContactGroupListItem = _contactLabel
 
-    private fun getContactGroupEmails(contactLabel: ContactGroupListItem) {
-        contactGroupDetailsRepository.getContactGroupEmails(contactLabel.contactId)
-            .onEach { list ->
-                updateContactGroup()
-                _contactGroupEmailsResult.postValue(list)
-            }
-            .catch { throwable ->
-                _contactGroupEmailsEmpty.value = Event(
-                    throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
-                )
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private suspend fun updateContactGroup() {
-        runCatching { contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.contactId) }
-            .fold(
-                onSuccess = { contactLabel ->
-                    Timber.v("ContactLabel: $contactLabel retrieved")
-                    contactLabel?.let { label ->
-                        _contactLabel = contactsMapper.mapLabelToContactGroup(label)
-                        _setupUIData.value = contactsMapper.mapLabelToContactGroup(label)
-                    }
-                },
-                onFailure = { throwable ->
-                    if (throwable is SQLException) {
-                        _contactGroupEmailsEmpty.value = Event(throwable.message ?: ErrorEnum.DEFAULT_ERROR.name)
-                    } else
-                        throw throwable
-                }
-            )
-    }
-
     private fun initFiltering() {
         filteringChannel
-            .asFlow()
-            .debounce(300.milliseconds)
+            .debounce(300.toDuration(TimeUnit.MILLISECONDS))
             .distinctUntilChanged()
             .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.contactId, it) }
             .catch {
@@ -152,9 +128,49 @@ class ContactGroupDetailsViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    private fun initGroupsObserving() {
+        _contactGroupItemFlow
+            .filterNotNull()
+            .flatMapLatest { contactGroupDetailsRepository.observeContactGroupEmails(it.contactId) }
+            .onEach { list ->
+                _contactGroupEmailsResult.postValue(list)
+            }
+            .catch { throwable ->
+                _contactGroupEmailsEmpty.value = Event(
+                    throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
+                )
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun initGroupLabelObserving() {
+        _contactGroupItemFlow
+            .filterNotNull()
+            .flatMapLatest { contactGroupListItem ->
+                contactGroupDetailsRepository.observeContactGroupDetails(contactGroupListItem.contactId)
+                    .filterNotNull()
+                    .map { label ->
+                        contactsMapper.mapLabelEntityToContactGroup(
+                            label,
+                            contactRepository.countContactEmailsByLabelId(LabelId(contactGroupListItem.contactId))
+                        )
+                    }
+            }
+            .onEach { groupListItem ->
+                _contactLabel = groupListItem
+                _setupUIData.value = groupListItem
+            }
+            .catch { throwable ->
+                if (throwable is SQLException) {
+                    _contactGroupEmailsEmpty.value = Event(throwable.message ?: ErrorEnum.DEFAULT_ERROR.name)
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
     fun doFilter(filter: String) {
         viewModelScope.launch {
-            filteringChannel.send(filter.trim())
+            filteringChannel.emit(filter.trim())
         }
     }
 

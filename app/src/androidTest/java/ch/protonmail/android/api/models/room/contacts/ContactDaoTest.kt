@@ -203,7 +203,7 @@ internal class ContactDaoTest {
     @Test
     fun findContactDataById() {
         val expected = contactData[3]
-        val actual = database.findContactDataById(expected.contactId!!)
+        val actual = database.findContactDataByIdBlocking(expected.contactId!!)
         Assert.assertEquals(expected, actual)
         assertDatabaseState()
     }
@@ -234,7 +234,7 @@ internal class ContactDaoTest {
     fun saveContactData() {
         val inserted = ContactData("z", "zz")
         val expected = contactData + inserted
-        database.saveContactData(inserted)
+        database.saveContactDataBlocking(inserted)
         assertDatabaseState(expectedContactData = expected)
     }
 
@@ -277,7 +277,7 @@ internal class ContactDaoTest {
     }
 
     @Test
-    fun findContactEmailById() {
+    fun findContactEmailById() = runBlocking{
         val expected = contactEmails[2]
         val actual = database.findContactEmailById(expected.contactEmailId!!)
         Assert.assertEquals(expected, actual)
@@ -343,12 +343,12 @@ internal class ContactDaoTest {
     fun deleteAllContactsEmails() {
         val deleted = listOf(contactEmails[3], contactEmails[1])
         val expected = contactEmails - deleted
-        database.deleteAllContactsEmails(deleted)
+        database.deleteAllContactsEmailsBlocking(deleted)
         assertDatabaseState(expectedContactEmails = expected)
     }
 
     @Test
-    fun saveContactEmail() {
+    fun saveContactEmail() = runBlocking {
         val inserted = ContactEmail(
             "z",
             "z@z.com",
@@ -385,7 +385,7 @@ internal class ContactDaoTest {
     }
 
     @Test
-    fun saveAllContactsEmails1() {
+    fun saveAllContactsEmails1() = runBlocking{
         val inserted = listOf(
             ContactEmail(
                 "y",
@@ -403,7 +403,7 @@ internal class ContactDaoTest {
             )
         )
         val expected = contactEmails + inserted
-        database.saveAllContactsEmails(*inserted.toTypedArray())
+        database.saveAllContactsEmails(inserted)
         assertDatabaseState(expectedContactEmails = expected)
     }
 
@@ -589,7 +589,7 @@ internal class ContactDaoTest {
 
 
     @Test
-    fun testContactEmailsConverter() {
+    fun testContactEmailsConverter() = runBlocking {
         val email1 = ContactEmail(
             "e1",
             "1@1.1",
@@ -608,7 +608,7 @@ internal class ContactDaoTest {
             "c",
             labelIds = listOf("la", "lc")
         )
-        initiallyEmptyDatabase.saveAllContactsEmails(email1, email2, email3)
+        initiallyEmptyDatabase.saveAllContactsEmails(listOf(email1, email2, email3))
         val emailFromDb = initiallyEmptyDatabase.findContactEmailById("e1")
         Assert.assertNotNull(emailFromDb)
         val listOfGroups = emailFromDb?.labelIds

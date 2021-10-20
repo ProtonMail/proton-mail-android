@@ -20,8 +20,11 @@
 package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
@@ -35,8 +38,8 @@ class MessageLocationResolverTest {
 
     class NonParametrizedMessageLocationResolverTest {
 
-        private val messageDao = mockk<MessageDao>()
-        private val messageLocationResolver = MessageLocationResolver(messageDao)
+        private val labelRepository = mockk<LabelRepository>()
+        private val messageLocationResolver = MessageLocationResolver(labelRepository)
 
         @Test
         fun verifyLocationIsCorrectlyResolvedFromLabelsWithMultipleInputs() {
@@ -125,9 +128,9 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<Label> {
-                every { exclusive } returns true
+                every { type } returns LabelType.FOLDER
             }
-            every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
+            coEvery { labelRepository.findLabel(any()) } returns testLabel
 
             // when
             val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
@@ -145,9 +148,9 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL
             val testLabel = mockk<Label> {
-                every { exclusive } returns false
+                every { type } returns LabelType.MESSAGE_LABEL
             }
-            every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
+            coEvery { labelRepository.findLabel(any()) } returns testLabel
 
             // when
             val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
@@ -166,9 +169,9 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<Label> {
-                every { exclusive } returns true
+                every { type } returns LabelType.FOLDER
             }
-            every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
+            coEvery { labelRepository.findLabel(any()) } returns testLabel
 
             // when
             val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
@@ -189,9 +192,9 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val testLabel = mockk<Label> {
-                every { exclusive } returns true
+                every { type } returns LabelType.FOLDER
             }
-            every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
+            coEvery { labelRepository.findLabel(any()) } returns testLabel
 
             // when
             val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
@@ -232,13 +235,13 @@ class MessageLocationResolverTest {
             )
             val expected = Constants.MessageLocationType.LABEL_FOLDER
             val exclusiveLabel = mockk<Label> {
-                every { exclusive } returns true
+                every { type } returns LabelType.FOLDER
             }
             val nonExclusiveLabel = mockk<Label> {
-                every { exclusive } returns false
+                every { type } returns LabelType.MESSAGE_LABEL
             }
-            every { messageDao.findLabelByIdBlocking(exclusiveLabelId) } returns exclusiveLabel
-            every { messageDao.findLabelByIdBlocking(nonExclusiveLabelId) } returns nonExclusiveLabel
+            coEvery { labelRepository.findLabel(LabelId(exclusiveLabelId)) } returns exclusiveLabel
+            coEvery { labelRepository.findLabel(LabelId(nonExclusiveLabelId)) } returns nonExclusiveLabel
 
             // when
             val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
@@ -270,8 +273,8 @@ class MessageLocationResolverTest {
         private val resolvedLocationId: String
     ) {
 
-        private val messageDao = mockk<MessageDao>()
-        private val messageLocationResolver = MessageLocationResolver(messageDao)
+        private val labelRepository = mockk<LabelRepository>()
+        private val messageLocationResolver = MessageLocationResolver(labelRepository)
 
         @Test(expected = IllegalArgumentException::class)
         fun verifyResolvingInvalidLocationThrowsAnException() {
@@ -300,8 +303,8 @@ class MessageLocationResolverTest {
         private val expectedMessageLocationType: Constants.MessageLocationType,
     ) {
 
-        private val messageDao = mockk<MessageDao>()
-        private val messageLocationResolver = MessageLocationResolver(messageDao)
+        private val labelRepository = mockk<LabelRepository>()
+        private val messageLocationResolver = MessageLocationResolver(labelRepository)
 
         @Test
         fun verifyValidLocationIsResolved() {

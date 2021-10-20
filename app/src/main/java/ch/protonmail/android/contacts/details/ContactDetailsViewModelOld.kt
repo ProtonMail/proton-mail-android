@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.details
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.util.PatternsCompat
@@ -29,19 +28,21 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
-import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.DispatcherProvider
 import studio.forface.viewstatestore.ViewStateStore
 import java.io.FileNotFoundException
@@ -66,97 +67,27 @@ import javax.inject.Inject
 open class ContactDetailsViewModelOld @Inject constructor(
     dispatchers: DispatcherProvider,
     private val downloadFile: DownloadFile,
-    private val contactDetailsRepository: ContactDetailsRepository
+    private val contactDetailsRepository: ContactDetailsRepository,
+    private val userManager: UserManager
 ) : BaseViewModel(dispatchers) {
 
-    protected lateinit var allContactGroups: List<ContactLabel>
+    protected lateinit var allContactGroups: List<ContactLabelUiModel>
     protected lateinit var allContactEmails: List<ContactEmail>
 
     private var _setupCompleteValue: Boolean = false
-    private val _setupComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _setupError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
-
-    private var _emailGroupsResult: MutableLiveData<ContactEmailsGroups> = MutableLiveData()
-    private val _emailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
-    private val _mapEmailGroups: HashMap<String, List<ContactLabel>> = HashMap()
-
-    private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabel>> = MutableLiveData()
-    private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
-
-    val setupComplete: LiveData<Event<Boolean>>
-        get() = _setupComplete
 
     val profilePicture = ViewStateStore<Bitmap>().lock
 
-    @SuppressLint("CheckResult")
-    fun mergeContactEmailGroups(email: String) {
-        Observable.just(allContactEmails)
-            .flatMap { emailList ->
-                val contactEmail =
-                    emailList.find { contactEmail -> contactEmail.email == email }!!
-                val list1 = allContactGroups
-                val list2 = _mapEmailGroups[contactEmail.contactEmailId]
-                list2?.let { _ ->
-                    list1.forEach { contactLabel ->
-                        val selectedState =
-                            list2.find { selected -> selected.ID == contactLabel.ID } != null
-                        contactLabel.isSelected = if (selectedState) {
-                            SELECTED
-                        } else {
-                            ContactEmailGroupSelectionState.DEFAULT
-                        }
-                    }
-                }
-                Observable.just(list1)
-            }
-            .subscribe(
-                {
-                    _mergedContactEmailGroupsResult.postValue(it)
-                },
-                {
-                    _mergedContactEmailGroupsError.postValue(
-                        Event(
-                            ErrorResponse(
-                                it.message ?: "",
-                                ErrorEnum.INVALID_GROUP_LIST
-                            )
-                        )
-                    )
-                }
-            )
-    }
-
-    fun fetchContactEmailGroups(rowID: Int, email: String) {
-        val emailId = allContactEmails.find {
-            it.email == email
-        }?.contactEmailId
-
-        emailId?.let { _ ->
-            contactDetailsRepository.getContactGroups(emailId)
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main())
-                .subscribe(
-                    {
-                        _mapEmailGroups[emailId] = it
-                        _emailGroupsResult.value = ContactEmailsGroups(it, emailId, rowID)
-                    },
-                    {
-                        _emailGroupsError.postValue(
-                            Event(
-                                ErrorResponse(
-                                    it.message ?: "",
-                                    ErrorEnum.SERVER_ERROR
-                                )
-                            )
-                        )
-                    }
-                )
-        }
-    }
-
     fun fetchContactGroupsAndContactEmails(contactId: String) {
+        val userId = userManager.requireCurrentUserId()
         Observable.zip(
-            contactDetailsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
+            Observable.fromCallable {
+                runBlocking {
+                    contactDetailsRepository.getContactGroups(userId)
+                }
+            }
+                .subscribeOn(ThreadSchedulers.io())
                 .doOnError {
                     if (allContactGroups.isEmpty()) {
                         _setupError.postValue(
@@ -178,7 +109,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         )
                     }
                 },
-            contactDetailsRepository.getContactEmailsBlocking(contactId).subscribeOn(ThreadSchedulers.io())
+            contactDetailsRepository.getContactEmails(contactId).subscribeOn(ThreadSchedulers.io())
                 .doOnError {
                     if (allContactEmails.isEmpty()) {
                         _setupError.postValue(
@@ -200,9 +131,20 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         )
                     }
                 },
-            { groups: List<ContactLabel>,
+            {
+                groups: List<Label>,
                 emails: List<ContactEmail> ->
-                allContactGroups = groups
+                allContactGroups = groups.map { entity ->
+                    ContactLabelUiModel(
+                        id = entity.id,
+                        name = entity.name,
+                        color = entity.color,
+                        type = entity.type,
+                        path = entity.path,
+                        parentId = entity.parentId,
+                        contactEmailsCount = runBlocking { contactDetailsRepository.getContactEmailsCount(entity.id) }
+                    )
+                }
                 allContactEmails = emails
             }
         ).observeOn(ThreadSchedulers.main())
@@ -210,7 +152,6 @@ open class ContactDetailsViewModelOld @Inject constructor(
                 {
                     if (!_setupCompleteValue) {
                         _setupCompleteValue = true
-                        _setupComplete.value = Event(true)
                     }
                 },
                 {

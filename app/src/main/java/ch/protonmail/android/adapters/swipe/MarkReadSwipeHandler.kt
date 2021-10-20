@@ -26,15 +26,14 @@ import com.birbit.android.jobqueue.Job
 
 class MarkReadSwipeHandler : ISwipeHandler {
 
-    override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
-        return PostReadJob(listOf(message.messageId))
-    }
+    override fun handleSwipe(
+        message: SimpleMessage,
+        currentLocation: String
+    ): Job = PostReadJob(listOf(message.messageId))
 
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String?
-    ): Job {
-        return PostUnreadJob(listOf(message.messageId))
-    }
+        currentLocation: String
+    ): Job = PostUnreadJob(listOf(message.messageId))
 }

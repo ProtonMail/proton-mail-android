@@ -32,17 +32,16 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
-import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.utils.MessageUtils
-import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
@@ -65,7 +64,8 @@ import java.util.HashSet
 import javax.inject.Inject
 
 private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
-private const val DEPRECATION_MESSAGE = "We should strive towards moving methods out of this repository and stopping using it."
+private const val DEPRECATION_MESSAGE =
+    "We should strive towards moving methods out of this repository and stopping using it."
 
 @Deprecated("Scheduled to be removed, do not add new usages", ReplaceWith("MessageRepository"))
 class MessageDetailsRepository @Inject constructor(
@@ -74,7 +74,8 @@ class MessageDetailsRepository @Inject constructor(
     private var messagesDao: MessageDao,
     private var pendingActionDao: PendingActionDao,
     private val databaseProvider: DatabaseProvider,
-    private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
+    private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
+    private val labelRepository: LabelRepository
 ) {
 
     @AssistedInject
@@ -83,6 +84,7 @@ class MessageDetailsRepository @Inject constructor(
         jobManager: JobManager,
         databaseProvider: DatabaseProvider,
         attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
+        labelRepository: LabelRepository,
         @Assisted userId: UserId
     ) : this(
         applicationContext = context,
@@ -90,7 +92,8 @@ class MessageDetailsRepository @Inject constructor(
         messagesDao = databaseProvider.provideMessageDao(userId),
         pendingActionDao = databaseProvider.providePendingActionDao(userId),
         databaseProvider = databaseProvider,
-        attachmentsWorker = attachmentsWorker
+        attachmentsWorker = attachmentsWorker,
+        labelRepository = labelRepository
     )
 
     fun reloadDependenciesForUser(userId: UserId) {
@@ -225,7 +228,8 @@ class MessageDetailsRepository @Inject constructor(
         val messageId = message.messageId
         val messageBody = message.messageBody
         if (messageId != null && messageBody != null && messageBody.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
-            val messageBodyDirectory = File(applicationContext.filesDir.toString() + Constants.DIR_MESSAGE_BODY_DOWNLOADS)
+            val messageBodyDirectory =
+                File(applicationContext.filesDir.toString() + Constants.DIR_MESSAGE_BODY_DOWNLOADS)
             messageBodyDirectory.mkdirs()
 
             val messageBodyFile = File(messageBodyDirectory, messageId.replace(" ", "_").replace("/", ":"))
@@ -257,43 +261,8 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
 
-    fun getAllLabelsLiveData() = messagesDao.getAllLabelsLiveData()
-
-    suspend fun getAllLabels(): List<Label> = messagesDao.getAllLabels().first()
-
-    fun findAllLabelsWithIds(labelIds: List<String>): List<Label> = messagesDao.findLabelsByIdBlocking(labelIds)
-
-    suspend fun findAllLabelsWithIds(
-        message: Message,
-        checkedLabelIds: List<String>,
-        labels: List<Label>
-    ) {
-        val labelsToRemove = ArrayList<String>()
-        val jobList = ArrayList<Job>()
-        val messageId = message.messageId
-        val mutableLabelIds = checkedLabelIds.toMutableList()
-        for (label in labels) {
-            val labelId = label.id
-            val exclusive = label.exclusive
-            if (!mutableLabelIds.contains(labelId) && !exclusive) {
-                // this label should be removed
-                labelsToRemove.add(labelId)
-                jobList.add(RemoveLabelJob(listOf(messageId), labelId))
-            } else if (mutableLabelIds.contains(labelId)) {
-                // the label remains
-                mutableLabelIds.remove(labelId)
-            }
-        }
-        // what remains are the new labels
-        val applyLabelsJobs = mutableLabelIds.map { ApplyLabelJob(listOf(messageId), it) }
-        jobList.addAll(applyLabelsJobs)
-        // update the message with the new labels
-        message.addLabels(mutableLabelIds)
-        message.removeLabels(labelsToRemove)
-
-        jobList.forEach(jobManager::addJobInBackground)
-        saveMessage(message)
-    }
+    suspend fun findLabelsWithIds(labelIds: List<String>): List<Label> =
+        labelRepository.findLabels(labelIds.map { LabelId(it) })
 
     suspend fun prepareEditMessageIntent(
         messageAction: Constants.MessageActionType,

@@ -26,7 +26,13 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
+import ch.protonmail.android.labels.data.remote.worker.KEY_UPDATE_LABELS_CONVERSATION_IDS
+import ch.protonmail.android.labels.data.remote.worker.KEY_UPDATE_LABELS_ERROR_DESCRIPTION
+import ch.protonmail.android.labels.data.remote.worker.KEY_UPDATE_LABELS_SELECTED_LABELS
+import ch.protonmail.android.labels.data.remote.worker.KEY_UPDATE_LABELS_UNSELECTED_LABELS
+import ch.protonmail.android.labels.data.remote.worker.KEY_UPDATE_LABELS_USER_ID
+import ch.protonmail.android.labels.data.remote.worker.UpdateConversationsLabelsWorker
+import ch.protonmail.android.labels.domain.usecase.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.every

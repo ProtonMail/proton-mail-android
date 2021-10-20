@@ -20,6 +20,7 @@ package ch.protonmail.android.drawer.presentation.model
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import ch.protonmail.android.labels.domain.model.LabelType
 
 /**
  * An UiModel representing a Label item
@@ -30,17 +31,8 @@ data class DrawerLabelUiModel(
     val labelId: String,
     val name: String,
     val icon: Icon,
-    val type: Type
+    val type: LabelType
 ) {
-
-    /** The type of the Model */
-    enum class Type {
-        /** Model is Label */
-        LABELS,
-
-        /** Model is Folder */
-        FOLDERS
-    }
 
     data class Icon(
         @DrawableRes val drawableRes: Int,

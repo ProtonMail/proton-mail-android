@@ -23,8 +23,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -80,7 +80,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
     fun showLabelsManager(
         messageIds: List<String>,
         currentLocation: Constants.MessageLocationType,
-        labelsSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL
+        labelsSheetType: LabelType = LabelType.MESSAGE_LABEL
     ) {
         viewModelScope.launch {
             val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(
@@ -311,9 +311,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
         currentFolder: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
+            val primaryUserId = accountManager.getPrimaryUserId().first()
             if (isActionAppliedToConversation(currentFolder, true)) {
                 Timber.v("Move conversation to folder: $newFolderLocationId")
-                val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     val result = moveConversationsToFolder(
                         ids,
@@ -331,7 +331,8 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 moveMessagesToFolder(
                     ids,
                     newFolderLocationId.messageLocationTypeValue.toString(),
-                    currentFolder.messageLocationTypeValue.toString()
+                    currentFolder.messageLocationTypeValue.toString(),
+                    requireNotNull(primaryUserId)
                 )
             }
         }.invokeOnCompletion { cancellationException ->

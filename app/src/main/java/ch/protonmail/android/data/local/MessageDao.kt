@@ -20,7 +20,6 @@ package ch.protonmail.android.data.local
 
 import android.provider.BaseColumns
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -30,7 +29,6 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
-import ch.protonmail.android.data.local.model.COLUMN_LABEL_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_DELETED
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
@@ -43,10 +41,8 @@ import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_EMAIL
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_NAME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SUBJECT
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_TIME
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TABLE_ATTACHMENTS
-import ch.protonmail.android.data.local.model.TABLE_LABELS
 import ch.protonmail.android.data.local.model.TABLE_MESSAGES
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -375,51 +371,11 @@ abstract class MessageDao : BaseDao<Message>() {
             if (parts.size != 4) {
                 return null
             }
-            findMessageInfoById(parts[1]) ?: return null
+            findMessageInfoById(parts[1])
         }
         return findAttachmentByIdCorrectId(attachmentId)
     }
 
     @Query("DELETE FROM $TABLE_ATTACHMENTS")
     abstract fun clearAttachmentsCache()
-
-
-    @Query("SELECT * FROM $TABLE_LABELS")
-    @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
-    abstract fun getAllLabelsLiveData(): LiveData<List<Label>>
-
-    @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
-    abstract fun getAllLabels(): Flow<List<Label>>
-
-    // Folders
-    @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 1 ORDER BY `LabelOrder`")
-    abstract fun getAllLabelsExclusivePaged(): DataSource.Factory<Int, Label>
-
-    // Labels
-    @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 0 ORDER BY `LabelOrder`")
-    abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, Label>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY LabelOrder")
-    abstract fun findLabelsById(labelIds: List<String>): Flow<List<Label>>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract fun findLabelByIdBlocking(labelId: String): Label?
-
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract suspend fun findLabelById(labelId: String): Label?
-
-    @Query("DELETE FROM $TABLE_LABELS")
-    abstract fun clearLabelsCache()
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveLabel(label: Label): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAllLabels(labels: List<Label>): List<Long>
-
-    @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract fun deleteLabelById(labelId: String)
 }

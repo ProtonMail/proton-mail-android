@@ -42,8 +42,6 @@ import ch.protonmail.android.activities.DefaultAddressActivity
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.SettingsItem
-import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
 import ch.protonmail.android.core.Constants
@@ -63,6 +61,8 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
+import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
+import ch.protonmail.android.labels.presentation.LabelsManagerActivity
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
@@ -432,7 +432,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                         FetchByLocationJob(
                             mMailboxLocation,
                             mLabelId,
-                            true,
                             null,
                             false
                         )

@@ -26,7 +26,10 @@ import com.birbit.android.jobqueue.Job
 
 class StarSwipeHandler : ISwipeHandler {
 
-    override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
+    override fun handleSwipe(
+        message: SimpleMessage,
+        currentLocation: String
+    ): Job {
         return if (!message.isStarred) {
             PostStarJob(listOf(message.messageId))
         } else {
@@ -37,7 +40,7 @@ class StarSwipeHandler : ISwipeHandler {
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String?
+        currentLocation: String
     ): Job {
         return if (message.isStarred) {
             PostStarJob(listOf(message.messageId))

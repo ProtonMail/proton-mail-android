@@ -35,10 +35,10 @@ fun initVersions() {
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.4"         // Released: Oct 31, 2020
-    `espresso version` =                        "3.4.0-beta01"  // Released: May 15, 2021
+    `espresso version` =                        "3.4.0"         // Released: Jul 04, 2021
     `hilt-android version` =                    "2.37"          // Released: Jun 10, 2021
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
-    `ktx version` =                             "1.6.0"         // Released: Jul 04, 2021
+    `ktx version` =                             "1.6.0"         // Released: Jun 30, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.4.0"         // Released: Jul 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
@@ -95,7 +95,7 @@ const val `Proton-user-settings version` =      "1.5.1"         // Released: Jul
 
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
-const val `android-test-ext version` =          "1.1.3-alpha05" // Released: Mar 15, 2021
+const val `android-test-ext version` =          "1.1.3-rc01"    // Released: Jun 22, 2021
 const val `assertJ version` =                   "3.13.2"        // Released: Aug 04, 2019
 const val `falcon version` =                    "2.1.1"         // Released: Sep 24, 2018
 const val `hamcrest version` =                  "1.3"           // Released:
@@ -103,12 +103,12 @@ const val `json-simple version` =               "1.1.1"         // Released: Mar
 const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun 10, 2020
 const val `uiautomator version` =               "2.2.0"         // Released: Oct 25, 2018
 const val `sun-mail-android version` =          "1.5.5"         // Released: Mar 06, 2020
-const val `turbine version` =                   "0.5.1"         // Released: Mar 15, 2021
+const val `turbine version` =                   "0.6.1"         // Released: Sep 02, 2021
 const val `junit-ktx version` =                 "1.1.2"         // Released: Aug 06, 2020
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
-const val `android-fragment version` =          "1.2.0-rc01"    // Released: Oct 24, 2019
+const val `android-fragment version` =          "1.3.6"         // Released: Jul 21, 2021
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
 const val `flexbox version` =                   "2.0.1"         // Released: Jan 17, 2020
 const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020
@@ -137,7 +137,7 @@ const val `sentry version` =                    "1.7.30"        // Released: Jan
 const val `sentry-plugin version` =             "1.7.36"        // Released: Oct 16, 2020
 const val `sonarQube version` =                 "2.7.1"         // Released: May 14, 2019
 const val `stetho version` =                    "1.5.1"         // Released: Mar 18, 2019
-const val `timber version` =                    "4.7.1"         // Released:
+const val `timber version` =                    "4.7.1"         // Released: 
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
 const val `remark version` =                    "1.1.0"         // Released: Dec 08, 2016
 const val `store version` =                     "4.0.2-KT15"    // Released: May 17, 2021

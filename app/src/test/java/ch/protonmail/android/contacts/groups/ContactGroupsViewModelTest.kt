@@ -20,22 +20,22 @@ package ch.protonmail.android.contacts.groups
 
 import android.graphics.Color
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
-import ch.protonmail.android.usecase.delete.DeleteLabel
+import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.utils.Event
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
@@ -56,7 +56,7 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     private lateinit var userManager: UserManager
 
     @RelaxedMockK
-    private lateinit var deleteLabel: DeleteLabel
+    private lateinit var deleteLabels: DeleteLabels
 
     private val contactsListMapper = ContactsListMapper()
 
@@ -66,9 +66,13 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var contactGroupsViewModel: ContactGroupsViewModel
 
-    private val label1 = ContactLabel("a", "aa")
-    private val label2 = ContactLabel("b", "bb")
-    private val label3 = ContactLabel("c", "cc")
+    private val testPath = "test/path1234"
+    private val label1 =
+        ContactLabelUiModel(LabelId("a"), "aa", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0)
+    private val label2 =
+        ContactLabelUiModel(LabelId("b"), "bb", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0)
+    private val label3 =
+        ContactLabelUiModel(LabelId("c"), "cc", "color", LabelType.MESSAGE_LABEL, testPath, "parentId", 0)
 
     private val testColorInt = 871
 
@@ -91,28 +95,25 @@ class ContactGroupsViewModelTest : CoroutinesTest {
         val resultLiveData = contactGroupsViewModel.contactGroupsResult.testObserver()
         val contactLabels = listOf(label1, label2, label3)
         val listItem1 = ContactGroupListItem(
-            label1.ID,
+            label1.id.id,
             label1.name,
             0,
             color = testColorInt,
         )
         val listItem2 = ContactGroupListItem(
-            label2.ID,
+            label2.id.id,
             label2.name,
             0,
             color = testColorInt,
         )
         val listItem3 = ContactGroupListItem(
-            label3.ID,
+            label3.id.id,
             label3.name,
             0,
             color = testColorInt,
         )
         val contactListItems = listOf(listItem1, listItem2, listItem3)
         coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } returns flowOf(contactLabels)
-        val join1 = mockk<ContactEmailContactLabelJoin>()
-        val joins = listOf(join1)
-        coEvery { contactGroupsRepository.getJoins() } returns flowOf(joins)
 
         // when
         contactGroupsViewModel.setSearchPhrase(searchTerm)
@@ -131,9 +132,6 @@ class ContactGroupsViewModelTest : CoroutinesTest {
             val resultLiveData = contactGroupsViewModel.contactGroupsError.testObserver()
             val exception = Exception("test-exception")
             coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } throws exception
-            val join1 = mockk<ContactEmailContactLabelJoin>()
-            val joins = listOf(join1)
-            coEvery { contactGroupsRepository.getJoins() } returns flowOf(joins)
 
             // when
             contactGroupsViewModel.setSearchPhrase(searchTerm)

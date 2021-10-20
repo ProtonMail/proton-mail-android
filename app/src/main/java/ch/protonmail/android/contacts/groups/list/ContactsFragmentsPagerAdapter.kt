@@ -41,7 +41,7 @@ class ContactsFragmentsPagerAdapter(
     private val fragmentCounts = arrayOf(-1, -1)
     private var hasPermission: Boolean = false
 
-    override fun getPageTitle(position: Int): CharSequence? = when (position) {
+    override fun getPageTitle(position: Int): CharSequence = when (position) {
         0 -> {
             if (fragmentCounts[0] == -1) {
                 context.getString(R.string.contacts)

@@ -30,7 +30,6 @@ import ch.protonmail.android.api.exceptions.ApiException;
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory;
-import ch.protonmail.android.data.local.ContactDao;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
 import ch.protonmail.android.jobs.Priority;
@@ -40,7 +39,6 @@ import timber.log.Timber;
 
 public class GetSendPreferenceJob extends ProtonMailBaseJob {
 
-	private final ContactDao contactDao;
     private final List<String> mEmails;
     private final Destination mDestination;
 
@@ -48,9 +46,8 @@ public class GetSendPreferenceJob extends ProtonMailBaseJob {
         TO, CC, BCC
     }
 
-    public GetSendPreferenceJob(ContactDao contactDao, List<String> emails, Destination destination) {
+    public GetSendPreferenceJob(List<String> emails, Destination destination) {
         super(new Params(Priority.HIGH).requireNetwork());
-		this.contactDao = contactDao;
 		mEmails = emails;
         mDestination = destination;
     }

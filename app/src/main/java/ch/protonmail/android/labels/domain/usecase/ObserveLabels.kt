@@ -19,16 +19,16 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.data.LabelRepository
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
-internal class ObserveLabels @Inject constructor(
+class ObserveLabels @Inject constructor(
     private val labelRepository: LabelRepository
 ) {
 
-    operator fun invoke(userId: UserId): Flow<List<Label>> =
-        labelRepository.findAllLabels(userId)
+    operator fun invoke(userId: UserId, shallRefresh: Boolean = false): Flow<List<Label>> =
+        labelRepository.observeAllLabels(userId, shallRefresh)
 }

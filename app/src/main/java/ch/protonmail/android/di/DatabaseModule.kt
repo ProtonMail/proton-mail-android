@@ -21,6 +21,7 @@ package ch.protonmail.android.di
 
 import android.content.Context
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.AppDatabase
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactDao
@@ -31,17 +32,31 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import me.proton.core.domain.entity.UserId
+import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.domain.entity.UserId
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object DatabaseModule {
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(
+        @ApplicationContext context: Context
+    ): AppDatabase = AppDatabase.buildDatabase(context)
+
+    @Provides
+    fun provideLabelDao(
+        appDatabase: AppDatabase
+    ): LabelDao = appDatabase.labelDao()
 
     @Provides
     fun provideAttachmentMetadataDao(

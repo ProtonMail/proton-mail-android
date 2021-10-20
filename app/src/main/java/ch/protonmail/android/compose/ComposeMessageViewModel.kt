@@ -46,13 +46,12 @@ import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
+import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.feature.account.allLoggedInBlocking
@@ -75,7 +74,6 @@ import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.GlobalScope
@@ -85,9 +83,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -160,9 +162,9 @@ class ComposeMessageViewModel @Inject constructor(
     var _actionId = Constants.MessageActionType.NONE
     private var _parentId: String? = null
     private val _draftId = AtomicReference<String>()
-    private lateinit var _data: List<ContactLabel>
+    private lateinit var _data: List<ContactLabelUiModel>
     private lateinit var _senderAddresses: List<String>
-    private val _groupsRecipientsMap = HashMap<ContactLabel, List<MessageRecipient>>()
+    private val _groupsRecipientsMap = HashMap<ContactLabelUiModel, List<MessageRecipient>>()
     private var _oldSenderAddressId: String = ""
     private lateinit var htmlProcessor: HtmlProcessor
     private var _dbId: Long? = null
@@ -329,10 +331,10 @@ class ComposeMessageViewModel @Inject constructor(
             handleContactGroupsResult()
             return
         }
-        val disposable = composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
-            .flatMap {
-                for (group in it) {
-                    val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
+        composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
+            .onEach { models ->
+                for (group in models) {
+                    val emails = composeMessageRepository.getContactGroupEmailsSync(group.id.id)
                     val recipients = ArrayList<MessageRecipient>()
                     for (email in emails) {
                         val recipient = MessageRecipient(email.name, email.email)
@@ -344,39 +346,32 @@ class ComposeMessageViewModel @Inject constructor(
                     }
                     _groupsRecipientsMap[group] = recipients
                 }
-                Observable.just(it)
-            }
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe(
-                {
-                    _data = it
-                    handleContactGroupsResult()
-                    _setupCompleteValue = true
-                    sendingInProcess = false
-                    _setupComplete.postValue(Event(true))
-                    if (!_protonMailContactsLoaded) {
-                        loadPMContacts()
-                    }
-                },
-                {
-                    _data = ArrayList()
-                    _setupCompleteValue = false
-                    sendingInProcess = false
-                    _setupComplete.postValue(Event(false))
-                    if (!_protonMailContactsLoaded) {
-                        loadPMContacts()
-                    }
-                }
-            )
 
-        compositeDisposable.add(disposable)
+                _data = models
+                handleContactGroupsResult()
+                _setupCompleteValue = true
+                sendingInProcess = false
+                _setupComplete.postValue(Event(true))
+                if (!_protonMailContactsLoaded) {
+                    loadPMContacts()
+                }
+            }
+            .catch {
+                _data = ArrayList()
+                _setupCompleteValue = false
+                sendingInProcess = false
+                _setupComplete.postValue(Event(false))
+                if (!_protonMailContactsLoaded) {
+                    loadPMContacts()
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun getContactGroupRecipients(group: ContactLabel): List<MessageRecipient> =
+    fun getContactGroupRecipients(group: ContactLabelUiModel): List<MessageRecipient> =
         _groupsRecipientsMap[group] ?: ArrayList()
 
-    fun getContactGroupByName(groupName: String): ContactLabel? {
+    fun getContactGroupByName(groupName: String): ContactLabelUiModel? {
         return _data.find {
             it.name == groupName
         }
@@ -406,17 +401,19 @@ class ComposeMessageViewModel @Inject constructor(
     @Subscribe
     fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent) {
         if (event.success) {
-            val message = event.message
-            message!!.decrypt(userManager, userManager.requireCurrentUserId())
-            val decryptedMessage = message.decryptedHTML // todo check if any var should be set
-            val messageId = event.messageId
-            composeMessageRepository.markMessageRead(messageId)
-            MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .message(message)
-                .decryptedMessage(decryptedMessage!!)
-                .build()
-            _actionType = UserAction.SAVE_DRAFT
+            viewModelScope.launch {
+                val message = event.message
+                message!!.decrypt(userManager, userManager.requireCurrentUserId())
+                val decryptedMessage = message.decryptedHTML // todo check if any var should be set
+                val messageId = event.messageId
+                composeMessageRepository.markMessageRead(messageId)
+                MessageBuilderData.Builder()
+                    .fromOld(_messageDataResult)
+                    .message(message)
+                    .decryptedMessage(decryptedMessage!!)
+                    .build()
+                _actionType = UserAction.SAVE_DRAFT
+            }
         }
     }
 

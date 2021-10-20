@@ -62,8 +62,7 @@ interface ContactApiSpec {
 
     suspend fun deleteContact(contactIds: IDList): DeleteResponse
 
-    @Throws(IOException::class)
-    fun labelContacts(labelContactsBody: LabelContactsBody): Completable
+    suspend fun labelContacts(labelContactsBody: LabelContactsBody)
 
     @Throws(IOException::class)
     fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable

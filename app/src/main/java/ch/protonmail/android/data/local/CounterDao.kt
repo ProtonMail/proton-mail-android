@@ -39,10 +39,16 @@ abstract class CounterDao {
 
     //region Unread Locations Counters
     @Query("SELECT * FROM $TABLE_UNREAD_LOCATION_COUNTERS WHERE $COLUMN_COUNTER_ID=:locationId")
-    abstract fun findUnreadLocationById(locationId: Int): UnreadLocationCounter?
+    abstract suspend fun findUnreadLocationById(locationId: Int): UnreadLocationCounter?
+
+    @Query("SELECT * FROM $TABLE_UNREAD_LOCATION_COUNTERS WHERE $COLUMN_COUNTER_ID=:locationId")
+    abstract fun findUnreadLocationByIdBlocking(locationId: Int): UnreadLocationCounter?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertUnreadLocation(unreadLocation: UnreadLocationCounter)
+    abstract suspend fun insertUnreadLocation(unreadLocation: UnreadLocationCounter)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insertUnreadLocationBlocking(unreadLocation: UnreadLocationCounter)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertAllUnreadLocations(unreadLocations: Collection<UnreadLocationCounter>)

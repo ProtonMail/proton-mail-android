@@ -237,7 +237,11 @@ class AddressKeyActivationWorker @AssistedInject constructor(
                 "ch.protonmail.android.mapper.bridge.AddressBridgeMapper"
             )
         )
-        fun activateAddressKeysIfNeeded(context: Context, addresses: List<OldAddress>, userId: UserId) {
+        fun activateAddressKeysIfNeeded(
+            context: Context,
+            addresses: List<OldAddress>,
+            userId: UserId
+        ) {
             val mapper = AddressBridgeMapper.buildDefault()
             runIfNeeded(WorkManager.getInstance(context), addresses.map(mapper) { it.toNewModel() }, userId)
         }

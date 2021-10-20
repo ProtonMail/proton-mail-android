@@ -66,7 +66,6 @@ class SaveDraftTest : CoroutinesTest {
 
     private val userNotifier: UserNotifier = mockk(relaxed = true)
 
-    private val uploadAttachments: UploadAttachments = mockk(relaxed = true)
     private val uploadAttachmentsEnqueuer: UploadAttachments.Enqueuer = mockk(relaxed = true)
 
     private val createDraftScheduler: Enqueuer = mockk(relaxed = true)

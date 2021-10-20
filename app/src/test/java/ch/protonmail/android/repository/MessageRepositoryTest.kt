@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.repository
 
+import android.content.Context
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
@@ -31,6 +32,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.user.User
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -38,6 +40,7 @@ import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMa
 import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
 import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
+import ch.protonmail.android.mailbox.data.remote.worker.MoveMessageToLocationWorker
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.utils.MessageBodyFileManager
@@ -102,7 +105,14 @@ class MessageRepositoryTest {
         every { isInternetConnectionPossible() } returns true
     }
 
-    private val testUserId = UserId("id")
+    private val labelRepository = mockk<LabelRepository>()
+
+    private val postToLocationWorker = mockk<MoveMessageToLocationWorker.Enqueuer>()
+
+    private val contextMock = mockk<Context>()
+
+    private val testUserName = "userName1"
+    private val testUserId = UserId(testUserName)
     private val message1 = Message(messageId = "1")
     private val message2 = Message(messageId = "2")
     private val message3 = Message(messageId = "3")
@@ -125,7 +135,10 @@ class MessageRepositoryTest {
         messageBodyFileManager = messageBodyFileManager,
         userManager = userManager,
         jobManager = jobManager,
-        connectivityManager = networkConnectivityManager
+        connectivityManager = networkConnectivityManager,
+        labelRepository = labelRepository,
+        moveMessageToLocationWorker = postToLocationWorker,
+        context = contextMock
     )
 
     @Test

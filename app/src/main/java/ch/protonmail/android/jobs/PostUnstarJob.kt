@@ -72,13 +72,13 @@ class PostUnstarJob(private val messageIds: List<String>) : ProtonMailEndlessJob
             .getDao()
 
         val locationId = messageLocation.messageLocationTypeValue
-        val unreadLocationCounter = counterDao.findUnreadLocationById(locationId) ?: return
+        val unreadLocationCounter = counterDao.findUnreadLocationByIdBlocking(locationId) ?: return
         unreadLocationCounter.increment(messageIds.size)
 
         val countersToUpdate: MutableList<UnreadLocationCounter> = ArrayList()
         countersToUpdate.add(unreadLocationCounter)
 
-        val starredUnread = counterDao.findUnreadLocationById(MessageLocationType.STARRED.messageLocationTypeValue)
+        val starredUnread = counterDao.findUnreadLocationByIdBlocking(MessageLocationType.STARRED.messageLocationTypeValue)
         if (starredUnread != null) {
             starredUnread.increment()
             countersToUpdate.add(starredUnread)

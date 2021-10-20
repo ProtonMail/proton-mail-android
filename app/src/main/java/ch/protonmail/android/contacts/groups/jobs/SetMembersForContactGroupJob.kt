@@ -18,34 +18,30 @@
  */
 package ch.protonmail.android.contacts.groups.jobs
 
-import android.text.TextUtils
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
+import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.Params
+import kotlinx.coroutines.runBlocking
 
 class SetMembersForContactGroupJob(
     private val contactGroupId: String,
     private val contactGroupName: String,
-    private val membersList: List<String>
+    private val membersList: List<String>,
+    private val labelRepository: LabelRepository
 ) : ProtonMailBaseJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_LABEL)) {
 
     override fun onRun() {
-        val contactsDatabase = ContactDatabase
-            .getInstance(applicationContext, getUserManager().requireCurrentUserId())
-            .getDao()
         var id = contactGroupId
-        if (TextUtils.isEmpty(id)) {
-            val contactLabel = contactsDatabase.findContactGroupByName(contactGroupName)
-            id = contactLabel?.ID ?: ""
+        runBlocking {
+            if (id.isEmpty()) {
+                val contactLabel = labelRepository.findLabelByName(contactGroupName, requireNotNull(userId))
+                id = contactLabel?.id?.id ?: ""
+            }
+            val labelContactsBody = LabelContactsBody(id, membersList)
+            getApi().labelContacts(labelContactsBody)
         }
-        val labelContactsBody = LabelContactsBody(id, membersList)
-        getApi().labelContacts(labelContactsBody)
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.io())
-            .blockingAwait()
     }
 }

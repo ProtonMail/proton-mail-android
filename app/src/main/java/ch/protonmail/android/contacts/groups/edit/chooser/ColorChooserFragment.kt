@@ -93,9 +93,7 @@ class ColorChooserFragment : AbstractDialogFragment(), AdapterView.OnItemClickLi
 
     companion object {
 
-        fun newInstance(): ColorChooserFragment {
-            return ColorChooserFragment()
-        }
+        fun newInstance(): ColorChooserFragment = ColorChooserFragment()
     }
 
     interface IColorChooserListener {

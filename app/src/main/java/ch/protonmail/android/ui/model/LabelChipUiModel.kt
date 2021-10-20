@@ -20,8 +20,8 @@
 package ch.protonmail.android.ui.model
 
 import androidx.annotation.ColorInt
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.labels.domain.model.LabelId
 
 /**
  * Ui Model for [LabelChipView]

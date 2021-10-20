@@ -20,15 +20,14 @@ package ch.protonmail.android.contacts.groups.edit
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.UnsavedChangesDialog
@@ -45,6 +44,10 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_edit_create_contact_group_header.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import me.proton.core.presentation.utils.onTextChange
+import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.Random
@@ -64,7 +67,6 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
 
     override fun colorChosen(@ColorInt color: Int) {
         contactGroupEditCreateViewModel.setGroupColor(color)
-        setColor()
         contactGroupEditCreateViewModel.setChanged()
     }
 
@@ -80,8 +82,15 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         contactGroupEditCreateViewModel = ViewModelProviders.of(this, contactGroupEditCreateViewModelFactory)
             .get(ContactGroupEditCreateViewModel::class.java)
         contactGroupEditCreateViewModel.setData(intent?.extras?.getParcelable(EXTRA_CONTACT_GROUP))
-        setColor()
-        setName()
+
+        contactGroupEditCreateViewModel.contactGroupItemFlow
+            .onEach { item ->
+                setColor(item?.color)
+                setName(item?.name ?: EMPTY_STRING)
+            }
+            .launchIn(lifecycleScope)
+
+
         contactGroupEditCreateViewModel.contactGroupSetupLayout.observe(
             this,
             { event ->
@@ -130,10 +139,9 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                     this,
                     {
                         progress.visibility = View.GONE
-                        it?.getContentIfNotHandled()?.let {
-                            val status = it.status
-                            when (status) {
-                                Status.FAILED -> showToast(it.message ?: getString(R.string.error))
+                        it?.getContentIfNotHandled()?.let { postResult ->
+                            when (postResult.status) {
+                                Status.FAILED -> showToast(postResult.message ?: getString(R.string.error))
                                 Status.SUCCESS -> {
                                     showToast(R.string.contact_group_saved)
                                     saveLastInteraction()
@@ -179,7 +187,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
             mode = GroupsItemAdapterMode.NORMAL
         )
         with(contactEmailsRecyclerView) {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@ContactGroupEditCreateActivity)
+            layoutManager = LinearLayoutManager(this@ContactGroupEditCreateActivity)
             adapter = contactGroupEmailsAdapter
         }
     }
@@ -209,7 +217,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     private fun startObserving() {
         contactGroupEditCreateViewModel.contactGroupEmailsResult.observe(
             this,
-            Observer {
+            {
                 // prevent flickering between previous and future contacts list while waiting for response
                 if (progress.visibility != View.VISIBLE) {
                     refreshData(HashSet(it))
@@ -218,15 +226,15 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         )
         contactGroupEditCreateViewModel.contactGroupEmailsError.observe(
             this,
-            Observer {
+            {
                 membersList.visibility = View.GONE
             }
         )
         contactGroupEditCreateViewModel.cleanUpComplete.observe(
             this,
-            Observer {
-                it?.getContentIfNotHandled()?.let {
-                    if (!it) {
+            {
+                it?.getContentIfNotHandled()?.let { isHandled ->
+                    if (!isHandled) {
                         buildAndShowUnsavedEditDialog()
                     } else {
                         saveLastInteraction()
@@ -235,7 +243,6 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                 }
             }
         )
-        contactGroupEditCreateViewModel.getContactGroupEmails()
     }
 
     private fun refreshData(it: HashSet<ContactEmail>?) {
@@ -253,23 +260,16 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         }
     }
 
-    private fun setName() {
-        contactGroupName.text = contactGroupEditCreateViewModel.getGroupName()
-        contactGroupName.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
+    private fun setName(groupName: String) {
+        contactGroupName.apply {
+            text = groupName
+            onTextChange {
                 contactGroupEditCreateViewModel.setChanged()
             }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { // noop
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { // noop
-            }
-        })
+        }
     }
 
-    private fun setColor() {
-        val colorInt: Int? = contactGroupEditCreateViewModel.getGroupColor()
+    private fun setColor(colorInt: Int?) {
         val color = if (colorInt != null && colorInt != 0) {
             colorInt
         } else {

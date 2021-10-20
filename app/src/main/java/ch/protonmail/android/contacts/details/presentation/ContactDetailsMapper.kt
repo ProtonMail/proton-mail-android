@@ -42,7 +42,7 @@ class ContactDetailsMapper @Inject constructor() {
 
         val groups = groupsResult.groupsList.mapIndexed { index, group ->
             ContactDetailsUiItem.Group(
-                group.ID,
+                group.id,
                 group.name,
                 Color.parseColor(UiUtil.normalizeColor(group.color)),
                 index

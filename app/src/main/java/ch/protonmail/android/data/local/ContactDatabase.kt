@@ -21,31 +21,79 @@ package ch.protonmail.android.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import ch.protonmail.android.BuildConfig
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import ch.protonmail.android.data.ProtonMailConverters
+import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_ID
+import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABEL_IDS
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsConverter
+import ch.protonmail.android.data.local.model.TABLE_CONTACT_EMAILS
+import me.proton.core.data.room.db.CommonConverters
+import org.apache.commons.lang3.StringEscapeUtils
 
 @Database(
     entities = [
         ContactData::class,
         ContactEmail::class,
-        ContactLabel::class,
         FullContactDetails::class,
-        ContactEmailContactLabelJoin::class
     ],
-    version = BuildConfig.ROOM_DB_VERSION
+    version = 2
 )
-@TypeConverters(value = [FullContactDetailsConverter::class])
+@TypeConverters(
+    FullContactDetailsConverter::class,
+    // Core - temp solution before migration to 1 db
+    CommonConverters::class,
+    ProtonMailConverters::class
+)
 abstract class ContactDatabase : RoomDatabase() {
 
     abstract fun getDao(): ContactDao
 
     companion object : DatabaseFactory<ContactDatabase>(
         ContactDatabase::class,
-        "ContactsDatabase.db"
+        "ContactsDatabase.db",
+        MIGRATION_1_2
     )
+}
+
+private val MIGRATION_1_2 = object : Migration(1, 2) {
+
+    private val CONTACT_LABEL_TABLE = "ContactLabel"
+    private val CONTACT_EMAILS_LABEL_JOIN_TABLE = "ContactEmailsLabelJoin"
+
+    private val selectContactIdsToLabelIdsQuery =
+        "SELECT $COLUMN_CONTACT_EMAILS_ID, $COLUMN_CONTACT_EMAILS_LABEL_IDS " +
+            "from $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS <> ''"
+
+    private fun updateLabelIdsQuery(labelIds: String, contactId: String) =
+        "UPDATE $TABLE_CONTACT_EMAILS SET $COLUMN_CONTACT_EMAILS_LABEL_IDS = '$labelIds' " +
+            "WHERE $COLUMN_CONTACT_EMAILS_ID = '$contactId'"
+
+    override fun migrate(database: SupportSQLiteDatabase) {
+        with(database) {
+            fixCorruptedLabelIds()
+            dropContactEmailsLabelJoinTable()
+            dropContactLabelTable()
+        }
+    }
+
+    private fun SupportSQLiteDatabase.fixCorruptedLabelIds() {
+        query(selectContactIdsToLabelIdsQuery).use { cursor ->
+            while (cursor.moveToNext()) {
+                val contactId = cursor.getString(0)
+                val corruptedLabelIds = cursor.getString(1)
+                val fixedLabelIds = StringEscapeUtils.unescapeJava(corruptedLabelIds)
+                execSQL(updateLabelIdsQuery(fixedLabelIds, contactId))
+            }
+        }
+    }
+
+    private fun SupportSQLiteDatabase.dropContactLabelTable() =
+        execSQL("DROP TABLE $CONTACT_LABEL_TABLE")
+
+    private fun SupportSQLiteDatabase.dropContactEmailsLabelJoinTable() =
+        execSQL("DROP TABLE $CONTACT_EMAILS_LABEL_JOIN_TABLE")
 }

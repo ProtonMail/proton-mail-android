@@ -29,17 +29,22 @@ import com.birbit.android.jobqueue.Job
 
 class TrashSwipeHandler : ISwipeHandler {
 
-    override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job =
+    override fun handleSwipe(
+        message: SimpleMessage,
+        currentLocation: String
+    ): Job =
         PostTrashJobV2(listOf(message.messageId), currentLocation)
 
     override fun handleUndo(
         message: SimpleMessage,
         messageLocation: Constants.MessageLocationType,
-        currentLocation: String?
+        currentLocation: String
     ): Job = when (messageLocation) {
         Constants.MessageLocationType.INBOX -> PostInboxJob(listOf(message.messageId))
         Constants.MessageLocationType.ARCHIVE -> PostArchiveJob(listOf(message.messageId))
-        Constants.MessageLocationType.LABEL_FOLDER -> MoveToFolderJob(listOf(message.messageId), currentLocation)
+        Constants.MessageLocationType.LABEL_FOLDER -> MoveToFolderJob(
+            listOf(message.messageId), currentLocation
+        )
         else -> PostDraftJob(listOf(message.messageId))
     }
 }

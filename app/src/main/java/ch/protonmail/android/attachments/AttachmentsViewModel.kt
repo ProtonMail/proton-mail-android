@@ -83,9 +83,9 @@ class AttachmentsViewModel @Inject constructor(
     }
 
     private fun draftWasAlreadyCreated(existingMessage: Message, updatedMessage: Message) =
-        isRemoteMessage(existingMessage)
-            && isRemoteMessage(updatedMessage)
-            && existingMessage.messageId == updatedMessage.messageId
+        isRemoteMessage(existingMessage) &&
+            isRemoteMessage(updatedMessage) &&
+            existingMessage.messageId == updatedMessage.messageId
 
     private fun draftCreationHappened(existingMessage: Message, updatedMessage: Message) =
         !isRemoteMessage(existingMessage) && isRemoteMessage(updatedMessage)

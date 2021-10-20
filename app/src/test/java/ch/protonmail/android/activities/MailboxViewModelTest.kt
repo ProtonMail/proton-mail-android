@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.activities
 
+import android.graphics.Color
 import androidx.lifecycle.liveData
 import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -34,19 +35,20 @@ import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
 import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.di.JobEntryPoint
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
-import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
@@ -57,6 +59,7 @@ import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
@@ -86,8 +89,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.util.kotlin.EMPTY_STRING
-import org.junit.After
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -142,6 +144,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val getMailSettings: GetMailSettings = mockk()
 
+    private val observeLabels: ObserveLabels = mockk()
+
     private val messageRecipientToCorrespondentMapper = MessageRecipientToCorrespondentMapper()
 
     private lateinit var viewModel: MailboxViewModel
@@ -149,6 +153,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val loadingState = MailboxState.Loading
     private val messagesResponseChannel = Channel<GetMessagesResult>()
     private val conversationsResponseFlow = Channel<GetConversationsResult>()
+
+    private val currentUserId = UserId("8237462347237428")
+    private val testColorInt = 871
 
     @BeforeTest
     fun setUp() {
@@ -165,6 +172,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
         val jobEntryPoint = mockk<JobEntryPoint>()
         mockkStatic(EntryPoints::class)
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
+
 
         every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
         every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
@@ -173,13 +183,23 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery { contactsRepository.findContactsByEmail(any()) } returns flowOf(emptyList())
 
         val allLabels = (0..11).map {
-            Label(id = "$it", name = "label $it", color = EMPTY_STRING)
+            Label(
+                id = LabelId("$it"),
+                name = "label $it",
+                color = testColorInt.toString(),
+                order = 0,
+                type = LabelType.MESSAGE_LABEL,
+                path = "a/b",
+                parentId = "parentId",
+            )
+
         }
-        every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
-        every { labelRepository.findLabels(any(), any()) } answers {
+        coEvery { labelRepository.findAllLabels(any()) } returns allLabels
+        coEvery { labelRepository.findLabels(any()) } answers {
             val labelIds = arg<List<LabelId>>(1)
-            flowOf(allLabels.filter { label -> LabelId(label.id) in labelIds })
+            allLabels.filter { label -> label.id in labelIds }
         }
+        coEvery { observeLabels(any(), any()) } returns flowOf(allLabels)
 
         viewModel = MailboxViewModel(
             messageDetailsRepository = messageDetailsRepository,
@@ -201,16 +221,17 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             moveConversationsToFolder = moveConversationsToFolder,
             moveMessagesToFolder = moveMessagesToFolder,
             deleteConversations = deleteConversations,
-            observeLabels = mockk(),
+            observeLabels = observeLabels,
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings,
             messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper
         )
     }
 
-    @After
+    @AfterTest
     fun tearDown() {
         unmockkStatic(EntryPoints::class)
+        unmockkStatic(Color::class)
     }
 
     @Test
@@ -512,6 +533,14 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             }
         )
         every { conversationModeEnabled(any()) } returns false
+        coEvery {
+            labelRepository.findLabels(
+                listOf(LabelId("0"), LabelId("2"))
+            )
+        } returns listOf(
+            Label(LabelId("0"), "label 0", "blue", 0, LabelType.MESSAGE_LABEL, "", ""),
+            Label(LabelId("2"), "label 2", "blue", 0, LabelType.MESSAGE_LABEL, "", "")
+        )
 
         val expected = MailboxUiItem(
             itemId = "messageId",
@@ -532,8 +561,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             ),
             isDeleted = false,
             labels = listOf(
-                LabelChipUiModel(LabelId("0"), Name("label 0"), null),
-                LabelChipUiModel(LabelId("2"), Name("label 2"), null)
+                LabelChipUiModel(LabelId("0"), Name("label 0"), testColorInt),
+                LabelChipUiModel(LabelId("2"), Name("label 2"), testColorInt)
             ),
             recipients = "recipientName",
             isDraft = false
@@ -744,7 +773,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messagesCount = 2,
                 messageData = null,
                 isDeleted = false,
-                labels = listOf(LabelChipUiModel(LabelId("10"), Name("label 10"), null)),
+                labels = listOf(LabelChipUiModel(LabelId("10"), Name("label 10"), testColorInt)),
                 recipients = "",
                 isDraft = false
             ).toMailboxState()
@@ -846,8 +875,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messageData = null,
                 isDeleted = false,
                 labels = listOf(
-                    LabelChipUiModel(LabelId("0"), Name("label 0"), null),
-                    LabelChipUiModel(LabelId("6"), Name("label 6"), null)
+                    LabelChipUiModel(LabelId("0"), Name("label 0"), testColorInt),
+                    LabelChipUiModel(LabelId("6"), Name("label 6"), testColorInt)
                 ),
                 recipients = "",
                 isDraft = false
@@ -902,7 +931,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messagesCount = 2,
                 messageData = null,
                 isDeleted = false,
-                labels = listOf(LabelChipUiModel(LabelId("6"), Name("label 6"), null)),
+                labels = listOf(LabelChipUiModel(LabelId("6"), Name("label 6"), testColorInt)),
                 recipients = "",
                 isDraft = false
             ).toMailboxState()
@@ -954,8 +983,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messageData = null,
                 isDeleted = false,
                 labels = listOf(
-                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
                 ),
                 recipients = "",
                 true
@@ -1007,8 +1036,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 messageData = null,
                 isDeleted = false,
                 labels = listOf(
-                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
                 ),
                 recipients = "",
                 false
@@ -1037,6 +1066,18 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 }
             )
             every { conversationModeEnabled(any()) } returns false
+            coEvery {
+                labelRepository.findLabels(
+                    listOf(LabelId(ALL_DRAFT_LABEL_ID), LabelId(DRAFT_LABEL_ID))
+                )
+            } returns listOf(
+                Label(
+                    LabelId(ALL_DRAFT_LABEL_ID), "label 1", "blue", 0, LabelType.MESSAGE_LABEL, "", "",
+                ),
+                Label(
+                    LabelId(DRAFT_LABEL_ID), "label 8", "blue", 0, LabelType.MESSAGE_LABEL, "", "",
+                )
+            )
 
             // Then
             val expected = MailboxUiItem(
@@ -1058,8 +1099,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 ),
                 isDeleted = false,
                 labels = listOf(
-                    LabelChipUiModel(LabelId("1"), Name("label 1"), null),
-                    LabelChipUiModel(LabelId("8"), Name("label 8"), null)
+                    LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
+                    LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
                 ),
                 recipients = "",
                 isDraft = true

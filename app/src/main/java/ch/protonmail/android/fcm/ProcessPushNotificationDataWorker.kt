@@ -101,7 +101,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
         queueNetworkUtil.setCurrentlyHasConnectivity()
 
         val notificationUserId = sessionManager.getUserId(SessionId(sessionId))
-        // we do not show notifications for unknown/inactive users
+            // we do not show notifications for unknown/inactive users
             ?: return Result.failure(
                 workDataOf(
                     KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR to "User is unknown or inactive"

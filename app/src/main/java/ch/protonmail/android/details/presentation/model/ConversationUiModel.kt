@@ -19,8 +19,8 @@
 
 package ch.protonmail.android.details.presentation.model
 
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.ui.model.LabelChipUiModel
 
 data class ConversationUiModel(

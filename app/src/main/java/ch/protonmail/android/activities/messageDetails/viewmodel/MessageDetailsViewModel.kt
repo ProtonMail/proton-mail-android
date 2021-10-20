@@ -47,28 +47,29 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.DIR_EMB_ATTACHMENT_DOWNLOADS
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.jobs.helper.EmbeddedImage
-import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.model.LabelChipUiModel
@@ -250,7 +251,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         val exclusiveLabelsHashMap = hashMapOf<String, List<Label>>()
         conversation.messages.filter { it.allLabelIDs.isNotEmpty() }.forEach { message ->
             val messageId = requireNotNull(message.messageId)
-            getAllLabelsFor(userManager.requireCurrentUserId(), message)?.let { (exclusiveLabels, nonExclusiveLabels) ->
+            getAllLabelsFor(message)?.let { (exclusiveLabels, nonExclusiveLabels) ->
                 exclusiveLabelsHashMap[messageId] = exclusiveLabels.toList()
                 nonExclusiveLabelsHashMap[messageId] = nonExclusiveLabels
             }
@@ -264,20 +265,19 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private suspend fun getAllLabelsFor(
-        userId: UserId,
         message: Message
     ): Pair<Collection<Label>, List<LabelChipUiModel>>? {
         val allLabelIds = message.allLabelIDs.map { labelId -> LabelId(labelId) }
-        return labelRepository.findLabels(userId, allLabelIds)
+        return labelRepository.observeLabels(allLabelIds)
             .firstOrNull()
-            ?.partition { it.exclusive }
+            ?.partition { it.type == LabelType.FOLDER }
             ?.mapSecond { it.toNonExclusiveLabelModel() }
     }
 
     private fun Label.toNonExclusiveLabelModel(): LabelChipUiModel {
         val labelColor = color.takeIfNotBlank()
             ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-        return LabelChipUiModel(LabelId(id), Name(name), labelColor)
+        return LabelChipUiModel(id, Name(name), labelColor)
     }
 
     fun markUnread() {
@@ -363,7 +363,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private suspend fun loadConversationDetails(
-        result: DataResult<Conversation>, userId: UserId
+        result: DataResult<Conversation>,
+        userId: UserId
     ): ConversationUiModel? {
         return when (result) {
             is DataResult.Success -> {
@@ -663,7 +664,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         fetchingPubKeys = false
         // render with the new verification keys
         if (renderingPassed) {
-            RegisterReloadTask(message).execute()
+            RegisterReloadTask(message, labelRepository).execute()
         }
     }
 
@@ -721,8 +722,8 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun moveLastMessageToTrash() {
         viewModelScope.launch {
+            val primaryUserId = userManager.requireCurrentUserId()
             if (isConversationEnabled() && doesConversationHaveMoreThanOneMessage()) {
-                val primaryUserId = userManager.requireCurrentUserId()
                 moveConversationsToFolder(
                     listOf(messageOrConversationId),
                     primaryUserId,
@@ -733,7 +734,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                     moveMessagesToFolder(
                         listOf(requireNotNull(message.messageId)),
                         Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
-                        message.folderLocation ?: EMPTY_STRING
+                        message.folderLocation ?: EMPTY_STRING,
+                        primaryUserId
                     )
                 }
             }
