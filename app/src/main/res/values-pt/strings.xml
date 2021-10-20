@@ -71,14 +71,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sent_option">ENVIADO</string>
     <string name="archive_option">ARQUIVO</string>
     <string name="trash_option">LIXO</string>
-    <string name="spam_option">ASSÉDIO</string>
+    <string name="spam_option">Spam</string>
     <string name="inbox">Caixa de entrada</string>
     <string name="starred">Com estrela</string>
     <string name="drafts">Rascunhos</string>
     <string name="sent">Enviado</string>
     <string name="archive">Arquivo</string>
     <string name="trash">Lixo</string>
-    <string name="spam">Assédio</string>
+    <string name="spam">Spam</string>
     <string name="contacts">Contactos</string>
     <string name="search_contacts">Procurar contactos</string>
     <string name="fetching_contacts">A obter contactos do ProtonMail...</string>
@@ -101,7 +101,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="mark_unread">Marcar como não lida</string>
     <string name="move_to_archive">Mover para o arquivo</string>
     <string name="move_to_trash">Mover para o lixo</string>
-    <string name="move_to_spam">Mover para o assédio</string>
+    <string name="move_to_spam">Mover para Spam</string>
     <string name="move_to_inbox">Mover para a caixa de entrada</string>
     <string name="are_you_sure_empty">Tem a certeza de que deseja eliminar todas as mensagens desta pasta?</string>
     <string name="send">Enviar</string>
@@ -394,11 +394,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upgrade_line5">Prioridade no apoio ao cliente</string>
     <string name="upgrade">Actualizar</string>
     <string name="payment_options">Opção de pagamento</string>
-    <string name="other_plans">Para planos com mais armazenamento, actualize através 
+    <string name="other_plans">Para planos com mais armazenamento, actualize através
     da aplicação web do ProtonMail.</string>
     <string name="upgrade_paid_user">Obrigado por ser um utilizador pagante!</string>
     <string name="select_account_type">Seleccione o seu tipo de conta</string>
-    <string name="select_account_type_subtitle">O ProtonMail é um serviço gratuito 
+    <string name="select_account_type_subtitle">O ProtonMail é um serviço gratuito
     para o bem público. Pode ajudar a apoiar a privacidade online subscrevendo uma conta paga.</string>
     <string name="plan_free_with_price">FREE</string>
     <string name="plan_plus_with_price">PLUS %s /mês</string>
@@ -730,9 +730,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print">Imprimir</string>
     <string name="phishing_dialog_title">Confirmar relatório de phishing</string>
     <string name="phishing_dialog_message">Comunicar uma mensagem como uma tentativa de phishing enviará a
- mensagem para nós, para que possamos analisá-la e melhorar os nossos filtros. Isto significa que poderemos 
+ mensagem para nós, para que possamos analisá-la e melhorar os nossos filtros. Isto significa que poderemos
  ver o conteúdo da mensagem na íntegra.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Relatório enviado. Mensagem movida para o assédio.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Relatório enviado. Mensagem movida para o spam.</string>
     <string name="cannot_send_report_send">Impossível enviar o relatório</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
@@ -897,7 +897,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_action_trash">Mensagem movida para o lixo</string>
     <string name="swipe_action_trash_short">Movida para o lixo</string>
     <string name="swipe_action_star">Estrela da mensagem actualizada</string>
-    <string name="swipe_action_spam">Mensagem marcada como assédio</string>
+    <string name="swipe_action_spam">Mensagem marcada como spam</string>
     <string name="swipe_action_archive">Mensagem arquivada</string>
     <string name="swipe_action_mark_read">Mensagem marcada como lida</string>
     <plurals name="action_move_to_trash">
@@ -905,8 +905,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="other">Mensagens movidas para o lixo</item>
     </plurals>
     <plurals name="action_move_to_spam">
-        <item quantity="one">Mensagem marcada como assédio</item>
-        <item quantity="other">Mensagens marcadas como assédio</item>
+        <item quantity="one">Mensagem marcada como spam</item>
+        <item quantity="other">Mensagens marcadas como spam</item>
     </plurals>
     <plurals name="action_move_to_archive">
         <item quantity="one">Mensagem arquivada</item>
