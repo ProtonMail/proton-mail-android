@@ -181,21 +181,119 @@ class LabelDomainActionItemUiMapperTest {
         assertEquals(expected, result)
     }
 
+    @Test
+    fun childFolderColorIsUsedIfDefined() {
+        // given
+        val parent = "parent"
+        val child = "child"
+        val redString = "red"
+        val blueString = "blue"
+        val redInt = 1
+        val blueInt = 2
+
+        val childFolder = buildFolder(name = child, color = blueString)
+        val parentFolder = buildFolder(name = parent, color = redString, children = listOf(childFolder))
+        val input = listOf(parentFolder)
+
+        every { Color.parseColor(redString) } returns redInt
+        every { Color.parseColor(blueString) } returns blueInt
+
+        val expected = listOf(
+            buildActionItem(name = parent, folderLevel = 0, colorInt = redInt),
+            buildActionItem(name = child, folderLevel = 1, colorInt = blueInt),
+        )
+
+        // when
+        val result = mapper.toUiModels(input, emptyList())
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun parentColorIsUsedIfNoneDefined() {
+        // given
+        val parent = "parent"
+        val child = "child"
+        val redString = "red"
+        val redInt = 1
+
+        val childFolder = buildFolder(name = child, color = EMPTY_STRING)
+        val parentFolder = buildFolder(name = parent, color = redString, children = listOf(childFolder))
+        val input = listOf(parentFolder)
+
+        every { Color.parseColor(redString) } returns redInt
+        every { Color.parseColor(EMPTY_STRING) } answers {
+            throw IllegalArgumentException("invalid color")
+        }
+
+        val expected = listOf(
+            buildActionItem(name = parent, folderLevel = 0, colorInt = redInt),
+            buildActionItem(name = child, folderLevel = 1, colorInt = redInt),
+        )
+
+        // when
+        val result = mapper.toUiModels(input, emptyList())
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun defaultColorIsUsedIfNoneDefinedForFolderAndParent() {
+        // given
+        val parent = "parent"
+        val child = "child"
+
+        val childFolder = buildFolder(name = child, color = EMPTY_STRING)
+        val parentFolder = buildFolder(name = parent, color = EMPTY_STRING, children = listOf(childFolder))
+        val input = listOf(parentFolder)
+
+        every { Color.parseColor(EMPTY_STRING) } answers {
+            throw IllegalArgumentException("invalid color")
+        }
+
+        val expected = listOf(
+            buildActionItem(name = parent, folderLevel = 0, colorInt = 0),
+            buildActionItem(name = child, folderLevel = 1, colorInt = 0),
+        )
+
+        // when
+        val result = mapper.toUiModels(input, emptyList())
+
+        // then
+        assertEquals(expected, result)
+    }
+
     private fun buildLabel() = LabelOrFolderWithChildren.Label(
         id = TEST_LABEL_ID,
         name = TEST_LABEL_NAME,
         color = EMPTY_STRING
     )
 
+    private fun buildFolder(
+        name: String = TEST_LABEL_NAME,
+        color: String = EMPTY_STRING,
+        children: Collection<LabelOrFolderWithChildren.Folder> = emptyList()
+    ) = LabelOrFolderWithChildren.Folder(
+        id = LabelId(name),
+        name = name,
+        color = color,
+        parentId = null,
+        path = name,
+        children = children
+    )
+
     private fun buildActionItem(
         name: String,
-        folderLevel: Int
+        folderLevel: Int,
+        colorInt: Int = TEST_COLOR_INT
     ) = LabelActonItemUiModel(
         labelId = LabelId(name),
         title = name,
         folderLevel = folderLevel,
         iconRes = R.drawable.ic_folder_filled,
-        colorInt = TEST_COLOR_INT,
+        colorInt = colorInt,
         labelType = LabelType.FOLDER
     )
 }

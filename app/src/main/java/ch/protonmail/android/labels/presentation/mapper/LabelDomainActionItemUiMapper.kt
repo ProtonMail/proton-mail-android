@@ -46,21 +46,37 @@ class LabelDomainActionItemUiMapper @Inject constructor(
     fun toUiModels(
         labels: Collection<LabelOrFolderWithChildren>,
         currentLabelsSelection: List<String>
-    ): List<LabelActonItemUiModel> = labels.flatMap { labelToUiModels(it, currentLabelsSelection, 0) }
+    ): List<LabelActonItemUiModel> = labels.flatMap { label ->
+        labelToUiModels(
+            label = label,
+            currentLabelsSelection = currentLabelsSelection,
+            folderLevel = 0,
+            parentColor = null
+        )
+    }
 
     private fun labelToUiModels(
         label: LabelOrFolderWithChildren,
         currentLabelsSelection: List<String>,
-        folderLevel: Int
+        folderLevel: Int,
+        parentColor: Int?
     ): List<LabelActonItemUiModel> {
 
         val parent = labelToUiModel(
             label = label,
             currentLabelsSelection = currentLabelsSelection,
-            folderLevel = folderLevel
+            folderLevel = folderLevel,
+            parentColor = parentColor
         )
         val children = if (label is LabelOrFolderWithChildren.Folder) {
-            label.children.flatMap { labelToUiModels(it, currentLabelsSelection, folderLevel + 1) }
+            label.children.flatMap {
+                labelToUiModels(
+                    label = it,
+                    currentLabelsSelection = currentLabelsSelection,
+                    folderLevel = folderLevel + 1,
+                    parentColor = parent.colorInt
+                )
+            }
         } else {
             emptyList()
         }
@@ -71,6 +87,7 @@ class LabelDomainActionItemUiMapper @Inject constructor(
         label: LabelOrFolderWithChildren,
         currentLabelsSelection: List<String>,
         folderLevel: Int,
+        parentColor: Int?
     ): LabelActonItemUiModel {
 
         val labelType = when (label) {
@@ -84,10 +101,14 @@ class LabelDomainActionItemUiMapper @Inject constructor(
             LabelType.CONTACT_GROUP -> throw IllegalArgumentException("Contacts are currently unsupported")
         }
 
-        val colorInt = if (useFolderColor) label.color.toColorIntOrDefault() else defaultIconColor
+        val colorInt = if (useFolderColor) {
+            label.color.toColorIntOrNull() ?: parentColor ?: defaultIconColor
+        } else {
+            defaultIconColor
+        }
 
         val isChecked = if (labelType == LabelType.MESSAGE_LABEL) {
-            currentLabelsSelection.contains(label.id.id)
+            label.id.id in currentLabelsSelection
         } else {
             null
         }
@@ -104,10 +125,10 @@ class LabelDomainActionItemUiMapper @Inject constructor(
         )
     }
 
-    private fun String.toColorIntOrDefault(): Int = try {
+    private fun String.toColorIntOrNull(): Int? = try {
         toColorInt()
     } catch (exc: IllegalArgumentException) {
         Timber.e(exc, "Unknown label color: $this")
-        defaultIconColor
+        null
     }
 }
