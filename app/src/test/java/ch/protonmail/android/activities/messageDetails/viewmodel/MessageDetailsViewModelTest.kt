@@ -639,7 +639,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         viewModel.markUnread()
 
         // then
-        coVerify(exactly = 0) {
+        coVerify(exactly = 1) {
             changeConversationsReadStatus.invoke(
                 listOf(inputConversationId),
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
@@ -647,7 +647,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
         }
-        coVerify(exactly = 1) {
+        coVerify(exactly = 0) {
             messageRepository.markUnRead(listOf(MESSAGE_ID_ONE))
         }
     }
@@ -704,14 +704,14 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         // when
         observeMessageFlow.tryEmit(message)
-        viewModel.moveLastMessageToTrash()
+        viewModel.moveToTrash()
 
         // then
         coVerify(exactly = 1) {
             moveMessagesToFolder.invoke(
                 listOf(inputConversationId),
                 Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
-                message.folderLocation ?: EMPTY_STRING,
+                inputMessageLocation.messageLocationTypeValue.toString(),
                 testUserId1
             )
         }
@@ -738,7 +738,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // when
         userIdFlow.tryEmit(testUserId2)
         observeConversationFlow.tryEmit(conversationResult)
-        viewModel.moveLastMessageToTrash()
+        viewModel.moveToTrash()
 
         // then
         coVerify(exactly = 1) {
@@ -776,17 +776,17 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // when
         userIdFlow.tryEmit(testUserId2)
         observeConversationFlow.tryEmit(conversationResult)
-        viewModel.moveLastMessageToTrash()
+        viewModel.moveToTrash()
 
         // then
-        coVerify(exactly = 0) {
+        coVerify(exactly = 1) {
             moveConversationsToFolder(
                 listOf(inputConversationId),
                 testId1,
                 Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
             )
         }
-        coVerify(exactly = 1) {
+        coVerify(exactly = 0) {
             moveMessagesToFolder.invoke(
                 any(),
                 any(),
@@ -897,14 +897,14 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         viewModel.delete()
 
         // then
-        coVerify(exactly = 0) {
+        coVerify(exactly = 1) {
             deleteConversations(
                 listOf(inputConversationId),
                 testId1,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
         }
-        coVerify(exactly = 1) {
+        coVerify(exactly = 0) {
             deleteMessage.invoke(
                 listOf(MESSAGE_ID_ONE),
                 inputMessageLocation.messageLocationTypeValue.toString()

@@ -627,7 +627,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         messageDetailsActionsView.setOnSecondActionClickListener {
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) {
                 viewModel.delete()
-            } else viewModel.moveLastMessageToTrash()
+            } else viewModel.moveToTrash()
             onBackPressed()
         }
         messageDetailsActionsView.setOnFirstActionClickListener {
