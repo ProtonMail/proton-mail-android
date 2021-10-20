@@ -19,5 +19,5 @@
   -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/dark_silver_gray">
-    <item android:drawable="@android:color/white" />
+    <item android:drawable="@color/background_norm" />
 </ripple>

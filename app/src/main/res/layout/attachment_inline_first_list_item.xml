@@ -61,7 +61,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
                 android:text="@string/inline_prefix"
-                android:textColor="@color/chateau_gray"
+                android:textColor="@color/text_norm"
                 app:fontName="Roboto-Thin.ttf" />
 
             <LinearLayout
@@ -76,12 +76,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
+                    android:textColor="@color/text_norm"
                     android:layout_marginRight="4dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/attachment_size"
                     style="@style/AttachmentText"
+                    android:textColor="@color/text_norm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
