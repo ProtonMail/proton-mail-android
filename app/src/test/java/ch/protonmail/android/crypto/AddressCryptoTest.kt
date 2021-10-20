@@ -26,19 +26,13 @@ import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.utils.crypto.OpenPGP
-import com.proton.gopenpgp.crypto.PlainMessage
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
-import org.junit.Ignore
 import java.util.UUID
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
 private const val USER_ID_VALUE = "userId"
 private const val ADDRESS_ID_VALUE = "addressId"
@@ -76,11 +70,6 @@ class AddressCryptoTest {
         addressId = AddressId(ADDRESS_ID_VALUE)
     )
 
-    @AfterTest
-    fun tearDown() {
-        unmockkStatic(GoOpenPgpCrypto::class)
-    }
-
     @Test
     fun whenPassphraseForKeyIsRequestedForNonMigratedUserThenTheMailboxPasswordIsReturned() {
         val key = buildAddressKey(null, null)
@@ -89,35 +78,6 @@ class AddressCryptoTest {
 
         assertEquals(MAILBOX_PASSWORD, actual?.toString(Charsets.UTF_8))
     }
-
-    @Test
-    @Ignore("Kept for discussion purposes on the PR, will drop afterwards")
-    fun whenPassphraseForKeyIsRequestedForMigratedUserThenAllKeysAreCheckedForAValidSignedToken() {
-        val token = PgpField.Message(NotBlankString(TOKEN))
-        val signature = PgpField.Signature(NotBlankString("Signature"))
-        val addressKey = buildAddressKey(token, signature)
-
-        mockkStatic(GoOpenPgpCrypto::class) {
-            every { GoOpenPgpCrypto.newPGPMessageFromArmored(TOKEN) } answers { mockk() }
-            every { GoOpenPgpCrypto.newKeyFromArmored(PRIVATE_KEY_FAILING_DECRYPTING) } returns mockk {
-                every { GoOpenPgpCrypto.newKeyRing(any()) } returns mockk {
-                    every { decrypt(any(), null, 0) } returns null
-                }
-            }
-
-            every { GoOpenPgpCrypto.newKeyFromArmored(PRIVATE_KEY_SUCCESSFUL_DECRYPTING) } returns mockk {
-                every { GoOpenPgpCrypto.newKeyRing(any()) } returns mockk {
-                    every { decrypt(any(), null, 0) } returns PlainMessage("decrypted token")
-                }
-            }
-        }
-
-        val actual = addressCrypto.passphraseFor(addressKey)
-
-        val decryptedToken = "decrypted token"
-        assertEquals(decryptedToken, actual?.toString(Charsets.UTF_8))
-    }
-
 
     private fun buildKeys(privateKey: String) = Keys(
         UUID.randomUUID().toString(),
