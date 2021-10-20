@@ -741,7 +741,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                 conversationDao.updateNumUnreadMessages(conversationId, unreadMessages + 1)
                 conversationDao.updateNumUnreadMessages(conversationId1, unreadMessages + 1)
             }
-            coVerify {
+            coVerify(exactly = 2) {
                 markUnreadLatestNonDraftMessageInLocation(
                     conversationMessagesList,
                     locationId,
