@@ -277,8 +277,6 @@ internal class AccountStateManager @Inject constructor(
             // FCM Register (see MailboxActivity.checkRegistration).
             fcmTokenManagerFactory.create(prefs).setTokenSent(false)
         }
-        // We have a primary account.
-        mutableStateFlow.tryEmit(State.PrimaryExist)
     }
 
     private suspend fun onAccountDisabled(account: Account) = withContext(NonCancellable + dispatchers.Io) {
