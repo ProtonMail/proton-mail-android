@@ -125,7 +125,7 @@
     <string name="sent_option">Enviado</string>
     <string name="archive_option">Arquivo</string>
     <string name="trash_option">Lixo</string>
-    <string name="spam_option">Assédio</string>
+    <string name="spam_option">Spam</string>
     <string name="allmail_option">Todo o correio</string>
     <string name="inbox">Caixa de entrada</string>
     <string name="starred">Com estrela</string>
@@ -133,7 +133,7 @@
     <string name="sent">Enviado</string>
     <string name="archive">Arquivo</string>
     <string name="trash">Lixo</string>
-    <string name="spam">Assédio</string>
+    <string name="spam">Spam</string>
     <string name="all_mail">Todo o correio</string>
     <string name="contacts">Contactos</string>
     <string name="search_contacts">Procurar contactos</string>
@@ -156,7 +156,7 @@
     <string name="mark_unread">Marcar como não lida</string>
     <string name="move_to_archive">Mover para o arquivo</string>
     <string name="move_to_trash">Mover para o lixo</string>
-    <string name="move_to_spam">Mover para o assédio</string>
+    <string name="move_to_spam">Mover para Spam</string>
     <string name="move_to_inbox">Mover para a caixa de entrada</string>
     <string name="move_to">Mover para…</string>
     <string name="are_you_sure_empty">Tem a certeza de que deseja eliminar todas as mensagens desta pasta?</string>
@@ -663,7 +663,7 @@
     <string name="phishing_dialog_message">Comunicar uma mensagem como uma tentativa de phishing enviará a
  mensagem para nós, para que possamos analisá-la e melhorar os nossos filtros. Isto significa que poderemos 
  ver o conteúdo da mensagem na íntegra.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Relatório enviado. Mensagem movida para o assédio.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Relatório enviado. Mensagem movida para o spam.</string>
     <string name="cannot_send_report_send">Impossível enviar o relatório</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
@@ -853,8 +853,8 @@
     <string name="swipe_action_trash_short">Mover para Lixo</string>
     <string name="swipe_action_star">Estrela da mensagem actualizada</string>
     <string name="swipe_action_star_short">Actualizar estrela</string>
-    <string name="swipe_action_spam">Mensagem marcada como assédio</string>
-    <string name="swipe_action_spam_short">Assédio</string>
+    <string name="swipe_action_spam">Mensagem marcada como spam</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Mensagem arquivada</string>
     <string name="swipe_action_archive_short">Arquivo</string>
     <string name="swipe_action_mark_read">Mensagem marcada como lida</string>
@@ -864,8 +864,8 @@
         <item quantity="other">Mensagens movidas para o lixo</item>
     </plurals>
     <plurals name="action_move_to_spam">
-        <item quantity="one">Mensagem marcada como assédio</item>
-        <item quantity="other">Mensagens marcadas como assédio</item>
+        <item quantity="one">Mensagem marcada como spam</item>
+        <item quantity="other">Mensagens marcadas como spam</item>
     </plurals>
     <plurals name="action_move_to_archive">
         <item quantity="one">Mensagem arquivada</item>
@@ -963,7 +963,7 @@
     <string name="move_message">Mover mensagem</string>
     <string name="manage">Gerir</string>
     <string name="message_from">Mensagem de %s</string>
-    <string name="not_spam_move_to_inbox">Não é assédio (mover para caixa de entrada)</string>
+    <string name="not_spam_move_to_inbox">Não é spam (mover para caixa de entrada)</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d mensagem</item>
         <item quantity="other">%d mensagens</item>
