@@ -83,6 +83,7 @@ import kotlin.math.max
 // For non-custom locations such as: Inbox, Sent, Archive etc.
 private const val MAX_LOCATION_ID_LENGTH = 2
 
+@Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 internal class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
@@ -368,6 +369,33 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                     val newLabels = conversation.labels.filter { it.id != currentFolderId }
                     conversationDao.updateLabels(conversationId, newLabels)
                 }
+            }
+        }
+    }
+
+    override suspend fun updateConversationsAfterDeletingMessages(messageIds: List<String>, userId: UserId) {
+        messageIds.forEach forEachMessageId@{ messageId ->
+            val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId
+            val conversation = message.conversationId?.let {
+                conversationDao.findConversation(userId.id, it)
+            } ?: return@forEachMessageId
+            if (conversation.numMessages == 1) {
+                conversationDao.deleteConversation(userId.id, conversation.id)
+            } else {
+                val numMessages = conversation.numMessages - 1
+                val numUnread = if (message.Unread) {
+                    conversation.numUnread - 1
+                } else {
+                    conversation.numUnread
+                }
+                val numAttachments = conversation.numAttachments - message.numAttachments
+                conversationDao.update(
+                    conversation.copy(
+                        numMessages = numMessages,
+                        numUnread = numUnread,
+                        numAttachments = numAttachments
+                    )
+                )
             }
         }
     }

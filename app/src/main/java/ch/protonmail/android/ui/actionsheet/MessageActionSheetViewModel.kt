@@ -107,19 +107,20 @@ internal class MessageActionSheetViewModel @Inject constructor(
         shallIgnoreLocationInConversationResolution: Boolean
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(currentFolder, shallIgnoreLocationInConversationResolution)) {
-                accountManager.getPrimaryUserId().first()?.let {
+            accountManager.getPrimaryUserId().first()?.let { userId ->
+                if (isActionAppliedToConversation(currentFolder, shallIgnoreLocationInConversationResolution)) {
                     deleteConversations(
                         ids,
-                        it,
+                        userId,
                         currentFolder.messageLocationTypeValue.toString()
                     )
+                } else {
+                    deleteMessage(
+                        ids,
+                        currentFolder.messageLocationTypeValue.toString(),
+                        userId
+                    )
                 }
-            } else {
-                deleteMessage(
-                    ids,
-                    currentFolder.messageLocationTypeValue.toString()
-                )
             }
         }.invokeOnCompletion {
             val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()

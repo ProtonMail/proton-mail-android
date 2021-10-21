@@ -98,6 +98,8 @@ interface ConversationsRepository {
 
     suspend fun delete(conversationIds: List<String>, userId: UserId, currentFolderId: String)
 
+    suspend fun updateConversationsAfterDeletingMessages(messageIds: List<String>, userId: UserId)
+
     suspend fun label(
         conversationIds: List<String>,
         userId: UserId,

@@ -832,7 +832,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 1) {
             deleteMessage.invoke(
                 listOf(inputConversationId),
-                inputMessageLocation.messageLocationTypeValue.toString()
+                inputMessageLocation.messageLocationTypeValue.toString(),
+                testUserId1
             )
         }
         coVerify(exactly = 0) {
@@ -875,7 +876,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 0) {
             deleteMessage.invoke(
                 listOf(inputConversationId),
-                inputMessageLocation.messageLocationTypeValue.toString()
+                inputMessageLocation.messageLocationTypeValue.toString(),
+                testId1
             )
         }
     }
@@ -911,7 +913,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 0) {
             deleteMessage.invoke(
                 listOf(MESSAGE_ID_ONE),
-                inputMessageLocation.messageLocationTypeValue.toString()
+                inputMessageLocation.messageLocationTypeValue.toString(),
+                testUserId1
             )
         }
 

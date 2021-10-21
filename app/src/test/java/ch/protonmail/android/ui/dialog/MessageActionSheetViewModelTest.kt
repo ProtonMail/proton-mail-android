@@ -479,6 +479,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyDeleteCallsDeleteMessageWhenCalledForAMessageInsideAConversation() {
         val messageIds = listOf("messageId5")
         val currentFolder = Constants.MessageLocationType.TRASH
+        val userId = UserId("userId")
+        every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         every { conversationModeEnabled(any()) } returns true
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
@@ -490,7 +492,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             true
         )
 
-        coVerify { deleteMessage(messageIds, currentFolder.messageLocationTypeValue.toString()) }
+        coVerify {
+            deleteMessage(messageIds, currentFolder.messageLocationTypeValue.toString(), userId)
+        }
     }
 
     @Test

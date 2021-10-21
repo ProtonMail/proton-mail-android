@@ -1029,6 +1029,73 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     @Test
+    fun verifyConversationsAreUpdatedWhenMessagesAreDeleted() = runBlockingTest {
+        // given
+        val messageId1 = "messageId1"
+        val messageId2 = "messageId2"
+        val conversationId1 = "conversationId1"
+        val conversationId2 = "conversationId2"
+        val messageIds = listOf(messageId1, messageId2)
+        val userId = UserId("userId")
+        val copyConversationDatabaseModel = ConversationDatabaseModel(
+            userId = userId.id,
+            id = conversationId2,
+            order = 0,
+            subject = "subject",
+            senders = listOf(),
+            recipients = listOf(),
+            numMessages = 1,
+            numUnread = 0,
+            numAttachments = 0,
+            expirationTime = 0L,
+            size = 0,
+            labels = listOf()
+        )
+        coEvery { messageDao.findMessageByIdOnce(messageId1) } returns mockk {
+            every { conversationId } returns conversationId1
+        }
+        coEvery { messageDao.findMessageByIdOnce(messageId2) } returns mockk {
+            every { conversationId } returns conversationId2
+            every { Unread } returns true
+            every { numAttachments } returns 1
+        }
+        coEvery { conversationDao.findConversation(userId.id, conversationId1) } returns mockk {
+            every { id } returns conversationId1
+            every { numMessages } returns 1
+        }
+        coEvery { conversationDao.findConversation(userId.id, conversationId2) } returns mockk {
+            every { id } returns conversationId2
+            every { numMessages } returns 2
+            every { numUnread } returns 1
+            every { numAttachments } returns 1
+            every {
+                copy(
+                    numMessages = 1,
+                    numUnread = 0,
+                    numAttachments = 0
+                )
+            } returns copyConversationDatabaseModel
+        }
+        coEvery {
+            conversationDao.deleteConversation(userId.id, any())
+        } just runs
+        coEvery {
+            conversationDao.update(copyConversationDatabaseModel)
+        } returns 123
+
+        // when
+        conversationsRepository.updateConversationsAfterDeletingMessages(messageIds, userId)
+
+        // then
+        coVerify(exactly = 1) {
+            conversationDao.deleteConversation(userId.id, conversationId1)
+        }
+        coVerify(exactly = 1) {
+            conversationDao.update(copyConversationDatabaseModel)
+        }
+    }
+
+    @Test
     fun verifyMessagesAndConversationsAreLabeled() {
         runBlockingTest {
             // given

@@ -106,6 +106,7 @@ private const val STARRED_LABEL_ID = "10"
 private const val MIN_MESSAGES_TO_SHOW_COUNT = 2
 private typealias ApplyRemoveLabelsPair = Pair<List<String>, List<String>>
 
+@Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
 internal class MailboxViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
@@ -653,7 +654,11 @@ internal class MailboxViewModel @Inject constructor(
             if (conversationModeEnabled(currentLocation)) {
                 deleteConversations(ids, userId, currentLocation.messageLocationTypeValue.toString())
             } else {
-                val deleteMessagesResult = deleteMessage(ids, currentLocation.messageLocationTypeValue.toString())
+                val deleteMessagesResult = deleteMessage(
+                    ids,
+                    currentLocation.messageLocationTypeValue.toString(),
+                    userId
+                )
                 _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
             }
         }

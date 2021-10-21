@@ -727,7 +727,8 @@ class ComposeMessageViewModel @Inject constructor(
             if (_draftId.get().isNotEmpty()) {
                 deleteMessage(
                     listOf(_draftId.get()),
-                    Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()
+                    Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString(),
+                    userId
                 )
             }
         }
