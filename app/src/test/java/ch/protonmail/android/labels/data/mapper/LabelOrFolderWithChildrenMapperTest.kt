@@ -104,7 +104,7 @@ class LabelOrFolderWithChildrenMapperTest {
     }
 
     @Test
-    fun complexHierarchy() = runBlockingTest {
+    fun mapsComplexHierarchyOfFolders() = runBlockingTest {
         // given
         val first = "first"
         val second = "second"
@@ -120,7 +120,7 @@ class LabelOrFolderWithChildrenMapperTest {
         val thirdThirdFirst = "third-third-first"
         val thirdThirdSecond = "third-third-second"
         val thirdThirdThird = "third-third-third"
-        val forth = "forth"
+        val fourth = "fourth"
         val input = listOf(
             buildLabelEntity(first),
             buildLabelEntity(second),
@@ -136,7 +136,7 @@ class LabelOrFolderWithChildrenMapperTest {
             buildLabelEntity(thirdThirdFirst, parent = thirdThird),
             buildLabelEntity(thirdThirdSecond, parent = thirdThird),
             buildLabelEntity(thirdThirdThird, parent = thirdThird),
-            buildLabelEntity(forth)
+            buildLabelEntity(fourth)
         )
         val expected = buildFolders {
             +first
@@ -157,7 +157,7 @@ class LabelOrFolderWithChildrenMapperTest {
                     +thirdThirdThird
                 }
             }
-            +forth
+            +fourth
         }
 
         // when
@@ -168,7 +168,7 @@ class LabelOrFolderWithChildrenMapperTest {
     }
 
     @Test
-    fun orphanChildrenAreIgnored() = runBlockingTest {
+    fun orphanFoldersAreIgnoredFromTheResult() = runBlockingTest {
         // given
         val parent = "parent"
         val child = "child"

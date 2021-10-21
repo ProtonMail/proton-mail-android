@@ -31,11 +31,13 @@ import javax.inject.Inject
 
 class LabelOrFolderWithChildrenMapper @Inject constructor(
     private val dispatchers: DispatcherProvider
-) : Mapper<Collection<LabelEntity>, Collection<LabelOrFolderWithChildren>> {
+) : Mapper<Collection<LabelEntity>, List<LabelOrFolderWithChildren>> {
 
-    suspend fun toLabelsAndFoldersWithChildren(labels: Collection<LabelEntity>): List<LabelOrFolderWithChildren> {
+    suspend fun toLabelsAndFoldersWithChildren(
+        labelsAndFoldersEntities: Collection<LabelEntity>
+    ): List<LabelOrFolderWithChildren> {
         return withContext(dispatchers.Comp) {
-            val mutableList = labels
+            val mutableList = labelsAndFoldersEntities
                 .toMutableList()
             toLabels(mutableList) + toFoldersWithChildren(mutableList, parentId = EMPTY_STRING)
         }
