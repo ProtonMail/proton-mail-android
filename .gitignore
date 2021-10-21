@@ -31,9 +31,6 @@ proguard/
 # Log Files
 *.log
 
-# Room database schemas
-app/schemas/
-
 # Creadentials - contact the lead to get access to these files
 privateConfig/
 sentry.properties

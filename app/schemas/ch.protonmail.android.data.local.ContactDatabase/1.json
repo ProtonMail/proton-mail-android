@@ -1,0 +1,368 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "d449dd1050e6d63b5ca8844c36c2d2f2",
+    "entities": [
+      {
+        "tableName": "contact_data",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT, `Name` TEXT NOT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "fields": [
+          {
+            "fieldPath": "contactId",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dbId",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_contact_data_ID",
+            "unique": true,
+            "columnNames": [
+              "ID"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contact_data_ID` ON `${TABLE_NAME}` (`ID`)"
+          },
+          {
+            "name": "index_contact_data_Name",
+            "unique": false,
+            "columnNames": [
+              "Name"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_contact_data_Name` ON `${TABLE_NAME}` (`Name`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "contact_emailsv3",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT NOT NULL, `Email` TEXT NOT NULL, `Name` TEXT, `ContactID` TEXT, `LabelIDs` TEXT, `selected` INTEGER NOT NULL, `pgpIcon` INTEGER NOT NULL, `pgpIconColor` INTEGER NOT NULL, `pgpDescription` INTEGER NOT NULL, `isPGP` INTEGER NOT NULL, PRIMARY KEY(`ID`))",
+        "fields": [
+          {
+            "fieldPath": "contactEmailId",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "Email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "contactId",
+            "columnName": "ContactID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "labelIds",
+            "columnName": "LabelIDs",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "selected",
+            "columnName": "selected",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pgpIcon",
+            "columnName": "pgpIcon",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pgpIconColor",
+            "columnName": "pgpIconColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pgpDescription",
+            "columnName": "pgpDescription",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPGP",
+            "columnName": "isPGP",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_contact_emailsv3_ID",
+            "unique": true,
+            "columnNames": [
+              "ID"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contact_emailsv3_ID` ON `${TABLE_NAME}` (`ID`)"
+          },
+          {
+            "name": "index_contact_emailsv3_Email",
+            "unique": false,
+            "columnNames": [
+              "Email"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_contact_emailsv3_Email` ON `${TABLE_NAME}` (`Email`)"
+          },
+          {
+            "name": "index_contact_emailsv3_ContactID",
+            "unique": false,
+            "columnNames": [
+              "ContactID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_contact_emailsv3_ContactID` ON `${TABLE_NAME}` (`ContactID`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ContactLabel",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT NOT NULL, `Name` TEXT NOT NULL, `Color` TEXT NOT NULL, `Display` INTEGER NOT NULL, `LabelOrder` INTEGER NOT NULL, `Exclusive` INTEGER NOT NULL, `Type` INTEGER NOT NULL, `contactEmailsCount` INTEGER NOT NULL, `contactDataCount` INTEGER NOT NULL, PRIMARY KEY(`ID`))",
+        "fields": [
+          {
+            "fieldPath": "ID",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "Color",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "display",
+            "columnName": "Display",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "LabelOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exclusive",
+            "columnName": "Exclusive",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "Type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contactEmailsCount",
+            "columnName": "contactEmailsCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contactDataCount",
+            "columnName": "contactDataCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_ContactLabel_ID",
+            "unique": true,
+            "columnNames": [
+              "ID"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ContactLabel_ID` ON `${TABLE_NAME}` (`ID`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "fullContactsDetails",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT NOT NULL, `Name` TEXT, `Uid` TEXT, `CreateTime` INTEGER NOT NULL, `ModifyTIme` INTEGER NOT NULL, `Size` INTEGER NOT NULL, `Defaults` INTEGER NOT NULL, `EncryptedData` TEXT, PRIMARY KEY(`ID`))",
+        "fields": [
+          {
+            "fieldPath": "contactId",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "uid",
+            "columnName": "Uid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createTime",
+            "columnName": "CreateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifyTime",
+            "columnName": "ModifyTIme",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "size",
+            "columnName": "Size",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "defaults",
+            "columnName": "Defaults",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "encryptedData",
+            "columnName": "EncryptedData",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ContactEmailsLabelJoin",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`emailId` TEXT NOT NULL, `labelId` TEXT NOT NULL, PRIMARY KEY(`emailId`, `labelId`), FOREIGN KEY(`emailId`) REFERENCES `contact_emailsv3`(`ID`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`labelId`) REFERENCES `ContactLabel`(`ID`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "emailId",
+            "columnName": "emailId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "labelId",
+            "columnName": "labelId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "emailId",
+            "labelId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_ContactEmailsLabelJoin_emailId",
+            "unique": false,
+            "columnNames": [
+              "emailId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ContactEmailsLabelJoin_emailId` ON `${TABLE_NAME}` (`emailId`)"
+          },
+          {
+            "name": "index_ContactEmailsLabelJoin_labelId",
+            "unique": false,
+            "columnNames": [
+              "labelId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ContactEmailsLabelJoin_labelId` ON `${TABLE_NAME}` (`labelId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "contact_emailsv3",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "emailId"
+            ],
+            "referencedColumns": [
+              "ID"
+            ]
+          },
+          {
+            "table": "ContactLabel",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "labelId"
+            ],
+            "referencedColumns": [
+              "ID"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd449dd1050e6d63b5ca8844c36c2d2f2')"
+    ]
+  }
+}
