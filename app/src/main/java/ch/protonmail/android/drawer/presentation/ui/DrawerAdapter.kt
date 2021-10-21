@@ -22,6 +22,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.R
 import ch.protonmail.android.databinding.DrawerFooterBinding
 import ch.protonmail.android.databinding.DrawerListItemBinding
 import ch.protonmail.android.databinding.DrawerSectionNameItemBinding
@@ -150,9 +152,13 @@ internal class DrawerAdapter : BaseAdapter<
 
         override fun onBind(item: Primary.Label) {
             super.onBind(item)
+            val model = item.uiModel
+
+            (itemView.layoutParams as RecyclerView.LayoutParams).marginStart =
+                model.folderLevel * itemView.context.resources.getDimensionPixelSize(R.dimen.gap_large)
             binding.drawerItemLabelTextView.apply {
-                text = item.uiModel.name
-                tag = item.uiModel.name
+                text = model.name
+                tag = model.name
             }
             binding.drawerItemIconView.apply {
                 setColorFilter(item.uiModel.icon.colorInt)
