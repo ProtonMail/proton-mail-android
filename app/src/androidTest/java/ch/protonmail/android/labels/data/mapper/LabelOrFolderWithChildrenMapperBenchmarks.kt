@@ -32,10 +32,12 @@ import org.junit.FixMethodOrder
 import org.junit.runners.MethodSorters
 import kotlin.system.measureTimeMillis
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Suppress("PrivatePropertyName") // `_` for readability purpose on big numbers
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore("Benchmarks are useful only when observed, not needed to run for every pipeline")
 class LabelOrFolderWithChildrenMapperBenchmarks {
 
     private val mapper = LabelOrFolderWithChildrenMapper(TestDispatcherProvider)
