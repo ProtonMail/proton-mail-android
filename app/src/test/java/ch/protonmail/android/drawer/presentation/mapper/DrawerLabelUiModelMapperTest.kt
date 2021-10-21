@@ -23,7 +23,8 @@ import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.AQUA_BASE_V3_COLOR
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.SAGE_BASE_V3_COLOR
-import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -34,21 +35,20 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Test suite for [DrawerLabelUiModelMapper]
- */
-class DrawerLabelUiModelMapperTest {
+private const val TEST_LABEL_NAME = "label"
+private val TEST_LABEL_ID = LabelId(TEST_LABEL_NAME)
+private const val DUMMY_PARSED_COLOR = 0
+private const val DUMMY_AQUA_BASE_COLOR = 1357
+private const val DUMMY_SAGE_BASE_COLOR = 2468
+private const val DUMMY_ICON_INVERTED_COLOR = 123
 
-    private val dummyParsedColor = 0
-    private val dummyAquaBaseColor = 1357
-    private val dummySageBaseColor = 2468
-    private val dummyIconInvertedColor = 123
+class DrawerLabelUiModelMapperTest {
 
     private val mapper = DrawerLabelUiModelMapper(
         context = mockk {
-            every { getColor(R.color.aqua_base) } returns dummyAquaBaseColor
-            every { getColor(R.color.sage_base) } returns dummySageBaseColor
-            every { getColor(R.color.icon_inverted) } returns dummyIconInvertedColor
+            every { getColor(R.color.aqua_base) } returns DUMMY_AQUA_BASE_COLOR
+            every { getColor(R.color.sage_base) } returns DUMMY_SAGE_BASE_COLOR
+            every { getColor(R.color.icon_inverted) } returns DUMMY_ICON_INVERTED_COLOR
         }
     )
 
@@ -61,7 +61,7 @@ class DrawerLabelUiModelMapperTest {
             if (basicColorRegex.matches(stringColorArg).not()) {
                 throw IllegalArgumentException("Invalid color format")
             }
-            dummyParsedColor
+            DUMMY_PARSED_COLOR
         }
     }
 
@@ -73,70 +73,66 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun worksCorrectlyWithCorrectColor() {
         // given
-        val input = mockk<Label>(relaxed = true) {
-            every { color } returns "#123"
-        }
+        val input = buildLabel("#123")
 
         // when
         val result = mapper.toUiModel(input)
 
         // then
-        assertEquals(dummyParsedColor, result.icon.colorInt)
+        assertEquals(DUMMY_PARSED_COLOR, result.icon.colorInt)
     }
 
     @Test
     fun defaultColorIsSetIfColorIsEmpty() {
         // given
-        val input = mockk<Label>(relaxed = true) {
-            every { color } returns EMPTY_STRING
-        }
+        val input = buildLabel(EMPTY_STRING)
 
         // when
         val result = mapper.toUiModel(input)
 
         // then
-        assertEquals(dummyIconInvertedColor, result.icon.colorInt)
+        assertEquals(DUMMY_ICON_INVERTED_COLOR, result.icon.colorInt)
     }
 
     @Test
     fun defaultColorIsSetIfColorCantBeParsed() {
         // given
-        val input = mockk<Label>(relaxed = true) {
-            every { color } returns "incorrect"
-        }
+        val input = buildLabel("incorrect")
 
         // when
         val result = mapper.toUiModel(input)
 
         // then
-        assertEquals(dummyIconInvertedColor, result.icon.colorInt)
+        assertEquals(DUMMY_ICON_INVERTED_COLOR, result.icon.colorInt)
     }
 
     @Test
     fun aquaBaseColorIsReplacedCorrectly() {
         // given
-        val input = mockk<Label>(relaxed = true) {
-            every { color } returns AQUA_BASE_V3_COLOR
-        }
+        val input = buildLabel(AQUA_BASE_V3_COLOR)
 
         // when
         val result = mapper.toUiModel(input)
 
         // then
-        assertEquals(dummyAquaBaseColor, result.icon.colorInt)
+        assertEquals(DUMMY_AQUA_BASE_COLOR, result.icon.colorInt)
     }
 
     @Test
     fun sageBaseColorIsReplacedCorrectly() {
         // given
-        val input = mockk<Label>(relaxed = true) {
-            every { color } returns SAGE_BASE_V3_COLOR
-        }
+        val input = buildLabel(SAGE_BASE_V3_COLOR)
 
         // when
         val result = mapper.toUiModel(input)
 
         // then
-        assertEquals(dummySageBaseColor, result.icon.colorInt)
+        assertEquals(DUMMY_SAGE_BASE_COLOR, result.icon.colorInt)
     }
+
+    private fun buildLabel(color: String) = LabelOrFolderWithChildren.Label(
+        id = TEST_LABEL_ID,
+        name = TEST_LABEL_NAME,
+        color = color
+    )
 }
