@@ -54,6 +54,7 @@ internal class NotificationSettingsViewModel(
 ) : AndroidViewModel(application), ViewStateStoreScope {
 
     private companion object {
+
         /**
          * [Uri] of default ringtone from [RingtoneManager]
          * This [Uri] could be [Uri.EMPTY]
@@ -174,8 +175,10 @@ internal class NotificationSettingsViewModel(
 
         /** @return new instance of [NotificationSettingsViewModel] casted as T */
         @Suppress("UNCHECKED_CAST") // NotificationSettingsViewModel is T, since T is ViewModel
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            NotificationSettingsViewModel(application, userManager) as T
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            require(modelClass.isAssignableFrom(NotificationSettingsViewModel::class.java))
+            return NotificationSettingsViewModel(application, userManager) as T
+        }
     }
 
     /** A [CharSequence] representing [R.string.none] resource */

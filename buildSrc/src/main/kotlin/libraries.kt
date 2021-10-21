@@ -33,6 +33,7 @@ val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("
 val DependencyHandler.`Proton-account` get() =                      proton("account") version `Proton-account version`
 val DependencyHandler.`Proton-account-manager` get() =              proton("account-manager") version `Proton-account-manager version`
 val DependencyHandler.`Proton-auth` get() =                         proton("auth") version `Proton-auth version`
+val DependencyHandler.`Proton-contact` get() =                      proton("contact") version `Proton-contact version`
 val DependencyHandler.`Proton-country` get() =                      proton("country") version `Proton-country version`
 val DependencyHandler.`Proton-crypto` get() =                       proton("crypto") version `Proton-crypto version`
 val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-data version`

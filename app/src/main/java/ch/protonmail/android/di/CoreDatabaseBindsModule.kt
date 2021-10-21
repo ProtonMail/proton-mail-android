@@ -24,12 +24,14 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.account.data.db.AccountDatabase
+import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.key.data.db.KeySaltDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.mailsettings.data.db.MailSettingsDatabase
 import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.db.UserDatabase
+import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
 
 @Module
@@ -59,4 +61,10 @@ internal abstract class CoreDatabaseBindsModule {
 
     @Binds
     abstract fun provideUserSettingsDatabase(db: AppDatabase): UserSettingsDatabase
+
+    @Binds
+    abstract fun provideOrganizationDatabase(db: AppDatabase): OrganizationDatabase
+
+    @Binds
+    abstract fun provideContactDatabase(db: AppDatabase): ContactDatabase
 }

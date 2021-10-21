@@ -63,6 +63,7 @@ import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
+import me.proton.core.accountmanager.presentation.onSessionForceLogout
 import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onAddAccountResult
@@ -139,6 +140,7 @@ internal class AccountStateManager @Inject constructor(
      */
     private fun observeAccountStateWithInternalLifecycle() {
         observeAccountManager(lifecycle)
+            .onSessionForceLogout { userManager.lock(it.userId) }
             .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
             .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
             .onAccountRemoved { onAccountDisabled(it) }
@@ -275,8 +277,6 @@ internal class AccountStateManager @Inject constructor(
             // FCM Register (see MailboxActivity.checkRegistration).
             fcmTokenManagerFactory.create(prefs).setTokenSent(false)
         }
-        // We have a primary account.
-        mutableStateFlow.tryEmit(State.PrimaryExist)
     }
 
     private suspend fun onAccountDisabled(account: Account) = withContext(NonCancellable + dispatchers.Io) {

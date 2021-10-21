@@ -26,18 +26,23 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
 import me.proton.core.account.data.entity.SessionDetailsEntity
 import me.proton.core.account.data.entity.SessionEntity
+import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.humanverification.data.entity.HumanVerificationEntity
+import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.key.data.entity.KeySaltEntity
 import me.proton.core.key.data.entity.PublicAddressEntity
 import me.proton.core.key.data.entity.PublicAddressKeyEntity
 import me.proton.core.mailsettings.data.entity.MailSettingsEntity
+import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.entity.AddressEntity
 import me.proton.core.user.data.entity.AddressKeyEntity
 import me.proton.core.user.data.entity.UserEntity
 import me.proton.core.user.data.entity.UserKeyEntity
+import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.entity.UserSettingsEntity
 import timber.log.Timber
 
+@Suppress("ClassOrdering")
 object AppDatabaseMigrations {
 
     /**
@@ -91,6 +96,15 @@ object AppDatabaseMigrations {
 
             // Delete Core Database.
             coreDbFile.delete()
+        }
+    }
+
+    val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            OrganizationDatabase.MIGRATION_0.migrate(database)
+            ContactDatabase.MIGRATION_0.migrate(database)
+            AddressDatabase.MIGRATION_2.migrate(database)
+            PublicAddressDatabase.MIGRATION_1.migrate(database)
         }
     }
 }

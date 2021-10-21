@@ -87,13 +87,6 @@ object UserManagerModule {
 
     @Provides
     @Singleton
-    fun provideUserSettingsRepository(
-        db: UserSettingsDatabase,
-        provider: ApiProvider
-    ): UserSettingsRepository = UserSettingsRepositoryImpl(db, provider)
-
-    @Provides
-    @Singleton
     fun provideDomainRepository(
         @DefaultDomainHost defaultDomain: Domain,
         provider: ApiProvider

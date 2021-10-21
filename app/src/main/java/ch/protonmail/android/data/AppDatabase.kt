@@ -34,6 +34,12 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
 import me.proton.core.account.data.entity.SessionDetailsEntity
 import me.proton.core.account.data.entity.SessionEntity
+import me.proton.core.contact.data.local.db.ContactConverters
+import me.proton.core.contact.data.local.db.ContactDatabase
+import me.proton.core.contact.data.local.db.entity.ContactCardEntity
+import me.proton.core.contact.data.local.db.entity.ContactEmailEntity
+import me.proton.core.contact.data.local.db.entity.ContactEmailLabelEntity
+import me.proton.core.contact.data.local.db.entity.ContactEntity
 import me.proton.core.crypto.android.keystore.CryptoConverters
 import me.proton.core.data.room.db.BaseDatabase
 import me.proton.core.data.room.db.CommonConverters
@@ -54,8 +60,11 @@ import me.proton.core.user.data.entity.AddressEntity
 import me.proton.core.user.data.entity.AddressKeyEntity
 import me.proton.core.user.data.entity.UserEntity
 import me.proton.core.user.data.entity.UserKeyEntity
+import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsConverters
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
+import me.proton.core.usersettings.data.entity.OrganizationEntity
+import me.proton.core.usersettings.data.entity.OrganizationKeysEntity
 import me.proton.core.usersettings.data.entity.UserSettingsEntity
 import timber.log.Timber
 
@@ -76,6 +85,12 @@ import timber.log.Timber
         UserEntity::class,
         UserKeyEntity::class,
         UserSettingsEntity::class,
+        OrganizationEntity::class,
+        OrganizationKeysEntity::class,
+        ContactEntity::class,
+        ContactCardEntity::class,
+        ContactEmailEntity::class,
+        ContactEmailLabelEntity::class,
         // Mail
         LabelEntity::class,
     ],
@@ -90,6 +105,7 @@ import timber.log.Timber
     CryptoConverters::class,
     HumanVerificationConverters::class,
     UserSettingsConverters::class,
+    ContactConverters::class,
     // Mail
     ProtonMailConverters::class
 )
@@ -102,13 +118,15 @@ internal abstract class AppDatabase :
     HumanVerificationDatabase,
     PublicAddressDatabase,
     MailSettingsDatabase,
-    UserSettingsDatabase {
+    UserSettingsDatabase,
+    OrganizationDatabase,
+    ContactDatabase {
 
     abstract fun labelDao(): LabelDao
 
     companion object {
 
-        const val version = 1
+        const val version = 2
         private const val name = "proton-mail.db"
 
         private fun getDbCreationCallback(context: Context): Callback = object : Callback() {
@@ -127,7 +145,9 @@ internal abstract class AppDatabase :
         }
 
         private fun getMigrations(): Array<Migration> {
-            val migrations = emptyArray<Migration>()
+            val migrations = arrayOf(
+                AppDatabaseMigrations.MIGRATION_1_2
+            )
             Timber.v("Db migrations list size ${migrations.size}")
             return migrations
         }

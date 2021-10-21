@@ -93,6 +93,7 @@ import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.servers.notification.NotificationServer;
+import ch.protonmail.android.utils.CoreTimberLogger;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.DownloadUtils;
 import ch.protonmail.android.utils.FileUtils;
@@ -107,6 +108,7 @@ import leakcanary.DefaultOnHeapAnalyzedListener;
 import leakcanary.LeakCanary;
 import me.proton.core.accountmanager.domain.AccountManager;
 import me.proton.core.domain.entity.UserId;
+import me.proton.core.util.kotlin.CoreLogger;
 import shark.AndroidObjectInspectors;
 import shark.AndroidReferenceMatchers;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
@@ -192,6 +194,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
         mBus = new Bus();
         mBus.register(this);
 
+        CoreLogger.INSTANCE.set(new CoreTimberLogger());
+
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
             enableStrictMode();
@@ -230,8 +234,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         accountManagerUserIdMigration.blocking();
         coreAccountManagerMigration.migrateBlocking();
-
-        WorkManager.initialize(this, getWorkManagerConfiguration());
 
         checkForUpdateAndClearCache();
     }

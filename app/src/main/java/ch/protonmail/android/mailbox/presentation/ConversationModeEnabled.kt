@@ -21,7 +21,6 @@ package ch.protonmail.android.mailbox.presentation
 
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.domain.AccountManager
@@ -39,12 +38,8 @@ class ConversationModeEnabled @Inject constructor(
      */
     operator fun invoke(location: MessageLocationType?, userId: UserId? = null): Boolean {
         return runBlocking {
-            val primaryUserId = userId
-                ?: accountManager.getPrimaryUserId().filterNotNull().first()
-
-            observeConversationModeEnabled(primaryUserId, location)
-                .first()
+            val primaryUserId = userId ?: accountManager.getPrimaryUserId().first()
+            primaryUserId?.let { observeConversationModeEnabled(primaryUserId, location).first() } ?: false
         }
     }
-
 }

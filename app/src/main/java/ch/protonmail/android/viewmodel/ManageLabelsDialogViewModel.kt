@@ -133,11 +133,9 @@ class ManageLabelsDialogViewModel @Inject constructor(
         private val manageLabelsViewModel: ManageLabelsDialogViewModel
     ) : ViewModelProvider.NewInstanceFactory() {
 
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(ManageLabelsDialogViewModel::class.java)) {
-                return manageLabelsViewModel as T
-            }
-            throw IllegalArgumentException("Cannot assign ManageLabelsDialogViewModel from given class name")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            require(modelClass.isAssignableFrom(ManageLabelsDialogViewModel::class.java))
+            return manageLabelsViewModel as T
         }
     }
 }

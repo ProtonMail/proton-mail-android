@@ -42,7 +42,7 @@ import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.crypto.common.keystore.PlainByteArray
-import me.proton.core.crypto.common.keystore.encryptWith
+import me.proton.core.crypto.common.keystore.encrypt
 import me.proton.core.domain.entity.UserId
 import me.proton.core.key.domain.entity.key.KeyId
 import me.proton.core.key.domain.entity.key.PrivateKey
@@ -117,7 +117,7 @@ class CoreAccountManagerMigration @Inject constructor(
                     accountManager.addAccount(account = migration.account, session = migration.session)
                     // Encrypt the passphrase.
                     val encryptedPassphrase = PlainByteArray(migration.passphrase.toByteArray()).use {
-                        it.encryptWith(keyStoreCrypto)
+                        it.encrypt(keyStoreCrypto)
                     }
                     runCatching {
                         // Migrate User/Addresses/Keys to Core.
@@ -189,7 +189,8 @@ private fun Address.toCoreUserAddress(userId: UserId, passphrase: EncryptedByteA
     enabled = status.toBooleanOrFalse(),
     type = AddressType.map[type],
     order = order,
-    keys = keys.map { it.toCoreUserAddressKey(AddressId(id), passphrase) }
+    keys = keys.map { it.toCoreUserAddressKey(AddressId(id), passphrase) },
+    signedKeyList = null
 )
 
 private fun Keys.toCoreUserAddressKey(addressId: AddressId, passphrase: EncryptedByteArray?) = UserAddressKey(

@@ -204,14 +204,14 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             setSupportActionBar(mToolbar);
         }
 
-        humanVerificationOrchestrator.register(this);
+        humanVerificationOrchestrator.register(this, false);
         accountStateManager.setHumanVerificationOrchestrator(humanVerificationOrchestrator);
         accountStateManager.observeHumanVerificationStateWithExternalLifecycle(getLifecycle());
     }
 
     @Override
     protected void onDestroy() {
-        humanVerificationOrchestrator.unregister();
+        humanVerificationOrchestrator.unregister(this);
         super.onDestroy();
     }
 

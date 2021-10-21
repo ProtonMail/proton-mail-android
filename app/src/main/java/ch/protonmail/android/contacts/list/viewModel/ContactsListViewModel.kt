@@ -21,6 +21,7 @@ package ch.protonmail.android.contacts.list.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.loader.app.LoaderManager
@@ -34,7 +35,6 @@ import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContac
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.worker.DeleteContactWorker
-import ch.protonmail.libs.core.utils.ViewModelFactory
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -133,11 +133,12 @@ class ContactsListViewModel(
         private val androidContactsRepositoryFactory: AndroidContactsRepository.AssistedFactory,
         private val androidContactsDetailsRepositoryFactory: AndroidContactDetailsRepository.AssistedFactory,
         private val contactsListMapper: ContactsListMapper
-    ) : ViewModelFactory<ContactsListViewModel>() {
+    ) : ViewModelProvider.Factory {
 
         lateinit var loaderManager: LoaderManager
 
-        override fun create(): ContactsListViewModel {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            require(modelClass.isAssignableFrom(ContactsListViewModel::class.java))
             val androidContactsRepository = androidContactsRepositoryFactory.create(loaderManager)
             val androidContactsDetailsRepository = androidContactsDetailsRepositoryFactory.create(loaderManager)
             return ContactsListViewModel(
@@ -146,7 +147,7 @@ class ContactsListViewModel(
                 androidContactsRepository,
                 androidContactsDetailsRepository,
                 contactsListMapper
-            )
+            ) as T
         }
     }
 }

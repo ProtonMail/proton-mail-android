@@ -26,10 +26,8 @@ class AddressChooserViewModelFactory @Inject constructor(
     private val addressChooserViewModel: AddressChooserViewModel
 ) : ViewModelProvider.NewInstanceFactory() {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AddressChooserViewModel::class.java)) {
-            return addressChooserViewModel as T
-        }
-        throw IllegalArgumentException("Unknown class name")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        require(modelClass.isAssignableFrom(AddressChooserViewModel::class.java))
+        return addressChooserViewModel as T
     }
 }
