@@ -37,14 +37,13 @@ class LabelOrFolderWithChildrenMapper @Inject constructor(
         labelsAndFoldersEntities: Collection<LabelEntity>
     ): List<LabelOrFolderWithChildren> {
         return withContext(dispatchers.Comp) {
-            val mutableList = labelsAndFoldersEntities
-                .toMutableList()
-            toLabels(mutableList) + toFoldersWithChildren(mutableList, parentId = EMPTY_STRING)
+            val (labels, folders) = labelsAndFoldersEntities.partition { it.type == LabelType.MESSAGE_LABEL }
+            toLabels(labels) + toFoldersWithChildren(folders, parentId = EMPTY_STRING)
         }
     }
 
-    private fun toLabels(mutableList: MutableList<LabelEntity>): List<LabelOrFolderWithChildren.Label> {
-        val messageLabels = mutableList.pullIf { it.type == LabelType.MESSAGE_LABEL }
+    private fun toLabels(labelsEntities: List<LabelEntity>): List<LabelOrFolderWithChildren.Label> {
+        val messageLabels = labelsEntities.filter { it.type == LabelType.MESSAGE_LABEL }
         return messageLabels.map { labelEntity ->
             LabelOrFolderWithChildren.Label(
                 id = labelEntity.id,
@@ -55,12 +54,12 @@ class LabelOrFolderWithChildrenMapper @Inject constructor(
     }
 
     private fun toFoldersWithChildren(
-        mutableList: MutableList<LabelEntity>,
+        foldersEntities: List<LabelEntity>,
         parentId: String
     ): List<LabelOrFolderWithChildren.Folder> {
-        val rootFolders = mutableList.pullIf { it.parentId == parentId }
+        val rootFolders = foldersEntities.filter { it.parentId == parentId }
         return rootFolders.map { label ->
-            val children = toFoldersWithChildren(mutableList, label.id.id)
+            val children = toFoldersWithChildren(foldersEntities, label.id.id)
             toFolderWithoutChildren(label).copy(children = children)
         }
     }
@@ -74,9 +73,4 @@ class LabelOrFolderWithChildrenMapper @Inject constructor(
         children = emptyList()
     )
 
-    private fun <T> MutableList<T>.pullIf(predicate: (T) -> Boolean): List<T> {
-        val toPull = this.filter(predicate)
-        this.removeAll(toPull)
-        return toPull
-    }
 }

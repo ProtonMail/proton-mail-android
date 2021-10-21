@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.labels.data.mapper
 
-import android.os.Debug
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
@@ -84,16 +83,16 @@ class LabelOrFolderWithChildrenMapperBenchmarks {
     }
 
     private suspend fun runBenchmark(
-        traceName: String,
+        @Suppress("unused") traceName: String,
         input: List<LabelEntity>,
         shouldPrintOutput: Boolean = false
     ) {
         // when
         var result: List<LabelOrFolderWithChildren>
         val time = measureTimeMillis {
-            Debug.startMethodTracing(traceName)
+            // Debug.startMethodTracing(traceName)
             result = mapper.toLabelsAndFoldersWithChildren(input)
-            Debug.stopMethodTracing()
+            // Debug.stopMethodTracing()
         }
 
         // then
