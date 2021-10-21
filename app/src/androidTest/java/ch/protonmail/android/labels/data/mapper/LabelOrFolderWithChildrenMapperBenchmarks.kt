@@ -134,7 +134,12 @@ private fun Collection<LabelOrFolderWithChildren>.joinToString(hasParent: Boolea
 }
 
 private fun LabelOrFolderWithChildren.prettyPrint(): String {
-    val name = "name: $name"
-    val parent = if (parentId == null) EMPTY_STRING else " - parent: $parentId"
-    return "$name$parent${children.joinToString(parentId != null)}"
+    return when (this) {
+        is LabelOrFolderWithChildren.Folder -> {
+            val name = "name: $name"
+            val parent = if (parentId == null) EMPTY_STRING else " - parent: $parentId"
+            "$name$parent${children.joinToString(parentId != null)}"
+        }
+        is LabelOrFolderWithChildren.Label -> name
+    }
 }

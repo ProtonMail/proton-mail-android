@@ -46,7 +46,7 @@ class LabelOrFolderWithChildrenMapperTest {
             buildLabelEntity(first, LabelType.FOLDER),
             buildLabelEntity(second, LabelType.MESSAGE_LABEL),
         )
-        val expected = listOf(buildLabel(second)) + buildFolders { +first }
+        val expected = listOf(buildLabel(second)) + buildFolders { folder(first) }
 
         // when
         val result = mapper.toLabelsAndFoldersWithChildren(input)
@@ -65,8 +65,8 @@ class LabelOrFolderWithChildrenMapperTest {
             buildLabelEntity(child, parent = parent)
         )
         val expected = buildFolders {
-            +parent {
-                +child
+            folder(parent) {
+                folder(child)
             }
         }
 
@@ -89,9 +89,9 @@ class LabelOrFolderWithChildrenMapperTest {
             buildLabelEntity(grandchild, parent = child)
         )
         val expected = buildFolders {
-            +parent {
-                +child {
-                    +grandchild
+            folder(parent) {
+                folder(child) {
+                    folder(grandchild)
                 }
             }
         }
@@ -139,25 +139,25 @@ class LabelOrFolderWithChildrenMapperTest {
             buildLabelEntity(fourth)
         )
         val expected = buildFolders {
-            +first
-            +second {
-                +secondFirst
-                +secondSecond
+            folder(first)
+            folder(second) {
+                folder(secondFirst)
+                folder(secondSecond)
             }
-            +third {
-                +thirdFirst
-                +thirdSecond {
-                    +thirdSecondFirst
-                    +thirdSecondSecond
-                    +thirdSecondThird
+            folder(third) {
+                folder(thirdFirst)
+                folder(thirdSecond) {
+                    folder(thirdSecondFirst)
+                    folder(thirdSecondSecond)
+                    folder(thirdSecondThird)
                 }
-                +thirdThird {
-                    +thirdThirdFirst
-                    +thirdThirdSecond
-                    +thirdThirdThird
+                folder(thirdThird) {
+                    folder(thirdThirdFirst)
+                    folder(thirdThirdSecond)
+                    folder(thirdThirdThird)
                 }
             }
-            +fourth
+            folder(fourth)
         }
 
         // when
@@ -178,8 +178,8 @@ class LabelOrFolderWithChildrenMapperTest {
             buildLabelEntity(child, parent = parent)
         )
         val expected = buildFolders {
-            +parent {
-                +child
+            folder(parent) {
+                folder(child)
             }
         }
 

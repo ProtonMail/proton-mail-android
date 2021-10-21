@@ -50,18 +50,10 @@ class FolderBuilder(private val parent: String) {
 
     val result: MutableList<Folder> = mutableListOf()
 
-    operator fun String.unaryPlus() {
-        result += buildFolder(this, parent, emptyList())
-    }
-
-    operator fun Folder.unaryPlus() {
-        result += this
-    }
-
-    operator fun String.invoke(block: FolderBuilder.() -> Unit): Folder {
-        val folderBuilder = FolderBuilder(this)
+    fun folder(name: String, block: FolderBuilder.() -> Unit = {}) {
+        val folderBuilder = FolderBuilder(name)
         folderBuilder.block()
-        return buildFolder(this, parent, folderBuilder.result)
+        result += buildFolder(name, parent, folderBuilder.result)
     }
 }
 
