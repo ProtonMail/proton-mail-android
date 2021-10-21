@@ -303,7 +303,6 @@ dependencies {
         `Proton-auth`,
         `Proton-account`,
         `Proton-account-manager`,
-        `Proton-account-manager-data-db`,
         `Proton-user`,
         `Proton-user-settings`,
         `Proton-mail-settings`,
