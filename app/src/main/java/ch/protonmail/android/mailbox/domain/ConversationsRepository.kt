@@ -26,6 +26,7 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
@@ -85,6 +86,12 @@ interface ConversationsRepository {
         userId: UserId,
         locationId: String
     ): ConversationsActionResult
+
+    suspend fun updateConversationsAfterChangingMessagesReadStatus(
+        messageIds: List<String>,
+        action: ChangeMessagesReadStatus.Action,
+        userId: UserId
+    )
 
     suspend fun star(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 

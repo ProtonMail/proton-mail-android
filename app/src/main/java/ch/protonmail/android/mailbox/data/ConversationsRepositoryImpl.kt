@@ -55,6 +55,7 @@ import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
@@ -233,6 +234,30 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         }
 
         return ConversationsActionResult.Success
+    }
+
+    override suspend fun updateConversationsAfterChangingMessagesReadStatus(
+        messageIds: List<String>,
+        action: ChangeMessagesReadStatus.Action,
+        userId: UserId
+    ) {
+        messageIds.forEach forEachMessageId@{ messageId ->
+            val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId
+            val conversation = message.conversationId?.let {
+                conversationDao.findConversation(userId.id, it)
+            } ?: return@forEachMessageId
+
+            val numUnread = if (action == ChangeMessagesReadStatus.Action.ACTION_MARK_READ) {
+                conversation.numUnread - 1
+            } else {
+                conversation.numUnread + 1
+            }
+            conversationDao.update(
+                conversation.copy(
+                    numUnread = numUnread
+                )
+            )
+        }
     }
 
     override suspend fun star(

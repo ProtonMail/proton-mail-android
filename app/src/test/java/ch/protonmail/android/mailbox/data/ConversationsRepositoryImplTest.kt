@@ -72,6 +72,7 @@ import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -771,6 +772,45 @@ class ConversationsRepositoryImplTest : ArchTest {
 
             // then
             assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyConversationsAreUpdatedWhenMessagesAreMarkedAsRead() = runBlockingTest {
+        // given
+        val conversationId1 = "conversationId1"
+        val messageId1 = "messageId1"
+        val action = ChangeMessagesReadStatus.Action.ACTION_MARK_READ
+        val userId = UserId("userId")
+        val message1 = Message(
+            conversationId = conversationId1
+        )
+        val conversation1 = buildConversationDatabaseModel(
+            userId = userId.id,
+            id = conversationId1,
+            numMessages = 2,
+            numUnread = 1
+        )
+        val updatedConversation1 = buildConversationDatabaseModel(
+            userId = userId.id,
+            id = conversationId1,
+            numMessages = 2,
+            numUnread = 0
+        )
+        coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message1
+        coEvery { conversationDao.findConversation(userId.id, conversationId1) } returns conversation1
+        coEvery { conversationDao.update(updatedConversation1) } returns 123
+
+        // when
+        conversationsRepository.updateConversationsAfterChangingMessagesReadStatus(
+            listOf(messageId1),
+            action,
+            userId
+        )
+
+        // then
+        coVerify {
+            conversationDao.update(updatedConversation1)
         }
     }
 
