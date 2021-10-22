@@ -28,6 +28,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.utils.buildFolders
+import ch.protonmail.android.utils.UiUtil
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -57,7 +58,7 @@ class DrawerLabelUiModelMapperTest {
 
     @BeforeTest
     fun setup() {
-        mockkStatic(Color::class)
+        mockkStatic(Color::class, UiUtil::class)
         every { Color.parseColor(any()) } answers {
             val stringColorArg = firstArg<String>()
             val basicColorRegex = """#(\d{3,8})""".toRegex()
@@ -66,6 +67,7 @@ class DrawerLabelUiModelMapperTest {
             }
             DUMMY_PARSED_COLOR
         }
+        every { UiUtil.normalizeColor(any()) } answers { firstArg() }
     }
 
     @AfterTest
@@ -207,6 +209,90 @@ class DrawerLabelUiModelMapperTest {
         assertEquals(DUMMY_SAGE_BASE_COLOR, result.first().icon.colorInt)
     }
 
+    @Test
+    fun childFolderColorIsUsedIfDefined() {
+        // given
+        val parent = "parent"
+        val child = "child"
+        val redString = "red"
+        val blueString = "blue"
+        val redInt = 1
+        val blueInt = 2
+
+        val childFolder = buildFolder(name = child, color = blueString)
+        val parentFolder = buildFolder(name = parent, color = redString, children = listOf(childFolder))
+        val input = listOf(parentFolder)
+
+        every { Color.parseColor(redString) } returns redInt
+        every { Color.parseColor(blueString) } returns blueInt
+
+        val expected = listOf(
+            buildFolderUiModel(name = parent, folderLevel = 0, colorInt = redInt),
+            buildFolderUiModel(name = child, folderLevel = 1, colorInt = blueInt),
+        )
+
+        // when
+        val result = mapper.toUiModels(input)
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun parentColorIsUsedIfNoneDefined() {
+        // given
+        val parent = "parent"
+        val child = "child"
+        val redString = "red"
+        val redInt = 1
+
+        val childFolder = buildFolder(name = child, color = EMPTY_STRING)
+        val parentFolder = buildFolder(name = parent, color = redString, children = listOf(childFolder))
+        val input = listOf(parentFolder)
+
+        every { Color.parseColor(redString) } returns redInt
+        every { Color.parseColor(EMPTY_STRING) } answers {
+            throw IllegalArgumentException("invalid color")
+        }
+
+        val expected = listOf(
+            buildFolderUiModel(name = parent, folderLevel = 0, colorInt = redInt),
+            buildFolderUiModel(name = child, folderLevel = 1, colorInt = redInt),
+        )
+
+        // when
+        val result = mapper.toUiModels(input)
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun defaultColorIsUsedIfNoneDefinedForFolderAndParent() {
+        // given
+        val parent = "parent"
+        val child = "child"
+
+        val childFolder = buildFolder(name = child, color = EMPTY_STRING)
+        val parentFolder = buildFolder(name = parent, color = EMPTY_STRING, children = listOf(childFolder))
+        val input = listOf(parentFolder)
+
+        every { Color.parseColor(EMPTY_STRING) } answers {
+            throw IllegalArgumentException("invalid color")
+        }
+
+        val expected = listOf(
+            buildFolderUiModel(name = parent, folderLevel = 0, colorInt = DUMMY_ICON_INVERTED_COLOR),
+            buildFolderUiModel(name = child, folderLevel = 1, colorInt = DUMMY_ICON_INVERTED_COLOR),
+        )
+
+        // when
+        val result = mapper.toUiModels(input)
+
+        // then
+        assertEquals(expected, result)
+    }
+
     private fun buildLabel(
         name: String = TEST_LABEL_NAME,
         color: String = TEST_COLOR
@@ -214,6 +300,19 @@ class DrawerLabelUiModelMapperTest {
         id = LabelId(name),
         name = name,
         color = color
+    )
+
+    private fun buildFolder(
+        name: String = TEST_LABEL_NAME,
+        color: String = EMPTY_STRING,
+        children: Collection<LabelOrFolderWithChildren.Folder> = emptyList()
+    ) = LabelOrFolderWithChildren.Folder(
+        id = LabelId(name),
+        name = name,
+        color = color,
+        parentId = null,
+        path = name,
+        children = children
     )
 
     private fun buildLabelUiModel(
@@ -228,11 +327,12 @@ class DrawerLabelUiModelMapperTest {
 
     private fun buildFolderUiModel(
         name: String = TEST_LABEL_NAME,
-        folderLevel: Int
+        folderLevel: Int,
+        colorInt: Int = DUMMY_ICON_INVERTED_COLOR
     ) = DrawerLabelUiModel(
         labelId = name,
         name = name,
-        icon = DrawerLabelUiModel.Icon(R.drawable.ic_folder_filled, DUMMY_ICON_INVERTED_COLOR),
+        icon = DrawerLabelUiModel.Icon(R.drawable.ic_folder_filled, colorInt),
         type = LabelType.FOLDER,
         folderLevel = folderLevel
     )

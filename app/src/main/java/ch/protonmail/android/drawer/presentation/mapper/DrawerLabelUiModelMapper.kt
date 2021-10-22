@@ -48,16 +48,25 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
     private val useFolderColor: Boolean = true
 
     fun toUiModels(models: Collection<LabelOrFolderWithChildren>): List<DrawerLabelUiModel> =
-        models.flatMap { domainModelToUiModels(it, 0) }
+        models.flatMap { domainModelToUiModels(model = it, folderLevel = 0, parentColor = null) }
 
     private fun domainModelToUiModels(
         model: LabelOrFolderWithChildren,
-        folderLevel: Int
+        folderLevel: Int,
+        parentColor: Int?
     ): List<DrawerLabelUiModel> {
-        val parent = domainModelToUiModel(model, folderLevel)
+        val parent = domainModelToUiModel(
+            model = model,
+            folderLevel = folderLevel,
+            parentColor = parentColor
+        )
 
         val children = if (model is LabelOrFolderWithChildren.Folder) {
-            model.children.flatMap { domainModelToUiModels(it, folderLevel + 1) }
+            model.children.flatMap { domainModelToUiModels(
+                model = it,
+                folderLevel = folderLevel + 1,
+                parentColor = parent.icon.colorInt
+            ) }
         } else {
             emptyList()
         }
@@ -66,7 +75,8 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
 
     private fun domainModelToUiModel(
         model: LabelOrFolderWithChildren,
-        folderLevel: Int
+        folderLevel: Int,
+        parentColor: Int?
     ): DrawerLabelUiModel {
 
         val labelType = when (model) {
@@ -77,13 +87,17 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
         return DrawerLabelUiModel(
             labelId = model.id.id,
             name = model.name,
-            icon = buildIcon(labelType, model.color),
+            icon = buildIcon(labelType, model.color, parentColor),
             type = labelType,
             folderLevel = folderLevel
         )
     }
 
-    private fun buildIcon(type: LabelType, color: String): DrawerLabelUiModel.Icon {
+    private fun buildIcon(
+        type: LabelType,
+        color: String,
+        parentColor: Int?
+    ): DrawerLabelUiModel.Icon {
 
         val drawableRes = when (type) {
             LabelType.MESSAGE_LABEL -> R.drawable.shape_ellipse
@@ -93,13 +107,13 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
         }
 
         val colorInt =
-            if (useFolderColor) toColorInt(color)
+            if (useFolderColor) toColorIntOrNull(color) ?: parentColor ?: context.getColor(R.color.icon_inverted)
             else context.getColor(R.color.icon_inverted)
 
         return DrawerLabelUiModel.Icon(drawableRes, colorInt)
     }
 
-    private fun toColorInt(color: String): Int {
+    private fun toColorIntOrNull(color: String): Int? {
         return when (color) {
             AQUA_BASE_V3_COLOR -> context.getColor(R.color.aqua_base)
             SAGE_BASE_V3_COLOR -> context.getColor(R.color.sage_base)
@@ -107,12 +121,12 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
         }
     }
 
-    private fun parseColor(color: String): Int =
+    private fun parseColor(color: String): Int? =
         try {
             Color.parseColor(UiUtil.normalizeColor(color))
         } catch (exception: IllegalArgumentException) {
             Timber.w(exception, "Cannot parse color: $color")
-            context.getColor(R.color.icon_inverted)
+            null
         }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
