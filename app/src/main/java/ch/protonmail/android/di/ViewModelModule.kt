@@ -50,6 +50,7 @@ import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.Module
@@ -91,6 +92,7 @@ internal class ViewModelModule {
         factory: ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory
     ): ViewModelProvider.NewInstanceFactory = factory
 
+    @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
     @Provides
     fun provideMailboxViewModel(
         messageDetailsRepository: MessageDetailsRepository,
@@ -105,6 +107,7 @@ internal class ViewModelModule {
         conversationModeEnabled: ConversationModeEnabled,
         observeConversationsByLocation: ObserveConversationsByLocation,
         observeConversationModeEnabled: ObserveConversationModeEnabled,
+        changeMessagesReadStatus: ChangeMessagesReadStatus,
         changeConversationsReadStatus: ChangeConversationsReadStatus,
         changeConversationsStarredStatus: ChangeConversationsStarredStatus,
         observeMessagesByLocation: ObserveMessagesByLocation,
@@ -131,6 +134,7 @@ internal class ViewModelModule {
         observeMessagesByLocation = observeMessagesByLocation,
         observeConversationsByLocation = observeConversationsByLocation,
         observeConversationModeEnabled = observeConversationModeEnabled,
+        changeMessagesReadStatus = changeMessagesReadStatus,
         changeConversationsReadStatus = changeConversationsReadStatus,
         changeConversationsStarredStatus = changeConversationsStarredStatus,
         observeAllUnreadCounters = observeAllUnreadCounters,

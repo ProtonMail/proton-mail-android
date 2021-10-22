@@ -71,6 +71,7 @@ import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.EntryPoints
 import io.mockk.Runs
@@ -131,6 +132,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val observeConversationsByLocation: ObserveConversationsByLocation = mockk()
 
     private val observeMessagesByLocation: ObserveMessagesByLocation = mockk()
+
+    private val changeMessagesReadStatus: ChangeMessagesReadStatus = mockk()
 
     private val changeConversationsReadStatus: ChangeConversationsReadStatus = mockk()
 
@@ -215,6 +218,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             observeConversationModeEnabled = mockk(),
             observeMessagesByLocation = observeMessagesByLocation,
             observeConversationsByLocation = observeConversationsByLocation,
+            changeMessagesReadStatus = changeMessagesReadStatus,
             changeConversationsReadStatus = changeConversationsReadStatus,
             changeConversationsStarredStatus = changeConversationsStarredStatus,
             observeAllUnreadCounters = mockk(),

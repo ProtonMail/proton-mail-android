@@ -348,18 +348,6 @@ class MessageDetailsRepository @Inject constructor(
         attachmentsWorker.enqueue(messageId, userId, "")
     }
 
-    @Deprecated("Use a method from [MessageRepository]")
-    fun markRead(messageIds: List<String>) {
-        Timber.d("markRead $messageIds")
-        jobManager.addJobInBackground(PostReadJob(messageIds))
-    }
-
-    @Deprecated("Use a method from [MessageRepository]")
-    fun markUnRead(messageIds: List<String>) {
-        Timber.d("markUnRead $messageIds")
-        jobManager.addJobInBackground(PostUnreadJob(messageIds))
-    }
-
     fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> =
         pendingActionDao.findAllPendingSendsAsync()
 

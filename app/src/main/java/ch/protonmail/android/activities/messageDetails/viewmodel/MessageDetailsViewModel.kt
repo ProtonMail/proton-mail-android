@@ -76,6 +76,7 @@ import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
@@ -136,6 +137,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val conversationModeEnabled: ConversationModeEnabled,
     private val conversationRepository: ConversationsRepository,
+    private val changeMessagesReadStatus: ChangeMessagesReadStatus,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val deleteMessage: DeleteMessage,
@@ -290,7 +292,11 @@ internal class MessageDetailsViewModel @Inject constructor(
                     mailboxLocationId ?: location.messageLocationTypeValue.toString()
                 )
             } else {
-                messageRepository.markUnRead(listOf(messageOrConversationId))
+                changeMessagesReadStatus(
+                    listOf(messageOrConversationId),
+                    ChangeMessagesReadStatus.Action.ACTION_MARK_UNREAD,
+                    userManager.requireCurrentUserId()
+                )
             }
         }
     }

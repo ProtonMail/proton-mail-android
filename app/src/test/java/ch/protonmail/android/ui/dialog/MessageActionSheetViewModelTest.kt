@@ -36,6 +36,7 @@ import ch.protonmail.android.ui.actionsheet.MessageActionSheetState
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -66,6 +67,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     @MockK
     private lateinit var messageRepository: MessageRepository
+
+    @MockK
+    private lateinit var changeMessagesReadStatus: ChangeMessagesReadStatus
 
     @MockK
     private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
@@ -103,6 +107,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder,
             moveConversationsToFolder,
             messageRepository,
+            changeMessagesReadStatus,
             changeConversationsReadStatus,
             changeConversationsStarredStatus,
             conversationModeEnabled,
@@ -436,7 +441,13 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageId = "messageId4"
         val expected = MessageActionSheetAction.DismissActionSheet(false)
         every { conversationModeEnabled(any()) } returns true
-        every { messageRepository.markUnRead(listOf(messageId)) } just Runs
+        coEvery {
+            changeMessagesReadStatus.invoke(
+                listOf(messageId),
+                ChangeMessagesReadStatus.Action.ACTION_MARK_UNREAD,
+                any()
+            )
+        } just Runs
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -450,8 +461,13 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
-        verify { messageRepository.markUnRead(listOf(messageId)) }
-        verify { accountManager wasNot Called }
+        coVerify {
+            changeMessagesReadStatus.invoke(
+                listOf(messageId),
+                ChangeMessagesReadStatus.Action.ACTION_MARK_UNREAD,
+                any()
+            )
+        }
     }
 
     @Test
