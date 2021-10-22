@@ -32,6 +32,6 @@ class ObserveLabelsAndFoldersWithChildren @Inject constructor(
     private val labelRepository: LabelRepository
 ) {
 
-    operator fun invoke(userId: UserId): Flow<List<LabelOrFolderWithChildren>> =
-        labelRepository.observeAllLabelsAndFoldersWithChildren(userId)
+    operator fun invoke(userId: UserId, shallRefresh: Boolean): Flow<List<LabelOrFolderWithChildren>> =
+        labelRepository.observeAllLabelsAndFoldersWithChildren(userId, shallRefresh = shallRefresh)
 }

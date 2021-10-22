@@ -23,7 +23,7 @@ import android.graphics.Color
 import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
-import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.utils.UiUtil
 import me.proton.core.domain.arch.Mapper
@@ -36,22 +36,34 @@ import javax.inject.Inject
  *
  * @property useFolderColor whether the user enabled the settings for use Colors for Folders.
  *  TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`
+ *
+ * TODO: the mapper currently includes a piece of logic to flatten the hierarchy of the Folders to facilitate the
+ *  implementation with a conventional RecyclerView/Adapter, this must be reevaluated with MAILAND-2304, where we
+ *  probably need to keep the hierarchy, in order to have collapsible groups
  */
 internal class DrawerLabelUiModelMapper @Inject constructor(
     private val context: Context
-) : Mapper<Label, DrawerLabelUiModel> {
+) : Mapper<LabelOrFolderWithChildren, List<DrawerLabelUiModel>> {
 
     private val useFolderColor: Boolean = true
 
-    fun toUiModel(model: Label): DrawerLabelUiModel {
+    fun toUiModels(model: LabelOrFolderWithChildren): List<DrawerLabelUiModel> {
+        val parent = toUiModel(model)
+        return listOf(parent)
+    }
 
-        val type = model.type
+    fun toUiModel(model: LabelOrFolderWithChildren): DrawerLabelUiModel {
+
+        val labelType = when (model) {
+            is LabelOrFolderWithChildren.Label -> LabelType.MESSAGE_LABEL
+            is LabelOrFolderWithChildren.Folder -> LabelType.FOLDER
+        }
 
         return DrawerLabelUiModel(
             labelId = model.id.id,
             name = model.name,
-            icon = buildIcon(type, model.color),
-            type = type
+            icon = buildIcon(labelType, model.color),
+            type = labelType
         )
     }
 
@@ -82,7 +94,7 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
     private fun parseColor(color: String): Int =
         try {
             Color.parseColor(UiUtil.normalizeColor(color))
-        } catch (exception: Exception) {
+        } catch (exception: IllegalArgumentException) {
             Timber.w(exception, "Cannot parse color: $color")
             context.getColor(R.color.icon_inverted)
         }

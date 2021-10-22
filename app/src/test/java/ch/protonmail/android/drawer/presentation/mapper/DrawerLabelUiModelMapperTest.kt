@@ -23,8 +23,11 @@ import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.AQUA_BASE_V3_COLOR
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelUiModelMapper.Companion.SAGE_BASE_V3_COLOR
+import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
+import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.utils.buildFolders
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -36,7 +39,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private const val TEST_LABEL_NAME = "label"
-private val TEST_LABEL_ID = LabelId(TEST_LABEL_NAME)
+private const val TEST_COLOR = "#123"
 private const val DUMMY_PARSED_COLOR = 0
 private const val DUMMY_AQUA_BASE_COLOR = 1357
 private const val DUMMY_SAGE_BASE_COLOR = 2468
@@ -71,9 +74,53 @@ class DrawerLabelUiModelMapperTest {
     }
 
     @Test
+    fun singleLabelIsMapperCorrectly() {
+        // given
+        val name = "label"
+        val input = buildLabel(name)
+        val expected = listOf(
+            DrawerLabelUiModel(
+                labelId = name,
+                name = name,
+                icon = DrawerLabelUiModel.Icon(R.drawable.shape_ellipse, DUMMY_PARSED_COLOR),
+                type = LabelType.MESSAGE_LABEL,
+                folderLevel = 0
+            )
+        )
+
+        // when
+        val result = mapper.toUiModels(input)
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun singleFolderIsMapperCorrectly() {
+        // given
+        val name = "folder"
+        val input = buildFolders { folder(name) }
+        val expected = listOf(
+            DrawerLabelUiModel(
+                labelId = name,
+                name = name,
+                icon = DrawerLabelUiModel.Icon(R.drawable.ic_folder_filled, DUMMY_ICON_INVERTED_COLOR),
+                type = LabelType.FOLDER,
+                folderLevel = 0
+            )
+        )
+
+        // when
+        val result = mapper.toUiModels(input.first())
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
     fun worksCorrectlyWithCorrectColor() {
         // given
-        val input = buildLabel("#123")
+        val input = buildLabel(color = "#123")
 
         // when
         val result = mapper.toUiModel(input)
@@ -85,7 +132,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun defaultColorIsSetIfColorIsEmpty() {
         // given
-        val input = buildLabel(EMPTY_STRING)
+        val input = buildLabel(color = EMPTY_STRING)
 
         // when
         val result = mapper.toUiModel(input)
@@ -97,7 +144,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun defaultColorIsSetIfColorCantBeParsed() {
         // given
-        val input = buildLabel("incorrect")
+        val input = buildLabel(color = "incorrect")
 
         // when
         val result = mapper.toUiModel(input)
@@ -109,7 +156,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun aquaBaseColorIsReplacedCorrectly() {
         // given
-        val input = buildLabel(AQUA_BASE_V3_COLOR)
+        val input = buildLabel(color = AQUA_BASE_V3_COLOR)
 
         // when
         val result = mapper.toUiModel(input)
@@ -121,7 +168,7 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun sageBaseColorIsReplacedCorrectly() {
         // given
-        val input = buildLabel(SAGE_BASE_V3_COLOR)
+        val input = buildLabel(color = SAGE_BASE_V3_COLOR)
 
         // when
         val result = mapper.toUiModel(input)
@@ -130,9 +177,12 @@ class DrawerLabelUiModelMapperTest {
         assertEquals(DUMMY_SAGE_BASE_COLOR, result.icon.colorInt)
     }
 
-    private fun buildLabel(color: String) = LabelOrFolderWithChildren.Label(
-        id = TEST_LABEL_ID,
-        name = TEST_LABEL_NAME,
+    private fun buildLabel(
+        name: String = TEST_LABEL_NAME,
+        color: String = TEST_COLOR
+    ) = LabelOrFolderWithChildren.Label(
+        id = LabelId(name),
+        name = name,
         color = color
     )
 }

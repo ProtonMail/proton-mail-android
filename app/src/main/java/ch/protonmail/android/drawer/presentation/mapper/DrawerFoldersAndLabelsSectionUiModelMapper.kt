@@ -21,20 +21,20 @@ package ch.protonmail.android.drawer.presentation.mapper
 
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
-import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import me.proton.core.domain.arch.Mapper
 import javax.inject.Inject
 
 /**
- * Map from [List] of [Label] to [DrawerFoldersAndLabelsSectionUiModel]
+ * Map from [List] of [LabelOrFolderWithChildren] to [DrawerFoldersAndLabelsSectionUiModel]
  * Inherit from [Mapper]
  */
 internal class DrawerFoldersAndLabelsSectionUiModelMapper @Inject constructor(
     private val drawerLabelItemUiModelMapper: DrawerLabelItemUiModelMapper
-) : Mapper<List<Label>, DrawerFoldersAndLabelsSectionUiModel> {
+) : Mapper<List<LabelOrFolderWithChildren>, DrawerFoldersAndLabelsSectionUiModel> {
 
-    fun toUiModel(labels: List<Label>): DrawerFoldersAndLabelsSectionUiModel {
+    fun toUiModel(labels: List<LabelOrFolderWithChildren>): DrawerFoldersAndLabelsSectionUiModel {
         val (labelsItems, foldersItems) = labels.map { drawerLabelItemUiModelMapper.toUiModel(it) }
             .partition { it.uiModel.type == LabelType.MESSAGE_LABEL }
 
