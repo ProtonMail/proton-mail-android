@@ -132,11 +132,11 @@ class DrawerLabelUiModelMapperTest {
             }
         }
         val expected = listOf(
-            buildFolderUiModel(name = first, folderLevel = 0),
+            buildFolderUiModel(name = first, folderLevel = 0, hasChildren = true),
             buildFolderUiModel(name = firstFirst, folderLevel = 1),
             buildFolderUiModel(name = second, folderLevel = 0),
-            buildFolderUiModel(name = third, folderLevel = 0),
-            buildFolderUiModel(name = thirdFirst, folderLevel = 1),
+            buildFolderUiModel(name = third, folderLevel = 0, hasChildren = true),
+            buildFolderUiModel(name = thirdFirst, folderLevel = 1, hasChildren = true),
             buildFolderUiModel(name = thirdFirstFirst, folderLevel = 2),
             buildFolderUiModel(name = thirdFirstSecond, folderLevel = 2),
             buildFolderUiModel(name = thirdSecond, folderLevel = 1)
@@ -227,7 +227,7 @@ class DrawerLabelUiModelMapperTest {
         every { Color.parseColor(blueString) } returns blueInt
 
         val expected = listOf(
-            buildFolderUiModel(name = parent, folderLevel = 0, colorInt = redInt),
+            buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = redInt),
             buildFolderUiModel(name = child, folderLevel = 1, colorInt = blueInt),
         )
 
@@ -256,7 +256,7 @@ class DrawerLabelUiModelMapperTest {
         }
 
         val expected = listOf(
-            buildFolderUiModel(name = parent, folderLevel = 0, colorInt = redInt),
+            buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = redInt),
             buildFolderUiModel(name = child, folderLevel = 1, colorInt = redInt),
         )
 
@@ -282,7 +282,7 @@ class DrawerLabelUiModelMapperTest {
         }
 
         val expected = listOf(
-            buildFolderUiModel(name = parent, folderLevel = 0, colorInt = DUMMY_ICON_INVERTED_COLOR),
+            buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = DUMMY_ICON_INVERTED_COLOR),
             buildFolderUiModel(name = child, folderLevel = 1, colorInt = DUMMY_ICON_INVERTED_COLOR),
         )
 
@@ -328,12 +328,16 @@ class DrawerLabelUiModelMapperTest {
     private fun buildFolderUiModel(
         name: String = TEST_LABEL_NAME,
         folderLevel: Int,
+        hasChildren: Boolean = false,
         colorInt: Int = DUMMY_ICON_INVERTED_COLOR
-    ) = DrawerLabelUiModel(
-        labelId = name,
-        name = name,
-        icon = DrawerLabelUiModel.Icon(R.drawable.ic_folder_filled, colorInt),
-        type = LabelType.FOLDER,
-        folderLevel = folderLevel
-    )
+    ): DrawerLabelUiModel {
+        val drawableRes = if (hasChildren) R.drawable.ic_folder_multiple_filled else R.drawable.ic_folder_filled
+        return DrawerLabelUiModel(
+            labelId = name,
+            name = name,
+            icon = DrawerLabelUiModel.Icon(drawableRes, colorInt),
+            type = LabelType.FOLDER,
+            folderLevel = folderLevel
+        )
+    }
 }

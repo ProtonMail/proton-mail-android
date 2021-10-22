@@ -62,11 +62,13 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
         )
 
         val children = if (model is LabelOrFolderWithChildren.Folder) {
-            model.children.flatMap { domainModelToUiModels(
-                model = it,
-                folderLevel = folderLevel + 1,
-                parentColor = parent.icon.colorInt
-            ) }
+            model.children.flatMap {
+                domainModelToUiModels(
+                    model = it,
+                    folderLevel = folderLevel + 1,
+                    parentColor = parent.icon.colorInt
+                )
+            }
         } else {
             emptyList()
         }
@@ -84,10 +86,11 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
             is LabelOrFolderWithChildren.Folder -> LabelType.FOLDER
         }
 
+        val hasChildren = model is LabelOrFolderWithChildren.Folder && model.children.isNotEmpty()
         return DrawerLabelUiModel(
             labelId = model.id.id,
             name = model.name,
-            icon = buildIcon(labelType, model.color, parentColor),
+            icon = buildIcon(labelType, model.color, parentColor, hasChildren),
             type = labelType,
             folderLevel = folderLevel
         )
@@ -96,12 +99,19 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
     private fun buildIcon(
         type: LabelType,
         color: String,
-        parentColor: Int?
+        parentColor: Int?,
+        hasChildren: Boolean
     ): DrawerLabelUiModel.Icon {
 
         val drawableRes = when (type) {
             LabelType.MESSAGE_LABEL -> R.drawable.shape_ellipse
-            LabelType.FOLDER -> if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
+            LabelType.FOLDER -> {
+                if (useFolderColor) {
+                    if (hasChildren.not()) R.drawable.ic_folder_filled else R.drawable.ic_folder_multiple_filled
+                } else {
+                    if (hasChildren.not()) R.drawable.ic_folder else R.drawable.ic_folder_multiple
+                }
+            }
             LabelType.CONTACT_GROUP ->
                 throw IllegalArgumentException("Contact groups are not supported by the nav drawer")
         }
