@@ -75,7 +75,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             )
         val mailboxLabelId = arguments?.getString(EXTRA_ARG_MAILBOX_LABEL_ID)
             ?: messageLocation.messageLocationTypeValue.toString()
-        val doesConversationHaveMoreThanOneMessage = arguments?.getBoolean(EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE) ?: true
+        val doesConversationHaveMoreThanOneMessage =
+            arguments?.getBoolean(EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE) ?: true
 
         Timber.v("MessageActionSheet for location: $messageLocation")
         val binding = FragmentMessageActionSheetBinding.inflate(inflater)
@@ -87,7 +88,9 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         viewModel.setupViewState(messageIds, messageLocation, actionsTarget)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
-        setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, actionsTarget, messageIds, doesConversationHaveMoreThanOneMessage)
+        setupReplyActionsBindings(
+            binding.includeLayoutActionSheetButtons, actionsTarget, messageIds, doesConversationHaveMoreThanOneMessage
+        )
         setupManageSectionBindings(binding, viewModel, actionsTarget, messageIds, messageLocation, mailboxLabelId)
         setupMoreSectionBindings(binding, actionsTarget, messageIds)
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
@@ -186,8 +189,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             layoutDetailsActions.isVisible = actionsTarget in listOf(
                 ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN,
                 ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
-            ) || (actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN &&
-                !doesConversationHaveMoreThanOneMessage)
+            ) || actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN &&
+                !doesConversationHaveMoreThanOneMessage
 
             textViewDetailsActionsReply.setOnClickListener {
                 (activity as? MessageDetailsActivity)?.executeMessageAction(
@@ -454,7 +457,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
-        private const val EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE = "arg_conversation_has_more_than_one_message"
+        private const val EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE =
+            "arg_conversation_has_more_than_one_message"
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
         internal const val EXTRA_ARG_ACTION_TARGET = "extra_arg_action_sheet_actions_target"
 
