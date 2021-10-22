@@ -29,8 +29,8 @@ import javax.inject.Inject
  */
 internal class DrawerLabelItemUiModelMapper @Inject constructor(
     private val drawerLabelMapper: DrawerLabelUiModelMapper
-) : Mapper<LabelOrFolderWithChildren, DrawerItemUiModel.Primary.Label> {
+) : Mapper<Collection<LabelOrFolderWithChildren>, List<DrawerItemUiModel.Primary.Label>> {
 
-    fun toUiModel(model: LabelOrFolderWithChildren): DrawerItemUiModel.Primary.Label =
-        DrawerItemUiModel.Primary.Label(drawerLabelMapper.toUiModel(model))
+    fun toUiModels(models: Collection<LabelOrFolderWithChildren>): List<DrawerItemUiModel.Primary.Label> =
+        drawerLabelMapper.toUiModels(models).map(DrawerItemUiModel.Primary::Label)
 }

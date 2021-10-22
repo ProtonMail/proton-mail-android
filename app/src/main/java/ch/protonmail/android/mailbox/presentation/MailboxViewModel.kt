@@ -175,7 +175,7 @@ internal class MailboxViewModel @Inject constructor(
     ) { userId, isRefresh -> userId to isRefresh }
         .flatMapLatest { userIdPair -> observeLabelsAndFoldersWithChildren(userIdPair.first, userIdPair.second) }
         .map { labelsAndFolders ->
-            drawerFoldersAndLabelsSectionUiModelMapper.toUiModel(labelsAndFolders)
+            drawerFoldersAndLabelsSectionUiModelMapper.toUiModels(labelsAndFolders)
         }
 
     val unreadCounters: Flow<List<UnreadCounter>> = combine(

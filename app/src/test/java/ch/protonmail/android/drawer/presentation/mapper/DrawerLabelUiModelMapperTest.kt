@@ -77,15 +77,9 @@ class DrawerLabelUiModelMapperTest {
     fun singleLabelIsMapperCorrectly() {
         // given
         val name = "label"
-        val input = buildLabel(name)
+        val input = listOf(buildLabel(name))
         val expected = listOf(
-            DrawerLabelUiModel(
-                labelId = name,
-                name = name,
-                icon = DrawerLabelUiModel.Icon(R.drawable.shape_ellipse, DUMMY_PARSED_COLOR),
-                type = LabelType.MESSAGE_LABEL,
-                folderLevel = 0
-            )
+            buildLabelUiModel(name)
         )
 
         // when
@@ -101,17 +95,53 @@ class DrawerLabelUiModelMapperTest {
         val name = "folder"
         val input = buildFolders { folder(name) }
         val expected = listOf(
-            DrawerLabelUiModel(
-                labelId = name,
-                name = name,
-                icon = DrawerLabelUiModel.Icon(R.drawable.ic_folder_filled, DUMMY_ICON_INVERTED_COLOR),
-                type = LabelType.FOLDER,
-                folderLevel = 0
-            )
+            buildFolderUiModel(name, folderLevel = 0)
         )
 
         // when
-        val result = mapper.toUiModels(input.first())
+        val result = mapper.toUiModels(input)
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun nestedFoldersAreMappedCorrectly() {
+        // given
+        val first = "first"
+        val firstFirst = "first.first"
+        val second = "second"
+        val third = "third"
+        val thirdFirst = "third.first"
+        val thirdFirstFirst = "third.first.first"
+        val thirdFirstSecond = "third.first.second"
+        val thirdSecond = "third.second"
+        val input = buildFolders {
+            folder(first) {
+                folder(firstFirst)
+            }
+            folder(second)
+            folder(third) {
+                folder(thirdFirst) {
+                    folder(thirdFirstFirst)
+                    folder(thirdFirstSecond)
+                }
+                folder(thirdSecond)
+            }
+        }
+        val expected = listOf(
+            buildFolderUiModel(name = first, folderLevel = 0),
+            buildFolderUiModel(name = firstFirst, folderLevel = 1),
+            buildFolderUiModel(name = second, folderLevel = 0),
+            buildFolderUiModel(name = third, folderLevel = 0),
+            buildFolderUiModel(name = thirdFirst, folderLevel = 1),
+            buildFolderUiModel(name = thirdFirstFirst, folderLevel = 2),
+            buildFolderUiModel(name = thirdFirstSecond, folderLevel = 2),
+            buildFolderUiModel(name = thirdSecond, folderLevel = 1)
+        )
+
+        // when
+        val result = mapper.toUiModels(input)
 
         // then
         assertEquals(expected, result)
@@ -120,61 +150,61 @@ class DrawerLabelUiModelMapperTest {
     @Test
     fun worksCorrectlyWithCorrectColor() {
         // given
-        val input = buildLabel(color = "#123")
+        val input = listOf(buildLabel(color = "#123"))
 
         // when
-        val result = mapper.toUiModel(input)
+        val result = mapper.toUiModels(input)
 
         // then
-        assertEquals(DUMMY_PARSED_COLOR, result.icon.colorInt)
+        assertEquals(DUMMY_PARSED_COLOR, result.first().icon.colorInt)
     }
 
     @Test
     fun defaultColorIsSetIfColorIsEmpty() {
         // given
-        val input = buildLabel(color = EMPTY_STRING)
+        val input = listOf(buildLabel(color = EMPTY_STRING))
 
         // when
-        val result = mapper.toUiModel(input)
+        val result = mapper.toUiModels(input)
 
         // then
-        assertEquals(DUMMY_ICON_INVERTED_COLOR, result.icon.colorInt)
+        assertEquals(DUMMY_ICON_INVERTED_COLOR, result.first().icon.colorInt)
     }
 
     @Test
     fun defaultColorIsSetIfColorCantBeParsed() {
         // given
-        val input = buildLabel(color = "incorrect")
+        val input = listOf(buildLabel(color = "incorrect"))
 
         // when
-        val result = mapper.toUiModel(input)
+        val result = mapper.toUiModels(input)
 
         // then
-        assertEquals(DUMMY_ICON_INVERTED_COLOR, result.icon.colorInt)
+        assertEquals(DUMMY_ICON_INVERTED_COLOR, result.first().icon.colorInt)
     }
 
     @Test
     fun aquaBaseColorIsReplacedCorrectly() {
         // given
-        val input = buildLabel(color = AQUA_BASE_V3_COLOR)
+        val input = listOf(buildLabel(color = AQUA_BASE_V3_COLOR))
 
         // when
-        val result = mapper.toUiModel(input)
+        val result = mapper.toUiModels(input)
 
         // then
-        assertEquals(DUMMY_AQUA_BASE_COLOR, result.icon.colorInt)
+        assertEquals(DUMMY_AQUA_BASE_COLOR, result.first().icon.colorInt)
     }
 
     @Test
     fun sageBaseColorIsReplacedCorrectly() {
         // given
-        val input = buildLabel(color = SAGE_BASE_V3_COLOR)
+        val input = listOf(buildLabel(color = SAGE_BASE_V3_COLOR))
 
         // when
-        val result = mapper.toUiModel(input)
+        val result = mapper.toUiModels(input)
 
         // then
-        assertEquals(DUMMY_SAGE_BASE_COLOR, result.icon.colorInt)
+        assertEquals(DUMMY_SAGE_BASE_COLOR, result.first().icon.colorInt)
     }
 
     private fun buildLabel(
@@ -184,5 +214,26 @@ class DrawerLabelUiModelMapperTest {
         id = LabelId(name),
         name = name,
         color = color
+    )
+
+    private fun buildLabelUiModel(
+        name: String = TEST_LABEL_NAME
+    ) = DrawerLabelUiModel(
+        labelId = name,
+        name = name,
+        icon = DrawerLabelUiModel.Icon(R.drawable.shape_ellipse, DUMMY_PARSED_COLOR),
+        type = LabelType.MESSAGE_LABEL,
+        folderLevel = 0
+    )
+
+    private fun buildFolderUiModel(
+        name: String = TEST_LABEL_NAME,
+        folderLevel: Int
+    ) = DrawerLabelUiModel(
+        labelId = name,
+        name = name,
+        icon = DrawerLabelUiModel.Icon(R.drawable.ic_folder_filled, DUMMY_ICON_INVERTED_COLOR),
+        type = LabelType.FOLDER,
+        folderLevel = folderLevel
     )
 }

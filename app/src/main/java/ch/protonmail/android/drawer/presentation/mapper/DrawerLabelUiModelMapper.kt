@@ -43,16 +43,31 @@ import javax.inject.Inject
  */
 internal class DrawerLabelUiModelMapper @Inject constructor(
     private val context: Context
-) : Mapper<LabelOrFolderWithChildren, List<DrawerLabelUiModel>> {
+) : Mapper<Collection<LabelOrFolderWithChildren>, List<DrawerLabelUiModel>> {
 
     private val useFolderColor: Boolean = true
 
-    fun toUiModels(model: LabelOrFolderWithChildren): List<DrawerLabelUiModel> {
-        val parent = toUiModel(model)
-        return listOf(parent)
+    fun toUiModels(models: Collection<LabelOrFolderWithChildren>): List<DrawerLabelUiModel> =
+        models.flatMap { domainModelToUiModels(it, 0) }
+
+    private fun domainModelToUiModels(
+        model: LabelOrFolderWithChildren,
+        folderLevel: Int
+    ): List<DrawerLabelUiModel> {
+        val parent = domainModelToUiModel(model, folderLevel)
+
+        val children = if (model is LabelOrFolderWithChildren.Folder) {
+            model.children.flatMap { domainModelToUiModels(it, folderLevel + 1) }
+        } else {
+            emptyList()
+        }
+        return listOf(parent) + children
     }
 
-    fun toUiModel(model: LabelOrFolderWithChildren): DrawerLabelUiModel {
+    private fun domainModelToUiModel(
+        model: LabelOrFolderWithChildren,
+        folderLevel: Int
+    ): DrawerLabelUiModel {
 
         val labelType = when (model) {
             is LabelOrFolderWithChildren.Label -> LabelType.MESSAGE_LABEL
@@ -63,7 +78,8 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
             labelId = model.id.id,
             name = model.name,
             icon = buildIcon(labelType, model.color),
-            type = labelType
+            type = labelType,
+            folderLevel = folderLevel
         )
     }
 

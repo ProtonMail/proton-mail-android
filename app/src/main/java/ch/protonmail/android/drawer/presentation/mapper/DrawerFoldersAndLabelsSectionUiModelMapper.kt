@@ -27,15 +27,15 @@ import me.proton.core.domain.arch.Mapper
 import javax.inject.Inject
 
 /**
- * Map from [List] of [LabelOrFolderWithChildren] to [DrawerFoldersAndLabelsSectionUiModel]
+ * Map [List] of [LabelOrFolderWithChildren] to [DrawerFoldersAndLabelsSectionUiModel]
  * Inherit from [Mapper]
  */
 internal class DrawerFoldersAndLabelsSectionUiModelMapper @Inject constructor(
     private val drawerLabelItemUiModelMapper: DrawerLabelItemUiModelMapper
-) : Mapper<List<LabelOrFolderWithChildren>, DrawerFoldersAndLabelsSectionUiModel> {
+) : Mapper<Collection<LabelOrFolderWithChildren>, DrawerFoldersAndLabelsSectionUiModel> {
 
-    fun toUiModel(labels: List<LabelOrFolderWithChildren>): DrawerFoldersAndLabelsSectionUiModel {
-        val (labelsItems, foldersItems) = labels.map { drawerLabelItemUiModelMapper.toUiModel(it) }
+    fun toUiModels(labels: Collection<LabelOrFolderWithChildren>): DrawerFoldersAndLabelsSectionUiModel {
+        val (labelsItems, foldersItems) = drawerLabelItemUiModelMapper.toUiModels(labels)
             .partition { it.uiModel.type == LabelType.MESSAGE_LABEL }
 
         return DrawerFoldersAndLabelsSectionUiModel(
