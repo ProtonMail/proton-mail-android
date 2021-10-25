@@ -37,6 +37,7 @@ import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -75,6 +76,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
 
     @MockK
+    private lateinit var changeMessagesStarredStatus: ChangeMessagesStarredStatus
+
+    @MockK
     private lateinit var changeConversationsStarredStatus: ChangeConversationsStarredStatus
 
     @MockK
@@ -109,6 +113,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageRepository,
             changeMessagesReadStatus,
             changeConversationsReadStatus,
+            changeMessagesStarredStatus,
             changeConversationsStarredStatus,
             conversationModeEnabled,
             accountManager
@@ -396,12 +401,18 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         val messageId = "messageId3"
         val expected = MessageActionSheetAction.ChangeStarredStatus(true, isSuccessful = true)
+        val userId = UserId("userId")
         every { conversationModeEnabled(any()) } returns true
-        every { messageRepository.starMessages(listOf(messageId)) } just Runs
+        coEvery {
+            changeMessagesStarredStatus(
+                listOf(messageId),
+                ChangeMessagesStarredStatus.Action.ACTION_STAR,
+                userId
+            )
+        } just Runs
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
-        val userId = UserId("userId")
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         coEvery { changeConversationsStarredStatus(any(), any(), any()) } returns ConversationsActionResult.Success
 
@@ -413,8 +424,13 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
-        verify { messageRepository.starMessages(listOf(messageId)) }
-        verify { accountManager wasNot Called }
+        coVerify {
+            changeMessagesStarredStatus(
+                listOf(messageId),
+                ChangeMessagesStarredStatus.Action.ACTION_STAR,
+                userId
+            )
+        }
     }
 
     @Test

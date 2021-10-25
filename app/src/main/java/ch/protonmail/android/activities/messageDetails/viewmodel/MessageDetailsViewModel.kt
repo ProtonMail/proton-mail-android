@@ -77,6 +77,7 @@ import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
@@ -139,6 +140,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val conversationRepository: ConversationsRepository,
     private val changeMessagesReadStatus: ChangeMessagesReadStatus,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
+    private val changeMessagesStarredStatus: ChangeMessagesStarredStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val deleteMessage: DeleteMessage,
     private val deleteConversations: DeleteConversations,
@@ -766,26 +768,34 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun handleStarUnStar(messageOrConversationId: String, isChecked: Boolean) {
         val ids = listOf(messageOrConversationId)
+        val primaryUserId = userManager.requireCurrentUserId()
 
-        if (isConversationEnabled()) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (isConversationEnabled()) {
                 val starAction = if (isChecked) {
                     ChangeConversationsStarredStatus.Action.ACTION_STAR
                 } else {
                     ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
                 }
-                val primaryUserId = userManager.requireCurrentUserId()
                 changeConversationsStarredStatus(
                     ids,
                     primaryUserId,
                     starAction
                 )
-            }
-        } else {
-            if (isChecked) {
-                messageRepository.starMessages(ids)
             } else {
-                messageRepository.unStarMessages(ids)
+                if (isChecked) {
+                    changeMessagesStarredStatus(
+                        ids,
+                        ChangeMessagesStarredStatus.Action.ACTION_STAR,
+                        primaryUserId
+                    )
+                } else {
+                    changeMessagesStarredStatus(
+                        ids,
+                        ChangeMessagesStarredStatus.Action.ACTION_UNSTAR,
+                        primaryUserId
+                    )
+                }
             }
         }
     }

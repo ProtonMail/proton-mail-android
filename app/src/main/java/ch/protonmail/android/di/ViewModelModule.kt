@@ -51,6 +51,7 @@ import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.Module
@@ -109,6 +110,7 @@ internal class ViewModelModule {
         observeConversationModeEnabled: ObserveConversationModeEnabled,
         changeMessagesReadStatus: ChangeMessagesReadStatus,
         changeConversationsReadStatus: ChangeConversationsReadStatus,
+        changeMessagesStarredStatus: ChangeMessagesStarredStatus,
         changeConversationsStarredStatus: ChangeConversationsStarredStatus,
         observeMessagesByLocation: ObserveMessagesByLocation,
         observeAllUnreadCounters: ObserveAllUnreadCounters,
@@ -136,6 +138,7 @@ internal class ViewModelModule {
         observeConversationModeEnabled = observeConversationModeEnabled,
         changeMessagesReadStatus = changeMessagesReadStatus,
         changeConversationsReadStatus = changeConversationsReadStatus,
+        changeMessagesStarredStatus = changeMessagesStarredStatus,
         changeConversationsStarredStatus = changeConversationsStarredStatus,
         observeAllUnreadCounters = observeAllUnreadCounters,
         moveConversationsToFolder = moveConversationsToFolder,

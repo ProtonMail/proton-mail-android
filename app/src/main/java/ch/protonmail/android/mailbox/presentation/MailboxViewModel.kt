@@ -38,7 +38,6 @@ import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.jobs.ApplyLabelJob
-import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
@@ -68,6 +67,7 @@ import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
@@ -125,6 +125,7 @@ internal class MailboxViewModel @Inject constructor(
     private val observeConversationsByLocation: ObserveConversationsByLocation,
     private val changeMessagesReadStatus: ChangeMessagesReadStatus,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
+    private val changeMessagesStarredStatus: ChangeMessagesStarredStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val observeAllUnreadCounters: ObserveAllUnreadCounters,
     private val moveConversationsToFolder: MoveConversationsToFolder,
@@ -723,16 +724,20 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     fun star(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
-        if (conversationModeEnabled(location)) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (conversationModeEnabled(location)) {
                 changeConversationsStarredStatus(
                     ids,
                     userId,
                     ChangeConversationsStarredStatus.Action.ACTION_STAR
                 )
+            } else {
+                changeMessagesStarredStatus(
+                    ids,
+                    ChangeMessagesStarredStatus.Action.ACTION_STAR,
+                    userId
+                )
             }
-        } else {
-            jobManager.addJobInBackground(PostStarJob(ids))
         }
     }
 
