@@ -270,3 +270,30 @@
 
 # Coroutines
 -dontwarn kotlinx.atomicfu.AtomicBoolean
+
+# kotlinx.serialization
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+-keep,includedescriptorclasses class me.proton.core.**$$serializer { *; }
+-keepclassmembers class me.proton.core.** {
+    *** Companion;
+}
+-keepclasseswithmembers class me.proton.core.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+-keep,includedescriptorclasses class ch.protonmail.android.**$$serializer { *; }
+-keepclassmembers class ch.protonmail.android.** {
+    *** Companion;
+}
+-keepclasseswithmembers class ch.protonmail.android.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
