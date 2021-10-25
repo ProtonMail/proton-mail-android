@@ -66,16 +66,20 @@ class LabelsActionAdapter(
         root: ConstraintLayout
     ) : RecyclerView.ViewHolder(root) {
 
-        fun bind(
-            model: LabelActonItemUiModel
-        ) {
+        fun bind(model: LabelActonItemUiModel) {
             Timber.v("Bind ManageLabelsViewHolder $model")
 
-            // Apply a padding for sub-folders
-            (itemView.layoutParams as RecyclerView.LayoutParams).marginStart =
-                model.folderLevel * itemView.context.resources.getDimensionPixelSize(R.dimen.gap_large)
+            applyPaddingForSubFolders(model.folderLevel)
+            setTitleAndIcon(model)
+            setCheckbox(model.isChecked)
+        }
 
-            // Set Title and icon
+        private fun applyPaddingForSubFolders(folderLevel: Int) {
+            (itemView.layoutParams as RecyclerView.LayoutParams).marginStart =
+                folderLevel * itemView.context.resources.getDimensionPixelSize(R.dimen.gap_large)
+        }
+
+        private fun setTitleAndIcon(model: LabelActonItemUiModel) {
             titleTextView.apply {
                 text = if (model.titleRes != null) {
                     resources.getString(model.titleRes)
@@ -92,13 +96,14 @@ class LabelsActionAdapter(
                     null
                 )
             }
+        }
 
-            // Set checkbox
-            with(checkbox) {
-                if (model.isChecked == null) {
+        private fun setCheckbox(isModelChecked: Boolean?) {
+            checkbox.apply {
+                if (isModelChecked == null) {
                     isVisible = false
                 } else {
-                    isChecked = model.isChecked
+                    isChecked = isModelChecked
                     isVisible = true
                 }
             }
