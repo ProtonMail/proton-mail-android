@@ -24,6 +24,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/background_norm"
     tools:context=".details.presentation.MessageDetailsActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
