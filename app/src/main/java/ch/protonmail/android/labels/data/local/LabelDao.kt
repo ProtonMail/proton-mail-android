@@ -65,21 +65,21 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
 
     @Query(
         """
-         SELECT * FROM LabelEntity 
+        SELECT * FROM LabelEntity 
         WHERE userId = :userId
-        AND type = :labelType
+        AND type in (:labelTypes)
         """
     )
-    abstract fun observeLabelsByType(userId: UserId, labelType: LabelType): Flow<List<LabelEntity>>
+    abstract fun observeLabelsByType(userId: UserId, vararg labelTypes: LabelType): Flow<List<LabelEntity>>
 
     @Query(
         """
-         SELECT * FROM LabelEntity 
+        SELECT * FROM LabelEntity 
         WHERE userId = :userId
-        AND type = :labelType
+        AND type in (:labelTypes)
         """
     )
-    abstract suspend fun findLabelsByType(userId: UserId, labelType: LabelType): List<LabelEntity>
+    abstract suspend fun findLabelsByTypes(userId: UserId, vararg labelTypes: LabelType): List<LabelEntity>
 
     @Query(
         """

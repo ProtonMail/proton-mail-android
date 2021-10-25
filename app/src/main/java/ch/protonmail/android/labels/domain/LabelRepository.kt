@@ -23,6 +23,7 @@ import androidx.paging.DataSource
 import androidx.work.WorkInfo
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
@@ -30,6 +31,8 @@ import me.proton.core.domain.entity.UserId
 interface LabelRepository {
 
     fun observeAllLabels(userId: UserId, shallRefresh: Boolean = false): Flow<List<Label>>
+
+    fun observeAllLabelsAndFoldersWithChildren(userId: UserId, shallRefresh: Boolean = false): Flow<List<LabelOrFolderWithChildren>>
 
     suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean = false): List<Label>
 
