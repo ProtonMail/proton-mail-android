@@ -73,6 +73,7 @@ import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -235,6 +236,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     private val messageId2 = "messageId2"
     private val inboxLabelId = MessageLocationType.INBOX.messageLocationTypeValue.toString()
     private val trashLabelId = MessageLocationType.TRASH.messageLocationTypeValue.toString()
+    private val starredLabelId = MessageLocationType.STARRED.messageLocationTypeValue.toString()
 
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
@@ -952,6 +954,64 @@ class ConversationsRepositoryImplTest : ArchTest {
 
             // then
             assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun verifyConversationsAreUpdatedWhenMessagesAreStarred() = runBlockingTest {
+        // given
+        val action = ChangeMessagesStarredStatus.Action.ACTION_STAR
+        val inboxLabel = buildLabelContextDatabaseModel(
+            id = inboxLabelId,
+            contextNumUnread = 0,
+            contextNumMessages = 2,
+            contextNumAttachments = 3
+        )
+        val starredLabel = buildLabelContextDatabaseModel(
+            id = starredLabelId,
+            contextNumUnread = 1,
+            contextNumMessages = 1,
+            contextTime = 123,
+            contextSize = 123,
+            contextNumAttachments = 2
+        )
+        val conversation1 = buildConversationDatabaseModel(
+            userId = testUserId.id,
+            id = conversationId1,
+            numMessages = 2,
+            numUnread = 0,
+            numAttachments = 3,
+            labels = listOf(inboxLabel)
+        )
+        val updatedConversation1 = buildConversationDatabaseModel(
+            userId = testUserId.id,
+            id = conversationId1,
+            numMessages = 2,
+            numUnread = 0,
+            numAttachments = 3,
+            labels = listOf(inboxLabel, starredLabel)
+        )
+        val message1 = Message(
+            conversationId = conversationId1,
+            Unread = true,
+            time = 123,
+            totalSize = 123,
+            numAttachments = 2
+        )
+        coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message1
+        coEvery { conversationDao.findConversation(testUserId.id, conversationId1) } returns conversation1
+        coEvery { conversationDao.update(updatedConversation1) } returns 123
+
+        // when
+        conversationsRepository.updateConversationsAfterChangingMessagesStarredStatus(
+            listOf(messageId1),
+            action,
+            testUserId
+        )
+
+        // then
+        coVerify {
+            conversationDao.update(updatedConversation1)
         }
     }
 

@@ -27,6 +27,7 @@ import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
@@ -96,6 +97,12 @@ interface ConversationsRepository {
     suspend fun star(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 
     suspend fun unstar(conversationIds: List<String>, userId: UserId): ConversationsActionResult
+
+    suspend fun updateConversationsAfterChangingMessagesStarredStatus(
+        messageIds: List<String>,
+        action: ChangeMessagesStarredStatus.Action,
+        userId: UserId
+    )
 
     suspend fun moveToFolder(
         conversationIds: List<String>,
