@@ -26,7 +26,6 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Color
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
@@ -1409,7 +1408,7 @@ internal class MailboxActivity :
                         val view = newMessageSnack.view
                         val tv =
                             view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                        tv.setTextColor(Color.WHITE)
+                        tv.setTextColor(context.getColor(R.color.text_inverted))
                         newMessageSnack.show()
                     }
                 }

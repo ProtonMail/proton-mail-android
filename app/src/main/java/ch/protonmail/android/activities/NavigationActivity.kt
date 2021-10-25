@@ -22,6 +22,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
@@ -146,7 +147,10 @@ internal abstract class NavigationActivity : BaseActivity() {
         val currentUsername = switch.current?.username
         if (switch.previous != null && currentUsername != null) {
             val message = String.format(getString(R.string.signed_in_with), currentUsername)
-            Snackbar.make(drawerLayout, message, Snackbar.LENGTH_SHORT).show()
+            val snackBar = Snackbar.make(drawerLayout, message, Snackbar.LENGTH_SHORT)
+            snackBar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                .setTextColor(this.getColor(R.color.text_inverted))
+            snackBar.show()
         }
     }
 

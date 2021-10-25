@@ -1870,7 +1870,7 @@ public class ComposeMessageActivity
                         snack.setAnchorView(binding.composerBottomAppBar);
                         View snackView = snack.getView();
                         TextView tv = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
-                        tv.setTextColor(Color.WHITE);
+                        tv.setTextColor(getColor(R.color.text_inverted));
                         snack.show();
                     } else {
                         String previousSenderAddressId = composeMessageViewModel.getMessageDataResult().getAddressId();

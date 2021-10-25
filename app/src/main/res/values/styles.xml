@@ -174,8 +174,8 @@
     </style>
 
     <style name="ThemeOverlay.App.Snackbar" parent="">
-        <item name="colorSurface">@color/woodsmoke</item>
-        <item name="colorOnSurface">@color/woodsmoke</item>
+        <item name="colorSurface">@color/icon_norm</item>
+        <item name="colorOnSurface">@color/icon_norm</item>
     </style>
 
     <style name="ThemeOverlay.App.Snackbar.Error" parent="">
@@ -189,7 +189,7 @@
     </style>
 
     <style name="Widget.App.SnackbarButton" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/background_norm</item>
     </style>
     <!-- endregion -->
 

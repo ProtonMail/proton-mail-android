@@ -362,6 +362,7 @@ class DialogUtils {
             showUndo: Boolean
         ): Snackbar {
             val undoSnack = Snackbar.make(parent, message, Snackbar.LENGTH_LONG)
+            undoSnack.setTextColor(context.getColor(R.color.text_inverted))
             if (showUndo) {
                 undoSnack.setAction(context.getString(R.string.undo)) {
                     okListener(Unit)
