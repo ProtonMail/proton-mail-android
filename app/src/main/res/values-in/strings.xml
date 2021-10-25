@@ -121,7 +121,7 @@
     <string name="close_drawer">Tutup</string>
     <string name="inbox_option">Kotak masuk</string>
     <string name="starred_option">Dibintangi</string>
-    <string name="drafts_option">Konsep</string>
+    <string name="drafts_option">Draf</string>
     <string name="sent_option">Terkirim</string>
     <string name="archive_option">Arsip</string>
     <string name="trash_option">Sampah</string>
@@ -138,7 +138,7 @@
     <string name="contacts">Kontak</string>
     <string name="search_contacts">Cari kontak</string>
     <string name="fetching_contacts">Mengambil kontak ProtonMail...</string>
-    <string name="fetching_contacts_success">Kontak berhasil disegarkan</string>
+    <string name="fetching_contacts_success">Kontak berhasil dimuat ulang</string>
     <string name="fetching_contacts_failure">Tidak dapat menyegarkan kontak</string>
     <string name="search_messages">Cari pesan</string>
     <string name="no_search_results">Tidak ada hasil pencarian</string>
@@ -231,7 +231,7 @@
     <string name="save">Simpan</string>
     <string name="syncing_messages">Menyinkronkan...</string>
     <string name="sync">Sinkronkan Kontak</string>
-    <string name="save_message_as_draft">Simpan pesan sebagai konsep?</string>
+    <string name="save_message_as_draft">Simpan pesan sebagai draf?</string>
     <string name="no_subject">Kirim pesan tanpa subjek?</string>
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
@@ -304,7 +304,7 @@
     <string name="server_not_reachable_troubleshoot">Server tidak dapat dijangkau… (<u>Penyelesaian masalah</u>)</string>
     <string name="connectivity_checking">Memeriksa koneksi...</string>
     <string name="sync_short">sinkronkan</string>
-    <string name="draft_attachments_uploading">Konsep masih mengunggah...</string>
+    <string name="draft_attachments_uploading">Draf masih mengunggah…</string>
     <string name="draft_label_attachments_uploading">mengunggah lampiran…</string>
     <string name="draft_label_message_uploading">mengirim pesan…</string>
     <string name="attachment_failed">Gagal mengunggah lampiran untuk pesan </string>
@@ -585,7 +585,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="encrypted_contact_details">Rincian Kontak Terenkripsi</string>
     <string name="convert_question">Unggah kontak lokal</string>
     <string name="convert_question_subtitle">Ini akan mengunggah kontak lokal pada perangkat Anda ke direktori kontak ProtonMail Anda. Anda kemudian dapat mengakses kontak ini di perangkat Anda yang lain melalui ProtonMail.</string>
-    <string name="refresh_contacts">Segarkan</string>
+    <string name="refresh_contacts">Muat Ulang</string>
     <string name="upload">Unggah</string>
     <string name="invalid_email_some_contacts">Alamat email tidak valid untuk beberapa kontak Anda</string>
     <string name="protonmail_contacts">Kontak ProtonMail</string>

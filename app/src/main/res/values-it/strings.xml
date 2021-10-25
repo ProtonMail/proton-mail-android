@@ -631,7 +631,7 @@
     <string name="sender_lock_pgp_encrypted_verified">Messaggio crittografato con PGP da un indirizzo verificato</string>
     <string name="sender_lock_pgp_signed_verified_sender">Messaggio firmato con PGP da un indirizzo verificato</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
+    <string name="sender_lock_internal">Messaggio crittografato e firmato end-to-end</string>
     <string name="sender_lock_internal_verified">Messaggio crittografato ent-to-end da un indirizzo verificato</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Crittografia end-to-end</string>

@@ -629,12 +629,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Doğrulanmış adresten PGP şifreli ileti</string>
     <string name="sender_lock_pgp_signed_verified_sender">Doğrulanmış adresten PGP imzalı ileti</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
+    <string name="sender_lock_internal">Uçtan uca şifrelenmiş ve imzalanmış ileti</string>
     <string name="sender_lock_internal_verified">Doğrulanmış adresten uçtan uca şifreli ileti</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Uçtan uca şifreli</string>
     <string name="composer_lock_internal_pinned">Doğrulanmış adrese uçtan uca şifreli</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Doğrulanmış alıcıya PGP şifreli</string>
     <string name="composer_lock_pgp_signed">PGP-imzalı</string>
     <string name="recipient_not_found_and_removed">Alıcı bulunamadı: %s ve kaldırıldı</string>
     <string name="recipient_error_and_removed">Alıcı bilgileri alınırken bir hata oluştu ve alıcı kaldırıldı: %s</string>
