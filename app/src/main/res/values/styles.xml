@@ -145,7 +145,6 @@
         <item name="android:clickable">true</item>
         <item name="android:background">@drawable/shape_background_action_sheet_buttons</item>
         <item name="android:drawablePadding">@dimen/padding_s</item>
-        <item name="android:elevation">@dimen/elevation_s</item>
         <item name="android:focusable">true</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingTop">@dimen/padding_m</item>
