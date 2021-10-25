@@ -980,11 +980,11 @@
     <string name="invalid_firebase_api_key_message">Неверный ключ API Firebase. Push-уведомления не будут работать.</string>
     <string name="failed_saving_draft_online">Не удалось сохранить онлайн черновик сообщения: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Невозможно открыть сообщение пока оно отправляется</string>
-    <string name="enable_conversation_mode">Включить обсуждения</string>
+    <string name="enable_conversation_mode">Включить режим цепочек писем</string>
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Ошибка загрузки бесед, попробуйте еще раз</string>
+    <string name="error_loading_conversations">Ошибка загрузки цепочек писем, попробуйте еще раз</string>
     <string name="star">Отметить как Важное</string>
     <string name="unstar">Снять пометку</string>
     <string name="star_unstar">Отметить важным / снять отметку</string>
@@ -1006,10 +1006,10 @@
         <item quantity="other">%d сообщений</item>
     </plurals>
     <plurals name="x_conversations_count">
-        <item quantity="one">%d беседа</item>
-        <item quantity="few">%d беседы</item>
+        <item quantity="one">%d цепочка писем</item>
+        <item quantity="few">%d цепочек писем</item>
         <item quantity="many">%d бесед</item>
-        <item quantity="other">%d бесед</item>
+        <item quantity="other">%d цепочка(и,ек) писем</item>
     </plurals>
     <string name="contacts_call">Позвонить</string>
     <string name="contacts_send_group_message">Отправить сообщение всей группе</string>
