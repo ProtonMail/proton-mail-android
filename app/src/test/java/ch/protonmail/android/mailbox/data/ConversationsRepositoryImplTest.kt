@@ -230,6 +230,11 @@ class ConversationsRepositoryImplTest : ArchTest {
 
     private val conversationId = "conversationId"
     private val conversationId1 = "conversationId1"
+    private val conversationId2 = "conversationId2"
+    private val messageId1 = "messageId1"
+    private val messageId2 = "messageId2"
+    private val inboxLabelId = MessageLocationType.INBOX.messageLocationTypeValue.toString()
+    private val trashLabelId = MessageLocationType.TRASH.messageLocationTypeValue.toString()
 
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
@@ -778,34 +783,31 @@ class ConversationsRepositoryImplTest : ArchTest {
     @Test
     fun verifyConversationsAreUpdatedWhenMessagesAreMarkedAsRead() = runBlockingTest {
         // given
-        val conversationId1 = "conversationId1"
-        val messageId1 = "messageId1"
         val action = ChangeMessagesReadStatus.Action.ACTION_MARK_READ
-        val userId = UserId("userId")
         val message1 = Message(
             conversationId = conversationId1
         )
         val conversation1 = buildConversationDatabaseModel(
-            userId = userId.id,
+            userId = testUserId.id,
             id = conversationId1,
             numMessages = 2,
             numUnread = 1
         )
         val updatedConversation1 = buildConversationDatabaseModel(
-            userId = userId.id,
+            userId = testUserId.id,
             id = conversationId1,
             numMessages = 2,
             numUnread = 0
         )
         coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message1
-        coEvery { conversationDao.findConversation(userId.id, conversationId1) } returns conversation1
+        coEvery { conversationDao.findConversation(testUserId.id, conversationId1) } returns conversation1
         coEvery { conversationDao.update(updatedConversation1) } returns 123
 
         // when
         conversationsRepository.updateConversationsAfterChangingMessagesReadStatus(
             listOf(messageId1),
             action,
-            userId
+            testUserId
         )
 
         // then
@@ -1071,13 +1073,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     @Test
     fun verifyConversationsAreUpdatedWhenMessagesAreDeleted() = runBlockingTest {
         // given
-        val messageId1 = "messageId1"
-        val messageId2 = "messageId2"
-        val conversationId1 = "conversationId1"
-        val conversationId2 = "conversationId2"
         val messageIds = listOf(messageId1, messageId2)
-        val inboxLabelId = MessageLocationType.INBOX.messageLocationTypeValue.toString()
-        val trashLabelId = MessageLocationType.TRASH.messageLocationTypeValue.toString()
         val inboxLabel = buildLabelContextDatabaseModel(
             id = inboxLabelId,
             contextNumUnread = 0,
