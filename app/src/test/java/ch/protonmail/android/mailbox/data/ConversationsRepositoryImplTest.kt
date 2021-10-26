@@ -1036,62 +1036,67 @@ class ConversationsRepositoryImplTest : ArchTest {
         val conversationId1 = "conversationId1"
         val conversationId2 = "conversationId2"
         val messageIds = listOf(messageId1, messageId2)
-        val userId = UserId("userId")
-        val copyConversationDatabaseModel = ConversationDatabaseModel(
-            userId = userId.id,
+        val inboxLabelId = MessageLocationType.INBOX.messageLocationTypeValue.toString()
+        val trashLabelId = MessageLocationType.TRASH.messageLocationTypeValue.toString()
+        val inboxLabel = buildLabelContextDatabaseModel(
+            id = inboxLabelId,
+            contextNumUnread = 0,
+            contextNumMessages = 1,
+            contextNumAttachments = 0
+        )
+        val trashLabel = buildLabelContextDatabaseModel(
+            id = trashLabelId,
+            contextNumUnread = 1,
+            contextNumMessages = 1,
+            contextNumAttachments = 1
+        )
+        val message1 = Message(
+            conversationId = conversationId1
+        )
+        val message2 = Message(
+            conversationId = conversationId2,
+            Unread = true,
+            numAttachments = 1,
+            allLabelIDs = listOf(trashLabelId)
+        )
+        val conversation1 = buildConversationDatabaseModel(
+            id = conversationId1,
+            numMessages = 1
+        )
+        val conversation2 = buildConversationDatabaseModel(
             id = conversationId2,
-            order = 0,
-            subject = "subject",
-            senders = listOf(),
-            recipients = listOf(),
+            numMessages = 2,
+            numUnread = 1,
+            numAttachments = 1,
+            labels = listOf(inboxLabel, trashLabel)
+        )
+        val updatedConversation2 = buildConversationDatabaseModel(
+            id = conversationId2,
             numMessages = 1,
             numUnread = 0,
             numAttachments = 0,
-            expirationTime = 0L,
-            size = 0,
-            labels = listOf()
+            labels = listOf(inboxLabel)
         )
-        coEvery { messageDao.findMessageByIdOnce(messageId1) } returns mockk {
-            every { conversationId } returns conversationId1
-        }
-        coEvery { messageDao.findMessageByIdOnce(messageId2) } returns mockk {
-            every { conversationId } returns conversationId2
-            every { Unread } returns true
-            every { numAttachments } returns 1
-        }
-        coEvery { conversationDao.findConversation(userId.id, conversationId1) } returns mockk {
-            every { id } returns conversationId1
-            every { numMessages } returns 1
-        }
-        coEvery { conversationDao.findConversation(userId.id, conversationId2) } returns mockk {
-            every { id } returns conversationId2
-            every { numMessages } returns 2
-            every { numUnread } returns 1
-            every { numAttachments } returns 1
-            every {
-                copy(
-                    numMessages = 1,
-                    numUnread = 0,
-                    numAttachments = 0
-                )
-            } returns copyConversationDatabaseModel
-        }
+        coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message1
+        coEvery { messageDao.findMessageByIdOnce(messageId2) } returns message2
+        coEvery { conversationDao.findConversation(testUserId.id, conversationId1) } returns conversation1
+        coEvery { conversationDao.findConversation(testUserId.id, conversationId2) } returns conversation2
         coEvery {
-            conversationDao.deleteConversation(userId.id, any())
+            conversationDao.deleteConversation(testUserId.id, any())
         } just runs
         coEvery {
-            conversationDao.update(copyConversationDatabaseModel)
+            conversationDao.update(updatedConversation2)
         } returns 123
 
         // when
-        conversationsRepository.updateConversationsAfterDeletingMessages(messageIds, userId)
+        conversationsRepository.updateConversationsAfterDeletingMessages(messageIds, testUserId)
 
         // then
         coVerify(exactly = 1) {
-            conversationDao.deleteConversation(userId.id, conversationId1)
+            conversationDao.deleteConversation(testUserId.id, conversationId1)
         }
         coVerify(exactly = 1) {
-            conversationDao.update(copyConversationDatabaseModel)
+            conversationDao.update(updatedConversation2)
         }
     }
 
@@ -1464,6 +1469,34 @@ class ConversationsRepositoryImplTest : ArchTest {
     )
 
     private fun buildConversationDatabaseModel(
+        id: String = conversationId,
+        order: Long = 0,
+        userId: String = testUserId.id,
+        subject: String = "Subject",
+        senders: List<MessageSender> = emptyList(),
+        recipients: List<MessageRecipient> = emptyList(),
+        numMessages: Int = 0,
+        numUnread: Int = 0,
+        numAttachments: Int = 0,
+        expirationTime: Long = 0,
+        size: Long = 0,
+        labels: List<LabelContextDatabaseModel> = emptyList()
+    ) = ConversationDatabaseModel(
+        id = id,
+        order = order,
+        userId = userId,
+        subject = subject,
+        senders = senders,
+        recipients = recipients,
+        numMessages = numMessages,
+        numUnread = numUnread,
+        numAttachments = numAttachments,
+        expirationTime = expirationTime,
+        size = size,
+        labels = labels
+    )
+
+    private fun buildConversationDatabaseModel(
         userId: UserId = testUserId,
         id: String,
         order: Long = 0,
@@ -1516,6 +1549,22 @@ class ConversationsRepositoryImplTest : ArchTest {
             size = 1,
             labels = labels
         )
+
+    private fun buildLabelContextDatabaseModel(
+        id: String,
+        contextNumUnread: Int = 0,
+        contextNumMessages: Int = 0,
+        contextTime: Long = 0,
+        contextSize: Int = 0,
+        contextNumAttachments: Int = 0
+    ) = LabelContextDatabaseModel(
+        id = id,
+        contextNumUnread = contextNumUnread,
+        contextNumMessages = contextNumMessages,
+        contextTime = contextTime,
+        contextSize = contextSize,
+        contextNumAttachments = contextNumAttachments
+    )
 
     private fun customContextDatabaseModel(labelId: String) = LabelContextDatabaseModel(
         id = labelId,
