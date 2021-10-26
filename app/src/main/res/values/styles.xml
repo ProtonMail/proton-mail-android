@@ -38,6 +38,8 @@
 
         <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
         <item name="snackbarButtonStyle">@style/Widget.App.SnackbarButton</item>
+
+        <item name="elevationOverlayEnabled">false</item>
     </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">
