@@ -19,6 +19,8 @@
 package ch.protonmail.android.activities
 
 import android.content.Intent
+import android.content.res.Configuration.UI_MODE_NIGHT_MASK
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -268,7 +270,13 @@ internal abstract class NavigationActivity : BaseActivity() {
     override fun onResume() {
         accountStateManager.setAuthOrchestrator(authOrchestrator)
         super.onResume()
-        if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setLightStatusBar()
+        if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS)
+            if (resources.configuration.uiMode and UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES) {
+                setDarkStatusBar()
+            } else {
+                setLightStatusBar()
+            }
+
         checkUserId()
         app.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
@@ -340,7 +348,13 @@ internal abstract class NavigationActivity : BaseActivity() {
 
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
-                if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setLightStatusBar()
+                if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS)
+                    if (resources.configuration.uiMode and UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES) {
+                        setDarkStatusBar()
+                    } else {
+                        setLightStatusBar()
+                    }
+
                 onDrawerClose()
                 onDrawerClose = {}
             }
