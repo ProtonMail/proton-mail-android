@@ -25,7 +25,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
     android:paddingStart="5dp"
-    android:textColor="@color/lead_gray"
+    android:textColor="@color/text_norm"
     android:textSize="@dimen/h5"
     android:textStyle="bold"
     app:fontName="Roboto-Regular.ttf" />

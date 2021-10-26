@@ -604,13 +604,6 @@
         <item name="android:background">@drawable/search_edittext_shape</item>
     </style>
 
-    <style name="SpinnerTheme" parent="android:Widget.Spinner">
-        <item name="android:background">@drawable/spinner_bg</item>
-        <item name="android:layout_marginLeft">5dp</item>
-        <item name="android:layout_marginRight">5dp</item>
-        <item name="android:layout_marginBottom">5dp</item>
-    </style>
-
     <!-- Text Appearance -->
     <style name="App.Text.Caption" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textColor">@color/iron_gray</item>
