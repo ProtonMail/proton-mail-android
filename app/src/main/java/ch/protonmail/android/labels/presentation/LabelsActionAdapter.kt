@@ -77,7 +77,7 @@ class LabelsActionAdapter(
                 }
 
                 val iconDrawable = ResourcesCompat.getDrawable(resources, model.iconRes, null)?.mutate()
-                iconDrawable?.setTint(model.colorInt)
+                if (model.titleRes == null) iconDrawable?.setTint(model.colorInt)
                 setCompoundDrawablesRelativeWithIntrinsicBounds(
                     iconDrawable,
                     null,
