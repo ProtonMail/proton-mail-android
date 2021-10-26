@@ -24,27 +24,24 @@ import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.Logger;
+import timber.log.Timber;
 
 public class FetchDraftDetailJob extends ProtonMailBaseJob {
-
-    private static final String TAG_FETCH_DRAFT_DETAIL_JOB = "FetchDraftDetailJob";
 
     private final String mMessageId;
 
     public FetchDraftDetailJob(final String messageId) {
         super(new Params(Priority.LOW).requireNetwork().groupBy(Constants.JOB_GROUP_MESSAGE));
         mMessageId = messageId;
+
+        if (!getQueueNetworkUtil().isConnected()) {
+            Timber.d("no network - cannot fetch draft detail");
+            AppUtil.postEventOnUi(new FetchDraftDetailEvent(false));
+        }
     }
 
     @Override
     public void onRun() throws Throwable {
-        if (!getQueueNetworkUtil().isConnected()) {
-            Logger.doLog(TAG_FETCH_DRAFT_DETAIL_JOB, "no network - cannot fetch draft detail");
-            AppUtil.postEventOnUi(new FetchDraftDetailEvent(false));
-            return;
-        }
-
         try {
             final Message message = getApi().messageDetail(mMessageId).getMessage();
             Message savedMessage = getMessageDetailsRepository().findMessageByIdBlocking(message.getMessageId());
