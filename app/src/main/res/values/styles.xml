@@ -395,8 +395,8 @@
 
     <style name="ComposeMessageEditText" parent="@android:style/Widget.EditText">
         <item name="android:background">@null</item>
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textColorHint">@color/chateau_gray</item>
+        <item name="android:textColor">@color/text_norm</item>
+        <item name="android:textColorHint">@color/text_hint</item>
     </style>
 
     <style name="ComposeMessageSubjectText" parent="ComposeMessageEditText">
@@ -467,7 +467,7 @@
     <style name="MessageRecipientView" parent="MessageRecipientBase">
         <item name="android:background">@null</item>
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
-        <item name="android:textColor">@color/lead_gray</item>
+        <item name="android:textColor">@color/text_norm</item>
         <item name="android:lineSpacingExtra">@dimen/padding_m</item>
     </style>
 
