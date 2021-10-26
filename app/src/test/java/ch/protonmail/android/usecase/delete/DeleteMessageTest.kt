@@ -31,7 +31,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
@@ -47,19 +46,25 @@ import kotlin.test.assertTrue
 
 class DeleteMessageTest {
 
-    @MockK
-    private lateinit var workScheduler: DeleteMessageWorker.Enqueuer
+    private val workScheduler: DeleteMessageWorker.Enqueuer = mockk()
 
-    @MockK
-    private lateinit var db: PendingActionDao
+    private val db: PendingActionDao = mockk()
 
-    @MockK
-    private lateinit var messageDetailsRepository: MessageDetailsRepository
+    private val messageDetailsRepository: MessageDetailsRepository = mockk()
 
-    @MockK
-    private lateinit var conversationsRepository: ConversationsRepository
+    private val conversationsRepository: ConversationsRepository = mockk()
 
     private lateinit var deleteMessage: DeleteMessage
+
+    private val messId = "Id1"
+
+    private val currentLabelId = "3"  // Constants.MessageLocationType.TRASH
+
+    private val userId = UserId("userId")
+
+    private val message = mockk<Message>(relaxed = true)
+
+    private val operation = mockk<Operation>(relaxed = true)
 
     @BeforeTest
     fun setUp() {
@@ -71,31 +76,32 @@ class DeleteMessageTest {
             db,
             workScheduler
         )
+
+        coEvery {
+            messageDetailsRepository.saveMessagesInOneTransaction(any())
+        } just runs
+        coEvery {
+            conversationsRepository.updateConversationsAfterDeletingMessages(any(), userId)
+        } just runs
+        every { workScheduler.enqueue(any(), any()) } returns operation
     }
 
     @Test
     fun verifyThatMessageIsSuccessfullyDeletedWithoutPendingMessagesInTheDb() {
         runBlockingTest {
             // given
-            val messId = "Id1"
-            val currentLabelId = "3"  // Constants.MessageLocationType.TRASH
-            val userId = UserId("userId")
-            val message = mockk<Message>(relaxed = true)
-            val operation = mockk<Operation>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns null
             every { messageDetailsRepository.findMessageById(messId) } returns flowOf(message)
-            coEvery { messageDetailsRepository.saveMessagesInOneTransaction(any()) } returns Unit
-            coEvery {
-                conversationsRepository.updateConversationsAfterDeletingMessages(any(), userId)
-            } just runs
-            every { workScheduler.enqueue(any(), any()) } returns operation
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
 
             // then
-            coVerify { messageDetailsRepository.saveMessagesInOneTransaction(listOf(message)) }
+            coVerify {
+                messageDetailsRepository.saveMessagesInOneTransaction(listOf(message))
+                conversationsRepository.updateConversationsAfterDeletingMessages(listOf(messId), userId)
+            }
             verify { workScheduler.enqueue(listOf(messId), currentLabelId) }
             assertTrue(response.isSuccessfullyDeleted)
         }
@@ -105,27 +111,20 @@ class DeleteMessageTest {
     fun verifyThatMessageIsSuccessfullyDeletedWithPendingUploadMessageInTheDb() {
         runBlockingTest {
             // given
-            val messId = "Id1"
-            val currentLabelId = "3"  // Constants.MessageLocationType.TRASH
-            val userId = UserId("userId")
-            val message = mockk<Message>(relaxed = true)
             val pendingUpload = mockk<PendingUpload>(relaxed = true)
-            val operation = mockk<Operation>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns pendingUpload
             every { db.findPendingSendByMessageId(any()) } returns null
             every { messageDetailsRepository.findMessageByIdBlocking(messId) } returns message
             coEvery { messageDetailsRepository.saveMessage(message) } returns 1L
-            coEvery { messageDetailsRepository.saveMessagesInOneTransaction(any()) } returns Unit
-            coEvery {
-                conversationsRepository.updateConversationsAfterDeletingMessages(any(), userId)
-            } just runs
-            every { workScheduler.enqueue(any(), any()) } returns operation
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
 
             // then
-            coVerify { messageDetailsRepository.saveMessagesInOneTransaction(emptyList()) }
+            coVerify {
+                messageDetailsRepository.saveMessagesInOneTransaction(emptyList())
+                conversationsRepository.updateConversationsAfterDeletingMessages(emptyList(), userId)
+            }
             verify { workScheduler.enqueue(emptyList(), currentLabelId) }
             assertFalse(response.isSuccessfullyDeleted)
         }
@@ -135,29 +134,22 @@ class DeleteMessageTest {
     fun verifyThatMessageIsSuccessfullyDeletedWithPendingSendMessageInTheDb() {
         runBlockingTest {
             // given
-            val messId = "Id1"
-            val currentLabelId = "3"  // Constants.MessageLocationType.TRASH
-            val userId = UserId("userId")
-            val message = mockk<Message>(relaxed = true)
             val pendingSend = mockk<PendingSend>(relaxed = true) {
                 every { sent } returns true
             }
-            val operation = mockk<Operation>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns pendingSend
             every { messageDetailsRepository.findMessageByIdBlocking(messId) } returns null
             coEvery { messageDetailsRepository.saveMessage(message) } returns 1L
-            coEvery { messageDetailsRepository.saveMessagesInOneTransaction(any()) } returns Unit
-            coEvery {
-                conversationsRepository.updateConversationsAfterDeletingMessages(any(), userId)
-            } just runs
-            every { workScheduler.enqueue(any(), any()) } returns operation
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
 
             // then
-            coVerify { messageDetailsRepository.saveMessagesInOneTransaction(emptyList()) }
+            coVerify {
+                messageDetailsRepository.saveMessagesInOneTransaction(emptyList())
+                conversationsRepository.updateConversationsAfterDeletingMessages(emptyList(), userId)
+            }
             verify { workScheduler.enqueue(emptyList(), currentLabelId) }
             assertFalse(response.isSuccessfullyDeleted)
         }
