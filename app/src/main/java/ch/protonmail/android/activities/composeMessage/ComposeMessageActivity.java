@@ -1439,7 +1439,7 @@ public class ComposeMessageActivity
             if (!isFinishing()) {
                 DialogUtils.Companion.showInfoDialog(ComposeMessageActivity.this, getString(R.string.app_name), getString(R.string.messages_load_failure),
                         unit -> {
-                            onBackPressed();
+                            finishActivity();
                             return unit;
                         });
             }
