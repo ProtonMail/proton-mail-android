@@ -181,7 +181,7 @@ public class UiUtil {
         Snackbar infoSnack = Snackbar.make(snackBarLayout, context.getString(message), Snackbar.LENGTH_LONG);
         View view = infoSnack.getView();
         TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
-        tv.setTextColor(Color.WHITE);
+        tv.setTextColor(context.getColor(R.color.text_inverted));
         return infoSnack;
     }
 

@@ -35,7 +35,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/fields_default_space_small"
         android:layout_marginRight="@dimen/fields_default_space_small"
-        android:background="@color/white"
+        android:background="@color/background_norm"
         android:paddingBottom="@dimen/fields_default_space_small_minus"
         android:paddingTop="@dimen/fields_default_space_small_minus"
         android:src="@drawable/fab_ic_contact_groups"

@@ -107,7 +107,6 @@ import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.mapSecond
 import me.proton.core.util.kotlin.takeIfNotBlank
 import okio.buffer
@@ -681,12 +680,13 @@ internal class MessageDetailsViewModel @Inject constructor(
         message: Message,
         windowWidth: Int,
         css: String,
+        darkModeCss: String,
         defaultErrorMessage: String
     ): String {
         val messageId = requireNotNull(message.messageId) { "message id is null" }
         val formattedHtml = try {
             val contentTransformer = DefaultTransformer()
-                .pipe(ViewportTransformer(windowWidth, css))
+                .pipe(ViewportTransformer(windowWidth, css, darkModeCss))
 
             contentTransformer.transform(Jsoup.parse(message.decryptedHTML)).toString()
         } catch (ioException: IOException) {

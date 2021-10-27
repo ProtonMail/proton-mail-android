@@ -64,7 +64,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:id="@+id/layout_progress_contacts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/background_norm"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -100,7 +100,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:menu_colorNormal="@color/interaction_strong"
         app:menu_colorPressed="@color/dark_purple_statusbar"
         app:menu_colorRipple="@color/dark_purple_statusbar"
-        app:menu_icon="@drawable/fab_add"
+        app:menu_icon="@drawable/ic_add_inverted"
         app:menu_labels_colorNormal="@color/white"
         app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
         app:menu_labels_position="@integer/fab_label_start"

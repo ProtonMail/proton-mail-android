@@ -207,6 +207,11 @@ h6,
   font-weight: normal;
 }
 
+:root {
+  --background-norm: white;
+  --text-norm: #262a33;
+}
+
 body {
   font-size: 100%;
   width: 100%;
@@ -214,8 +219,8 @@ body {
     Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   padding: 1rem;
   line-height: 1.5;
-	overflow-wrap: break-word;
-  color: var(--color-main-area, #262a33);
+  background: var(--background-norm);
+  color: var(--text-norm);
 }
 
 q {
@@ -252,11 +257,7 @@ blockquote {
   border-width: 0 0 0 3px !important;
 }
 
-blockquote blockquote {
-  font-size: 1em;
-}
-
-blockquote blockquote blockquote {
+blockquote blockquote blockquote blockquote blockquote {
   padding: 0 !important;
   border: none !important;
 }

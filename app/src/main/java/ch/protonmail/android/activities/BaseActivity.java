@@ -28,7 +28,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.method.LinkMovementMethod;
@@ -454,7 +453,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         mRequestTimeoutSnack = Snackbar.make(mConnectivitySnackLayout, getString(R.string.request_timeout), Snackbar.LENGTH_LONG);
         View view = mRequestTimeoutSnack.getView();
         TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
-        tv.setTextColor(Color.WHITE);
+        tv.setTextColor(this.getColor(R.color.text_inverted));
         mRequestTimeoutSnack.show();
     }
 

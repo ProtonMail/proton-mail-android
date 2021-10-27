@@ -27,7 +27,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:id="@+id/groupItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/background_norm"
         android:baselineAlignBottom="true"
         android:src="@drawable/fab_ic_contact_groups"
         tools:ignore="ContentDescription,RtlSymmetry,VectorDrawableCompat" />

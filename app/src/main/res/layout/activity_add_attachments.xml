@@ -22,7 +22,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/background_norm"
     android:fitsSystemWindows="true"
     tools:context=".activities.AddAttachmentsActivity">
 
@@ -82,7 +82,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        android:background="@color/white"
         android:visibility="gone">
 
         <ProgressBar
@@ -113,7 +112,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        android:background="@color/white"
         android:visibility="gone">
 
         <ProgressBar

@@ -21,9 +21,8 @@
 
     <!-- region V4 -->
     <style name="ProtonTheme.Splash.Mail.Light">
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="proton_background_norm">@color/white</item>
-        <item name="proton_text_norm">@color/woodsmoke</item>
+        <item name="proton_background_norm">@color/background_norm</item>
+        <item name="proton_text_norm">@color/text_norm</item>
     </style>
 
     <style name="ProtonTheme.Mail" parent="ProtonTheme">
@@ -39,6 +38,8 @@
 
         <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
         <item name="snackbarButtonStyle">@style/Widget.App.SnackbarButton</item>
+
+        <item name="elevationOverlayEnabled">false</item>
     </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">
@@ -78,7 +79,7 @@
 
     <style name="ProtonBadge">
         <item name="android:textAppearance">@style/Proton.Text.Default.Inverted</item>
-        <item name="android:textColor">@color/text_inverted</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:singleLine">true</item>
         <item name="android:minWidth">@dimen/size_badge</item>
         <item name="android:ellipsize">end</item>
@@ -145,7 +146,6 @@
         <item name="android:clickable">true</item>
         <item name="android:background">@drawable/shape_background_action_sheet_buttons</item>
         <item name="android:drawablePadding">@dimen/padding_s</item>
-        <item name="android:elevation">@dimen/elevation_s</item>
         <item name="android:focusable">true</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingTop">@dimen/padding_m</item>
@@ -175,8 +175,8 @@
     </style>
 
     <style name="ThemeOverlay.App.Snackbar" parent="">
-        <item name="colorSurface">@color/woodsmoke</item>
-        <item name="colorOnSurface">@color/woodsmoke</item>
+        <item name="colorSurface">@color/icon_norm</item>
+        <item name="colorOnSurface">@color/icon_norm</item>
     </style>
 
     <style name="ThemeOverlay.App.Snackbar.Error" parent="">
@@ -190,7 +190,7 @@
     </style>
 
     <style name="Widget.App.SnackbarButton" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/background_norm</item>
     </style>
     <!-- endregion -->
 
@@ -221,21 +221,6 @@
     <style name="AppTheme" parent="ProtonTheme" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="ToolbarStyle">
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="colorControlNormal">@color/white</item>
-        <item name="colorControlHighlight">#3fff</item>
-    </style>
-
-    <style name="ToolbarStyle.White" parent="ToolbarStyle">
-        <item name="android:textColorPrimary">@color/black</item>
-        <item name="colorControlNormal">@color/black</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:textColor">@color/red_orange</item>
-    </style>
 
     <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
         <item name="background">@color/dark_purple</item>
@@ -281,15 +266,7 @@
         <item name="android:textColorHint">@color/name_gray</item>
         <item name="android:textSize">@dimen/h5</item>
         <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@color/white</item>
-    </style>
-
-    <style name="V3EditText.Gray" parent="V3EditText">
-        <item name="android:textColor">@color/new_purple</item>
-        <item name="android:textColorHint">@color/name_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@drawable/new_label_edittext</item>
+        <item name="android:background">@color/background_norm</item>
     </style>
 
     <style name="V3EditText.Inverted.Margin" parent="V3EditText.Inverted">
@@ -313,45 +290,6 @@
 
     <style name="LabelEditText" parent="V3EditText">
 
-    </style>
-
-    <style name="DrawerItemText">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/h4</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-    </style>
-
-    <style name="DrawerNameText">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/h4</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
-    </style>
-
-    <style name="DrawerNameText.Black" parent="DrawerNameText">
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="DrawerNameText.Red" parent="DrawerNameText">
-        <item name="android:textColor">@color/red</item>
-    </style>
-
-    <style name="DrawerEmailAddressText">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/h6</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
-    </style>
-
-    <style name="DrawerEmailAddressText.Black" parent="DrawerEmailAddressText">
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="DrawerEmailAddressText.Red" parent="DrawerEmailAddressText">
-        <item name="android:textColor">@color/red</item>
     </style>
 
     <style name="MessagePrimaryText">
@@ -459,8 +397,8 @@
 
     <style name="ComposeMessageEditText" parent="@android:style/Widget.EditText">
         <item name="android:background">@null</item>
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textColorHint">@color/chateau_gray</item>
+        <item name="android:textColor">@color/text_norm</item>
+        <item name="android:textColorHint">@color/text_hint</item>
     </style>
 
     <style name="ComposeMessageSubjectText" parent="ComposeMessageEditText">
@@ -531,7 +469,7 @@
     <style name="MessageRecipientView" parent="MessageRecipientBase">
         <item name="android:background">@null</item>
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
-        <item name="android:textColor">@color/lead_gray</item>
+        <item name="android:textColor">@color/text_norm</item>
         <item name="android:lineSpacingExtra">@dimen/padding_m</item>
     </style>
 
@@ -660,27 +598,10 @@
         <item name="android:textColorHint">#CACACA</item>
         <item name="android:textSize">@dimen/h3</item>
         <item name="android:paddingLeft">8dp</item>
-        <item name="android:drawableStart">@drawable/ic_menu_search</item>
-        <item name="android:drawableLeft">@drawable/ic_menu_search</item>
+        <item name="android:drawableStart">@drawable/ic_search</item>
+        <item name="android:drawableLeft">@drawable/ic_search</item>
         <item name="android:drawablePadding">@dimen/fields_default_space_small</item>
         <item name="android:background">@drawable/search_edittext_shape</item>
-    </style>
-
-    <style name="CollapsedAppBar">
-        <item name="android:textSize">@dimen/h1</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:fontFamily" tools:ignore="NewApi">@fonts/Roboto-Thin.ttf</item>
-    </style>
-
-    <style name="SpinnerTheme" parent="android:Widget.Spinner">
-        <item name="android:background">@drawable/spinner_bg</item>
-        <item name="android:layout_marginLeft">5dp</item>
-        <item name="android:layout_marginRight">5dp</item>
-        <item name="android:layout_marginBottom">5dp</item>
-    </style>
-
-    <style name="Widget.Support.CoordinatorLayout" parent="android:Widget">
-        <item name="statusBarBackground">@android:color/transparent</item>
     </style>
 
     <!-- Text Appearance -->

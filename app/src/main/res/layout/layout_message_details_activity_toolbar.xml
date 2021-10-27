@@ -24,6 +24,7 @@
     android:id="@+id/collapsingToolbarLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/background_norm"
     app:layout_scrollFlags="scroll|exitUntilCollapsed"
     tools:showIn="@layout/activity_message_details">
 

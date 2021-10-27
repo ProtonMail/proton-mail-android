@@ -19,6 +19,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/contact_encrypted_data" />
+    <solid android:color="@color/background_secondary" />
     <corners android:radius="1dp" />
 </shape>

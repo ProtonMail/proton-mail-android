@@ -24,7 +24,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:viewportHeight="24">
 
     <path
-        android:fillColor="#000000"
+        android:fillColor="@color/icon_norm"
         android:pathData="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
     <path
         android:pathData="M0 0h24v24H0z" />
