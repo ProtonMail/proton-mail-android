@@ -986,9 +986,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val isChecked = true
         coEvery {
             changeMessagesStarredStatus(
+                any(),
                 listOf(inputConversationId),
-                ChangeMessagesStarredStatus.Action.ACTION_STAR,
-                any()
+                ChangeMessagesStarredStatus.Action.ACTION_STAR
             )
         } just Runs
 
@@ -1005,16 +1005,16 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
         coVerify(exactly = 1) {
             changeMessagesStarredStatus(
+                any(),
                 listOf(inputConversationId),
-                ChangeMessagesStarredStatus.Action.ACTION_STAR,
-                any()
+                ChangeMessagesStarredStatus.Action.ACTION_STAR
             )
         }
         coVerify(exactly = 0) {
             changeMessagesStarredStatus(
+                any(),
                 listOf(inputConversationId),
-                ChangeMessagesStarredStatus.Action.ACTION_UNSTAR,
-                any()
+                ChangeMessagesStarredStatus.Action.ACTION_UNSTAR
             )
         }
     }

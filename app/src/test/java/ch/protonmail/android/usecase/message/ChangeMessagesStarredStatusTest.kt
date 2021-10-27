@@ -51,23 +51,23 @@ class ChangeMessagesStarredStatusTest {
             messageRepository.starMessages(messageIds)
         } just runs
         coEvery {
-            conversationsRepository.updateConversationsAfterChangingMessagesStarredStatus(
+            conversationsRepository.updateConvosBasedOnMessagesStarredStatus(
+                userId,
                 messageIds,
-                action,
-                userId
+                action
             )
         } just runs
 
         // when
-        changeMessagesStarredStatus(messageIds, action, userId)
+        changeMessagesStarredStatus(userId, messageIds, action)
 
         // then
         coVerify {
             messageRepository.starMessages(messageIds)
-            conversationsRepository.updateConversationsAfterChangingMessagesStarredStatus(
+            conversationsRepository.updateConvosBasedOnMessagesStarredStatus(
+                userId,
                 messageIds,
-                action,
-                userId
+                action
             )
         }
     }
@@ -82,23 +82,23 @@ class ChangeMessagesStarredStatusTest {
             messageRepository.unStarMessages(messageIds)
         } just runs
         coEvery {
-            conversationsRepository.updateConversationsAfterChangingMessagesStarredStatus(
+            conversationsRepository.updateConvosBasedOnMessagesStarredStatus(
+                userId,
                 messageIds,
-                action,
-                userId
+                action
             )
         } just runs
 
         // when
-        changeMessagesStarredStatus(messageIds, action, userId)
+        changeMessagesStarredStatus(userId, messageIds, action)
 
         // then
         coVerify {
             messageRepository.unStarMessages(messageIds)
-            conversationsRepository.updateConversationsAfterChangingMessagesStarredStatus(
+            conversationsRepository.updateConvosBasedOnMessagesStarredStatus(
+                userId,
                 messageIds,
-                action,
-                userId
+                action
             )
         }
     }

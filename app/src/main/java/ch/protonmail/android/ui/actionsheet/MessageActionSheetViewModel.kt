@@ -179,9 +179,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
                     }
                 } else {
                     changeMessagesStarredStatus(
+                        primaryUserId,
                         ids,
-                        ChangeMessagesStarredStatus.Action.ACTION_STAR,
-                        primaryUserId
+                        ChangeMessagesStarredStatus.Action.ACTION_STAR
                     )
                 }
             } else {
@@ -219,9 +219,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
                     }
                 } else {
                     changeMessagesStarredStatus(
+                        primaryUserId,
                         ids,
-                        ChangeMessagesStarredStatus.Action.ACTION_UNSTAR,
-                        primaryUserId
+                        ChangeMessagesStarredStatus.Action.ACTION_UNSTAR
                     )
                 }
             } else {

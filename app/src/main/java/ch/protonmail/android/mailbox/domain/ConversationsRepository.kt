@@ -98,10 +98,10 @@ interface ConversationsRepository {
 
     suspend fun unstar(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 
-    suspend fun updateConversationsAfterChangingMessagesStarredStatus(
+    suspend fun updateConvosBasedOnMessagesStarredStatus(
+        userId: UserId,
         messageIds: List<String>,
-        action: ChangeMessagesStarredStatus.Action,
-        userId: UserId
+        action: ChangeMessagesStarredStatus.Action
     )
 
     suspend fun moveToFolder(

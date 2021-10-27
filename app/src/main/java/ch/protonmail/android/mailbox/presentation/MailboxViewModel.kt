@@ -733,9 +733,9 @@ internal class MailboxViewModel @Inject constructor(
                 )
             } else {
                 changeMessagesStarredStatus(
+                    userId,
                     ids,
-                    ChangeMessagesStarredStatus.Action.ACTION_STAR,
-                    userId
+                    ChangeMessagesStarredStatus.Action.ACTION_STAR
                 )
             }
         }

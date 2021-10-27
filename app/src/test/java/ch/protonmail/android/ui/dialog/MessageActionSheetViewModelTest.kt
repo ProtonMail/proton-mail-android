@@ -405,9 +405,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(any()) } returns true
         coEvery {
             changeMessagesStarredStatus(
+                userId,
                 listOf(messageId),
-                ChangeMessagesStarredStatus.Action.ACTION_STAR,
-                userId
+                ChangeMessagesStarredStatus.Action.ACTION_STAR
             )
         } just Runs
         every {
@@ -426,9 +426,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         assertEquals(expected, viewModel.actionsFlow.value)
         coVerify {
             changeMessagesStarredStatus(
+                userId,
                 listOf(messageId),
-                ChangeMessagesStarredStatus.Action.ACTION_STAR,
-                userId
+                ChangeMessagesStarredStatus.Action.ACTION_STAR
             )
         }
     }

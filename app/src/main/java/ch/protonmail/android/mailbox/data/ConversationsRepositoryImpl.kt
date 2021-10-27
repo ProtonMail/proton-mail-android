@@ -317,10 +317,10 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         return ConversationsActionResult.Success
     }
 
-    override suspend fun updateConversationsAfterChangingMessagesStarredStatus(
+    override suspend fun updateConvosBasedOnMessagesStarredStatus(
+        userId: UserId,
         messageIds: List<String>,
-        action: ChangeMessagesStarredStatus.Action,
-        userId: UserId
+        action: ChangeMessagesStarredStatus.Action
     ) {
         messageIds.forEach forEachMessageId@{ messageId ->
             val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId
@@ -329,9 +329,9 @@ internal class ConversationsRepositoryImpl @Inject constructor(
             } ?: return@forEachMessageId
 
             val labels = updateLabelsAfterMessageAction(
-                Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString(),
-                conversation.labels,
                 message,
+                conversation.labels,
+                Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString(),
                 action == ChangeMessagesStarredStatus.Action.ACTION_STAR
             )
 
@@ -446,9 +446,9 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                 var labels = conversation.labels
                 message.allLabelIDs.forEach { labelId ->
                     labels = updateLabelsAfterMessageAction(
-                        labelId,
-                        labels,
                         message,
+                        labels,
+                        labelId,
                         false
                     )
                 }
@@ -641,9 +641,9 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     }
 
     private fun updateLabelsAfterMessageAction(
-        labelId: String,
-        labels: List<LabelContextDatabaseModel>,
         message: Message,
+        labels: List<LabelContextDatabaseModel>,
+        labelId: String,
         shouldAddMessageToLabel: Boolean // true == add message to label; false == remove message from label
     ): List<LabelContextDatabaseModel> {
         val label = labels.find { it.id == labelId }

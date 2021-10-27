@@ -1003,10 +1003,10 @@ class ConversationsRepositoryImplTest : ArchTest {
         coEvery { conversationDao.update(updatedConversation1) } returns 123
 
         // when
-        conversationsRepository.updateConversationsAfterChangingMessagesStarredStatus(
+        conversationsRepository.updateConvosBasedOnMessagesStarredStatus(
+            testUserId,
             listOf(messageId1),
-            action,
-            testUserId
+            action
         )
 
         // then

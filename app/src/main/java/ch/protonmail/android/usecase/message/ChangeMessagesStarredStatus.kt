@@ -33,9 +33,9 @@ class ChangeMessagesStarredStatus @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        userId: UserId,
         messageIds: List<String>,
-        action: Action,
-        userId: UserId
+        action: Action
     ) {
         if (action == Action.ACTION_STAR) {
             messageRepository.starMessages(messageIds)
@@ -43,10 +43,10 @@ class ChangeMessagesStarredStatus @Inject constructor(
             messageRepository.unStarMessages(messageIds)
         }
 
-        conversationsRepository.updateConversationsAfterChangingMessagesStarredStatus(
+        conversationsRepository.updateConvosBasedOnMessagesStarredStatus(
+            userId,
             messageIds,
-            action,
-            userId
+            action
         )
     }
 
