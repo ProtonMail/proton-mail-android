@@ -35,28 +35,30 @@ import kotlin.test.Test
  */
 class ChangeMessagesReadStatusTest {
 
-    private val messageRepository: MessageRepository = mockk()
+    private val messageIds = listOf("messageId1", "messageId2")
+    private val userId = UserId("userId")
 
-    private val conversationsRepository: ConversationsRepository = mockk()
+    private val messageRepository: MessageRepository = mockk {
+        coEvery { markRead(messageIds) } just runs
+        coEvery { markUnRead(messageIds) } just runs
+    }
+
+    private val conversationsRepository: ConversationsRepository = mockk {
+        coEvery {
+            updateConvosBasedOnMessagesReadStatus(
+                userId,
+                messageIds,
+                any()
+            )
+        } just runs
+    }
 
     private val changeMessagesReadStatus = ChangeMessagesReadStatus(messageRepository, conversationsRepository)
 
     @Test
     fun verifyCorrectMethodsAreCalledWhenActionIsMarkAsRead() = runBlockingTest {
         // given
-        val messageIds = listOf("messageId1", "messageId2")
         val action = ChangeMessagesReadStatus.Action.ACTION_MARK_READ
-        val userId = UserId("userId")
-        coEvery {
-            messageRepository.markRead(messageIds)
-        } just runs
-        coEvery {
-            conversationsRepository.updateConvosBasedOnMessagesReadStatus(
-                userId,
-                messageIds,
-                action
-            )
-        } just runs
 
         // when
         changeMessagesReadStatus(messageIds, action, userId)
@@ -75,19 +77,7 @@ class ChangeMessagesReadStatusTest {
     @Test
     fun verifyCorrectMethodsAreCalledWhenActionIsMarkAsUnread() = runBlockingTest {
         // given
-        val messageIds = listOf("messageId1", "messageId2")
         val action = ChangeMessagesReadStatus.Action.ACTION_MARK_UNREAD
-        val userId = UserId("userId")
-        coEvery {
-            messageRepository.markUnRead(messageIds)
-        } just runs
-        coEvery {
-            conversationsRepository.updateConvosBasedOnMessagesReadStatus(
-                userId,
-                messageIds,
-                action
-            )
-        } just runs
 
         // when
         changeMessagesReadStatus(messageIds, action, userId)
