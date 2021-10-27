@@ -35,28 +35,30 @@ import kotlin.test.Test
  */
 class ChangeMessagesStarredStatusTest {
 
-    private val messageRepository: MessageRepository = mockk()
+    private val messageIds = listOf("messageId1", "messageId2")
+    private val userId = UserId("userId")
 
-    private val conversationsRepository: ConversationsRepository = mockk()
+    private val messageRepository: MessageRepository = mockk {
+        coEvery { starMessages(messageIds) } just runs
+        coEvery { unStarMessages(messageIds) } just runs
+    }
+
+    private val conversationsRepository: ConversationsRepository = mockk {
+        coEvery {
+            updateConvosBasedOnMessagesStarredStatus(
+                userId,
+                messageIds,
+                any()
+            )
+        } just runs
+    }
 
     private val changeMessagesStarredStatus = ChangeMessagesStarredStatus(messageRepository, conversationsRepository)
 
     @Test
     fun verifyCorrectMethodsAreCalledWhenActionIsStar() = runBlockingTest {
         // given
-        val messageIds = listOf("messageId1", "messageId2")
         val action = ChangeMessagesStarredStatus.Action.ACTION_STAR
-        val userId = UserId("userId")
-        coEvery {
-            messageRepository.starMessages(messageIds)
-        } just runs
-        coEvery {
-            conversationsRepository.updateConvosBasedOnMessagesStarredStatus(
-                userId,
-                messageIds,
-                action
-            )
-        } just runs
 
         // when
         changeMessagesStarredStatus(userId, messageIds, action)
@@ -75,19 +77,7 @@ class ChangeMessagesStarredStatusTest {
     @Test
     fun verifyCorrectMethodsAreCalledWhenActionIsUnstar() = runBlockingTest {
         // given
-        val messageIds = listOf("messageId1", "messageId2")
         val action = ChangeMessagesStarredStatus.Action.ACTION_UNSTAR
-        val userId = UserId("userId")
-        coEvery {
-            messageRepository.unStarMessages(messageIds)
-        } just runs
-        coEvery {
-            conversationsRepository.updateConvosBasedOnMessagesStarredStatus(
-                userId,
-                messageIds,
-                action
-            )
-        } just runs
 
         // when
         changeMessagesStarredStatus(userId, messageIds, action)
