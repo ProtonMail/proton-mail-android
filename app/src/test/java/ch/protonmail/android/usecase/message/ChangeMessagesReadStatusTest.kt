@@ -51,10 +51,10 @@ class ChangeMessagesReadStatusTest {
             messageRepository.markRead(messageIds)
         } just runs
         coEvery {
-            conversationsRepository.updateConversationsAfterChangingMessagesReadStatus(
+            conversationsRepository.updateConvosBasedOnMessagesReadStatus(
+                userId,
                 messageIds,
-                action,
-                userId
+                action
             )
         } just runs
 
@@ -64,10 +64,10 @@ class ChangeMessagesReadStatusTest {
         // then
         coVerify {
             messageRepository.markRead(messageIds)
-            conversationsRepository.updateConversationsAfterChangingMessagesReadStatus(
+            conversationsRepository.updateConvosBasedOnMessagesReadStatus(
+                userId,
                 messageIds,
-                action,
-                userId
+                action
             )
         }
     }
@@ -82,10 +82,10 @@ class ChangeMessagesReadStatusTest {
             messageRepository.markUnRead(messageIds)
         } just runs
         coEvery {
-            conversationsRepository.updateConversationsAfterChangingMessagesReadStatus(
+            conversationsRepository.updateConvosBasedOnMessagesReadStatus(
+                userId,
                 messageIds,
-                action,
-                userId
+                action
             )
         } just runs
 
@@ -95,10 +95,10 @@ class ChangeMessagesReadStatusTest {
         // then
         coVerify {
             messageRepository.markUnRead(messageIds)
-            conversationsRepository.updateConversationsAfterChangingMessagesReadStatus(
+            conversationsRepository.updateConvosBasedOnMessagesReadStatus(
+                userId,
                 messageIds,
-                action,
-                userId
+                action
             )
         }
     }

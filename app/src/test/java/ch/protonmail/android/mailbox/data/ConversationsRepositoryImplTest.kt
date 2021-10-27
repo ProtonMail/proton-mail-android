@@ -804,10 +804,10 @@ class ConversationsRepositoryImplTest : ArchTest {
         coEvery { conversationDao.update(updatedConversation1) } returns 123
 
         // when
-        conversationsRepository.updateConversationsAfterChangingMessagesReadStatus(
+        conversationsRepository.updateConvosBasedOnMessagesReadStatus(
+            testUserId,
             listOf(messageId1),
-            action,
-            testUserId
+            action
         )
 
         // then

@@ -236,10 +236,10 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         return ConversationsActionResult.Success
     }
 
-    override suspend fun updateConversationsAfterChangingMessagesReadStatus(
+    override suspend fun updateConvosBasedOnMessagesReadStatus(
+        userId: UserId,
         messageIds: List<String>,
-        action: ChangeMessagesReadStatus.Action,
-        userId: UserId
+        action: ChangeMessagesReadStatus.Action
     ) {
         messageIds.forEach forEachMessageId@{ messageId ->
             val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId

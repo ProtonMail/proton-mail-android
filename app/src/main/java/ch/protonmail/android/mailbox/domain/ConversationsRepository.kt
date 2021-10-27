@@ -87,10 +87,10 @@ interface ConversationsRepository {
         locationId: String
     ): ConversationsActionResult
 
-    suspend fun updateConversationsAfterChangingMessagesReadStatus(
+    suspend fun updateConvosBasedOnMessagesReadStatus(
+        userId: UserId,
         messageIds: List<String>,
-        action: ChangeMessagesReadStatus.Action,
-        userId: UserId
+        action: ChangeMessagesReadStatus.Action
     )
 
     suspend fun star(conversationIds: List<String>, userId: UserId): ConversationsActionResult

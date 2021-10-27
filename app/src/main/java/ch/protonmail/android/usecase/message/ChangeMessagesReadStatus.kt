@@ -43,10 +43,10 @@ class ChangeMessagesReadStatus @Inject constructor(
             messageRepository.markUnRead(messageIds)
         }
 
-        conversationsRepository.updateConversationsAfterChangingMessagesReadStatus(
+        conversationsRepository.updateConvosBasedOnMessagesReadStatus(
+            userId,
             messageIds,
-            action,
-            userId
+            action
         )
     }
 
