@@ -67,7 +67,7 @@ class DeleteMessage @Inject constructor(
 
             ensureActive()
             messageDetailsRepository.saveMessagesInOneTransaction(messagesToSave)
-            conversationsRepository.updateConversationsAfterDeletingMessages(validMessageIdList, userId)
+            conversationsRepository.updateConversationsAfterDeletingMessages(userId, validMessageIdList)
 
             val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList, currentLabelId)
             return@withContext DeleteMessageResult(

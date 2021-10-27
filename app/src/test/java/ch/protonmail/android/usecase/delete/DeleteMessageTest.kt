@@ -81,7 +81,7 @@ class DeleteMessageTest {
             messageDetailsRepository.saveMessagesInOneTransaction(any())
         } just runs
         coEvery {
-            conversationsRepository.updateConversationsAfterDeletingMessages(any(), userId)
+            conversationsRepository.updateConversationsAfterDeletingMessages(userId, any())
         } just runs
         every { workScheduler.enqueue(any(), any()) } returns operation
     }
@@ -100,7 +100,7 @@ class DeleteMessageTest {
             // then
             coVerify {
                 messageDetailsRepository.saveMessagesInOneTransaction(listOf(message))
-                conversationsRepository.updateConversationsAfterDeletingMessages(listOf(messId), userId)
+                conversationsRepository.updateConversationsAfterDeletingMessages(userId, listOf(messId))
             }
             verify { workScheduler.enqueue(listOf(messId), currentLabelId) }
             assertTrue(response.isSuccessfullyDeleted)
@@ -123,7 +123,7 @@ class DeleteMessageTest {
             // then
             coVerify {
                 messageDetailsRepository.saveMessagesInOneTransaction(emptyList())
-                conversationsRepository.updateConversationsAfterDeletingMessages(emptyList(), userId)
+                conversationsRepository.updateConversationsAfterDeletingMessages(userId, emptyList())
             }
             verify { workScheduler.enqueue(emptyList(), currentLabelId) }
             assertFalse(response.isSuccessfullyDeleted)
@@ -148,7 +148,7 @@ class DeleteMessageTest {
             // then
             coVerify {
                 messageDetailsRepository.saveMessagesInOneTransaction(emptyList())
-                conversationsRepository.updateConversationsAfterDeletingMessages(emptyList(), userId)
+                conversationsRepository.updateConversationsAfterDeletingMessages(userId, emptyList())
             }
             verify { workScheduler.enqueue(emptyList(), currentLabelId) }
             assertFalse(response.isSuccessfullyDeleted)
