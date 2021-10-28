@@ -22,7 +22,7 @@ package ch.protonmail.android.labels.presentation.mapper
 import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
-import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import me.proton.core.domain.arch.Mapper
@@ -37,29 +37,81 @@ import javax.inject.Inject
  */
 class LabelDomainActionItemUiMapper @Inject constructor(
     context: Context
-) : Mapper<Label, LabelActonItemUiModel> {
+) : Mapper<Collection<LabelOrFolderWithChildren>, List<LabelActonItemUiModel>> {
 
     private val useFolderColor: Boolean = true
 
     private val defaultIconColor = context.getColor(R.color.icon_norm)
 
-    fun toActionItemUi(
-        label: Label,
+    fun toUiModels(
+        labels: Collection<LabelOrFolderWithChildren>,
+        currentLabelsSelection: List<String>
+    ): List<LabelActonItemUiModel> = labels.flatMap { label ->
+        labelToUiModels(
+            label = label,
+            currentLabelsSelection = currentLabelsSelection,
+            folderLevel = 0,
+            parentColor = null
+        )
+    }
+
+    private fun labelToUiModels(
+        label: LabelOrFolderWithChildren,
         currentLabelsSelection: List<String>,
-        labelType: LabelType
+        folderLevel: Int,
+        parentColor: Int?
+    ): List<LabelActonItemUiModel> {
+
+        val parent = labelToUiModel(
+            label = label,
+            currentLabelsSelection = currentLabelsSelection,
+            folderLevel = folderLevel,
+            parentColor = parentColor
+        )
+        val children = if (label is LabelOrFolderWithChildren.Folder) {
+            label.children.flatMap {
+                labelToUiModels(
+                    label = it,
+                    currentLabelsSelection = currentLabelsSelection,
+                    folderLevel = folderLevel + 1,
+                    parentColor = parent.colorInt
+                )
+            }
+        } else {
+            emptyList()
+        }
+        return listOf(parent) + children
+    }
+
+    private fun labelToUiModel(
+        label: LabelOrFolderWithChildren,
+        currentLabelsSelection: List<String>,
+        folderLevel: Int,
+        parentColor: Int?
     ): LabelActonItemUiModel {
 
-        val iconRes = when (labelType) {
-            LabelType.MESSAGE_LABEL -> R.drawable.circle_labels_selection
-            LabelType.FOLDER ->
-                if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
-            LabelType.CONTACT_GROUP -> throw IllegalArgumentException("Contacts are currently unsupported")
+        val labelType = when (label) {
+            is LabelOrFolderWithChildren.Label -> LabelType.MESSAGE_LABEL
+            is LabelOrFolderWithChildren.Folder -> LabelType.FOLDER
+        }
+        val iconRes = when (label) {
+            is LabelOrFolderWithChildren.Label -> R.drawable.circle_labels_selection
+            is LabelOrFolderWithChildren.Folder ->
+                if (useFolderColor) {
+                    if (label.children.isEmpty()) R.drawable.ic_folder_filled else R.drawable.ic_folder_multiple_filled
+                } else {
+                    if (label.children.isEmpty()) R.drawable.ic_folder else R.drawable.ic_folder_multiple
+                }
         }
 
-        val colorInt = if (useFolderColor) label.color.toColorIntOrDefault() else defaultIconColor
+        val colorInt = if (useFolderColor) {
+            label.color.toColorIntOrNull() ?: parentColor ?: defaultIconColor
+        } else {
+            defaultIconColor
+        }
 
         val isChecked = if (labelType == LabelType.MESSAGE_LABEL) {
-            currentLabelsSelection.contains(label.id.id)
+            label.id.id in currentLabelsSelection
         } else {
             null
         }
@@ -70,15 +122,16 @@ class LabelDomainActionItemUiMapper @Inject constructor(
             title = label.name,
             titleRes = null,
             colorInt = colorInt,
+            folderLevel = folderLevel,
             isChecked = isChecked,
             labelType = labelType
         )
     }
 
-    private fun String.toColorIntOrDefault(): Int = try {
+    private fun String.toColorIntOrNull(): Int? = try {
         toColorInt()
     } catch (exc: IllegalArgumentException) {
         Timber.e(exc, "Unknown label color: $this")
-        defaultIconColor
+        null
     }
 }

@@ -17,27 +17,24 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.presentation.model
+package ch.protonmail.android.labels.domain.usecase
 
-import android.graphics.Color
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
+import me.proton.core.domain.entity.UserId
+import javax.inject.Inject
 
 /**
- * @property title for item custom titles e.g. "Label123"
- * @property titleRes for standard titles e.g. "Inbox"
- * @property folderLevel related to Folders' parent/children relationships
+ * Get a [List] of [LabelOrFolderWithChildren] filtering by the [LabelType] passed as parameter
  */
-data class LabelActonItemUiModel(
-    val labelId: LabelId,
-    @DrawableRes val iconRes: Int,
-    val title: String? = null,
-    @StringRes val titleRes: Int? = null,
-    @ColorInt val colorInt: Int = Color.BLACK,
-    val folderLevel: Int = 0,
-    val isChecked: Boolean? = null,
-    val labelType: LabelType
-)
+class GetLabelsOrFolderWithChildrenByType @Inject constructor(
+    private val labelRepository: LabelRepository
+) {
+
+    suspend operator fun invoke(
+        userId: UserId,
+        labelsType: LabelType
+    ): List<LabelOrFolderWithChildren> = labelRepository.findAllLabelsOrFolderWithChildren(userId, labelsType)
+
+}

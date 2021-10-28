@@ -28,6 +28,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import timber.log.Timber
@@ -65,10 +66,20 @@ class LabelsActionAdapter(
         root: ConstraintLayout
     ) : RecyclerView.ViewHolder(root) {
 
-        fun bind(
-            model: LabelActonItemUiModel
-        ) {
+        fun bind(model: LabelActonItemUiModel) {
             Timber.v("Bind ManageLabelsViewHolder $model")
+
+            applyPaddingForSubFolders(model.folderLevel)
+            setTitleAndIcon(model)
+            setCheckbox(model.isChecked)
+        }
+
+        private fun applyPaddingForSubFolders(folderLevel: Int) {
+            (itemView.layoutParams as RecyclerView.LayoutParams).marginStart =
+                folderLevel * itemView.context.resources.getDimensionPixelSize(R.dimen.gap_large)
+        }
+
+        private fun setTitleAndIcon(model: LabelActonItemUiModel) {
             titleTextView.apply {
                 text = if (model.titleRes != null) {
                     resources.getString(model.titleRes)
@@ -85,11 +96,14 @@ class LabelsActionAdapter(
                     null
                 )
             }
-            with(checkbox) {
-                if (model.isChecked == null) {
+        }
+
+        private fun setCheckbox(isModelChecked: Boolean?) {
+            checkbox.apply {
+                if (isModelChecked == null) {
                     isVisible = false
                 } else {
-                    isChecked = model.isChecked
+                    isChecked = isModelChecked
                     isVisible = true
                 }
             }

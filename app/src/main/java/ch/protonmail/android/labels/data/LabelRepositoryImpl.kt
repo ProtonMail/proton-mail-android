@@ -71,16 +71,17 @@ internal class LabelRepositoryImpl @Inject constructor(
                 Timber.v("Emitting new labels size: ${it.size} user: $userId")
             }
 
-    override fun observeAllLabelsAndFoldersWithChildren(
-        userId: UserId,
-        shallRefresh: Boolean
-    ): Flow<List<LabelOrFolderWithChildren>> =
-        labelDao.observeLabelsByType(userId, LabelType.MESSAGE_LABEL, LabelType.FOLDER)
-            .onStartFetchAndSaveAllLabels(userId, shallRefresh)
-            .mapToLabelsWithChildren()
-
     override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<Label> =
         observeAllLabels(userId, shallRefresh).first()
+
+    override fun observeAllLabelsOrFoldersWithChildren(
+        userId: UserId,
+        type: LabelType,
+        shallRefresh: Boolean
+    ): Flow<List<LabelOrFolderWithChildren>> =
+        labelDao.observeLabelsByType(userId, type)
+            .onStartFetchAndSaveAllLabels(userId, shallRefresh)
+            .mapToLabelsWithChildren()
 
     override fun observeLabels(labelsIds: List<LabelId>): Flow<List<Label>> =
         labelDao.observeLabelsById(labelsIds)
@@ -219,8 +220,9 @@ internal class LabelRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun Flow<List<LabelEntity>>.mapToLabelsWithChildren(): Flow<List<LabelOrFolderWithChildren>> = map { entities ->
-        labelOrFolderWithChildrenMapper.toLabelsAndFoldersWithChildren(entities)
-    }
+    private fun Flow<List<LabelEntity>>.mapToLabelsWithChildren(): Flow<List<LabelOrFolderWithChildren>> =
+        map { entities ->
+            labelOrFolderWithChildrenMapper.toLabelsAndFoldersWithChildren(entities)
+        }
 
 }
