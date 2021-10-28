@@ -69,7 +69,10 @@ class NetworkSnackBarUtil @Inject constructor() {
                     R.string.you_are_offline,
                     Snackbar.LENGTH_INDEFINITE
                 ).apply {
-                    anchorViewId?.let { setAnchorView(it) }
+                    anchorViewId?.let {
+                        setAnchorView(it)
+                        isAnchorViewLayoutListenerEnabled = true
+                    }
                     setActionTextColor(textColor)
                     setBackgroundTint(warningColor)
                     view.apply {
@@ -85,7 +88,10 @@ class NetworkSnackBarUtil @Inject constructor() {
                     R.string.server_not_reachable_troubleshoot,
                     Snackbar.LENGTH_INDEFINITE
                 ).apply {
-                    anchorViewId?.let { setAnchorView(it) }
+                    anchorViewId?.let {
+                        setAnchorView(it)
+                        isAnchorViewLayoutListenerEnabled = true
+                    }
                     setAction(context.getString(R.string.retry)) { onRetryClick?.invoke() }
                     setActionTextColor(textColor)
                     view.apply {
@@ -122,7 +128,10 @@ class NetworkSnackBarUtil @Inject constructor() {
             Snackbar.LENGTH_LONG
         ).apply {
             view.apply {
-                anchorViewId?.let { setAnchorView(it) }
+                anchorViewId?.let {
+                    setAnchorView(it)
+                    isAnchorViewLayoutListenerEnabled = true
+                }
                 setBackgroundColor(infoColor)
                 findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
                     setTextColor(textColor)
