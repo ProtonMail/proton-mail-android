@@ -222,6 +222,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder = moveMessagesToFolder,
             deleteConversations = deleteConversations,
             observeLabels = observeLabels,
+            observeLabelsAndFoldersWithChildren = mockk(),
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings,
             messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper

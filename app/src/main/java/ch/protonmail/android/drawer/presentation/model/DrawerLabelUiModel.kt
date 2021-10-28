@@ -23,15 +23,16 @@ import androidx.annotation.DrawableRes
 import ch.protonmail.android.labels.domain.model.LabelType
 
 /**
- * An UiModel representing a Label item
+ * An UiModel representing a Label or Folder for Side Drawer
  *
- * @author Davide Farella
+ * @property folderLevel related to Folders' parent/children relationships
  */
 data class DrawerLabelUiModel(
     val labelId: String,
     val name: String,
     val icon: Icon,
-    val type: LabelType
+    val type: LabelType,
+    val folderLevel: Int = 0
 ) {
 
     data class Icon(

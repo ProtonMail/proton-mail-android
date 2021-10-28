@@ -16,21 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.drawer.presentation.mapper
 
-import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
+package ch.protonmail.android.labels.domain.usecase
+
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
-import me.proton.core.domain.arch.Mapper
+import kotlinx.coroutines.flow.Flow
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 /**
- * Map from [LabelOrFolderWithChildren] to [DrawerItemUiModel.Primary.Label]
- * Inherit from [Mapper]
+ * Get all the [LabelOrFolderWithChildren] for a given User
  */
-internal class DrawerLabelItemUiModelMapper @Inject constructor(
-    private val drawerLabelMapper: DrawerLabelUiModelMapper
-) : Mapper<Collection<LabelOrFolderWithChildren>, List<DrawerItemUiModel.Primary.Label>> {
+class ObserveLabelsAndFoldersWithChildren @Inject constructor(
+    private val labelRepository: LabelRepository
+) {
 
-    fun toUiModels(models: Collection<LabelOrFolderWithChildren>): List<DrawerItemUiModel.Primary.Label> =
-        drawerLabelMapper.toUiModels(models).map(DrawerItemUiModel.Primary::Label)
+    operator fun invoke(userId: UserId, shallRefresh: Boolean): Flow<List<LabelOrFolderWithChildren>> =
+        labelRepository.observeAllLabelsAndFoldersWithChildren(userId, shallRefresh = shallRefresh)
 }

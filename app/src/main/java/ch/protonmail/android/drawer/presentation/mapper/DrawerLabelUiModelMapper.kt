@@ -23,7 +23,7 @@ import android.graphics.Color
 import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
-import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.utils.UiUtil
 import me.proton.core.domain.arch.Mapper
@@ -36,42 +36,94 @@ import javax.inject.Inject
  *
  * @property useFolderColor whether the user enabled the settings for use Colors for Folders.
  *  TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`
+ *
+ * TODO: the mapper currently includes a piece of logic to flatten the hierarchy of the Folders to facilitate the
+ *  implementation with a conventional RecyclerView/Adapter, this must be reevaluated with MAILAND-2304, where we
+ *  probably need to keep the hierarchy, in order to have collapsible groups
  */
 internal class DrawerLabelUiModelMapper @Inject constructor(
     private val context: Context
-) : Mapper<Label, DrawerLabelUiModel> {
+) : Mapper<Collection<LabelOrFolderWithChildren>, List<DrawerLabelUiModel>> {
 
     private val useFolderColor: Boolean = true
 
-    fun toUiModel(model: Label): DrawerLabelUiModel {
+    fun toUiModels(models: Collection<LabelOrFolderWithChildren>): List<DrawerLabelUiModel> =
+        models.flatMap { domainModelToUiModels(model = it, folderLevel = 0, parentColor = null) }
 
-        val type = model.type
+    private fun domainModelToUiModels(
+        model: LabelOrFolderWithChildren,
+        folderLevel: Int,
+        parentColor: Int?
+    ): List<DrawerLabelUiModel> {
+        val parent = domainModelToUiModel(
+            model = model,
+            folderLevel = folderLevel,
+            parentColor = parentColor
+        )
 
+        val children = if (model is LabelOrFolderWithChildren.Folder) {
+            model.children.flatMap {
+                domainModelToUiModels(
+                    model = it,
+                    folderLevel = folderLevel + 1,
+                    parentColor = parent.icon.colorInt
+                )
+            }
+        } else {
+            emptyList()
+        }
+        return listOf(parent) + children
+    }
+
+    private fun domainModelToUiModel(
+        model: LabelOrFolderWithChildren,
+        folderLevel: Int,
+        parentColor: Int?
+    ): DrawerLabelUiModel {
+
+        val labelType = when (model) {
+            is LabelOrFolderWithChildren.Label -> LabelType.MESSAGE_LABEL
+            is LabelOrFolderWithChildren.Folder -> LabelType.FOLDER
+        }
+
+        val hasChildren = model is LabelOrFolderWithChildren.Folder && model.children.isNotEmpty()
         return DrawerLabelUiModel(
             labelId = model.id.id,
             name = model.name,
-            icon = buildIcon(type, model.color),
-            type = type
+            icon = buildIcon(labelType, model.color, parentColor, hasChildren),
+            type = labelType,
+            folderLevel = folderLevel
         )
     }
 
-    private fun buildIcon(type: LabelType, color: String): DrawerLabelUiModel.Icon {
+    private fun buildIcon(
+        type: LabelType,
+        color: String,
+        parentColor: Int?,
+        hasChildren: Boolean
+    ): DrawerLabelUiModel.Icon {
 
         val drawableRes = when (type) {
             LabelType.MESSAGE_LABEL -> R.drawable.shape_ellipse
-            LabelType.FOLDER -> if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
+            LabelType.FOLDER -> {
+                if (useFolderColor) {
+                    if (hasChildren.not()) R.drawable.ic_folder_filled else R.drawable.ic_folder_multiple_filled
+                } else {
+                    if (hasChildren.not()) R.drawable.ic_folder else R.drawable.ic_folder_multiple
+                }
+            }
             LabelType.CONTACT_GROUP ->
                 throw IllegalArgumentException("Contact groups are not supported by the nav drawer")
         }
 
         val colorInt =
-            if (useFolderColor) toColorInt(color)
+            if (useFolderColor) toColorIntOrNull(color) ?: parentColor ?: context.getColor(R.color.icon_inverted)
             else context.getColor(R.color.icon_inverted)
 
         return DrawerLabelUiModel.Icon(drawableRes, colorInt)
     }
 
-    private fun toColorInt(color: String): Int {
+    private fun toColorIntOrNull(color: String): Int? {
         return when (color) {
             AQUA_BASE_V3_COLOR -> context.getColor(R.color.aqua_base)
             SAGE_BASE_V3_COLOR -> context.getColor(R.color.sage_base)
@@ -79,12 +131,12 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
         }
     }
 
-    private fun parseColor(color: String): Int =
+    private fun parseColor(color: String): Int? =
         try {
             Color.parseColor(UiUtil.normalizeColor(color))
-        } catch (exception: Exception) {
+        } catch (exception: IllegalArgumentException) {
             Timber.w(exception, "Cannot parse color: $color")
-            context.getColor(R.color.icon_inverted)
+            null
         }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

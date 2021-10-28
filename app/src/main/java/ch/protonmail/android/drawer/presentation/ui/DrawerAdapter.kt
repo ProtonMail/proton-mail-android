@@ -18,12 +18,15 @@
  */
 package ch.protonmail.android.drawer.presentation.ui
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
+import ch.protonmail.android.databinding.DrawerFooterBinding
+import ch.protonmail.android.databinding.DrawerListItemBinding
+import ch.protonmail.android.databinding.DrawerSectionNameItemBinding
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Footer
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
@@ -32,25 +35,17 @@ import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
-import kotlinx.android.synthetic.main.drawer_section_name_item.view.*
-import me.proton.core.presentation.utils.inflate
 
-// region constants
-/** View types for Adapter */
 private const val VIEW_TYPE_SECTION_NAME = 0
 private const val VIEW_TYPE_STATIC = 1
 private const val VIEW_TYPE_LABEL = 2
 private const val VIEW_TYPE_FOOTER = 3
-// endregion
 
 /**
  * Adapter for Drawer Items that support different View types
  *
  * Inherit from [BaseAdapter]
- *
- * @author Davide Farella.
  */
-
 internal class DrawerAdapter : BaseAdapter<
     DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>
     >(ModelsComparator) {
@@ -90,6 +85,30 @@ internal class DrawerAdapter : BaseAdapter<
         }
     }
 
+    /** @return a [ViewHolder] for the given [viewType] */
+    private fun <Model : DrawerItemUiModel> ViewGroup.viewHolderForViewType(viewType: Int): ViewHolder<Model> {
+        val inflater = LayoutInflater.from(context)
+        return when (viewType) {
+            VIEW_TYPE_SECTION_NAME -> {
+                val binding = DrawerSectionNameItemBinding.inflate(inflater, this, false)
+                SectionNameViewHolder(binding)
+            }
+            VIEW_TYPE_STATIC -> {
+                val binding = DrawerListItemBinding.inflate(inflater, this, false)
+                StaticViewHolder(binding)
+            }
+            VIEW_TYPE_LABEL -> {
+                val binding = DrawerListItemBinding.inflate(inflater, this, false)
+                LabelViewHolder(binding)
+            }
+            VIEW_TYPE_FOOTER -> {
+                val binding = DrawerFooterBinding.inflate(inflater, this, false)
+                FooterViewHolder(binding)
+            }
+            else -> throw IllegalArgumentException("View type not found: '$viewType'")
+        } as ViewHolder<Model>
+    }
+
     /** Abstract ViewHolder for the Adapter */
     abstract class ViewHolder<Model : DrawerItemUiModel>(itemView: View) :
         ClickableAdapter.ViewHolder<Model>(itemView)
@@ -112,17 +131,14 @@ internal class DrawerAdapter : BaseAdapter<
         }
     }
 
-    /**
-     * [ViewHolder] for [Primary.Static] Item
-     * Inherit from [PrimaryViewHolder]
-     */
-    private class StaticViewHolder(itemView: View) : PrimaryViewHolder<Primary.Static>(itemView) {
+    /** [ViewHolder] for [SectionName] */
+    private class SectionNameViewHolder(
+        private val binding: DrawerSectionNameItemBinding
+    ) : ViewHolder<SectionName>(binding.root) {
 
-        override fun onBind(item: Primary.Static) = with(itemView) {
+        override fun onBind(item: SectionName) {
             super.onBind(item)
-            drawer_item_label_text_view.setText(item.labelRes)
-            drawer_item_icon_view.setImageResource(item.iconRes)
-            menuItem.tag = resources.getString(item.labelRes)
+            binding.text.text = item.text
         }
     }
 
@@ -130,67 +146,66 @@ internal class DrawerAdapter : BaseAdapter<
      * [ViewHolder] for [Primary.Label] Item
      * Inherit from [PrimaryViewHolder]
      */
-    private class LabelViewHolder(itemView: View) : PrimaryViewHolder<Primary.Label>(itemView) {
+    private class LabelViewHolder(
+        private val binding: DrawerListItemBinding
+    ) : PrimaryViewHolder<Primary.Label>(binding.root) {
 
-        override fun onBind(item: Primary.Label) = with(itemView) {
+        override fun onBind(item: Primary.Label) {
             super.onBind(item)
-            drawer_item_label_text_view.text = item.uiModel.name
-            drawer_item_icon_view.setColorFilter(item.uiModel.icon.colorInt)
-            drawer_item_icon_view.setImageResource(item.uiModel.icon.drawableRes)
-            drawer_item_label_text_view.tag = item.uiModel.name
+            val model = item.uiModel
+
+            (itemView.layoutParams as RecyclerView.LayoutParams).marginStart =
+                model.folderLevel * itemView.context.resources.getDimensionPixelSize(R.dimen.gap_large)
+            binding.drawerItemLabelTextView.apply {
+                text = model.name
+                tag = model.name
+            }
+            binding.drawerItemIconView.apply {
+                setColorFilter(item.uiModel.icon.colorInt)
+                setImageResource(item.uiModel.icon.drawableRes)
+            }
+        }
+    }
+
+    /**
+     * [ViewHolder] for [Primary.Static] Item
+     * Inherit from [PrimaryViewHolder]
+     */
+    private class StaticViewHolder(
+        private val binding: DrawerListItemBinding
+    ) : PrimaryViewHolder<Primary.Static>(binding.root) {
+
+        override fun onBind(item: Primary.Static) {
+            super.onBind(item)
+            binding.apply {
+                drawerItemLabelTextView.setText(item.labelRes)
+                drawerItemIconView.setImageResource(item.iconRes)
+                menuItem.tag = context.getString(item.labelRes)
+            }
         }
     }
 
     /** [ViewHolder] for [Footer] */
-    private class FooterViewHolder(itemView: View) : ViewHolder<Footer>(itemView) {
+    private class FooterViewHolder(
+        private val binding: DrawerFooterBinding
+    ) : ViewHolder<Footer>(binding.root) {
 
         override fun onBind(item: Footer) {
             super.onBind(item)
-            val textView = itemView as TextView
-            textView.text = item.text
+            binding.root.text = item.text
         }
-    }
-
-    /** [ViewHolder] for [SectionName] */
-    private class SectionNameViewHolder(itemView: View) : ViewHolder<SectionName>(itemView) {
-
-        override fun onBind(item: SectionName) {
-            super.onBind(item)
-            itemView.text.text = item.text
-        }
-    }
-
-    /** @return [Int] view type for the receiver [DrawerItemUiModel] */
-    private val DrawerItemUiModel.viewType: Int
-        get() {
-            return when (this) {
-                is SectionName -> VIEW_TYPE_SECTION_NAME
-                is Primary -> when (this) {
-                    is Primary.Static -> VIEW_TYPE_STATIC
-                    is Primary.Label -> VIEW_TYPE_LABEL
-                }
-                is Footer -> VIEW_TYPE_FOOTER
-            }
-        }
-
-    /** @return [LayoutRes] for the given [viewType] */
-    private fun layoutForViewType(viewType: Int) = when (viewType) {
-        VIEW_TYPE_SECTION_NAME -> R.layout.drawer_section_name_item
-        VIEW_TYPE_STATIC, VIEW_TYPE_LABEL -> R.layout.drawer_list_item
-        VIEW_TYPE_FOOTER -> R.layout.drawer_footer
-        else -> throw IllegalArgumentException("View type not found: '$viewType'")
-    }
-
-    /** @return a [ViewHolder] for the given [viewType] */
-    private fun <Model : DrawerItemUiModel> ViewGroup.viewHolderForViewType(viewType: Int): ViewHolder<Model> {
-        val view = inflate(layoutForViewType(viewType))
-        @Suppress("UNCHECKED_CAST") // Type cannot be checked since is in invariant position
-        return when (viewType) {
-            VIEW_TYPE_SECTION_NAME -> SectionNameViewHolder(view)
-            VIEW_TYPE_STATIC -> StaticViewHolder(view)
-            VIEW_TYPE_LABEL -> LabelViewHolder(view)
-            VIEW_TYPE_FOOTER -> FooterViewHolder(view)
-            else -> throw IllegalArgumentException("View type not found: '$viewType'")
-        } as ViewHolder<Model>
     }
 }
+
+/** @return [Int] view type for the receiver [DrawerItemUiModel] */
+private val DrawerItemUiModel.viewType: Int
+    get() {
+        return when (this) {
+            is SectionName -> VIEW_TYPE_SECTION_NAME
+            is Primary -> when (this) {
+                is Primary.Static -> VIEW_TYPE_STATIC
+                is Primary.Label -> VIEW_TYPE_LABEL
+            }
+            is Footer -> VIEW_TYPE_FOOTER
+        }
+    }

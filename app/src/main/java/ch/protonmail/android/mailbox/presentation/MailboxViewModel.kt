@@ -32,7 +32,6 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.asLoadMoreFlow
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreMap
@@ -46,6 +45,7 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
+import ch.protonmail.android.labels.domain.usecase.ObserveLabelsAndFoldersWithChildren
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
@@ -128,6 +128,7 @@ internal class MailboxViewModel @Inject constructor(
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val deleteConversations: DeleteConversations,
     private val observeLabels: ObserveLabels,
+    private val observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren,
     private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
     private val getMailSettings: GetMailSettings,
     private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper
@@ -172,11 +173,9 @@ internal class MailboxViewModel @Inject constructor(
         mutableUserId,
         mutableRefreshFlow.onStart { emit(false) }
     ) { userId, isRefresh -> userId to isRefresh }
-        .flatMapLatest { userIdPair -> observeLabels(userIdPair.first, userIdPair.second) }
-        .map { labels ->
-            drawerFoldersAndLabelsSectionUiModelMapper.toUiModel(
-                labels.filter { it.type != LabelType.CONTACT_GROUP }
-            )
+        .flatMapLatest { userIdPair -> observeLabelsAndFoldersWithChildren(userIdPair.first, userIdPair.second) }
+        .map { labelsAndFolders ->
+            drawerFoldersAndLabelsSectionUiModelMapper.toUiModels(labelsAndFolders)
         }
 
     val unreadCounters: Flow<List<UnreadCounter>> = combine(

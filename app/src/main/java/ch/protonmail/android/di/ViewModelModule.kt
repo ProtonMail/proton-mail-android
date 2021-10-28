@@ -32,13 +32,14 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
+import ch.protonmail.android.labels.domain.usecase.ObserveLabelsAndFoldersWithChildren
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
@@ -112,6 +113,7 @@ internal class ViewModelModule {
         moveMessagesToFolder: MoveMessagesToFolder,
         deleteConversations: DeleteConversations,
         observeLabels: ObserveLabels,
+        observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren,
         drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings: GetMailSettings,
         messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper
@@ -136,6 +138,7 @@ internal class ViewModelModule {
         moveMessagesToFolder = moveMessagesToFolder,
         deleteConversations = deleteConversations,
         observeLabels = observeLabels,
+        observeLabelsAndFoldersWithChildren = observeLabelsAndFoldersWithChildren,
         drawerFoldersAndLabelsSectionUiModelMapper = drawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings = getMailSettings,
         messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper

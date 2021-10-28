@@ -48,6 +48,11 @@ interface LabelRepository {
     ): List<LabelOrFolderWithChildren> =
         observeAllLabelsOrFoldersWithChildren(userId, type, shallRefresh).first()
 
+    fun observeAllLabelsAndFoldersWithChildren(
+        userId: UserId,
+        shallRefresh: Boolean = false
+    ): Flow<List<LabelOrFolderWithChildren>>
+
     fun observeLabels(labelsIds: List<LabelId>): Flow<List<Label>>
 
     suspend fun findLabels(labelsIds: List<LabelId>): List<Label>

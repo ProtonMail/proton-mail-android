@@ -74,6 +74,14 @@ internal class LabelRepositoryImpl @Inject constructor(
     override suspend fun findAllLabels(userId: UserId, shallRefresh: Boolean): List<Label> =
         observeAllLabels(userId, shallRefresh).first()
 
+    override fun observeAllLabelsAndFoldersWithChildren(
+        userId: UserId,
+        shallRefresh: Boolean
+    ): Flow<List<LabelOrFolderWithChildren>> =
+        labelDao.observeLabelsByType(userId, LabelType.MESSAGE_LABEL, LabelType.FOLDER)
+            .onStartFetchAndSaveAllLabels(userId, shallRefresh)
+            .mapToLabelsWithChildren()
+
     override fun observeAllLabelsOrFoldersWithChildren(
         userId: UserId,
         type: LabelType,
