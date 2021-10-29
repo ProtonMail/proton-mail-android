@@ -229,6 +229,10 @@ public class UiUtil {
         }
     }
 
+    /**
+     * @deprecated Use an injected instance of RenderDimensionProvider instead.
+     */
+    @Deprecated()
     public static int getRenderWidth(WindowManager windowManager) {
         DisplayMetrics dm = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(dm);
