@@ -271,6 +271,10 @@
 # Coroutines
 -dontwarn kotlinx.atomicfu.AtomicBoolean
 
+# labels models
+-keep public class ch.protonmail.android.labels.data.remote.model.LabelEventModel { }
+-keep class ch.protonmail.android.labels.data.remote.model.** { *; }
+
 # kotlinx.serialization
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
