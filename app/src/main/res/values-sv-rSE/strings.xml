@@ -272,10 +272,10 @@
     <string name="close">Stäng</string>
     <string name="eo_password_title">Ställ in lösenord</string>
     <string name="eo_password_subtitle">Ange ett lösenord för att kryptera detta meddelande för icke-ProtonMail-användare</string>
-    <string name="eo_password_more_info">Get more information</string>
+    <string name="eo_password_more_info">Få mer information</string>
     <string name="no_attachments">0 bilagor</string>
     <string name="pin_lock_option_settings">Låsalternativ</string>
-    <string name="pin_lock_after">Lock app after</string>
+    <string name="pin_lock_after">Lås app efter</string>
     <string name="lock_the_app">Lås appen</string>
     <string name="display_name_banned_chars">Ogiltigt visningsnamn. \'&gt;\' och \'&lt;\' är inte tillåtna</string>
     <string name="cont">Fortsätt</string>
@@ -287,8 +287,8 @@
     <string name="labels_title_add">Lägg till etikett</string>
     <string name="labels_title">Etiketter</string>
     <string name="label_name">Etikettnamn</string>
-    <string name="label_name_empty">Label must have a name</string>
-    <string name="label_name_duplicate">This label name already exists</string>
+    <string name="label_name_empty">Etikett måste ha ett namn</string>
+    <string name="label_name_duplicate">Detta etikettnamn finns redan</string>
     <string name="label_created">Etikett skapad</string>
     <string name="label_invalid">Etiketten skapades inte på grund av ogiltigt namn.</string>
     <string name="undo">Ångra</string>
@@ -301,7 +301,7 @@
     <string name="no_application_found">Ingen app som kan hantera åtgärden hittades</string>
     <string name="no_application_found_or_link_invalid">Ingen app hittades som kan hantera begäran eller så är länken ogiltig</string>
     <string name="also_archive">Arkivera</string>
-    <string name="label_deleted">Label Deleted</string>
+    <string name="label_deleted">Etikett borttagen</string>
     <string name="label_deleted_error">Fel vid borttagning av etikett</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Svara i tråd</string>
@@ -318,7 +318,7 @@
     <string name="dismiss">Avfärda</string>
     <string name="new_message_arrived">Nytt meddelande!</string>
     <string name="please_choose_color">Välj färg</string>
-    <string name="display_images">Show remote content</string>
+    <string name="display_images">Visa fjärrinnehåll</string>
     <string name="retry">Försök igen</string>
     <string name="saving_failed_no_conn">Misslyckades att spara, ingen anslutning</string>
     <string name="close_engagement">stäng rundtur</string>
@@ -413,8 +413,8 @@
     <string name="edit_payment_methods">Logga in på protonmail.com för att ändra faktureringsuppgifter.</string>
     <string name="message_not_loaded">Message not loaded</string>
     <string name="signature_text">Signaturtext</string>
-    <string name="available_addresses">Available Addresses</string>
-    <string name="inactive_addresses">Inactive Addresses</string>
+    <string name="available_addresses">Tillgängliga adresser</string>
+    <string name="inactive_addresses">Inaktiva adresser</string>
     <string name="not_set">Inte Angivet</string>
     <string name="edit_notification_email">Ändra E-post för Återställning</string>
     <string name="available_swipe_actions">Tillgängliga åtgärder</string>
@@ -551,7 +551,7 @@
     <string name="save_new_folder">Spara ny mapp</string>
     <string name="create_new_folder">Skapa mapp</string>
     <string name="empty_emails">Ingen e-post</string>
-    <string name="empty_email_list">No email address</string>
+    <string name="empty_email_list">Ingen e-postadress</string>
     <string name="no_contacts">Inga kontakter</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; skrev:</string>
     <string name="update_label">Uppdatera etikett</string>
@@ -577,7 +577,7 @@
     <string name="address_region">Region (delstat eller provins)</string>
     <string name="address_postcode">Postnummer</string>
     <string name="address_country">Land</string>
-    <string name="recheck_delinquency">Check Again</string>
+    <string name="recheck_delinquency">Kontrollera igen</string>
     <string name="close_app">Stäng appen</string>
     <string name="empty_subject">(Inget ämne)</string>
     <string name="empty_recipients">(Inga mottagare)</string>
@@ -694,8 +694,8 @@
     <string name="search_contacts_inside_group">Sök efter kontakter</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
-        <item quantity="one">%d Member</item>
-        <item quantity="other">%d Members</item>
+        <item quantity="one">%d medlem</item>
+        <item quantity="other">%d medlemmar</item>
     </plurals>
     <string name="groups">Grupper</string>
     <string name="tab_contacts">Kontakter (%d)</string>
@@ -710,8 +710,8 @@
         <item quantity="other">Är du säker på att du vill ta bort de valda grupperna?</item>
     </plurals>
     <plurals name="group_deleted">
-        <item quantity="one">Group Deleted</item>
-        <item quantity="other">Groups Deleted</item>
+        <item quantity="one">Grupp borttagen</item>
+        <item quantity="other">Grupper borttagna</item>
     </plurals>
     <plurals name="are_you_sure_delete_contact">
         <item quantity="one">Är du säker på att du vill ta bort denna kontakt?</item>
@@ -719,7 +719,7 @@
     </plurals>
     <string name="members">Medlemmar</string>
     <string name="max_emails_in_group_title">Maximalt antal e-post per grupp uppnått</string>
-    <string name="select_deselect_all">Select All</string>
+    <string name="select_deselect_all">Välj alla</string>
     <string name="contact_group_name_hint">Välj ett gruppnamn</string>
     <string name="contact_group_change_color">Ändra färg</string>
     <string name="fab_add_contact">Lägg till ny kontakt</string>
@@ -841,7 +841,7 @@
     <string name="labels">Etiketter</string>
     <string name="labels_manager">Etiketthanterare</string>
     <string name="folders_manage">Mapphantering</string>
-    <string name="swipe_actions">Swipe actions</string>
+    <string name="swipe_actions">Svepåtgärder</string>
     <string name="swipe_action_right">Svep höger</string>
     <string name="swipe_action_left">Svep vänster</string>
     <!-- region Swipe Actions -->
@@ -875,7 +875,7 @@
     <string name="app_settings">App-inställningar</string>
     <!-- region App Settings -->
     <string name="push_notifications">Push notifications</string>
-    <string name="extended_notifications">Extended Notifications</string>
+    <string name="extended_notifications">Utökade aviseringar</string>
     <string name="extended_notifications_description">Aktivera denna inställning om du vill se e-postens avsändare i aviseringarna.</string>
     <string name="notification_settings">Aviseringsinställningar</string>
     <string name="auto_lock">Autolås</string>
@@ -899,7 +899,7 @@
     <!-- endregion -->
     <string name="enabled">Aktiverad</string>
     <string name="disabled">Inaktiverad</string>
-    <string name="app_info">App information</string>
+    <string name="app_info">App-information</string>
     <string name="app_version">App-version</string>
     <!-- endregion -->
     <!-- region Multi Account -->
@@ -980,5 +980,5 @@
     <string name="details_show_history">Visa historik</string>
     <string name="could_not_complete_action">Det gick inte att slutföra åtgärden</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
-    <string name="labels_selected_limit_reached">Limit reached</string>
+    <string name="labels_selected_limit_reached">Gräns uppnådd</string>
 </resources>

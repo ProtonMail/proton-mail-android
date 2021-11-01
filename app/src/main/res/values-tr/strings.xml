@@ -144,7 +144,7 @@
     <string name="no_search_results">Arama sonucu yok</string>
     <string name="compose">Oluştur</string>
     <string name="compose_message">İleti oluştur</string>
-    <string name="empty_folder">Klasörü boşalt</string>
+    <string name="empty_folder">Klasörü Boşalt</string>
     <string name="view_headers">Başlıkları Görüntüle</string>
     <string name="message_headers">Mesaj başlığı</string>
     <string name="delete_message">Mesajı sil</string>
