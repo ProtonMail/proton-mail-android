@@ -42,7 +42,7 @@
     <string name="composer_cc">Cc:</string>
     <string name="composer_compose_email">Tulis surel</string>
     <string name="composer_from">Dari:</string>
-    <string name="composer_subject">Subyek:</string>
+    <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
     <string name="set_msg_password_title">Setel kata sandi</string>
     <string name="set_msg_password_info">Setel sandi untuk mengenkripsi pesan ini bagi pengguna non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Pelajari lebih lanjut</a>
@@ -395,7 +395,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="error">Kesalahan</string>
     <string name="storage_gb">Penyimpanan %d GB</string>
     <string name="storage_mb">Penyimpanan %d MB</string>
-    <string name="max_addresses">Maksimal %d alias email</string>
+    <string name="max_addresses">Hingga %d alias email</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Gambar Tertanam</string>
     <string name="select">Pilih</string>
@@ -627,7 +627,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="sender_lock_internal">Pesan bertanda dan terenkripsi dua arah</string>
     <string name="sender_lock_internal_verified">Pesan terenkripsi end-to-end dari alamat terverifikasi</string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">Dienkripsi end-to-end</string>
+    <string name="composer_lock_internal">Terenkripsi end-to-end</string>
     <string name="composer_lock_internal_pinned">Terenkripsi end-to-end ke alamat terverifikasi</string>
     <string name="composer_lock_pgp_encrypted_pinned">Terenkripsi PGP ke penerima terverifikasi</string>
     <string name="composer_lock_pgp_signed">Ditandatangani PGP</string>

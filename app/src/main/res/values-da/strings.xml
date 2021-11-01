@@ -99,8 +99,8 @@
     <string name="messages_load_failure">Kan ikke hente beskeder</string>
     <string name="message_details_load_failure">Kan ikke hente beskeddetaljer</string>
     <string name="no_more_messages">Ikke flere beskeder</string>
-    <string name="mailbox_login_failure">Mislykkedes at logge ind på postkassen</string>
-    <string name="login_failure">Mislykkedes at logge ind</string>
+    <string name="mailbox_login_failure">Det lykkedes ikke at logge ind på postkassen</string>
+    <string name="login_failure">Login mislykkedes</string>
     <string name="incorrect_key_parameters">Forkerte nøgleparametre</string>
     <string name="not_signed_up">Du er ikke tilmeldt ProtonMail Android Beta</string>
     <string name="no_network">Intet netværk</string>
@@ -112,7 +112,7 @@
     <string name="api_offline">ProtonMail er pt. offline. For konkret status, se venligst https://protonstatus.com eller https://twitter.com/protonmail.</string>
     <string name="contact_saved">Kontakt er gemt</string>
     <string name="contact_saved_offline">Kontakt gemt. Den synkes, når en forbindelse bliver tilgængelig.</string>
-    <string name="contact_exist">Kontakt-e-mail findes allerede</string>
+    <string name="contact_exist">Kontaktmail findes allerede</string>
     <string name="invalid_email">Ugyldig e-mailadresse</string>
     <string name="duplicate_email">E-mail er en dublet</string>
     <string name="invalid_code">Kode er ugyldig</string>
@@ -129,7 +129,7 @@
     <string name="allmail_option">Alle mails</string>
     <string name="inbox">Indbakke</string>
     <string name="starred">Stjernemarkeret</string>
-    <string name="drafts">Udkast</string>
+    <string name="drafts">Kladder</string>
     <string name="sent">Sendt</string>
     <string name="archive">Arkiv</string>
     <string name="trash">Papirkurv</string>
@@ -138,10 +138,10 @@
     <string name="contacts">Kontakter</string>
     <string name="search_contacts">Søg i kontakter</string>
     <string name="fetching_contacts">Henter ProtonMail-kontakter...</string>
-    <string name="fetching_contacts_success">Kontakter er kopieret</string>
-    <string name="fetching_contacts_failure">Kunne ikke opfriske kontakter</string>
-    <string name="search_messages">Søg efter beskeder</string>
-    <string name="no_search_results">Intet søgeresultat</string>
+    <string name="fetching_contacts_success">Kontakter opdateret</string>
+    <string name="fetching_contacts_failure">Kunne ikke opdatere kontakter</string>
+    <string name="search_messages">Søg i beskeder</string>
+    <string name="no_search_results">Ingen søgeresultater</string>
     <string name="compose">Skriv</string>
     <string name="compose_message">Skriv besked</string>
     <string name="empty_folder">Tøm mappe</string>
@@ -154,10 +154,10 @@
     <string name="remove_star">Fjern stjernemarkering</string>
     <string name="mark_read">Marker som læst</string>
     <string name="mark_unread">Marker som ulæst</string>
-    <string name="move_to_archive">Flyt til Arkiv</string>
-    <string name="move_to_trash">Flyt til Papirkurv</string>
-    <string name="move_to_spam">Flyt til Spam</string>
-    <string name="move_to_inbox">Flyt til Indbakke</string>
+    <string name="move_to_archive">Flyt til arkiv</string>
+    <string name="move_to_trash">Flyt til papirkurv</string>
+    <string name="move_to_spam">Flyt til spam</string>
+    <string name="move_to_inbox">Flyt til indbakke</string>
     <string name="move_to">Flyt til…</string>
     <string name="are_you_sure_empty">Er du sikker på, at du vil slette alle beskeder fra denne mappe?</string>
     <string name="send">Send</string>
@@ -182,8 +182,8 @@
     <string name="define_message_password">Beskedadgangskode</string>
     <string name="confirm_message_password">Bekræft adgangskode</string>
     <string name="define_password_hint">Angiv tip (valgfrit)</string>
-    <string name="message_passwords_do_not_match">Login-adgangskoder stemmer ikke</string>
-    <string name="eo_passwords_do_not_match">Adgangskoder stemmer ikke</string>
+    <string name="message_passwords_do_not_match">Login-adgangskoder stemmer ikke overens</string>
+    <string name="eo_passwords_do_not_match">Adgangskoder stemmer ikke overens</string>
     <string name="define_expiration_period">Angiv udløbsperiode</string>
     <string name="set_message_expiration">Angiv beskedudløb</string>
     <string name="days">Dage</string>
@@ -228,14 +228,14 @@
     <string name="add_contact">Tilføj kontakt</string>
     <string name="delete_contact">Fjern %s fra kontakter?</string>
     <string name="confirm">Bekræft</string>
-    <string name="confirm_destructive_action">Sikker? Handlingen er irreversibel.</string>
+    <string name="confirm_destructive_action">Er du sikker? Dette kan ikke omgøres.</string>
     <string name="create">Opret</string>
     <string name="email">E-mail</string>
     <string name="phone">Telefonnummer</string>
     <string name="save">Gem</string>
     <string name="syncing_messages">Synkroniserer...</string>
     <string name="sync">Synkronisér kontakter</string>
-    <string name="save_message_as_draft">Gem besked som udkast?</string>
+    <string name="save_message_as_draft">Gem besked som kladde?</string>
     <string name="no_subject">Send besked uden emneindhold?</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
@@ -249,7 +249,7 @@
     <string name="not_received_report">Anmeldelse ikke modtaget</string>
     <string name="not_received_report_offline">Offline! Rapport indsendes, når online</string>
     <string name="forward_prefix">Vs:</string>
-    <string name="original_message_divider">-------- Originalbesked --------</string>
+    <string name="original_message_divider">-------- Oprindelig besked --------</string>
     <string name="invalid_email_address">Adressen \'%s\' er ugyldig</string>
     <string name="invalid_email_address_removed">The address \'%s\' is invalid and was removed</string>
     <string name="no_recipients_specified">Angiv mindst én modtager</string>
@@ -257,7 +257,7 @@
     <string name="attachment_limit">Vedhæftninger er begrænset til %1$s. Vedhæftninger i alt ville udgøre %2$s.</string>
     <string name="sending_message">Sender besked ...</string>
     <string name="sending_message_offline">Offline, sat i kø til senere afsendelse...</string>
-    <string name="go_to_inbox">Gå til min indbakke</string>
+    <string name="go_to_inbox">Fortsæt til min indbakke</string>
     <string name="message_sent">Besked afsendt</string>
     <string name="message_failed">Beskedafsendelse mislykkedes</string>
     <string name="message_sending_failures">%d message sending failures</string>
@@ -309,7 +309,7 @@
     <string name="server_not_reachable_troubleshoot">Server ikke tilgængelig… (<u>Fejlfind</u>)</string>
     <string name="connectivity_checking">Tjekker for tilslutning...</string>
     <string name="sync_short">synkr.</string>
-    <string name="draft_attachments_uploading">Udkast uploader stadig...</string>
+    <string name="draft_attachments_uploading">Kladde uploader stadig…</string>
     <string name="draft_label_attachments_uploading">uploader vedhæftninger…</string>
     <string name="draft_label_message_uploading">sender beskeder…</string>
     <string name="attachment_failed">Upload af vedhæftning mislykkedes for besked </string>
@@ -357,7 +357,7 @@
     </string>
     <string name="enter_pin">Angiv PIN-kode for at oplåse din indbakke</string>
     <string name="enter_pin_message_details">Angiv PIN-kode for at oplåse din besked</string>
-    <string name="enter_current_pin">Angiv aktuelle PIN-kode</string>
+    <string name="enter_current_pin">Angiv din aktuelle PIN-kode</string>
     <string name="pin_subtitle_create">Opret din PIN-kode her</string>
     <string name="pin_subtitle_create_new">Opret din NYE PIN-kode her</string>
     <string name="pin_subtitle_confirm">Bekræft din PIN-kode her</string>
@@ -365,7 +365,7 @@
     <string name="pin_invalid">Ugyldig PIN-kode. Angiv den korrekte 4-cifrede PIN-kode</string>
     <string name="pin_confirmation_not_match">Bekræftelses PIN-kode matcher ikke</string>
     <string name="pin_not_match">PIN-koder matcher ikke</string>
-    <string name="new_pin_saved">Ny PIN-kode gent</string>
+    <string name="new_pin_saved">Ny PIN-kode gemt</string>
     <string name="new_emails">%d nye e-mails</string>
     <string name="attachment_download_success">%s blev downloadet til Filhåndtering</string>
     <string name="attachment_download_failed">Mislykkedes at downloade %s</string>
@@ -378,26 +378,26 @@
     <string name="share_link">Del link</string>
     <string name="sync_attachments">Synkroniserer vedhæftninger</string>
     <string name="processing_attachment">Behandler vedhæftninger</string>
-    <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Fortsæt?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Ønsker du at fortsætte?</string>
+    <string name="dont_ask_again">Spørg ikke igen</string>
     <string name="none">Ingen</string>
     <string name="changes_affected_after_closing">Ændringer effektueres efter lukning af app\'en</string>
     <plurals name="incorrect_pin_remaining_attempts">
-        <item quantity="one">Forkert PIN-kode, %d førsøg tilbage</item>
-        <item quantity="other">Forkert PIN-kode, %d førsøg tilbage</item>
+        <item quantity="one">Forkert PIN-kode, %d forsøg tilbage</item>
+        <item quantity="other">Forkert PIN-kode, %d forsøg tilbage</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
-        <item quantity="one">%d førsøg inden sikker datarydning!</item>
-        <item quantity="other">%d førsøg inden sikker datarydning!</item>
+        <item quantity="one">%d forsøg inden sikker datarydning!</item>
+        <item quantity="other">%d forsøg inden sikker datarydning!</item>
     </plurals>
     <string name="done">Udført</string>
     <string name="logout">Log ud</string>
-    <string name="log_out">Log out %s?</string>
+    <string name="log_out">Log %s ud?</string>
     <string name="logout_question">Sikker på, at du vil logge ud?</string>
     <string name="logout_question_next_account">Sikker på, at du vil logge ud af den aktuelle konto og fortsætte ved brug af %s?</string>
     <string name="upgrade">Opgradér</string>
     <string name="country">Land</string>
-    <string name="set_cont">Angiv og fortsat</string>
+    <string name="set_cont">Angiv og fortsæt</string>
     <string name="error">Fejl</string>
     <string name="storage_gb">%d GB lagerplads</string>
     <string name="storage_mb">%d MB lagerplads</string>
@@ -406,7 +406,7 @@
     <string name="inline_header">%d indlejrede billeder</string>
     <string name="select">Vælg</string>
     <string name="warning">Advarsel</string>
-    <string name="empty_recovery_email_question">Advarsel: Du har ikke angivet en gendannelses-e-mail, så kontogendannelse er umulig, hvis du skulle glemme din adgangskode. Fortsæt alligevel?</string>
+    <string name="empty_recovery_email_question">Advarsel: Du har ikke angivet en gendannelsesmail, så kontogendannelse er umulig, hvis du skulle glemme din adgangskode. Fortsæt alligevel?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Udløbsdato %s</string>
     <string name="no_payment_methods">Du har ingen gemte betalingsmetoder.</string>
@@ -416,7 +416,7 @@
     <string name="available_addresses">Tilgængelige adresser</string>
     <string name="inactive_addresses">Inaktive adresser</string>
     <string name="not_set">Ikke indstillet</string>
-    <string name="edit_notification_email">Redigér Gendannelses-e-mail</string>
+    <string name="edit_notification_email">Redigér gendannelsesmail</string>
     <string name="available_swipe_actions">Tilgængelige handlinger</string>
     <string name="no_available_addresses">Du har ingen tilgængelige adresser</string>
     <string name="no_inactive_addresses">Du har ingen inaktive adresser</string>
@@ -558,19 +558,19 @@
     <string name="max_labels_in_message">Beskeden %1$s må maks. have %2$d etiketter.</string>
     <string name="delete">Slet</string>
     <string name="subject_copied">Emne kopieret til Udklipsholder</string>
-    <string name="details_copied">Oplysninger kopieret til Udklipsholder</string>
+    <string name="details_copied">Oplysninger kopieret til udklipsholder</string>
     <string name="saving">Gemmer...</string>
-    <string name="update_folder">Opdatere mappe</string>
-    <string name="spam_score_100">Denne e-mail lader til at være sandt fra ProtonMail, men kom fra et eksternt system og bestod ikke godkendelseskravene. Den kan være falsk eller forkert videresendt!</string>
-    <string name="spam_score_101">Denne e-mail fejlede sit domæns godkendelseskrav. Den kan være falsk eller forkert videresendt!</string>
+    <string name="update_folder">Opdater mappe</string>
+    <string name="spam_score_100">Denne e-mail lader til at være sendt fra en ProtonMail-adresse, men den kom fra et sted uden for vores system og bestod ikke vores godkendelseskrav. Den kan være falsk eller ukorrekt videresendt!</string>
+    <string name="spam_score_101">Denne e-mail bestod ikke sit domænes godkendelseskrav. Den kan være falsk eller ukorrekt videresendt!</string>
     <string name="spam_score_102">Denne besked kan være et phishing-forsøg. Tjek afsenderen og indholdet for at sikre, at de er legitime. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">FÅ MERE AT VIDE</a>
     </string>
-    <string name="print_from_template">Fra %s</string>
+    <string name="print_from_template">Fra: %s</string>
     <string name="print_to_template">Til: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="signature_error">Bekræftelsesfejl</string>
-    <string name="signature_error_desc">Mislykkedes at bekræfte dette indholds signatur</string>
+    <string name="signature_error_desc">Kunne ikke bekræfte dette indholds signatur</string>
     <string name="address">Adresse: </string>
     <string name="address_street">Gade</string>
     <string name="address_city">By</string>
@@ -583,15 +583,15 @@
     <string name="empty_recipients">(Ingen modtagere)</string>
     <string name="contacts_unknown">Ukendt</string>
     <string name="learn_more">
-        <u>Få mereat vide</u>
+        <u>Få mere at vide</u>
     </string>
     <string name="info">Info</string>
-    <string name="error_can_not_send_from_this_address">Opgradér til et abonnement for at sende fra din %s-adresse.</string>
-    <string name="email_empty">E-mail mangler</string>
+    <string name="error_can_not_send_from_this_address">Opgradér til et betalt abonnement for at sende fra din %s-adresse.</string>
+    <string name="email_empty">E-mailadresse mangler</string>
     <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">Krypterede kontaktoplysninger</string>
     <string name="convert_question">Upload lokale kontakter</string>
-    <string name="convert_question_subtitle">Dette vil synkronisere de lokale kontakter på enheden til ProtonMail-kontaktmappen. Du vil derefter via ProtonMail kunne tilgå disse kontakter på dine øvrige enheder.</string>
+    <string name="convert_question_subtitle">Dette vil uploade de lokale kontakter på din enhed til kontaktkartoteket i ProtonMail. Du vil derefter kunne tilgå disse kontakter på dine øvrige enheder via ProtonMail.</string>
     <string name="refresh_contacts">Opfrisk</string>
     <string name="upload">Upload</string>
     <string name="invalid_email_some_contacts">E-mail er ikke gyldig for visse af dine kontakter</string>
@@ -642,14 +642,14 @@
     <string name="recipient_error_and_removed">En fejl opstod under hentning af modtageroplysninger, og modtageren er blevet fjernet: %s</string>
     <string name="send_anyway">Send alligevel</string>
     <string name="expiration_error_title">Du har aktiveret beskedudløb, men ikke alle modtagerne understøtter dette.</string>
-    <string name="expiration_error_add_msg_password">Tilføj en beskedadgangskode for flg. modtagere:</string>
-    <string name="expiration_error_disable_pgp_sending">Deaktivér PGP-afsendelse for flg. modtagere:</string>
+    <string name="expiration_error_add_msg_password">Tilføj en beskedadgangskode for følgende modtagere:</string>
+    <string name="expiration_error_disable_pgp_sending">Deaktivér PGP-afsendelse for følgende modtagere:</string>
     <string name="expiration_error_proceed">Tryk afsend alligevel for at snde uden udløb til disse modtagere.</string>
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">FÅ MERE AT VIDE</a>
     </string>
     <string name="channel_name_attachments">Vedhæftninger</string>
-    <string name="channel_description_attachments">Oplyser om status for download af vedhæftning</string>
+    <string name="channel_description_attachments">Oplyser status for download af vedhæftning</string>
     <string name="channel_name_emails">E-mails</string>
     <string name="channel_description_emails">Indgående e-mailnotifikationer</string>
     <string name="channel_name_account">Konto</string>
@@ -681,10 +681,10 @@
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Føj adresse til grupper</string>
     <string name="title_activity_address_chooser">Administrer medlemmer</string>
-    <string name="title_activity_account_manager">Håndtér konti</string>
+    <string name="title_activity_account_manager">Administrer konti</string>
     <string name="account_manager_add_account">Tilføj konto</string>
     <string name="account_manager_remove_all_accounts">Fjerner alle konti</string>
-    <string name="account_manager_note">Du kan være logget på et ubegrænset antal betalte ProtonMail-konti og en gratis konto samtidigt.</string>
+    <string name="account_manager_note">Du kan være logget på et ubegrænset antal betalte ProtonMail-konti og én gratis konto samtidigt.</string>
     <string name="account_manager_remove_all">Fjern alle konti</string>
     <string name="account_manager_logout">Log ud</string>
     <string name="account_manager_login">Log ind</string>
@@ -772,10 +772,10 @@
     <string name="storage">Postkassestørrelse</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Adresser</string>
-    <string name="default_mail_address">Standard e-mail</string>
+    <string name="default_mail_address">Standard e-mailadresse</string>
     <string name="default_address">Standardadresse</string>
     <string name="display_name_n_signature">Vis navn og signatur</string>
-    <string name="display_name">Vis navn</string>
+    <string name="display_name">Vist navn</string>
     <string name="edit_display_name">Redigér vist navn</string>
     <string name="signature">Signatur</string>
     <string name="mobile_footer">Mobil-sidefod</string>
