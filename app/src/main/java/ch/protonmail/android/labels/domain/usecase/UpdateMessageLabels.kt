@@ -23,6 +23,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.repository.MessageRepository
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.filterNotNull
@@ -36,6 +37,7 @@ import javax.inject.Inject
 
 internal class UpdateMessageLabels @Inject constructor(
     private val messageRepository: MessageRepository,
+    private val conversationsRepository: ConversationsRepository,
     private val accountManager: AccountManager,
     private val labelRepository: LabelRepository,
     private val dispatchers: DispatcherProvider,
@@ -90,6 +92,14 @@ internal class UpdateMessageLabels @Inject constructor(
         message.addLabels(mutableLabelIds)
         message.removeLabels(labelsToRemove)
 
-        messageRepository.saveMessage(userId, message)
+        val updatedMessage = messageRepository.saveMessage(userId, message)
+        conversationsRepository.updateConversationBasedOnMessageLabels(
+            userId,
+            messageId,
+            mutableLabelIds,
+            labelsToRemove
+        )
+
+        return@withContext updatedMessage
     }
 }

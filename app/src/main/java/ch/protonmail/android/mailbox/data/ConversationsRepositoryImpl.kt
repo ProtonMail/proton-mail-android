@@ -514,6 +514,37 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         return ConversationsActionResult.Success
     }
 
+    override suspend fun updateConversationBasedOnMessageLabels(
+        userId: UserId,
+        messageId: String,
+        labelsToAdd: List<String>,
+        labelsToRemove: List<String>
+    ) {
+        val message = messageDao.findMessageByIdOnce(messageId) ?: return
+        val conversation = message.conversationId?.let {
+            conversationDao.findConversation(userId.id, it)
+        } ?: return
+
+        var labels = conversation.labels
+        labelsToAdd.forEach { labelId ->
+            labels = updateLabelsAfterMessageAction(
+                message,
+                labels,
+                labelId,
+                true
+            )
+        }
+        labelsToRemove.forEach { labelId ->
+            labels = updateLabelsAfterMessageAction(
+                message,
+                labels,
+                labelId,
+                false
+            )
+        }
+        conversationDao.update(conversation.copy(labels = labels))
+    }
+
     private fun observeAllConversationsFromDatabase(
         params: GetAllConversationsParameters
     ): Flow<List<ConversationDatabaseModel>> {
@@ -640,7 +671,21 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         return ConversationsActionResult.Success
     }
 
-    private fun updateLabelsAfterMessageAction(
+    private suspend fun getContextTimeFromMessagesInConversation(
+        conversationId: String,
+        messageId: String?,
+        labelId: String
+    ): Long {
+        var contextTime = 0L
+        getAllConversationMessagesSortedByNewest(conversationId).forEach { message ->
+            if (message.messageId != messageId && message.allLabelIDs.contains(labelId)) {
+                contextTime = max(contextTime, message.time)
+            }
+        }
+        return contextTime
+    }
+
+    private suspend fun updateLabelsAfterMessageAction(
         message: Message,
         labels: List<LabelContextDatabaseModel>,
         labelId: String,
@@ -662,7 +707,9 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                 id = labelId,
                 contextNumUnread = label.contextNumUnread - message.Unread.toInt(),
                 contextNumMessages = label.contextNumMessages - 1,
-                contextTime = label.contextTime,
+                contextTime = message.conversationId?.let {
+                    getContextTimeFromMessagesInConversation(it, message.messageId, labelId)
+                } ?: label.contextTime,
                 contextSize = label.contextSize - message.totalSize.toInt(),
                 contextNumAttachments = label.contextNumAttachments - message.numAttachments
             )

@@ -237,6 +237,8 @@ class ConversationsRepositoryImplTest : ArchTest {
     private val inboxLabelId = MessageLocationType.INBOX.messageLocationTypeValue.toString()
     private val trashLabelId = MessageLocationType.TRASH.messageLocationTypeValue.toString()
     private val starredLabelId = MessageLocationType.STARRED.messageLocationTypeValue.toString()
+    private val labelId1 = "labelId1"
+    private val labelId2 = "labelId2"
 
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
@@ -1327,6 +1329,55 @@ class ConversationsRepositoryImplTest : ArchTest {
 
             // then
             assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun `verify conversation is updated when labels are added and removed from a message`() {
+        runBlockingTest {
+            // given
+            val message = Message(
+                conversationId = conversationId1,
+                Unread = false,
+                time = 10,
+                totalSize = 10,
+                numAttachments = 0
+            )
+            val conversation = buildConversationDatabaseModel(
+                id = conversationId1,
+                labels = listOf(
+                    buildLabelContextDatabaseModel(id = inboxLabelId),
+                    buildLabelContextDatabaseModel(id = labelId2)
+                )
+            )
+            val updatedConversation = buildConversationDatabaseModel(
+                id = conversationId1,
+                labels = listOf(
+                    buildLabelContextDatabaseModel(id = inboxLabelId),
+                    buildLabelContextDatabaseModel(
+                        id = labelId1,
+                        contextNumMessages = 1,
+                        contextTime = 10,
+                        contextSize = 10
+                    )
+                )
+            )
+            coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message
+            coEvery { conversationDao.findConversation(testUserId.id, conversationId1) } returns conversation
+            coEvery { conversationDao.update(updatedConversation) } returns 123
+
+            // when
+            conversationsRepository.updateConversationBasedOnMessageLabels(
+                testUserId,
+                messageId1,
+                listOf(labelId1),
+                listOf(labelId2)
+            )
+
+            // then
+            coVerify {
+                conversationDao.update(updatedConversation)
+            }
         }
     }
 
