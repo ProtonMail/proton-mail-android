@@ -28,6 +28,7 @@ class RenderDimensionsProvider @Inject constructor(
     private val context: Context
 ) {
 
+    @Suppress("Deprecation")
     fun getRenderWidth(): Int {
         val metrics = DisplayMetrics()
         context.getSystemService(WindowManager::class.java).defaultDisplay.getMetrics(metrics)
