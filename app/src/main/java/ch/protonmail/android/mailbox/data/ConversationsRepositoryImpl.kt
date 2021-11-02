@@ -396,6 +396,36 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         return ConversationsActionResult.Success
     }
 
+    override suspend fun updateConvosBasedOnMessagesLocation(
+        userId: UserId,
+        messageIds: List<String>,
+        currentFolderId: String,
+        newFolderId: String
+    ) {
+        messageIds.forEach forEachMessageId@{ messageId ->
+            val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId
+            val conversation = message.conversationId?.let {
+                conversationDao.findConversation(userId.id, it)
+            } ?: return@forEachMessageId
+
+            var labels = conversation.labels
+            labels = updateLabelsAfterMessageAction(
+                message,
+                labels,
+                currentFolderId,
+                shouldAddMessageToLabel = false
+            )
+            labels = updateLabelsAfterMessageAction(
+                message,
+                labels,
+                newFolderId,
+                shouldAddMessageToLabel = true
+            )
+
+            conversationDao.update(conversation.copy(labels = labels))
+        }
+    }
+
     override suspend fun delete(
         conversationIds: List<String>,
         userId: UserId,

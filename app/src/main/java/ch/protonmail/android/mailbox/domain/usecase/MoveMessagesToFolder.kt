@@ -20,6 +20,7 @@
 package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.repository.MessageRepository
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -27,7 +28,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal class MoveMessagesToFolder @Inject constructor(
-    private val messagesRepository: MessageRepository
+    private val messagesRepository: MessageRepository,
+    private val conversationsRepository: ConversationsRepository
 ) {
 
     suspend operator fun invoke(
@@ -54,5 +56,11 @@ internal class MoveMessagesToFolder @Inject constructor(
                     userId
                 )
         }
+        conversationsRepository.updateConvosBasedOnMessagesLocation(
+            userId,
+            messageIds,
+            currentFolderLabelId,
+            newFolderLocationId
+        )
     }
 }

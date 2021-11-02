@@ -239,6 +239,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     private val starredLabelId = MessageLocationType.STARRED.messageLocationTypeValue.toString()
     private val labelId1 = "labelId1"
     private val labelId2 = "labelId2"
+    private val folderId = "folderId"
 
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
@@ -1093,6 +1094,53 @@ class ConversationsRepositoryImplTest : ArchTest {
 
             // then
             assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun `verify conversations are updated when messages location changes`() = runBlockingTest {
+        // given
+        val message = Message(
+            messageId = messageId1,
+            conversationId = conversationId1,
+            Unread = false,
+            time = 0,
+            totalSize = 0,
+            numAttachments = 0
+        )
+        val conversation = buildConversationDatabaseModel(
+            id = conversationId1,
+            labels = listOf(
+                buildLabelContextDatabaseModel(
+                    id = inboxLabelId,
+                    contextNumMessages = 1
+                )
+            )
+        )
+        val updatedConversation = buildConversationDatabaseModel(
+            id = conversationId1,
+            labels = listOf(
+                buildLabelContextDatabaseModel(
+                    id = folderId,
+                    contextNumMessages = 1
+                )
+            )
+        )
+        coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message
+        coEvery { conversationDao.findConversation(testUserId.id, conversationId1) } returns conversation
+        coEvery { conversationDao.update(updatedConversation) } returns 123
+
+        // when
+        conversationsRepository.updateConvosBasedOnMessagesLocation(
+            testUserId,
+            listOf(messageId1),
+            inboxLabelId,
+            folderId
+        )
+
+        // then
+        coVerify {
+            conversationDao.update(updatedConversation)
         }
     }
 
