@@ -27,7 +27,7 @@ import javax.inject.Inject
 /**
  * Maps [UnreadCounterEntity] to [UnreadCounter] domain model
  */
-internal class DatabaseToDomainUnreadCounterMapper @Inject constructor() :
+class DatabaseToDomainUnreadCounterMapper @Inject constructor() :
     Mapper<UnreadCounterEntity, UnreadCounter> {
 
     fun toDomainModel(counterEntity: UnreadCounterEntity) = UnreadCounter(

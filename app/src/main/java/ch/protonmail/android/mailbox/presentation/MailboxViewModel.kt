@@ -67,6 +67,7 @@ import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
@@ -122,6 +123,7 @@ internal class MailboxViewModel @Inject constructor(
     private val observeConversationModeEnabled: ObserveConversationModeEnabled,
     private val observeMessagesByLocation: ObserveMessagesByLocation,
     private val observeConversationsByLocation: ObserveConversationsByLocation,
+    private val changeMessagesReadStatus: ChangeMessagesReadStatus,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val observeAllUnreadCounters: ObserveAllUnreadCounters,
@@ -678,17 +680,21 @@ internal class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         locationId: String
     ) {
-        if (conversationModeEnabled(location)) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (conversationModeEnabled(location)) {
                 changeConversationsReadStatus(
                     ids,
                     ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
                     userId,
                     locationId
                 )
+            } else {
+                changeMessagesReadStatus(
+                    ids,
+                    ChangeMessagesReadStatus.Action.ACTION_MARK_READ,
+                    userId
+                )
             }
-        } else {
-            messageDetailsRepository.markRead(ids)
         }
     }
 
@@ -698,17 +704,21 @@ internal class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         locationId: String
     ) {
-        if (conversationModeEnabled(location)) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (conversationModeEnabled(location)) {
                 changeConversationsReadStatus(
                     ids,
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                     userId,
                     locationId
                 )
+            } else {
+                changeMessagesReadStatus(
+                    ids,
+                    ChangeMessagesReadStatus.Action.ACTION_MARK_UNREAD,
+                    userId
+                )
             }
-        } else {
-            messageDetailsRepository.markUnRead(ids)
         }
     }
 

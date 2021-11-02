@@ -28,7 +28,7 @@ import javax.inject.Inject
 /**
  * Maps [CountsApiModel] to [UnreadCounterEntity]
  */
-internal class ApiToDatabaseUnreadCounterMapper @Inject constructor() :
+class ApiToDatabaseUnreadCounterMapper @Inject constructor() :
     Mapper<CountsApiModel, UnreadCounterEntity> {
 
     fun toDatabaseModel(

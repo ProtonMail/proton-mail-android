@@ -34,6 +34,7 @@ import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,6 +54,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val messageRepository: MessageRepository,
+    private val changeMessagesReadStatus: ChangeMessagesReadStatus,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val conversationModeEnabled: ConversationModeEnabled,
@@ -236,9 +238,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
         shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
-                val primaryUserId = accountManager.getPrimaryUserId().first()
-                if (primaryUserId != null) {
+            val primaryUserId = accountManager.getPrimaryUserId().first()
+            if (primaryUserId != null) {
+                if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                     val result = changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
@@ -249,10 +251,14 @@ internal class MessageActionSheetViewModel @Inject constructor(
                         cancel("Could not complete the action")
                     }
                 } else {
-                    Timber.e("Primary user id is null. Cannot mark message/conversation unread")
+                    changeMessagesReadStatus(
+                        ids,
+                        ChangeMessagesReadStatus.Action.ACTION_MARK_UNREAD,
+                        primaryUserId
+                    )
                 }
             } else {
-                messageRepository.markUnRead(ids)
+                Timber.e("Primary user id is null. Cannot mark message/conversation unread")
             }
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
@@ -271,9 +277,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
         shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
-                val primaryUserId = accountManager.getPrimaryUserId().first()
-                if (primaryUserId != null) {
+            val primaryUserId = accountManager.getPrimaryUserId().first()
+            if (primaryUserId != null) {
+                if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                     val result = changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
@@ -284,10 +290,14 @@ internal class MessageActionSheetViewModel @Inject constructor(
                         cancel("Could not complete the action")
                     }
                 } else {
-                    Timber.e("Primary user id is null. Cannot mark message/conversation read")
+                    changeMessagesReadStatus(
+                        ids,
+                        ChangeMessagesReadStatus.Action.ACTION_MARK_READ,
+                        primaryUserId
+                    )
                 }
             } else {
-                messageRepository.markRead(ids)
+                Timber.e("Primary user id is null. Cannot mark message/conversation read")
             }
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {

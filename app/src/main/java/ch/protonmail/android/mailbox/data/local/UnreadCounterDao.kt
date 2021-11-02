@@ -30,7 +30,7 @@ import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 
 @Dao
-internal abstract class UnreadCounterDao : BaseDao<UnreadCounterEntity>() {
+abstract class UnreadCounterDao : BaseDao<UnreadCounterEntity>() {
 
     fun observeMessagesUnreadCounters(userId: UserId): Flow<List<UnreadCounterEntity>> =
         observeUnreadCounters(userId, UnreadCounterEntity.Type.MESSAGES)

@@ -74,7 +74,7 @@ private const val FILE_PREFIX = "file://"
 /**
  * A repository for getting and saving messages.
  */
-internal class MessageRepository @Inject constructor(
+class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val unreadCounterDao: UnreadCounterDao,
     private val databaseProvider: DatabaseProvider,

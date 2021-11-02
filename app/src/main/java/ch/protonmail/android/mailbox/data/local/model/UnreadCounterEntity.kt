@@ -37,7 +37,7 @@ const val UNREAD_COUNTER_COLUMN_UNREAD_COUNT = "unread_count"
     tableName = UNREAD_COUNTER_TABLE_NAME,
     primaryKeys = [UNREAD_COUNTER_COLUMN_USER_ID, UNREAD_COUNTER_COLUMN_LABEL_ID, UNREAD_COUNTER_COLUMN_TYPE]
 )
-internal data class UnreadCounterEntity(
+data class UnreadCounterEntity(
 
     @ColumnInfo(name = UNREAD_COUNTER_COLUMN_USER_ID)
     val userId: UserId,

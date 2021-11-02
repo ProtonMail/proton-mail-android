@@ -64,6 +64,7 @@ import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
+import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.utils.DownloadUtils
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -107,6 +108,8 @@ private const val SUBJECT = "subject"
 private const val MESSAGE_SENDER_EMAIL_ADDRESS = "sender@protonmail.com"
 
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
+
+    private val changeMessagesReadStatus: ChangeMessagesReadStatus = mockk()
 
     private val changeConversationsReadStatus: ChangeConversationsReadStatus = mockk(relaxed = true)
 
@@ -209,6 +212,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             moveConversationsToFolder,
             conversationModeEnabled,
             conversationRepository,
+            changeMessagesReadStatus,
             changeConversationsReadStatus,
             changeConversationsStarredStatus,
             deleteMessage,
@@ -666,7 +670,13 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
-        coEvery { messageRepository.markUnRead(any()) } just Runs
+        coEvery {
+            changeMessagesReadStatus.invoke(
+                listOf(inputConversationId),
+                ChangeMessagesReadStatus.Action.ACTION_MARK_UNREAD,
+                any()
+            )
+        } just Runs
         val message = Message(
             messageId = inputConversationId,
             isDownloaded = true,
@@ -680,7 +690,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         coVerify(exactly = 1) {
-            messageRepository.markUnRead(listOf(inputConversationId))
+            changeMessagesReadStatus.invoke(
+                listOf(inputConversationId),
+                ChangeMessagesReadStatus.Action.ACTION_MARK_UNREAD,
+                any()
+            )
         }
     }
 
