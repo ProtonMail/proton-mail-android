@@ -45,13 +45,13 @@ class MessageBodyDecryptorTest {
         val decryptedMessageSpy = MessageTestData.messageSpy()
 
         // when
-        val decryptedSucceeded = messageBodyDecryptor(
+        val decryptionSucceeded = messageBodyDecryptor(
             message = decryptedMessageSpy,
             publicKeys = KeyInformationTestData.listWithValidKey
         )
 
         // then
-        assertTrue(decryptedSucceeded)
+        assertTrue(decryptionSucceeded)
         verify {
             decryptedMessageSpy.decrypt(
                 userManagerMock,
@@ -67,13 +67,13 @@ class MessageBodyDecryptorTest {
         val decryptedMessageSpy = MessageTestData.messageSpy().throwingException()
 
         // when
-        val decryptedSucceeded = messageBodyDecryptor(
+        val decryptionSucceeded = messageBodyDecryptor(
             message = decryptedMessageSpy,
             publicKeys = KeyInformationTestData.listWithValidKey
         )
 
         // then
-        assertTrue(decryptedSucceeded)
+        assertTrue(decryptionSucceeded)
         assertFalse(decryptedMessageSpy.hasValidSignature)
         assertTrue(decryptedMessageSpy.hasInvalidSignature)
         verify {
@@ -91,13 +91,13 @@ class MessageBodyDecryptorTest {
         val decryptedMessageSpy = MessageTestData.messageSpy().throwingException(publicKeys)
 
         // when
-        val decryptedSucceeded = messageBodyDecryptor(
+        val decryptionSucceeded = messageBodyDecryptor(
             message = decryptedMessageSpy,
             publicKeys = publicKeys
         )
 
         // then
-        assertFalse(decryptedSucceeded)
+        assertFalse(decryptionSucceeded)
     }
 
     @Test
@@ -107,13 +107,13 @@ class MessageBodyDecryptorTest {
         val decryptedMessageSpy = MessageTestData.messageSpy().throwingException(publicKeys)
 
         // when
-        val decryptedSucceeded = messageBodyDecryptor(
+        val decryptionSucceeded = messageBodyDecryptor(
             message = decryptedMessageSpy,
             publicKeys = publicKeys
         )
 
         // then
-        assertFalse(decryptedSucceeded)
+        assertFalse(decryptionSucceeded)
     }
 
     private fun Message.throwingException(
