@@ -56,6 +56,7 @@ import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
@@ -316,6 +317,32 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         return ConversationsActionResult.Success
     }
 
+    override suspend fun updateConvosBasedOnMessagesStarredStatus(
+        userId: UserId,
+        messageIds: List<String>,
+        action: ChangeMessagesStarredStatus.Action
+    ) {
+        messageIds.forEach forEachMessageId@{ messageId ->
+            val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId
+            val conversation = message.conversationId?.let {
+                conversationDao.findConversation(userId.id, it)
+            } ?: return@forEachMessageId
+
+            val labels = updateLabelsAfterMessageAction(
+                message,
+                conversation.labels,
+                Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString(),
+                action == ChangeMessagesStarredStatus.Action.ACTION_STAR
+            )
+
+            conversationDao.update(
+                conversation.copy(
+                    labels = labels
+                )
+            )
+        }
+    }
+
     override suspend fun moveToFolder(
         conversationIds: List<String>,
         userId: UserId,
@@ -419,9 +446,10 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                 var labels = conversation.labels
                 message.allLabelIDs.forEach { labelId ->
                     labels = updateLabelsAfterMessageAction(
-                        labelId,
+                        message,
                         labels,
-                        message
+                        labelId,
+                        false
                     )
                 }
                 conversationDao.update(
@@ -613,23 +641,34 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     }
 
     private fun updateLabelsAfterMessageAction(
-        labelId: String,
+        message: Message,
         labels: List<LabelContextDatabaseModel>,
-        message: Message
+        labelId: String,
+        shouldAddMessageToLabel: Boolean // true == add message to label; false == remove message from label
     ): List<LabelContextDatabaseModel> {
         val label = labels.find { it.id == labelId }
         val updatedLabels = labels.filterNot { it.id == labelId }.toMutableList()
-        if (label != null && label.contextNumMessages > 1) {
-            val updatedLabel = label.copy(
-                id = label.id,
+        val updatedLabel = if (shouldAddMessageToLabel) {
+            LabelContextDatabaseModel(
+                id = labelId,
+                contextNumUnread = label?.contextNumUnread ?: 0 + message.Unread.toInt(),
+                contextNumMessages = label?.contextNumMessages ?: 0 + 1,
+                contextTime = max(label?.contextTime ?: 0, message.time),
+                contextSize = label?.contextSize ?: 0 + message.totalSize.toInt(),
+                contextNumAttachments = label?.contextNumAttachments ?: 0 + message.numAttachments
+            )
+        } else if (label != null && label.contextNumMessages > 1) {
+            LabelContextDatabaseModel(
+                id = labelId,
                 contextNumUnread = label.contextNumUnread - message.Unread.toInt(),
                 contextNumMessages = label.contextNumMessages - 1,
                 contextTime = label.contextTime,
                 contextSize = label.contextSize - message.totalSize.toInt(),
                 contextNumAttachments = label.contextNumAttachments - message.numAttachments
             )
-            updatedLabels.add(updatedLabel)
-        }
+        } else null
+
+        updatedLabel?.let { updatedLabels.add(updatedLabel) }
         return updatedLabels
     }
 

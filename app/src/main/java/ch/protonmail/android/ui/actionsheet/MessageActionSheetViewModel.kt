@@ -35,6 +35,7 @@ import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,6 +57,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private val messageRepository: MessageRepository,
     private val changeMessagesReadStatus: ChangeMessagesReadStatus,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
+    private val changeMessagesStarredStatus: ChangeMessagesStarredStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val conversationModeEnabled: ConversationModeEnabled,
     private val accountManager: AccountManager
@@ -164,9 +166,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
         shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
-                val primaryUserId = accountManager.getPrimaryUserId().first()
-                if (primaryUserId != null) {
+            val primaryUserId = accountManager.getPrimaryUserId().first()
+            if (primaryUserId != null) {
+                if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                     val result = changeConversationsStarredStatus(
                         ids,
                         primaryUserId,
@@ -176,10 +178,14 @@ internal class MessageActionSheetViewModel @Inject constructor(
                         cancel("Could not complete the action")
                     }
                 } else {
-                    Timber.e("Primary user id is null. Cannot star message/conversation")
+                    changeMessagesStarredStatus(
+                        primaryUserId,
+                        ids,
+                        ChangeMessagesStarredStatus.Action.ACTION_STAR
+                    )
                 }
             } else {
-                messageRepository.starMessages(ids)
+                Timber.e("Primary user id is null. Cannot star message/conversation")
             }
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
@@ -200,9 +206,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
         shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
-                val primaryUserId = accountManager.getPrimaryUserId().first()
-                if (primaryUserId != null) {
+            val primaryUserId = accountManager.getPrimaryUserId().first()
+            if (primaryUserId != null) {
+                if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                     val result = changeConversationsStarredStatus(
                         ids,
                         primaryUserId,
@@ -212,10 +218,14 @@ internal class MessageActionSheetViewModel @Inject constructor(
                         cancel("Could not complete the action")
                     }
                 } else {
-                    Timber.e("Primary user id is null. Cannot unstar message/conversation")
+                    changeMessagesStarredStatus(
+                        primaryUserId,
+                        ids,
+                        ChangeMessagesStarredStatus.Action.ACTION_UNSTAR
+                    )
                 }
             } else {
-                messageRepository.unStarMessages(ids)
+                Timber.e("Primary user id is null. Cannot unstar message/conversation")
             }
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {

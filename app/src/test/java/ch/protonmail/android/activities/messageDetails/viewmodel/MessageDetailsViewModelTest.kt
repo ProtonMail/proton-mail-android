@@ -65,6 +65,7 @@ import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
+import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.DownloadUtils
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -112,6 +113,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val changeMessagesReadStatus: ChangeMessagesReadStatus = mockk()
 
     private val changeConversationsReadStatus: ChangeConversationsReadStatus = mockk(relaxed = true)
+
+    private val changeMessagesStarredStatus: ChangeMessagesStarredStatus = mockk()
 
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus = mockk(relaxed = true)
 
@@ -214,6 +217,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             conversationRepository,
             changeMessagesReadStatus,
             changeConversationsReadStatus,
+            changeMessagesStarredStatus,
             changeConversationsStarredStatus,
             deleteMessage,
             deleteConversations,
@@ -980,9 +984,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             inputMessageLocation.messageLocationTypeValue
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
         val isChecked = true
-        every {
-            messageRepository.starMessages(
-                listOf(inputConversationId)
+        coEvery {
+            changeMessagesStarredStatus(
+                any(),
+                listOf(inputConversationId),
+                ChangeMessagesStarredStatus.Action.ACTION_STAR
             )
         } just Runs
 
@@ -998,13 +1004,17 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             )
         }
         coVerify(exactly = 1) {
-            messageRepository.starMessages(
-                listOf(inputConversationId)
+            changeMessagesStarredStatus(
+                any(),
+                listOf(inputConversationId),
+                ChangeMessagesStarredStatus.Action.ACTION_STAR
             )
         }
         coVerify(exactly = 0) {
-            messageRepository.unStarMessages(
-                any()
+            changeMessagesStarredStatus(
+                any(),
+                listOf(inputConversationId),
+                ChangeMessagesStarredStatus.Action.ACTION_UNSTAR
             )
         }
     }
