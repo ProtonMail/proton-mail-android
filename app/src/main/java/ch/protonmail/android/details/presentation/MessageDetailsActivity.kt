@@ -102,6 +102,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     @Inject
     lateinit var messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper
 
+    @Inject
+    lateinit var renderDimensionsProvider: RenderDimensionsProvider
+
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
     private lateinit var primaryBaseActivity: Context
@@ -237,11 +240,13 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 val loadedMessage = messageBodyState.message
                 val parsedBody = viewModel.formatMessageHtmlBody(
                     loadedMessage,
-                    UiUtil.getRenderWidth(this.windowManager),
+                    renderDimensionsProvider.getRenderWidth(),
                     AppUtil.readTxt(this, R.raw.css_reset_with_custom_props),
                     if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
                         AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only)
-                    } else EMPTY_STRING,
+                    } else {
+                        EMPTY_STRING
+                    },
                     this.getString(R.string.request_timeout)
                 )
 
