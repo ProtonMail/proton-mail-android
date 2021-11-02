@@ -76,6 +76,7 @@ import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.toInt
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.max
@@ -83,6 +84,7 @@ import kotlin.math.max
 // For non-custom locations such as: Inbox, Sent, Archive etc.
 private const val MAX_LOCATION_ID_LENGTH = 2
 
+@Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 internal class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
@@ -372,6 +374,43 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateConversationsAfterDeletingMessages(userId: UserId, messageIds: List<String>) {
+        messageIds.forEach forEachMessageId@{ messageId ->
+            val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId
+            val conversation = message.conversationId?.let {
+                conversationDao.findConversation(userId.id, it)
+            } ?: return@forEachMessageId
+
+            if (conversation.numMessages == 1) {
+                conversationDao.deleteConversation(userId.id, conversation.id)
+            } else {
+                val numMessages = conversation.numMessages - 1
+                val numUnread = if (message.Unread) {
+                    conversation.numUnread - 1
+                } else {
+                    conversation.numUnread
+                }
+                val numAttachments = conversation.numAttachments - message.numAttachments
+                var labels = conversation.labels
+                message.allLabelIDs.forEach { labelId ->
+                    labels = updateLabelsAfterMessageAction(
+                        labelId,
+                        labels,
+                        message
+                    )
+                }
+                conversationDao.update(
+                    conversation.copy(
+                        numMessages = numMessages,
+                        numUnread = numUnread,
+                        numAttachments = numAttachments,
+                        labels = labels
+                    )
+                )
+            }
+        }
+    }
+
     override suspend fun label(
         conversationIds: List<String>,
         userId: UserId,
@@ -546,6 +585,27 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         labels.removeAll { it.id in labelIds }
         conversationDao.updateLabels(conversationId, labels)
         return ConversationsActionResult.Success
+    }
+
+    private fun updateLabelsAfterMessageAction(
+        labelId: String,
+        labels: List<LabelContextDatabaseModel>,
+        message: Message
+    ): List<LabelContextDatabaseModel> {
+        val label = labels.find { it.id == labelId }
+        val updatedLabels = labels.filterNot { it.id == labelId }.toMutableList()
+        if (label != null && label.contextNumMessages > 1) {
+            val updatedLabel = label.copy(
+                id = label.id,
+                contextNumUnread = label.contextNumUnread - message.Unread.toInt(),
+                contextNumMessages = label.contextNumMessages - 1,
+                contextTime = label.contextTime,
+                contextSize = label.contextSize - message.totalSize.toInt(),
+                contextNumAttachments = label.contextNumAttachments - message.numAttachments
+            )
+            updatedLabels.add(updatedLabel)
+        }
+        return updatedLabels
     }
 
     private fun observeConversationFromDatabase(params: GetOneConversationParameters): Flow<Conversation?> =

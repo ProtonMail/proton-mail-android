@@ -118,6 +118,7 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
+@Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
@@ -740,8 +741,8 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun delete() {
         viewModelScope.launch {
+            val primaryUserId = userManager.requireCurrentUserId()
             if (isConversationEnabled()) {
-                val primaryUserId = userManager.requireCurrentUserId()
                 deleteConversations(
                     listOf(messageOrConversationId),
                     primaryUserId,
@@ -750,7 +751,8 @@ internal class MessageDetailsViewModel @Inject constructor(
             } else {
                 deleteMessage(
                     listOf(messageOrConversationId),
-                    location.messageLocationTypeValue.toString()
+                    location.messageLocationTypeValue.toString(),
+                    primaryUserId
                 )
             }
         }

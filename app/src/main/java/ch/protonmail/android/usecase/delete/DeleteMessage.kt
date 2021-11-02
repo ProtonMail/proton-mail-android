@@ -24,11 +24,13 @@ import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.usecase.model.DeleteMessageResult
 import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
@@ -37,13 +39,18 @@ import javax.inject.Inject
  * [DeleteMessageWorker] that will send a deferrable delete message network request.
  */
 class DeleteMessage @Inject constructor(
+    private val conversationsRepository: ConversationsRepository,
     private val dispatchers: DispatcherProvider,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val pendingActionDatabase: PendingActionDao,
     private val workerScheduler: DeleteMessageWorker.Enqueuer
 ) {
 
-    suspend operator fun invoke(messageIds: List<String>, currentLabelId: String?): DeleteMessageResult =
+    suspend operator fun invoke(
+        messageIds: List<String>,
+        currentLabelId: String?,
+        userId: UserId
+    ): DeleteMessageResult =
         withContext(dispatchers.Io) {
 
             val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(messageIds)
@@ -60,6 +67,7 @@ class DeleteMessage @Inject constructor(
 
             ensureActive()
             messageDetailsRepository.saveMessagesInOneTransaction(messagesToSave)
+            conversationsRepository.updateConversationsAfterDeletingMessages(userId, validMessageIdList)
 
             val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList, currentLabelId)
             return@withContext DeleteMessageResult(
