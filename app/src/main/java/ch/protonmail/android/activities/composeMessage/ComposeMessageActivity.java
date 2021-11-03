@@ -433,25 +433,6 @@ public class ComposeMessageActivity
 
         composeMessageViewModel.getDbIdWatcher().observe(ComposeMessageActivity.this, new SendMessageObserver());
 
-        composeMessageViewModel.getFetchMessageDetailsEvent().observe(this, messageBuilderDataEvent -> {
-            try {
-                binding.composerProgressLayout.setVisibility(View.GONE);
-                MessageBuilderData messageBuilderData = messageBuilderDataEvent.getContentIfNotHandled();
-                if (messageBuilderData != null) {
-                    String mimeType = messageBuilderData.getMessage().getMimeType();
-                    setMessageBodyInContainers(composeMessageViewModel.setMessageBody
-                            (messageBuilderData.getDecryptedMessage(), false,
-                                    mimeType != null && mimeType.equals(Constants.MIME_TYPE_PLAIN_TEXT), getString(R.string.sender_name_address),
-                                    getString(R.string.original_message_divider),
-                                    getString(R.string.reply_prefix_on),
-                                    DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
-                }
-                composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
-            } catch (Exception exc) {
-                Timber.tag("588").e(exc, "Exception on fetch message details event");
-            }
-        });
-
         composeMessageViewModel.getFetchKeyDetailsResult().observe(
                 this,
                 this::onFetchEmailKeysEvent
@@ -1439,7 +1420,7 @@ public class ComposeMessageActivity
             if (!isFinishing()) {
                 DialogUtils.Companion.showInfoDialog(ComposeMessageActivity.this, getString(R.string.app_name), getString(R.string.messages_load_failure),
                         unit -> {
-                            onBackPressed();
+                            finishActivity();
                             return unit;
                         });
             }
