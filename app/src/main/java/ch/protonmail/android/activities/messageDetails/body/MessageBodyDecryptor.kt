@@ -30,7 +30,7 @@ import javax.inject.Inject
 const val SIGNATURE_VERIFICATION_ERROR = "Signature Verification Error: No matching signature"
 
 @Suppress("Deprecation")
-internal class MessageBodyDecryptor @Inject constructor(
+class MessageBodyDecryptor @Inject constructor(
     private val userManager: UserManager
 ) {
 
