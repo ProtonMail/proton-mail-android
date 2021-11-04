@@ -41,11 +41,9 @@ import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.event.AlarmReceiver
-import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelItemUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.Type
@@ -61,7 +59,6 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
-import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.startSplashActivity
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
@@ -110,10 +107,6 @@ internal abstract class NavigationActivity : BaseActivity() {
     // endregion
 
     val lazyManager = resettableManager()
-
-    val messagesDatabase by resettableLazy(lazyManager) {
-        MessageDatabase.getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
-    }
 
     @Inject
     lateinit var accountManager: AccountManager
@@ -279,7 +272,6 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         checkUserId()
         app.startJobManager()
-        mJobManager.addJobInBackground(FetchUpdatesJob())
         val alarmReceiver = AlarmReceiver()
         alarmReceiver.setAlarm(this)
 
