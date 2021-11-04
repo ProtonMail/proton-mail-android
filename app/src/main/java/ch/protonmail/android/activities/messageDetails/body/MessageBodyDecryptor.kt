@@ -38,6 +38,14 @@ class MessageBodyDecryptor @Inject constructor(
         message: Message,
         publicKeys: List<KeyInformation>?
     ): Boolean {
+        return if (message.decryptedHTML.isNullOrEmpty()) {
+            tryToDecrypt(message, publicKeys)
+        } else {
+            true
+        }
+    }
+
+    private fun tryToDecrypt(message: Message, publicKeys: List<KeyInformation>?): Boolean {
         return try {
             message.decrypt(userManager, userManager.requireCurrentUserId(), publicKeys)
             true

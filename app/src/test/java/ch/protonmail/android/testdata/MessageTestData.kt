@@ -26,9 +26,11 @@ import io.mockk.runs
 import io.mockk.spyk
 
 object MessageTestData {
-    private const val MESSAGE_ID = "message_id"
+    const val MESSAGE_ID_RAW = "message_id"
+    const val MESSAGE_BODY = "<span>I just call, to say, hello world.</span>"
+    const val MESSAGE_BODY_FORMATTED = "<span>I just call, to say, hello world. But now I am formatted.</span>"
 
-    fun messageSpy(messageId: String = MESSAGE_ID) = Message(messageId).toSpy()
+    fun messageSpy(messageId: String? = MESSAGE_ID_RAW) = Message(messageId).toSpy()
 
     fun Message.toSpy(): Message {
         return spyk(this).apply {
