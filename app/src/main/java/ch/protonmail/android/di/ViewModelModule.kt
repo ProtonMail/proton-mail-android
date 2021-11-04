@@ -96,7 +96,7 @@ internal class ViewModelModule {
     @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
     @Provides
     fun provideMailboxViewModel(
-        messageDetailsRepository: MessageDetailsRepository,
+        messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
         userManager: UserManager,
         jobManager: JobManager,
         deleteMessage: DeleteMessage,
@@ -123,7 +123,7 @@ internal class ViewModelModule {
         getMailSettings: GetMailSettings,
         messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper
     ) = MailboxViewModel(
-        messageDetailsRepository = messageDetailsRepository,
+        messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
         userManager = userManager,
         jobManager = jobManager,
         deleteMessage = deleteMessage,

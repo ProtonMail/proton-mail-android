@@ -23,8 +23,9 @@ import android.content.Context
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.work.ListenableWorker
+import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.storage.AttachmentClearingServiceHelper
 import ch.protonmail.android.utils.AppUtil
@@ -45,15 +46,17 @@ import kotlin.test.assertEquals
 class HandleSingleAttachmentTest : ArchTest {
 
     private val context: Context = mockk()
+    private val userManager: UserManager = mockk()
+    private val databaseProvider: DatabaseProvider = mockk()
     private val attachmentsRepository: AttachmentsRepository = mockk()
     private val clearingServiceHelper: AttachmentClearingServiceHelper = mockk()
     private val attachmentsHelper: AttachmentsHelper = mockk()
-    private val attachmentsDao: AttachmentMetadataDao = mockk()
     private val testMimeType = "image/jpeg"
 
     val useCase = HandleSingleAttachment(
         context,
-        attachmentsDao,
+        userManager,
+        databaseProvider,
         attachmentsHelper,
         clearingServiceHelper,
         attachmentsRepository

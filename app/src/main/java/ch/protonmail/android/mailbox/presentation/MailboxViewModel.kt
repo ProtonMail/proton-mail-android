@@ -21,6 +21,8 @@ package ch.protonmail.android.mailbox.presentation
 import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.swipe.SwipeAction
@@ -82,6 +84,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -110,7 +113,7 @@ private typealias ApplyRemoveLabelsPair = Pair<List<String>, List<String>>
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
 internal class MailboxViewModel @Inject constructor(
-    private val messageDetailsRepository: MessageDetailsRepository,
+    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val userManager: UserManager,
     private val jobManager: JobManager,
     private val deleteMessage: DeleteMessage,
@@ -138,9 +141,6 @@ internal class MailboxViewModel @Inject constructor(
     private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
-    var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
-    var pendingUploadsLiveData = messageDetailsRepository.findAllPendingUploadsAsync()
-
     private val _manageLimitReachedWarning = MutableLiveData<Event<Boolean>>()
     private val _manageLimitApproachingWarning = MutableLiveData<Event<Boolean>>()
     private val _manageLimitBelowCritical = MutableLiveData<Event<Boolean>>()
@@ -150,11 +150,21 @@ internal class MailboxViewModel @Inject constructor(
     private val mutableMailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
     private val mutableMailboxLocation = MutableStateFlow(INBOX)
     private val mutableMailboxLabelId = MutableStateFlow(EMPTY_STRING)
-    private val mutableUserId = MutableStateFlow(requireNotNull(userManager.currentUserId))
+    private val mutableUserId = userManager.primaryUserId.filterNotNull()
     private val mutableRefreshFlow = MutableSharedFlow<Boolean>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
+    private val messageDetailsRepository: MessageDetailsRepository
+        get() = messageDetailsRepositoryFactory.create(userManager.requireCurrentUserId())
+
+    var pendingSendsLiveData = mutableUserId.asLiveData().switchMap {
+        messageDetailsRepository.findAllPendingSendsAsync()
+    }
+    var pendingUploadsLiveData = mutableUserId.asLiveData().switchMap {
+        messageDetailsRepository.findAllPendingUploadsAsync()
+    }
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -774,12 +784,6 @@ internal class MailboxViewModel @Inject constructor(
     fun setNewMailboxLabel(labelId: String) {
         if (mutableMailboxLabelId.value != labelId) {
             mutableMailboxLabelId.value = labelId
-        }
-    }
-
-    fun setNewUserId(currentUserId: UserId) {
-        if (mutableUserId.value != currentUserId) {
-            mutableUserId.value = currentUserId
         }
     }
 

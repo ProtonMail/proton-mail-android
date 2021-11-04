@@ -20,16 +20,16 @@
 package ch.protonmail.android.mailbox.presentation
 
 import ch.protonmail.android.core.Constants.MessageLocationType
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
-import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 class ConversationModeEnabled @Inject constructor(
-    private val observeConversationModeEnabled: ObserveConversationModeEnabled,
-    private val accountManager: AccountManager
+    private val userManager: UserManager,
+    private val observeConversationModeEnabled: ObserveConversationModeEnabled
 ) {
 
     /**
@@ -37,9 +37,10 @@ class ConversationModeEnabled @Inject constructor(
      * When userId is null, use the current primary user id.
      */
     operator fun invoke(location: MessageLocationType?, userId: UserId? = null): Boolean {
+        val currentUserId = userId ?: userManager.currentUserId ?: return false
+        // TODO: Remove runBlocking and convert invoke function into a suspend.
         return runBlocking {
-            val primaryUserId = userId ?: accountManager.getPrimaryUserId().first()
-            primaryUserId?.let { observeConversationModeEnabled(primaryUserId, location).first() } ?: false
+            observeConversationModeEnabled(currentUserId, location).firstOrNull() ?: false
         }
     }
 }

@@ -47,6 +47,9 @@ class DownloadEmbeddedAttachmentsWorkerTest {
     private val userManager: UserManager = mockk(relaxed = true)
 
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
+    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory = mockk(relaxed = true) {
+        every { create(any()) } returns messageDetailsRepository
+    }
 
     private val attachmentsHelper: AttachmentsHelper = mockk()
 
@@ -58,7 +61,7 @@ class DownloadEmbeddedAttachmentsWorkerTest {
         context,
         parameters,
         userManager,
-        messageDetailsRepository,
+        messageDetailsRepositoryFactory,
         attachmentsHelper,
         handleSingleAttachment,
         handleEmbeddedImages

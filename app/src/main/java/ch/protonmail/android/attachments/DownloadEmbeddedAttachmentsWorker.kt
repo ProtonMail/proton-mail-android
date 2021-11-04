@@ -69,7 +69,7 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,
-    private val messageDetailsRepository: MessageDetailsRepository,
+    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val attachmentsHelper: AttachmentsHelper,
     private val handleSingleAttachment: HandleSingleAttachment,
     private val handleEmbeddedImages: HandleEmbeddedImageAttachments
@@ -90,6 +90,7 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
 
         val singleAttachmentId = inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING)
 
+        val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
         val message = messageDetailsRepository.findMessageById(messageId).first()
         var attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId)
 

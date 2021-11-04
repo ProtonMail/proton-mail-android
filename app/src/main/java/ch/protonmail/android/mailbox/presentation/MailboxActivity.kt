@@ -227,11 +227,8 @@ internal class MailboxActivity :
         counterDao = CounterDatabase.getInstance(this, userId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, userId).getDao()
 
-        // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
-
         // TODO if we decide to use special flag for switching (and not login), change this
         if (intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)) {
-            messageDetailsRepository.reloadDependenciesForUser(userId)
             multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking() // force FCM to re-register
         }
         val extras = intent.extras
@@ -536,17 +533,12 @@ internal class MailboxActivity :
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, currentUserId).getDao()
-        messageDetailsRepository.reloadDependenciesForUser(currentUserId)
 
         startObservingPendingActions()
         AppUtil.clearNotifications(this, currentUserId)
         lazyManager.reset()
         setUpDrawer()
         checkRegistration()
-        // This should trigger loading mailbox items for the newly switched account.
-        // This method also "reloads dependencies" for the instance of `messageDetailsRepo` held by
-        // MailboxVM. This should be done before triggering an "update" of the Mailbox for the new user
-        mailboxViewModel.setNewUserId(currentUserId)
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
         // Account has been switched, so used space changed as well
@@ -1125,8 +1117,10 @@ internal class MailboxActivity :
             actionMode?.finish()
         }
         mailboxActionsView.setOnMoreActionClickListener {
-            showActionSheet(getSelectedMessageIds(), isConversationModeEnabled(currentMailboxLocation))
-            actionMode?.finish()
+            lifecycleScope.launch {
+                showActionSheet(getSelectedMessageIds(), isConversationModeEnabled(currentMailboxLocation))
+                actionMode?.finish()
+            }
         }
     }
 

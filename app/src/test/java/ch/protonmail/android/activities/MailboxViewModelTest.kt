@@ -85,6 +85,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runBlockingTest
@@ -106,16 +107,19 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val contactsRepository: ContactsRepository = mockk()
 
-    @Suppress("RemoveExplicitTypeArguments") // Explicit arguments are required for lists. IDE bug?
     private val messageDetailsRepository: MessageDetailsRepository = mockk {
         every { findAllPendingSendsAsync() } returns liveData { emit(emptyList<PendingSend>()) }
         every { findAllPendingUploadsAsync() } returns liveData { emit(emptyList<PendingUpload>()) }
+    }
+    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory = mockk {
+        every { create(any()) } returns messageDetailsRepository
     }
 
     private val labelRepository: LabelRepository = mockk()
 
     private val userManager: UserManager = mockk {
         every { currentUserId } returns testUserId
+        coEvery { primaryUserId } returns MutableStateFlow(testUserId)
     }
 
     private val jobManager: JobManager = mockk {
@@ -208,7 +212,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery { observeLabels(any(), any()) } returns flowOf(allLabels)
 
         viewModel = MailboxViewModel(
-            messageDetailsRepository = messageDetailsRepository,
+            messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
             userManager = userManager,
             jobManager = jobManager,
             deleteMessage = deleteMessage,
@@ -623,19 +627,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         viewModel.loadMore()
 
         verify(exactly = 0) { jobManager.addJobInBackground(any()) }
-    }
-
-    @Test
-    fun getMailboxItemsCallsMessageServiceStartFetchMessagesByLabelWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsALabelOrFolder() {
-        val location = LABEL_FOLDER
-        val userId = UserId("userId1")
-        every { userManager.currentUserId } returns userId
-        every { conversationModeEnabled(location) } returns false
-
-        viewModel.setNewMailboxLocation(location)
-        viewModel.loadMore()
-
-        verify(exactly = 0) { messageDetailsRepository.reloadDependenciesForUser(userId) }
     }
 
     @Test
