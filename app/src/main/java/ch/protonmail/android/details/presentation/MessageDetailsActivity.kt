@@ -73,6 +73,7 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
+import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
 import com.squareup.otto.Subscribe

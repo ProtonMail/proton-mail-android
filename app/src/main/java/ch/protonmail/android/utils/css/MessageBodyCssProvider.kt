@@ -20,8 +20,10 @@
 package ch.protonmail.android.utils.css
 
 import android.content.Context
+import android.content.res.Configuration
 import ch.protonmail.android.R
 import ch.protonmail.android.utils.AppUtil
+import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
 class MessageBodyCssProvider @Inject constructor(
@@ -29,6 +31,15 @@ class MessageBodyCssProvider @Inject constructor(
 ) {
 
     fun getMessageBodyCss(): String {
-        return AppUtil.readTxt(context, R.raw.editor)
+        return AppUtil.readTxt(context, R.raw.css_reset_with_custom_props)
+    }
+
+    fun getMessageBodyDarkModeCss(): String {
+        return if (context.resources.configuration.uiMode
+            and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+            AppUtil.readTxt(context, R.raw.css_reset_dark_mode_only)
+        } else {
+            EMPTY_STRING
+        }
     }
 }
