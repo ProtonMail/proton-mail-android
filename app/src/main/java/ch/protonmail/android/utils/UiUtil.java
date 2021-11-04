@@ -36,7 +36,6 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -227,14 +226,6 @@ public class UiUtil {
         } catch (Exception e) {
             return input;
         }
-    }
-
-    public static int getRenderWidth(WindowManager windowManager) {
-        DisplayMetrics dm = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
-        float dens = dm.density;
-        return (int) (width / dens);
     }
 
     public static void buildExpirationTimeErrorDialog(Context context, List<String> recipientsMissingPassword, List<String> recipientsDisablePgp, final View.OnClickListener okClickListener) {

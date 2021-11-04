@@ -165,6 +165,7 @@ import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
+import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
@@ -259,6 +260,9 @@ public class ComposeMessageActivity
     
     @Inject
     HtmlToSpanned htmlToSpanned;
+
+    @Inject
+    RenderDimensionsProvider renderDimensionsProvider;
 
     String composerInstanceId;
 
@@ -1624,7 +1628,7 @@ public class ComposeMessageActivity
             if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
                 darkCss = AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only);
             }
-            Transformer viewportTransformer = new ViewportTransformer(UiUtil.getRenderWidth(getWindowManager()), css, darkCss);
+            Transformer viewportTransformer = new ViewportTransformer(renderDimensionsProvider.getRenderWidth(), css, darkCss);
             Transformer contentTransformer = new DefaultTransformer()
                     .pipe(viewportTransformer)
                     .pipe(new AbstractTransformer() {
@@ -1668,7 +1672,7 @@ public class ComposeMessageActivity
             if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
                 darkCss = AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only);
             }
-            Transformer contentTransformer = new ViewportTransformer(UiUtil.getRenderWidth(getWindowManager()), css, darkCss);
+            Transformer contentTransformer = new ViewportTransformer(renderDimensionsProvider.getRenderWidth(), css, darkCss);
             Document doc = Jsoup.parse(content);
             doc.outputSettings().indentAmount(0).prettyPrint(false);
             doc = contentTransformer.transform(doc);
