@@ -324,7 +324,7 @@ internal class MailboxActivity :
             actionMode?.title = "$checkedItems ${getString(R.string.selected)}"
 
             mailboxActionsView.setAction(
-                BottomActionsView.ActionPosition.ACTION_SECOND,
+                BottomActionsView.ActionPosition.ACTION_FIRST,
                 true,
                 if (MessageUtils.areAllUnRead(
                         selectedMessages
@@ -1039,6 +1039,7 @@ internal class MailboxActivity :
 
     private fun setUpMailboxActionsView() {
         val actionsUiModel = BottomActionsView.UiModel(
+            R.drawable.ic_envelope_dot,
             if (currentMailboxLocation in arrayOf(
                     MessageLocationType.TRASH,
                     MessageLocationType.DRAFT,
@@ -1046,12 +1047,30 @@ internal class MailboxActivity :
                     MessageLocationType.SENT
                 )
             ) R.drawable.ic_trash_empty else R.drawable.ic_trash,
-            R.drawable.ic_envelope_dot,
             R.drawable.ic_folder_move,
             R.drawable.ic_label
         )
         mailboxActionsView.bind(actionsUiModel)
         mailboxActionsView.setOnFirstActionClickListener {
+            val messageIds = getSelectedMessageIds()
+            if (MessageUtils.areAllUnRead(selectedMessages)) {
+                mailboxViewModel.markRead(
+                    messageIds,
+                    UserId(userManager.requireCurrentUserId().id),
+                    currentMailboxLocation,
+                    mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
+                )
+            } else {
+                mailboxViewModel.markUnRead(
+                    messageIds,
+                    UserId(userManager.requireCurrentUserId().id),
+                    currentMailboxLocation,
+                    mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
+                )
+            }
+            actionMode?.finish()
+        }
+        mailboxActionsView.setOnSecondActionClickListener {
             val messageIds = getSelectedMessageIds()
             if (currentMailboxLocation in arrayOf(
                     MessageLocationType.TRASH,
@@ -1085,25 +1104,6 @@ internal class MailboxActivity :
                     UserId(userManager.requireCurrentUserId().id),
                     currentMailboxLocation,
                     MessageLocationType.TRASH.messageLocationTypeValue.toString()
-                )
-            }
-            actionMode?.finish()
-        }
-        mailboxActionsView.setOnSecondActionClickListener {
-            val messageIds = getSelectedMessageIds()
-            if (MessageUtils.areAllUnRead(selectedMessages)) {
-                mailboxViewModel.markRead(
-                    messageIds,
-                    UserId(userManager.requireCurrentUserId().id),
-                    currentMailboxLocation,
-                    mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
-                )
-            } else {
-                mailboxViewModel.markUnRead(
-                    messageIds,
-                    UserId(userManager.requireCurrentUserId().id),
-                    currentMailboxLocation,
-                    mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
                 )
             }
             actionMode?.finish()
