@@ -205,7 +205,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
         humanVerificationOrchestrator.register(this, false);
         accountStateManager.setHumanVerificationOrchestrator(humanVerificationOrchestrator);
-        accountStateManager.observeHumanVerificationStateWithExternalLifecycle(getLifecycle());
+        accountStateManager.observeHVStateWithExternalLifecycle(getLifecycle());
     }
 
     @Override

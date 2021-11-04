@@ -89,7 +89,6 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.math.abs
 
-
 private const val TITLE_ANIMATION_THRESHOLD = 0.9
 private const val TITLE_ANIMATION_DURATION = 200L
 private const val ONE_HUNDRED_PERCENT = 1.0

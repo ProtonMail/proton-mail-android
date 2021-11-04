@@ -85,6 +85,7 @@ class MessageRepositoryTest {
 
     private val databaseProvider: DatabaseProvider = mockk {
         every { provideMessageDao(any()) } returns messageDao
+        every { provideUnreadCounterDao(any()) } returns unreadCounterDao
     }
 
     private val messageBodyFileManager: MessageBodyFileManager = mockk()
@@ -126,7 +127,6 @@ class MessageRepositoryTest {
 
     private val messageRepository = MessageRepository(
         dispatcherProvider = TestDispatcherProvider,
-        unreadCounterDao = unreadCounterDao,
         databaseProvider = databaseProvider,
         protonMailApiManager = protonMailApiManager,
         databaseToDomainUnreadCounterMapper = DatabaseToDomainUnreadCounterMapper(),

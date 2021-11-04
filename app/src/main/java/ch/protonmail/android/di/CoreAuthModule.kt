@@ -19,6 +19,8 @@
 package ch.protonmail.android.di
 
 import android.content.Context
+import ch.protonmail.android.feature.account.SetupAccountUserCheck
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +31,6 @@ import me.proton.core.auth.data.repository.AuthRepositoryImpl
 import me.proton.core.auth.domain.repository.AuthRepository
 import me.proton.core.auth.domain.usecase.SetupAccountCheck
 import me.proton.core.auth.presentation.AuthOrchestrator
-import me.proton.core.auth.presentation.DefaultUserCheck
 import me.proton.core.crypto.android.srp.GOpenPGPSrpCrypto
 import me.proton.core.crypto.common.srp.SrpCrypto
 import me.proton.core.network.data.ApiProvider
@@ -59,6 +60,7 @@ object CoreAuthModule {
     fun provideUserCheck(
         @ApplicationContext context: Context,
         accountManager: AccountManager,
-        userManager: UserManager
-    ): SetupAccountCheck.UserCheck = DefaultUserCheck(context, accountManager, userManager)
+        userManager: UserManager,
+        factory: SecureSharedPreferences.Factory
+    ): SetupAccountCheck.UserCheck = SetupAccountUserCheck(context, accountManager, userManager, factory)
 }

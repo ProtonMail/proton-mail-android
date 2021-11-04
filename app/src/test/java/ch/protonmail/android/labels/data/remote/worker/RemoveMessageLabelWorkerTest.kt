@@ -24,6 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.CounterRepository
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
@@ -32,9 +33,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -48,7 +47,7 @@ class RemoveMessageLabelWorkerTest {
 
     private val api = mockk<ProtonMailApi>()
 
-    private val accountManager = mockk<AccountManager>()
+    private val userManager = mockk<UserManager>()
 
     private val counterRepository = mockk<CounterRepository>()
 
@@ -59,12 +58,12 @@ class RemoveMessageLabelWorkerTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
+        every { userManager.currentUserId } returns testUserId
 
         worker = RemoveMessageLabelWorker(
             context,
             parameters,
-            accountManager,
+            userManager,
             counterRepository,
             api
         )

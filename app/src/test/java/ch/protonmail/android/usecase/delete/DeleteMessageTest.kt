@@ -21,6 +21,7 @@ package ch.protonmail.android.usecase.delete
 
 import androidx.work.Operation
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
@@ -48,11 +49,17 @@ class DeleteMessageTest {
 
     private val workScheduler: DeleteMessageWorker.Enqueuer = mockk()
 
-    private val db: PendingActionDao = mockk()
-
     private val messageDetailsRepository: MessageDetailsRepository = mockk()
+    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory = mockk() {
+        every { create(any()) } returns messageDetailsRepository
+    }
 
+    private val pendingActionDao: PendingActionDao = mockk()
     private val conversationsRepository: ConversationsRepository = mockk()
+
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { providePendingActionDao(any()) } returns pendingActionDao
+    }
 
     private lateinit var deleteMessage: DeleteMessage
 
@@ -70,10 +77,10 @@ class DeleteMessageTest {
     fun setUp() {
         MockKAnnotations.init(this)
         deleteMessage = DeleteMessage(
+            databaseProvider,
             conversationsRepository,
             TestDispatcherProvider,
-            messageDetailsRepository,
-            db,
+            messageDetailsRepositoryFactory,
             workScheduler
         )
 
@@ -90,8 +97,8 @@ class DeleteMessageTest {
     fun verifyThatMessageIsSuccessfullyDeletedWithoutPendingMessagesInTheDb() {
         runBlockingTest {
             // given
-            every { db.findPendingUploadByMessageId(any()) } returns null
-            every { db.findPendingSendByMessageId(any()) } returns null
+            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
+            every { pendingActionDao.findPendingSendByMessageId(any()) } returns null
             every { messageDetailsRepository.findMessageById(messId) } returns flowOf(message)
 
             // when
@@ -112,8 +119,8 @@ class DeleteMessageTest {
         runBlockingTest {
             // given
             val pendingUpload = mockk<PendingUpload>(relaxed = true)
-            every { db.findPendingUploadByMessageId(any()) } returns pendingUpload
-            every { db.findPendingSendByMessageId(any()) } returns null
+            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns pendingUpload
+            every { pendingActionDao.findPendingSendByMessageId(any()) } returns null
             every { messageDetailsRepository.findMessageByIdBlocking(messId) } returns message
             coEvery { messageDetailsRepository.saveMessage(message) } returns 1L
 
@@ -137,8 +144,8 @@ class DeleteMessageTest {
             val pendingSend = mockk<PendingSend>(relaxed = true) {
                 every { sent } returns true
             }
-            every { db.findPendingUploadByMessageId(any()) } returns null
-            every { db.findPendingSendByMessageId(any()) } returns pendingSend
+            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
+            every { pendingActionDao.findPendingSendByMessageId(any()) } returns pendingSend
             every { messageDetailsRepository.findMessageByIdBlocking(messId) } returns null
             coEvery { messageDetailsRepository.saveMessage(message) } returns 1L
 

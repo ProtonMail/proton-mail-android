@@ -30,8 +30,10 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
 import dagger.assisted.Assisted
@@ -55,13 +57,19 @@ class DeleteContactWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val contactDao: ContactDao,
-    private val contactDatabase: ContactDatabase,
+    private val userManager: UserManager,
+    private val databaseProvider: DatabaseProvider,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
-    override suspend fun doWork(): Result {
+    private val contactDatabase: ContactDatabase
+        get() = databaseProvider.provideContactDatabase(userManager.requireCurrentUserId())
 
+    private val contactDao: ContactDao
+        get() = databaseProvider.provideContactDao(userManager.requireCurrentUserId())
+
+    override suspend fun doWork(): Result {
+        // TODO: Pass userId (requireCurrentUserId would not always be the right one).
         val contactIds = inputData.getStringArray(KEY_INPUT_DATA_CONTACT_IDS)
             ?: emptyArray()
 

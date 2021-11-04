@@ -21,11 +21,13 @@ package ch.protonmail.android.mailbox.data
 
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
@@ -183,6 +185,11 @@ class ConversationsRepositoryImplTest : ArchTest {
         )
     )
 
+    private val userManager: UserManager = mockk {
+        every { currentUserId } returns testUserId
+        every { requireCurrentUserId() } returns testUserId
+    }
+
     private val conversationDao: ConversationDao = mockk {
         coEvery { updateLabels(any(), any()) } just Runs
         coEvery { insertOrUpdate(*anyVararg()) } just Runs
@@ -196,6 +203,12 @@ class ConversationsRepositoryImplTest : ArchTest {
     private val unreadCounterDao: UnreadCounterDao = mockk {
         every { observeConversationsUnreadCounters(any()) } returns flowOf(emptyList())
         coEvery { insertOrUpdate(any<Collection<UnreadCounterEntity>>()) } just Runs
+    }
+
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { provideConversationDao(any()) } returns conversationDao
+        every { provideMessageDao(any()) } returns messageDao
+        every { provideUnreadCounterDao(any()) } returns unreadCounterDao
     }
 
     private val api: ProtonMailApiManager = mockk {
@@ -252,9 +265,8 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     private val conversationsRepository = ConversationsRepositoryImpl(
-        conversationDao = conversationDao,
-        messageDao = messageDao,
-        unreadCounterDao = unreadCounterDao,
+        userManager = userManager,
+        databaseProvider = databaseProvider,
         api = api,
         responseToConversationsMapper = ConversationsResponseToConversationsMapper(
             conversationApiModelToConversationMapper

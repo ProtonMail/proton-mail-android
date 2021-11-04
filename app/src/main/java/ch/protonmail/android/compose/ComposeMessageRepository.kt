@@ -58,7 +58,6 @@ class ComposeMessageRepository @Inject constructor(
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
-    private var messageDao: MessageDao,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val accountManager: AccountManager,
     private val userManager: UserManager,
@@ -68,9 +67,11 @@ class ComposeMessageRepository @Inject constructor(
 
     val lazyManager = resettableManager()
 
-    private val contactDao by resettableLazy(lazyManager) {
-        databaseProvider.provideContactDao(userManager.requireCurrentUserId())
-    }
+    private val messageDao: MessageDao
+        get() = databaseProvider.provideMessageDao(userManager.requireCurrentUserId())
+
+    private val contactDao: ContactDao
+        get() = databaseProvider.provideContactDao(userManager.requireCurrentUserId())
 
     private val contactDaos: HashMap<UserId, ContactDao> by resettableLazy(lazyManager) {
         val userIds = accountManager.allLoggedInBlocking()
@@ -79,13 +80,6 @@ class ComposeMessageRepository @Inject constructor(
             listOfDaos[userId] = databaseProvider.provideContactDao(userId)
         }
         listOfDaos
-    }
-
-    /**
-     * Reloads all statically required dependencies when currently active user changes.
-     */
-    fun reloadDependenciesForUser(userId: UserId) {
-        messageDao = databaseProvider.provideMessageDao(userId)
     }
 
     fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Flow<List<ContactLabelUiModel>> {

@@ -259,7 +259,6 @@ class ComposeMessageViewModel @Inject constructor(
     fun init(processor: HtmlProcessor) {
         htmlProcessor = processor
         composeMessageRepository.lazyManager.reset()
-        composeMessageRepository.reloadDependenciesForUser(userId)
         getSenderEmailAddresses()
         // if the user is free user, then we do not fetch contact groups and announce the setup is complete
         if (!user.isPaidUser) {

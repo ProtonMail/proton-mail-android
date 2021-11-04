@@ -24,8 +24,10 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.model.ContactData
@@ -50,6 +52,12 @@ class DeleteContactWorkerTest {
     @RelaxedMockK
     private lateinit var parameters: WorkerParameters
 
+    @MockK
+    private lateinit var userManager: UserManager
+
+    @RelaxedMockK
+    private lateinit var databaseProvider: DatabaseProvider
+
     @RelaxedMockK
     private lateinit var contactDatabase: ContactDatabase
 
@@ -64,12 +72,17 @@ class DeleteContactWorkerTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+
+        every { userManager.requireCurrentUserId() } returns mockk()
+        every { databaseProvider.provideContactDatabase(any()) } returns contactDatabase
+        every { databaseProvider.provideContactDao(any()) } returns contactDao
+
         worker = DeleteContactWorker(
             context,
             parameters,
             api,
-            contactDao,
-            contactDatabase,
+            userManager,
+            databaseProvider,
             TestDispatcherProvider
         )
     }
@@ -100,15 +113,14 @@ class DeleteContactWorkerTest {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
             val contactData = mockk<ContactData>()
-            val contactEmail= mockk<ContactEmail>()
+            val contactEmail = mockk<ContactEmail>()
             val expected = ListenableWorker.Result.success()
 
             every { contactDao.findContactDataByIdBlocking(contactId) } returns contactData
             every { contactDao.findContactEmailsByContactIdBlocking(contactId) } returns listOf(contactEmail)
             every { contactDao.deleteAllContactsEmailsBlocking(any()) } returns mockk()
             every { contactDao.deleteContactData(any()) } returns mockk()
-            every { parameters.inputData } returns
-                workDataOf(KEY_INPUT_DATA_CONTACT_IDS to arrayOf(contactId))
+            every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_CONTACT_IDS to arrayOf(contactId))
             coEvery { api.deleteContact(any()) } returns deleteResponse
 
             // when
@@ -129,7 +141,7 @@ class DeleteContactWorkerTest {
                 every { code } returns randomErrorCode
             }
             val contactData = mockk<ContactData>()
-            val contactEmail= mockk<ContactEmail>()
+            val contactEmail = mockk<ContactEmail>()
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $randomErrorCode")
             )
@@ -138,8 +150,7 @@ class DeleteContactWorkerTest {
             every { contactDao.findContactEmailsByContactIdBlocking(contactId) } returns listOf(contactEmail)
             every { contactDao.deleteAllContactsEmailsBlocking(any()) } returns mockk()
             every { contactDao.deleteContactData(any()) } returns mockk()
-            every { parameters.inputData } returns
-                workDataOf(KEY_INPUT_DATA_CONTACT_IDS to arrayOf(contactId))
+            every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_CONTACT_IDS to arrayOf(contactId))
             coEvery { api.deleteContact(any()) } returns deleteResponse
 
             // when
@@ -149,5 +160,4 @@ class DeleteContactWorkerTest {
             assertEquals(operationResult, expected)
         }
     }
-
 }

@@ -47,6 +47,9 @@ class DatabaseProvider @Inject constructor(
         AttachmentMetadataDatabase.getInstance(context, userId).getDao()
 
     // Contact
+    fun provideContactDatabase(userId: UserId): ContactDatabase =
+        ContactDatabase.getInstance(context, userId)
+
     fun provideContactDao(userId: UserId): ContactDao =
         ContactDatabase.getInstance(context, userId).getDao()
 

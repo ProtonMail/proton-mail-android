@@ -102,7 +102,6 @@ internal class EventHandler @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface AssistedFactory {
-
         fun create(userId: UserId): EventHandler
     }
 

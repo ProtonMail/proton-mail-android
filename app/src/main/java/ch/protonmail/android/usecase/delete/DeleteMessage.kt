@@ -20,7 +20,7 @@
 package ch.protonmail.android.usecase.delete
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
@@ -39,10 +39,10 @@ import javax.inject.Inject
  * [DeleteMessageWorker] that will send a deferrable delete message network request.
  */
 class DeleteMessage @Inject constructor(
+    private val databaseProvider: DatabaseProvider,
     private val conversationsRepository: ConversationsRepository,
     private val dispatchers: DispatcherProvider,
-    private val messageDetailsRepository: MessageDetailsRepository,
-    private val pendingActionDatabase: PendingActionDao,
+    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val workerScheduler: DeleteMessageWorker.Enqueuer
 ) {
 
@@ -52,8 +52,9 @@ class DeleteMessage @Inject constructor(
         userId: UserId
     ): DeleteMessageResult =
         withContext(dispatchers.Io) {
+            val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
 
-            val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(messageIds)
+            val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(userId, messageIds)
 
             val messagesToSave = mutableListOf<Message>()
 
@@ -76,7 +77,7 @@ class DeleteMessage @Inject constructor(
             )
         }
 
-    private fun getValidAndInvalidMessages(messageIds: List<String>): Pair<List<String>, List<String>> {
+    private fun getValidAndInvalidMessages(userId: UserId, messageIds: List<String>): Pair<List<String>, List<String>> {
         val validMessageIdList = mutableListOf<String>()
         val invalidMessageIdList = mutableListOf<String>()
 
@@ -84,8 +85,9 @@ class DeleteMessage @Inject constructor(
             if (id.isEmpty()) {
                 continue
             }
-            val pendingUploads = pendingActionDatabase.findPendingUploadByMessageId(id)
-            val pendingForSending = pendingActionDatabase.findPendingSendByMessageId(id)
+            val pendingActionDao = databaseProvider.providePendingActionDao(userId)
+            val pendingUploads = pendingActionDao.findPendingUploadByMessageId(id)
+            val pendingForSending = pendingActionDao.findPendingSendByMessageId(id)
 
             if (areThereAnyPendingUplandsOrSends(pendingUploads, pendingForSending)) {
                 invalidMessageIdList.add(id)

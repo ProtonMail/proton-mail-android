@@ -38,7 +38,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.contacts.ContactsActivity
@@ -54,7 +53,6 @@ import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.LabelsManagerActivity
-import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
 import ch.protonmail.android.settings.pin.ValidatePinActivity
@@ -62,21 +60,18 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
-import ch.protonmail.android.utils.resettableManager
-import ch.protonmail.android.utils.startSplashActivity
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
-import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.domain.entity.UserId
 import me.proton.core.presentation.utils.setDarkStatusBar
 import me.proton.core.presentation.utils.setLightStatusBar
-import java.util.Calendar
 import javax.inject.Inject
 
 // region constants
@@ -109,13 +104,8 @@ internal abstract class NavigationActivity : BaseActivity() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
     // endregion
 
-    val lazyManager = resettableManager()
-
     @Inject
     lateinit var accountManager: AccountManager
-
-    @Inject
-    lateinit var authOrchestrator: AuthOrchestrator
 
     @Inject
     lateinit var databaseProvider: DatabaseProvider
@@ -129,7 +119,6 @@ internal abstract class NavigationActivity : BaseActivity() {
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
 
     protected abstract val currentMailboxLocation: Constants.MessageLocationType
-
     protected abstract val currentLabelId: String?
 
     /**
@@ -150,6 +139,13 @@ internal abstract class NavigationActivity : BaseActivity() {
                 .setTextColor(this.getColor(R.color.text_inverted))
             snackBar.show()
         }
+    }
+
+    protected open fun onPrimaryUserId(userId: UserId) {
+        app.startJobManager()
+        mJobManager.addJobInBackground(FetchUpdatesJob())
+        val alarmReceiver = AlarmReceiver()
+        alarmReceiver.setAlarm(this)
     }
 
     protected abstract fun onInbox(type: Constants.DrawerOptionType)
@@ -174,29 +170,35 @@ internal abstract class NavigationActivity : BaseActivity() {
         }
 
         super.onCreate(savedInstanceState)
-        authOrchestrator.register(this)
 
         with(accountStateManager) {
-            setAuthOrchestrator(authOrchestrator)
-            observeAccountStateWithExternalLifecycle(lifecycle)
+            register(this@NavigationActivity)
+
             // Start Splash on AccountNeeded.
             state
                 .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .onEach {
                     when (it) {
                         AccountStateManager.State.Processing,
-                        AccountStateManager.State.PrimaryExist ->
-                            Unit
-                        AccountStateManager.State.AccountNeeded -> {
-                            startSplashActivity()
-                            finishAndRemoveTask()
-                        }
+                        AccountStateManager.State.PrimaryExist -> Unit
+                        AccountStateManager.State.AccountNeeded -> addAccount()
                     }
                 }.launchIn(lifecycleScope)
+
+            onAddAccountClosed {
+                if (userManager.currentUserId == null) {
+                    finish()
+                }
+            }
 
             onAccountSwitched()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .onEach { switch -> onAccountSwitched(switch) }
+                .launchIn(lifecycleScope)
+
+            getPrimaryUserId().filterNotNull()
+                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+                .onEach { userId -> onPrimaryUserId(userId) }
                 .launchIn(lifecycleScope)
         }
 
@@ -269,18 +271,12 @@ internal abstract class NavigationActivity : BaseActivity() {
         setUpDrawer()
     }
 
-    override fun onDestroy() {
-        authOrchestrator.unregister()
-        super.onDestroy()
-    }
-
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
     }
 
     override fun onResume() {
-        accountStateManager.setAuthOrchestrator(authOrchestrator)
         super.onResume()
         if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS)
             if (resources.configuration.uiMode and UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES) {
@@ -290,10 +286,6 @@ internal abstract class NavigationActivity : BaseActivity() {
             }
 
         checkUserId()
-        app.startJobManager()
-        val alarmReceiver = AlarmReceiver()
-        alarmReceiver.setAlarm(this)
-
         closeDrawerAndDialog()
     }
 
@@ -311,11 +303,11 @@ internal abstract class NavigationActivity : BaseActivity() {
     private fun checkUserId() {
         // Requested UserId match the current ?
         intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
+            intent.extras?.remove(EXTRA_USER_ID)
             val requestedUserId = UserId(extraUserId)
             if (requestedUserId != accountStateManager.getPrimaryUserId().value) {
                 accountStateManager.switch(requestedUserId)
             }
-            intent.extras?.remove(EXTRA_USER_ID)
         }
     }
 
@@ -370,16 +362,6 @@ internal abstract class NavigationActivity : BaseActivity() {
                 onDrawerClose = {}
             }
         })
-    }
-
-    private suspend fun areNotificationsSnoozed(userId: UserId): Boolean {
-        val userPreferences = SecureSharedPreferences.getPrefsForUser(this, userId)
-        with(SnoozeSettings.load(userPreferences)) {
-            val shouldShowNotification = !shouldSuppressNotification(Calendar.getInstance())
-            val isQuickSnoozeEnabled = snoozeQuick
-            val isScheduledSnoozeEnabled = getScheduledSnooze(userPreferences)
-            return isQuickSnoozeEnabled || (isScheduledSnoozeEnabled && !shouldShowNotification)
-        }
     }
 
     private fun setUpInitialDrawerItems(isPinEnabled: Boolean) {
