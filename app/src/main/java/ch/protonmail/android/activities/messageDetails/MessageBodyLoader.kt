@@ -33,7 +33,7 @@ import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider
 import javax.inject.Inject
 
-internal class MessageBodyLoader @Inject constructor(
+class MessageBodyLoader @Inject constructor(
     private val userManager: UserManager,
     private val messageRepository: MessageRepository,
     private val renderDimensionsProvider: RenderDimensionsProvider,
