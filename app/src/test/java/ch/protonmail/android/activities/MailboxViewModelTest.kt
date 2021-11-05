@@ -23,6 +23,7 @@ import android.graphics.Color
 import androidx.lifecycle.liveData
 import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.core.Constants
@@ -55,6 +56,7 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
@@ -82,6 +84,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.runs
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.channels.Channel
@@ -120,6 +123,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val userManager: UserManager = mockk {
         every { currentUserId } returns testUserId
         coEvery { primaryUserId } returns MutableStateFlow(testUserId)
+        every { requireCurrentUserId() } returns testUserId
     }
 
     private val jobManager: JobManager = mockk {
@@ -164,7 +168,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val messagesResponseChannel = Channel<GetMessagesResult>()
     private val conversationsResponseFlow = Channel<GetConversationsResult>()
 
-    private val currentUserId = UserId("8237462347237428")
+    private val mailboxItemId1 = "mailboxItemId1"
+    private val inboxLocation = INBOX
     private val testColorInt = 871
 
     @BeforeTest
@@ -601,8 +606,20 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             val messages = listOf(message)
 
+            val messageData = MessageData(
+                INVALID.messageLocationTypeValue,
+                isReplied = false,
+                isRepliedAll = false,
+                isForwarded = false,
+                isInline = false
+            )
             val expected = listOf(
-                fakeMailboxUiData("messageId9238482", "senderName", "subject1283")
+                buildMailboxUiItem(
+                    itemId = "messageId9238482",
+                    senderName = "senderName",
+                    subject = "subject1283",
+                    messageData = messageData
+                )
             )
             val expectedState = expected.toMailboxState()
 
@@ -1159,35 +1176,142 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         }
     }
 
+    @Test
+    fun `verify conversation is unstarred`() = runBlockingTest {
+        // given
+        val ids = listOf(mailboxItemId1)
+        every { conversationModeEnabled(inboxLocation) } returns true
+        coEvery {
+            changeConversationsStarredStatus(ids, testUserId, ChangeConversationsStarredStatus.Action.ACTION_UNSTAR)
+        } returns ConversationsActionResult.Success
+
+        // when
+        viewModel.unstar(ids, testUserId, inboxLocation)
+
+        // then
+        coVerify {
+            changeConversationsStarredStatus(ids, testUserId, ChangeConversationsStarredStatus.Action.ACTION_UNSTAR)
+        }
+    }
+
+    @Test
+    fun `verify message is unstarred`() = runBlockingTest {
+        // given
+        val ids = listOf(mailboxItemId1)
+        every { conversationModeEnabled(inboxLocation) } returns false
+        coEvery {
+            changeMessagesStarredStatus(testUserId, ids, ChangeMessagesStarredStatus.Action.ACTION_UNSTAR)
+        } just runs
+
+        // when
+        viewModel.unstar(ids, testUserId, inboxLocation)
+
+        // then
+        coVerify {
+            changeMessagesStarredStatus(testUserId, ids, ChangeMessagesStarredStatus.Action.ACTION_UNSTAR)
+        }
+    }
+
+    @Test
+    fun `verify the star action is called when doing an update star swipe action on unstarred mailbox item`() = runBlockingTest {
+        // given
+        val mailboxUiItem = buildMailboxUiItem(
+            itemId = mailboxItemId1,
+            isStarred = false
+        )
+        coEvery {
+            viewModel.star(
+                listOf(mailboxItemId1),
+                testUserId,
+                inboxLocation
+            )
+        } just runs
+
+        // when
+        viewModel.handleConversationSwipe(
+            SwipeAction.UPDATE_STAR,
+            mailboxUiItem,
+            inboxLocation,
+            inboxLocation.messageLocationTypeValue.toString()
+        )
+
+        // then
+        coVerify {
+            viewModel.star(
+                listOf(mailboxItemId1),
+                testUserId,
+                inboxLocation
+            )
+        }
+    }
+
+    @Test
+    fun `verify the unstar action is called when doing an update star swipe action on starred mailbox item`() = runBlockingTest {
+        // given
+        val mailboxUiItem = buildMailboxUiItem(
+            itemId = mailboxItemId1,
+            isStarred = true
+        )
+        coEvery {
+            viewModel.unstar(
+                listOf(mailboxItemId1),
+                testUserId,
+                inboxLocation
+            )
+        } just runs
+
+        // when
+        viewModel.handleConversationSwipe(
+            SwipeAction.UPDATE_STAR,
+            mailboxUiItem,
+            inboxLocation,
+            inboxLocation.messageLocationTypeValue.toString()
+        )
+
+        // then
+        coVerify {
+            viewModel.unstar(
+                listOf(mailboxItemId1),
+                testUserId,
+                inboxLocation
+            )
+        }
+    }
+
     private fun MailboxUiItem.toMailboxState() = listOf(this).toMailboxState()
 
     private fun List<MailboxUiItem>.toMailboxState(): MailboxState.Data =
         MailboxState.Data(this, isFreshData = false, shouldResetPosition = true)
 
-    private fun fakeMailboxUiData(
+    private fun buildMailboxUiItem(
         itemId: String,
-        senderName: String,
-        subject: String
+        senderName: String = "senderName",
+        subject: String = "subject",
+        lastMessageTimeMs: Long = 0,
+        hasAttachments: Boolean = false,
+        isStarred: Boolean = false,
+        isRead: Boolean = true,
+        expirationTime: Long = 0,
+        messagesCount: Int? = null,
+        messageData: MessageData? = null,
+        isDeleted: Boolean = false,
+        labels: List<LabelChipUiModel> = emptyList(),
+        recipients: String = "",
+        isDraft: Boolean = false
     ) = MailboxUiItem(
-        itemId,
-        senderName,
-        subject,
-        0,
-        hasAttachments = false,
-        isStarred = false,
-        isRead = true,
-        expirationTime = 0,
-        messagesCount = null,
-        messageData = MessageData(
-            INVALID.messageLocationTypeValue,
-            isReplied = false,
-            isRepliedAll = false,
-            isForwarded = false,
-            isInline = false
-        ),
-        isDeleted = false,
-        labels = emptyList(),
-        recipients = "",
-        isDraft = false
+        itemId = itemId,
+        senderName = senderName,
+        subject = subject,
+        lastMessageTimeMs = lastMessageTimeMs,
+        hasAttachments = hasAttachments,
+        isStarred = isStarred,
+        isRead = isRead,
+        expirationTime = expirationTime,
+        messagesCount = messagesCount,
+        messageData = messageData,
+        isDeleted = isDeleted,
+        labels = labels,
+        recipients = recipients,
+        isDraft = isDraft
     )
 }

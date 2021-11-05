@@ -49,7 +49,7 @@ enum class SwipeAction {
         override fun getActionPreviewBackgroundResource(right: Boolean): Int =
             if (right) R.layout.settings_right_swipe_action_spam else R.layout.settings_left_swipe_action_spam
     },
-    STAR {
+    UPDATE_STAR {
 
         override val actionName: Int
             get() = R.string.swipe_action_star_short

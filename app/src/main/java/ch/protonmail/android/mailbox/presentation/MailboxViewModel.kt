@@ -751,6 +751,24 @@ internal class MailboxViewModel @Inject constructor(
         }
     }
 
+    fun unstar(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(location)) {
+                changeConversationsStarredStatus(
+                    ids,
+                    userId,
+                    ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
+                )
+            } else {
+                changeMessagesStarredStatus(
+                    userId,
+                    ids,
+                    ChangeMessagesStarredStatus.Action.ACTION_UNSTAR
+                )
+            }
+        }
+    }
+
     fun moveToFolder(
         ids: List<String>,
         userId: UserId,
@@ -793,41 +811,49 @@ internal class MailboxViewModel @Inject constructor(
 
     fun handleConversationSwipe(
         swipeAction: SwipeAction,
-        conversationId: String,
+        mailboxUiItem: MailboxUiItem,
         mailboxLocation: Constants.MessageLocationType,
         mailboxLocationId: String
     ) {
         when (swipeAction) {
             SwipeAction.TRASH ->
                 moveToFolder(
-                    listOf(conversationId),
+                    listOf(mailboxUiItem.itemId),
                     UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation,
                     Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
                 )
             SwipeAction.SPAM ->
                 moveToFolder(
-                    listOf(conversationId),
+                    listOf(mailboxUiItem.itemId),
                     UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation,
                     Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()
                 )
-            SwipeAction.STAR ->
-                star(
-                    listOf(conversationId),
-                    UserId(userManager.requireCurrentUserId().id),
-                    mailboxLocation
-                )
+            SwipeAction.UPDATE_STAR ->
+                if (mailboxUiItem.isStarred) {
+                    unstar(
+                        listOf(mailboxUiItem.itemId),
+                        UserId(userManager.requireCurrentUserId().id),
+                        mailboxLocation
+                    )
+                } else {
+                    star(
+                        listOf(mailboxUiItem.itemId),
+                        UserId(userManager.requireCurrentUserId().id),
+                        mailboxLocation
+                    )
+                }
             SwipeAction.ARCHIVE ->
                 moveToFolder(
-                    listOf(conversationId),
+                    listOf(mailboxUiItem.itemId),
                     UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation,
                     Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
                 )
             SwipeAction.MARK_READ ->
                 markRead(
-                    listOf(conversationId),
+                    listOf(mailboxUiItem.itemId),
                     UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation,
                     mailboxLocationId

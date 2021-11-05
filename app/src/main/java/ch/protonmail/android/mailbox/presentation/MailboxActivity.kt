@@ -1216,7 +1216,7 @@ internal class MailboxActivity :
         mSwipeProcessor.apply {
             addHandler(SwipeAction.TRASH, TrashSwipeHandler())
             addHandler(SwipeAction.SPAM, SpamSwipeHandler())
-            addHandler(SwipeAction.STAR, StarSwipeHandler())
+            addHandler(SwipeAction.UPDATE_STAR, StarSwipeHandler())
             addHandler(SwipeAction.ARCHIVE, ArchiveSwipeHandler())
             addHandler(SwipeAction.MARK_READ, MarkReadSwipeHandler())
         }
@@ -1447,7 +1447,7 @@ internal class MailboxActivity :
 
         fun normalise(swipeAction: SwipeAction, mailboxLocation: MessageLocationType?): SwipeAction {
             return if (mailboxLocation == MessageLocationType.DRAFT ||
-                mailboxLocation == MessageLocationType.ALL_DRAFT && swipeAction != SwipeAction.STAR
+                mailboxLocation == MessageLocationType.ALL_DRAFT && swipeAction != SwipeAction.UPDATE_STAR
             ) {
                 SwipeAction.TRASH
             } else swipeAction
@@ -1477,7 +1477,7 @@ internal class MailboxActivity :
             if (isConversationModeEnabled(mailboxLocation)) {
                 mailboxViewModel.handleConversationSwipe(
                     swipeAction,
-                    mailboxItem.itemId,
+                    mailboxItem,
                     mailboxLocation,
                     currentLocationId
                 )
