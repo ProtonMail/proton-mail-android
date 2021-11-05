@@ -17,10 +17,10 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.details.presentation
 
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.presentation.MessageDetailsListItem
+import ch.protonmail.android.details.domain.usecase.MarkMessageAsReadIfNeeded
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.testdata.ConversationTestData
 import ch.protonmail.android.testdata.KeyInformationTestData

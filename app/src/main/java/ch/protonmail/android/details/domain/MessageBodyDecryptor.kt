@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails.body
+package ch.protonmail.android.details.domain
 
 import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.core.UserManager

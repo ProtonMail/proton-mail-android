@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.details.domain.usecase
 
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.repository.MessageRepository
