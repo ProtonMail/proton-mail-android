@@ -175,8 +175,8 @@
     </style>
 
     <style name="ThemeOverlay.App.Snackbar" parent="">
-        <item name="colorSurface">@color/icon_norm</item>
-        <item name="colorOnSurface">@color/icon_norm</item>
+        <item name="colorSurface">?attr/proton_notification_norm</item>
+        <item name="colorOnSurface">?attr/proton_notification_norm</item>
     </style>
 
     <style name="ThemeOverlay.App.Snackbar.Error" parent="">
