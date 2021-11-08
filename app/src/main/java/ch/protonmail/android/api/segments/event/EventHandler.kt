@@ -108,10 +108,6 @@ internal class EventHandler @AssistedInject constructor(
 
     private val stagedMessages = HashMap<String, Message>()
 
-    init {
-        messageDetailsRepository.reloadDependenciesForUser(userId)
-    }
-
     fun handleRefreshContacts() {
         contactDao.run {
             clearContactDataCache()

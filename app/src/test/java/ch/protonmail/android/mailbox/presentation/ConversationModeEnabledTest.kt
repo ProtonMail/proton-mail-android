@@ -20,6 +20,7 @@
 package ch.protonmail.android.mailbox.presentation
 
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import io.mockk.coEvery
@@ -27,7 +28,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
@@ -50,7 +50,7 @@ import kotlin.test.assertEquals
 
 class ConversationModeEnabledTest {
 
-    private val accountManager: AccountManager = mockk()
+    private val userManager: UserManager = mockk()
 
     private val featureFlagsManager: FeatureFlagsManager = mockk()
 
@@ -62,8 +62,8 @@ class ConversationModeEnabledTest {
     )
 
     private val conversationModeEnabled = ConversationModeEnabled(
-        observeConversationModeEnabled = observerConversationModeEnabled,
-        accountManager = accountManager
+        userManager = userManager,
+        observeConversationModeEnabled = observerConversationModeEnabled
     )
 
     private val userId = UserId("userId")
@@ -73,7 +73,7 @@ class ConversationModeEnabledTest {
     fun conversationModeIsEnabledWhenFeatureFlagIsEnabledAndUserViewModeIsConversationMode() = runBlockingTest {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
             mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
@@ -88,7 +88,7 @@ class ConversationModeEnabledTest {
     fun conversationModeIsDisabledWhenIsChangeViewModeFeatureFlagIsDisabled() {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns false
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
             mailSettingsWithMessagesViewMode().toFlowOfDataResult()
 
@@ -103,7 +103,7 @@ class ConversationModeEnabledTest {
     fun conversationModeIsDisabledWhenFeatureFlagIsEnabledButUserViewModeIsMessagesMode() {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
             mailSettingsWithMessagesViewMode().toFlowOfDataResult()
 
@@ -118,7 +118,7 @@ class ConversationModeEnabledTest {
     fun conversationModeIsDisabledWhenInputLocationIsDraft() {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
             mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
@@ -133,7 +133,7 @@ class ConversationModeEnabledTest {
     fun conversationModeIsDisabledWhenInputLocationIsSent() {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
             mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
@@ -148,7 +148,7 @@ class ConversationModeEnabledTest {
     fun conversationModeIsDisabledWhenInputLocationIsSearch() {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
             mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
@@ -163,7 +163,7 @@ class ConversationModeEnabledTest {
     fun conversationModeIsEnabledWhenLocationIsArchive() {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
             mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
@@ -178,7 +178,7 @@ class ConversationModeEnabledTest {
     fun verifyThatConversationModeIsEnabledWhenLocationIsNull() {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(userId) } returns
             mailSettingsWithConversationViewMode().toFlowOfDataResult()
 
@@ -193,7 +193,7 @@ class ConversationModeEnabledTest {
     fun conversationModeIsEnabledForSecondaryUserWhenSecondaryUserViewModeIsConversationMode() {
         // given
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { userManager.currentUserId } returns userId
         coEvery { mailSettingsRepository.getMailSettingsFlow(secondaryUserId) } returns
             mailSettingsWithConversationViewMode().toFlowOfDataResult()
 

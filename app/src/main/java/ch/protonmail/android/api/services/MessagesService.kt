@@ -82,8 +82,6 @@ internal class MessagesService : JobIntentService() {
         Timber.v("onHandleWork $intent")
         val userId = UserId(requireNotNull(intent.getStringExtra(EXTRA_USER_ID)))
         messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
-
-        messageDetailsRepository.reloadDependenciesForUser(userId)
         when (intent.action) {
             ACTION_FETCH_MESSAGES_BY_PAGE -> {
                 val location = intent.getIntExtra(EXTRA_MESSAGE_LOCATION, 0)
@@ -176,7 +174,6 @@ internal class MessagesService : JobIntentService() {
             var unixTime = 0L
             val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
             val actionsDb = actionsDbFactory.getDao()
-            messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
             messageList.asSequence().map { msg ->
                 unixTime = msg.time
@@ -248,7 +245,6 @@ internal class MessagesService : JobIntentService() {
             var unixTime = 0L
             val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
             val actionsDb = actionsDbFactory.getDao()
-            messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
             messageList.asSequence().map { msg ->
                 unixTime = msg.time

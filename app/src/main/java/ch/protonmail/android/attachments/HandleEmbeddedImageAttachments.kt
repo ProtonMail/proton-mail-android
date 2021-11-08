@@ -23,7 +23,9 @@ import android.content.Context
 import android.text.TextUtils
 import androidx.core.content.FileProvider
 import androidx.work.ListenableWorker
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.AttachmentMetadata
@@ -44,10 +46,14 @@ import javax.inject.Inject
  */
 class HandleEmbeddedImageAttachments @Inject constructor(
     private val context: Context,
-    private val attachmentMetadataDao: AttachmentMetadataDao,
+    private val userManager: UserManager,
+    private val databaseProvider: DatabaseProvider,
     private val clearingServiceHelper: AttachmentClearingServiceHelper,
     private val attachmentsRepository: AttachmentsRepository
 ) {
+
+    private val attachmentMetadataDao: AttachmentMetadataDao
+        get() = databaseProvider.provideAttachmentMetadataDao(userManager.requireCurrentUserId())
 
     suspend operator fun invoke(
         embeddedImages: List<EmbeddedImage>,

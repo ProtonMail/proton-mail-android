@@ -29,6 +29,7 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
@@ -36,13 +37,10 @@ import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.jobs.PostReadJob
-import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.utils.MessageUtils
-import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.Flowable
@@ -70,35 +68,32 @@ private const val DEPRECATION_MESSAGE =
 @Deprecated("Scheduled to be removed, do not add new usages", ReplaceWith("MessageRepository"))
 class MessageDetailsRepository @Inject constructor(
     private val applicationContext: Context,
-    private val jobManager: JobManager,
-    private var messagesDao: MessageDao,
-    private var pendingActionDao: PendingActionDao,
+    private val userManager: UserManager,
     private val databaseProvider: DatabaseProvider,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
     private val labelRepository: LabelRepository
 ) {
+    private var requestedUserId: UserId? = null
+
+    private val userId: UserId
+        get() = requestedUserId ?: userManager.requireCurrentUserId()
+
+    private val messagesDao: MessageDao
+        get() = databaseProvider.provideMessageDao(userId)
+
+    private val pendingActionDao: PendingActionDao
+        get() = databaseProvider.providePendingActionDao(userId)
 
     @AssistedInject
     constructor(
-        context: Context,
-        jobManager: JobManager,
+        applicationContext: Context,
+        userManager: UserManager,
         databaseProvider: DatabaseProvider,
         attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
         labelRepository: LabelRepository,
-        @Assisted userId: UserId
-    ) : this(
-        applicationContext = context,
-        jobManager = jobManager,
-        messagesDao = databaseProvider.provideMessageDao(userId),
-        pendingActionDao = databaseProvider.providePendingActionDao(userId),
-        databaseProvider = databaseProvider,
-        attachmentsWorker = attachmentsWorker,
-        labelRepository = labelRepository
-    )
-
-    fun reloadDependenciesForUser(userId: UserId) {
-        pendingActionDao = databaseProvider.providePendingActionDao(userId)
-        messagesDao = databaseProvider.provideMessageDao(userId)
+        @Assisted userId: UserId,
+    ) : this(applicationContext, userManager, databaseProvider, attachmentsWorker, labelRepository) {
+        requestedUserId = userId
     }
 
     fun findMessageByIdBlocking(messageId: String): Message? =

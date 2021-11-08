@@ -85,7 +85,6 @@ class ComposeMessageRepository @Inject constructor(
      * Reloads all statically required dependencies when currently active user changes.
      */
     fun reloadDependenciesForUser(userId: UserId) {
-        messageDetailsRepository.reloadDependenciesForUser(userId)
         messageDao = databaseProvider.provideMessageDao(userId)
     }
 

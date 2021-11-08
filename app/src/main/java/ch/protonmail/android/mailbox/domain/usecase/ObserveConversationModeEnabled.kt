@@ -22,12 +22,12 @@ package ch.protonmail.android.mailbox.domain.usecase
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.mapNotNull
-import me.proton.core.domain.arch.DataResult
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -52,20 +52,10 @@ class ObserveConversationModeEnabled @Inject constructor(
      *  Use `null` if you're interested in the global value, instead of a specific location
      */
     operator fun invoke(userId: UserId, locationType: MessageLocationType? = null): Flow<Boolean> =
-        mailSettingsRepository.getMailSettingsFlow(userId).mapNotNull { result ->
-            when (result) {
-                is DataResult.Processing -> null
-                is DataResult.Error -> {
-                    Timber.e(result.cause, result.message)
-                    null
-                }
-                is DataResult.Success -> {
-                    val isEnabledInSettings = result.value.viewMode?.enum == ViewMode.ConversationGrouping
-                    isEnabledInSettings &&
-                        featureFlagsManager.isChangeViewModeFeatureEnabled() &&
-                        locationType !in forceMessagesViewModeLocations
-                }
-            }
-        }
-
+        mailSettingsRepository.getMailSettingsFlow(userId).mapSuccessValueOrNull().map { settings ->
+            val isFeatureEnabled = featureFlagsManager.isChangeViewModeFeatureEnabled()
+            val isEnabledInSettings = settings?.viewMode?.enum == ViewMode.ConversationGrouping
+            val isAvailableForLocation = locationType !in forceMessagesViewModeLocations
+            isFeatureEnabled && isEnabledInSettings && isAvailableForLocation
+        }.distinctUntilChanged()
 }
