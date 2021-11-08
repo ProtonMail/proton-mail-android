@@ -898,7 +898,7 @@ compre más
     <string name="combined_contacts">Contactos combinados</string>
     <string name="turn_combined_contacts_on">Active esta función para completar automáticamente las direcciones usando los contactos de todas sus cuentas conectadas.</string>
     <string name="local_cache_management">Caché local</string>
-    <string name="cache_cleared">Local cache is Refreshed</string>
+    <string name="cache_cleared">El caché local se Actualizó</string>
     <string name="empty_data">Limpiar datos</string>
     <!-- endregion -->
     <string name="enabled">Habilitado</string>
