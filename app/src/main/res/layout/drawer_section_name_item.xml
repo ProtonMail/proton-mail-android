@@ -16,18 +16,15 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-
-<!-- TODO: hardcoded values -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="56dp">
+    android:layout_height="@dimen/height_drawer_section_name">
 
-    <!-- TODO: fix textAppearance -->
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/drawer_section_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/Proton.Text.Caption"
@@ -35,13 +32,13 @@
         tools:text="Folders"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp"
-        android:layout_marginHorizontal="16dp" />
+        android:layout_marginTop="@dimen/padding_xxl"
+        android:layout_marginHorizontal="@dimen/padding_l" />
 
     <include layout="@layout/drawer_list_item_divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        app:layout_constraintStart_toStartOf="@id/text"
+        app:layout_constraintStart_toStartOf="@id/drawer_section_name_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="@dimen/padding_l"
         app:layout_constraintBottom_toBottomOf="parent"/>

@@ -46,9 +46,8 @@ private const val VIEW_TYPE_FOOTER = 3
  *
  * Inherit from [BaseAdapter]
  */
-internal class DrawerAdapter : BaseAdapter<
-    DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>
-    >(ModelsComparator) {
+internal class DrawerAdapter :
+    BaseAdapter<DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>>(ModelsComparator) {
 
     /** Select the given [item] and un-select all the others */
     fun setSelected(item: Primary) {
@@ -138,7 +137,7 @@ internal class DrawerAdapter : BaseAdapter<
 
         override fun onBind(item: SectionName) {
             super.onBind(item)
-            binding.text.text = item.text
+            binding.drawerSectionNameTextView.text = item.text
         }
     }
 
