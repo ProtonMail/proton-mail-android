@@ -89,17 +89,17 @@
     <string name="sign_in">Logga in</string>
     <string name="sign_out">Logga ut</string>
     <string name="sign_out_question">Är du säker på att du vill logga ut?</string>
-    <string name="processing_request">Din begäran behandlas</string>
+    <string name="processing_request">Din förfrågan bearbetas</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Du är inte inloggad!</string>
-    <string name="forgot_mailbox_password">För att återställa lösenordet för din e-postlåda, vänligen använd ProtonMail:s webbversion på protonmail.com</string>
+    <string name="forgot_mailbox_password">För att återställa ditt lösenord för brevlådan, använd webbversionen av ProtonMail på protonmail.com</string>
     <!-- Toast messages -->
-    <string name="error_chrome_disabled">Kan inte ladda innehållet. Aktivera Chrome</string>
-    <string name="error_chrome_not_found">Kan inte ladda innehållet. Installera Chrome</string>
+    <string name="error_chrome_disabled">Omöjligt att ladda innehåll. Aktivera Chrome</string>
+    <string name="error_chrome_not_found">Omöjligt att ladda innehåll. Installera Chrome</string>
     <string name="messages_load_failure">Kan inte hämta meddelanden</string>
     <string name="message_details_load_failure">Kan inte hämta detaljer om meddelande</string>
     <string name="no_more_messages">Inga fler meddelanden</string>
-    <string name="mailbox_login_failure">Inloggningen misslyckades</string>
+    <string name="mailbox_login_failure">Misslyckades att logga in på brevlådan</string>
     <string name="login_failure">Misslyckades att logga in</string>
     <string name="incorrect_key_parameters">Felaktiga nyckelparametrar</string>
     <string name="not_signed_up">ProtonMail Android Beta ingår inte i ditt konto</string>
@@ -109,11 +109,11 @@
     <string name="update_app">Din ProtonMail app måste uppdateras innan den går att använda</string>
     <string name="you_are_offline">Du är offline</string>
     <string name="api_offline_title">ProtonMail API är offline</string>
-    <string name="api_offline">ProtonMail är för närvarande offline. Besök https://protonstatus.com eller https://twitter.com/protonmail för aktuell status.</string>
+    <string name="api_offline">ProtonMail är för närvarande offline, kolla vår Twitter för aktuell status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt sparad</string>
-    <string name="contact_saved_offline">Kontakt sparad och kommer att synkas när en anslutning finns tillgänglig</string>
+    <string name="contact_saved_offline">Kontakt sparad, synkroniseras när anslutning är tillgänglig</string>
     <string name="contact_exist">Contact email already exist</string>
-    <string name="invalid_email">E-postadressen är inte giltig</string>
+    <string name="invalid_email">E-postadress är inte giltig</string>
     <string name="duplicate_email">E-postadress är en dubblett</string>
     <string name="invalid_code">Kod är inte giltig</string>
     <string name="message_drafted">Det gick inte att skicka. Dina meddelanden finns sparade i Utkast.</string>
@@ -137,7 +137,7 @@
     <string name="all_mail">All e-post</string>
     <string name="contacts">Kontakter</string>
     <string name="search_contacts">Sök kontakter</string>
-    <string name="fetching_contacts">Hämtar Protonmail kontakter...</string>
+    <string name="fetching_contacts">Hämtar ProtonMail-kontakter...</string>
     <string name="fetching_contacts_success">Kontakterna har uppdaterats</string>
     <string name="fetching_contacts_failure">Kan inte inte att uppdatera kontakter</string>
     <string name="search_messages">Sök efter meddelanden</string>
@@ -146,7 +146,7 @@
     <string name="compose_message">Skriv meddelande</string>
     <string name="empty_folder">Töm mapp</string>
     <string name="view_headers">Visa rubriker</string>
-    <string name="message_headers">Meddelandehuvud</string>
+    <string name="message_headers">Meddelanderubrik</string>
     <string name="delete_message">Ta bort meddelande</string>
     <string name="delete_messages">Radera meddelanden</string>
     <string name="add_label">Lägg till etikett</string>
@@ -184,7 +184,7 @@
     <string name="define_password_hint">Definiera ledtråd (Valfritt)</string>
     <string name="message_passwords_do_not_match">Inloggningslösenorden matchar inte</string>
     <string name="eo_passwords_do_not_match">Lösenorden matchar inte</string>
-    <string name="define_expiration_period">Ange ett Utgångsdatum</string>
+    <string name="define_expiration_period">Definiera utgångsperiod</string>
     <string name="set_message_expiration">Ange när Meddelandet ska Upphöra att gälla</string>
     <string name="days">Dagar</string>
     <string name="hours">Timmar</string>
@@ -226,9 +226,9 @@
     <string name="problem_taking_photo">Det var ett problem att ta ett foto</string>
     <string name="problem_selecting_file">Det uppstod ett fel när filen skulle bifogas</string>
     <string name="add_contact">Lägg till kontakt</string>
-    <string name="delete_contact">Radera %s från Kontakter?</string>
+    <string name="delete_contact">Ta bort %s från kontakter?</string>
     <string name="confirm">Bekräfta</string>
-    <string name="confirm_destructive_action">Är du riktigt säker? Detta kan inte ångras.</string>
+    <string name="confirm_destructive_action">Är du säker? Detta kan inte ångras.</string>
     <string name="create">Skapa</string>
     <string name="email">E-post</string>
     <string name="phone">Telefonnummer</string>
@@ -252,7 +252,7 @@
     <string name="original_message_divider">-------- Originalmeddelande --------</string>
     <string name="invalid_email_address">Adressen \'%s\' är ogiltig</string>
     <string name="invalid_email_address_removed">Adressen \'%s\' är ogiltig och har tagits bort</string>
-    <string name="no_recipients_specified">Please add at least one recipient</string>
+    <string name="no_recipients_specified">Lägg till minst en mottagare</string>
     <string name="no_password_specified">Utgångstid kan bara anges på fullständigt krypterade meddelanden. Vänligen ange ett lösenord för dina icke-ProtonMail-mottagare.</string>
     <string name="attachment_limit">Bilagor är begränsat till %1$s. Totalt antal bilagor skulle uppgå till %2$s.</string>
     <string name="sending_message">Skickar meddelande...</string>
@@ -403,7 +403,7 @@
     <string name="storage_mb">%d MB lagringsutrymme</string>
     <string name="max_addresses">Upp till %d e-postadresser</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d Embedded Images</string>
+    <string name="inline_header">%d inbäddade bilder</string>
     <string name="select">Välj</string>
     <string name="warning">Varning</string>
     <string name="empty_recovery_email_question">Varning: Återställning av kontot är inte möjligt, du har inte angett en e-postadress för återställning av ditt lösenord. Fortsätta utan e-postadress för återställning?</string>
@@ -411,7 +411,7 @@
     <string name="card_details_subtitle">Löper ut %s</string>
     <string name="no_payment_methods">Du har inga sparade betalningsmetoder.</string>
     <string name="edit_payment_methods">Logga in på protonmail.com för att ändra faktureringsuppgifter.</string>
-    <string name="message_not_loaded">Message not loaded</string>
+    <string name="message_not_loaded">Meddelandet har inte laddats</string>
     <string name="signature_text">Signaturtext</string>
     <string name="available_addresses">Tillgängliga adresser</string>
     <string name="inactive_addresses">Inaktiva adresser</string>
@@ -609,7 +609,7 @@
     <string name="attachment_storage_value_current_unlimited">Nuvarande val: obegränsat</string>
     <string name="attachment_offline_max_storage">Anger det maximala lagringsutrymme som ProtonMail kan använda på din mobila enhet.</string>
     <string name="load_embedded_images_failed_no_network">Kunde inte ladda inbäddade bilder. Kontrollera din nätverksanslutning.</string>
-    <string name="load_embedded_images_failed">Embedded images loading failed.</string>
+    <string name="load_embedded_images_failed">Misslyckades att ladda inbäddade bilder.</string>
     <string name="unlimited">Obegränsat</string>
     <string name="local_storage_cleared">Lokal lagring rensad</string>
     <string name="recipient_popup_compose_to">Skriv nytt till</string>
@@ -747,7 +747,7 @@
     <string name="app_locked">Appen är låst</string>
     <string name="use_pin_instead">Använd PIN-kod istället</string>
     <!-- strings used for biometric enrollment -->
-    <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
+    <string name="no_biometric_data_enrolled">Inga biometriska data registrerade</string>
     <string name="log_in_using_biometric_credential">Lås upp med dina biometriska inloggningsuppgifter</string>
     <string name="unlock_using_biometrics">Lås upp med biometri</string>
     <string name="biometric_error_hw_not_available">Biometrisk hårdvara inte tillgänglig.</string>
@@ -916,7 +916,7 @@
     <string name="shortcut_compose_new_message">Compose a new message</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
+    <string name="troubleshoot_dialog_title">Vanliga anslutningsproblem och lösningar</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
@@ -932,7 +932,7 @@
     <string name="error_saving_try_again">Fel vid sparande av meddelande. Försök igen.</string>
     <!-- endregion -->
     <string name="allowed">Tillåtet</string>
-    <string name="denied">Denied</string>
+    <string name="denied">Nekad</string>
     <string name="more">Mer</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Svepgester har ändrats</string>
@@ -974,7 +974,7 @@
     <string name="inbox_this_folder_is_empty">Denna mapp är tom</string>
     <string name="inbox_nothing_to_see_here">Inget att se här</string>
     <string name="inbox_could_not_retrieve_messages">Kunde inte hämta dina meddelanden</string>
-    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
+    <string name="inbox_pull_down_to_retry">Dra ner för att försöka igen</string>
     <string name="edit_draft">Redigera utkast</string>
     <string name="primary_user_error">Kunde inte uppgradera, något gick fel.</string>
     <string name="details_show_history">Visa historik</string>
