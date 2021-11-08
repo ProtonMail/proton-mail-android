@@ -90,7 +90,10 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         @StringRes sectionNameRes: Int,
         items: List<DrawerItemUiModel.Primary.Label>
     ) {
-        foldersSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
+        foldersSectionItem = DrawerItemUiModel.SectionName(
+            text = context.getText(sectionNameRes),
+            shouldShowCreateButton = items.isNotEmpty()
+        )
         folderItems = items
         update()
     }
@@ -99,7 +102,10 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         @StringRes sectionNameRes: Int,
         items: List<DrawerItemUiModel.Primary.Label>
     ) {
-        labelsSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
+        labelsSectionItem = DrawerItemUiModel.SectionName(
+            text = context.getText(sectionNameRes),
+            shouldShowCreateButton = items.isNotEmpty()
+        )
         labelItems = items
         update()
     }
@@ -111,12 +117,15 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
      * @see DrawerItemUiModel.Primary.Static.Type.itemId
      */
     internal fun setUnreadCounters(counters: List<UnreadCounter>) {
-        labelIdsToUnreadCountersMap = counters.map { it.labelId to it.unreadCount }.toMap()
+        labelIdsToUnreadCountersMap = counters.associate { it.labelId to it.unreadCount }
         update()
     }
 
     fun setMoreItems(@StringRes sectionNameRes: Int, items: List<DrawerItemUiModel.Primary.Static>) {
-        moreSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
+        moreSectionItem = DrawerItemUiModel.SectionName(
+            text = context.getText(sectionNameRes),
+            shouldShowCreateButton = false
+        )
         moreItems = items
         update()
     }

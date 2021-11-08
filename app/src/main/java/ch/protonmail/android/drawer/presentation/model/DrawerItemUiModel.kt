@@ -26,18 +26,15 @@ import ch.protonmail.android.core.Constants.MessageLocationType
 /**
  * Ui Model for Items in Navigation Drawer
  * @see ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
- *
- * @author Davide Farella
  */
 internal sealed class DrawerItemUiModel {
 
     /**
-     * Title of a section for the Drawer
-     *
-     * @param text [CharSequence] text of the Section
+     * Header of a section for the Drawer
      */
     data class SectionName(
-        val text: CharSequence
+        val text: CharSequence,
+        val shouldShowCreateButton: Boolean
     ) : DrawerItemUiModel()
 
     /**

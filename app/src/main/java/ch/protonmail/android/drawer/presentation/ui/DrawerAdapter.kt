@@ -138,6 +138,7 @@ internal class DrawerAdapter :
         override fun onBind(item: SectionName) {
             super.onBind(item)
             binding.drawerSectionNameTextView.text = item.text
+            binding.drawerSectionNameCreateButton.isVisible = item.shouldShowCreateButton
         }
     }
 
