@@ -26,7 +26,7 @@ internal fun SwipeAction.toLocalSwipeActionUiModel(): SwipeActionUiModel {
     return when (this) {
         SwipeAction.Trash -> SwipeActionUiModel.TRASH
         SwipeAction.Spam -> SwipeActionUiModel.SPAM
-        SwipeAction.Star -> SwipeActionUiModel.STAR
+        SwipeAction.Star -> SwipeActionUiModel.UPDATE_STAR
         SwipeAction.Archive -> SwipeActionUiModel.ARCHIVE
         SwipeAction.MarkRead -> SwipeActionUiModel.MARK_READ
     }

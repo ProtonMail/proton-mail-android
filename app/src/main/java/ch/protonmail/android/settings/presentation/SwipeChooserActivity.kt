@@ -105,7 +105,7 @@ class SwipeChooserActivity : BaseActivity() {
     private fun createActions() {
 
         val availableActions = arrayOf(
-            getString(SwipeActionLocal.MARK_READ.actionDescription), getString(SwipeActionLocal.STAR.actionDescription),
+            getString(SwipeActionLocal.MARK_READ.actionDescription), getString(SwipeActionLocal.UPDATE_STAR.actionDescription),
             getString(SwipeActionLocal.TRASH.actionDescription), getString(SwipeActionLocal.ARCHIVE.actionDescription),
             getString(SwipeActionLocal.SPAM.actionDescription)
         )
