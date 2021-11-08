@@ -23,18 +23,73 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
+import ch.protonmail.android.R
+import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
+import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
+import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
+import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.utils.AppUtil
 
-class StartMessageDetails : ActivityResultContract<StartMessageDetails.Input, Unit?>() {
+class StartValidatePin : ActivityResultContract<Unit, Unit?>() {
+
+    override fun createIntent(context: Context, input: Unit): Intent =
+        AppUtil.decorInAppIntent(Intent(context, ValidatePinActivity::class.java)).apply {
+            putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title)
+        }
+
+    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
+        if (resultCode != Activity.RESULT_OK) return null
+        return Unit
+    }
+}
+
+
+class StartSettings : ActivityResultContract<StartSettings.Input, Unit?>() {
+
+    override fun createIntent(context: Context, input: Input): Intent =
+        AppUtil.decorInAppIntent(Intent(context, SettingsActivity::class.java)).apply {
+            putExtra(EXTRA_CURRENT_MAILBOX_LOCATION, input.locationType.messageLocationTypeValue)
+            putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, input.labelId)
+        }
+
+    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
+        if (resultCode != Activity.RESULT_OK) return null
+        return Unit
+    }
 
     data class Input(
-        val messageId: String,
         val locationType: Constants.MessageLocationType,
         val labelId: String?,
-        val messageSubject: String
     )
+}
+
+class StartContacts : ActivityResultContract<Unit, Unit?>() {
+
+    override fun createIntent(context: Context, input: Unit): Intent =
+        AppUtil.decorInAppIntent(Intent(context, ContactsActivity::class.java))
+
+    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
+        if (resultCode != Activity.RESULT_OK) return null
+        return Unit
+    }
+}
+
+class StartReportBugs : ActivityResultContract<Unit, Unit?>() {
+
+    override fun createIntent(context: Context, input: Unit): Intent =
+        AppUtil.decorInAppIntent(Intent(context, ReportBugsActivity::class.java))
+
+    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
+        if (resultCode != Activity.RESULT_OK) return null
+        return Unit
+    }
+}
+
+class StartMessageDetails : ActivityResultContract<StartMessageDetails.Input, Unit?>() {
 
     override fun createIntent(context: Context, input: Input): Intent =
         AppUtil.decorInAppIntent(Intent(context, MessageDetailsActivity::class.java)).apply {
@@ -43,6 +98,45 @@ class StartMessageDetails : ActivityResultContract<StartMessageDetails.Input, Un
             putExtra(MessageDetailsActivity.EXTRA_MAILBOX_LABEL_ID, input.labelId)
             putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, input.messageSubject)
         }
+
+    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
+        if (resultCode != Activity.RESULT_OK) return null
+        return Unit
+    }
+
+    data class Input(
+        val messageId: String,
+        val locationType: Constants.MessageLocationType,
+        val labelId: String?,
+        val messageSubject: String
+    )
+}
+
+class StartCompose : ActivityResultContract<StartCompose.Input, Unit?>() {
+
+    override fun createIntent(context: Context, input: Input): Intent =
+        AppUtil.decorInAppIntent(Intent(context, ComposeMessageActivity::class.java)).apply {
+            input.messageId?.let { putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, it) }
+            input.isInline?.let { putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, it) }
+            input.addressId?.let { putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, it) }
+        }
+
+    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
+        if (resultCode != Activity.RESULT_OK) return null
+        return Unit
+    }
+
+    data class Input(
+        val messageId: String? = null,
+        val isInline: Boolean? = null,
+        val addressId: String? = null,
+    )
+}
+
+class StartSearch : ActivityResultContract<Unit, Unit?>() {
+
+    override fun createIntent(context: Context, input: Unit): Intent =
+        AppUtil.decorInAppIntent(Intent(context, SearchActivity::class.java))
 
     override fun parseResult(resultCode: Int, result: Intent?): Unit? {
         if (resultCode != Activity.RESULT_OK) return null

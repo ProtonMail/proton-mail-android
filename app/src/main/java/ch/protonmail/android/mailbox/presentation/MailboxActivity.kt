@@ -61,10 +61,10 @@ import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
 import ch.protonmail.android.activities.NavigationActivity
-import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsItem
+import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.activities.StartMessageDetails
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.StartSearch
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.adapters.messages.MailboxItemViewHolder.MessageViewHolder
@@ -158,7 +158,6 @@ private const val STATE_MAILBOX_LOCATION = "mailbox_location"
 private const val STATE_MAILBOX_LABEL_LOCATION = "mailbox_label_location"
 private const val STATE_MAILBOX_LABEL_LOCATION_NAME = "mailbox_label_location_name"
 const val LOADER_ID_LABELS_OFFLINE = 32
-private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 private const val ACTION_MODE_STATUS_BAR_COLOR_DELAY = 500L
 
 @AndroidEntryPoint
@@ -213,6 +212,8 @@ internal class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     private val startMessageDetailsLauncher = registerForActivityResult(StartMessageDetails()) {}
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) {}
+    private val startSearchLauncher = registerForActivityResult(StartSearch()) {}
 
     override val currentLabelId get() = mailboxLabelId
 
@@ -509,13 +510,7 @@ internal class MailboxActivity :
                 }
             )
         } else {
-            val intent = AppUtil.decorInAppIntent(
-                Intent(
-                    this@MailboxActivity,
-                    ComposeMessageActivity::class.java
-                )
-            )
-            startActivityForResult(intent, REQUEST_CODE_COMPOSE_MESSAGE)
+            startComposeLauncher.launch(StartCompose.Input())
         }
     }
 
@@ -782,13 +777,7 @@ internal class MailboxActivity :
             }
         searchMenuItem.actionView.findViewById<ImageView>(R.id.searchImageButton)
             .setOnClickListener {
-                val intent = AppUtil.decorInAppIntent(
-                    Intent(
-                        this@MailboxActivity,
-                        SearchActivity::class.java
-                    )
-                )
-                startActivity(intent)
+                startSearchLauncher.launch(Unit)
             }
     }
 
@@ -1320,11 +1309,13 @@ internal class MailboxActivity :
                 mailboxActivity?.showToast(R.string.cannot_open_message_while_being_sent, Toast.LENGTH_SHORT)
                 return
             }
-            val intent = AppUtil.decorInAppIntent(Intent(mailboxActivity, ComposeMessageActivity::class.java))
-            intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, messageId)
-            intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, isInline)
-            intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, addressId)
-            mailboxActivity?.startActivityForResult(intent, REQUEST_CODE_COMPOSE_MESSAGE)
+            mailboxActivity?.startComposeLauncher?.launch(
+                StartCompose.Input(
+                    messageId = messageId,
+                    isInline = isInline,
+                    addressId = addressId
+                )
+            )
         }
     }
 

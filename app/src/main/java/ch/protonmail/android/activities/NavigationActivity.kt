@@ -35,12 +35,10 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
-import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.event.AlarmReceiver
-import ch.protonmail.android.contacts.ContactsActivity
+import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelItemUiModelMapper
@@ -54,8 +52,6 @@ import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.LabelsManagerActivity
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
-import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
-import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -117,6 +113,10 @@ internal abstract class NavigationActivity : BaseActivity() {
     lateinit var drawerLabelMapper: DrawerLabelItemUiModelMapper
 
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
+
+    private val startSettingsLauncher = registerForActivityResult(StartSettings()) {}
+    private val startContactsLauncher = registerForActivityResult(StartContacts()) {}
+    private val startReportBugsLauncher = registerForActivityResult(StartReportBugs()) {}
 
     protected abstract val currentMailboxLocation: Constants.MessageLocationType
     protected abstract val currentLabelId: String?
@@ -429,17 +429,11 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         when (type) {
             Type.SIGNOUT -> onSignOutSelected()
-            Type.CONTACTS -> startActivity(
-                AppUtil.decorInAppIntent(Intent(this, ContactsActivity::class.java))
+            Type.CONTACTS -> startContactsLauncher.launch(Unit)
+            Type.REPORT_BUGS -> startReportBugsLauncher.launch(Unit)
+            Type.SETTINGS -> startSettingsLauncher.launch(
+                StartSettings.Input(currentMailboxLocation, currentLabelId)
             )
-            Type.REPORT_BUGS -> startActivity(
-                AppUtil.decorInAppIntent(Intent(this, ReportBugsActivity::class.java))
-            )
-            Type.SETTINGS -> with(AppUtil.decorInAppIntent(Intent(this, SettingsActivity::class.java))) {
-                putExtra(EXTRA_CURRENT_MAILBOX_LOCATION, currentMailboxLocation.messageLocationTypeValue)
-                putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, currentLabelId)
-                startActivity(this)
-            }
             Type.INBOX -> onInbox(type.drawerOptionType)
             Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
                 onOtherMailBox(type.drawerOptionType)
@@ -447,9 +441,7 @@ internal abstract class NavigationActivity : BaseActivity() {
                 val user = userManager.currentLegacyUser
                 if (user != null && user.isUsePin && userManager.getMailboxPin() != null) {
                     user.setManuallyLocked(true)
-                    val pinIntent = AppUtil.decorInAppIntent(Intent(this, ValidatePinActivity::class.java))
-                    pinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title)
-                    startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN)
+                    startValidatePinLauncher.launch(Unit)
                 }
             }
             Type.LABEL -> { /* We don't need it, perhaps we could remove the value from enum */
