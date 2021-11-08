@@ -37,6 +37,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -360,7 +361,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         VCard vCardSigned = viewModel.buildSignedCard(contactName);
 
         if (contactPhoto.getVisibility() == View.VISIBLE && contactPhoto.getDrawable() != null) {
-            Bitmap bitmap = ((RoundedBitmapDrawable) contactPhoto.getDrawable()).getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) contactPhoto.getDrawable()).getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream);
             byte[] bytemapdata = stream.toByteArray();
