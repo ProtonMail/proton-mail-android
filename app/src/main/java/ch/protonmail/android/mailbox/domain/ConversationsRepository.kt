@@ -125,4 +125,11 @@ interface ConversationsRepository {
         userId: UserId,
         labelId: String
     ): ConversationsActionResult
+
+    suspend fun updateConversationBasedOnMessageLabels(
+        userId: UserId,
+        messageId: String,
+        labelsToAdd: List<String>,
+        labelsToRemove: List<String>
+    )
 }

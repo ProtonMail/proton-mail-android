@@ -24,6 +24,7 @@ import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -33,6 +34,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
@@ -45,6 +47,9 @@ class UpdateMessageLabelsTest {
 
     @MockK
     private lateinit var messageRepository: MessageRepository
+
+    @MockK
+    private lateinit var conversationsRepository: ConversationsRepository
 
     @MockK
     private lateinit var accountManager: AccountManager
@@ -62,6 +67,7 @@ class UpdateMessageLabelsTest {
         every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
         useCase = UpdateMessageLabels(
             messageRepository,
+            conversationsRepository,
             accountManager,
             labelRepository,
             TestDispatcherProvider
@@ -94,6 +100,14 @@ class UpdateMessageLabelsTest {
                 message
             )
         } returns message
+        coEvery {
+            conversationsRepository.updateConversationBasedOnMessageLabels(
+                testUserId,
+                testMessageId,
+                any(),
+                any()
+            )
+        } just runs
 
         // when
         useCase.invoke(testMessageId, checkedLabelIds)
@@ -103,6 +117,12 @@ class UpdateMessageLabelsTest {
             messageRepository.saveMessage(
                 testUserId,
                 message
+            )
+            conversationsRepository.updateConversationBasedOnMessageLabels(
+                testUserId,
+                testMessageId,
+                any(),
+                any()
             )
         }
     }
