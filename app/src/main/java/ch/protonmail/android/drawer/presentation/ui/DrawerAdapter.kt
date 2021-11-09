@@ -109,7 +109,8 @@ internal class DrawerAdapter(
                 LabelViewHolder(binding)
             }
             ViewType.CREATE_ITEM -> {
-                TODO("ViewHolder for CREATE_ITEM")
+                val binding = DrawerListItemBinding.inflate(inflater, this, false)
+                CreateItemViewHolder(binding)
             }
             ViewType.FOOTER -> {
                 val binding = DrawerFooterBinding.inflate(inflater, this, false)
@@ -202,6 +203,24 @@ internal class DrawerAdapter(
                 drawerItemLabelTextView.setText(item.labelRes)
                 drawerItemIconView.setImageResource(item.iconRes)
                 menuItem.tag = context.getString(item.labelRes)
+            }
+        }
+    }
+
+    /**
+     * [ViewHolder] for [CreateItem] button
+     * @see CreateItem.Folder
+     * @see CreateItem.Label
+     */
+    private class CreateItemViewHolder(
+        private val binding: DrawerListItemBinding
+    ) : ViewHolder<CreateItem>(binding.root) {
+
+        override fun onBind(item: CreateItem) {
+            super.onBind(item)
+            binding.apply {
+                drawerItemIconView.setImageResource(R.drawable.ic_plus)
+                drawerItemLabelTextView.setText(item.textRes)
             }
         }
     }
