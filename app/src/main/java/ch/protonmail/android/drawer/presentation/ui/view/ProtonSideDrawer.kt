@@ -40,7 +40,16 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private val bodyRecyclerView: RecyclerView
-    private val bodyAdapter = DrawerAdapter()
+    private val bodyAdapter = DrawerAdapter(
+        onItemClick = { onItemClick(it) },
+        onCreateLabel = { onCreateLabel() },
+        onCreateFolder = { onCreateFolder() }
+    )
+
+    // click listeners
+    private lateinit var onItemClick: (DrawerItemUiModel) -> Unit
+    private lateinit var onCreateLabel: () -> Unit
+    private lateinit var onCreateFolder: () -> Unit
 
     // lists
     private var locationItems = listOf<DrawerItemUiModel.Primary.Static>()
@@ -68,12 +77,18 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         addView(linearLayout)
     }
 
-    fun setOnItemClick(block: (DrawerItemUiModel) -> Unit) {
-        bodyAdapter.onItemClick = { drawerItemUiModel ->
-            block(drawerItemUiModel)
+    fun setClickListeners(
+        onItemClick: (DrawerItemUiModel) -> Unit,
+        onCreateLabel: () -> Unit,
+        onCreateFolder: () -> Unit
+    ) {
+        this.onItemClick = { drawerItemUiModel ->
+            onItemClick(drawerItemUiModel)
             if (drawerItemUiModel is DrawerItemUiModel.Primary)
                 bodyAdapter.setSelected(drawerItemUiModel)
         }
+        this.onCreateLabel = onCreateLabel
+        this.onCreateFolder = onCreateFolder
     }
 
     fun setLocationItems(items: List<DrawerItemUiModel.Primary.Static>) {
@@ -92,6 +107,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     ) {
         foldersSectionItem = DrawerItemUiModel.SectionName(
             text = context.getText(sectionNameRes),
+            type = DrawerItemUiModel.SectionName.Type.FOLDER,
             shouldShowCreateButton = items.isNotEmpty()
         )
         folderItems = items
@@ -104,6 +120,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     ) {
         labelsSectionItem = DrawerItemUiModel.SectionName(
             text = context.getText(sectionNameRes),
+            type = DrawerItemUiModel.SectionName.Type.LABEL,
             shouldShowCreateButton = items.isNotEmpty()
         )
         labelItems = items
@@ -124,6 +141,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     fun setMoreItems(@StringRes sectionNameRes: Int, items: List<DrawerItemUiModel.Primary.Static>) {
         moreSectionItem = DrawerItemUiModel.SectionName(
             text = context.getText(sectionNameRes),
+            type = DrawerItemUiModel.SectionName.Type.OTHER,
             shouldShowCreateButton = false
         )
         moreItems = items

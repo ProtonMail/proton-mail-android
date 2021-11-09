@@ -34,6 +34,7 @@ import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Section
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
+import ch.protonmail.libs.core.utils.onClick
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
 
 private const val VIEW_TYPE_SECTION_NAME = 0
@@ -46,8 +47,14 @@ private const val VIEW_TYPE_FOOTER = 3
  *
  * Inherit from [BaseAdapter]
  */
-internal class DrawerAdapter :
-    BaseAdapter<DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>>(ModelsComparator) {
+internal class DrawerAdapter(
+    onItemClick: (DrawerItemUiModel) -> Unit,
+    private val onCreateLabel: () -> Unit,
+    private val onCreateFolder: () -> Unit
+) : BaseAdapter<DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>>(
+    itemsComparator = ModelsComparator,
+    onItemClick = onItemClick
+) {
 
     /** Select the given [item] and un-select all the others */
     fun setSelected(item: Primary) {
@@ -90,7 +97,11 @@ internal class DrawerAdapter :
         return when (viewType) {
             VIEW_TYPE_SECTION_NAME -> {
                 val binding = DrawerSectionNameItemBinding.inflate(inflater, this, false)
-                SectionNameViewHolder(binding)
+                SectionNameViewHolder(
+                    binding = binding,
+                    onCreateLabel = onCreateLabel,
+                    onCreateFolder = onCreateFolder
+                )
             }
             VIEW_TYPE_STATIC -> {
                 val binding = DrawerListItemBinding.inflate(inflater, this, false)
@@ -132,13 +143,24 @@ internal class DrawerAdapter :
 
     /** [ViewHolder] for [SectionName] */
     private class SectionNameViewHolder(
-        private val binding: DrawerSectionNameItemBinding
+        private val binding: DrawerSectionNameItemBinding,
+        private val onCreateLabel: () -> Unit,
+        private val onCreateFolder: () -> Unit,
     ) : ViewHolder<SectionName>(binding.root) {
 
         override fun onBind(item: SectionName) {
             super.onBind(item)
             binding.drawerSectionNameTextView.text = item.text
-            binding.drawerSectionNameCreateButton.isVisible = item.shouldShowCreateButton
+            binding.drawerSectionNameCreateButton.apply {
+                isVisible = item.shouldShowCreateButton
+                onClick {
+                    when (item.type) {
+                        SectionName.Type.FOLDER -> onCreateFolder()
+                        SectionName.Type.LABEL -> onCreateLabel()
+                        else -> {}
+                    }
+                }
+            }
         }
     }
 

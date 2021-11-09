@@ -232,20 +232,24 @@ internal abstract class NavigationActivity : BaseActivity() {
             }
             .launchIn(lifecycleScope)
 
-        sideDrawer.setOnItemClick { drawerItem ->
-            // Header clicked
-            if (drawerItem is Primary) {
-                onDrawerClose = {
+        sideDrawer.setClickListeners(
+            onItemClick = { drawerItem ->
+                // Header clicked
+                if (drawerItem is Primary) {
+                    onDrawerClose = {
 
-                    // Static item clicked
-                    if (drawerItem is Primary.Static) onDrawerStaticItemSelected(drawerItem.type)
+                        // Static item clicked
+                        if (drawerItem is Primary.Static) onDrawerStaticItemSelected(drawerItem.type)
 
-                    // Label clicked
-                    else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
+                        // Label clicked
+                        else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
+                    }
+                    drawerLayout.closeDrawer(GravityCompat.START)
                 }
-                drawerLayout.closeDrawer(GravityCompat.START)
-            }
-        }
+            },
+            onCreateLabel = { TODO("Open Create Label") },
+            onCreateFolder = { TODO("Open Create Folder") }
+        )
 
         setUpDrawer()
     }

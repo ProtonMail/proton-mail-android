@@ -34,8 +34,12 @@ internal sealed class DrawerItemUiModel {
      */
     data class SectionName(
         val text: CharSequence,
+        val type: Type,
         val shouldShowCreateButton: Boolean
-    ) : DrawerItemUiModel()
+    ) : DrawerItemUiModel() {
+
+        enum class Type { LABEL, FOLDER, OTHER }
+    }
 
     /**
      * Primary Item for the Drawer.
