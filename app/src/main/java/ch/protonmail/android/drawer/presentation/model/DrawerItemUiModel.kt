@@ -138,6 +138,21 @@ internal sealed class DrawerItemUiModel {
     }
 
     /**
+     * Represent a View ( Button ) for crate a new Item
+     * @see CreateItem.Folder
+     * @see CreateItem.Label
+     */
+    sealed class CreateItem : DrawerItemUiModel() {
+
+        @get:StringRes
+        abstract val textRes: Int
+
+        data class Folder(@StringRes override val textRes: Int) : CreateItem()
+
+        data class Label(@StringRes override val textRes: Int) : CreateItem()
+    }
+
+    /**
      * Footer for the Drawer
      *
      * @param text [CharSequence] text of the Footer

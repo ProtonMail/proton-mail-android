@@ -28,6 +28,7 @@ import ch.protonmail.android.databinding.DrawerFooterBinding
 import ch.protonmail.android.databinding.DrawerListItemBinding
 import ch.protonmail.android.databinding.DrawerSectionNameItemBinding
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.CreateItem
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Footer
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.SectionName
@@ -66,14 +67,11 @@ internal class DrawerAdapter(
         }
     }
 
-    /** @return a [ViewHolder] for the given [viewType] */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<DrawerItemUiModel> =
-        parent.viewHolderForViewType(viewType)
+        parent.viewHolderForViewType(ViewType.fromInt(viewType))
 
-    /** @return [Int] that identifies the View type for the Item at the given [position] */
-    override fun getItemViewType(position: Int) = items[position].viewType
+    override fun getItemViewType(position: Int) = ViewType.fromModel(items[position]).intValue
 
-    /** A [BaseAdapter.ItemsComparator] for the Adapter */
     private object ModelsComparator : BaseAdapter.ItemsComparator<DrawerItemUiModel>() {
 
         /** Check if old [DrawerItemUiModel] and new [DrawerItemUiModel] are the same element */
@@ -81,7 +79,7 @@ internal class DrawerAdapter(
             val newItemAsStatic = newItem as? Primary.Static
             val newItemAsLabel = newItem as? Primary.Label
             return when (oldItem) {
-                is SectionName -> oldItem == newItem
+                is SectionName, is CreateItem -> oldItem == newItem
                 is Primary -> when (oldItem) {
                     is Primary.Static -> oldItem.type == newItemAsStatic?.type
                     is Primary.Label -> oldItem.uiModel.labelId == newItemAsLabel?.uiModel?.labelId
@@ -91,11 +89,10 @@ internal class DrawerAdapter(
         }
     }
 
-    /** @return a [ViewHolder] for the given [viewType] */
-    private fun <Model : DrawerItemUiModel> ViewGroup.viewHolderForViewType(viewType: Int): ViewHolder<Model> {
+    private fun <Model : DrawerItemUiModel> ViewGroup.viewHolderForViewType(viewType: ViewType): ViewHolder<Model> {
         val inflater = LayoutInflater.from(context)
         return when (viewType) {
-            VIEW_TYPE_SECTION_NAME -> {
+            ViewType.SECTION_NAME -> {
                 val binding = DrawerSectionNameItemBinding.inflate(inflater, this, false)
                 SectionNameViewHolder(
                     binding = binding,
@@ -103,19 +100,21 @@ internal class DrawerAdapter(
                     onCreateFolder = onCreateFolder
                 )
             }
-            VIEW_TYPE_STATIC -> {
+            ViewType.STATIC -> {
                 val binding = DrawerListItemBinding.inflate(inflater, this, false)
                 StaticViewHolder(binding)
             }
-            VIEW_TYPE_LABEL -> {
+            ViewType.LABEL -> {
                 val binding = DrawerListItemBinding.inflate(inflater, this, false)
                 LabelViewHolder(binding)
             }
-            VIEW_TYPE_FOOTER -> {
+            ViewType.CREATE_ITEM -> {
+                TODO("ViewHolder for CREATE_ITEM")
+            }
+            ViewType.FOOTER -> {
                 val binding = DrawerFooterBinding.inflate(inflater, this, false)
                 FooterViewHolder(binding)
             }
-            else -> throw IllegalArgumentException("View type not found: '$viewType'")
         } as ViewHolder<Model>
     }
 
@@ -217,17 +216,27 @@ internal class DrawerAdapter(
             binding.root.text = item.text
         }
     }
-}
 
-/** @return [Int] view type for the receiver [DrawerItemUiModel] */
-private val DrawerItemUiModel.viewType: Int
-    get() {
-        return when (this) {
-            is SectionName -> VIEW_TYPE_SECTION_NAME
-            is Primary -> when (this) {
-                is Primary.Static -> VIEW_TYPE_STATIC
-                is Primary.Label -> VIEW_TYPE_LABEL
-            }
-            is Footer -> VIEW_TYPE_FOOTER
+    enum class ViewType(val intValue: Int) {
+        SECTION_NAME(0),
+        STATIC(1),
+        LABEL(2),
+        CREATE_ITEM(3),
+        FOOTER(4);
+
+        companion object {
+
+            fun fromInt(intValue: Int): ViewType =
+                values().first { it.intValue == intValue }
+
+            fun fromModel(model: DrawerItemUiModel): ViewType =
+                when (model) {
+                    is SectionName -> SECTION_NAME
+                    is Primary.Static -> STATIC
+                    is Primary.Label -> LABEL
+                    is CreateItem -> CREATE_ITEM
+                    is Footer -> FOOTER
+                }
         }
     }
+}

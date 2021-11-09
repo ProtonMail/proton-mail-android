@@ -27,6 +27,7 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
 import ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
@@ -160,13 +161,18 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     @OptIn(ExperimentalStdlibApi::class)
     private fun update() {
         bodyAdapter.items = buildList {
+
             addAll(locationItems.mapWithCounters())
+
             foldersSectionItem?.let { add(it) }
-            addAll(folderItems.mapWithCounters())
+            addAll(folderItems.mapWithCounters().setCreateFolderButtonIfEmpty())
+
             labelsSectionItem?.let { add(it) }
-            addAll(labelItems.mapWithCounters())
+            addAll(labelItems.mapWithCounters().setCreateLabelButtonIfEmpty())
+
             moreSectionItem?.let { add(it) }
             addAll(moreItems)
+
             footerItem?.let { add(it) }
         }
     }
@@ -178,6 +184,12 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     @JvmName("mapLabelsWithCounters")
     private fun List<DrawerItemUiModel.Primary.Label>.mapWithCounters() =
         mapWithCounters { it.uiModel.labelId }
+
+    private fun List<DrawerItemUiModel.Primary.Label>.setCreateFolderButtonIfEmpty() =
+        ifEmpty { listOf(DrawerItemUiModel.CreateItem.Folder(R.string.drawer_create_folder)) }
+
+    private fun List<DrawerItemUiModel.Primary.Label>.setCreateLabelButtonIfEmpty() =
+        ifEmpty { listOf(DrawerItemUiModel.CreateItem.Label(R.string.drawer_create_label)) }
 
     private fun <T : DrawerItemUiModel.Primary> List<T>.mapWithCounters(
         getDrawerItemLabelId: (T) -> String
