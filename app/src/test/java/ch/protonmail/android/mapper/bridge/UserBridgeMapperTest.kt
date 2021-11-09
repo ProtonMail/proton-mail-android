@@ -111,7 +111,6 @@ internal class UserBridgeMapperTest {
                     +total.l.fix() equals 30_000.toULong()
                 }
                 )
-            + isLegacy equals true
         }
     }
 
@@ -180,7 +179,6 @@ internal class UserBridgeMapperTest {
                         +total.l.fix() equals 30_000.toULong()
                     }
                     )
-                +isLegacy equals true
             }
         }
     }

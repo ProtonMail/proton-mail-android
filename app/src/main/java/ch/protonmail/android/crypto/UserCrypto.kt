@@ -49,7 +49,7 @@ class UserCrypto(
     override val UserKey.privateKey: PgpField.PrivateKey
         get() = privateKey
 
-    protected override fun passphraseFor(key: UserKey): ByteArray? = passphrase
+    override fun passphraseFor(key: UserKey): ByteArray? = passphrase
 
     fun verify(data: String, signature: String): TextDecryptionResult {
         val valid = openPgp.verifyTextSignDetachedBinKey(signature, data, getVerificationKeys(), openPgp.time)
