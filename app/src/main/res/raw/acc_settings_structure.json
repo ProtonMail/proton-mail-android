@@ -61,14 +61,21 @@
     "is_section": true
   },
   {
-    "setting_id": "privacy",
+    "setting_id": "labels_manager",
     "is_section": false,
     "setting_value": "",
     "setting_hasValue": false,
     "setting_type": "drill"
   },
   {
-    "setting_id": "labels_n_folders",
+    "setting_id": "folders_manager",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": false,
+    "setting_type": "drill"
+  },
+  {
+    "setting_id": "privacy",
     "is_section": false,
     "setting_value": "",
     "setting_hasValue": false,

@@ -367,12 +367,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 backgroundSyncIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.BACKGROUND_SYNC)
                 startActivity(AppUtil.decorInAppIntent(backgroundSyncIntent))
             }
-            LABELS_N_FOLDERS -> {
-                val labelsNFoldersIntent =
-                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
-                labelsNFoldersIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.LABELS_AND_FOLDERS)
-                startActivity(labelsNFoldersIntent)
-            }
             LABELS_MANAGER -> {
                 val labelsManagerIntent =
                     AppUtil.decorInAppIntent(Intent(this, LabelsManagerActivity::class.java))

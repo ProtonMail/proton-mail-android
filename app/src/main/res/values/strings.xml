@@ -918,8 +918,6 @@
     <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Folders</string>
     <string name="labels">Labels</string>
-    <string name="labels_manager">Labels manager</string>
-    <string name="folders_manage">Folders manager</string>
 
     <string name="swipe_actions">Swipe actions</string>
     <string name="swipe_action_right">Swipe right</string>

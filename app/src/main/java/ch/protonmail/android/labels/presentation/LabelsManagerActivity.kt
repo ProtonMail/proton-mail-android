@@ -136,8 +136,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             val elevation = resources.getDimension(R.dimen.action_bar_elevation)
             this.elevation = elevation
             title = getString(
-                if (type == LabelType.MESSAGE_LABEL) R.string.labels_manager
-                else R.string.folders_manager
+                if (type == LabelType.MESSAGE_LABEL) R.string.labels
+                else R.string.folders
             )
         }
 
