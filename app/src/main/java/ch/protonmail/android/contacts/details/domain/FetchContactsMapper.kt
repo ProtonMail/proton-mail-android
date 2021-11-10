@@ -52,7 +52,7 @@ class FetchContactsMapper @Inject constructor(
 ) {
 
     fun mapEncryptedDataToResult(
-        encryptedDataList: MutableList<ContactEncryptedData>?,
+        encryptedDataList: List<ContactEncryptedData>?,
         contactId: String
     ): FetchContactDetailsResult? {
         if (!encryptedDataList.isNullOrEmpty()) {
