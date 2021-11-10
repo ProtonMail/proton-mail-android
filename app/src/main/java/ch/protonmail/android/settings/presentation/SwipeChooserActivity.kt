@@ -80,16 +80,13 @@ class SwipeChooserActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.save_menu, menu)
+        menu.findItem(R.id.save).isVisible = false
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
             android.R.id.home -> {
-                saveAndFinish()
-                true
-            }
-            R.id.save -> {
                 swipeActionsViewModel.onSaveClicked()
                 saveAndFinish()
                 true
@@ -99,6 +96,7 @@ class SwipeChooserActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        swipeActionsViewModel.onSaveClicked()
         saveAndFinish()
     }
 
