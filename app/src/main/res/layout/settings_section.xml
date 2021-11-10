@@ -21,6 +21,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="@dimen/padding_l"
-    android:paddingTop="@dimen/padding_xl"
+    android:paddingTop="@dimen/padding_m"
     android:paddingEnd="@dimen/padding_l"
-    android:paddingBottom="@dimen/padding_m"/>
+    android:paddingBottom="@dimen/padding_s" />
