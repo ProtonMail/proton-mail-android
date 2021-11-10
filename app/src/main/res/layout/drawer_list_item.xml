@@ -52,7 +52,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:tint="@color/white"
+        app:tint="@color/icon_weak"
         tools:src="@drawable/ic_inbox" />
 
     <!-- Badge -->
