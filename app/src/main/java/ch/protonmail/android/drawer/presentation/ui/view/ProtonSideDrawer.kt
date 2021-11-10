@@ -27,6 +27,7 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
 import ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
@@ -40,7 +41,16 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private val bodyRecyclerView: RecyclerView
-    private val bodyAdapter = DrawerAdapter()
+    private val bodyAdapter = DrawerAdapter(
+        onItemClick = { onItemClick(it) },
+        onCreateLabel = { onCreateLabel() },
+        onCreateFolder = { onCreateFolder() }
+    )
+
+    // click listeners
+    private lateinit var onItemClick: (DrawerItemUiModel) -> Unit
+    private lateinit var onCreateLabel: () -> Unit
+    private lateinit var onCreateFolder: () -> Unit
 
     // lists
     private var locationItems = listOf<DrawerItemUiModel.Primary.Static>()
@@ -68,12 +78,18 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         addView(linearLayout)
     }
 
-    fun setOnItemClick(block: (DrawerItemUiModel) -> Unit) {
-        bodyAdapter.onItemClick = { drawerItemUiModel ->
-            block(drawerItemUiModel)
+    fun setClickListeners(
+        onItemClick: (DrawerItemUiModel) -> Unit,
+        onCreateLabel: () -> Unit,
+        onCreateFolder: () -> Unit
+    ) {
+        this.onItemClick = { drawerItemUiModel ->
+            onItemClick(drawerItemUiModel)
             if (drawerItemUiModel is DrawerItemUiModel.Primary)
                 bodyAdapter.setSelected(drawerItemUiModel)
         }
+        this.onCreateLabel = onCreateLabel
+        this.onCreateFolder = onCreateFolder
     }
 
     fun setLocationItems(items: List<DrawerItemUiModel.Primary.Static>) {
@@ -90,7 +106,11 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         @StringRes sectionNameRes: Int,
         items: List<DrawerItemUiModel.Primary.Label>
     ) {
-        foldersSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
+        foldersSectionItem = DrawerItemUiModel.SectionName(
+            text = context.getText(sectionNameRes),
+            type = DrawerItemUiModel.SectionName.Type.FOLDER,
+            shouldShowCreateButton = items.isNotEmpty()
+        )
         folderItems = items
         update()
     }
@@ -99,7 +119,11 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         @StringRes sectionNameRes: Int,
         items: List<DrawerItemUiModel.Primary.Label>
     ) {
-        labelsSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
+        labelsSectionItem = DrawerItemUiModel.SectionName(
+            text = context.getText(sectionNameRes),
+            type = DrawerItemUiModel.SectionName.Type.LABEL,
+            shouldShowCreateButton = items.isNotEmpty()
+        )
         labelItems = items
         update()
     }
@@ -111,12 +135,16 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
      * @see DrawerItemUiModel.Primary.Static.Type.itemId
      */
     internal fun setUnreadCounters(counters: List<UnreadCounter>) {
-        labelIdsToUnreadCountersMap = counters.map { it.labelId to it.unreadCount }.toMap()
+        labelIdsToUnreadCountersMap = counters.associate { it.labelId to it.unreadCount }
         update()
     }
 
     fun setMoreItems(@StringRes sectionNameRes: Int, items: List<DrawerItemUiModel.Primary.Static>) {
-        moreSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
+        moreSectionItem = DrawerItemUiModel.SectionName(
+            text = context.getText(sectionNameRes),
+            type = DrawerItemUiModel.SectionName.Type.OTHER,
+            shouldShowCreateButton = false
+        )
         moreItems = items
         update()
     }
@@ -133,13 +161,18 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     @OptIn(ExperimentalStdlibApi::class)
     private fun update() {
         bodyAdapter.items = buildList {
+
             addAll(locationItems.mapWithCounters())
+
             foldersSectionItem?.let { add(it) }
-            addAll(folderItems.mapWithCounters())
+            addAll(folderItems.mapWithCounters().setCreateFolderButtonIfEmpty())
+
             labelsSectionItem?.let { add(it) }
-            addAll(labelItems.mapWithCounters())
+            addAll(labelItems.mapWithCounters().setCreateLabelButtonIfEmpty())
+
             moreSectionItem?.let { add(it) }
             addAll(moreItems)
+
             footerItem?.let { add(it) }
         }
     }
@@ -151,6 +184,12 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
     @JvmName("mapLabelsWithCounters")
     private fun List<DrawerItemUiModel.Primary.Label>.mapWithCounters() =
         mapWithCounters { it.uiModel.labelId }
+
+    private fun List<DrawerItemUiModel.Primary.Label>.setCreateFolderButtonIfEmpty() =
+        ifEmpty { listOf(DrawerItemUiModel.CreateItem.Folder(R.string.drawer_add_folder)) }
+
+    private fun List<DrawerItemUiModel.Primary.Label>.setCreateLabelButtonIfEmpty() =
+        ifEmpty { listOf(DrawerItemUiModel.CreateItem.Label(R.string.drawer_add_label)) }
 
     private fun <T : DrawerItemUiModel.Primary> List<T>.mapWithCounters(
         getDrawerItemLabelId: (T) -> String

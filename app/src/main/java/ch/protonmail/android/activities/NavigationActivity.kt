@@ -45,12 +45,15 @@ import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelItemUiModelMapper
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.CreateItem
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.Type
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
 import ch.protonmail.android.drawer.presentation.ui.view.ProtonSideDrawer
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
+import ch.protonmail.android.labels.presentation.LabelsManagerActivity
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
@@ -232,20 +235,36 @@ internal abstract class NavigationActivity : BaseActivity() {
             }
             .launchIn(lifecycleScope)
 
-        sideDrawer.setOnItemClick { drawerItem ->
-            // Header clicked
-            if (drawerItem is Primary) {
-                onDrawerClose = {
-
-                    // Static item clicked
-                    if (drawerItem is Primary.Static) onDrawerStaticItemSelected(drawerItem.type)
-
-                    // Label clicked
-                    else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
-                }
-                drawerLayout.closeDrawer(GravityCompat.START)
-            }
+        fun launchCreateLabel() {
+            val createLabelIntent = AppUtil.decorInAppIntent(
+                Intent(this, LabelsManagerActivity::class.java)
+            )
+            startActivity(createLabelIntent)
         }
+        fun launchCreateFolder() {
+            val createFolderIntent = AppUtil.decorInAppIntent(
+                Intent(this, LabelsManagerActivity::class.java)
+            ).putExtra(EXTRA_MANAGE_FOLDERS, true)
+            startActivity(createFolderIntent)
+        }
+        sideDrawer.setClickListeners(
+            onItemClick = { drawerItem ->
+                when (drawerItem) {
+                    is Primary -> {
+                        onDrawerClose = {
+                            if (drawerItem is Primary.Static) onDrawerStaticItemSelected(drawerItem.type)
+                            else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
+                        }
+                        drawerLayout.closeDrawer(GravityCompat.START)
+                    }
+                    is CreateItem.Folder -> launchCreateFolder()
+                    is CreateItem.Label -> launchCreateLabel()
+                    else -> {}
+                }
+            },
+            onCreateLabel = ::launchCreateLabel,
+            onCreateFolder = ::launchCreateFolder
+        )
 
         setUpDrawer()
     }
