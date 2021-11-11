@@ -140,11 +140,15 @@
         <activity android:name=".util.HiltViewTestActivity"/>
 
         <!-- Begin - Root Activities -->
-        <activity
+        <activity-alias
             android:name=".activities.SplashActivity"
+            android:targetActivity=".mailbox.presentation.MailboxActivity"/>
+        <activity
+            android:name=".mailbox.presentation.MailboxActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance"
+            android:launchMode="standard"
+            android:maxRecents="1"
             android:theme="@style/ProtonTheme.Splash.Mail.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -154,12 +158,6 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
-        <activity
-            android:name=".mailbox.presentation.MailboxActivity"
-            android:exported="false"
-            android:configChanges="orientation|screenSize"
-            android:maxRecents="1"
-            android:theme="@style/ProtonTheme.Splash.Mail.Light" />
         <!-- End - Root Activities -->
         <activity
             android:name=".settings.presentation.AttachmentStorageActivity"

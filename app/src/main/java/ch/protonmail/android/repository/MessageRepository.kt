@@ -39,7 +39,6 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.labels.domain.LabelRepository
-import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
@@ -76,7 +75,6 @@ private const val FILE_PREFIX = "file://"
  */
 class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
-    private val unreadCounterDao: UnreadCounterDao,
     private val databaseProvider: DatabaseProvider,
     private val protonMailApiManager: ProtonMailApiManager,
     private val databaseToDomainUnreadCounterMapper: DatabaseToDomainUnreadCounterMapper,
@@ -222,6 +220,7 @@ class MessageRepository @Inject constructor(
         Timber.v("Fetch Messages Unread response: $response")
         val counts = response.counts
             .map(apiToDatabaseUnreadCounterMapper) { toDatabaseModel(it, userId, Type.MESSAGES) }
+        val unreadCounterDao = databaseProvider.provideUnreadCounterDao(userId)
         unreadCounterDao.insertOrUpdate(counts)
     }
 
@@ -359,7 +358,9 @@ class MessageRepository @Inject constructor(
     }
 
     private fun observerUnreadCountersFromDatabase(userId: UserId): Flow<DataResult<List<UnreadCounter>>> =
-        unreadCounterDao.observeMessagesUnreadCounters(userId).map { list ->
+        databaseProvider
+            .provideUnreadCounterDao(userId)
+            .observeMessagesUnreadCounters(userId).map { list ->
             val domainModels = databaseToDomainUnreadCounterMapper.toDomainModels(list)
             DataResult.Success(ResponseSource.Local, domainModels)
         }

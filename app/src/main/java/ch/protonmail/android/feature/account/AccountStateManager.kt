@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.feature.account
 
+import androidx.activity.ComponentActivity
 import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -87,6 +88,7 @@ internal class AccountStateManager @Inject constructor(
     private val userManager: UserManager,
     private val eventManager: EventManager,
     private val jobManager: JobManager,
+    private val authOrchestrator: AuthOrchestrator,
     private val humanVerificationManager: HumanVerificationManager,
     private val oldUserManager: ch.protonmail.android.core.UserManager,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
@@ -101,7 +103,6 @@ internal class AccountStateManager @Inject constructor(
     private val scope = lifecycleOwner.lifecycleScope
     private val lifecycle = lifecycleOwner.lifecycle
 
-    private lateinit var currentAuthOrchestrator: AuthOrchestrator
     private lateinit var currentHumanVerificationOrchestrator: HumanVerificationOrchestrator
 
     private val mutableStateFlow = MutableStateFlow(State.Processing)
@@ -129,6 +130,8 @@ internal class AccountStateManager @Inject constructor(
             }.launchIn(scope)
     }
 
+    private suspend fun getAccountOrNull(userId: UserId) = getAccount(userId).firstOrNull()
+
     private fun observeAccountManager(lifecycle: Lifecycle): AccountManagerObserver =
         accountManager.observe(lifecycle, Lifecycle.State.CREATED)
 
@@ -154,43 +157,35 @@ internal class AccountStateManager @Inject constructor(
      *
      * For example, SecondFactor Workflow, TwoPassMode Workflow or ChooseAddress Workflow.
      */
-    fun observeAccountStateWithExternalLifecycle(
-        lifecycle: Lifecycle,
-        isSplashActivity: Boolean = false
-    ) {
-        // Don't start workflow if MailboxActivity will do it later.
-        fun shouldStart() = !isSplashActivity || state.value != State.PrimaryExist
+    private fun observeAccountStateWithExternalLifecycle(lifecycle: Lifecycle) {
         observeAccountManager(lifecycle)
-            .onSessionSecondFactorNeeded { if (shouldStart()) currentAuthOrchestrator.startSecondFactorWorkflow(it) }
-            .onAccountTwoPassModeNeeded { if (shouldStart()) currentAuthOrchestrator.startTwoPassModeWorkflow(it) }
-            .onAccountCreateAddressNeeded { if (shouldStart()) currentAuthOrchestrator.startChooseAddressWorkflow(it) }
+            .onSessionSecondFactorNeeded { authOrchestrator.startSecondFactorWorkflow(it) }
+            .onAccountTwoPassModeNeeded { authOrchestrator.startTwoPassModeWorkflow(it) }
+            .onAccountCreateAddressNeeded { authOrchestrator.startChooseAddressWorkflow(it) }
     }
 
     /**
      * Observe all human verification states that can be solved with [HumanVerificationOrchestrator].
      */
-    fun observeHumanVerificationStateWithExternalLifecycle(lifecycle: Lifecycle) {
+    fun observeHVStateWithExternalLifecycle(lifecycle: Lifecycle) {
         observeHumanVerificationManager(lifecycle)
             .onHumanVerificationNeeded { currentHumanVerificationOrchestrator.startHumanVerificationWorkflow(it) }
     }
 
-    fun setAuthOrchestrator(authOrchestrator: AuthOrchestrator) {
-        currentAuthOrchestrator = authOrchestrator
-    }
-
-    fun setHumanVerificationOrchestrator(
-        humanVerificationOrchestrator: HumanVerificationOrchestrator
-    ) {
+    fun setHumanVerificationOrchestrator(humanVerificationOrchestrator: HumanVerificationOrchestrator) {
         currentHumanVerificationOrchestrator = humanVerificationOrchestrator
     }
 
+    fun register(context: ComponentActivity) {
+        authOrchestrator.register(context)
+        observeAccountStateWithExternalLifecycle(context.lifecycle)
+    }
+
     fun onAddAccountClosed(block: () -> Unit) {
-        currentAuthOrchestrator.onAddAccountResult { result -> if (result == null) block() }
+        authOrchestrator.onAddAccountResult { result -> if (result == null) block() }
     }
 
     fun getAccount(userId: UserId) = accountManager.getAccount(userId)
-
-    suspend fun getAccountOrNull(userId: UserId) = getAccount(userId).firstOrNull()
 
     fun signOut(userId: UserId) = scope.launch {
         accountManager.disableAccount(userId)
@@ -202,14 +197,14 @@ internal class AccountStateManager @Inject constructor(
 
     fun signIn(userId: UserId? = null) = scope.launch {
         val account = userId?.let { getAccountOrNull(it) }
-        currentAuthOrchestrator.startLoginWorkflow(
+        authOrchestrator.startLoginWorkflow(
             requiredAccountType = requiredAccountType,
             username = account?.username
         )
     }
 
     fun addAccount() = scope.launch {
-        currentAuthOrchestrator.startAddAccountWorkflow(
+        authOrchestrator.startAddAccountWorkflow(
             requiredAccountType = requiredAccountType,
             product = product
         )
@@ -218,7 +213,7 @@ internal class AccountStateManager @Inject constructor(
     fun switch(userId: UserId) = scope.launch {
         val account = getAccountOrNull(userId) ?: return@launch
         when {
-            account.isDisabled() -> currentAuthOrchestrator.startLoginWorkflow(
+            account.isDisabled() -> authOrchestrator.startLoginWorkflow(
                 requiredAccountType = AccountType.Internal,
                 username = account.username
             )
@@ -259,11 +254,7 @@ internal class AccountStateManager @Inject constructor(
         val prefs = oldUserManager.preferencesFor(userId)
         val initialized = prefs.getBoolean(Constants.Prefs.PREF_USER_INITIALIZED, false)
         if (!initialized) {
-            oldUserManager.preferencesFor(userId).edit {
-                putBoolean(Constants.Prefs.PREF_USER_INITIALIZED, true)
-                // See DatabaseFactory.usernameForUserId.
-                putString(Constants.Prefs.PREF_USER_NAME, account.username)
-            }
+            prefs.edit { putBoolean(Constants.Prefs.PREF_USER_INITIALIZED, true) }
             // Workaround: Wait the primary key passphrase before proceeding.
             userManager.waitPrimaryKeyPassphraseAvailable(account.userId)
             // Workaround: Make sure this uninitialized User is fresh.
@@ -290,9 +281,7 @@ internal class AccountStateManager @Inject constructor(
             // Clear Data/State.
             clearUserData.invoke(userId)
             eventManager.clearState(userId)
-            oldUserManager.preferencesFor(UserId(account.userId.id)).clearAll(
-                /*excludedKeys*/ PREF_PIN, Constants.Prefs.PREF_USER_NAME
-            )
+            prefs.clearAll(/*excludedKeys*/ PREF_PIN, Constants.Prefs.PREF_USER_NAME)
         }
     }
 

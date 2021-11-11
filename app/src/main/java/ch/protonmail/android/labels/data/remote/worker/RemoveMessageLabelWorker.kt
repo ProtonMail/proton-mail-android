@@ -32,13 +32,11 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.api.models.IDList
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.CounterRepository
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
-import me.proton.core.accountmanager.domain.AccountManager
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 import javax.inject.Inject
@@ -47,17 +45,17 @@ import javax.inject.Inject
 internal class RemoveMessageLabelWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val accountManager: AccountManager,
+    private val userManager: UserManager,
     private val counterRepository: CounterRepository,
     private val protonMailApi: ProtonMailApi
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        val userId = requireNotNull(userManager.currentUserId)
         val messageIds = requireNotNull(inputData.getStringArray(KEY_INPUT_DATA_MESSAGES_IDS)) {
             "Cannot continue without message ids!"
         }
         val labelId = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
-        val userId = accountManager.getPrimaryUserId().filterNotNull().first()
         Timber.v("Remove label $labelId for messages: $messageIds")
 
         if (messageIds.isEmpty() || labelId == null) {

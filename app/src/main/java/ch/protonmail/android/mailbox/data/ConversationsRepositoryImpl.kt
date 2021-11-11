@@ -19,9 +19,11 @@
 package ch.protonmail.android.mailbox.data
 
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
@@ -88,10 +90,9 @@ private const val MAX_LOCATION_ID_LENGTH = 2
 
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 internal class ConversationsRepositoryImpl @Inject constructor(
-    private val conversationDao: ConversationDao,
-    private val messageDao: MessageDao,
+    private val userManager: UserManager,
+    private val databaseProvider: DatabaseProvider,
     private val labelsRepository: LabelRepository,
-    private val unreadCounterDao: UnreadCounterDao,
     private val api: ProtonMailApiManager,
     responseToConversationsMapper: ConversationsResponseToConversationsMapper,
     private val databaseToConversationMapper: ConversationDatabaseModelToConversationMapper,
@@ -108,6 +109,15 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     private val markUnreadLatestNonDraftMessageInLocation: MarkUnreadLatestNonDraftMessageInLocation,
     connectivityManager: NetworkConnectivityManager
 ) : ConversationsRepository {
+
+    private val conversationDao: ConversationDao
+        get() = databaseProvider.provideConversationDao(userManager.requireCurrentUserId())
+
+    private val messageDao: MessageDao
+        get() = databaseProvider.provideMessageDao(userManager.requireCurrentUserId())
+
+    private val unreadCounterDao: UnreadCounterDao
+        get() = databaseProvider.provideUnreadCounterDao(userManager.requireCurrentUserId())
 
     private val refreshUnreadCountersTrigger = MutableSharedFlow<Unit>(replay = 1)
 
@@ -394,6 +404,36 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         }
 
         return ConversationsActionResult.Success
+    }
+
+    override suspend fun updateConvosBasedOnMessagesLocation(
+        userId: UserId,
+        messageIds: List<String>,
+        currentFolderId: String,
+        newFolderId: String
+    ) {
+        messageIds.forEach forEachMessageId@{ messageId ->
+            val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId
+            val conversation = message.conversationId?.let {
+                conversationDao.findConversation(userId.id, it)
+            } ?: return@forEachMessageId
+
+            var labels = conversation.labels
+            labels = updateLabelsAfterMessageAction(
+                message,
+                labels,
+                currentFolderId,
+                shouldAddMessageToLabel = false
+            )
+            labels = updateLabelsAfterMessageAction(
+                message,
+                labels,
+                newFolderId,
+                shouldAddMessageToLabel = true
+            )
+
+            conversationDao.update(conversation.copy(labels = labels))
+        }
     }
 
     override suspend fun delete(

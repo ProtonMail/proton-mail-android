@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.crypto
 
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PROTECTED
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
@@ -73,7 +75,8 @@ abstract class Crypto<K>(
     protected fun requirePrimaryKey(): K =
         checkNotNull(primaryKey) { "No primary key found" }
 
-    protected abstract fun passphraseFor(key: K): ByteArray?
+    @VisibleForTesting(otherwise = PROTECTED)
+    abstract fun passphraseFor(key: K): ByteArray?
 
     protected abstract val K.privateKey: PgpField.PrivateKey
 

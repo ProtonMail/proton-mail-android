@@ -26,19 +26,20 @@ import ch.protonmail.android.core.Constants.MessageLocationType
 /**
  * Ui Model for Items in Navigation Drawer
  * @see ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
- *
- * @author Davide Farella
  */
 internal sealed class DrawerItemUiModel {
 
     /**
-     * Title of a section for the Drawer
-     *
-     * @param text [CharSequence] text of the Section
+     * Header of a section for the Drawer
      */
     data class SectionName(
-        val text: CharSequence
-    ) : DrawerItemUiModel()
+        val text: CharSequence,
+        val type: Type,
+        val shouldShowCreateButton: Boolean
+    ) : DrawerItemUiModel() {
+
+        enum class Type { LABEL, FOLDER, OTHER }
+    }
 
     /**
      * Primary Item for the Drawer.
@@ -134,6 +135,21 @@ internal sealed class DrawerItemUiModel {
             override fun copyWithNotificationCount(count: Int) = copy(notificationCount = count)
             override fun copyWithSelected(select: Boolean) = copy(selected = select)
         }
+    }
+
+    /**
+     * Represent a View ( Button ) for crate a new Item
+     * @see CreateItem.Folder
+     * @see CreateItem.Label
+     */
+    sealed class CreateItem : DrawerItemUiModel() {
+
+        @get:StringRes
+        abstract val textRes: Int
+
+        data class Folder(@StringRes override val textRes: Int) : CreateItem()
+
+        data class Label(@StringRes override val textRes: Int) : CreateItem()
     }
 
     /**

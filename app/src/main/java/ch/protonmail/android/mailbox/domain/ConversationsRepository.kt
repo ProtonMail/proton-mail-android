@@ -110,6 +110,13 @@ interface ConversationsRepository {
         folderId: String
     ): ConversationsActionResult
 
+    suspend fun updateConvosBasedOnMessagesLocation(
+        userId: UserId,
+        messageIds: List<String>,
+        currentFolderId: String,
+        newFolderId: String
+    )
+
     suspend fun delete(conversationIds: List<String>, userId: UserId, currentFolderId: String)
 
     suspend fun updateConversationsAfterDeletingMessages(userId: UserId, messageIds: List<String>)

@@ -87,6 +87,7 @@ import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -150,7 +151,7 @@ internal class MailboxViewModel @Inject constructor(
     private val mutableMailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
     private val mutableMailboxLocation = MutableStateFlow(INBOX)
     private val mutableMailboxLabelId = MutableStateFlow(EMPTY_STRING)
-    private val mutableUserId = userManager.primaryUserId.filterNotNull()
+    private val mutableUserId = userManager.primaryUserId
     private val mutableRefreshFlow = MutableSharedFlow<Boolean>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
@@ -159,12 +160,14 @@ internal class MailboxViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository
         get() = messageDetailsRepositoryFactory.create(userManager.requireCurrentUserId())
 
-    var pendingSendsLiveData = mutableUserId.asLiveData().switchMap {
+    var pendingSendsLiveData = mutableUserId.filterNotNull().asLiveData().switchMap {
         messageDetailsRepository.findAllPendingSendsAsync()
     }
-    var pendingUploadsLiveData = mutableUserId.asLiveData().switchMap {
+    var pendingUploadsLiveData = mutableUserId.filterNotNull().asLiveData().switchMap {
         messageDetailsRepository.findAllPendingUploadsAsync()
     }
+
+    val primaryUserId: Flow<UserId> = mutableUserId.filterNotNull()
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -184,10 +187,12 @@ internal class MailboxViewModel @Inject constructor(
     val mailboxLocation = mutableMailboxLocation.asStateFlow()
 
     val drawerLabels: Flow<DrawerFoldersAndLabelsSectionUiModel> = combine(
-        mutableUserId,
+        mutableUserId.filterNotNull(),
         mutableRefreshFlow.onStart { emit(false) }
     ) { userId, isRefresh -> userId to isRefresh }
-        .flatMapLatest { userIdPair -> observeLabelsAndFoldersWithChildren(userIdPair.first, userIdPair.second) }
+        .flatMapLatest { userIdPair ->
+            observeLabelsAndFoldersWithChildren(userIdPair.first, userIdPair.second)
+        }
         .map { labelsAndFolders ->
             drawerFoldersAndLabelsSectionUiModelMapper.toUiModels(labelsAndFolders)
         }
@@ -197,6 +202,7 @@ internal class MailboxViewModel @Inject constructor(
         mutableRefreshFlow.onStart { emit(false) }
     ) { userId, _ -> userId }
         .flatMapLatest { userId ->
+            if (userId == null) return@flatMapLatest flowOf(emptyList())
             combineTransform(
                 observeAllUnreadCounters(userId),
                 observeConversationModeEnabled(userId)
@@ -223,7 +229,7 @@ internal class MailboxViewModel @Inject constructor(
         combine(
             mutableMailboxLocation,
             mutableMailboxLabelId,
-            mutableUserId,
+            mutableUserId.filterNotNull(),
             mutableRefreshFlow.onStart { emit(false) }
         ) { location, label, userId, isRefresh ->
             Timber.v("New location: $location, label: $label, user: $userId, isRefresh: $isRefresh")
@@ -258,11 +264,6 @@ internal class MailboxViewModel @Inject constructor(
                 mutableMailboxState.value = it
             }
             .launchIn(viewModelScope)
-    }
-
-    fun reloadDependenciesForUser() {
-        pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
-        pendingUploadsLiveData = messageDetailsRepository.findAllPendingUploadsAsync()
     }
 
     fun usedSpaceActionEvent(limitReachedFlow: Int) {

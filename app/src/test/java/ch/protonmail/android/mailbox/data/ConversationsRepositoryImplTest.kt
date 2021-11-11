@@ -21,11 +21,13 @@ package ch.protonmail.android.mailbox.data
 
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
@@ -183,6 +185,11 @@ class ConversationsRepositoryImplTest : ArchTest {
         )
     )
 
+    private val userManager: UserManager = mockk {
+        every { currentUserId } returns testUserId
+        every { requireCurrentUserId() } returns testUserId
+    }
+
     private val conversationDao: ConversationDao = mockk {
         coEvery { updateLabels(any(), any()) } just Runs
         coEvery { insertOrUpdate(*anyVararg()) } just Runs
@@ -196,6 +203,12 @@ class ConversationsRepositoryImplTest : ArchTest {
     private val unreadCounterDao: UnreadCounterDao = mockk {
         every { observeConversationsUnreadCounters(any()) } returns flowOf(emptyList())
         coEvery { insertOrUpdate(any<Collection<UnreadCounterEntity>>()) } just Runs
+    }
+
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { provideConversationDao(any()) } returns conversationDao
+        every { provideMessageDao(any()) } returns messageDao
+        every { provideUnreadCounterDao(any()) } returns unreadCounterDao
     }
 
     private val api: ProtonMailApiManager = mockk {
@@ -239,6 +252,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     private val starredLabelId = MessageLocationType.STARRED.messageLocationTypeValue.toString()
     private val labelId1 = "labelId1"
     private val labelId2 = "labelId2"
+    private val folderId = "folderId"
 
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer = mockk(relaxed = true)
@@ -251,9 +265,8 @@ class ConversationsRepositoryImplTest : ArchTest {
     }
 
     private val conversationsRepository = ConversationsRepositoryImpl(
-        conversationDao = conversationDao,
-        messageDao = messageDao,
-        unreadCounterDao = unreadCounterDao,
+        userManager = userManager,
+        databaseProvider = databaseProvider,
         api = api,
         responseToConversationsMapper = ConversationsResponseToConversationsMapper(
             conversationApiModelToConversationMapper
@@ -1093,6 +1106,53 @@ class ConversationsRepositoryImplTest : ArchTest {
 
             // then
             assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun `verify conversations are updated when messages location changes`() = runBlockingTest {
+        // given
+        val message = Message(
+            messageId = messageId1,
+            conversationId = conversationId1,
+            Unread = false,
+            time = 0,
+            totalSize = 0,
+            numAttachments = 0
+        )
+        val conversation = buildConversationDatabaseModel(
+            id = conversationId1,
+            labels = listOf(
+                buildLabelContextDatabaseModel(
+                    id = inboxLabelId,
+                    contextNumMessages = 1
+                )
+            )
+        )
+        val updatedConversation = buildConversationDatabaseModel(
+            id = conversationId1,
+            labels = listOf(
+                buildLabelContextDatabaseModel(
+                    id = folderId,
+                    contextNumMessages = 1
+                )
+            )
+        )
+        coEvery { messageDao.findMessageByIdOnce(messageId1) } returns message
+        coEvery { conversationDao.findConversation(testUserId.id, conversationId1) } returns conversation
+        coEvery { conversationDao.update(updatedConversation) } returns 123
+
+        // when
+        conversationsRepository.updateConvosBasedOnMessagesLocation(
+            testUserId,
+            listOf(messageId1),
+            inboxLabelId,
+            folderId
+        )
+
+        // then
+        coVerify {
+            conversationDao.update(updatedConversation)
         }
     }
 
