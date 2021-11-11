@@ -19,20 +19,21 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
+import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 /**
- * Get a [List] of [LabelOrFolderWithChildren] filtering by the [LabelType] passed as parameter
+ * Observe a [List] of [LabelOrFolderWithChildren] filtering by the [LabelType] passed as parameter
  */
-class GetLabelsOrFolderWithChildrenByType @Inject constructor(
-    private val observeAllLabelsOrFoldersWithChildrenByType: ObserveLabelsOrFoldersWithChildrenByType
+class ObserveLabelsOrFoldersWithChildrenByType @Inject constructor(
+    private val labelRepository: LabelRepository
 ) {
 
-    suspend operator fun invoke(userId: UserId, labelsType: LabelType): List<LabelOrFolderWithChildren> =
-        observeAllLabelsOrFoldersWithChildrenByType(userId, labelsType).first()
+    operator fun invoke(userId: UserId, labelsType: LabelType): Flow<List<LabelOrFolderWithChildren>> =
+        labelRepository.observeAllLabelsOrFoldersWithChildren(userId, labelsType)
 
 }
