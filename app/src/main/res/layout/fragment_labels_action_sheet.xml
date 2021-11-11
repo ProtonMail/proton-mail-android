@@ -47,7 +47,7 @@
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_labels_sheet_archive_switch"
+                android:id="@+id/labels_sheet_archive_switch_layout"
                 style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_labels_sheet_archive"
+                    android:id="@+id/labels_sheet_archive_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -80,7 +80,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/text_view_labels_sheet_new_label"
+                android:id="@+id/labels_sheet_new_label_text_view"
                 style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                 tools:visibility="visible" />
 
             <TextView
-                android:id="@+id/text_view_labels_sheet_new_folder"
+                android:id="@+id/labels_sheet_new_folder_text_view"
                 style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,7 +106,7 @@
                 tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview_labels_sheet"
+                android:id="@+id/labels_sheet_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_manage_labels_action" />

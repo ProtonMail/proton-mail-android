@@ -83,24 +83,24 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
 
             if (actionSheetType == LabelType.MESSAGE_LABEL) {
                 setRightActionClickListener {
-                    viewModel.onDoneClicked(binding.switchLabelsSheetArchive.isChecked)
+                    viewModel.onDoneClicked(binding.labelsSheetArchiveSwitch.isChecked)
                 }
             }
         }
         val manageLabelsActionAdapter = LabelsActionAdapter(::onLabelClicked)
-        with(binding.recyclerviewLabelsSheet) {
+        with(binding.labelsSheetRecyclerview) {
             layoutManager = LinearLayoutManager(context)
             adapter = manageLabelsActionAdapter
         }
 
-        with(binding.layoutLabelsSheetArchiveSwitch) {
+        with(binding.labelsSheetArchiveSwitchLayout) {
             isVisible = actionSheetType == LabelType.MESSAGE_LABEL
             setOnClickListener {
-                binding.switchLabelsSheetArchive.toggle()
+                binding.labelsSheetArchiveSwitch.toggle()
             }
         }
 
-        binding.textViewLabelsSheetNewLabel.apply {
+        binding.labelsSheetNewLabelTextView.apply {
             isVisible = actionSheetType == LabelType.MESSAGE_LABEL
             setOnClickListener {
                 val createLabelIntent = AppUtil.decorInAppIntent(
@@ -110,7 +110,7 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
             }
         }
 
-        binding.textViewLabelsSheetNewFolder.apply {
+        binding.labelsSheetNewFolderTextView.apply {
             isVisible = actionSheetType == LabelType.FOLDER
             setOnClickListener {
                 val createFolderIntent = AppUtil.decorInAppIntent(
