@@ -28,7 +28,6 @@ import ch.protonmail.android.labels.data.remote.worker.UpdateConversationsLabels
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.domain.usecase.GetLabelsOrFolderWithChildrenByType
 import ch.protonmail.android.labels.domain.usecase.ObserveLabelsOrFoldersWithChildrenByType
 import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
@@ -65,9 +64,8 @@ private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
 @HiltViewModel
 internal class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val getLabelsOrFolderWithChildrenByType: GetLabelsOrFolderWithChildrenByType,
     private val observeLabelsOrFoldersWithChildrenByType: ObserveLabelsOrFoldersWithChildrenByType,
-    private val accountManager: AccountManager,
+    accountManager: AccountManager,
     private val userManager: UserManager,
     private val updateMessageLabels: UpdateMessageLabels,
     private val updateConversationsLabels: UpdateConversationsLabelsWorker.Enqueuer,
