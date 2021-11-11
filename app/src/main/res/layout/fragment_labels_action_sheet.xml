@@ -87,7 +87,7 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/new_label"
+                android:text="@string/x_add_label"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_add"
                 tools:visibility="visible" />
@@ -100,7 +100,7 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/new_folder"
+                android:text="@string/x_add_folder"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_add"
                 tools:visibility="visible" />

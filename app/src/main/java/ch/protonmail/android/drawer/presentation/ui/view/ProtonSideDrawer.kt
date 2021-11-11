@@ -186,10 +186,10 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         mapWithCounters { it.uiModel.labelId }
 
     private fun List<DrawerItemUiModel.Primary.Label>.setCreateFolderButtonIfEmpty() =
-        ifEmpty { listOf(DrawerItemUiModel.CreateItem.Folder(R.string.drawer_add_folder)) }
+        ifEmpty { listOf(DrawerItemUiModel.CreateItem.Folder(R.string.x_add_folder)) }
 
     private fun List<DrawerItemUiModel.Primary.Label>.setCreateLabelButtonIfEmpty() =
-        ifEmpty { listOf(DrawerItemUiModel.CreateItem.Label(R.string.drawer_add_label)) }
+        ifEmpty { listOf(DrawerItemUiModel.CreateItem.Label(R.string.x_add_label)) }
 
     private fun <T : DrawerItemUiModel.Primary> List<T>.mapWithCounters(
         getDrawerItemLabelId: (T) -> String

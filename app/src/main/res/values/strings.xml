@@ -21,6 +21,8 @@
 
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Add folder</string>
+    <string name="x_add_label">Add label</string>
     <string name="x_days">Days</string>
     <string name="x_folders">Folders</string>
     <string name="x_hours">Hours</string>
@@ -38,8 +40,6 @@
     <string name="drawer_settings">Settings</string>
     <string name="drawer_subscription">Subscription</string>
     <string name="drawer_sign_out">Sign out</string>
-    <string name="drawer_add_folder">Add folder</string>
-    <string name="drawer_add_label">Add label</string>
     <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
 
@@ -1050,8 +1050,6 @@
     <string name="unstar">Unstar</string>
     <string name="star_unstar">Star/unstar</string>
     <string name="send_to_archive">Send to archive?</string>
-    <string name="new_label">New Label</string>
-    <string name="new_folder">New Folder</string>
     <string name="label_as">Label as…</string>
     <string name="mark_as_unread">Mark as unread</string>
     <string name="mark_as_read">Mark as read</string>
