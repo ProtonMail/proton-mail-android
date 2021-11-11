@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.labels.presentation.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,10 +35,13 @@ import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
+import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.LabelsActionAdapter
 import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
+import ch.protonmail.android.labels.presentation.LabelsManagerActivity
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
+import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -97,18 +101,22 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
         }
 
         binding.textViewLabelsSheetNewLabel.apply {
-            // TODO: Change visibility logic when the feature is implemented
-            isVisible = false
+            isVisible = actionSheetType == LabelType.MESSAGE_LABEL
             setOnClickListener {
-                // TODO: Link it to appropriate setting section for adding new Label
+                val createLabelIntent = AppUtil.decorInAppIntent(
+                    Intent(requireContext(), LabelsManagerActivity::class.java)
+                )
+                startActivity(createLabelIntent)
             }
         }
 
         binding.textViewLabelsSheetNewFolder.apply {
-            // TODO: Change visibility logic when the feature is implemented
-            isVisible = false
+            isVisible = actionSheetType == LabelType.FOLDER
             setOnClickListener {
-                // TODO: Link it to appropriate setting section for adding new Folder
+                val createFolderIntent = AppUtil.decorInAppIntent(
+                    Intent(requireContext(), LabelsManagerActivity::class.java)
+                ).putExtra(EXTRA_MANAGE_FOLDERS, true)
+                startActivity(createFolderIntent)
             }
         }
 
