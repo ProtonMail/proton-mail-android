@@ -42,6 +42,7 @@ import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -319,11 +320,17 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         binding.textViewDetailsActionsDelete.apply {
             isVisible = state.showDeleteAction
             setOnClickListener {
-                viewModel.delete(
-                    messageIds,
-                    currentLocation,
-                    state.actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
-                )
+                showDeleteConfirmationDialog(
+                    context,
+                    getString(R.string.delete_messages),
+                    getString(R.string.confirm_destructive_action)
+                ) {
+                    viewModel.delete(
+                        messageIds,
+                        currentLocation,
+                        state.actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                    )
+                }
             }
         }
 

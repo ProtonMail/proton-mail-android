@@ -72,6 +72,7 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider
 import ch.protonmail.android.views.messageDetails.BottomActionsView
@@ -635,9 +636,18 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
         messageDetailsActionsView.setOnSecondActionClickListener {
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) {
-                viewModel.delete()
-            } else viewModel.moveToTrash()
-            onBackPressed()
+                showDeleteConfirmationDialog(
+                    this,
+                    getString(R.string.delete_messages),
+                    getString(R.string.confirm_destructive_action)
+                ) {
+                    viewModel.delete()
+                    onBackPressed()
+                }
+            } else {
+                viewModel.moveToTrash()
+                onBackPressed()
+            }
         }
         messageDetailsActionsView.setOnFirstActionClickListener {
             onBackPressed()
