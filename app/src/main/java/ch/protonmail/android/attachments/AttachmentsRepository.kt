@@ -85,7 +85,8 @@ class AttachmentsRepository @Inject constructor(
             val mimeType = attachment.mimeType
             val filename = attachment.fileName
             if (mimeType == null || filename == null) {
-                Timber.e("Upload attachment failed: mimeType or filename were null")
+                Timber.e("Upload attachment failed for " +
+                    "${attachment.attachmentId} message ${attachment.messageId}: mimeType or filename were null")
                 return@withContext Result.Failure("This attachment name / type is invalid. Please retry")
             }
 
@@ -102,6 +103,7 @@ class AttachmentsRepository @Inject constructor(
                 if (isAttachmentInline(headers)) {
                     requireNotNull(headers)
 
+                    Timber.w("Uploading inline attachment ${attachment.attachmentId} for message ${attachment.messageId}")
                     apiManager.uploadAttachmentInline(
                         attachment,
                         attachment.messageId,
@@ -111,6 +113,7 @@ class AttachmentsRepository @Inject constructor(
                         signature
                     )
                 } else {
+                    Timber.w("Uploading attachment ${attachment.attachmentId} for message ${attachment.messageId}")
                     apiManager.uploadAttachment(
                         attachment,
                         keyPackage,
@@ -119,13 +122,16 @@ class AttachmentsRepository @Inject constructor(
                     )
                 }
             } catch (exception: IOException) {
-                Timber.e("Upload attachment failed: $exception")
+                Timber.e("Upload attachment ${attachment.attachmentId} failed for " +
+                    "message ${attachment.messageId}: $exception")
                 return@withContext Result.Failure("Upload attachment request failed")
             } catch (cancellationException: CancellationException) {
-                Timber.w("Upload attachment was cancelled. $cancellationException. Rethrowing")
+                Timber.w("Upload attachment ${attachment.attachmentId} was cancelled for message " +
+                    "${attachment.messageId}. $cancellationException. Rethrowing")
                 throw cancellationException
             } catch (exception: Exception) {
-                Timber.w("Upload attachment failed throwing generic exception: $exception")
+                Timber.e("Upload attachment ${attachment.attachmentId} failed for message " +
+                    "${attachment.messageId} throwing generic exception: $exception")
                 return@withContext Result.Failure("Upload attachment request failed")
             }
 
@@ -141,7 +147,8 @@ class AttachmentsRepository @Inject constructor(
                 return@withContext Result.Success(uploadResult.attachmentID)
             }
 
-            Timber.e("Upload attachment failed: ${uploadResult.error}")
+            Timber.e("Upload attachment ${attachment.attachmentId} failed for message" +
+                " ${attachment.messageId} error: ${uploadResult.error}")
             return@withContext Result.Failure(uploadResult.error)
         }
 

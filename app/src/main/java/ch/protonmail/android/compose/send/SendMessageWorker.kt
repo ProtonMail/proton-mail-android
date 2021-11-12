@@ -237,15 +237,18 @@ class SendMessageWorker @WorkerInject constructor(
         sendPreferences: List<SendPreference>,
         username: String
     ): MessageSendBody {
-            val securityOptions = requireInputMessageSecurityOptions()
-            val packages = packagesFactory.generatePackages(
-                savedDraftMessage,
-                sendPreferences,
-                securityOptions,
-                username
-            )
-            val autoSaveContacts = userManager.getMailSettings(username)?.autoSaveContacts ?: NO_CONTACTS_AUTO_SAVE
-            return MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
+        val securityOptions = requireInputMessageSecurityOptions()
+        val packages = packagesFactory.generatePackages(
+            savedDraftMessage,
+            sendPreferences,
+            securityOptions,
+            username
+        )
+        val autoSaveContacts = userManager.getMailSettings(username)?.autoSaveContacts ?: NO_CONTACTS_AUTO_SAVE
+        if (packages.size >= 1)
+            Timber.w("Create RequestBody for message " +
+                "${savedDraftMessage.messageId} sending with attachments: ${packages[0].attachmentKeys}.")
+        return MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
     }
 
     private fun requestSendPreferences(message: Message, username: String): List<SendPreference>? {

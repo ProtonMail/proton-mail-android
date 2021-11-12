@@ -78,13 +78,14 @@ class UploadAttachments @WorkerInject constructor(
             val addressId = requireNotNull(message.addressID)
             val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(userManager.username))
 
+            Timber.w("Calling upload attachments from inside worker for $messageId.")
             return@withContext when (val result = upload(newAttachments, message, addressCrypto, isMessageSending)) {
                 is Result.Success -> ListenableWorker.Result.success()
-                is Result.Failure -> retryOrFail(result.error)
+                is Result.Failure -> retryOrFail(result.error, messageId = message.messageId)
             }
         }
 
-        return@withContext failureWithError("Message not found")
+        return@withContext failureWithError("Message not found", messageId = messageId)
     }
 
     private suspend fun upload(
@@ -136,6 +137,8 @@ class UploadAttachments @WorkerInject constructor(
             }
             attachment.setMessage(message)
 
+            Timber.w("Calling repository upload attachment " +
+                "$attachmentId from inside worker for $messageId.")
             val result = attachmentsRepository.upload(attachment, crypto)
 
             when (result) {
@@ -175,17 +178,18 @@ class UploadAttachments @WorkerInject constructor(
 
     private fun retryOrFail(
         error: String,
-        exception: Throwable? = null
+        exception: Throwable? = null,
+        messageId: String?
     ): ListenableWorker.Result {
         if (runAttemptCount < UPLOAD_ATTACHMENTS_MAX_RETRIES) {
             Timber.d("UploadAttachments Worker failed with error = $error, exception = $exception. Retrying...")
             return ListenableWorker.Result.retry()
         }
-        return failureWithError(error, exception)
+        return failureWithError(error, exception, messageId)
     }
 
-    private fun failureWithError(error: String, exception: Throwable? = null): ListenableWorker.Result {
-        Timber.e("UploadAttachments Worker failed permanently. error = $error, exception = $exception. FAILING")
+    private fun failureWithError(error: String, exception: Throwable? = null, messageId: String?): ListenableWorker.Result {
+        Timber.e("UploadAttachments Worker failed permanently for $messageId. error = $error, exception = $exception. FAILING")
         val errorData = workDataOf(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to error)
         return ListenableWorker.Result.failure(errorData)
     }
