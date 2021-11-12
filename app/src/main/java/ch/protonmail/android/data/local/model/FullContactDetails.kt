@@ -78,7 +78,7 @@ data class FullContactDetails @Ignore constructor(
     var emails: List<ContactEmail>? = null,
 
     @ColumnInfo(name = COLUMN_CONTACT_ENCRYPTED_DATA)
-    var encryptedData: MutableList<ContactEncryptedData>? = null
+    var encryptedData: List<ContactEncryptedData>? = null
 ) {
 
     /**
@@ -92,7 +92,7 @@ data class FullContactDetails @Ignore constructor(
         modifyTime: Long,
         size: Int,
         defaults: Int,
-        encryptedData: MutableList<ContactEncryptedData>?
+        encryptedData: List<ContactEncryptedData>?
     ) : this(
         contactId,
         name,
@@ -106,8 +106,7 @@ data class FullContactDetails @Ignore constructor(
     )
 
     fun addEncryptedData(data: ContactEncryptedData) {
-        encryptedData?.add(data)
-            ?: run { encryptedData = mutableListOf(data) }
+        encryptedData = (encryptedData ?: emptyList()) + data
     }
 
     fun getPublicKeys(crypto: UserCrypto, email: String): List<String> {
