@@ -112,7 +112,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
             else CreateButtonState.Hidden
 
         foldersSectionItem = DrawerItemUiModel.SectionName(
-            text = context.getText(sectionNameRes),
+            text = sectionNameRes,
             type = DrawerItemUiModel.SectionName.Type.FOLDER,
             createButtonState = createButtonState
         )
@@ -129,7 +129,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
             else CreateButtonState.Hidden
 
         labelsSectionItem = DrawerItemUiModel.SectionName(
-            text = context.getText(sectionNameRes),
+            text = sectionNameRes,
             type = DrawerItemUiModel.SectionName.Type.LABEL,
             createButtonState = createButtonState
         )
@@ -150,7 +150,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
 
     fun setMoreItems(@StringRes sectionNameRes: Int, items: List<DrawerItemUiModel.Primary.Static>) {
         moreSectionItem = DrawerItemUiModel.SectionName(
-            text = context.getText(sectionNameRes),
+            text = sectionNameRes,
             type = DrawerItemUiModel.SectionName.Type.OTHER,
             createButtonState = CreateButtonState.Hidden
         )

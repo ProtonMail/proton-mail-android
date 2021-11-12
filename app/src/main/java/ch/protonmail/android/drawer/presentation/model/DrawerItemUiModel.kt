@@ -37,7 +37,7 @@ internal sealed class DrawerItemUiModel {
      *  content description ( for accessibility )
      */
     data class SectionName(
-        val text: CharSequence,
+        @StringRes val text: Int,
         val type: Type,
         val createButtonState: CreateButtonState
     ) : DrawerItemUiModel() {
