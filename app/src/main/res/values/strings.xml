@@ -40,7 +40,8 @@
     <string name="drawer_settings">Settings</string>
     <string name="drawer_subscription">Subscription</string>
     <string name="drawer_sign_out">Sign out</string>
-    <string name="drawer_create_icon_description">Create new item</string>
+    <string name="drawer_create_folder_description">Create new folder</string>
+    <string name="drawer_create_label_description">Create new label</string>
     <!-- endregion -->
 
     <!-- region Composer -->

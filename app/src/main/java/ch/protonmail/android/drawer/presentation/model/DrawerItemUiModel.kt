@@ -31,14 +31,24 @@ internal sealed class DrawerItemUiModel {
 
     /**
      * Header of a section for the Drawer
+     *
+     * @property text Name of the section, e.g. Labels
+     * @property createButtonState whether the Button for create a new Item should be shown and what would be its
+     *  content description ( for accessibility )
      */
     data class SectionName(
         val text: CharSequence,
         val type: Type,
-        val shouldShowCreateButton: Boolean
+        val createButtonState: CreateButtonState
     ) : DrawerItemUiModel() {
 
         enum class Type { LABEL, FOLDER, OTHER }
+
+        sealed class CreateButtonState {
+
+            object Hidden : CreateButtonState()
+            class Shown(@StringRes val contentDescriptionRes: Int) : CreateButtonState()
+        }
     }
 
     /**

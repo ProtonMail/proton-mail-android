@@ -32,6 +32,7 @@ import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.CreateI
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Footer
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.SectionName
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.SectionName.CreateButtonState
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
@@ -152,13 +153,18 @@ internal class DrawerAdapter(
             super.onBind(item)
             binding.drawerSectionNameTextView.text = item.text
             binding.drawerSectionNameCreateButton.apply {
-                isVisible = item.shouldShowCreateButton
-                onClick {
-                    when (item.type) {
-                        SectionName.Type.FOLDER -> onCreateFolder()
-                        SectionName.Type.LABEL -> onCreateLabel()
-                        else -> {}
+                if (item.createButtonState is CreateButtonState.Shown) {
+                    isVisible = true
+                    contentDescription = getString(item.createButtonState.contentDescriptionRes)
+                    onClick {
+                        when (item.type) {
+                            SectionName.Type.FOLDER -> onCreateFolder()
+                            SectionName.Type.LABEL -> onCreateLabel()
+                            else -> {}
+                        }
                     }
+                } else {
+                    isVisible = false
                 }
             }
         }

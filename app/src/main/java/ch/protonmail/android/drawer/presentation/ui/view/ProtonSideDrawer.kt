@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.SectionName.CreateButtonState
 import ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 
@@ -106,10 +107,14 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         @StringRes sectionNameRes: Int,
         items: List<DrawerItemUiModel.Primary.Label>
     ) {
+        val createButtonState =
+            if (items.isNotEmpty()) CreateButtonState.Shown(R.string.drawer_create_folder_description)
+            else CreateButtonState.Hidden
+
         foldersSectionItem = DrawerItemUiModel.SectionName(
             text = context.getText(sectionNameRes),
             type = DrawerItemUiModel.SectionName.Type.FOLDER,
-            shouldShowCreateButton = items.isNotEmpty()
+            createButtonState = createButtonState
         )
         folderItems = items
         update()
@@ -119,10 +124,14 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         @StringRes sectionNameRes: Int,
         items: List<DrawerItemUiModel.Primary.Label>
     ) {
+        val createButtonState =
+            if (items.isNotEmpty()) CreateButtonState.Shown(R.string.drawer_create_label_description)
+            else CreateButtonState.Hidden
+
         labelsSectionItem = DrawerItemUiModel.SectionName(
             text = context.getText(sectionNameRes),
             type = DrawerItemUiModel.SectionName.Type.LABEL,
-            shouldShowCreateButton = items.isNotEmpty()
+            createButtonState = createButtonState
         )
         labelItems = items
         update()
@@ -143,7 +152,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         moreSectionItem = DrawerItemUiModel.SectionName(
             text = context.getText(sectionNameRes),
             type = DrawerItemUiModel.SectionName.Type.OTHER,
-            shouldShowCreateButton = false
+            createButtonState = CreateButtonState.Hidden
         )
         moreItems = items
         update()
