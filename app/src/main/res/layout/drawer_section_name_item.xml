@@ -43,6 +43,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginHorizontal="@dimen/padding_l" />
 
+    <!-- Content description set in the adapter -->
     <ImageButton
         android:id="@+id/drawer_section_name_create_button"
         style="@style/ProtonImage.ImageButton"
@@ -57,5 +58,6 @@
         app:tint="@color/icon_weak"
         android:visibility="gone"
         tools:visibility="visible"
-        android:contentDescription="@string/drawer_create_icon_description"/>
+        tools:ignore="ContentDescription" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
