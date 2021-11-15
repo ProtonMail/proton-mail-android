@@ -31,7 +31,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.domain.usecase.GetLabelsOrFolderWithChildrenByType
+import ch.protonmail.android.labels.domain.usecase.ObserveLabelsOrFoldersWithChildrenByType
 import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
@@ -79,8 +79,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @MockK
     private lateinit var userManager: UserManager
 
-    private val getLabelsOrFolderWithChildrenByType: GetLabelsOrFolderWithChildrenByType = mockk {
-        coEvery { this@mockk(any(), any()) } returns emptyList()
+    private val observeLabelsOrFoldersWithChildrenByType: ObserveLabelsOrFoldersWithChildrenByType = mockk {
+        coEvery { this@mockk(any(), any()) } returns flowOf(emptyList())
     }
 
     private val accountManager: AccountManager = mockk {
@@ -240,8 +240,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
 
             // given
-            coEvery { getLabelsOrFolderWithChildrenByType(any(), any()) } returns
-                listOf(buildLabelOrFolderWithChildrenLabel(id = LabelId(labelId1), name = title))
+            coEvery { observeLabelsOrFoldersWithChildrenByType(any(), any()) } returns
+                flowOf(listOf(buildLabelOrFolderWithChildrenLabel(id = LabelId(labelId1), name = title)))
             coEvery { userManager.didReachLabelsThreshold(any()) } returns false
             val viewModel = buildViewModel()
 
@@ -257,8 +257,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyThatAfterOnLabelIsClickedForLabelTypeStandardLabelsAreAdded() = runBlockingTest {
 
         // given
-        coEvery { getLabelsOrFolderWithChildrenByType(any(), any()) } returns
-            listOf(buildLabelOrFolderWithChildrenLabel(id = LabelId(labelId1), name = title))
+        coEvery { observeLabelsOrFoldersWithChildrenByType(any(), any()) } returns
+            flowOf(listOf(buildLabelOrFolderWithChildrenLabel(id = LabelId(labelId1), name = title)))
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
         val viewModel = buildViewModel()
 
@@ -281,7 +281,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             }
             coEvery { messageRepository.findMessageById(any()) } returns testMessage
             val expectedResult = ManageLabelActionResult.ErrorLabelsThresholdReached(maximumLabelsSelectedThreshold)
-            coEvery { getLabelsOrFolderWithChildrenByType(any(), any()) } returns buildAListOfMoreThanOneHundredSelectedLabels()
+            coEvery { observeLabelsOrFoldersWithChildrenByType(any(), any()) } returns
+                flowOf(buildAListOfMoreThanOneHundredSelectedLabels())
             val labelsActionSheetViewModel = buildViewModel()
 
             // when
@@ -374,7 +375,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     private fun buildViewModel() = LabelsActionSheetViewModel(
         savedStateHandle = savedStateHandle,
-        getLabelsOrFolderWithChildrenByType = getLabelsOrFolderWithChildrenByType,
+        observeLabelsOrFoldersWithChildrenByType = observeLabelsOrFoldersWithChildrenByType,
         accountManager = accountManager,
         userManager = userManager,
         updateMessageLabels = updateMessageLabels,

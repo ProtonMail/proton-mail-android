@@ -28,7 +28,7 @@ import ch.protonmail.android.labels.data.remote.worker.UpdateConversationsLabels
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.domain.usecase.GetLabelsOrFolderWithChildrenByType
+import ch.protonmail.android.labels.domain.usecase.ObserveLabelsOrFoldersWithChildrenByType
 import ch.protonmail.android.labels.domain.usecase.UpdateMessageLabels
 import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
@@ -45,8 +45,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.arch.onSuccess
@@ -59,8 +64,8 @@ private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
 @HiltViewModel
 internal class LabelsActionSheetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val getLabelsOrFolderWithChildrenByType: GetLabelsOrFolderWithChildrenByType,
-    private val accountManager: AccountManager,
+    private val observeLabelsOrFoldersWithChildrenByType: ObserveLabelsOrFoldersWithChildrenByType,
+    accountManager: AccountManager,
     private val userManager: UserManager,
     private val updateMessageLabels: UpdateMessageLabels,
     private val updateConversationsLabels: UpdateConversationsLabelsWorker.Enqueuer,
@@ -90,44 +95,46 @@ internal class LabelsActionSheetViewModel @Inject constructor(
     private val labelsMutableFlow = MutableStateFlow(emptyList<LabelActonItemUiModel>())
     private val actionsResultMutableFlow = MutableStateFlow<ManageLabelActionResult>(ManageLabelActionResult.Default)
 
-    val labels: StateFlow<List<LabelActonItemUiModel>>
-        get() = labelsMutableFlow
+    val labels: StateFlow<List<LabelActonItemUiModel>> =
+        labelsMutableFlow.asStateFlow()
 
     val actionsResult: StateFlow<ManageLabelActionResult>
         get() = actionsResultMutableFlow
 
     init {
-        viewModelScope.launch {
-            val userId = accountManager.getPrimaryUserId().filterNotNull().first()
-            val allLabels = getLabelsOrFolderWithChildrenByType(userId, labelsSheetType)
+        accountManager.getPrimaryUserId().filterNotNull()
+            .flatMapLatest { observeLabelsOrFoldersWithChildrenByType(it, labelsSheetType) }
+            .map {
+                val uiModels = labelDomainUiMapper.toUiModels(it, getCheckedLabelsForAllMailboxItems(messageIds))
 
-            val savedModels = labelDomainUiMapper
-                .toUiModels(allLabels, getCheckedLabelsForAllMailboxItems(messageIds))
+                val isConversationItemInDetails =
+                    actionSheetTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                val isTrashFolder = currentMessageFolder == Constants.MessageLocationType.TRASH
+                val currentMessageFolder =
+                    if (isConversationItemInDetails || isTrashFolder) currentMessageFolder
+                    else Constants.MessageLocationType.INVALID
 
-            labelsMutableFlow.value = getAllModels(
-                if (actionSheetTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN ||
-                    currentMessageFolder == Constants.MessageLocationType.TRASH
-                ) currentMessageFolder
-                else Constants.MessageLocationType.INVALID,
-                labelsSheetType,
-                savedModels
-            )
-
-        }
+                getAllModels(
+                    currentMessageFolder = currentMessageFolder,
+                    labelsSheetType = labelsSheetType,
+                    uiLabelsFromDatabase = uiModels
+                )
+            }
+            .onEach { labelsMutableFlow.value = it }
+            .launchIn(viewModelScope)
     }
 
     private fun getAllModels(
         currentMessageFolder: Constants.MessageLocationType?,
         labelsSheetType: LabelType,
-        uiLabelsFromDb: List<LabelActonItemUiModel>
+        uiLabelsFromDatabase: List<LabelActonItemUiModel>
     ): List<LabelActonItemUiModel> {
         return if (labelsSheetType == LabelType.FOLDER) {
             requireNotNull(currentMessageFolder)
-            uiLabelsFromDb + getStandardFolders(currentMessageFolder)
+            uiLabelsFromDatabase + getStandardFolders(currentMessageFolder)
         } else
-            uiLabelsFromDb
+            uiLabelsFromDatabase
     }
-
 
     private fun getStandardFolders(
         currentMessageFolder: Constants.MessageLocationType
