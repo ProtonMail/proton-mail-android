@@ -36,6 +36,9 @@
     <string name="drawer_settings">Einstellungen</string>
     <string name="drawer_subscription">Abonnement</string>
     <string name="drawer_sign_out">Abmelden</string>
+    <string name="drawer_add_folder">Ordner hinzufügen</string>
+    <string name="drawer_add_label">Kategorie hinzufügen</string>
+    <string name="drawer_create_icon_description">Neues Element erstellen</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">BCC:</string>
@@ -757,7 +760,9 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="plan_and_user">Tarif</string>
     <string name="payment_method">Zahlungsmethode</string>
     <string name="password_manager">Passwörter verwalten</string>
+    <string name="password_changed">Passwort wurde geändert.</string>
     <string name="recovery_email">Wiederherstellungs-E-Mail-Adresse</string>
+    <string name="recovery_email_changed">Wiederherstellungs-E-Mail-Adresse wurde geändert.</string>
     <string name="info_for_missing_functionality">Bitte melden Sie sich über <a href="https://www.protonmail.com/">protonmail.com</a> an und öffnen Sie Ihre Einstellungen, um diese Informationen bearbeiten zu können.</string>
     <string name="storage">Größe des Postfachs</string>
     <string name="storage_used">%1$s / %2$s</string>

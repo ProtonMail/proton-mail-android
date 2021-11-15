@@ -36,6 +36,9 @@
     <string name="drawer_settings">Definições</string>
     <string name="drawer_subscription">Subscrição</string>
     <string name="drawer_sign_out">Terminar sessão</string>
+    <string name="drawer_add_folder">Add folder</string>
+    <string name="drawer_add_label">Add label</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -766,7 +769,9 @@
     <string name="plan_and_user">Plano</string>
     <string name="payment_method">Método de pagamento</string>
     <string name="password_manager">Gestão de senhas</string>
+    <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Email de recuperação</string>
+    <string name="recovery_email_changed">Recovery email changed.</string>
     <string name="info_for_missing_functionality">Inicie a sessão através do <a href="https://www.protonmail.com/">protonmail.com</a> e aceda às definições para editar esta informação.</string>
     <string name="storage">Tamanho da caixa de correio</string>
     <string name="storage_used">%1$s/%2$s</string>

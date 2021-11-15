@@ -36,6 +36,9 @@
     <string name="drawer_settings">Налаштування</string>
     <string name="drawer_subscription">Передплата</string>
     <string name="drawer_sign_out">Вийти</string>
+    <string name="drawer_add_folder">Додати теку</string>
+    <string name="drawer_add_label">Додати мітку</string>
+    <string name="drawer_create_icon_description">Створити новий елемент</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Прихована копія:</string>
@@ -794,7 +797,9 @@
     <string name="plan_and_user">Тарифний план</string>
     <string name="payment_method">Спосіб оплати</string>
     <string name="password_manager">Керування паролями</string>
+    <string name="password_changed">Пароль змінено.</string>
     <string name="recovery_email">Пошта для відновлення доступу</string>
+    <string name="recovery_email_changed">Е-пошту для відновлення доступу змінено.</string>
     <string name="info_for_missing_functionality">Будь ласка, увійдіть до <a href="https://www.protonmail.com/">protonmail.com</a> та отримайте доступ до налаштувань, щоб змінити ці дані.</string>
     <string name="storage">Розмір поштової скриньки</string>
     <string name="storage_used">%1$s / %2$s</string>

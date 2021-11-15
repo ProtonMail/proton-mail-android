@@ -36,6 +36,9 @@
     <string name="drawer_settings">Impostazioni</string>
     <string name="drawer_subscription">Abbonamento</string>
     <string name="drawer_sign_out">Esci</string>
+    <string name="drawer_add_folder">Aggiungi cartella</string>
+    <string name="drawer_add_label">Aggiungi etichetta</string>
+    <string name="drawer_create_icon_description">Crea nuovo elemento</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Ccn:</string>
@@ -767,7 +770,9 @@
     <string name="plan_and_user">Piano</string>
     <string name="payment_method">Metodo di pagamento</string>
     <string name="password_manager">Gestione password</string>
+    <string name="password_changed">Password cambiata.</string>
     <string name="recovery_email">Email di recupero</string>
+    <string name="recovery_email_changed">Email di recupero modificata.</string>
     <string name="info_for_missing_functionality">Sei pregato di accedere tramite <a href="https://www.protonmail.com/">protonmail.com</a> e accedere alle tue impostazioni per modificare quest\'informazione.</string>
     <string name="storage">Spazio della casella email</string>
     <string name="storage_used">%1$s / %2$s</string>

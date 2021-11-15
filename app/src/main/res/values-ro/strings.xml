@@ -36,6 +36,9 @@
     <string name="drawer_settings">Setări</string>
     <string name="drawer_subscription">Abonament</string>
     <string name="drawer_sign_out">Deconectare</string>
+    <string name="drawer_add_folder">Adăugare folder</string>
+    <string name="drawer_add_label">Adăugare etichetă</string>
+    <string name="drawer_create_icon_description">Creați un nou element</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Ca:</string>
@@ -779,7 +782,9 @@
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Metodă de plată</string>
     <string name="password_manager">Gestionare parole</string>
+    <string name="password_changed">Parolă schimbată.</string>
     <string name="recovery_email">E-mail de recuperare</string>
+    <string name="recovery_email_changed">Emailul de recuperare s-a schimbat.</string>
     <string name="info_for_missing_functionality">Autentificați-vă prin <a href="https://www.protonmail.com/">protonmail.com</a> și accesați-vă setările pentru a edita aceste informații.</string>
     <string name="storage">Mărime folder mesaje</string>
     <string name="storage_used">%1$s / %2$s</string>

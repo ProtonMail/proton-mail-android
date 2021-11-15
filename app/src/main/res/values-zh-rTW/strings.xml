@@ -36,6 +36,9 @@
     <string name="drawer_settings">設定</string>
     <string name="drawer_subscription">訂閲</string>
     <string name="drawer_sign_out">登出</string>
+    <string name="drawer_add_folder">新增資料夾</string>
+    <string name="drawer_add_label">新增標籤</string>
+    <string name="drawer_create_icon_description">建立新項目</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密件副本：</string>
@@ -751,7 +754,9 @@
     <string name="plan_and_user">方案</string>
     <string name="payment_method">付款方式</string>
     <string name="password_manager">密碼管理</string>
+    <string name="password_changed">密碼已變更。</string>
     <string name="recovery_email">備援電子郵件</string>
+    <string name="recovery_email_changed">備援電子郵件地址已變更。</string>
     <string name="info_for_missing_functionality">請登入 <a href="https://www.protonmail.com/">protonmail.com</a> 並存取您的設定以編輯此資訊。</string>
     <string name="storage">信箱大小</string>
     <string name="storage_used">%1$s / %2$s</string>

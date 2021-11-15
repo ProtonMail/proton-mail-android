@@ -36,6 +36,9 @@
     <string name="drawer_settings">Beállítások</string>
     <string name="drawer_subscription">Előfizetés</string>
     <string name="drawer_sign_out">Kijelentkezés</string>
+    <string name="drawer_add_folder">Add folder</string>
+    <string name="drawer_add_label">Add label</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Titkos másolat:</string>
@@ -767,7 +770,9 @@ Svájci székhellyel</string>
     <string name="plan_and_user">Csomag</string>
     <string name="payment_method">Fizetési mód</string>
     <string name="password_manager">Jelszókezelő</string>
+    <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Helyreállítási e-mail</string>
+    <string name="recovery_email_changed">Recovery email changed.</string>
     <string name="info_for_missing_functionality">Kérjük, jelentkezzen be a <a href="https://www.protonmail.com/">protonmail.com</a> -on keresztül, és a beállításoknál módosítsa ezt az információt.</string>
     <string name="storage">Postafiók mérete</string>
     <string name="storage_used">%1$s / %2$s</string>

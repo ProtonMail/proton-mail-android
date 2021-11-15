@@ -36,6 +36,9 @@
     <string name="drawer_settings">Ρυθμίσεις</string>
     <string name="drawer_subscription">Συνδρομή</string>
     <string name="drawer_sign_out">Αποσύνδεση</string>
+    <string name="drawer_add_folder">Προσθήκη φακέλου</string>
+    <string name="drawer_add_label">Προσθήκη ετικέτας</string>
+    <string name="drawer_create_icon_description">Δημιουργία νέου στοιχείου</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Κρυφή κοιν: </string>
@@ -766,7 +769,9 @@
     <string name="plan_and_user">Πλάνο</string>
     <string name="payment_method">Τρόπος Πληρωμής</string>
     <string name="password_manager">Διαχειριστής κωδικών πρόσβασης</string>
+    <string name="password_changed">Ο κωδικός πρόσβασης άλλαξε.</string>
     <string name="recovery_email">Email ανάκτησης</string>
+    <string name="recovery_email_changed">Η διεύθυνση ανάκτησης άλλαξε.</string>
     <string name="info_for_missing_functionality">Παρακαλούμε συνδεθείτε μέσω του <a href="https://www.protonmail.com/">protonmail.com</a> και αποκτήστε πρόσβαση στις ρυθμίσεις σας για να επεξεργαστείτε αυτές τις πληροφορίες.</string>
     <string name="storage">Μέγεθος θυρίδας</string>
     <string name="storage_used">%1$s / %2$s</string>

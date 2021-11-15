@@ -36,6 +36,9 @@
     <string name="drawer_settings">Configuración</string>
     <string name="drawer_subscription">Suscripción</string>
     <string name="drawer_sign_out">Cerrar sesión</string>
+    <string name="drawer_add_folder">Add folder</string>
+    <string name="drawer_add_label">Add label</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -330,7 +333,7 @@
     <string name="engagement_title_help">Ayuda y Soporte</string>
     <string name="engagement_title_support_protonmail">Apoye a ProtonMail</string>
     <string name="engagement_subtitle_welcome">Tu nueva cuenta de correo electrónico cifrado ha sido configurada y está lista para enviar y recibir mensajes cifrados.</string>
-    <string name="engagement_subtitle_swipe">Puedes personalizar gestos de deslizamiento en los ajustes de la aplicación de ProtonMail.</string>
+    <string name="engagement_subtitle_swipe">Puedes personalizar las acciones al deslizar en los ajustes de la aplicación de ProtonMail.</string>
     <string name="engagement_subtitle_labels">Crea y añade etiquetas para organizar tu bandeja de entrada. Mantén pulsado un mensaje para ver todas las opciones.</string>
     <string name="engagement_subtitle_encryption">Su buzón ahora está protegido con cifrado de extremo a extremo. Para enviar automáticamente correos electrónicos seguros a sus contactos, ¡invítelos a usar ProtonMail! También puede cifrar los mensajes manualmente si no utilizan ProtonMail.</string>
     <string name="engagement_subtitle_expire">Los mensajes que envíe se pueden establecer con borrado automático después de un cierto período de tiempo.</string>
@@ -767,7 +770,9 @@ compre más
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Método de pago</string>
     <string name="password_manager">Gestión de contraseñas</string>
+    <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Correo de recuperación</string>
+    <string name="recovery_email_changed">Recovery email changed.</string>
     <string name="info_for_missing_functionality">Inicia sesión a través de <a href="https://www.protonmail.com/">protonmail.com</a> y accede a tu configuración para editar esta información.</string>
     <string name="storage">Tamaño del buzón</string>
     <string name="storage_used">%1$s / %2$s</string>

@@ -36,6 +36,9 @@
     <string name="drawer_settings">Ustawienia</string>
     <string name="drawer_subscription">Subskrypcja</string>
     <string name="drawer_sign_out">Wyloguj</string>
+    <string name="drawer_add_folder">Dodaj folder</string>
+    <string name="drawer_add_label">Dodaj etykietę</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Udw:</string>
@@ -791,7 +794,9 @@
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Metoda płatności</string>
     <string name="password_manager">Zarządzaniem hasłem</string>
+    <string name="password_changed">Hasło zostało zmienione.</string>
     <string name="recovery_email">Adres pomocniczy</string>
+    <string name="recovery_email_changed">Adres pomocniczy został zmieniony.</string>
     <string name="info_for_missing_functionality">Zaloguj się przez <a href="https://www.protonmail.com/">protonmail.com</a> i uzyskaj dostęp do swoich ustawień.</string>
     <string name="storage">Rozmiar skrzynki pocztowej</string>
     <string name="storage_used">%1$s / %2$s</string>

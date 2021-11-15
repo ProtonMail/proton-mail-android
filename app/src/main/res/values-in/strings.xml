@@ -36,6 +36,9 @@
     <string name="drawer_settings">Pengaturan</string>
     <string name="drawer_subscription">Langganan</string>
     <string name="drawer_sign_out">Keluar</string>
+    <string name="drawer_add_folder">Tambah folder</string>
+    <string name="drawer_add_label">Tambah label</string>
+    <string name="drawer_create_icon_description">Buat item baru</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -754,7 +757,9 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="plan_and_user">Paket</string>
     <string name="payment_method">Metode Pembayaran</string>
     <string name="password_manager">Pengelolaan kata sandi</string>
+    <string name="password_changed">Kat sandi diubah.</string>
     <string name="recovery_email">Alamat email pemulihan</string>
+    <string name="recovery_email_changed">Email pemulihan diubah.</string>
     <string name="info_for_missing_functionality">Mohon masuk melalui <a href="https://www.protonmail.com/">protonmail.com</a> dan akses pengaturan Anda untuk mengedit informasi ini.</string>
     <string name="storage">Ukuran Kotak Surat</string>
     <string name="storage_used">%1$s / %2$s</string>
