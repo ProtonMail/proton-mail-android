@@ -305,6 +305,11 @@ class MessageRepository @Inject constructor(
         fun sentAsLabelId() =
             MessageLocationType.SENT.asLabelId()
 
+        // We treat Draft as a label in order to prevent draft messages being resolved as ALL_DRAFT and not shown in
+        // the Draft folder
+        fun draftAsLabelId() =
+            MessageLocationType.DRAFT.asLabelId()
+
         fun starredAsLabelId() =
             MessageLocationType.STARRED.asLabelId()
 
@@ -319,6 +324,7 @@ class MessageRepository @Inject constructor(
         } else {
             when (requireNotNull(params.labelId) { "Label Id is required" }) {
                 sentAsLabelId() -> dao.observeMessagesByLabelId(params.labelId)
+                draftAsLabelId() -> dao.observeMessagesByLabelId(params.labelId)
                 allMailAsLabelId() -> dao.observeAllMessages()
                 starredAsLabelId() -> dao.observeStarredMessages()
                 in locationTypesAlLabelId() -> dao.observeMessagesByLocation(params.labelId.toInt())
@@ -361,9 +367,9 @@ class MessageRepository @Inject constructor(
         databaseProvider
             .provideUnreadCounterDao(userId)
             .observeMessagesUnreadCounters(userId).map { list ->
-            val domainModels = databaseToDomainUnreadCounterMapper.toDomainModels(list)
-            DataResult.Success(ResponseSource.Local, domainModels)
-        }
+                val domainModels = databaseToDomainUnreadCounterMapper.toDomainModels(list)
+                DataResult.Success(ResponseSource.Local, domainModels)
+            }
 
     private suspend fun moveMessageInDb(
         messageIds: List<String>,

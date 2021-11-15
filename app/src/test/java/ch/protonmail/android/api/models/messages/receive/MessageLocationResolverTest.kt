@@ -58,22 +58,6 @@ class MessageLocationResolverTest {
         }
 
         @Test
-        fun verifyThatDraftsAreProperlyResolvedFromLabelsWithMultipleInputs() {
-
-            // given
-            val testLabelIds = listOf(
-                "1",
-                "5",
-                "8"
-            )
-            val expected = Constants.MessageLocationType.DRAFT
-
-            val result = messageLocationResolver.resolveLocationFromLabels(testLabelIds)
-
-            assertEquals(expected, result)
-        }
-
-        @Test
         fun verifyThatSingleAllLocationIsInvalid() {
 
             // given
