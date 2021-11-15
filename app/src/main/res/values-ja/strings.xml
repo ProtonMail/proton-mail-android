@@ -36,6 +36,9 @@
     <string name="drawer_settings">設定</string>
     <string name="drawer_subscription">サブスクリプション</string>
     <string name="drawer_sign_out">サインアウト</string>
+    <string name="drawer_add_folder">フォルダーを追加</string>
+    <string name="drawer_add_label">ラベルを追加</string>
+    <string name="drawer_create_icon_description">新しいアイテムの作成</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc：</string>
@@ -720,11 +723,9 @@
     <string name="storage_limit_approaching_text">ストレージ容量の90%に達しました。容量を空けるか、ストレージの追加購入を検討してください。</string>
     <!-- endregion -->
     <string name="need_permissions_title">アクセス許可</string>
-    <string name="need_storage_permissions_add_attachment_text">In order to add attachments you need to allow
-        access to storage.</string>
-    <string name="need_storage_permissions_download_attachment_text">In order to download attachments you need to allow
-        access to storage.</string>
-    <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
+    <string name="need_storage_permissions_add_attachment_text">添付ファイルを追加するには、ストレージへのアクセスを許可する必要があります。</string>
+    <string name="need_storage_permissions_download_attachment_text">添付ファイルをダウンロードするには、ストレージへのアクセスを許可する必要があります。</string>
+    <string name="need_contacts_permissions_text">この連絡先をインポートするには、連絡先へのアクセスを許可する必要があります。</string>
     <string name="push_notifications_alert_title">プッシュ通知警告</string>
     <string name="push_notifications_alert_subtitle">ProtonMailのプッシュ通知は、Google Playサービスを更新しないと機能しません。</string>
     <string name="app_locked">アプリはロックされています。</string>
@@ -746,7 +747,9 @@
     <string name="plan_and_user">プラン</string>
     <string name="payment_method">支払い方法</string>
     <string name="password_manager">パスワード管理</string>
+    <string name="password_changed">パスワードが変更されました。</string>
     <string name="recovery_email">回復用のメールアドレス</string>
+    <string name="recovery_email_changed">回復用メールアドレスが変更されました。</string>
     <string name="info_for_missing_functionality">
         <a href="https://www.protonmail.com/">protonmail.com</a> からログインし、情報を編集するには設定にアクセスしてください。</string>
     <string name="storage">メールボックスの容量</string>

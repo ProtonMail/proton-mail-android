@@ -36,6 +36,9 @@
     <string name="drawer_settings">Stillingar</string>
     <string name="drawer_subscription">Áskrift</string>
     <string name="drawer_sign_out">Skrá út</string>
+    <string name="drawer_add_folder">Add folder</string>
+    <string name="drawer_add_label">Add label</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Falið afrit:</string>
@@ -765,7 +768,9 @@
     <string name="plan_and_user">Áskriftarleið</string>
     <string name="payment_method">Greiðslumáti</string>
     <string name="password_manager">Sýsl með lykilorð</string>
+    <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Endurheimtupóstur</string>
+    <string name="recovery_email_changed">Recovery email changed.</string>
     <string name="info_for_missing_functionality">Skráðu þig inn í gegnum <a href="https://www.protonmail.com/">protonmail.com</a> til að breyta þessum upplýsingum.</string>
     <string name="storage">Stærð pósthólfs</string>
     <string name="storage_used">%1$s / %2$s</string>

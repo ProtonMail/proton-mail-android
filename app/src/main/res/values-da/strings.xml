@@ -36,6 +36,9 @@
     <string name="drawer_settings">Indstillinger</string>
     <string name="drawer_subscription">Abonnement</string>
     <string name="drawer_sign_out">Log ud</string>
+    <string name="drawer_add_folder">Tilføj mappe</string>
+    <string name="drawer_add_label">Tilføj etiket</string>
+    <string name="drawer_create_icon_description">Opret nyt element</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -767,7 +770,9 @@
     <string name="plan_and_user">Abonnementstype</string>
     <string name="payment_method">Betalingsmetode</string>
     <string name="password_manager">Adgangskodehåndtering</string>
+    <string name="password_changed">Adgangskode ændret.</string>
     <string name="recovery_email">Gendannelses e-mail</string>
+    <string name="recovery_email_changed">E-mail til gendannelse ændret.</string>
     <string name="info_for_missing_functionality">Log ind via <a href="https://www.protonmail.com/">protonmail.com</a> og få adgang til dine indstillinger for at redigere disse oplysninger.</string>
     <string name="storage">Postkassestørrelse</string>
     <string name="storage_used">%1$s / %2$s</string>

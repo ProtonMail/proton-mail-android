@@ -36,6 +36,9 @@
     <string name="drawer_settings">Instellingen</string>
     <string name="drawer_subscription">Abonnement</string>
     <string name="drawer_sign_out">Uitloggen</string>
+    <string name="drawer_add_folder">Add folder</string>
+    <string name="drawer_add_label">Add label</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -767,7 +770,9 @@
     <string name="plan_and_user">Abonnement</string>
     <string name="payment_method">Betaalmethode</string>
     <string name="password_manager">Wachtwoordbeheer</string>
+    <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Herstel e-mailadres</string>
+    <string name="recovery_email_changed">Recovery email changed.</string>
     <string name="info_for_missing_functionality">Gelieve in te loggen via <a href="https://www.protonmail.com/">protonmail.com</a> en toegang tot uw instellingen om deze informatie te bewerken.</string>
     <string name="storage">Mailboxgrootte</string>
     <string name="storage_used">%1$s / %2$s</string>

@@ -36,6 +36,9 @@
     <string name="drawer_settings">设置</string>
     <string name="drawer_subscription">账户等级</string>
     <string name="drawer_sign_out">退出账户</string>
+    <string name="drawer_add_folder">Add folder</string>
+    <string name="drawer_add_label">Add label</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密送：</string>
@@ -744,7 +747,9 @@
     <string name="plan_and_user">等级</string>
     <string name="payment_method">支付方式</string>
     <string name="password_manager">密码管理</string>
+    <string name="password_changed">密码已更改。</string>
     <string name="recovery_email">密保邮箱</string>
+    <string name="recovery_email_changed">密保邮箱已更改。</string>
     <string name="info_for_missing_functionality">请登录 <a href="https://www.protonmail.com/">protonmail.com</a> 并在设置中进行更改。</string>
     <string name="storage">邮箱容量</string>
     <string name="storage_used">%1$s / %2$s</string>

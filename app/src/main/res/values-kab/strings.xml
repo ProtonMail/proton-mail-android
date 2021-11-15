@@ -36,6 +36,9 @@
     <string name="drawer_settings">Iɣewwaṛen</string>
     <string name="drawer_subscription">Ajerred</string>
     <string name="drawer_sign_out">Ffeɣ</string>
+    <string name="drawer_add_folder">Add folder</string>
+    <string name="drawer_add_label">Add label</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -631,12 +634,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Izen ittuwegelhen s PGP yekka-d seg tansa yettusneqden</string>
     <string name="sender_lock_pgp_signed_verified_sender">Izen ittuzemlen s PGP yekka-d seg tansa yettusneqden</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
+    <string name="sender_lock_internal">Izen yettwawgelhen seg yixef ɣer yixef yerna yettazmel</string>
     <string name="sender_lock_internal_verified">Izen ittwawegelhen seg tazwara ar tagara yekka-d seg tansa yettusneqden</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ittwawegelhen seg tazwara ar tagara</string>
     <string name="composer_lock_internal_pinned">Ittwawegelhen seg tazwara ar tagara ar tansa yettusneqden</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Yettwawgelhen PGP ɣer uɣerwaḍ yettusneqden</string>
     <string name="composer_lock_pgp_signed">PGP-s uzmul</string>
     <string name="recipient_not_found_and_removed">Recipient could not be found: %s and it has been removed</string>
     <string name="recipient_error_and_removed">An error occurred while retrieving recipient information and the recipient has been removed: %s</string>
@@ -767,7 +770,9 @@
     <string name="plan_and_user">Aɣawas</string>
     <string name="payment_method">Tarrayt n usellek</string>
     <string name="password_manager">Asefrek n wawal uffir</string>
+    <string name="password_changed">Awal uffir ibeddem.</string>
     <string name="recovery_email">Imayl n tririt</string>
+    <string name="recovery_email_changed">Imayl n tririt ibeddel.</string>
     <string name="info_for_missing_functionality">Ttxil-k•m qqen di <a href="https://www.protonmail.com/">protonmail.com</a> yerna kcem ɣer yiɣewwaren-inek•inem akken ad tẓergeḍ talɣut-agi.</string>
     <string name="storage">Mailbox size</string>
     <string name="storage_used">%1$s / %2$s</string>

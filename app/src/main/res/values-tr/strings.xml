@@ -36,6 +36,9 @@
     <string name="drawer_settings">Ayarlar</string>
     <string name="drawer_subscription">Abonelik</string>
     <string name="drawer_sign_out">Oturumu kapat</string>
+    <string name="drawer_add_folder">Add folder</string>
+    <string name="drawer_add_label">Add label</string>
+    <string name="drawer_create_icon_description">Create new item</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -761,7 +764,9 @@
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Ödeme Yöntemi</string>
     <string name="password_manager">Şifre yönetimi</string>
+    <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Kurtarma e-postası</string>
+    <string name="recovery_email_changed">Recovery email changed.</string>
     <string name="info_for_missing_functionality">Lütfen bu bilgileri düzenlemek için <a href="https://www.protonmail.com/">protonmail.com</a> üzerinden giriş yapın ve ayarlarınıza erişin.</string>
     <string name="storage">Posta kutusu boyutu</string>
     <string name="storage_used">%1$s / %2$s</string>

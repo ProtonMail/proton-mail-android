@@ -36,6 +36,9 @@
     <string name="drawer_settings">Preferències</string>
     <string name="drawer_subscription">Subscripció</string>
     <string name="drawer_sign_out">Tancar la sessió</string>
+    <string name="drawer_add_folder">Afegir carpeta</string>
+    <string name="drawer_add_label">Afegir etiqueta</string>
+    <string name="drawer_create_icon_description">Crear un element nou</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -767,7 +770,9 @@
     <string name="plan_and_user">Pla</string>
     <string name="payment_method">Mètode de pagament</string>
     <string name="password_manager">Administrador de contrasenyes</string>
+    <string name="password_changed">S\'ha canviat la contrasenya.</string>
     <string name="recovery_email">Correu electrònic de recuperació</string>
+    <string name="recovery_email_changed">S\'ha canviat el correu electrònic de recuperació.</string>
     <string name="info_for_missing_functionality">Inicieu la sessió a <a href="https://www.protonmail.com/">protonmail.com</a> i accediu a les vostres preferències per editar aquesta informació.</string>
     <string name="storage">Mida de la bústia</string>
     <string name="storage_used">%1$s / %2$s</string>

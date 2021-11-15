@@ -36,6 +36,9 @@
     <string name="drawer_settings">Inställningar</string>
     <string name="drawer_subscription">Prenumeration</string>
     <string name="drawer_sign_out">Logga ut</string>
+    <string name="drawer_add_folder">Lägg till mapp</string>
+    <string name="drawer_add_label">Lägg till etikett</string>
+    <string name="drawer_create_icon_description">Skapa nytt objekt</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -763,7 +766,9 @@
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Betalningsmetod</string>
     <string name="password_manager">Lösenordshanterare</string>
+    <string name="password_changed">Lösenord ändrades.</string>
     <string name="recovery_email">E-postadress för återställning</string>
+    <string name="recovery_email_changed">E-postadressen för återställning ändrades.</string>
     <string name="info_for_missing_functionality">Vänligen logga in via <a href="https://www.protonmail.com/">protonmail.com</a> och kom åt dina inställningar för att redigera denna information.</string>
     <string name="storage">Brevlådestorlek</string>
     <string name="storage_used">%1$s/%2$s</string>

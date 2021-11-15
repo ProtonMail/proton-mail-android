@@ -36,6 +36,9 @@
     <string name="drawer_settings">Nastavení</string>
     <string name="drawer_subscription">Předplatné</string>
     <string name="drawer_sign_out">Odhlásit se</string>
+    <string name="drawer_add_folder">Přidat složku</string>
+    <string name="drawer_add_label">Přidat štítek</string>
+    <string name="drawer_create_icon_description">Vytvořit novou položku</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Skrytá kopie:</string>
@@ -654,7 +657,7 @@
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-End šifrováno</string>
     <string name="composer_lock_internal_pinned">Zašifrováno End-to-end k ověřenému příjemci</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Šifrované PGP odesílatel ověřen</string>
     <string name="composer_lock_pgp_signed">Podepsané pomocí PGP</string>
     <string name="recipient_not_found_and_removed">Příjemce nebyl nalezen: %s byl odstraněn</string>
     <string name="recipient_error_and_removed">Došlo k chybě při načítání informací o příjemci, příjemce byl odstraněn: %s</string>
@@ -793,7 +796,9 @@
     <string name="plan_and_user">Tarif</string>
     <string name="payment_method">Způsob platby</string>
     <string name="password_manager">Správa hesel</string>
+    <string name="password_changed">Heslo bylo změněno.</string>
     <string name="recovery_email">Sekundární e-mail</string>
+    <string name="recovery_email_changed">E-mail pro obnovení byl změněn.</string>
     <string name="info_for_missing_functionality">Přihlaste se prosím přes <a href="https://www.protonmail.com/">protonmail.com</a> a přejděte do nastavení pro úpravu těchto informací.</string>
     <string name="storage">Velikost e-mailové schránky</string>
     <string name="storage_used">%1$s / %2$s</string>
