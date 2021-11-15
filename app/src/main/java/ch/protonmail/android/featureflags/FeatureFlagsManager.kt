@@ -27,5 +27,5 @@ class FeatureFlagsManager @Inject constructor() {
      * Defines whether the user has the possibility to toggle view mode
      * between conversation view and single message view
      */
-    fun isChangeViewModeFeatureEnabled() = true
+    fun isChangeViewModeFeatureEnabled() = false
 }
