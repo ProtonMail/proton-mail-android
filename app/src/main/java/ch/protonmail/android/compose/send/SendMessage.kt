@@ -58,6 +58,7 @@ class SendMessage @Inject constructor(
         saveMessageLocally(message)
         setMessageAsPendingForSend(message)
 
+        Timber.w("Send message with attachments: ${parameters.newAttachmentIds}.")
         sendMessageScheduler.enqueue(
             parameters.message,
             parameters.newAttachmentIds,

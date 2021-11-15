@@ -99,7 +99,6 @@ class LogoutService : JobIntentService() {
 
         @JvmOverloads
         fun startLogout(online: Boolean, username: String? = null, fcmRegistrationId: String? = null) {
-            Timber.v("start Logout online:$online, username:$username")
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, LogoutService::class.java)
             intent.action = if (online) ACTION_LOGOUT_ONLINE else ACTION_LOGOUT_OFFLINE

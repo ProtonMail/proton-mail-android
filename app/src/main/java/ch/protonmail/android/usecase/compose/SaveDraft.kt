@@ -110,6 +110,7 @@ class SaveDraft @Inject constructor(
                         return@map SaveDraftResult.Success(createdDraftId)
                     }
 
+                    Timber.w("Calling uploadAttachments for $createdDraftId.")
                     return@map uploadAttachments(params, createdDraftId, localDraft)
                 } else {
                     Timber.e("Save Draft to API for messageId $localDraftId FAILED.")

@@ -67,8 +67,6 @@ class AddressKeyActivationWorker @WorkerInject constructor(
         val username = inputData.getString(KEY_INPUT_DATA_USERNAME) ?: return@withContext Result.failure()
         val mailboxPassword = userManager.getMailboxPassword(username) ?: return@withContext Result.failure()
 
-        Timber.v("AddressKeyActivationWorker started with username: $username")
-
         val user = userManager.getUser(username).toNewUser()
         val primaryKeys = user.addresses.addresses.values.map { it.keys.primaryKey }
         val keysToActivate = user.addresses.addresses.values.flatMap { address ->

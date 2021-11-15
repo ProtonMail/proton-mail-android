@@ -18,9 +18,17 @@
  */
 package ch.protonmail.android.api.models;
 
+import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION_EMAIL;
+import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_EMAIL;
+import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_INVOICE_TEXT;
+import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_LOCALE;
+import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_LOG_AUTH;
+import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_NEWS;
+import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_PASSWORD_MODE;
+import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_TWO_FACTOR;
+
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -29,15 +37,6 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.utils.FileUtils;
 import kotlin.jvm.Transient;
-
-import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_EMAIL;
-import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_INVOICE_TEXT;
-import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_LOCALE;
-import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_LOG_AUTH;
-import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_NEWS;
-import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_PASSWORD_MODE;
-import static ch.protonmail.android.core.Constants.Prefs.UserSettings.PREF_TWO_FACTOR;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION_EMAIL;
 
 public class UserSettings {
 
@@ -95,7 +94,6 @@ public class UserSettings {
     }
 
     public static UserSettings load(String username) {
-        Log.d("PMTAG", "loading UserSettings for user `" + username + "`");
         final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username);
 
         UserSettings userSettings = new UserSettings();
@@ -117,7 +115,6 @@ public class UserSettings {
     public void save() {
 
         final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        Log.d("PMTAG", "saving UserSettings for username: `" + this.username + "`");
 
         pref.edit()
                 .putInt(PREF_PASSWORD_MODE, passwordMode)

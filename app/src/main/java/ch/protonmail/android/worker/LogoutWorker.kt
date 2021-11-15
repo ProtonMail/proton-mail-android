@@ -66,8 +66,6 @@ class LogoutWorker @WorkerInject constructor(
                 throw IllegalArgumentException("Cannot proceed with an empty user name")
             }
 
-            Timber.v("Unregistering user: $userName")
-
             val loggedInUsers = accountManager.getLoggedInUsers()
             // Unregister FCM only if this is the last user on the device
             if (loggedInUsers.isEmpty() || loggedInUsers.size == 1 && loggedInUsers[0] == userName) {
@@ -113,7 +111,6 @@ class LogoutWorker @WorkerInject constructor(
                 )
                 .build()
             workManager.enqueue(workRequest)
-            Timber.v("Scheduling logout for $userName token: $fcmRegistrationId")
             return workManager.getWorkInfoByIdLiveData(workRequest.id)
         }
     }
