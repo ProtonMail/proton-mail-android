@@ -48,7 +48,7 @@
     <string name="composer_subject">主题：</string>
     <string name="composer_to">收件人：</string>
     <string name="set_msg_password_title">设置密码</string>
-    <string name="set_msg_password_info">请为非 ProtonMail 用户设置密码将邮件加密。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">了解详情</a>
+    <string name="set_msg_password_info">请为非 ProtonMail 用户设置密码将邮件加密。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a>
     </string>
     <string name="set_msg_password_info_icon_description">信息</string>
     <string name="set_msg_password_msg_password_title">邮件密码</string>

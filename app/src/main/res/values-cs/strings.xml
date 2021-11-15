@@ -48,7 +48,7 @@
     <string name="composer_subject">Předmět:</string>
     <string name="composer_to">Komu:</string>
     <string name="set_msg_password_title">Nastavit heslo</string>
-    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy pro uživatele, kteří nepoužívají Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Další informace</a>
+    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy pro uživatele, kteří nepoužívají Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informace</string>
     <string name="set_msg_password_msg_password_title">Heslo zprávy</string>

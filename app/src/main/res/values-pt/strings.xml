@@ -48,7 +48,7 @@
     <string name="composer_subject">Assunto:</string>
     <string name="composer_to">Para:</string>
     <string name="set_msg_password_title">Definir senha</string>
-    <string name="set_msg_password_info">Defina uma senha para encriptar esta mensagem para utilizadores não-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saiba mais</a>
+    <string name="set_msg_password_info">Defina uma senha para encriptar esta mensagem para utilizadores não-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saiba mais</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informação</string>
     <string name="set_msg_password_msg_password_title">Senha da mensagem</string>

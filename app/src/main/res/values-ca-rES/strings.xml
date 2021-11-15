@@ -48,7 +48,7 @@
     <string name="composer_subject">Assumpte:</string>
     <string name="composer_to">A:</string>
     <string name="set_msg_password_title">Establir contrasenya</string>
-    <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saber-ne més</a>
+    <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saber-ne més</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informació</string>
     <string name="set_msg_password_msg_password_title">Contrasenya del missatge</string>

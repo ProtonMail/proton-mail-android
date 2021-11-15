@@ -48,7 +48,7 @@
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
     <string name="set_msg_password_title">Встановити пароль</string>
-    <string name="set_msg_password_info">Встановіть пароль для шифрування цього повідомлення для користувачів інших постачальників пошти. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Докладніше</a>
+    <string name="set_msg_password_info">Встановіть пароль для шифрування цього повідомлення для користувачів інших постачальників пошти. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Докладніше</a>
     </string>
     <string name="set_msg_password_info_icon_description">Відомості</string>
     <string name="set_msg_password_msg_password_title">Пароль повідомлення</string>

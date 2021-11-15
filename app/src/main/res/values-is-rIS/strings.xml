@@ -48,7 +48,7 @@
     <string name="composer_subject">Viðfangsefni:</string>
     <string name="composer_to">Til:</string>
     <string name="set_msg_password_title">Stilltu lykilorð</string>
-    <string name="set_msg_password_info">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Kanna nánar</a>
+    <string name="set_msg_password_info">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Kanna nánar</a>
     </string>
     <string name="set_msg_password_info_icon_description">Upplýsingar</string>
     <string name="set_msg_password_msg_password_title">Lykilorð skilaboða</string>

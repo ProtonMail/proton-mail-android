@@ -48,7 +48,7 @@
     <string name="composer_subject">Θέμα:</string>
     <string name="composer_to">Προς:</string>
     <string name="set_msg_password_title">Ορισμός κωδικού</string>
-    <string name="set_msg_password_info">Ορίστε έναν κωδικό για να κρυπτογραφήσετε αυτό το μήνυμα, για τους χρήστες που δεν ανήκουν στη Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Μάθετε περισσότερα</a>
+    <string name="set_msg_password_info">Ορίστε έναν κωδικό για να κρυπτογραφήσετε αυτό το μήνυμα, για τους χρήστες που δεν ανήκουν στη Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Μάθετε περισσότερα</a>
     </string>
     <string name="set_msg_password_info_icon_description">Πληροφορίες</string>
     <string name="set_msg_password_msg_password_title">Κωδικός πρόσβασης μηνύματος</string>

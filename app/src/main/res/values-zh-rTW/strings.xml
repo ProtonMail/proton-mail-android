@@ -48,7 +48,7 @@
     <string name="composer_subject">主旨：</string>
     <string name="composer_to">收件人：</string>
     <string name="set_msg_password_title">設定密碼</string>
-    <string name="set_msg_password_info">為非 ProtonMail 使用者設定加密此郵件的密碼。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">瞭解更多</a>
+    <string name="set_msg_password_info">為非 ProtonMail 使用者設定加密此郵件的密碼。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">瞭解更多</a>
     </string>
     <string name="set_msg_password_info_icon_description">資訊</string>
     <string name="set_msg_password_msg_password_title">郵件密碼</string>

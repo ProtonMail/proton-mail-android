@@ -48,7 +48,7 @@
     <string name="composer_subject">Predmet:</string>
     <string name="composer_to">Za:</string>
     <string name="set_msg_password_title">Postavi lozinku</string>
-    <string name="set_msg_password_info">Postavite lozinku za šifriranje ove poruke za one koji nisu korisnici ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saznajte više</a>
+    <string name="set_msg_password_info">Postavite lozinku za šifriranje ove poruke za one koji nisu korisnici ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saznajte više</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informacije</string>
     <string name="set_msg_password_msg_password_title">Lozinka poruke</string>
