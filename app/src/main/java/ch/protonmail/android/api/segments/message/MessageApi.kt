@@ -76,22 +76,26 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
 
     @Throws(IOException::class)
     override fun emptyDrafts() {
-        service.emptyFolder(Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()).execute()
+        service.emptyFolderBlocking(Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()).execute()
     }
 
     @Throws(IOException::class)
     override fun emptySpam() {
-        service.emptyFolder(Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()).execute()
+        service.emptyFolderBlocking(Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()).execute()
     }
 
     @Throws(IOException::class)
     override fun emptyTrash() {
-        service.emptyFolder(Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()).execute()
+        service.emptyFolderBlocking(Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()).execute()
     }
 
     @Throws(IOException::class)
     override fun emptyCustomFolder(labelId: String) {
-        service.emptyFolder(labelId).execute()
+        service.emptyFolderBlocking(labelId).execute()
+    }
+
+    override suspend fun emptyFolder(userIdTag: UserIdTag, labelId: String) {
+        service.emptyFolder(userIdTag, labelId)
     }
 
     @WorkerThread

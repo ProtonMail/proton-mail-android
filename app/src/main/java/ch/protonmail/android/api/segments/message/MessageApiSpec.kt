@@ -63,6 +63,8 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun emptyCustomFolder(labelId: String)
 
+    suspend fun emptyFolder(userIdTag: UserIdTag, labelId: String)
+
     @WorkerThread
     @Throws(Exception::class)
     fun fetchMessageDetailsBlocking(messageId: String): MessageResponse
