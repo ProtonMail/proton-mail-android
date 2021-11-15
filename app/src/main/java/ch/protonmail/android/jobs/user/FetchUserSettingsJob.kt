@@ -31,7 +31,6 @@ import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
-import timber.log.Timber
 import kotlin.time.seconds
 
 class FetchUserSettingsJob(
@@ -42,8 +41,6 @@ class FetchUserSettingsJob(
     override fun onRun() {
         val fetchContactsEmails = entryPoint.fetchContactsEmailsWorkerEnqueuer()
         val fetchContactsData = entryPoint.fetchContactsDataWorkerEnqueuer()
-
-        Timber.v("FetchUserSettingsJob started for username: $username")
 
         val userInfo: UserInfo
         val userSettings: UserSettingsResponse

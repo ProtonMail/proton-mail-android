@@ -20,14 +20,10 @@ package ch.protonmail.android.api.models
 
 import android.content.SharedPreferences
 import android.text.TextUtils
-import android.util.Log
-
-import com.google.gson.annotations.SerializedName
-
-import java.io.Serializable
-
 import ch.protonmail.android.api.models.enumerations.PackageType
 import ch.protonmail.android.core.ProtonMailApplication
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 // region constants
 private const val FIELD_DISPLAY_NAME = "DisplayName"
@@ -160,7 +156,6 @@ class MailSettings : Serializable {
 
     fun save() {
         val pref: SharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username)
-        Log.d("PMTAG", "saving MailSettings for username: `" + this.username + "`")
 
         pref.edit()
                 .putString(PREF_DISPLAY_NAME, displayName)
@@ -190,7 +185,6 @@ class MailSettings : Serializable {
     companion object {
 
         fun load(username: String): MailSettings {
-            Log.d("PMTAG", "loading MailSettings for user `$username`")
             val prefs: SharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
             val mailSettings = MailSettings()
             mailSettings.showImages = prefs.getInt(PREF_SHOW_IMAGES, 0)
