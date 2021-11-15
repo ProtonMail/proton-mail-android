@@ -47,7 +47,7 @@ public class EmptyFolderJob extends ProtonMailBaseJob {
                 .getDao();
 
         if (labelId != null) {
-            messageDao.deleteMessagesByLabel(labelId);
+            messageDao.deleteMessagesByLabelBlocking(labelId);
         } else {
             messageDao.deleteMessagesByLocation(location.getMessageLocationTypeValue());
         }

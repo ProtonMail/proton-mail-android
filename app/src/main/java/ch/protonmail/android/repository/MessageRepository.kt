@@ -48,6 +48,7 @@ import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.utils.MessageBodyFileManager
+import ch.protonmail.android.worker.EmptyFolderRemoteWorker
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -76,6 +77,7 @@ private const val FILE_PREFIX = "file://"
 class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val databaseProvider: DatabaseProvider,
+    private val messageDao: MessageDao,
     private val protonMailApiManager: ProtonMailApiManager,
     private val databaseToDomainUnreadCounterMapper: DatabaseToDomainUnreadCounterMapper,
     private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
@@ -86,6 +88,7 @@ class MessageRepository @Inject constructor(
     connectivityManager: NetworkConnectivityManager,
     private val labelRepository: LabelRepository,
     private var moveMessageToLocationWorker: MoveMessageToLocationWorker.Enqueuer,
+    private val emptyFolderRemoteWorker: EmptyFolderRemoteWorker.Enqueuer,
     private val context: Context
 ) {
 
@@ -295,6 +298,17 @@ class MessageRepository @Inject constructor(
     fun markUnRead(messageIds: List<String>) {
         Timber.d("markUnRead $messageIds")
         jobManager.addJobInBackground(PostUnreadJob(messageIds))
+    }
+
+    /**
+     * The empty folder action deletes all messages that have a certain label (example: Trash).
+     * When performing the action with conversation mode ON, the conversations are not deleted. They are updated
+     * in a way that deleted messages are removed from the conversations.
+     */
+    suspend fun emptyFolder(userId: UserId, labelId: String) {
+        emptyFolderRemoteWorker.enqueue(userId, labelId)
+
+        messageDao.deleteMessagesByLabel(labelId)
     }
 
     private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {

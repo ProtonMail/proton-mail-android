@@ -313,7 +313,10 @@ abstract class MessageDao : BaseDao<Message>() {
     abstract fun deleteMessagesByLocation(location: Int)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
-    abstract fun deleteMessagesByLabel(labelId: String)
+    abstract fun deleteMessagesByLabelBlocking(labelId: String)
+
+    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
+    abstract suspend fun deleteMessagesByLabel(labelId: String)
 
     @Query(
         """

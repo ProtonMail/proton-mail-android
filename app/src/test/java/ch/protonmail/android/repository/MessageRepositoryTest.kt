@@ -44,6 +44,7 @@ import ch.protonmail.android.mailbox.data.remote.worker.MoveMessageToLocationWor
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.utils.MessageBodyFileManager
+import ch.protonmail.android.worker.EmptyFolderRemoteWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -76,7 +77,7 @@ import kotlin.test.assertNull
 
 class MessageRepositoryTest {
 
-    private val messageDao: MessageDao = mockk()
+    private val messageDao: MessageDao = mockk(relaxUnitFun = true)
 
     private val unreadCounterDao: UnreadCounterDao = mockk {
         every { observeMessagesUnreadCounters(any()) } returns flowOf(emptyList())
@@ -110,6 +111,10 @@ class MessageRepositoryTest {
 
     private val postToLocationWorker = mockk<MoveMessageToLocationWorker.Enqueuer>()
 
+    private val emptyFolderRemoteWorker = mockk<EmptyFolderRemoteWorker.Enqueuer> {
+        coEvery { enqueue(any(), any()) } returns mockk()
+    }
+
     private val contextMock = mockk<Context>()
 
     private val testUserName = "userName1"
@@ -128,6 +133,7 @@ class MessageRepositoryTest {
     private val messageRepository = MessageRepository(
         dispatcherProvider = TestDispatcherProvider,
         databaseProvider = databaseProvider,
+        messageDao = messageDao,
         protonMailApiManager = protonMailApiManager,
         databaseToDomainUnreadCounterMapper = DatabaseToDomainUnreadCounterMapper(),
         apiToDatabaseUnreadCounterMapper = ApiToDatabaseUnreadCounterMapper(),
@@ -138,6 +144,7 @@ class MessageRepositoryTest {
         connectivityManager = networkConnectivityManager,
         labelRepository = labelRepository,
         moveMessageToLocationWorker = postToLocationWorker,
+        emptyFolderRemoteWorker = emptyFolderRemoteWorker,
         context = contextMock
     )
 
@@ -745,6 +752,21 @@ class MessageRepositoryTest {
         // when
         messageRepository.getUnreadCounters(testUserId).test {
             expectItem()
+        }
+    }
+
+    @Test
+    fun `verify worker is enqueued and messages are deleted locally when emptying folder`() = runBlockingTest {
+        // given
+        val labelId = "labelId"
+
+        // when
+        messageRepository.emptyFolder(testUserId, labelId)
+
+        // then
+        coVerify {
+            emptyFolderRemoteWorker.enqueue(testUserId, labelId)
+            messageDao.deleteMessagesByLabel(labelId)
         }
     }
 
