@@ -182,7 +182,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/composer_from_spinner"
                 android:src="@drawable/ic_chevron_down"
-                android:tint="@color/shade_80"/>
+                app:tint="@color/shade_80"/>
 
             <View
                 android:id="@+id/composer_cc_top_divider"
