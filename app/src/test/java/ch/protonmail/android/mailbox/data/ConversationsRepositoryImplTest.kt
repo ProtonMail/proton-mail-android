@@ -1247,7 +1247,7 @@ class ConversationsRepositoryImplTest : ArchTest {
         } returns 123
 
         // when
-        conversationsRepository.updateConversationsAfterDeletingMessages(testUserId, messageIds)
+        conversationsRepository.updateConversationsWhenDeletingMessages(testUserId, messageIds)
 
         // then
         coVerify(exactly = 1) {

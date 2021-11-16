@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.delete
 
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.repository.MessageRepository
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
@@ -27,13 +28,16 @@ import javax.inject.Inject
  * A use case that handles emptying a folder
  */
 class EmptyFolder @Inject constructor(
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
+    private val conversationsRepository: ConversationsRepository
 ) {
 
     suspend operator fun invoke(
         userId: UserId,
         labelId: String
     ) {
+        conversationsRepository.updateConversationsWhenEmptyingFolder(userId, labelId)
+
         messageRepository.emptyFolder(userId, labelId)
     }
 }

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.delete
 
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -37,19 +38,23 @@ class EmptyFolderTest {
     private val messageRepository: MessageRepository = mockk {
         coEvery { emptyFolder(any(), any()) } just runs
     }
+    private val conversationsRepository: ConversationsRepository = mockk {
+        coEvery { updateConversationsWhenEmptyingFolder(any(), any()) } just runs
+    }
 
-    private val emptyFolder = EmptyFolder(messageRepository)
+    private val emptyFolder = EmptyFolder(messageRepository, conversationsRepository)
 
     private val testUserId = UserId("userId")
     private val testLabelId = "labelId"
 
     @Test
-    fun `should call the appropriate method from the repository for emptying the folder`() = runBlockingTest {
+    fun `should call the appropriate methods from the repositories for emptying the folder`() = runBlockingTest {
         // when
         emptyFolder(testUserId, testLabelId)
 
         // then
         coVerify {
+            conversationsRepository.updateConversationsWhenEmptyingFolder(testUserId, testLabelId)
             messageRepository.emptyFolder(testUserId, testLabelId)
         }
     }
