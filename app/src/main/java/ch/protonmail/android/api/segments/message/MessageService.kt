@@ -132,10 +132,6 @@ interface MessageService {
 
     @DELETE("mail/v4/messages/empty")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun emptyFolderBlocking(@Query("LabelID") labelId: String): Call<ResponseBody>
-
-    @DELETE("mail/v4/messages/empty")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun emptyFolder(
         @Tag userIdTag: UserIdTag,
         @Query("LabelID") labelId: String

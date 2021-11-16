@@ -247,14 +247,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun deleteMessage(messageDeleteRequest: MessageDeleteRequest) =
         api.deleteMessage(messageDeleteRequest)
 
-    override fun emptyDrafts() = api.emptyDrafts()
-
-    override fun emptySpam() = api.emptySpam()
-
-    override fun emptyTrash() = api.emptyTrash()
-
-    override fun emptyCustomFolder(labelId: String) = api.emptyCustomFolder(labelId)
-
     override suspend fun emptyFolder(userIdTag: UserIdTag, labelId: String) = api.emptyFolder(userIdTag, labelId)
 
     override fun fetchMessageDetailsBlocking(messageId: String): MessageResponse =

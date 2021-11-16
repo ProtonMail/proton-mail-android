@@ -73,6 +73,7 @@ import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import com.birbit.android.jobqueue.JobManager
@@ -156,6 +157,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val deleteConversations: DeleteConversations = mockk()
 
+    private val emptyFolder: EmptyFolder = mockk()
+
     private val getMailSettings: GetMailSettings = mockk()
 
     private val observeLabels: ObserveLabels = mockk()
@@ -238,6 +241,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             moveConversationsToFolder = moveConversationsToFolder,
             moveMessagesToFolder = moveMessagesToFolder,
             deleteConversations = deleteConversations,
+            emptyFolder = emptyFolder,
             observeLabels = observeLabels,
             observeLabelsAndFoldersWithChildren = mockk(),
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),

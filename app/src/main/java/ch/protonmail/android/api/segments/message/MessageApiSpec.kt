@@ -51,18 +51,6 @@ interface MessageApiSpec {
 
     suspend fun deleteMessage(messageDeleteRequest: MessageDeleteRequest): DeleteResponse
 
-    @Throws(IOException::class)
-    fun emptyDrafts()
-
-    @Throws(IOException::class)
-    fun emptySpam()
-
-    @Throws(IOException::class)
-    fun emptyTrash()
-
-    @Throws(IOException::class)
-    fun emptyCustomFolder(labelId: String)
-
     suspend fun emptyFolder(userIdTag: UserIdTag, labelId: String)
 
     @WorkerThread
