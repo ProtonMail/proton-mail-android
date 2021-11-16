@@ -79,7 +79,6 @@
     <dimen name="height_drawer_header">48dp</dimen>
     <dimen name="height_drawer_section_name">56dp</dimen>
     <dimen name="height_drawer_primaryitem">48dp</dimen>
-    <dimen name="height_drawer_badge">24dp</dimen>
     <dimen name="height_drawer_footer">96dp</dimen>
     <dimen name="margin_drawer_header_initials">10dp</dimen>
 
