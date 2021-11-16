@@ -23,8 +23,8 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyDecryptor
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
+import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.css.MessageBodyCssProvider
@@ -38,13 +38,19 @@ internal class MessageBodyLoader @Inject constructor(
     private val renderDimensionsProvider: RenderDimensionsProvider,
     private val messageBodyCssProvider: MessageBodyCssProvider,
     private val getStringResource: StringResourceResolver,
-    private val messageBodyParser: MessageBodyParser,
+    private val messageToMessageDetailsItemMapper: MessageToMessageDetailsListItemMapper,
     private val decryptMessageBody: MessageBodyDecryptor
 ) {
 
-    suspend fun loadExpandedMessageBody(
+    suspend fun loadExpandedMessageBodyOrNull(
         expandedMessage: Message,
-        formatMessageHtmlBody: (Message, Int, String, String, String) -> String,
+        formatMessageHtmlBody: (
+            message: Message,
+            windowWidth: Int,
+            messageBodyCss: String,
+            messageBodyDarkModeCss: String,
+            defaultErrorMessage: String
+        ) -> String,
         handleEmbeddedImagesLoading: (Message) -> Boolean,
         publicKeys: List<KeyInformation>?
     ): MessageDetailsListItem? {
@@ -59,7 +65,12 @@ internal class MessageBodyLoader @Inject constructor(
                 getStringResource(R.string.request_timeout)
             )
             fetchedMessage.decryptedHTML = messageBody
-            fetchedMessage.toMessageDetailsListItem(messageBody, messageDecrypted, handleEmbeddedImagesLoading)
+            messageToMessageDetailsItemMapper.toMessageDetailsListItem(
+                message = fetchedMessage,
+                messageBody = messageBody,
+                shouldShowDecryptionError = !messageDecrypted,
+                shouldShowLoadEmbeddedImagesButton = handleEmbeddedImagesLoading(fetchedMessage)
+            )
         } else {
             null
         }
@@ -68,18 +79,6 @@ internal class MessageBodyLoader @Inject constructor(
     private suspend fun fetchMessageBody(messageId: String): Message? {
         val userId = userManager.requireCurrentUserId()
         return messageRepository.getMessage(userId, messageId, true)
-    }
-
-    private fun Message.toMessageDetailsListItem(
-        messageBody: String,
-        decrypted: Boolean,
-        handleEmbeddedImagesLoading: (Message) -> Boolean
-    ) = MessageDetailsListItem(this, messageBody, messageBody).apply {
-        val messageBodyParts = messageBodyParser.splitBody(messageBody)
-        messageFormattedHtml = messageBodyParts.messageBody
-        messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
-        showLoadEmbeddedImagesButton = handleEmbeddedImagesLoading(this@toMessageDetailsListItem)
-        showDecryptionError = !decrypted
     }
 }
 

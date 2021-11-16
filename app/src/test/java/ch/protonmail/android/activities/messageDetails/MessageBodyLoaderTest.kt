@@ -23,11 +23,10 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyDecryptor
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.domain.MessageBodyParser
-import ch.protonmail.android.details.domain.model.MessageBodyParts
-import ch.protonmail.android.details.presentation.MessageDetailsListItem
+import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testdata.KeyInformationTestData
+import ch.protonmail.android.testdata.MessageDetailsListItemTestData
 import ch.protonmail.android.testdata.MessageTestData
 import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.utils.css.MessageBodyCssProvider
@@ -59,9 +58,7 @@ class MessageBodyLoaderTest {
     private val getStringResourceMock = mockk<StringResourceResolver> {
         every { this@mockk.invoke(R.string.request_timeout) } returns TestData.DEFAULT_ERROR_MESSAGE
     }
-    private val messageBodyParserMock = mockk<MessageBodyParser> {
-        every { splitBody(MessageTestData.MESSAGE_BODY_FORMATTED) } returns TestData.MessageParts.withBodyAndQuote
-    }
+    private val messageToMessageDetailsItemMapperMock = mockk<MessageToMessageDetailsListItemMapper>()
     private val decryptMessageBodyMock = mockk<MessageBodyDecryptor>()
     private val messageBodyLoader = MessageBodyLoader(
         userManagerMock,
@@ -69,14 +66,14 @@ class MessageBodyLoaderTest {
         renderDimensionsProviderMock,
         messageBodyCssProviderMock,
         getStringResourceMock,
-        messageBodyParserMock,
+        messageToMessageDetailsItemMapperMock,
         decryptMessageBodyMock
     )
 
     @Test(expected = IllegalArgumentException::class)
     fun `should fail if id of the expanded message is null`() = runBlockingTest {
         // when
-        messageBodyLoader.loadExpandedMessageBody(
+        messageBodyLoader.loadExpandedMessageBodyOrNull(
             expandedMessage = Message(messageId = null),
             formatMessageHtmlBody = mockk(),
             handleEmbeddedImagesLoading = mockk(),
@@ -90,7 +87,7 @@ class MessageBodyLoaderTest {
         givenFetchingMessageDetailsReturns(null)
 
         // when
-        val messageWithLoadedBody = messageBodyLoader.loadExpandedMessageBody(
+        val messageWithLoadedBody = messageBodyLoader.loadExpandedMessageBodyOrNull(
             expandedMessage = Message(messageId = MessageTestData.MESSAGE_ID_RAW),
             formatMessageHtmlBody = mockk(),
             handleEmbeddedImagesLoading = mockk(),
@@ -100,7 +97,7 @@ class MessageBodyLoaderTest {
         // then
         assertNull(messageWithLoadedBody)
         verify(exactly = 0) { decryptMessageBodyMock(any(), any()) }
-        verify(exactly = 0) { messageBodyParserMock.splitBody(any()) }
+        verify(exactly = 0) { messageToMessageDetailsItemMapperMock.toMessageDetailsListItem(any(), any(), any(), any()) }
     }
 
     @Test
@@ -110,11 +107,20 @@ class MessageBodyLoaderTest {
             messageId = MessageTestData.MESSAGE_ID_RAW,
             messageBody = MessageTestData.MESSAGE_BODY
         )
+        val expectedLoadedMessage = MessageDetailsListItemTestData.withLoadedBodyFrom(fetchedMessage)
+        every {
+            messageToMessageDetailsItemMapperMock.toMessageDetailsListItem(
+                fetchedMessage,
+                MessageTestData.MESSAGE_BODY_FORMATTED,
+                shouldShowDecryptionError = false,
+                shouldShowLoadEmbeddedImagesButton = true
+            )
+        } returns expectedLoadedMessage
         givenFetchingMessageDetailsReturns(fetchedMessage)
         givenDecryptingSucceedsFor(fetchedMessage)
 
         // when
-        val messageWithLoadedBody = messageBodyLoader.loadExpandedMessageBody(
+        val messageWithLoadedBody = messageBodyLoader.loadExpandedMessageBodyOrNull(
             expandedMessage = Message(messageId = MessageTestData.MESSAGE_ID_RAW),
             formatMessageHtmlBody = formatMessageBodyFor(fetchedMessage),
             handleEmbeddedImagesLoading = handleEmbeddedImageLoadingFor(fetchedMessage, showButton = true),
@@ -123,10 +129,15 @@ class MessageBodyLoaderTest {
 
         // then
         coVerify { decryptMessageBodyMock(fetchedMessage, KeyInformationTestData.listWithValidKey) }
-        messageWithLoadedBody.assertLoadedBodyProperties(
-            shouldShowEmbeddedImagesButton = true,
-            shouldShowDecryptionError = false
-        )
+        coVerify {
+            messageToMessageDetailsItemMapperMock.toMessageDetailsListItem(
+                fetchedMessage,
+                MessageTestData.MESSAGE_BODY_FORMATTED,
+                shouldShowDecryptionError = false,
+                shouldShowLoadEmbeddedImagesButton = true
+            )
+        }
+        assertEquals(expectedLoadedMessage, messageWithLoadedBody)
     }
 
     @Test
@@ -138,9 +149,18 @@ class MessageBodyLoaderTest {
         )
         givenFetchingMessageDetailsReturns(fetchedMessage)
         givenDecryptingFailsFor(fetchedMessage)
+        val expectedLoadedMessage = MessageDetailsListItemTestData.withLoadedBodyFrom(fetchedMessage)
+        every {
+            messageToMessageDetailsItemMapperMock.toMessageDetailsListItem(
+                fetchedMessage,
+                MessageTestData.MESSAGE_BODY_FORMATTED,
+                shouldShowDecryptionError = true,
+                shouldShowLoadEmbeddedImagesButton = false
+            )
+        } returns expectedLoadedMessage
 
         // when
-        val messageWithLoadedBody = messageBodyLoader.loadExpandedMessageBody(
+        val messageWithLoadedBody = messageBodyLoader.loadExpandedMessageBodyOrNull(
             expandedMessage = Message(messageId = MessageTestData.MESSAGE_ID_RAW),
             formatMessageHtmlBody = formatMessageBodyFor(fetchedMessage),
             handleEmbeddedImagesLoading = handleEmbeddedImageLoadingFor(fetchedMessage, showButton = false),
@@ -149,10 +169,15 @@ class MessageBodyLoaderTest {
 
         // then
         coVerify { decryptMessageBodyMock(fetchedMessage, KeyInformationTestData.listWithValidKey) }
-        messageWithLoadedBody.assertLoadedBodyProperties(
-            shouldShowEmbeddedImagesButton = false,
-            shouldShowDecryptionError = true
-        )
+        coVerify {
+            messageToMessageDetailsItemMapperMock.toMessageDetailsListItem(
+                fetchedMessage,
+                MessageTestData.MESSAGE_BODY_FORMATTED,
+                shouldShowDecryptionError = true,
+                shouldShowLoadEmbeddedImagesButton = false
+            )
+        }
+        assertEquals(expectedLoadedMessage, messageWithLoadedBody)
     }
 
     private fun givenFetchingMessageDetailsReturns(message: Message?) {
@@ -191,17 +216,6 @@ class MessageBodyLoaderTest {
 
     private fun handleEmbeddedImageLoadingFor(message: Message, showButton: Boolean) =
         mockk<(Message) -> Boolean> { every { this@mockk(message) } returns showButton }
-
-    private fun MessageDetailsListItem?.assertLoadedBodyProperties(
-        shouldShowEmbeddedImagesButton: Boolean,
-        shouldShowDecryptionError: Boolean
-    ) {
-        assertEquals(MessageTestData.MESSAGE_ID_RAW, this?.message?.messageId)
-        assertEquals(TestData.MessageParts.BODY, this?.messageFormattedHtml)
-        assertEquals(TestData.MessageParts.BODY_WITH_QUOTE, this?.messageFormattedHtmlWithQuotedHistory)
-        assertEquals(shouldShowEmbeddedImagesButton, this?.showLoadEmbeddedImagesButton)
-        assertEquals(shouldShowDecryptionError, this?.showDecryptionError)
-    }
 }
 
 private object TestData {
@@ -209,10 +223,4 @@ private object TestData {
     const val MESSAGE_BODY_CSS = "I am css"
     const val MESSAGE_BODY_DARK_MODE_CSS = "And I am a dark css"
     const val DEFAULT_ERROR_MESSAGE = "nope"
-
-    object MessageParts {
-        const val BODY = "I am the split message body"
-        const val BODY_WITH_QUOTE = "I am the split message body with quote"
-        val withBodyAndQuote = MessageBodyParts(BODY, BODY_WITH_QUOTE)
-    }
 }
