@@ -48,7 +48,7 @@
     <string name="composer_subject">Tárgy:</string>
     <string name="composer_to">Címzett:</string>
     <string name="set_msg_password_title">Jelszó beállítása</string>
-    <string name="set_msg_password_info">Állítson be egy jelszót, a nem ProtonMail címzettek számára küldött üzenet titkosításához. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">További információk</a>
+    <string name="set_msg_password_info">Állítson be egy jelszót, a nem ProtonMail címzettek számára küldött üzenet titkosításához. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">További információk</a>
     </string>
     <string name="set_msg_password_info_icon_description">Infó</string>
     <string name="set_msg_password_msg_password_title">Üzenet jelszó</string>

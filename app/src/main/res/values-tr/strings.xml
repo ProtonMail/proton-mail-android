@@ -48,7 +48,7 @@
     <string name="composer_subject">Konu:</string>
     <string name="composer_to">Alıcı:</string>
     <string name="set_msg_password_title">Parola belirle</string>
-    <string name="set_msg_password_info">Protonmail kullanmayan kullanıcılar için bu mesajı şifrelemek amacıyla bir parola belirleyin. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Daha fazla bilgi edin</a>
+    <string name="set_msg_password_info">Protonmail kullanmayan kullanıcılar için bu mesajı şifrelemek amacıyla bir parola belirleyin. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Daha fazla bilgi edin</a>
     </string>
     <string name="set_msg_password_info_icon_description">Bilgi</string>
     <string name="set_msg_password_msg_password_title">İleti parolası</string>

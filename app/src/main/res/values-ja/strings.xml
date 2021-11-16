@@ -48,7 +48,7 @@
     <string name="composer_subject">件名：</string>
     <string name="composer_to">宛先：</string>
     <string name="set_msg_password_title">パスワードを設定</string>
-    <string name="set_msg_password_info">ProtonMail ユーザー以外がこのメッセージを読めるようにパスワードを設定してください <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">詳細</a>
+    <string name="set_msg_password_info">ProtonMail ユーザー以外がこのメッセージを読めるようにパスワードを設定してください <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a>
     </string>
     <string name="set_msg_password_info_icon_description">情報</string>
     <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>

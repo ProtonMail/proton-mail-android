@@ -48,7 +48,7 @@
     <string name="composer_subject">Subiect:</string>
     <string name="composer_to">Către:</string>
     <string name="set_msg_password_title">Setare parolă</string>
-    <string name="set_msg_password_info">Setaţi o parolă pentru criptarea acestui mesaj pentru utilizatorii non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Mai multe detalii</a>
+    <string name="set_msg_password_info">Setaţi o parolă pentru criptarea acestui mesaj pentru utilizatorii non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Mai multe detalii</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informaţii</string>
     <string name="set_msg_password_msg_password_title">Parolă mesaj</string>

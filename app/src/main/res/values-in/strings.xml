@@ -48,7 +48,7 @@
     <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
     <string name="set_msg_password_title">Setel kata sandi</string>
-    <string name="set_msg_password_info">Setel sandi untuk mengenkripsi pesan ini bagi pengguna non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Pelajari lebih lanjut</a>
+    <string name="set_msg_password_info">Setel sandi untuk mengenkripsi pesan ini bagi pengguna non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Pelajari lebih lanjut</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Kata sandi pesan</string>

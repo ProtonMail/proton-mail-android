@@ -23,6 +23,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
@@ -41,6 +42,7 @@ import kotlinx.coroutines.flow.onEach
 import me.proton.core.presentation.ui.view.ProtonInput
 import me.proton.core.presentation.utils.onClick
 import me.proton.core.presentation.utils.onTextChange
+import me.proton.core.util.kotlin.forEach
 import timber.log.Timber
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -75,13 +77,12 @@ class SetMessagePasswordActivity : AppCompatActivity() {
         viewModel.validate(password, password, hint)
 
         with(binding) {
-            listOf(
+            setMsgPasswordInfoTextView.movementMethod = LinkMovementMethod.getInstance()
+            forEach(
                 setMsgPasswordMsgPasswordInput,
                 setMsgPasswordRepeatPasswordInput,
                 setMsgPasswordHintInput
-            ).forEach {
-                it.onTextChange { validateInput() }
-            }
+            ) { it.onTextChange { validateInput() } }
             setMsgPasswordApplyButton.onClick { setResultAndFinish() }
             setMsgPasswordRemoveButton.onClick {
                 messagePassword = MessagePasswordUiModel.Unset
