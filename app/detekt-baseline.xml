@@ -1,0 +1,717 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>ArrayPrimitive:SnoozeExtensions.kt$Array&lt;Boolean&gt;</ID>
+    <ID>ClassOrdering:ColorChooserFragment.kt$ColorChooserFragment$override fun initUi(rootView: View?)</ID>
+    <ID>ClassOrdering:Crypto.kt$Crypto$protected abstract fun passphraseFor(key: K): ByteArray?</ID>
+    <ID>ClassOrdering:EventManager.kt$EventManager$fun reconfigure(service: EventService)</ID>
+    <ID>ClassOrdering:JobModule.kt$JobModule$@Provides @Singleton fun jobManager(app: ProtonMailApplication, queueNetworkUtil: QueueNetworkUtil): JobManager</ID>
+    <ID>ClassOrdering:JobModule.kt$JobModule.&lt;no name provided&gt;$override fun v(text: String, vararg args: Any?)</ID>
+    <ID>ClassOrdering:Json.kt$Json$fun toString(value: Any?): String?</ID>
+    <ID>ClassOrdering:LabelColorsAdapter.kt$LabelColorsAdapter$private fun selectItem(view: View, item: LabelColorItem)</ID>
+    <ID>ClassOrdering:LocalAttachment.kt$LocalAttachment.Companion$fun createLocalAttachmentList(attachmentList: List&lt;Attachment&gt;): List&lt;LocalAttachment&gt;</ID>
+    <ID>ClassOrdering:MailboxActivity.kt$MailboxActivity$private fun renderState(state: MailboxState)</ID>
+    <ID>ClassOrdering:MailboxActivity.kt$MailboxActivity$private fun setNewLabel(labelId: String)</ID>
+    <ID>ClassOrdering:MailboxActivity.kt$MailboxActivity$private fun showStorageLimitApproachingAlertDialog()</ID>
+    <ID>ClassOrdering:MailboxActivity.kt$MailboxActivity$private fun startObservingUsedSpace()</ID>
+    <ID>ClassOrdering:MailboxActivity.kt$MailboxActivity$private fun switchToMailboxCustomLocation( newLocation: Int, labelId: String, labelName: String?, isFolder: Boolean )</ID>
+    <ID>ClassOrdering:MailboxActivity.kt$MailboxActivity$public override fun onLabelMailBox( type: DrawerOptionType, labelId: String, labelName: String, isFolder: Boolean )</ID>
+    <ID>ClassOrdering:MessageDetailsRepository.kt$MessageDetailsRepository$fun findAllMessageByLastMessageAccessTimeBlocking(laterThan: Long = 0)</ID>
+    <ID>ClassOrdering:MessageRecipientArrayAdapter.kt$MessageRecipientArrayAdapter.ViewHolder$fun bind(recipient: MessageRecipient)</ID>
+    <ID>ClassOrdering:MimeDecryptor.kt$MimeDecryptor$fun withMessageTime(messageTime: Long)</ID>
+    <ID>ClassOrdering:NotificationSettingsViewModel.kt$NotificationSettingsViewModel$Companion</ID>
+    <ID>ClassOrdering:PinFragment.kt$PinFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
+    <ID>ClassOrdering:PinFragmentViewModel.kt$PinFragmentViewModel$fun wantedPin()</ID>
+    <ID>ClassOrdering:PinSettingsActivity.kt$PinSettingsActivity$override fun getLayoutId(): Int</ID>
+    <ID>ClassOrdering:PinSettingsActivity.kt$PinSettingsActivity$private fun handlePinSwitchOff()</ID>
+    <ID>ClassOrdering:SecureEditText.kt$SecureEditText$fun isValid(wantedPin: String?): Boolean</ID>
+    <ID>ClassOrdering:SecureEditText.kt$SecureEditText$override fun dispatchTouchEvent(ev: MotionEvent): Boolean</ID>
+    <ID>ClassOrdering:SnoozeSettings.kt$SnoozeSettings$Companion</ID>
+    <ID>ClassOrdering:UserManager.kt$UserManager$@Deprecated("Use suspend function", ReplaceWith("getMailSettings(userId)")) fun getMailSettingsBlocking(userId: UserId): MailSettings</ID>
+    <ID>ClassOrdering:UserManager.kt$UserManager$private inline fun &lt;T&gt; withCurrentUserPreferences(block: (SharedPreferences) -&gt; T): T?</ID>
+    <ID>ComplexCondition:IntentExtrasData.kt$IntentExtrasData.Builder$!message.isPGPMime &amp;&amp; (messageAction == Constants.MessageActionType.REPLY || messageAction == Constants.MessageActionType.REPLY_ALL) &amp;&amp; embeddedImagesAttachments != null</ID>
+    <ID>ComplexInterface:ContactDao.kt$ContactDao</ID>
+    <ID>ComplexInterface:LabelRepository.kt$LabelRepository</ID>
+    <ID>ComplexMethod:AttachmentListAdapter.kt$AttachmentListAdapter$override fun getView(position: Int, convertView: View?, parent: ViewGroup): View</ID>
+    <ID>ComplexMethod:AttachmentsHelper.kt$AttachmentsHelper$fun fromAttachmentToEmbeddedImage( attachment: Attachment, embeddedImages: List&lt;String&gt; ): EmbeddedImage?</ID>
+    <ID>ComplexMethod:BaseSettingsActivity.kt$BaseSettingsActivity$private fun selectItem(settingsId: String)</ID>
+    <ID>ComplexMethod:ContactDetailsAdapter.kt$ContactDetailsAdapter.ContactDetailViewHolder$fun bind(item: ContactDetailsUiItem)</ID>
+    <ID>ComplexMethod:EditSettingsItemActivity.kt$EditSettingsItemActivity$override fun renderViews()</ID>
+    <ID>ComplexMethod:EventHandler.kt$EventHandler$private fun updateMessageFlags( messageDao: MessageDao, messageId: String, item: EventResponse.MessageEventBody )</ID>
+    <ID>ComplexMethod:EventHandler.kt$EventHandler$private fun writeMessageUpdate( event: EventResponse.MessageEventBody, pendingActionDao: PendingActionDao, messageDao: MessageDao )</ID>
+    <ID>ComplexMethod:FetchContactsMapper.kt$FetchContactsMapper$private fun mapResultToCardItems( decryptedVCardType0: String, // UNSIGNED decryptedVCardType2: String, // SIGNED decryptedVCardType3: String, // SIGNED_ENCRYPTED vCardType2Signature: String, vCardType3Signature: String, contactId: String ): FetchContactDetailsResult</ID>
+    <ID>ComplexMethod:ImportAttachmentsWorker.kt$ImportAttachmentsWorker$override fun doWork(): Result</ID>
+    <ID>ComplexMethod:LabelsManagerActivity.kt$LabelsManagerActivity$ private fun initTexts()</ID>
+    <ID>ComplexMethod:MailboxActivity.kt$MailboxActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>ComplexMethod:MailboxActivity.kt$MailboxActivity.SwipeController$override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int)</ID>
+    <ID>ComplexMethod:MessageDao.kt$MessageDao$private suspend fun processMessageAttachments(message: Message)</ID>
+    <ID>ComplexMethod:NavigationActivity.kt$NavigationActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>ComplexMethod:NavigationActivity.kt$NavigationActivity$private fun onDrawerStaticItemSelected(type: Type)</ID>
+    <ID>ComplexMethod:UpdateContactJob.kt$UpdateContactJob$private fun updateContact( contactName: String, contactEmails: List&lt;ContactEmail&gt;, encryptedData: String, encryptedDataSignature: String, signedDataSignature: String, updateJoins: Boolean )</ID>
+    <ID>ConstructorParameterNaming:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_TYPE) var Type: MessageType = MessageType.INBOX</ID>
+    <ID>ConstructorParameterNaming:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_UNREAD) var Unread: Boolean = false</ID>
+    <ID>ConstructorParameterNaming:MessageBodyState.kt$MessageBodyState.Error.DecryptionError$val _message: Message</ID>
+    <ID>ConstructorParameterNaming:MessageBodyState.kt$MessageBodyState.Success$val _message: Message</ID>
+    <ID>ConstructorParameterNaming:ServerAttachment.kt$ServerAttachment$var ID: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerAttachment.kt$ServerAttachment$var KeyPackets: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerAttachment.kt$ServerAttachment$var MIMEType: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerAttachment.kt$ServerAttachment$var Name: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerAttachment.kt$ServerAttachment$var Signature: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerAttachment.kt$ServerAttachment$var Size: Long? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$@SerializedName(FIELD_LABEL_IDS_ADDED) val LabelIDsAdded: List&lt;String&gt;? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$@SerializedName(FIELD_LABEL_IDS_REMOVED) val LabelIDsRemoved: List&lt;String&gt;? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val AddressID: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Attachments: List&lt;ServerAttachment&gt;? = listOf()</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val BCCList: List&lt;MessageRecipient&gt;? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Body: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val CCList: List&lt;MessageRecipient&gt;? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val ConversationID: String</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val ExpirationTime: Long = -1</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Flags: Long = 0</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val FolderLocation: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Header: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val LabelIDs: List&lt;String&gt;? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val MIMEType: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val NumAttachments: Int = -1</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Order: Long? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val ReplyTos: List&lt;MessageRecipient&gt;? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Sender: ServerMessageSender? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Size: Long = -1</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val SpamScore: Int = -1</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Starred: Int = -1</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Subject: String? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val ToList: List&lt;MessageRecipient&gt;? = null</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Type: Int = -1</ID>
+    <ID>ConstructorParameterNaming:ServerMessage.kt$ServerMessage$val Unread: Int = -1</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$/** * filePath used to store attached file path for drafts * at time to upload it will read file and upload */ @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_PATH) @Expose(serialize = false, deserialize = false) var filePath: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_NAME) var fileName: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_SIZE) var fileSize: Long = 0</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_ID) var attachmentId: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_IS_INLINE) var inline: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_KEY_PACKETS) var keyPackets: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_MESSAGE_ID) var messageId: String = ""</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_MIME_DATA) @Expose(serialize = false, deserialize = false) var mimeData: ByteArray? = null</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_MIME_TYPE) var mimeType: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_SIGNATURE) var signature: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADED) var isUploaded: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADING) var isUploading: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@Ignore var isNew: Boolean = true</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@PrimaryKey(autoGenerate = true) @ColumnInfo(name = BaseColumns._ID) var dbId: Long? = null</ID>
+    <ID>DataClassShouldBeImmutable:Attachment.kt$Attachment$@SerializedName(FIELD_ATTACHMENT_HEADERS) @ColumnInfo(name = COLUMN_ATTACHMENT_HEADERS) var headers: AttachmentHeaders? = null</ID>
+    <ID>DataClassShouldBeImmutable:ContactData.kt$ContactData$@PrimaryKey(autoGenerate = true) @ColumnInfo(name = BaseColumns._ID) var dbId: Long? = null</ID>
+    <ID>DataClassShouldBeImmutable:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_ID) @ColumnInfo(name = COLUMN_CONTACT_DATA_ID) var contactId: String?</ID>
+    <ID>DataClassShouldBeImmutable:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_LABEL_IDS) @Ignore private var labelIds: List&lt;String&gt;? = null</ID>
+    <ID>DataClassShouldBeImmutable:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_NAME) @ColumnInfo(name = COLUMN_CONTACT_DATA_NAME) var name: String</ID>
+    <ID>DataClassShouldBeImmutable:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_SIZE) @Ignore private var size: Int = 0</ID>
+    <ID>DataClassShouldBeImmutable:ContactDetailsUiItem.kt$ContactDetailsUiItem.Address$var country: String?</ID>
+    <ID>DataClassShouldBeImmutable:ContactDetailsUiItem.kt$ContactDetailsUiItem.Address$var locality: String?</ID>
+    <ID>DataClassShouldBeImmutable:ContactDetailsUiItem.kt$ContactDetailsUiItem.Address$var postalCode: String?</ID>
+    <ID>DataClassShouldBeImmutable:ContactDetailsUiItem.kt$ContactDetailsUiItem.Address$var region: String?</ID>
+    <ID>DataClassShouldBeImmutable:ContactDetailsUiItem.kt$ContactDetailsUiItem.Address$var street: String?</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_CONTACT_ID) @ColumnInfo(name = COLUMN_CONTACT_EMAILS_CONTACT_ID, index = true) var contactId: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_DEFAULTS) @Ignore private var defaults: Int = 0</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_EMAIL) @ColumnInfo(name = COLUMN_CONTACT_EMAILS_EMAIL) var email: String</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_EMAIL_TYPE) @Ignore private var type: MutableList&lt;String&gt;? = null</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_ID) @ColumnInfo(name = COLUMN_CONTACT_EMAILS_ID) @PrimaryKey var contactEmailId: String</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_LABEL_IDS) @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LABEL_IDS) var labelIds: List&lt;String&gt;? = null</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_NAME) @ColumnInfo(name = COLUMN_CONTACT_EMAILS_NAME) var name: String?</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_ORDER) @Ignore private var order: Int = 0</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$var isPGP: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$var pgpDescription: Int = 0 // for clicking description</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$var pgpIcon: Int = 0 // for pgp</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$var pgpIconColor: Int = 0 // for pgp</ID>
+    <ID>DataClassShouldBeImmutable:ContactEmail.kt$ContactEmail$var selected: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:FullContactDetails.kt$FullContactDetails$@ColumnInfo(name = COLUMN_CONTACT_ENCRYPTED_DATA) var encryptedData: MutableList&lt;ContactEncryptedData&gt;? = null</ID>
+    <ID>DataClassShouldBeImmutable:FullContactDetails.kt$FullContactDetails$@ColumnInfo(name = COLUMN_CONTACT_NAME) var name: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:FullContactDetails.kt$FullContactDetails$@Ignore var emails: List&lt;ContactEmail&gt;? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_CONVERSATION_ID) var conversationId: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_ACCESS_TIME) var accessTime: Long = 0</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_ADDRESS_ID) var addressID: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_BODY) var messageBody: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_DELETED) var deleted: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_EXPIRATION_TIME) var expirationTime: Long = 0</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_FOLDER_LOCATION) var folderLocation: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_HEADER) var header: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_ID) var messageId: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_INLINE_RESPONSE) var isInline: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_IS_DOWNLOADED) var isDownloaded: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_IS_ENCRYPTED) var messageEncryption: MessageEncryption = MessageEncryption.UNKNOWN</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_IS_FORWARDED) var isForwarded: Boolean? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_IS_REPLIED) var isReplied: Boolean? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_IS_REPLIED_ALL) var isRepliedAll: Boolean? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_IS_STARRED) var isStarred: Boolean? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_LABELS) var allLabelIDs: List&lt;String&gt; = emptyList()</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_LOCAL_ID) var localId: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_LOCATION) var location: Int = -1</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_MIME_TYPE) var mimeType: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_NUM_ATTACHMENTS) var numAttachments: Int = 0</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_SIZE) var totalSize: Long = 0</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_SPAM_SCORE) var spamScore: Int = 0</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_SUBJECT) var subject: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_TIME) var time: Long = 0</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_TYPE) var Type: MessageType = MessageType.INBOX</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@ColumnInfo(name = COLUMN_MESSAGE_UNREAD) var Unread: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@Embedded(prefix = COLUMN_MESSAGE_PREFIX_SENDER) var sender: MessageSender? = MessageSender(null, null)</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@Ignore var attachments = listOf&lt;Attachment&gt;() internal set</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@Ignore var decryptedBody: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@Ignore var decryptedHTML: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@Ignore var embeddedImageIds = listOf&lt;String&gt;()</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@Ignore var hasInvalidSignature: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@Ignore var hasValidSignature: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@Ignore var senderDisplayName: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@JvmSuppressWildcards @ColumnInfo(name = COLUMN_MESSAGE_BCC_LIST) var bccList: List&lt;MessageRecipient&gt; = emptyList()</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@JvmSuppressWildcards @ColumnInfo(name = COLUMN_MESSAGE_CC_LIST) var ccList: List&lt;MessageRecipient&gt; = mutableListOf()</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@JvmSuppressWildcards @ColumnInfo(name = COLUMN_MESSAGE_REPLY_TOS) var replyTos: List&lt;MessageRecipient&gt; = mutableListOf()</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@JvmSuppressWildcards @ColumnInfo(name = COLUMN_MESSAGE_TO_LIST) var toList: List&lt;MessageRecipient&gt; = emptyList()</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@PrimaryKey(autoGenerate = true) @ColumnInfo(name = BaseColumns._ID) var dbId: Long? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$@SerializedName(COLUMN_MESSAGE_PARSED_HEADERS) @ColumnInfo(name = COLUMN_MESSAGE_PARSED_HEADERS) var parsedHeaders: ParsedHeaders? = null</ID>
+    <ID>DataClassShouldBeImmutable:Message.kt$Message$var senderName: String? get() = sender?.name set(senderName) { sender = sender?.copy(name = senderName) ?: MessageSender( senderName, null ) }</ID>
+    <ID>DataClassShouldBeImmutable:MessageSender.kt$MessageSender$@ColumnInfo(name = COLUMN_MESSAGE_SENDER_EMAIL) @SerializedName("Address") var emailAddress: String?</ID>
+    <ID>DataClassShouldBeImmutable:MessageSender.kt$MessageSender$@ColumnInfo(name = COLUMN_MESSAGE_SENDER_NAME) var name: String?</ID>
+    <ID>DataClassShouldBeImmutable:Notification.kt$Notification$@ColumnInfo(name = COLUMN_NOTIFICATION_MESSAGE_ID) var messageId: String</ID>
+    <ID>DataClassShouldBeImmutable:Notification.kt$Notification$@PrimaryKey var dbId: Long? = null</ID>
+    <ID>DataClassShouldBeImmutable:PendingDraft.kt$PendingDraft$@PrimaryKey @ColumnInfo(name = COLUMN_PENDING_DRAFT_MESSAGE_ID) var messageDbId: Long</ID>
+    <ID>DataClassShouldBeImmutable:PendingSend.kt$PendingSend$@ColumnInfo(name = COLUMN_PENDING_SEND_LOCAL_DB_ID) var localDatabaseId: Long = 0</ID>
+    <ID>DataClassShouldBeImmutable:PendingSend.kt$PendingSend$@ColumnInfo(name = COLUMN_PENDING_SEND_MESSAGE_ID) var messageId: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:PendingSend.kt$PendingSend$@ColumnInfo(name = COLUMN_PENDING_SEND_OFFLINE_MESSAGE_ID) var offlineMessageId: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:PendingSend.kt$PendingSend$@ColumnInfo(name = COLUMN_PENDING_SEND_SENT) var sent: Boolean? = null</ID>
+    <ID>DataClassShouldBeImmutable:PendingSend.kt$PendingSend$@PrimaryKey @ColumnInfo(name = COLUMN_PENDING_SEND_ID) var id: String = ""</ID>
+    <ID>DataClassShouldBeImmutable:PendingUpload.kt$PendingUpload$@PrimaryKey @ColumnInfo(name = COLUMN_PENDING_UPLOAD_MESSAGE_ID) var messageId: String</ID>
+    <ID>DataClassShouldBeImmutable:RegisterDeviceRequestBody.kt$RegisterDeviceRequestBody$@SerializedName(FIELD_APP_VERSION) var appVersion: String</ID>
+    <ID>DataClassShouldBeImmutable:RegisterDeviceRequestBody.kt$RegisterDeviceRequestBody$@SerializedName(FIELD_DEVICE_MODEL) var deviceModel: String</ID>
+    <ID>DataClassShouldBeImmutable:RegisterDeviceRequestBody.kt$RegisterDeviceRequestBody$@SerializedName(FIELD_DEVICE_NAME) var deviceName: String</ID>
+    <ID>DataClassShouldBeImmutable:RegisterDeviceRequestBody.kt$RegisterDeviceRequestBody$@SerializedName(FIELD_DEVICE_TOKEN) var deviceToken: String</ID>
+    <ID>DataClassShouldBeImmutable:RegisterDeviceRequestBody.kt$RegisterDeviceRequestBody$@SerializedName(FIELD_DEVICE_VERSION) var deviceVersion: String</ID>
+    <ID>DataClassShouldBeImmutable:RegisterDeviceRequestBody.kt$RegisterDeviceRequestBody$@SerializedName(FIELD_ENVIRONMENT) var environment: Int</ID>
+    <ID>DataClassShouldBeImmutable:ServerAttachment.kt$ServerAttachment$@SerializedName(FIELD_ATTACHMENT_HEADERS) var headers: AttachmentHeaders? = null</ID>
+    <ID>DataClassShouldBeImmutable:ServerAttachment.kt$ServerAttachment$var ID: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:ServerAttachment.kt$ServerAttachment$var KeyPackets: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:ServerAttachment.kt$ServerAttachment$var MIMEType: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:ServerAttachment.kt$ServerAttachment$var Name: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:ServerAttachment.kt$ServerAttachment$var Signature: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:ServerAttachment.kt$ServerAttachment$var Size: Long? = null</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_CARDS) var encryptedData: List&lt;ContactEncryptedData&gt;?</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_CREATE_TIME) var createTime: Long</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_DEFAULTS) var defaults: Int</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_EMAILS) var emails: List&lt;ContactEmail&gt;</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_ID) var id: String</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_MODIFY_TIME) var modifyTime: Long</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_NAME) var name: String</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_SIZE) var size: Int</ID>
+    <ID>DataClassShouldBeImmutable:ServerFullContactDetails.kt$ServerFullContactDetails$@SerializedName(FIELD_UID) var uid: String</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$/** * [settingDisabled] is used if we don't wanna show the feature with [settingId] to user */ var settingDisabled: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var editTextChangeListener: (String) -&gt; Unit = {}</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var editTextListener: (View) -&gt; Unit = {}</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var enabled: Boolean = false</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var iconVisibility: Int = View.GONE</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var settingHeader: String? = EMPTY_STRING</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var settingValue: String? = EMPTY_STRING</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var settingsDescription: String? = EMPTY_STRING</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var settingsHint: String? = EMPTY_STRING</ID>
+    <ID>DataClassShouldBeImmutable:SettingsItemUiModel.kt$SettingsItemUiModel$var toggleListener: ((View, Boolean) -&gt; Unit)? = { _: View, _: Boolean -&gt; }</ID>
+    <ID>DataClassShouldBeImmutable:UnregisterDeviceRequestBody.kt$UnregisterDeviceRequestBody$@SerializedName(FIELD_DEVICE_SESSION_ID) var sessionId: String? = null</ID>
+    <ID>DataClassShouldBeImmutable:UnregisterDeviceRequestBody.kt$UnregisterDeviceRequestBody$@SerializedName(FIELD_DEVICE_TOKEN) var deviceToken: String</ID>
+    <ID>ExpressionBodySyntax:AccountTypeActivity.kt$AccountTypeActivity$return R.layout.activity_account_type</ID>
+    <ID>ExpressionBodySyntax:AttachmentStorageActivity.kt$AttachmentStorageActivity$return R.layout.activity_attachment_storage</ID>
+    <ID>ExpressionBodySyntax:CommonExtensions.kt$return Gson().fromJson(string(), ResponseBody::class.java)</ID>
+    <ID>ExpressionBodySyntax:CommonExtensions.kt$return response()?.errorBody()?.toPMResponseBody()</ID>
+    <ID>ExpressionBodySyntax:ComposeMessageViewModel.kt$ComposeMessageViewModel$return content.replace("&lt;", LESS_THAN).replace("&gt;", GREATER_THAN).replace("\n", NEW_LINE)</ID>
+    <ID>ExpressionBodySyntax:ComposeMessageViewModel.kt$ComposeMessageViewModel$return processSignature(_messageDataResult.signature)</ID>
+    <ID>ExpressionBodySyntax:ConnectivityService.kt$ConnectivityService$return Service.START_NOT_STICKY</ID>
+    <ID>ExpressionBodySyntax:ExpandableRecyclerAdapter.kt$ExpandableRecyclerAdapter$return visibleItems[position].itemType</ID>
+    <ID>ExpressionBodySyntax:Proxies.kt$Proxies$return prefs.getString(PREF_DNS_OVER_HTTPS_API_URL, Constants.BASE_URL)!!</ID>
+    <ID>ExpressionBodySyntax:ResettableDelegate.kt$ResettableLazy$return lazyHolder.value</ID>
+    <ID>ExpressionBodySyntax:ResettableDelegate.kt$return ResettableLazy(manager, init)</ID>
+    <ID>ExpressionBodySyntax:SearchExpandListener.kt$SearchExpandListener$return true</ID>
+    <ID>ExpressionBodySyntax:SecureEditText.kt$BiggerDotPasswordTransformationMethod$return PasswordCharSequence(super.getTransformation(source, view))</ID>
+    <ID>ExpressionBodySyntax:SecureEditText.kt$SecureEditText$return true</ID>
+    <ID>ExpressionBodySyntax:ServerMessageSender.kt$ServerMessageSender$return "$name $address"</ID>
+    <ID>ExpressionBodySyntax:ServerMessageSender.kt$ServerMessageSender$return name.orEmpty().compareTo(other.name.orEmpty())</ID>
+    <ID>ExpressionBodySyntax:SnoozeExtensions.kt$return countTrue() == 2 &amp;&amp; this[5] &amp;&amp; this[6]</ID>
+    <ID>ExpressionBodySyntax:SnoozeExtensions.kt$return countTrue() == 5 &amp;&amp; !this[5] &amp;&amp; !this[6]</ID>
+    <ID>ExpressionBodySyntax:SnoozeExtensions.kt$return if (this &lt; 10) "0$this" else this.toString()</ID>
+    <ID>ExpressionBodySyntax:SnoozeExtensions.kt$return this.filter { it.isSelected }.count()</ID>
+    <ID>ExpressionBodySyntax:SnoozeNotificationsActivity.kt$SnoozeNotificationsActivity$return R.layout.activity_snooze_notifications</ID>
+    <ID>ExpressionBodySyntax:SnoozeRepeatDayView.kt$SnoozeRepeatDayView$return isSelected</ID>
+    <ID>FinalNewline:ch.protonmail.android.compose.presentation.mapper.SendPreferencesToMessageEncryptionUiModelMapper.kt:1</ID>
+    <ID>ForbiddenComment:AddressKeysBridgeMapper.kt$AddressKeyBridgeMapper$// TODO not implemented on old Keys</ID>
+    <ID>ForbiddenComment:AddressKeysBridgeMapper.kt$AddressKeyBridgeMapper$// TODO not implemented on old Keys!!!</ID>
+    <ID>ForbiddenComment:AndroidContactDetailsCallbacks.kt$AndroidContactDetailsCallbacks$/* TODO get contact groups if it makes sense later */</ID>
+    <ID>ForbiddenComment:AndroidContactDetailsCallbacks.kt$AndroidContactDetailsCallbacks$// TODO remove duplication between this class and ConvertLocalContactsJob.kt</ID>
+    <ID>ForbiddenComment:ApplicationModule.kt$ApplicationModule$// TODO move to data module into a proper class</ID>
+    <ID>ForbiddenComment:AttachmentsRepository.kt$AttachmentsRepository$* Repository that handles uploading attachments * * TODO Replace `userManager` and `messageDetailsRepository` * dependencies for more robust components. tracked in MAILAND-1195</ID>
+    <ID>ForbiddenComment:BaseRequestInterceptor.kt$BaseRequestInterceptor$// TODO: DoH: proxy list is empty, what to do here?</ID>
+    <ID>ForbiddenComment:BaseSettingsActivity.kt$BaseSettingsActivity$// TODO("startChangePasswordWorkflow")</ID>
+    <ID>ForbiddenComment:BaseSettingsActivity.kt$BaseSettingsActivity$// TODO("startrecoverysetupworkflow")</ID>
+    <ID>ForbiddenComment:ClearUserData.kt$ClearUserData$// TODO remove this dependencies and use the ConversationRepository.clear()</ID>
+    <ID>ForbiddenComment:ClearUserData.kt$ClearUserData$// TODO replace services, options:</ID>
+    <ID>ForbiddenComment:ClearUserMessagesData.kt$ClearUserMessagesData$// TODO remove this dependency and use the ConversationRepository.clear()</ID>
+    <ID>ForbiddenComment:CollectionExtensions.kt$// TODO: Cannot inline due to compilation error: try with newer Kotlin version for trim allocations overhead</ID>
+    <ID>ForbiddenComment:ComposeMessageViewModel.kt$ComposeMessageViewModel$// todo check if any var should be set</ID>
+    <ID>ForbiddenComment:ContactDetailsViewModelOld.kt$ContactDetailsViewModelOld$* A [ViewModel] for display a contact * It is open so it can be extended by EditContactViewModel * * Inherit from [BaseViewModel] * * TODO: * [ ] Replace RxJava with Coroutines * [ ] Fix unhandled concurrency * [ ] Replace [LiveData] with [ViewStateStore] for avoid multiple [LiveData] for success and error and * [ViewStateStore.lock] for avoid useless private [MutableLiveData] * [ x] Inject dispatchers in the constructor * [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`</ID>
+    <ID>ForbiddenComment:ContactGroupsFragment.kt$ContactGroupsFragment$// TODO: Investigate if it could be merged together with [ContactsListFragment].</ID>
+    <ID>ForbiddenComment:ConversationUiModel.kt$ConversationUiModel$// TODO: The labels should be part of the message UI model instead</ID>
+    <ID>ForbiddenComment:CreateDraftWorker.kt$CreateDraftWorker$// TODO: Improve on this approach; MAILAND-2366</ID>
+    <ID>ForbiddenComment:DatabaseProvider.kt$DatabaseProvider$// TODO remove once the usage in ClearUserData use-case is removed</ID>
+    <ID>ForbiddenComment:DrawerLabelUiModelMapper.kt$DrawerLabelUiModelMapper$@property useFolderColor whether the user enabled the settings for use Colors for Folders. * TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true` * * TODO: the mapper currently includes a piece of logic to flatten the hierarchy of the Folders to facilitate the * implementation with a conventional RecyclerView/Adapter, this must be reevaluated with MAILAND-2304, where we * probably need to keep the hierarchy, in order to have collapsible groups</ID>
+    <ID>ForbiddenComment:FetchUserWorker.kt$FetchUserWorker$// TODO: Remove this result.</ID>
+    <ID>ForbiddenComment:HandleEmbeddedImageAttachments.kt$HandleEmbeddedImageAttachments$// TODO don't call it every time we download attachments</ID>
+    <ID>ForbiddenComment:HandleSingleAttachment.kt$HandleSingleAttachment$// TODO don't call it every time we download attachments</ID>
+    <ID>ForbiddenComment:ImportAttachmentsWorker.kt$ImportAttachmentsWorker$* Represents one unit of work importing attachments to app's cache directory. * * InputData has to contain non-null values for: * - fileUris * * Optionally: * - deleteOriginalFile: if Uri's scheme is [ContentResolver.SCHEME_FILE], delete this file after import * * OutputData contains: * TODO when we move from EventBus to observing Workers * * @see androidx.work.WorkManager * @see androidx.work.Data</ID>
+    <ID>ForbiddenComment:IntentExtrasData.kt$IntentExtrasData.Builder$// TODO temporary workaround for non-initialized lateinit crash</ID>
+    <ID>ForbiddenComment:LabelDomainActionItemUiMapper.kt$LabelDomainActionItemUiMapper$@property useFolderColor whether the user enabled the settings for use Colors for Folders. * TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`</ID>
+    <ID>ForbiddenComment:LabelsActionSheet.kt$LabelsActionSheet$// TODO: Change visibility logic when the feature is implemented</ID>
+    <ID>ForbiddenComment:LabelsActionSheet.kt$LabelsActionSheet$// TODO: Link it to appropriate setting section for adding new Folder</ID>
+    <ID>ForbiddenComment:LabelsActionSheet.kt$LabelsActionSheet$// TODO: Link it to appropriate setting section for adding new Label</ID>
+    <ID>ForbiddenComment:MailSettings.kt$MailSettings$// TODO this field should be changed to 'ShowImagesFrom' enum, once using Kotlinx serialization</ID>
+    <ID>ForbiddenComment:MailSettingsService.kt$MailSettingsService$// TODO: 8/20/18 Better error handling, in a single place</ID>
+    <ID>ForbiddenComment:MailboxActivity.kt$MailboxActivity$// TODO if we decide to use special flag for switching (and not login), change this</ID>
+    <ID>ForbiddenComment:MailboxActivity.kt$MailboxActivity$// TODO: remove?</ID>
+    <ID>ForbiddenComment:MailboxItemView.kt$MailboxItemView$// TODO: Currently there's a bug with showing the location on certain messages.</ID>
+    <ID>ForbiddenComment:MarkUnreadLatestNonDraftMessageInLocation.kt$MarkUnreadLatestNonDraftMessageInLocation$// TODO This business logic should live in the domain layer and that's where this class really belongs</ID>
+    <ID>ForbiddenComment:MessageUtils.kt$MessageUtils$// TODO: discard nullability of parameters once MessageDetailsActivity is converted to Kotlin</ID>
+    <ID>ForbiddenComment:MessageUtils.kt$MessageUtils$// TODO: discard nullability of parameters once MessageDetailsActivity is converted to Kotlin (dependent on above)</ID>
+    <ID>ForbiddenComment:MessageUtils.kt$MessageUtils$// TODO: replace with expression in MailboxActivity once it's converted to Kotlin and delete method</ID>
+    <ID>ForbiddenComment:MessageUtils.kt$MessageUtils$// TODO: replace with expression once ComposeMessageActivity is converted to Kotlin</ID>
+    <ID>ForbiddenComment:MessagesService.kt$MessagesService$// TODO extract common logic from handleResult methods</ID>
+    <ID>ForbiddenComment:MimeDecryptor.kt$MimeDecryptor$/*TODO gopenpgp*/</ID>
+    <ID>ForbiddenComment:MimeDecryptor.kt$MimeDecryptor$// TODO this works as long as it is passphrase matching one of correct keys</ID>
+    <ID>ForbiddenComment:NavigationActivity.kt$NavigationActivity$* A lambda that holds an operation that needs to be executed after the Drawer has been closed * * Note by Davide: I guess this is a workaround for avoid the Drawer's animation stuttering * while the other component is loading * TODO: Optimize loading and remove this delay</ID>
+    <ID>ForbiddenComment:NetworkSwitcher.kt$NetworkSwitcher$// TODO: DoH this can be done without null</ID>
+    <ID>ForbiddenComment:NotificationServer.kt$NotificationServer$// Set Sound - TODO those Int's are not very clear :/</ID>
+    <ID>ForbiddenComment:NotificationServer.kt$NotificationServer$// Set Vibration - TODO those Int's are not very clear :/</ID>
+    <ID>ForbiddenComment:NotificationServer.kt$NotificationServer$// TODO Make sure we have needed permissions and sound file can be read -</ID>
+    <ID>ForbiddenComment:NotificationServer.kt$NotificationServer$// TODO by Davide Farella: Perhaps schedule with Work Manager?</ID>
+    <ID>ForbiddenComment:NotificationSettingsActivity.kt$NotificationSettingsActivity$ TODO: doc </ID>
+    <ID>ForbiddenComment:NotificationSettingsActivity.kt$NotificationSettingsActivity$/* TODO: show progress */</ID>
+    <ID>ForbiddenComment:NotificationsUtils.kt$// TODO move to GCMService</ID>
+    <ID>ForbiddenComment:ProtonOkHttpClient.kt$ProxyOkHttpClient.PinningTrustManager$// TODO: is that enough? need security review</ID>
+    <ID>ForbiddenComment:SendMessageWorker.kt$SendMessageWorker$// TODO improve error handling for generic exception MAILAND-2003</ID>
+    <ID>ForbiddenComment:UpdateContactJob.kt$UpdateContactJob$// TODO: 9/14/17 todoContacts throw error</ID>
+    <ID>ForbiddenComment:UserKeysBridgeMapper.kt$UserKeyBridgeMapper$// TODO not implemented on old Keys</ID>
+    <ID>ForbiddenImport:AccountManager.kt$import ch.protonmail.libs.core.preferences.clearOnly</ID>
+    <ID>ForbiddenImport:AccountStateManager.kt$import ch.protonmail.libs.core.preferences.clearAll</ID>
+    <ID>ForbiddenImport:AddressCrypto.kt$import ch.protonmail.libs.core.utils.encodeToBase64String</ID>
+    <ID>ForbiddenImport:ComposerBottomAppBar.kt$import ch.protonmail.libs.core.utils.onClick</ID>
+    <ID>ForbiddenImport:CoreAccountManagerMigration.kt$import ch.protonmail.libs.core.preferences.getString</ID>
+    <ID>ForbiddenImport:DrawerAdapter.kt$import ch.protonmail.libs.core.ui.adapter.BaseAdapter</ID>
+    <ID>ForbiddenImport:DrawerAdapter.kt$import ch.protonmail.libs.core.ui.adapter.ClickableAdapter</ID>
+    <ID>ForbiddenImport:LabelsAdapter.kt$import ch.protonmail.libs.core.ui.adapter.BasePagedAdapter</ID>
+    <ID>ForbiddenImport:LabelsAdapter.kt$import ch.protonmail.libs.core.ui.adapter.SelectableAdapter</ID>
+    <ID>ForbiddenImport:SettingsAdapter.kt$import ch.protonmail.libs.core.ui.adapter.BaseAdapter</ID>
+    <ID>ForbiddenImport:SettingsAdapter.kt$import ch.protonmail.libs.core.ui.adapter.ClickableAdapter</ID>
+    <ID>ForbiddenImport:SnoozeExtensions.kt$import ch.protonmail.libs.core.utils.EMPTY_STRING</ID>
+    <ID>ForbiddenImport:SwipeSettingFragment.kt$import ch.protonmail.libs.core.utils.onClick</ID>
+    <ID>FunctionMaxLength:AccountStateManager.kt$AccountStateManager$ fun observeHumanVerificationStateWithExternalLifecycle(lifecycle: Lifecycle)</ID>
+    <ID>FunctionMaxLength:AttachmentClearingServiceHelper.kt$AttachmentClearingServiceHelper$fun startClearUpImmediatelyServiceAndDeleteTables(userId: UserId)</ID>
+    <ID>FunctionMaxLength:AttachmentMetadataDao.kt$AttachmentMetadataDao$@Query( """ SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION = :messageId AND $COLUMN_ATTACHMENT_ID = :attachmentId """ ) fun getAttachmentMetadataForMessageAndAttachmentId( messageId: String, attachmentId: String ): AttachmentMetadata?</ID>
+    <ID>FunctionMaxLength:MessageActionSheetViewModel.kt$MessageActionSheetViewModel$private fun isApplyingActionToMessageItemInDetailScreen(): Boolean</ID>
+    <ID>FunctionMaxLength:MessageActionSheetViewModel.kt$MessageActionSheetViewModel$private fun isApplyingActionToMessageWithinAConversation(): Boolean</ID>
+    <ID>FunctionMaxLength:MessageDao.kt$MessageDao$@Query( """ SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_CONVERSATION_ID = :conversationId AND $COLUMN_MESSAGE_DELETED = 0 ORDER BY $COLUMN_MESSAGE_TIME DESC """ ) abstract suspend fun findAllConversationMessagesSortedByNewest(conversationId: String): List&lt;Message&gt;</ID>
+    <ID>FunctionMaxLength:MessageDao.kt$MessageDao$@Query( """ SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ACCESS_TIME &gt; :laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME """ ) abstract fun observeAllMessagesInfoByLastMessageAccessTime(laterThan: Long = 0): Flow&lt;List&lt;Message&gt;&gt;</ID>
+    <ID>FunctionMaxLength:MessageDetailsAdapter.kt$MessageDetailsAdapter$private fun wrapMessageContentHeightWhenContentLoaded(messageWebViewContainer: LinearLayout)</ID>
+    <ID>FunctionMaxLength:MessageDetailsRepository.kt$MessageDetailsRepository$fun findAllMessageByLastMessageAccessTimeBlocking(laterThan: Long = 0)</ID>
+    <ID>FunctionMaxLength:NotificationServer.kt$NotificationServer$fun createRetrievingNotificationsNotification(): Notification</ID>
+    <ID>FunctionMaxLength:NotificationServer.kt$NotificationServer$private fun createGenericErrorSendingMessageNotification( userId: UserId ): NotificationCompat.Builder</ID>
+    <ID>FunctionMaxLength:QueueNetworkUtil.kt$QueueNetworkUtil$fun retryPingAsPreviousRequestWasInconclusive()</ID>
+    <ID>FunctionMaxLength:ViewModelModule.kt$ViewModelModule$@Provides fun provideContactGroupEditCreateViewModelFactory( contactGroupEditCreateViewModelFactory: ContactGroupEditCreateViewModelFactory ): ViewModelProvider.NewInstanceFactory</ID>
+    <ID>FunctionMaxLength:ViewModelModule.kt$ViewModelModule$@Provides fun provideManageLabelsDialogViewModelFactory( factory: ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory ): ViewModelProvider.NewInstanceFactory</ID>
+    <ID>FunctionMaxLength:ViewModelModule.kt$ViewModelModule$@Provides fun provideNotificationSettingsViewModelFactory( application: ProtonMailApplication, userManager: UserManager )</ID>
+    <ID>FunctionOnlyReturningConstant:FeatureFlagsManager.kt$FeatureFlagsManager$ fun isChangeViewModeFeatureEnabled()</ID>
+    <ID>FunctionParameterNaming:Attachment.kt$Attachment.Companion$message_id: String</ID>
+    <ID>FunctionParameterNaming:AttachmentUploadService.kt$AttachmentUploadService$@Part("ContentID") ContentID: String</ID>
+    <ID>FunctionParameterNaming:AttachmentUploadService.kt$AttachmentUploadService$@Part("DataPacket\"; filename=\"temp2") DataPacket: RequestBody</ID>
+    <ID>FunctionParameterNaming:AttachmentUploadService.kt$AttachmentUploadService$@Part("Filename") Filename: String</ID>
+    <ID>FunctionParameterNaming:AttachmentUploadService.kt$AttachmentUploadService$@Part("KeyPackets\"; filename=\"temp1") KeyPackets: RequestBody</ID>
+    <ID>FunctionParameterNaming:AttachmentUploadService.kt$AttachmentUploadService$@Part("MIMEType") MIMEType: String</ID>
+    <ID>FunctionParameterNaming:AttachmentUploadService.kt$AttachmentUploadService$@Part("MessageID") MessageID: String</ID>
+    <ID>FunctionParameterNaming:AttachmentUploadService.kt$AttachmentUploadService$@Part("Signature\"; filename=\"temp3") Signature: RequestBody</ID>
+    <ID>GlobalCoroutineUsage:ComposeMessageViewModel.kt$ComposeMessageViewModel$GlobalScope.launch { _messageDataResult = MessageBuilderData.Builder() .fromOld(_messageDataResult) .message(messageWithExpirationTime) .build() if (_dbId == null) { // if db ID is null this means we do not have local DB row of the message we are about to send // and we are saving it. also draftId should be null messageWithExpirationTime.messageId = UUID.randomUUID().toString() _dbId = saveMessage(messageWithExpirationTime) } else { // this will ensure the message get latest message id if it was already saved in a create/update draft job // and also that the message has all the latest edits in between draft saving (creation) and sending the message val savedMessage = messageDetailsRepository.findMessageByDatabaseId(_dbId!!).first() messageWithExpirationTime.dbId = _dbId savedMessage?.let { if (!TextUtils.isEmpty(it.localId)) { messageWithExpirationTime.messageId = it.messageId } else { messageWithExpirationTime.messageId = _draftId.get() } saveMessage(messageWithExpirationTime) } } if (_dbId != null) { val newAttachments = calculateNewAttachments(true) sendMessage( SendMessage.SendMessageParameters( messageWithExpirationTime, newAttachments, parentId, _actionId, _oldSenderAddressId, MessageSecurityOptions( messageDataResult.messagePassword, messageDataResult.passwordHint, messageDataResult.expiresAfterInSeconds ) ) ) } else { sendingInProcess = false } _dbIdWatcher.postValue(_dbId) }</ID>
+    <ID>GlobalCoroutineUsage:ComposeMessageViewModel.kt$ComposeMessageViewModel$GlobalScope.launch(dispatchers.Main) { if (_dbId == null) { _dbId = saveMessage(message) message.dbId = _dbId } else { message.dbId = _dbId saveMessage(message) } val saveDraftTrigger = if (uploadAttachments) { SaveDraft.SaveDraftTrigger.UserRequested } else { SaveDraft.SaveDraftTrigger.AutoSave } if (draftId.isNotEmpty()) { if (MessageUtils.isLocalMessageId(_draftId.get()) &amp;&amp; hasConnectivity) { return@launch } //region update existing draft here message.messageId = draftId val newAttachments = calculateNewAttachments(uploadAttachments) invokeSaveDraftUseCase( message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger ) // overwrite "old sender ID" when updating draft _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId setIsDirty(false) //endregion } else { //region new draft here if (draftId.isEmpty() &amp;&amp; message.messageId.isNullOrEmpty()) { val newDraftId = UUID.randomUUID().toString() _draftId.set(newDraftId) message.messageId = newDraftId saveMessage(message) watchForMessageSent() } var newAttachmentIds: List&lt;String&gt; = ArrayList() val listOfAttachments = ArrayList(message.attachments) if (uploadAttachments &amp;&amp; listOfAttachments.isNotEmpty()) { message.numAttachments = listOfAttachments.size saveMessage(message) newAttachmentIds = filterUploadedAttachments( composeMessageRepository.createAttachmentList( _messageDataResult.attachmentList, dispatchers.Io ), uploadAttachments ) } invokeSaveDraftUseCase( message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger ) _oldSenderAddressId = "" setIsDirty(false) //endregion } _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).isDirty(false).build() }</ID>
+    <ID>ImplicitDefaultLocale:ConvertLocalContactsJob.kt$ConvertLocalContactsJob$String.format("%s = 0", ContactsContract.Groups.GROUP_VISIBLE)</ID>
+    <ID>ImplicitDefaultLocale:GenerateTokenAndSignature.kt$GenerateTokenAndSignature$String.format("%02x", (it.toInt() and 0xff))</ID>
+    <ID>Indentation:ch.protonmail.android.ui.actionsheet.MessageActionSheet.kt:189</ID>
+    <ID>Indentation:ch.protonmail.android.ui.actionsheet.MessageActionSheet.kt:190</ID>
+    <ID>LargeClass:ComposeMessageViewModel.kt$ComposeMessageViewModel : ConnectivityBaseViewModel</ID>
+    <ID>LargeClass:MailboxActivity.kt$MailboxActivity : NavigationActivityCallbackOnRefreshListener</ID>
+    <ID>LargeClass:MailboxViewModel.kt$MailboxViewModel : ConnectivityBaseViewModel</ID>
+    <ID>LargeClass:MessageDetailsActivity.kt$MessageDetailsActivity : BaseStoragePermissionActivity</ID>
+    <ID>LargeClass:MessageDetailsViewModel.kt$MessageDetailsViewModel : ConnectivityBaseViewModelLifecycleObserver</ID>
+    <ID>LongMethod:AndroidContactDetailsCallbacks.kt$AndroidContactDetailsCallbacks$override fun onLoadFinished(loader: Loader&lt;Cursor&gt;, data: Cursor?)</ID>
+    <ID>LongMethod:AttachmentListAdapter.kt$AttachmentListAdapter$override fun getView(position: Int, convertView: View?, parent: ViewGroup): View</ID>
+    <ID>LongMethod:BaseRequestInterceptor.kt$BaseRequestInterceptor$fun checkResponse(response: Response, chain: Interceptor.Chain): Response</ID>
+    <ID>LongMethod:BaseSettingsActivity.kt$BaseSettingsActivity$private fun selectItem(settingsId: String)</ID>
+    <ID>LongMethod:ContactDetailsAdapter.kt$ContactDetailsAdapter.ContactDetailViewHolder$fun bind(item: ContactDetailsUiItem)</ID>
+    <ID>LongMethod:ContactDetailsMapper.kt$ContactDetailsMapper$fun mapToContactViewData( fetchResult: FetchContactDetailsResult, groupsResult: FetchContactGroupsResult ): ContactDetailsViewState.Data</ID>
+    <ID>LongMethod:ContactDetailsViewModelOld.kt$ContactDetailsViewModelOld$fun fetchContactGroupsAndContactEmails(contactId: String)</ID>
+    <ID>LongMethod:ConvertLocalContactsJob.kt$ConvertLocalContactsJob$@Throws(Throwable::class) override fun onRun()</ID>
+    <ID>LongMethod:EditSettingsItemActivity.kt$EditSettingsItemActivity$override fun renderViews()</ID>
+    <ID>LongMethod:EventHandler.kt$EventHandler$private fun updateMessageFlags( messageDao: MessageDao, messageId: String, item: EventResponse.MessageEventBody )</ID>
+    <ID>LongMethod:FetchContactsMapper.kt$FetchContactsMapper$private fun mapResultToCardItems( decryptedVCardType0: String, // UNSIGNED decryptedVCardType2: String, // SIGNED decryptedVCardType3: String, // SIGNED_ENCRYPTED vCardType2Signature: String, vCardType3Signature: String, contactId: String ): FetchContactDetailsResult</ID>
+    <ID>LongMethod:HandleEmbeddedImageAttachments.kt$HandleEmbeddedImageAttachments$suspend operator fun invoke( embeddedImages: List&lt;EmbeddedImage&gt;, crypto: AddressCrypto, messageId: String ): ListenableWorker.Result</ID>
+    <ID>LongMethod:ImportAttachmentsWorker.kt$ImportAttachmentsWorker$override fun doWork(): Result</ID>
+    <ID>LongMethod:MailboxActivity.kt$MailboxActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:MailboxActivity.kt$MailboxActivity$private fun setUpMailboxActionsView()</ID>
+    <ID>LongMethod:MessageDao.kt$MessageDao$private suspend fun processMessageAttachments(message: Message)</ID>
+    <ID>LongMethod:MessageDetailsActivity.kt$MessageDetailsActivity$private fun observeEditMessageEvents()</ID>
+    <ID>LongMethod:MessageDetailsHeaderView.kt$MessageDetailsHeaderView$fun bind( message: Message, messageEncryptionUiModel: MessageEncryptionUiModel, exclusiveLabels: List&lt;Label&gt;, nonExclusiveLabels: List&lt;LabelChipUiModel&gt;, onHeaderCollapsed: () -&gt; Unit )</ID>
+    <ID>LongMethod:MessageDetailsRepository.kt$MessageDetailsRepository$suspend fun prepareEditMessageIntent( messageAction: Constants.MessageActionType, message: Message, user: User, newMessageTitle: String?, content: String, mBigContentHolder: BigContentHolder, mImagesDisplayed: Boolean, remoteContentDisplayed: Boolean, embeddedImagesAttachments: MutableList&lt;Attachment&gt;?, dispatcher: CoroutineDispatcher ): IntentExtrasData</ID>
+    <ID>LongMethod:MessagesService.kt$MessagesService$// TODO extract common logic from handleResult methods private fun handleResult( messages: MessagesResponse?, location: Constants.MessageLocationType, refreshDetails: Boolean, uuid: String?, currentUserId: UserId, refreshMessages: Boolean = false )</ID>
+    <ID>LongMethod:NavigationActivity.kt$NavigationActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:NotificationServer.kt$NotificationServer$ fun notifySingleNewEmail( userManager: UserManager, user: User, notificationSettings: Int, ringtoneUri: Uri?, isNotificationVisibleInLockScreen: Boolean, message: Message?, messageId: String, notificationBody: String?, sender: String, primaryUser: Boolean )</ID>
+    <ID>LongMethod:ProcessPushNotificationDataWorker.kt$ProcessPushNotificationDataWorker$override suspend fun doWork(): Result</ID>
+    <ID>LongMethod:ProtonRetrofitBuilder.kt$ProtonRetrofitBuilder$fun rebuildMapFor(okHttpProvider: OkHttpProvider, endpointUri: String)</ID>
+    <ID>LongMethod:SendMessageWorker.kt$SendMessageWorker$override suspend fun doWork(): Result</ID>
+    <ID>LongMethod:UpdateContactJob.kt$UpdateContactJob$private fun updateContact( contactName: String, contactEmails: List&lt;ContactEmail&gt;, encryptedData: String, encryptedDataSignature: String, signedDataSignature: String, updateJoins: Boolean )</ID>
+    <ID>LongParameterList:ApplicationModule.kt$ApplicationModule$( context: Context, userManager: UserManager, jobManager: JobManager, serverTimeListener: ServerTimeListener, networkUtil: QueueNetworkUtil, okHttpProvider: OkHttpProvider, @DefaultSharedPreferences prefs: SharedPreferences, userNotifier: UserNotifier, sessionManager: SessionManager, @BaseUrl baseUrl: String )</ID>
+    <ID>LongParameterList:AttachmentApiSpec.kt$AttachmentApiSpec$( attachment: Attachment, messageID: String, contentID: String, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody )</ID>
+    <ID>LongParameterList:AttachmentUploadService.kt$AttachmentUploadService$( @Part("Filename") Filename: String, @Part("MessageID") MessageID: String, @Part("ContentID") ContentID: String, @Part("MIMEType") MIMEType: String, @Part("KeyPackets\"; filename=\"temp1") KeyPackets: RequestBody, @Part("DataPacket\"; filename=\"temp2") DataPacket: RequestBody, @Part("Signature\"; filename=\"temp3") Signature: RequestBody )</ID>
+    <ID>LongParameterList:AttachmentUploadService.kt$AttachmentUploadService$( @Part("Filename") Filename: String, @Part("MessageID") MessageID: String, @Part("MIMEType") MIMEType: String, @Part("KeyPackets\"; filename=\"temp1") KeyPackets: RequestBody, @Part("DataPacket\"; filename=\"temp2") DataPacket: RequestBody, @Part("Signature\"; filename=\"temp3") Signature: RequestBody )</ID>
+    <ID>LongParameterList:ComposeMessageViewModel.kt$ComposeMessageViewModel$( composerBody: String? = null, messageBody: String, setComposerContent: Boolean, isPlainText: Boolean, senderNameAddressFormat: String, originalMessageDividerString: String, replyPrefixOnString: String, formattedDateTimeString: String )</ID>
+    <ID>LongParameterList:ComposeMessageViewModel.kt$ComposeMessageViewModel$( message: Message, newAttachments: List&lt;String&gt;, parentId: String?, messageActionType: Constants.MessageActionType, oldSenderAddress: String, saveDraftTrigger: SaveDraft.SaveDraftTrigger )</ID>
+    <ID>LongParameterList:CoreNetworkModule.kt$NetworkModule$( apiClient: ApiClient, clientIdProvider: ClientIdProvider, serverTimeListener: ServerTimeListener, networkManager: NetworkManager, networkPrefs: NetworkPrefs, protonCookieStore: ProtonCookieStore, sessionProvider: SessionProvider, sessionListener: SessionListener, humanVerificationProvider: HumanVerificationProvider, humanVerificationListener: HumanVerificationListener, @DefaultApiPins defaultApiPins: Array&lt;String&gt;, @AlternativeApiPins alternativeApiPins: List&lt;String&gt;, @BaseUrl baseUrl: String )</ID>
+    <ID>LongParameterList:CoreUserModule.kt$UserManagerModule$( userRepository: UserRepository, userAddressRepository: UserAddressRepository, passphraseRepository: PassphraseRepository, keySaltRepository: KeySaltRepository, privateKeyRepository: PrivateKeyRepository, userAddressKeySecretProvider: UserAddressKeySecretProvider, cryptoContext: CryptoContext )</ID>
+    <ID>LongParameterList:DialogUtils.kt$DialogUtils.Companion$( context: Context, title: String, message: Spanned, negativeBtnText: String, positiveBtnText: String, checkBoxText: String, okListener: (Unit) -&gt; Unit, checkedListener: (Boolean) -&gt; Unit, cancelable: Boolean )</ID>
+    <ID>LongParameterList:DialogUtils.kt$DialogUtils.Companion$( context: Context, title: String, message: String, negativeBtnText: String, positiveBtnText: String, dismissListener: ((Unit) -&gt; Unit)?, okListener: ((Unit) -&gt; Unit)?, cancelable: Boolean, dismissible: Boolean = true, outsideClickCancellable: Boolean = true )</ID>
+    <ID>LongParameterList:DialogUtils.kt$DialogUtils.Companion$( context: Context, title: String, message: String, negativeBtnText: String, positiveBtnText: String, neultralBtnText: String, dismissListener: (Unit) -&gt; Unit, okListener: (Unit) -&gt; Unit, cancelable: Boolean )</ID>
+    <ID>LongParameterList:DialogUtils.kt$DialogUtils.Companion$( context: Context, title: String, message: String, negativeBtnText: String, positiveBtnText: String, okListener: ((Unit) -&gt; Unit)?, cancelable: Boolean )</ID>
+    <ID>LongParameterList:EditContactDetailsRepository.kt$EditContactDetailsRepository$( contactId: String, contactName: String, contactEmails: List&lt;ContactEmail&gt;, encryptedData: String, encryptedDataSignature: String, signedDataSignature: String, signedData: String, mapContactLabelIds: Map&lt;String, List&lt;LabelId&gt;&gt; )</ID>
+    <ID>LongParameterList:EditContactDetailsRepository.kt$EditContactDetailsRepository$( contactId: String, contactName: String, contactEmails: List&lt;ContactEmail&gt;, encryptedData: String, signedData: String, mapContactLabelIds: Map&lt;String, List&lt;LabelId&gt;&gt; )</ID>
+    <ID>LongParameterList:EditContactDetailsRepository.kt$EditContactDetailsRepository$( contactId: String, contactName: String, emails: List&lt;ContactEmail&gt;, vCardEncrypted: VCard, vCardSigned: VCard, mapContactLabelIds: Map&lt;String, List&lt;LabelId&gt;&gt;, )</ID>
+    <ID>LongParameterList:EditContactDetailsViewModel.kt$EditContactDetailsViewModel$( flow: Int, contactId: String, localContact: LocalContact?, email: String, vCardPhoneUIOptions: List&lt;String&gt;, vCardPhoneOptions: List&lt;String&gt;, vCardEmailUIOptions: List&lt;String&gt;, vCardEmailOptions: List&lt;String&gt;, vCardAddressUIOptions: List&lt;String&gt;, vCardAddressOptions: List&lt;String&gt;, vCardOtherOptions: List&lt;String&gt;, vCardStringType0: String?, vCardStringType2: String?, vCardStringType3Path: String? )</ID>
+    <ID>LongParameterList:EventHandler.kt$EventHandler$( private val context: Context, private val protonMailApiManager: ProtonMailApiManager, private val unreadCounterDao: UnreadCounterDao, private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper, private val userManager: UserManager, messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory, private val changeToConversations: HandleChangeToConversations, private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer, private val fetchContactsData: FetchContactsDataWorker.Enqueuer, private val fetchUserWorkerEnqueuer: FetchUserWorker.Enqueuer, private val fetchUserAddressesWorkerEnqueuer: FetchUserAddressesWorker.Enqueuer, private val fetchMailSettingsWorker: FetchMailSettingsWorker.Enqueuer, databaseProvider: DatabaseProvider, private val launchInitialDataFetch: LaunchInitialDataFetch, private val messageFactory: MessageFactory, @Assisted val userId: UserId, private val externalScope: CoroutineScope, private val messageFlagsToEncryptionMapper: MessageFlagsToEncryptionMapper, private val labelRepository: LabelRepository, private val labelEventApiMapper: LabelEventApiMapper )</ID>
+    <ID>LongParameterList:FetchContactsMapper.kt$FetchContactsMapper$( decryptedVCardType0: String, // UNSIGNED decryptedVCardType2: String, // SIGNED decryptedVCardType3: String, // SIGNED_ENCRYPTED vCardType2Signature: String, vCardType3Signature: String, contactId: String )</ID>
+    <ID>LongParameterList:IntentExtrasData.kt$IntentExtrasData$( val user: User, val userAddresses: List&lt;Address&gt;, val message: Message, val toRecipientListString: String, val messageCcList: String, val includeCCList: Boolean, val senderEmailAddress: String, val messageSenderName: String, val newMessageTitle: String?, val content: String, val body: String, val largeMessageBody: Boolean, val messageAction: Constants.MessageActionType, val imagesDisplayed: Boolean, val remoteContentDisplayed: Boolean, val isPGPMime: Boolean, val timeMs: Long, val messageId: String?, val addressID: String?, val addressEmailAlias: String?, val mBigContentHolder: BigContentHolder, val attachments: ArrayList&lt;LocalAttachment&gt;, val embeddedImagesAttachmentsExist: Boolean )</ID>
+    <ID>LongParameterList:ManageLabelsDialogViewModel.kt$ManageLabelsDialogViewModel$( isCreationMode: Boolean, labelColor: String?, checkedLabelIds: List&lt;String&gt;, archiveCheckboxState: Int, labelName: String, labelItemsList: List&lt;LabelsDialogAdapter.LabelItem&gt; )</ID>
+    <ID>LongParameterList:MessageActionSheet.kt$MessageActionSheet$( binding: FragmentMessageActionSheetBinding, viewModel: MessageActionSheetViewModel, actionsTarget: ActionSheetTarget, messageIds: List&lt;String&gt;, messageLocation: Constants.MessageLocationType, mailboxLabelId: String )</ID>
+    <ID>LongParameterList:MessageBuilderData.kt$MessageBuilderData$( val message: Message, val senderEmailAddress: String, val senderName: String, val messageTitle: String?, val content: String, val body: String, val largeMessageBody: Boolean, val isPGPMime: Boolean, val messageTimestamp: Long, val messageId: String?, val addressId: String, val addressEmailAlias: String?, val mBigContentHolder: BigContentHolder, val attachmentList: ArrayList&lt;LocalAttachment&gt;, val embeddedAttachmentsList: ArrayList&lt;LocalAttachment&gt;, var isDirty: Boolean, val signature: String, val mobileFooter: String, val messagePassword: String?, val passwordHint: String?, val isPasswordValid: Boolean, val expiresAfterInSeconds: Long = 0, val sendPreferences: Map&lt;String, SendPreference&gt;, val isRespondInlineButtonVisible: Boolean, val isRespondInlineChecked: Boolean, val showImages: Boolean, val showRemoteContent: Boolean, val initialMessageContent: String, val decryptedMessage: String, val isMessageBodyVisible: Boolean, val quotedHeader: Spanned, val uploadAttachments: Boolean )</ID>
+    <ID>LongParameterList:MessageDetailsAdapter.kt$MessageDetailsAdapter$( parsedBody: String?, messageId: String, showLoadEmbeddedImagesButton: Boolean, showDecryptionError: Boolean, attachments: List&lt;Attachment&gt;, embeddedImageIds: List&lt;String&gt; )</ID>
+    <ID>LongParameterList:MessageDetailsRepository.kt$MessageDetailsRepository$( messageAction: Constants.MessageActionType, message: Message, user: User, newMessageTitle: String?, content: String, mBigContentHolder: BigContentHolder, mImagesDisplayed: Boolean, remoteContentDisplayed: Boolean, embeddedImagesAttachments: MutableList&lt;Attachment&gt;?, dispatcher: CoroutineDispatcher )</ID>
+    <ID>LongParameterList:MessagesService.kt$MessagesService.Companion$( context: Context, userId: UserId, location: Constants.MessageLocationType, refreshDetails: Boolean, uuid: String?, refreshMessages: Boolean )</ID>
+    <ID>LongParameterList:NotificationServer.kt$NotificationServer$( userManager: UserManager, user: LegacyUser, message: Message?, messageId: String, notificationBody: String?, sender: String, primaryUser: Boolean )</ID>
+    <ID>LongParameterList:NotificationServer.kt$NotificationServer$( userManager: UserManager, user: User, notificationSettings: Int, ringtoneUri: Uri?, isNotificationVisibleInLockScreen: Boolean, message: Message?, messageId: String, notificationBody: String?, sender: String, primaryUser: Boolean )</ID>
+    <ID>LongParameterList:OkHttpProvider.kt$OkHttpProvider$( endpointUri: String, id: String = endpointUri, timeout: Long, interceptor: Interceptor, loggingLevel: HttpLoggingInterceptor.Level, connectionSpecs: List&lt;ConnectionSpec&gt;, serverTimeInterceptor: ServerTimeInterceptor?, cookieStore: ProtonCookieStore? )</ID>
+    <ID>LongParameterList:ProcessPushNotificationDataWorker.kt$ProcessPushNotificationDataWorker$( userId: UserId, user: User, messageId: String, notificationBody: String, sender: String, isPrimaryUser: Boolean )</ID>
+    <ID>LongParameterList:ReportApiSpec.kt$ReportApiSpec$( osName: String, appVersion: String, client: String, clientVersion: String, title: String, description: String, username: String, email: String )</ID>
+    <ID>LongParameterList:ReportBugsWorker.kt$ReportBugsWorker.Enqueuer$( osName: String, appVersion: String, client: String, clientVersion: String, title: String, description: String, userName: String, email: String )</ID>
+    <ID>LongParameterList:SendMessageWorker.kt$SendMessageWorker.Enqueuer$( message: Message, attachmentIds: List&lt;String&gt;, parentId: String?, actionType: Constants.MessageActionType, previousSenderAddressId: String, securityOptions: MessageSecurityOptions )</ID>
+    <ID>LongParameterList:SettingsDefaultItemView.kt$SettingsDefaultItemView$( view: View, startToStart: Boolean, endToStart: Boolean, endToEnd: Boolean, bottomToBottom: Boolean, viewId: Int )</ID>
+    <ID>LongParameterList:UpdateContactJob.kt$UpdateContactJob$( contactName: String, contactEmails: List&lt;ContactEmail&gt;, encryptedData: String, encryptedDataSignature: String, signedDataSignature: String, updateJoins: Boolean )</ID>
+    <ID>LongParameterList:UserManager.kt$UserManager$( isOn: Boolean, startTimeHour: Int, startTimeMinute: Int, endTimeHour: Int, endTimeMinute: Int, repeatingDays: String )</ID>
+    <ID>LongParameterList:ViewModelModule.kt$ViewModelModule$( messageDetailsRepository: MessageDetailsRepository, userManager: UserManager, jobManager: JobManager, deleteMessage: DeleteMessage, dispatchers: DispatcherProvider, contactsRepository: ContactsRepository, labelRepository: LabelRepository, verifyConnection: VerifyConnection, networkConfigurator: NetworkConfigurator, conversationModeEnabled: ConversationModeEnabled, observeConversationsByLocation: ObserveConversationsByLocation, observeConversationModeEnabled: ObserveConversationModeEnabled, changeConversationsReadStatus: ChangeConversationsReadStatus, changeConversationsStarredStatus: ChangeConversationsStarredStatus, observeMessagesByLocation: ObserveMessagesByLocation, observeAllUnreadCounters: ObserveAllUnreadCounters, moveConversationsToFolder: MoveConversationsToFolder, moveMessagesToFolder: MoveMessagesToFolder, deleteConversations: DeleteConversations, observeLabels: ObserveLabels, observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren, drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper, getMailSettings: GetMailSettings, messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper )</ID>
+    <ID>LoopWithTooManyJumpStatements:MessageRenderer.kt$MessageRenderer$while (!imageSelector.isEmpty) { val embeddedImage = imageSelector.receive() // Process the image val child = embeddedImage.localFileName ?: continue val file = File(messageDirectory(embeddedImage.messageId), child) // Skip if file does not exist if (!file.exists() || file.length() == 0L) continue val size = (MAX_IMAGES_TOTAL_SIZE / embeddedImages.size) .coerceAtMost(MAX_IMAGE_SINGLE_SIZE) val compressed = try { ByteArrayOutputStream().also { // The file could be corrupted even if exists and it's not empty val bitmap = bitmapImageDecoder(file, size) // Could throw `IllegalStateException` if for some reason the // Bitmap is already recycled bitmap.compress(Bitmap.CompressFormat.WEBP, 80, it) } } catch (t: Throwable) { Timber.i(t, "Skip the image") // Skip the image continue } // Add the processed image to outputs outputsChannel.send(EmbeddedImageWithOutputStream(embeddedImage, compressed)) }</ID>
+    <ID>MagicNumber:AccountTypeActivity.kt$AccountTypeActivity$14</ID>
+    <ID>MagicNumber:AccountTypeActivity.kt$AccountTypeActivity$3</ID>
+    <ID>MagicNumber:AddressChooserViewModel.kt$AddressChooserViewModel$300</ID>
+    <ID>MagicNumber:ApplicationModule.kt$ApplicationModule.&lt;no name provided&gt;$10_000</ID>
+    <ID>MagicNumber:ComposeMessageViewModel.kt$ComposeMessageViewModel$1000</ID>
+    <ID>MagicNumber:GroupRecipientsDialogFragment.kt$GroupRecipientsDialogFragment$3</ID>
+    <ID>MagicNumber:LabelChipView.kt$LabelChipView$999f</ID>
+    <ID>MagicNumber:LabelsAdapter.kt$LabelsAdapter.ViewHolder$15</ID>
+    <ID>MagicNumber:LabelsManagerActivity.kt$LabelsManagerActivity$0.95f</ID>
+    <ID>MagicNumber:LabelsManagerActivity.kt$LabelsManagerActivity$0.99f</ID>
+    <ID>MagicNumber:MailboxActivity.kt$MailboxActivity.FcmBroadcastReceiver$750</ID>
+    <ID>MagicNumber:MailboxActivity.kt$MailboxActivity.SwipeController$2750</ID>
+    <ID>MagicNumber:MessageBodyScaleListener.kt$MessageBodyScaleListener$0.1f</ID>
+    <ID>MagicNumber:MessageBodyScaleListener.kt$MessageBodyScaleListener$10.0f</ID>
+    <ID>MagicNumber:MessageBodyScaleListener.kt$MessageBodyScaleListener$1000</ID>
+    <ID>MagicNumber:MessageDao.kt$MessageDao$4</ID>
+    <ID>MagicNumber:MessageDetailsActivity.kt$MessageDetailsActivity$100</ID>
+    <ID>MagicNumber:MessageDetailsAdapter.kt$MessageDetailsAdapter$0.7</ID>
+    <ID>MagicNumber:MessageDetailsAdapter.kt$MessageDetailsAdapter$100</ID>
+    <ID>MagicNumber:MessageDetailsAdapter.kt$MessageDetailsAdapter$101</ID>
+    <ID>MagicNumber:MessageDetailsAdapter.kt$MessageDetailsAdapter$102</ID>
+    <ID>MagicNumber:MessageFactory.kt$MessageFactory$6</ID>
+    <ID>MagicNumber:NavigationActivity.kt$NavigationActivity$0.6f</ID>
+    <ID>MagicNumber:NotificationServer.kt$NotificationServer$1000</ID>
+    <ID>MagicNumber:NotificationServer.kt$NotificationServer$1500</ID>
+    <ID>MagicNumber:NotificationServer.kt$NotificationServer$2000</ID>
+    <ID>MagicNumber:NotificationServer.kt$NotificationServer$3</ID>
+    <ID>MagicNumber:NotificationServer.kt$NotificationServer$500</ID>
+    <ID>MagicNumber:NotificationSettingsActivity.kt$NotificationSettingsActivity$3</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$10</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$11</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$12</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$3</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$4</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$5</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$6</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$7</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$8</ID>
+    <ID>MagicNumber:ProtonMailApi.kt$ProtonMailApi$9</ID>
+    <ID>MagicNumber:RegisterDeviceWorker.kt$RegisterDeviceWorker$3</ID>
+    <ID>MagicNumber:SearchActivity.kt$SearchActivity$1000</ID>
+    <ID>MagicNumber:SecureEditText.kt$SecureEditText$150</ID>
+    <ID>MagicNumber:SecureEditText.kt$SecureEditText$3</ID>
+    <ID>MagicNumber:SecureEditText.kt$SecureEditText$350</ID>
+    <ID>MagicNumber:SecureEditText.kt$SecureEditText$4</ID>
+    <ID>MagicNumber:SecureEditText.kt$SecureEditText$450</ID>
+    <ID>MagicNumber:SecureSharedPreferences.kt$SecureSharedPreferences$5</ID>
+    <ID>MagicNumber:ServerTimeInterceptor.kt$ServerTimeInterceptor$1000</ID>
+    <ID>MagicNumber:SettingsDefaultItemView.kt$SettingsDefaultItemView$0.5f</ID>
+    <ID>MagicNumber:SnoozeExtensions.kt$10</ID>
+    <ID>MagicNumber:SnoozeExtensions.kt$5</ID>
+    <ID>MagicNumber:SnoozeExtensions.kt$6</ID>
+    <ID>MagicNumber:SnoozeExtensions.kt$7</ID>
+    <ID>MagicNumber:UnregisterDeviceWorker.kt$UnregisterDeviceWorker$3</ID>
+    <ID>MagicNumber:ViewExtensions.kt$10</ID>
+    <ID>MagicNumber:ViewExtensions.kt$100</ID>
+    <ID>MagicNumber:ViewExtensions.kt$1000</ID>
+    <ID>MagicNumber:ViewExtensions.kt$10f</ID>
+    <ID>MagicNumber:ViewExtensions.kt$11f</ID>
+    <ID>MagicNumber:ViewExtensions.kt$12f</ID>
+    <ID>MagicNumber:ViewExtensions.kt$13f</ID>
+    <ID>MaxLineLength:ClearUserMessagesData.kt$ClearUserMessagesData$val attachmentMetadataDao = runCatching { databaseProvider.provideAttachmentMetadataDao(legacyUserId) }.getOrNull()</ID>
+    <ID>MaxLineLength:ComposeMessageViewModel.kt$ComposeMessageViewModel$// and also that the message has all the latest edits in between draft saving (creation) and sending the message</ID>
+    <ID>MaxLineLength:ComposeMessageViewModel.kt$ComposeMessageViewModel$// region here in this block we are updating local view model attachments with the latest data for the attachments filled from the API</ID>
+    <ID>MaxLineLength:ComposeMessageViewModel.kt$ComposeMessageViewModel$// this will ensure the message get latest message id if it was already saved in a create/update draft job</ID>
+    <ID>MaxLineLength:ComposeMessageViewModel.kt$ComposeMessageViewModel$if</ID>
+    <ID>MaxLineLength:ContactService.kt$ContactService$fun</ID>
+    <ID>MaxLineLength:ConversationsRepositoryImpl.kt$ConversationsRepositoryImpl$val</ID>
+    <ID>MaxLineLength:ConvertLocalContactsJob.kt$ConvertLocalContactsJob$if</ID>
+    <ID>MaxLineLength:ConvertLocalContactsJob.kt$ConvertLocalContactsJob$}</ID>
+    <ID>MaxLineLength:DefaultAddressActivity.kt$DefaultAddressActivity$addressRadio = mInflater!!.inflate(R.layout.radio_button_list_item, availableAddresses, false) as RadioButton</ID>
+    <ID>MaxLineLength:HandleEmbeddedImageAttachments.kt$HandleEmbeddedImageAttachments$"Insert embd attachment id: ${embeddedImageWithFile.attachmentId} messageId: ${embeddedImageWithFile.messageId}"</ID>
+    <ID>MaxLineLength:IntentExtrasData.kt$IntentExtrasData.Builder$(messageAction == Constants.MessageActionType.REPLY || messageAction == Constants.MessageActionType.REPLY_ALL)</ID>
+    <ID>MaxLineLength:LabelApiModel.kt$LabelApiModel$*</ID>
+    <ID>MaxLineLength:MessageActionSheet.kt$MessageActionSheet$setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, actionsTarget, messageIds, doesConversationHaveMoreThanOneMessage)</ID>
+    <ID>MaxLineLength:MessageActionSheet.kt$MessageActionSheet$val doesConversationHaveMoreThanOneMessage = arguments?.getBoolean(EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE) ?: true</ID>
+    <ID>MaxLineLength:MessageActionSheet.kt$MessageActionSheet.Companion$private const val EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE = "arg_conversation_has_more_than_one_message"</ID>
+    <ID>MaxLineLength:MessageBodyClearingService.kt$MessageBodyClearingService$File(applicationContext.filesDir.toString() + Constants.DIR_MESSAGE_BODY_DOWNLOADS).listFiles()</ID>
+    <ID>MaxLineLength:MessageBodyClearingService.kt$MessageBodyClearingService.Companion$JobIntentService.enqueueWork(context, MessageBodyClearingService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGE_BODY_CLEARING, intent)</ID>
+    <ID>MaxLineLength:MessageBuilderData.kt$MessageBuilderData.Builder$if</ID>
+    <ID>MaxLineLength:MessageDetailsActivity.kt$MessageDetailsActivity$if</ID>
+    <ID>MaxLineLength:MessageDetailsActivity.kt$MessageDetailsActivity$val</ID>
+    <ID>MaxLineLength:MessagePrinter.kt$MessagePrinter$messageString.append(String.format(resources.getString(R.string.print_attachment_template), attachment.fileName))</ID>
+    <ID>MaxLineLength:MessagePrinter.kt$MessagePrinter$messageString.append(String.format(resources.getString(R.string.print_date_template), DateUtil.formatDetailedDateTime(context, message.timeMs)))</ID>
+    <ID>MaxLineLength:PostUnstarJob.kt$PostUnstarJob$val starredUnread = counterDao.findUnreadLocationByIdBlocking(MessageLocationType.STARRED.messageLocationTypeValue)</ID>
+    <ID>MaxLineLength:QueueNetworkUtil.kt$QueueNetworkUtil$Timber.v("updateRealConnectivity isServerAccessible: $serverAccessible timeDelta: $emissionTimeDelta $connectionState")</ID>
+    <ID>MaxLineLength:UserManager.kt$UserManager$suspend fun getPreviousCurrentUserId(): UserId?</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Addresses$const val ADDRESSES = "Addresses"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Attachment$const val ATTACHMENT = "Attachment"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Auth$const val AUTH = "Auth"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Contact$const val CONTACT = "Contact"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Domain$const val DOMAIN = "Domain"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Keys$const val KEYS = "Keys"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Message$const val MESSAGE = "Message"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Organization$const val ORGANIZATION = "Organization"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Payment$const val PAYMENT = "Payment"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Response$const val RESPONSE = "Response"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Subscription$const val SUBSCRIPTION = "Subscription"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.Unread$const val UNREAD = "Unread"</ID>
+    <ID>MemberNameEqualsClassName:Fields.kt$Fields.User$const val USER = "User"</ID>
+    <ID>NestedBlockDepth:AccountTypeActivity.kt$AccountTypeActivity$private fun showCardDetails(paymentMethods: List&lt;PaymentMethod&gt;?)</ID>
+    <ID>NestedBlockDepth:AttachmentsHelper.kt$AttachmentsHelper$fun fromAttachmentToEmbeddedImage( attachment: Attachment, embeddedImages: List&lt;String&gt; ): EmbeddedImage?</ID>
+    <ID>NestedBlockDepth:EditContactDetailsRepository.kt$EditContactDetailsRepository$suspend fun updateContact( contactId: String, contactName: String, contactEmails: List&lt;ContactEmail&gt;, encryptedData: String, encryptedDataSignature: String, signedDataSignature: String, signedData: String, mapContactLabelIds: Map&lt;String, List&lt;LabelId&gt;&gt; )</ID>
+    <ID>NestedBlockDepth:ImportAttachmentsWorker.kt$ImportAttachmentsWorker$override fun doWork(): Result</ID>
+    <ID>NestedBlockDepth:MailboxActivity.kt$MailboxActivity$private fun checkPlayServices(): Boolean</ID>
+    <ID>NestedBlockDepth:MessageDao.kt$MessageDao$private suspend fun processMessageAttachments(message: Message)</ID>
+    <ID>NestedBlockDepth:MessageDetailsRepository.kt$MessageDetailsRepository$ @Deprecated( message = DEPRECATION_MESSAGE, replaceWith = ReplaceWith( expression = "messageBodyFileManager.saveMessageBodyToFile(message)", imports = arrayOf("ch.protonmail.android.utils.MessageBodyFileManager") ) ) @WorkerThread private fun saveBodyToFileIfNeeded(message: Message, overwrite: Boolean = true): String?</ID>
+    <ID>NestedBlockDepth:NetworkSnackBarUtil.kt$NetworkSnackBarUtil$ fun getNoConnectionSnackBar( parentView: View, user: User, netConfiguratorCallback: INetworkConfiguratorCallback, onRetryClick: (() -&gt; Unit)?, @IdRes anchorViewId: Int? = null, isOffline: Boolean ): Snackbar</ID>
+    <ID>NestedBlockDepth:PinSettingsActivity.kt$PinSettingsActivity$@Suppress("DEPRECATION") @SuppressLint("NewApi") private fun saveCurrentSettings(mNewPin: String?)</ID>
+    <ID>NestedBlockDepth:PinSettingsActivity.kt$PinSettingsActivity$override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)</ID>
+    <ID>NestedBlockDepth:SentryTree.kt$SentryTree$override fun log(priority: Int, tag: String?, message: String, t: Throwable?)</ID>
+    <ID>NestedBlockDepth:UpdateContactJob.kt$UpdateContactJob$private fun updateContact( contactName: String, contactEmails: List&lt;ContactEmail&gt;, encryptedData: String, encryptedDataSignature: String, signedDataSignature: String, updateJoins: Boolean )</ID>
+    <ID>NewLineAtEndOfFile:SendPreferencesToMessageEncryptionUiModelMapper.kt$ch.protonmail.android.compose.presentation.mapper.SendPreferencesToMessageEncryptionUiModelMapper.kt</ID>
+    <ID>NoTrailingSpaces:ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModelTest.kt:262</ID>
+    <ID>NoTrailingSpaces:ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocationTest.kt:50</ID>
+    <ID>OptionalUnit:ContactsActivity.kt$ContactsActivity$Unit</ID>
+    <ID>PackageNaming:DefaultTransformer.kt$package ch.protonmail.android.utils.HTMLTransformer</ID>
+    <ID>PackageNaming:ViewportTransformer.kt$package ch.protonmail.android.utils.HTMLTransformer</ID>
+    <ID>ParameterListWrapping:ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter.kt:304</ID>
+    <ID>ParameterListWrapping:ch.protonmail.android.mailbox.data.ConversationsRepositoryImpl.kt:377</ID>
+    <ID>ParameterListWrapping:ch.protonmail.android.mailbox.data.MarkUnreadLatestNonDraftMessageInLocation.kt:32</ID>
+    <ID>ParameterListWrapping:ch.protonmail.android.worker.CreateContactWorkerTest.kt:245</ID>
+    <ID>ParameterListWrapping:ch.protonmail.android.worker.CreateDraftWorkerTest.kt:1301</ID>
+    <ID>ReturnCount:ConvertLocalContactsJob.kt$ConvertLocalContactsJob$@ContactEvent.Status private fun handleResponse( contactDao: ContactDao, response: ContactResponse, contactDataDbId: Long, contactGroupIds: List&lt;String&gt; ): Int</ID>
+    <ID>ReturnCount:CreateDraftWorker.kt$CreateDraftWorker$override suspend fun doWork(): Result</ID>
+    <ID>ReturnCount:CreateDraftWorker.kt$CreateDraftWorker$private suspend fun buildDraftBody( senderAddress: Address, messageId: UserId, message: Message, parentId: String? ): Either&lt;CreateDraftWorkerErrors, DraftBody&gt;</ID>
+    <ID>ReturnCount:MessageFlagsToEncryptionMapper.kt$MessageFlagsToEncryptionMapper$private fun handleInternalMessage( e2e: Boolean, received: Boolean, sent: Boolean, auto: Boolean ): MessageEncryption</ID>
+    <ID>ReturnCount:MessageLocationResolver.kt$MessageLocationResolver$fun resolveLocationFromLabels(labelIds: List&lt;String&gt;): Constants.MessageLocationType</ID>
+    <ID>ReturnCount:ProcessPushNotificationDataWorker.kt$ProcessPushNotificationDataWorker$override suspend fun doWork(): Result</ID>
+    <ID>ReturnCount:SendMessageWorker.kt$SendMessageWorker$override suspend fun doWork(): Result</ID>
+    <ID>SpacingAroundCurly:ch.protonmail.android.details.presentation.MessageDetailsActivity.kt:647</ID>
+    <ID>SpacingAroundCurly:ch.protonmail.android.labels.data.mapper.LabelEventApiMapperTest.kt:28</ID>
+    <ID>SpacingAroundOperators:ch.protonmail.android.worker.DeleteContactWorkerTest.kt:103</ID>
+    <ID>SpacingAroundOperators:ch.protonmail.android.worker.DeleteContactWorkerTest.kt:132</ID>
+    <ID>SpacingBetweenDeclarationsWithAnnotations:ch.protonmail.android.viewmodel.AccountTypeViewModelTest.kt:50</ID>
+    <ID>SpacingBetweenDeclarationsWithAnnotations:ch.protonmail.android.viewmodel.AccountTypeViewModelTest.kt:52</ID>
+    <ID>SpacingBetweenPackageAndImports:DnsOverHttpsProviderRFC8484.kt$ </ID>
+    <ID>SpacingBetweenPackageAndImports:MessageDetailsActivity.kt$ </ID>
+    <ID>ThrowsCount:LabelsManagerActivity.kt$LabelsManagerActivity$ private fun initTexts()</ID>
+    <ID>TooGenericExceptionCaught:AddressKeyActivationWorker.kt$AddressKeyActivationWorker$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:AttachmentsRepository.kt$AttachmentsRepository$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:BaseRequestInterceptor.kt$BaseRequestInterceptor$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:CreateDraftWorker.kt$CreateDraftWorker$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:ExpandableRecyclerAdapter.kt$ExpandableRecyclerAdapter$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:FetchUpdatesJob.kt$FetchUpdatesJob$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:FullContactDetails.kt$FullContactDetailsConverter$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ImportAttachmentsWorker.kt$ImportAttachmentsWorker$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:Message.kt$Message$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MessageApi.kt$MessageApi$exc: Exception</ID>
+    <ID>TooGenericExceptionCaught:MessageDetailsActivity.kt$MessageDetailsActivity$exc: Exception</ID>
+    <ID>TooGenericExceptionCaught:MessageDetailsRepository.kt$MessageDetailsRepository$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MessageDetailsViewModel.kt$MessageDetailsViewModel$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:MessagePrinter.kt$MessagePrinter.PrinterWebViewClient$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MessageRenderer.kt$MessageRenderer$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:MessagesService.kt$MessagesService$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MessagesService.kt$MessagesService$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:MessagesTypesConverter.kt$MessagesTypesConverter$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:NetworkConfigurator.kt$NetworkConfigurator$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:NotificationServer.kt$NotificationServer$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:NotificationSettingsViewModel.kt$NotificationSettingsViewModel$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:ProcessPushNotificationDataWorker.kt$ProcessPushNotificationDataWorker$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:SearchMessagesJob.kt$SearchMessagesJob$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:SecureSharedPreferences.kt$SecureSharedPreferences$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:SendMessageWorker.kt$SendMessageWorker$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:SendMessageWorker.kt$SendMessageWorker$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:UpdateSettingsJob.kt$UpdateSettingsJob$e: Exception</ID>
+    <ID>TooGenericExceptionThrown:AnyExtensions.kt$throw RuntimeException("$variableName is null")</ID>
+    <ID>TooGenericExceptionThrown:BaseApi.kt$BaseApi$throw RuntimeException("Interrupted!")</ID>
+    <ID>TooGenericExceptionThrown:ProtonRetrofitBuilder.kt$ProtonRetrofitBuilder$throw RuntimeException("Retrofit Cache could not be empty")</ID>
+    <ID>TooManyFunctions:ApplicationModule.kt$ApplicationModule$ApplicationModule</ID>
+    <ID>TooManyFunctions:BaseSettingsActivity.kt$BaseSettingsActivity : BaseConnectivityActivity</ID>
+    <ID>TooManyFunctions:ComposeMessageViewModel.kt$ComposeMessageViewModel : ConnectivityBaseViewModel</ID>
+    <ID>TooManyFunctions:ContactDao.kt$ContactDao</ID>
+    <ID>TooManyFunctions:ContactsListFragment.kt$ContactsListFragment : BaseFragmentIContactsFragment</ID>
+    <ID>TooManyFunctions:ConversationsRepositoryImpl.kt$ConversationsRepositoryImpl : ConversationsRepository</ID>
+    <ID>TooManyFunctions:EditContactDetailsViewModel.kt$EditContactDetailsViewModel : ContactDetailsViewModelOld</ID>
+    <ID>TooManyFunctions:LabelRepository.kt$LabelRepository</ID>
+    <ID>TooManyFunctions:LabelRepositoryImpl.kt$LabelRepositoryImpl : LabelRepository</ID>
+    <ID>TooManyFunctions:MailboxActivity.kt$MailboxActivity : NavigationActivityCallbackOnRefreshListener</ID>
+    <ID>TooManyFunctions:MailboxViewModel.kt$MailboxViewModel : ConnectivityBaseViewModel</ID>
+    <ID>TooManyFunctions:MessageBuilderData.kt$MessageBuilderData$Builder</ID>
+    <ID>TooManyFunctions:MessageDao.kt$MessageDao : BaseDao</ID>
+    <ID>TooManyFunctions:MessageDetailsActivity.kt$MessageDetailsActivity : BaseStoragePermissionActivity</ID>
+    <ID>TooManyFunctions:MessageDetailsViewModel.kt$MessageDetailsViewModel : ConnectivityBaseViewModelLifecycleObserver</ID>
+    <ID>TooManyFunctions:ProtonMailApiManager.kt$ProtonMailApiManager : BaseApiAttachmentApiSpecConnectivityApiSpecContactApiSpecDeviceApiSpecKeyApiSpecLabelApiSpecMessageApiSpecConversationApiSpecOrganizationApiSpecPaymentApiSpecReportApiSpecMailSettingsApiSpec</ID>
+    <ID>TooManyFunctions:UserManager.kt$UserManager</ID>
+    <ID>UnderscoresInNumericLiterals:AttachmentsRepositoryTest.kt$AttachmentsRepositoryTest$823742L</ID>
+    <ID>UnderscoresInNumericLiterals:CheckSubscriptionTest.kt$CheckSubscriptionTest$12323</ID>
+    <ID>UnderscoresInNumericLiterals:CreateDraftWorkerTest.kt$CreateDraftWorkerTest$10000</ID>
+    <ID>UnderscoresInNumericLiterals:CreateDraftWorkerTest.kt$CreateDraftWorkerTest$1234567L</ID>
+    <ID>UnderscoresInNumericLiterals:CreateDraftWorkerTest.kt$CreateDraftWorkerTest$89234L</ID>
+    <ID>UnderscoresInNumericLiterals:DeleteAttachmentWorkerTest.kt$DeleteAttachmentWorkerTest$11212</ID>
+    <ID>UnderscoresInNumericLiterals:DeleteContactWorkerTest.kt$DeleteContactWorkerTest$11212</ID>
+    <ID>UnderscoresInNumericLiterals:DeleteLabelsWorkerTest.kt$DeleteLabelsWorkerTest$12123</ID>
+    <ID>UnderscoresInNumericLiterals:DeleteMessageWorkerTest.kt$DeleteMessageWorkerTest$11212</ID>
+    <ID>UnderscoresInNumericLiterals:FetchPaymentMethodsTest.kt$FetchPaymentMethodsTest$121334</ID>
+    <ID>UnderscoresInNumericLiterals:LabelEventApiMapperTest.kt$LabelEventApiMapperTest$320000</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$123423423</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$1417982244</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$1417982244000</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$1617205075</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$1617205075000</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$1617982194</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$1617982194000</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$82334L</ID>
+    <ID>UnderscoresInNumericLiterals:MailboxViewModelTest.kt$MailboxViewModelTest$823764623</ID>
+    <ID>UnderscoresInNumericLiterals:MessageDetailsViewModelTest.kt$82374730L</ID>
+    <ID>UnderscoresInNumericLiterals:PingWorkerTest.kt$PingWorkerTest$12313</ID>
+    <ID>UnderscoresInNumericLiterals:SendMessageWorkerTest.kt$SendMessageWorkerTest$172800L</ID>
+    <ID>UnderscoresInNumericLiterals:SendMessageWorkerTest.kt$SendMessageWorkerTest$23712L</ID>
+    <ID>UnderscoresInNumericLiterals:UploadAttachmentsTest.kt$UploadAttachmentsTest$10000</ID>
+    <ID>UnnecessaryAbstractClass:CounterDao.kt$CounterDao</ID>
+    <ID>UnnecessaryParentheses:CollectionExtensionsTest.kt$CollectionExtensionsTest$(1..10)</ID>
+    <ID>UnnecessaryParentheses:ComposeMessageViewModel.kt$ComposeMessageViewModel$(htmlToSpanned(_messageDataResult.signature).toString())</ID>
+    <ID>UnnecessaryParentheses:ComposeMessageViewModel.kt$ComposeMessageViewModel$(messageDataResult.expiresAfterInSeconds)</ID>
+    <ID>UnnecessaryParentheses:DisplayNameAndSignatureFragment.kt$DisplayNameAndSignatureFragment$(selectedAddress.displayName?.s ?: selectedAddress.email.s)</ID>
+    <ID>UnnecessaryParentheses:GenerateTokenAndSignature.kt$GenerateTokenAndSignature$(it.toInt() and 0xff)</ID>
+    <ID>UnnecessaryParentheses:MessageActionSheet.kt$MessageActionSheet$(actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN &amp;&amp; !doesConversationHaveMoreThanOneMessage)</ID>
+    <ID>UnnecessaryParentheses:MessageRenderer.kt$DefaultImageDecoder$(y / height)</ID>
+    <ID>UnnecessaryParentheses:NavigationActivity.kt$NavigationActivity$(isScheduledSnoozeEnabled &amp;&amp; !shouldShowNotification)</ID>
+    <ID>UnusedImports:AccountTypeViewModelTest.kt$import me.proton.core.plan.presentation.onUpgradeResult</ID>
+    <ID>UnusedImports:ComposeMessageViewModel.kt$import ch.protonmail.android.utils.ServerTime</ID>
+    <ID>UnusedImports:ComposeMessageViewModel.kt$import ch.protonmail.android.utils.ServerTimeProvider</ID>
+    <ID>UnusedImports:ConnectivityService.kt$import ch.protonmail.android.utils.AppUtil</ID>
+    <ID>UnusedImports:CoreUserModule.kt$import me.proton.core.usersettings.data.db.UserSettingsDatabase</ID>
+    <ID>UnusedImports:CoreUserModule.kt$import me.proton.core.usersettings.data.repository.UserSettingsRepositoryImpl</ID>
+    <ID>UnusedImports:CoreUserModule.kt$import me.proton.core.usersettings.domain.repository.UserSettingsRepository</ID>
+    <ID>UnusedImports:DisplayNameAndSignatureFragment.kt$import me.proton.core.domain.entity.UserId</ID>
+    <ID>UnusedImports:FetchMailSettingsWorker.kt$import me.proton.core.domain.entity.UserId</ID>
+    <ID>UnusedImports:IntentExtrasDataTest.kt$import ch.protonmail.android.api.models.address.Address</ID>
+    <ID>UnusedImports:LabelsManagerViewModel.kt$import androidx.lifecycle.asLiveData</ID>
+    <ID>UnusedImports:LabelsManagerViewModel.kt$import androidx.lifecycle.liveData</ID>
+    <ID>UnusedImports:MessageDetailsAdapter.kt$import ch.protonmail.android.labels.data.local.model.LabelEntity</ID>
+    <ID>UnusedImports:SettingsItemUiModel.kt$import androidx.lifecycle.MutableLiveData</ID>
+    <ID>UnusedPrivateMember:ClearUserData.kt$ClearUserData$private val labelRepository: LabelRepository</ID>
+    <ID>UnusedPrivateMember:ComposeMessageRepository.kt$ComposeMessageRepository$combinedContacts: Boolean</ID>
+    <ID>UnusedPrivateMember:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_CREATE_TIME) @Ignore private val createTime: Long = 0</ID>
+    <ID>UnusedPrivateMember:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_LABEL_IDS) @Ignore private var labelIds: List&lt;String&gt;? = null</ID>
+    <ID>UnusedPrivateMember:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_MODIFY_TIME) @Ignore private val modifyTime: Long = 0</ID>
+    <ID>UnusedPrivateMember:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_SIZE) @Ignore private var size: Int = 0</ID>
+    <ID>UnusedPrivateMember:ContactData.kt$ContactData$@SerializedName(COLUMN_CONTACT_DATA_UID) @Ignore private val uid: String? = null</ID>
+    <ID>UnusedPrivateMember:ContactDetailsRepositoryTest.kt$ContactDetailsRepositoryTest$private val labelEntityDomainMapper: LabelEntityDomainMapper = mockk()</ID>
+    <ID>UnusedPrivateMember:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_DEFAULTS) @Ignore private var defaults: Int = 0</ID>
+    <ID>UnusedPrivateMember:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_EMAIL_TYPE) @Ignore private var type: MutableList&lt;String&gt;? = null</ID>
+    <ID>UnusedPrivateMember:ContactEmail.kt$ContactEmail$@SerializedName(COLUMN_CONTACT_EMAILS_ORDER) @Ignore private var order: Int = 0</ID>
+    <ID>UnusedPrivateMember:ContactGroupsRepositoryTest.kt$ContactGroupsRepositoryTest$private val dispatcherProvider = TestDispatcherProvider</ID>
+    <ID>UnusedPrivateMember:ContactGroupsViewModelTest.kt$ContactGroupsViewModelTest$@RelaxedMockK private lateinit var deleteLabels: DeleteLabels</ID>
+    <ID>UnusedPrivateMember:ContactGroupsViewModelTest.kt$ContactGroupsViewModelTest$@RelaxedMockK private lateinit var userManager: UserManager</ID>
+    <ID>UnusedPrivateMember:ContactGroupsViewModelTest.kt$ContactGroupsViewModelTest$private val contactsListMapper = ContactsListMapper()</ID>
+    <ID>UnusedPrivateMember:CreateContactGroupWorkerTest.kt$CreateContactGroupWorkerTest$@RelaxedMockK private lateinit var context: Context</ID>
+    <ID>UnusedPrivateMember:CreateContactGroupWorkerTest.kt$CreateContactGroupWorkerTest$private val labelsDomainMapper = LabelEntityDomainMapper()</ID>
+    <ID>UnusedPrivateMember:CreateContactWorkerTest.kt$CreateContactWorkerTest$@RelaxedMockK private lateinit var context: Context</ID>
+    <ID>UnusedPrivateMember:CreateContactWorkerTest.kt$CreateContactWorkerTest$private var dispatcherProvider = TestDispatcherProvider</ID>
+    <ID>UnusedPrivateMember:EventHandler.kt$EventHandler$messageDao: MessageDao</ID>
+    <ID>UnusedPrivateMember:ExpandableRecyclerAdapter.kt$ExpandableRecyclerAdapter$val `val` = indexList[i]</ID>
+    <ID>UnusedPrivateMember:FetchContactsEmailsWorkerTest.kt$FetchContactsEmailsWorkerTest$private val userManager: UserManager = mockk(relaxed = true)</ID>
+    <ID>UnusedPrivateMember:LabelsManagerViewModel.kt$private operator fun MutableLiveStringSet.minusAssign(element: String)</ID>
+    <ID>UnusedPrivateMember:LabelsManagerViewModel.kt$private operator fun MutableLiveStringSet.plusAssign(element: String)</ID>
+    <ID>UnusedPrivateMember:MailboxActivity.kt$MailboxActivity$event: MailboxNoMessagesEvent?</ID>
+    <ID>UnusedPrivateMember:MailboxViewModel.kt$MailboxViewModel$userId: UserId</ID>
+    <ID>UnusedPrivateMember:MailboxViewModelTest.kt$MailboxViewModelTest$val labelId = "labelId923842"</ID>
+    <ID>UnusedPrivateMember:MoreItemsLinearLayout.kt$MoreItemsLinearLayout$private fun View.asOrGetTextViewOrNull(): TextView?</ID>
+    <ID>UnusedPrivateMember:NavigationActivity.kt$NavigationActivity$private suspend fun areNotificationsSnoozed(userId: UserId): Boolean</ID>
+    <ID>UnusedPrivateMember:RemoveMessageLabelWorkerTest.kt$RemoveMessageLabelWorkerTest$val message = Message(messageId = testMessageId)</ID>
+    <ID>UnusedPrivateMember:SecureSharedPreferences.kt$SecureSharedPreferences$context: Context</ID>
+    <ID>UnusedPrivateMember:SnoozeSettingsTest.kt$SnoozeSettingsTest$i</ID>
+    <ID>UnusedPrivateMember:StringExtensions.kt$variableName: String = ""</ID>
+    <ID>UseDataClass:CipherText.kt$CipherText</ID>
+    <ID>UseDataClass:ForceUpgradeEvent.kt$ForceUpgradeEvent</ID>
+    <ID>UseDataClass:IntentExtrasData.kt$IntentExtrasData</ID>
+    <ID>UseDataClass:LabelContactsBody.kt$LabelContactsBody</ID>
+    <ID>UseDataClass:MailboxLoadedEvent.kt$MailboxLoadedEvent</ID>
+    <ID>UseDataClass:MessageBuilderData.kt$MessageBuilderData</ID>
+    <ID>UseIfInsteadOfWhen:BaseSettingsActivity.kt$BaseSettingsActivity$when (item.itemId) { android.R.id.home -&gt; { if (supportFragmentManager.fragments.filterIsInstance&lt;DisplayNameAndSignatureFragment&gt;().isNotEmpty()) { false } else { onBackPressed() true } } else -&gt; super.onOptionsItemSelected(item) }</ID>
+    <ID>UseIfInsteadOfWhen:FactoryUtils.kt$when (this) { -1L -&gt; throw IllegalStateException("$variableName is not set") else -&gt; this }</ID>
+    <ID>UseIfInsteadOfWhen:MailboxActivity.kt$MailboxActivity$when (menuItem.itemId) { R.id.empty -&gt; { if (!isFinishing) { showTwoButtonInfoDialog( titleStringId = R.string.empty_folder, messageStringId = R.string.are_you_sure_empty, leftStringId = R.string.no ) { mJobManager.addJobInBackground( EmptyFolderJob(mailboxViewModel.mailboxLocation.value, this.mailboxLabelId) ) setLoadingMore(false) } } true } else -&gt; super.onOptionsItemSelected(menuItem) }</ID>
+    <ID>UseIfInsteadOfWhen:SetMessagePasswordActivity.kt$SetMessagePasswordActivity$when (item.itemId) { android.R.id.home -&gt; cancelResultAndFinish() else -&gt; super.onOptionsItemSelected(item) }</ID>
+    <ID>UseIfInsteadOfWhen:SnoozeNotificationsActivity.kt$SnoozeNotificationsActivity$when (item.itemId) { android.R.id.home -&gt; { saveAndFinish() true } else -&gt; false }</ID>
+    <ID>UtilityClassWithPublicConstructor:DialogUtils.kt$DialogUtils</ID>
+    <ID>UtilityClassWithPublicConstructor:ThreadSchedulers.kt$ThreadSchedulers</ID>
+    <ID>VariableMaxLength:BaseApi.kt$const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC = 10_001</ID>
+    <ID>VariableMaxLength:BaseApi.kt$const val RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL = 13_002</ID>
+    <ID>VariableMaxLength:BaseApi.kt$const val RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED = 13_061</ID>
+    <ID>VariableMaxLength:BaseApi.kt$const val RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED = 13_014</ID>
+    <ID>VariableMaxLength:Constants.kt$Constants$const val JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING = 874</ID>
+    <ID>VariableMaxLength:Constants.kt$Constants$const val JOB_INTENT_SERVICE_ID_MESSAGE_BODY_CLEARING = 875</ID>
+    <ID>VariableMaxLength:Constants.kt$Constants.Prefs$const val PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES = "allow_secure_connections_via_third_parties"</ID>
+    <ID>VariableMaxLength:ContactsListViewModel.kt$ContactsListViewModel$private val showPermissionMissingDialogMutableLiveData = MutableLiveData&lt;Event&lt;Unit&gt;&gt;()</ID>
+    <ID>VariableMaxLength:CreateContactGroupWorker.kt$internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR = "keyCreateContactGroupInputDataColor"</ID>
+    <ID>VariableMaxLength:CreateContactGroupWorker.kt$internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXPANDED = "keyCreateContactGroupInputDataExpanded"</ID>
+    <ID>VariableMaxLength:CreateContactGroupWorker.kt$internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE = "keyCreateContactGroupInputDataIsUpdate"</ID>
+    <ID>VariableMaxLength:CreateContactGroupWorker.kt$internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_STICKY = "keyCreateContactGroupInputDataIsSticky"</ID>
+    <ID>VariableMaxLength:CreateContactGroupWorker.kt$internal const val KEY_RESULT_DATA_CREATE_CONTACT_GROUP_ERROR = "keyCreateContactGroupResultWorkerError"</ID>
+    <ID>VariableMaxLength:CreateContactWorker.kt$internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH = "keyCreateContactInputDataEncryptedData"</ID>
+    <ID>VariableMaxLength:CreateContactWorker.kt$internal const val KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA = "keyCreateContactInputDataSignedData"</ID>
+    <ID>VariableMaxLength:CreateContactWorker.kt$internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON = "keyCreateContactWorkerResultEmailsSerialised"</ID>
+    <ID>VariableMaxLength:CreateContactWorker.kt$internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM = "keyCreateContactWorkerResultError"</ID>
+    <ID>VariableMaxLength:ImportAttachmentsWorker.kt$const val KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN = "KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN"</ID>
+    <ID>VariableMaxLength:MessageActionSheet.kt$MessageActionSheet.Companion$private const val EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE = "arg_conversation_has_more_than_one_message"</ID>
+    <ID>VariableMaxLength:SendMessageWorker.kt$internal const val KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL = "keySendMessageMessageActionTypeEnumValue"</ID>
+    <ID>VariableMaxLength:SendMessageWorker.kt$internal const val KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID = "keySendMessagePreviousSenderAddressId"</ID>
+    <ID>VariableMaxLength:SendMessageWorker.kt$internal const val KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED = "keySendMessageSecurityOptionsSerialized"</ID>
+    <ID>VariableMaxLength:SendMessageWorker.kt$internal const val KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM = "keySendMessageErrorResult"</ID>
+    <ID>VariableMaxLength:SettingsActivity.kt$SettingsActivity$val allowSecureConnectionsViaThirdPartiesSettingValue = if (legacyUser.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString( R.string.denied )</ID>
+    <ID>VariableMaxLength:UploadAttachments.kt$internal const val KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS = "keyUploadAttachmentAttachmentIds"</ID>
+    <ID>VariableMaxLength:UploadAttachments.kt$internal const val KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING = "keyUploadAttachmentIsMessageSending"</ID>
+    <ID>VariableMaxLength:UploadAttachments.kt$internal const val KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR = "keyUploadAttachmentResultError"</ID>
+    <ID>VariableNaming:ComposeMessageViewModel.kt$ComposeMessageViewModel$var _actionId = Constants.MessageActionType.NONE</ID>
+    <ID>VariableNaming:ExpandableRecyclerAdapter.kt$ExpandableRecyclerAdapter$val `val` = indexList[i]</ID>
+    <ID>VariableNaming:NotificationSettingsViewModel.kt$NotificationSettingsViewModel$/** A [CharSequence] representing [R.string.none] resource */ @Suppress("PrivatePropertyName") private val NONE = context.getString(R.string.none)</ID>
+    <ID>WildcardImport:AttachmentsRepositoryTest.kt$import ch.protonmail.android.data.local.model.*</ID>
+    <ID>WildcardImport:BaseSettingsActivity.kt$import ch.protonmail.android.activities.settings.SettingsEnum.*</ID>
+  </CurrentIssues>
+</SmellBaseline>
