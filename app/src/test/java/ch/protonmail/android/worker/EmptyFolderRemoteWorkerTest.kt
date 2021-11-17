@@ -28,6 +28,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.labels.domain.model.LabelId
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
@@ -45,7 +46,7 @@ import kotlin.test.Test
  */
 class EmptyFolderRemoteWorkerTest {
 
-    private val labelId = "labelId"
+    private val labelId = LabelId("labelId")
     private val userId = UserId("userId")
     private val userIdTag = UserIdTag(userId)
 
@@ -55,7 +56,7 @@ class EmptyFolderRemoteWorkerTest {
     private val workerParameters = mockk<WorkerParameters>(relaxed = true) {
         every {
             inputData.getString(KEY_EMPTY_FOLDER_LABEL_ID)
-        } returns labelId
+        } returns labelId.id
         every {
             inputData.getString(KEY_EMPTY_FOLDER_USER_ID)
         } returns userId.id

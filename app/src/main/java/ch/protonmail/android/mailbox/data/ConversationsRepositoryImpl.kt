@@ -504,8 +504,8 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateConversationsWhenEmptyingFolder(userId: UserId, labelId: String) {
-        val messageIds = messageDao.getMessageIdsByLabelId(labelId)
+    override suspend fun updateConversationsWhenEmptyingFolder(userId: UserId, labelId: LabelId) {
+        val messageIds = messageDao.getMessageIdsByLabelId(labelId.id)
         updateConversationsWhenDeletingMessages(userId, messageIds)
     }
 

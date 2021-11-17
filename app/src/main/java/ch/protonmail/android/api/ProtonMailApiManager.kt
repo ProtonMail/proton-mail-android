@@ -67,6 +67,7 @@ import ch.protonmail.android.labels.data.remote.LabelApiSpec
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
@@ -247,7 +248,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun deleteMessage(messageDeleteRequest: MessageDeleteRequest) =
         api.deleteMessage(messageDeleteRequest)
 
-    override suspend fun emptyFolder(userIdTag: UserIdTag, labelId: String) = api.emptyFolder(userIdTag, labelId)
+    override suspend fun emptyFolder(userIdTag: UserIdTag, labelId: LabelId) = api.emptyFolder(userIdTag, labelId)
 
     override fun fetchMessageDetailsBlocking(messageId: String): MessageResponse =
         api.fetchMessageDetailsBlocking(messageId)

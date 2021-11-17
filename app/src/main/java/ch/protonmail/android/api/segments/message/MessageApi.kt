@@ -30,6 +30,7 @@ import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import io.reactivex.Observable
@@ -73,8 +74,8 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override suspend fun deleteMessage(messageDeleteRequest: MessageDeleteRequest) =
         service.delete(messageDeleteRequest)
 
-    override suspend fun emptyFolder(userIdTag: UserIdTag, labelId: String) {
-        service.emptyFolder(userIdTag, labelId)
+    override suspend fun emptyFolder(userIdTag: UserIdTag, labelId: LabelId) {
+        service.emptyFolder(userIdTag, labelId.id)
     }
 
     @WorkerThread

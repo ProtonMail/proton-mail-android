@@ -31,6 +31,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.labels.domain.model.LabelId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
@@ -63,7 +64,7 @@ class EmptyFolderRemoteWorker @AssistedInject constructor(
         }
 
         return runCatching {
-            protonMailApiManager.emptyFolder(UserIdTag(UserId(userId)), labelId)
+            protonMailApiManager.emptyFolder(UserIdTag(UserId(userId)), LabelId(labelId))
         }.fold(
             onSuccess = {
                 Result.success()
@@ -85,13 +86,13 @@ class EmptyFolderRemoteWorker @AssistedInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        fun enqueue(userId: UserId, labelId: String): Operation {
+        fun enqueue(userId: UserId, labelId: LabelId): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
             val data = workDataOf(
-                KEY_EMPTY_FOLDER_LABEL_ID to labelId,
+                KEY_EMPTY_FOLDER_LABEL_ID to labelId.id,
                 KEY_EMPTY_FOLDER_USER_ID to userId.id
             )
 

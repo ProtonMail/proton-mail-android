@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.delete
 
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.repository.MessageRepository
 import me.proton.core.domain.entity.UserId
@@ -34,7 +35,7 @@ class EmptyFolder @Inject constructor(
 
     suspend operator fun invoke(
         userId: UserId,
-        labelId: String
+        labelId: LabelId
     ) {
         conversationsRepository.updateConversationsWhenEmptyingFolder(userId, labelId)
 

@@ -39,6 +39,7 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
@@ -305,10 +306,10 @@ class MessageRepository @Inject constructor(
      * When performing the action with conversation mode ON, the conversations are not deleted. They are updated
      * in a way that deleted messages are removed from the conversations.
      */
-    suspend fun emptyFolder(userId: UserId, labelId: String) {
+    suspend fun emptyFolder(userId: UserId, labelId: LabelId) {
         emptyFolderRemoteWorker.enqueue(userId, labelId)
 
-        messageDao.deleteMessagesByLabel(labelId)
+        messageDao.deleteMessagesByLabel(labelId.id)
     }
 
     private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {

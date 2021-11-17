@@ -29,6 +29,7 @@ import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import io.reactivex.Observable
@@ -51,7 +52,7 @@ interface MessageApiSpec {
 
     suspend fun deleteMessage(messageDeleteRequest: MessageDeleteRequest): DeleteResponse
 
-    suspend fun emptyFolder(userIdTag: UserIdTag, labelId: String)
+    suspend fun emptyFolder(userIdTag: UserIdTag, labelId: LabelId)
 
     @WorkerThread
     @Throws(Exception::class)

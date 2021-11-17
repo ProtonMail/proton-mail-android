@@ -100,6 +100,7 @@ import ch.protonmail.android.fcm.MultiUserFcmTokenManager
 import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
@@ -814,7 +815,7 @@ internal class MailboxActivity :
             ) {
                 mailboxViewModel.emptyFolderAction(
                     userManager.requireCurrentUserId(),
-                    currentLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
+                    LabelId(currentLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString())
                 )
                 setLoadingMore(false)
             }

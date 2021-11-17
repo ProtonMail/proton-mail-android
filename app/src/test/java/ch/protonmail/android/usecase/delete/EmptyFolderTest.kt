@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.delete
 
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.coEvery
@@ -45,7 +46,7 @@ class EmptyFolderTest {
     private val emptyFolder = EmptyFolder(messageRepository, conversationsRepository)
 
     private val testUserId = UserId("userId")
-    private val testLabelId = "labelId"
+    private val testLabelId = LabelId("labelId")
 
     @Test
     fun `should call the appropriate methods from the repositories for emptying the folder`() = runBlockingTest {

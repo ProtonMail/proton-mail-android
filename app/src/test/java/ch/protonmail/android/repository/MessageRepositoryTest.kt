@@ -33,6 +33,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -758,7 +759,7 @@ class MessageRepositoryTest {
     @Test
     fun `verify worker is enqueued and messages are deleted locally when emptying folder`() = runBlockingTest {
         // given
-        val labelId = "labelId"
+        val labelId = LabelId("labelId")
 
         // when
         messageRepository.emptyFolder(testUserId, labelId)
@@ -766,7 +767,7 @@ class MessageRepositoryTest {
         // then
         coVerify {
             emptyFolderRemoteWorker.enqueue(testUserId, labelId)
-            messageDao.deleteMessagesByLabel(labelId)
+            messageDao.deleteMessagesByLabel(labelId.id)
         }
     }
 

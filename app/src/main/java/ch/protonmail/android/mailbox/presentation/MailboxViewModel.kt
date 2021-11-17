@@ -796,7 +796,7 @@ internal class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun emptyFolderAction(userId: UserId, labelId: String) {
+    fun emptyFolderAction(userId: UserId, labelId: LabelId) {
         viewModelScope.launch {
             emptyFolder(userId, labelId)
         }
