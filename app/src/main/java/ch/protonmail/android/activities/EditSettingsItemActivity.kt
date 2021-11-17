@@ -48,7 +48,6 @@ const val EXTRA_SETTINGS_ITEM_VALUE = "EXTRA_SETTINGS_ITEM_VALUE"
 
 enum class SettingsItem {
     PRIVACY,
-    LABELS_AND_FOLDERS,
     SWIPE,
     PUSH_NOTIFICATIONS,
     CONNECTIONS_VIA_THIRD_PARTIES,
@@ -217,9 +216,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 actionBarTitle = R.string.settings_background_sync
             }
-            SettingsItem.LABELS_AND_FOLDERS -> {
-                actionBarTitle = R.string.labels_and_folders
-            }
             SettingsItem.PUSH_NOTIFICATIONS -> {
                 setValue(SettingsEnum.EXTENDED_NOTIFICATION, getString(R.string.extended_notifications_description))
                 setEnabled(SettingsEnum.EXTENDED_NOTIFICATION, legacyUser.isNotificationVisibilityLockScreen)
@@ -234,7 +230,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 val notificationOption =
                     resources.getStringArray(R.array.notification_options)[mNotificationOptionValue]
                 setValue(SettingsEnum.NOTIFICATION_SETTINGS, notificationOption)
-                setIconVisibility(SettingsEnum.NOTIFICATION_SETTINGS, View.VISIBLE)
+                showIcon(SettingsEnum.NOTIFICATION_SETTINGS)
 
                 actionBarTitle = R.string.push_notifications
             }

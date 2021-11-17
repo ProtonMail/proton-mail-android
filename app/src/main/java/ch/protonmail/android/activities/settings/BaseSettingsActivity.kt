@@ -296,7 +296,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     private fun selectItem(settingsId: String) {
         legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
-        when (valueOf(settingsId.toUpperCase())) {
+        when (valueOf(settingsId.uppercase())) {
             ACCOUNT -> {
                 val accountSettingsIntent =
                     AppUtil.decorInAppIntent(Intent(this, AccountSettingsActivity::class.java))
@@ -366,12 +366,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 val backgroundSyncIntent = Intent(this, EditSettingsItemActivity::class.java)
                 backgroundSyncIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.BACKGROUND_SYNC)
                 startActivity(AppUtil.decorInAppIntent(backgroundSyncIntent))
-            }
-            LABELS_N_FOLDERS -> {
-                val labelsNFoldersIntent =
-                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
-                labelsNFoldersIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.LABELS_AND_FOLDERS)
-                startActivity(labelsNFoldersIntent)
             }
             LABELS_MANAGER -> {
                 val labelsManagerIntent =
@@ -500,13 +494,13 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     protected fun setToggleListener(settingType: SettingsEnum, listener: ((View, Boolean) -> Unit)?) {
         settingsAdapter.items
-            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            .find { it.settingId == settingType.name.lowercase(Locale.ENGLISH) }
             ?.apply { toggleListener = listener }
     }
 
     protected fun setValue(settingType: SettingsEnum, settingValueNew: String) {
         val position = settingsAdapter.items
-            .indexOfFirst { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            .indexOfFirst { it.settingId == settingType.name.lowercase(Locale.ENGLISH) }
         if (position < 0 || position >= settingsAdapter.items.size) {
             return
         }
@@ -514,10 +508,10 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.notifyItemChanged(position)
     }
 
-    protected fun setIconVisibility(settingType: SettingsEnum, visibility: Int) {
+    protected fun showIcon(settingType: SettingsEnum) {
         settingsAdapter.items
-            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
-            ?.apply { iconVisibility = visibility }
+            .find { it.settingId == settingType.name.lowercase(Locale.ENGLISH) }
+            ?.apply { iconVisibility = View.VISIBLE }
     }
 
     /**
@@ -525,7 +519,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
      */
     protected fun setEnabled(settingType: SettingsEnum, settingValueEnabled: Boolean) {
         val position = settingsAdapter.items
-            .indexOfFirst { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            .indexOfFirst { it.settingId == settingType.name.lowercase(Locale.ENGLISH) }
         if (position < 0 || position >= settingsAdapter.items.size) {
             return
         }
@@ -533,23 +527,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.notifyItemChanged(position)
     }
 
-    /**
-     * Sets the setting with [settingType] to locked, so the user can't change.
-     * Usually if the account is on a free plan.
-     */
-    protected fun setSettingDisabled(
-        settingType: SettingsEnum,
-        settingDisabledNew: Boolean,
-        description: String
-    ) {
-        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply {
-            settingDisabled = settingDisabledNew
-            settingsDescription = description
-        }
-    }
-
     protected fun setHeader(settingType: SettingsEnum, settingHeaderNew: String = "") {
-        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply {
+        settingsAdapter.items.find { it.settingId == settingType.name.lowercase(Locale.ENGLISH) }?.apply {
             settingHeader = if (settingHeaderNew.isNotEmpty()) {
                 settingHeaderNew
             } else {

@@ -38,10 +38,32 @@ const val VIEW_TYPE_ITEM = 1
 internal class SettingsAdapter :
     BaseAdapter<SettingsItemUiModel, SettingsAdapter.ViewHolder<SettingsItemUiModel>>(ModelsComparator) {
 
+    private val SettingsItemUiModel.viewType: Int
+        get() {
+            return if (this.isSection) VIEW_TYPE_SECTION else VIEW_TYPE_ITEM
+        }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<SettingsItemUiModel> =
         parent.viewHolderForViewType(viewType)
 
     override fun getItemViewType(position: Int) = items[position].viewType
+
+
+    private fun layoutForViewType(viewType: Int) = when (viewType) {
+        VIEW_TYPE_SECTION -> R.layout.settings_section
+        VIEW_TYPE_ITEM -> R.layout.settings_item
+        else -> throw IllegalArgumentException("View type not found: '$viewType'")
+    }
+
+    private fun <Model> ViewGroup.viewHolderForViewType(viewType: Int): ViewHolder<Model> {
+        val view = inflate(layoutForViewType(viewType))
+        @Suppress("UNCHECKED_CAST") // Type cannot be checked since is in invariant position
+        return when (viewType) {
+            VIEW_TYPE_SECTION -> SectionViewHolder(view)
+            VIEW_TYPE_ITEM -> ItemViewHolder(view)
+            else -> throw IllegalArgumentException("View type not found: '$viewType'")
+        } as ViewHolder<Model>
+    }
 
     private object ModelsComparator : BaseAdapter.ItemsComparator<SettingsItemUiModel>() {
 
@@ -51,18 +73,12 @@ internal class SettingsAdapter :
     abstract class ViewHolder<Model>(itemView: View) :
         ClickableAdapter.ViewHolder<Model>(itemView)
 
-    companion object {
-
-        fun getHeader(settingsId: String, context: Context): String =
-            SettingsEnum.valueOf(settingsId).getHeader(context)
-    }
-
     private class SectionViewHolder(itemView: View) : ViewHolder<SettingsItemUiModel>(itemView) {
 
         override fun onBind(item: SettingsItemUiModel) = with(itemView as TextView) {
             super.onBind(item)
             text = if (item.settingHeader.isNullOrEmpty()) {
-                getHeader(item.settingId.toUpperCase(), context)
+                getHeader(item.settingId.uppercase(), context)
             } else {
                 item.settingHeader
             }
@@ -77,7 +93,7 @@ internal class SettingsAdapter :
             super.onBind(item)
 
             header = if (item.settingHeader.isNullOrEmpty()) {
-                getHeader(item.settingId.toUpperCase(), context)
+                getHeader(item.settingId.uppercase(), context)
             } else {
                 item.settingHeader ?: ""
             }
@@ -95,24 +111,9 @@ internal class SettingsAdapter :
         }
     }
 
-    private val SettingsItemUiModel.viewType: Int
-        get() {
-            return if (this.isSection) VIEW_TYPE_SECTION else VIEW_TYPE_ITEM
-        }
+    companion object {
 
-    private fun layoutForViewType(viewType: Int) = when (viewType) {
-        VIEW_TYPE_SECTION -> R.layout.settings_section
-        VIEW_TYPE_ITEM -> R.layout.settings_item
-        else -> throw IllegalArgumentException("View type not found: '$viewType'")
-    }
-
-    private fun <Model> ViewGroup.viewHolderForViewType(viewType: Int): ViewHolder<Model> {
-        val view = inflate(layoutForViewType(viewType))
-        @Suppress("UNCHECKED_CAST") // Type cannot be checked since is in invariant position
-        return when (viewType) {
-            VIEW_TYPE_SECTION -> SectionViewHolder(view)
-            VIEW_TYPE_ITEM -> ItemViewHolder(view)
-            else -> throw IllegalArgumentException("View type not found: '$viewType'")
-        } as ViewHolder<Model>
+        fun getHeader(settingsId: String, context: Context): String =
+            SettingsEnum.valueOf(settingsId).getHeader(context)
     }
 }

@@ -101,20 +101,15 @@ enum class SettingsEnum {
         override fun getHeader(context: Context): String =
             context.resources.getString(R.string.settings_background_sync)
     },
-    LABELS_N_FOLDERS {
-
-        override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.labels_and_folders)
-    },
     LABELS_MANAGER {
 
         override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.labels_manager)
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.labels)
     },
     FOLDERS_MANAGER {
 
         override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.folders_manage)
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.folders)
     },
     SWIPING_GESTURE {
 
