@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.activities;
 
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
 import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
 import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
@@ -36,7 +37,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,12 +69,12 @@ import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.feature.account.AccountStateManager;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
+import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
 import ch.protonmail.android.worker.FetchMailSettingsWorker;
 import ch.protonmail.android.worker.FetchUserWorker;
 import dagger.hilt.android.AndroidEntryPoint;
-import kotlin.Unit;
 import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator;
 import timber.log.Timber;
 
@@ -131,8 +131,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Nullable
     @BindView(R.id.screenProtectorView)
     protected View mScreenProtectorLayout;
-
-    protected final ActivityResultLauncher<Unit> startValidatePinLauncher = registerForActivityResult(new StartValidatePin(), result -> {});
 
     private BroadcastReceiver mLangReceiver = null;
     private boolean inApp = false;
@@ -327,7 +325,11 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             return;
         }
         if (shouldLock) {
-            startValidatePinLauncher.launch(Unit.INSTANCE);
+            Intent validatePinIntent = new Intent(this, ValidatePinActivity.class);
+            validatePinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title);
+            Intent pinIntent = AppUtil.decorInAppIntent(validatePinIntent);
+            startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN);
+
         } else {
             this.shouldLock = false;
         }
