@@ -508,7 +508,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.notifyItemChanged(position)
     }
 
-    protected fun setIconVisibility(settingType: SettingsEnum) {
+    protected fun showIcon(settingType: SettingsEnum) {
         settingsAdapter.items
             .find { it.settingId == settingType.name.lowercase(Locale.ENGLISH) }
             ?.apply { iconVisibility = View.VISIBLE }
