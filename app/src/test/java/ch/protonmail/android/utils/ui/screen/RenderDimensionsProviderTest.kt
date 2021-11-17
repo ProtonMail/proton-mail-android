@@ -19,10 +19,11 @@
 
 package ch.protonmail.android.utils.ui.screen
 
-import android.content.Context
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.WindowManager
+import androidx.core.content.getSystemService
+import androidx.fragment.app.FragmentActivity
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
@@ -32,12 +33,13 @@ class RenderDimensionsProviderTest {
 
     private val defaultDisplayMock = mockk<Display>()
     private val windowManagerMock = mockk<WindowManager> {
+        @Suppress("DEPRECATION")
         every { defaultDisplay } returns defaultDisplayMock
     }
-    private val contextMock = mockk<Context> {
-        every { getSystemService(android.view.WindowManager::class.java) } returns windowManagerMock
+    private val activity = mockk<FragmentActivity> {
+        every { getSystemService<WindowManager>() } returns windowManagerMock
     }
-    private val renderDimensionsProvider = RenderDimensionsProvider(contextMock)
+    private val renderDimensionsProvider = RenderDimensionsProvider()
 
     @Test
     fun `should calculate the rendered width`() {
@@ -45,6 +47,7 @@ class RenderDimensionsProviderTest {
         val displayWidth = 200
         val displayDensity = 2.0f
         val expectedRenderedWidth = 100
+        @Suppress("DEPRECATION")
         every { defaultDisplayMock.getMetrics(any()) } answers {
             val metrics = it.invocation.args.first() as DisplayMetrics
             metrics.widthPixels = displayWidth
@@ -52,7 +55,7 @@ class RenderDimensionsProviderTest {
         }
 
         // when
-        val calculatedRenderedWidth = renderDimensionsProvider.getRenderWidth()
+        val calculatedRenderedWidth = renderDimensionsProvider.getRenderWidth(activity)
 
         // then
         assertEquals(expectedRenderedWidth, calculatedRenderedWidth)
