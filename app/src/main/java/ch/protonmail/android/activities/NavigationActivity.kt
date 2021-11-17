@@ -52,6 +52,8 @@ import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.LabelsManagerActivity
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
+import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
+import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -441,7 +443,9 @@ internal abstract class NavigationActivity : BaseActivity() {
                 val user = userManager.currentLegacyUser
                 if (user != null && user.isUsePin && userManager.getMailboxPin() != null) {
                     user.setManuallyLocked(true)
-                    startValidatePinLauncher.launch(Unit)
+                    val pinIntent = AppUtil.decorInAppIntent(Intent(this, ValidatePinActivity::class.java))
+                    pinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title)
+                    startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN)
                 }
             }
             Type.LABEL -> { /* We don't need it, perhaps we could remove the value from enum */

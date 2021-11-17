@@ -23,30 +23,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
-import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
-import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.utils.AppUtil
-
-class StartValidatePin : ActivityResultContract<Unit, Unit?>() {
-
-    override fun createIntent(context: Context, input: Unit): Intent =
-        AppUtil.decorInAppIntent(Intent(context, ValidatePinActivity::class.java)).apply {
-            putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title)
-        }
-
-    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
-        if (resultCode != Activity.RESULT_OK) return null
-        return Unit
-    }
-}
-
 
 class StartSettings : ActivityResultContract<StartSettings.Input, Unit?>() {
 
