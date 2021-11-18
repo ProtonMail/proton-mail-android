@@ -211,6 +211,17 @@ object MessageUtils {
         return valid
     }
 
+    fun isLocalAttachmentId(attachmentId: String?): Boolean {
+        var valid = false
+        try {
+            attachmentId?.toBigInteger()
+            valid = true
+        } catch (e: IllegalArgumentException) {
+            // noop
+        }
+        return valid
+    }
+
     fun calculateType(flags: Long): Message.MessageType {
         val received = flags and MessageFlag.RECEIVED.value == MessageFlag.RECEIVED.value
         val sent = flags and MessageFlag.SENT.value == MessageFlag.SENT.value
