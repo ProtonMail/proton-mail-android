@@ -93,4 +93,10 @@ interface INotificationServer {
     )
 
     fun notifySaveDraftError(errorMessage: String, messageSubject: String?, username: String)
+
+    fun notifyAttachmentUploadError(
+        errorMessage: String,
+        messageSubject: String?,
+        username: String
+    )
 }
