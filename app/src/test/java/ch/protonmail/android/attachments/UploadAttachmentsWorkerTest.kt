@@ -55,7 +55,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class UploadAttachmentsTest : CoroutinesTest {
+class UploadAttachmentsWorkerTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -85,7 +85,7 @@ class UploadAttachmentsTest : CoroutinesTest {
     private lateinit var crypto: AddressCrypto
 
     @InjectMockKs
-    private lateinit var uploadAttachments: UploadAttachments
+    private lateinit var uploadAttachmentsWorker: UploadAttachmentsWorker
 
     private val currentUsername = "current username"
 
@@ -114,7 +114,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { cryptoFactory.create(Id(addressId), Name(currentUsername)) } returns crypto
 
             // When
-            UploadAttachments.Enqueuer(workManager).enqueue(
+            UploadAttachmentsWorker.Enqueuer(workManager).enqueue(
                 attachmentIds,
                 messageId,
                 true
@@ -154,7 +154,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             givenFullValidInput(messageId, attachmentIds.toTypedArray())
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             val pendingUpload = PendingUpload(messageId)
             verify { pendingActionsDao.insertPendingForUpload(pendingUpload) }
@@ -169,7 +169,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             givenFullValidInput(messageId, attachmentIds.toTypedArray())
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns null
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             assertEquals(
                 ListenableWorker.Result.failure(
@@ -191,7 +191,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
             every { pendingActionsDao.findPendingUploadByMessageId(messageId) } returns PendingUpload(messageId)
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             verify { pendingActionsDao.insertPendingForUpload(any()) }
             assertEquals(ListenableWorker.Result.success(), result)
@@ -222,7 +222,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             coVerifyOrder {
                 attachment1.setMessage(message)
@@ -263,7 +263,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             }
             every { parameters.runAttemptCount } returns 0
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             assertEquals(ListenableWorker.Result.retry(), result)
             verify { pendingActionsDao.deletePendingUploadByMessageId("messageId8238") }
@@ -298,7 +298,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             }
             every { parameters.runAttemptCount } returns 4
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             assertEquals(
                 ListenableWorker.Result.failure(
@@ -327,7 +327,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             }
             every { parameters.runAttemptCount } returns 0
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             assertEquals(ListenableWorker.Result.retry(), result)
             verify { pendingActionsDao.deletePendingUploadByMessageId("messageId9273584") }
@@ -351,7 +351,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             }
             every { parameters.runAttemptCount } returns 4
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             assertEquals(
                 ListenableWorker.Result.failure(
@@ -381,7 +381,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns null
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             coVerifySequence { attachmentsRepository.upload(attachment2, crypto) }
         }
@@ -411,7 +411,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             coVerify(exactly = 0) { attachmentsRepository.upload(attachment1, crypto) }
             coVerify { attachmentsRepository.upload(attachment2, crypto) }
@@ -442,7 +442,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             coVerify { attachmentsRepository.upload(attachment1, crypto) }
             coVerify(exactly = 0) { attachmentsRepository.upload(attachment2, crypto) }
@@ -473,7 +473,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             coVerify { attachmentsRepository.upload(attachmentMock1, crypto) }
             coVerify(exactly = 0) { attachmentsRepository.upload(attachmentMock2, crypto) }
@@ -495,7 +495,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 AttachmentsRepository.Result.Success("23421")
             }
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             coVerify { attachmentsRepository.uploadPublicKey(message, crypto) }
         }
@@ -531,7 +531,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 AttachmentsRepository.Result.Failure("failed")
             }
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             verify { attachmentMock1.deleteLocalFile() }
             verify(exactly = 0) { attachmentMock2.deleteLocalFile() }
@@ -590,7 +590,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 AttachmentsRepository.Result.Success(uploadedAttachmentMock2Id)
             }
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             val actualMessage = slot<Message>()
             val expectedAttachments = listOf(uploadedAttachmentMock1, uploadedAttachmentMock2)
@@ -622,7 +622,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 AttachmentsRepository.Result.Failure("Failed uploading attachment!")
             }
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             verify(exactly = 1) { messageDetailsRepository.findAttachmentById("1") }
             coVerify(exactly = 0) { messageDetailsRepository.saveMessageLocally(any()) }
@@ -668,7 +668,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 AttachmentsRepository.Result.Success(uploadedAttachment2Id)
             }
 
-            uploadAttachments.doWork()
+            uploadAttachmentsWorker.doWork()
 
             val actualMessage = slot<Message>()
             val expectedAttachments = listOf(attachmentMock1)
@@ -690,7 +690,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } returns mockk()
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             coVerify(exactly = 0) { attachmentsRepository.uploadPublicKey(any(), any()) }
             assertEquals(ListenableWorker.Result.success(), result)
@@ -713,7 +713,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 AttachmentsRepository.Result.Success("82384")
             }
 
-            val result = uploadAttachments.doWork()
+            val result = uploadAttachmentsWorker.doWork()
 
             coVerify { attachmentsRepository.uploadPublicKey(any(), any()) }
             assertEquals(ListenableWorker.Result.success(), result)

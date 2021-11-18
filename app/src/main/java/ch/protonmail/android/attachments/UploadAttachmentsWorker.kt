@@ -57,8 +57,8 @@ internal const val KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR = "keyUploadAttach
 private const val UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX = "uploadAttachmentUniqueWorkName"
 private const val UPLOAD_ATTACHMENTS_MAX_RETRIES = 1
 
-class UploadAttachments @WorkerInject constructor(
-    @Assisted context: Context,
+class UploadAttachmentsWorker @WorkerInject constructor(
+    @Assisted val context: Context,
     @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
@@ -209,7 +209,7 @@ class UploadAttachments @WorkerInject constructor(
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val uploadAttachmentsRequest = OneTimeWorkRequestBuilder<UploadAttachments>()
+            val uploadAttachmentsRequest = OneTimeWorkRequestBuilder<UploadAttachmentsWorker>()
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
