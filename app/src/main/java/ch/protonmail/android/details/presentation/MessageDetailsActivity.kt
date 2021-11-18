@@ -75,6 +75,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider
+import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
 import com.squareup.otto.Subscribe
@@ -105,6 +106,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     @Inject
     lateinit var renderDimensionsProvider: RenderDimensionsProvider
+
+    @Inject
+    lateinit var setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported
+
 
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
@@ -218,6 +223,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageBodyParser,
             mUserManager,
             messageEncryptionUiModelMapper,
+            setUpWebViewDarkModeHandlingIfSupported,
             ::onLoadEmbeddedImagesClicked,
             ::onDisplayRemoteContentClicked,
             ::onLoadMessageBody,

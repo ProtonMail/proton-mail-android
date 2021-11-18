@@ -30,7 +30,7 @@ import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiMod
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChange
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChangeRequest
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
-import ch.protonmail.android.databinding.ActivityComposeMessage2Binding
+import ch.protonmail.android.databinding.ActivityComposeMessageBinding
 import ch.protonmail.android.ui.view.DaysHoursPair
 import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.onEach
 abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
 
     protected val composeViewModel: ComposeMessageViewModel by viewModels()
-    protected lateinit var binding: ActivityComposeMessage2Binding
+    protected lateinit var binding: ActivityComposeMessageBinding
 
     // region activity results
     // region password
@@ -61,7 +61,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     // endregion
 
     override fun getRootView(): View {
-        binding = ActivityComposeMessage2Binding.inflate(layoutInflater)
+        binding = ActivityComposeMessageBinding.inflate(layoutInflater)
         return binding.root
     }
 

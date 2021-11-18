@@ -85,6 +85,7 @@ import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
+import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -144,6 +145,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val deleteMessage: DeleteMessage,
     private val deleteConversations: DeleteConversations,
+    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
     private val savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
@@ -680,7 +682,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                 activityContext,
                 activityContext.resources,
                 activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager,
-                remoteContentDisplayed
+                setUpWebViewDarkModeHandlingIfSupported,
+                remoteContentDisplayed,
             ).printMessage(it, it.decryptedHTML ?: "")
         }
     }

@@ -69,6 +69,7 @@ val DependencyHandler.`google-services` get() =             googleServices()
 val DependencyHandler.`room-rxJava` get() =                 androidxRoom("rxjava2")
 val DependencyHandler.`safetyNet` get() =                   playServices("safetynet")
 val DependencyHandler.`lifecycle-extensions` get() =        androidxLifecycle("extensions") version `lifecycle-extensions version`
+val DependencyHandler.`android-webkit` get() =              androidx("webkit", "webkit") version `android-webkit version`
 
 fun DependencyHandler.googleServices(moduleSuffix: String? = null, version: String = `googleServices version`) =
     google("gms", "google-services", moduleSuffix, version)

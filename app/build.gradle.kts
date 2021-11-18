@@ -340,6 +340,7 @@ dependencies {
         `material`,
         `paging-runtime`,
         `android-work-runtime`,
+        `android-webkit`,
 
         // Lifecycle
         `lifecycle-extensions`,
