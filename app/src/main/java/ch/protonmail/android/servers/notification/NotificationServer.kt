@@ -608,6 +608,25 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SAVE_DRAFT_ERROR, notification)
     }
 
+    fun notifyAttachmentUploadError(
+        userId: UserId,
+        errorMessage: String,
+        messageSubject: String?,
+        username: Name
+    ) {
+        val title = context.getString(R.string.failed_uploading_attachment_online, messageSubject)
+
+        val bigTextStyle = NotificationCompat.BigTextStyle()
+            .setBigContentTitle(title)
+            .setSummaryText(username.s)
+            .bigText(errorMessage)
+
+        val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
+            .setStyle(bigTextStyle)
+
+        val notification = notificationBuilder.build()
+        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SAVE_DRAFT_ERROR, notification)
+    }
 }
 
 private fun Context.buildReplyIntent(
