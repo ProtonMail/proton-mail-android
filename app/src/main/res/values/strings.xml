@@ -92,6 +92,8 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Parent folder</string>
     <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_folder_icon_description">Folder icon</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
     <!-- endregion -->
 
     <!-- region Dialogs -->

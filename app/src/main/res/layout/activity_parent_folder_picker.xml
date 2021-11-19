@@ -43,7 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/padding_l"
         android:text="@string/parent_picker_header"
-        android:textAppearance="@style/Proton.Text.Default.Weak"
+        android:textAppearance="@style/Proton.Text.DefaultSmall.Weak"
         android:textColor="@color/text_weak"/>
 
     <androidx.recyclerview.widget.RecyclerView
