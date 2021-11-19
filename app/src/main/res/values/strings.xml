@@ -63,6 +63,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">Email address is a duplicate</string>
     <string name="invalid_code">Code is not valid</string>
     <string name="message_drafted">Message sending failed. Your messages are saved in drafts folder</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the "Drafts" folder.</string>
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Close</string>
     <string name="inbox_option">INBOX</string>
@@ -1102,6 +1103,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
     <string name="failed_saving_draft_online">Failed saving online draft for message: "%s"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
 
     <!-- region Proton Calendar -->
