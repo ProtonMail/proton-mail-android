@@ -22,11 +22,13 @@ package ch.protonmail.android.labels.presentation.ui
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ActivityParentFolderPickerBinding
 import ch.protonmail.android.databinding.ItemParentPickerFolderBinding
+import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
 
 class ParentFolderPickerActivity : AppCompatActivity() {
@@ -34,18 +36,27 @@ class ParentFolderPickerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityParentFolderPickerBinding
 
     private val adapter = ProtonAdapter(
-        diffCallback = ParentFolderPickerUiModel.DiffCallback,
+        diffCallback = ParentFolderPickerItemUiModel.DiffCallback,
         getView = { parent, inflater ->
             ItemParentPickerFolderBinding.inflate(inflater, parent, false)
         },
         onBind = { model ->
-            setMarginFor(folderLevel = model.folderLevel)
-            parentPickerFolderIconImageView.apply {
-                setColorFilter(model.colorInt)
-                setImageResource(model.icon.drawableRes)
-                contentDescription = getString(model.icon.contentDescriptionRes)
+            when (model) {
+                is ParentFolderPickerItemUiModel.Folder -> {
+                    setMarginFor(folderLevel = model.folderLevel)
+                    parentPickerFolderIconImageView.apply {
+                        isVisible = true
+                        setColorFilter(model.colorInt)
+                        setImageResource(model.icon.drawableRes)
+                        contentDescription = getString(model.icon.contentDescriptionRes)
+                    }
+                    parentPickerFolderNameTextView.text = model.name
+                }
+                is ParentFolderPickerItemUiModel.None -> {
+                    parentPickerFolderIconImageView.isVisible = false
+                    parentPickerFolderNameTextView.setText(R.string.x_none)
+                }
             }
-            parentPickerFolderNameTextView.text = model.name
         }
     )
 

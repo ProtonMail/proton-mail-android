@@ -36,7 +36,9 @@ class ParentFolderPickerActivityTest {
     @get:Rule val activityScenarioRule = activityScenarioRule<ParentFolderPickerActivity>()
 
     @Test
-    fun justRuns() {
+    fun verifyToolbarTitle() {
         onView(withId(R.id.parent_picker_toolbar)).check(matches(withText(R.string.parent_picker_title)))
     }
+
+
 }
