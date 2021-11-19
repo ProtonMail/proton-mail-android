@@ -55,6 +55,7 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPrefer
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageAlreadySent
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
+import ch.protonmail.android.compose.send.SendMessageWorkerError.UploadAttachmentsFailed
 import ch.protonmail.android.compose.send.SendMessageWorkerError.UserVerificationNeeded
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
@@ -172,7 +173,10 @@ class SendMessageWorker @WorkerInject constructor(
                 saveMessageAsSent(message)
                 failureWithError(MessageAlreadySent)
             }
-
+            is SaveDraftResult.UploadDraftAttachmentsFailed -> {
+                pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
+                failureWithError(UploadAttachmentsFailed)
+            }
             else -> {
                 pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
                 showSendMessageError(message.subject)

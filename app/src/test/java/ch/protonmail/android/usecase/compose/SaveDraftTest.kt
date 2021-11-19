@@ -23,6 +23,7 @@ import androidx.work.Data
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
@@ -619,7 +620,7 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftsShowPersistentErrorAndReturnsErrorWhenUploadingNewAttachmentsFails() {
+    fun saveDraftsShowUploadAttachmentErrorAndReturnsErrorWhenUploadingNewAttachmentsFails() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -630,6 +631,10 @@ class SaveDraftTest : CoroutinesTest {
                 decryptedBody = "Message body in plain text"
                 localId = localDraftId
                 subject = "Message Subject"
+                this.Attachments = listOf(
+                    Attachment(attachmentId = "2345", fileName = "Attachment_2345.jpg"),
+                    Attachment(attachmentId = "453", fileName = "Attachment_453.jpg"),
+                )
             }
             val newAttachmentIds = listOf("2345", "453")
             val createDraftOutputData = workDataOf(
@@ -638,7 +643,7 @@ class SaveDraftTest : CoroutinesTest {
             val createDraftWorkerResult = buildWorkerResponse(WorkInfo.State.SUCCEEDED, createDraftOutputData)
             val errorMessage = "Can't upload attachments"
             val uploadWorkOutputData = workDataOf(
-                KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to errorMessage
+                KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to errorMessage,
             )
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("newDraftId") } returns message.copy(messageId = "newDraftId")
@@ -669,7 +674,79 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            verify { userNotifier.showPersistentError(errorMessage, "Message Subject") }
+            verify { userNotifier.showAttachmentUploadError(errorMessage, "Message Subject") }
+            assertEquals(SaveDraftResult.UploadDraftAttachmentsFailed, result)
+        }
+    }
+
+    @Test
+    fun notifyUserWithUploadAttachmentErrorWhenAttachmentIsBroken() {
+        runBlockingTest {
+            // Given
+            val localDraftId = "8345"
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "45623"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+                subject = "Message Subject"
+                this.Attachments = listOf(
+                    Attachment(
+                        attachmentId = "2345",
+                        fileName = "Attachment_2345.jpg",
+                        isUploaded = false,
+                        filePath = null
+                    ),
+                    Attachment(attachmentId = "453", fileName = "Attachment_453.jpg"),
+                )
+            }
+            val newAttachmentIds = listOf("2345", "453")
+            val createDraftOutputData = workDataOf(
+                KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "newDraftId"
+            )
+            val createDraftWorkerResult = buildWorkerResponse(WorkInfo.State.SUCCEEDED, createDraftOutputData)
+            val errorMessage = "Invalid attachment."
+            val uploadWorkOutputData = workDataOf(
+                KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to errorMessage,
+            )
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            coEvery { messageDetailsRepository.findMessageById("newDraftId") } returns
+                message.copy(messageId = "newDraftId")
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
+            coEvery {
+                uploadAttachmentsWorker.enqueue(
+                    newAttachmentIds,
+                    "newDraftId",
+                    false
+                )
+            } returns buildWorkerResponse(
+                WorkInfo.State.FAILED,
+                uploadWorkOutputData
+            )
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    null,
+                    FORWARD,
+                    "previousSenderId132423"
+                )
+            } answers { createDraftWorkerResult }
+
+            // When
+            val result = saveDraft.invoke(
+                SaveDraftParameters(
+                    message,
+                    newAttachmentIds,
+                    null,
+                    FORWARD,
+                    "previousSenderId132423",
+                    SaveDraft.SaveDraftTrigger.UserRequested
+                )
+            )
+
+            // Then
+            verify { userNotifier.showAttachmentUploadError(errorMessage, "Message Subject") }
             assertEquals(SaveDraftResult.UploadDraftAttachmentsFailed, result)
         }
     }
