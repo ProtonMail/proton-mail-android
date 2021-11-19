@@ -55,13 +55,13 @@ import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.details.presentation.mapper.MessageEncryptionUiModelMapper
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
-import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER
 import ch.protonmail.android.utils.ui.TYPE_ITEM
+import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
@@ -86,6 +86,7 @@ internal class MessageDetailsAdapter(
     private val messageBodyParser: MessageBodyParser,
     private val userManager: UserManager,
     private val messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper,
+    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
     private val onLoadEmbeddedImagesClicked: (Message, List<String>) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
@@ -577,6 +578,8 @@ internal class MessageDetailsAdapter(
     }
 
     private fun configureWebView(webView: WebView, pmWebViewClient: PMWebViewClient) {
+        setUpWebViewDarkModeHandlingIfSupported(context, webView)
+
         webView.isScrollbarFadingEnabled = false
         webView.isVerticalScrollBarEnabled = false
         webView.isHorizontalScrollBarEnabled = false

@@ -166,6 +166,7 @@ import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
+import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
@@ -231,7 +232,7 @@ public class ComposeMessageActivity
     private ComposerBottomAppBar bottomAppBar;
     //endregion
 
-    private WebView mMessageBody;
+    private WebView quotedMessageWebView;
     private PMWebViewClient pmWebViewClient;
     final String newline = "<br>";
     private MessageRecipientArrayAdapter recipientAdapter;
@@ -263,6 +264,9 @@ public class ComposeMessageActivity
 
     @Inject
     RenderDimensionsProvider renderDimensionsProvider;
+
+    @Inject
+    SetUpWebViewDarkModeHandlingIfSupported setUpWebViewDarkModeHandlingIfSupported;
 
     String composerInstanceId;
 
@@ -326,22 +330,7 @@ public class ComposeMessageActivity
         initRecipientsView(bccRecipientView, recipientAdapter, Constants.RecipientLocationType.BCC);
         subjectEditText.setSelection(subjectEditText.getText().length(), subjectEditText.getText().length());
 
-        mMessageBody = new WebView(this);
-        pmWebViewClient = new PMWebViewClient(mUserManager, this, true);
-        mMessageBody.setWebViewClient(pmWebViewClient);
-        mMessageBody.requestDisallowInterceptTouchEvent(true);
-
-        final WebSettings webSettings = mMessageBody.getSettings();
-        webSettings.setAllowFileAccess(false);
-        webSettings.setDisplayZoomControls(false);
-        webSettings.setGeolocationEnabled(false);
-        webSettings.setSavePassword(false);
-        webSettings.setJavaScriptEnabled(false);
-        webSettings.setSupportZoom(true);
-        webSettings.setBuiltInZoomControls(true);
-        webSettings.setPluginState(WebSettings.PluginState.OFF);
-
-        binding.composerQuotedMessageContainer.addView(mMessageBody);
+        setUpQuotedMessageWebView();
 
         messageBodyEditText.setOnKeyListener(new ComposeBodyChangeListener());
         respondInlineButton.setOnClickListener(new RespondInlineButtonClickListener());
@@ -402,6 +391,27 @@ public class ComposeMessageActivity
         fromAddressSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
         composeMessageViewModel.setSignature(composeMessageViewModel.getSignatureByEmailAddress((String) fromAddressSpinner.getSelectedItem()));
+    }
+
+    private void setUpQuotedMessageWebView() {
+        quotedMessageWebView = new WebView(this);
+        pmWebViewClient = new PMWebViewClient(mUserManager, this, true);
+        quotedMessageWebView.setWebViewClient(pmWebViewClient);
+        quotedMessageWebView.requestDisallowInterceptTouchEvent(true);
+
+        final WebSettings webSettings = quotedMessageWebView.getSettings();
+        webSettings.setAllowFileAccess(false);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setGeolocationEnabled(false);
+        webSettings.setSavePassword(false);
+        webSettings.setJavaScriptEnabled(false);
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setPluginState(WebSettings.PluginState.OFF);
+
+        setUpWebViewDarkModeHandlingIfSupported.invoke(this, quotedMessageWebView);
+
+        binding.composerQuotedMessageContainer.addView(quotedMessageWebView);
     }
 
     private void observeSetup() {
@@ -1479,10 +1489,10 @@ public class ComposeMessageActivity
             setInlineContent(messageBody, false, mimeType != null && mimeType.equals(Constants.MIME_TYPE_PLAIN_TEXT));
         } else {
             binding.composerQuotedMessageContainer.setVisibility(View.VISIBLE);
-            mMessageBody.setVisibility(View.VISIBLE);
+            quotedMessageWebView.setVisibility(View.VISIBLE);
             composeMessageViewModel.setIsMessageBodyVisible(true);
-            mMessageBody.setFocusable(false);
-            mMessageBody.requestFocus();
+            quotedMessageWebView.setFocusable(false);
+            quotedMessageWebView.requestFocus();
             String delim = "<div class=\"verticalLine\">";
             String webDelim = "<blockquote class=\"protonmail_quote\"";
             int delimIndex = messageBody.indexOf(delim);
@@ -1497,10 +1507,10 @@ public class ComposeMessageActivity
                 composeMessageViewModel.setInitialMessageContent(messageBody);
                 composeMessageViewModel.setContent(messageBody);
                 setBodyContent(false, mimeType != null && mimeType.equals(Constants.MIME_TYPE_PLAIN_TEXT));
-                mMessageBody.setVisibility(View.VISIBLE);
+                quotedMessageWebView.setVisibility(View.VISIBLE);
                 composeMessageViewModel.setIsMessageBodyVisible(true);
-                mMessageBody.setFocusable(false);
-                mMessageBody.requestFocus();
+                quotedMessageWebView.setFocusable(false);
+                quotedMessageWebView.requestFocus();
                 setRespondInlineVisibility(true);
             } else {
                 setInlineContent(messageBody, false, mimeType != null && mimeType.equals(Constants.MIME_TYPE_PLAIN_TEXT));
@@ -1522,7 +1532,7 @@ public class ComposeMessageActivity
             messageBody = messageBody.substring(0, messageBody.indexOf(originalMessageDividerString));
         }
         setRespondInlineVisibility(false);
-        mMessageBody.setVisibility(View.GONE);
+        quotedMessageWebView.setVisibility(View.GONE);
         composeMessageViewModel.setIsMessageBodyVisible(false);
         messageBodyEditText.setVisibility(View.VISIBLE);
         composeMessageViewModel.setContent(messageBody);
@@ -1642,7 +1652,7 @@ public class ComposeMessageActivity
             doc = contentTransformer.transform(doc);
             content = doc.toString();
             pmWebViewClient.blockRemoteResources(!composeMessageViewModel.getMessageDataResult().getShowRemoteContent());
-            mMessageBody.loadDataWithBaseURL("", content, "text/html", HTTP.UTF_8, "");
+            quotedMessageWebView.loadDataWithBaseURL("", content, "text/html", HTTP.UTF_8, "");
         } else {
             final CharSequence bodyText;
             if (isPlainText) {
@@ -1678,7 +1688,7 @@ public class ComposeMessageActivity
             doc = contentTransformer.transform(doc);
             content = doc.toString();
             pmWebViewClient.blockRemoteResources(!composeMessageViewModel.getMessageDataResult().getShowRemoteContent());
-            EmbeddedImagesThread mEmbeddedImagesTask = new EmbeddedImagesThread(new WeakReference<>(ComposeMessageActivity.this.mMessageBody), event, content);
+            EmbeddedImagesThread mEmbeddedImagesTask = new EmbeddedImagesThread(new WeakReference<>(ComposeMessageActivity.this.quotedMessageWebView), event, content);
             mEmbeddedImagesTask.execute();
         }
     }
@@ -1804,9 +1814,9 @@ public class ComposeMessageActivity
 
             composeMessageViewModel.setRespondInline(true);
             setRespondInlineVisibility(false);
-            mMessageBody.setVisibility(View.GONE);
+            quotedMessageWebView.setVisibility(View.GONE);
             composeMessageViewModel.setIsMessageBodyVisible(false);
-            mMessageBody.loadData("", "text/html; charset=utf-8", HTTP.UTF_8);
+            quotedMessageWebView.loadData("", "text/html; charset=utf-8", HTTP.UTF_8);
             binding.composerQuoteHeaderTextView.setVisibility(View.GONE);
             String composeContentBuilder = messageBodyEditText.getText().toString() +
                     System.getProperty("line.separator") +
