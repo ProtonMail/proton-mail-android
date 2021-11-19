@@ -67,7 +67,6 @@ import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.DownloadUtils
-import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -164,8 +163,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val deleteConversations: DeleteConversations = mockk()
 
-    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported = mockk()
-
     private val deleteMessage: DeleteMessage = mockk()
 
     private val savedStateHandle = mockk<SavedStateHandle> {
@@ -224,7 +221,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             changeConversationsStarredStatus,
             deleteMessage,
             deleteConversations,
-            setUpWebViewDarkModeHandlingIfSupported,
             savedStateHandle,
             messageRendererFactory,
             verifyConnection,

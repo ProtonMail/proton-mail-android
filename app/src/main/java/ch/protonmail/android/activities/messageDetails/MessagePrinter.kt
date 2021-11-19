@@ -33,14 +33,12 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import timber.log.Timber
 
 internal class MessagePrinter(
     private val context: Context,
     private val resources: Resources,
     private val printManager: PrintManager,
-    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
     private val loadRemoteImages: Boolean
 ) {
 
@@ -64,7 +62,6 @@ internal class MessagePrinter(
         val webView = WebView(context)
         webView.webViewClient = PrinterWebViewClient(message)
         webView.settings.blockNetworkImage = !loadRemoteImages
-        setUpWebViewDarkModeHandlingIfSupported(context, webView)
         val messageString = StringBuilder("<p>")
         val imagePath = "file:///android_asset/logo_print.png"
         messageString.append("<img src=\"$imagePath\" height=\"42\"")
