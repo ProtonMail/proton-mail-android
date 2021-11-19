@@ -203,14 +203,12 @@ object MessageUtils {
     }
 
     fun isLocalAttachmentId(attachmentId: String?): Boolean {
-        var valid = false
-        try {
+        return try {
             attachmentId?.toBigInteger()
-            valid = true
-        } catch (e: IllegalArgumentException) {
-            // noop
+            true
+        } catch (e: NumberFormatException) {
+            false
         }
-        return valid
     }
 
     fun calculateType(flags: Long): Message.MessageType {

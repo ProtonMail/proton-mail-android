@@ -67,6 +67,7 @@ private const val CHANNEL_ID_ONGOING_OPS = "ongoingOperations"
 private const val CHANNEL_ID_ACCOUNT = "account"
 private const val CHANNEL_ID_ATTACHMENTS = "attachments"
 private const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
+private const val NOTIFICATION_ID_ATTACHMENT_ERROR = 6813
 private const val NOTIFICATION_GROUP_ID_EMAIL = 99
 private const val NOTIFICATION_ID_LOGGED_OUT = 3
 // endregion
@@ -569,7 +570,6 @@ class NotificationServer @Inject constructor(
             .setSummaryText(username.s)
             .bigText(error)
 
-        // Create notification builder
         val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
             .setStyle(bigTextStyle)
 
@@ -577,15 +577,23 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 
-    @Deprecated(
-        "Use with new user id and username",
-        ReplaceWith("notifySingleErrorSendingMessage(UserId(user.id), Name(user.name), error)")
-    )
-    fun notifySingleErrorSendingMessage(
-        user: LegacyUser,
-        error: String,
+    private fun notifyErrorWithTitle(
+        userId: UserId,
+        title: String,
+        bigText: String,
+        summaryText: String,
+        notificationID: Int
     ) {
-        notifySingleErrorSendingMessage(UserId(user.id), Name(user.name), error)
+        val bigTextStyle = NotificationCompat.BigTextStyle()
+            .setBigContentTitle(title)
+            .setSummaryText(summaryText)
+            .bigText(bigText)
+
+        val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
+            .setStyle(bigTextStyle)
+
+        val notification = notificationBuilder.build()
+        notificationManager.notify(userId.hashCode() + notificationID, notification)
     }
 
     fun notifySaveDraftError(
@@ -595,17 +603,13 @@ class NotificationServer @Inject constructor(
         username: Name
     ) {
         val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
-
-        val bigTextStyle = NotificationCompat.BigTextStyle()
-            .setBigContentTitle(title)
-            .setSummaryText(username.s)
-            .bigText(errorMessage)
-
-        val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
-            .setStyle(bigTextStyle)
-
-        val notification = notificationBuilder.build()
-        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SAVE_DRAFT_ERROR, notification)
+        notifyErrorWithTitle(
+            userId,
+            title,
+            errorMessage,
+            username.s,
+            notificationID = NOTIFICATION_ID_SAVE_DRAFT_ERROR,
+        )
     }
 
     fun notifyAttachmentUploadError(
@@ -615,17 +619,13 @@ class NotificationServer @Inject constructor(
         username: Name
     ) {
         val title = context.getString(R.string.failed_uploading_attachment_online, messageSubject)
-
-        val bigTextStyle = NotificationCompat.BigTextStyle()
-            .setBigContentTitle(title)
-            .setSummaryText(username.s)
-            .bigText(errorMessage)
-
-        val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
-            .setStyle(bigTextStyle)
-
-        val notification = notificationBuilder.build()
-        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SAVE_DRAFT_ERROR, notification)
+        notifyErrorWithTitle(
+            userId,
+            title,
+            errorMessage,
+            username.s,
+            notificationID = NOTIFICATION_ID_ATTACHMENT_ERROR
+        )
     }
 }
 

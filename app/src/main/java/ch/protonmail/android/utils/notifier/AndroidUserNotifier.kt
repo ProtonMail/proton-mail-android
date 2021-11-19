@@ -58,10 +58,9 @@ class AndroidUserNotifier @Inject constructor(
         notificationServer.notifySingleErrorSendingMessage(user.id, user.name, error)
     }
 
-    override fun showAttachmentUploadError(errorMessage: String, attachmentName: String?, messageSubject: String?) {
-        val error = "\"$attachmentName\" - $errorMessage"
+    override fun showAttachmentUploadError(errorMessage: String, messageSubject: String?) {
         val user = userManager.requireCurrentUser()
-        notificationServer.notifyAttachmentUploadError(user.id, error, messageSubject, user.name)
+        notificationServer.notifyAttachmentUploadError(user.id, errorMessage, messageSubject, user.name)
     }
 
     override suspend fun showMessageSent() {
