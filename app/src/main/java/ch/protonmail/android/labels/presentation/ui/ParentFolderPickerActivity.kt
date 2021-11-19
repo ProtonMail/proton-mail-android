@@ -21,18 +21,24 @@ package ch.protonmail.android.labels.presentation.ui
 
 import android.os.Bundle
 import android.os.PersistableBundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ActivityParentFolderPickerBinding
 import ch.protonmail.android.databinding.ItemParentPickerFolderBinding
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
+import ch.protonmail.android.labels.presentation.viewmodel.ParentFolderPickerViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
 
 class ParentFolderPickerActivity : AppCompatActivity() {
 
+    private val viewModel: ParentFolderPickerViewModel by viewModels()
     private lateinit var binding: ActivityParentFolderPickerBinding
 
     private val adapter = ProtonAdapter(
@@ -69,6 +75,10 @@ class ParentFolderPickerActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(context)
             this.adapter = this@ParentFolderPickerActivity.adapter
         }
+
+        viewModel.state.onEach { state ->
+            adapter.submitList(state.items)
+        }.launchIn(lifecycleScope)
     }
 }
 
