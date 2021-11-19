@@ -19,10 +19,49 @@
 
 package ch.protonmail.android.labels.presentation.ui
 
+import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
+import ch.protonmail.android.databinding.ActivityParentFolderPickerBinding
+import ch.protonmail.android.databinding.ItemParentPickerFolderBinding
+import me.proton.core.presentation.ui.adapter.ProtonAdapter
 
-class ParentFolderPickerActivity : AppCompatActivity(R.layout.activity_parent_folder_picker) {
+class ParentFolderPickerActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityParentFolderPickerBinding
 
+    private val adapter = ProtonAdapter(
+        diffCallback = ParentFolderPickerUiModel.DiffCallback,
+        getView = { parent, inflater ->
+            ItemParentPickerFolderBinding.inflate(inflater, parent, false)
+        },
+        onBind = { model ->
+            setMarginFor(folderLevel = model.folderLevel)
+            parentPickerFolderIconImageView.apply {
+                setColorFilter(model.colorInt)
+                setImageResource(model.icon.drawableRes)
+                contentDescription = getString(model.icon.contentDescriptionRes)
+            }
+            parentPickerFolderNameTextView.text = model.name
+        }
+    )
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityParentFolderPickerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.parentPickerRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            this.adapter = this@ParentFolderPickerActivity.adapter
+        }
+    }
+}
+
+private fun ItemParentPickerFolderBinding.setMarginFor(folderLevel: Int) {
+    (root.layoutParams as RecyclerView.LayoutParams).marginStart =
+        folderLevel * root.context.resources.getDimensionPixelSize(R.dimen.gap_large)
 }

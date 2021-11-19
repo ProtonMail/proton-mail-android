@@ -21,6 +21,7 @@ package ch.protonmail.android.labels.presentation.ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.presentation.ui.ParentFolderPickerUiModel.Icon.WithChildren
@@ -29,8 +30,9 @@ import ch.protonmail.android.labels.presentation.ui.ParentFolderPickerUiModel.Ic
 sealed class ParentFolderPickerUiModel(
     val id: LabelId,
     val name: String,
+    val colorInt: Int,
     val icon: Icon,
-    val level: Int
+    val folderLevel: Int
 ) {
 
     /**
@@ -54,5 +56,14 @@ sealed class ParentFolderPickerUiModel(
             R.drawable.ic_folder_filled,
             R.string.parent_picker_folder_icon_description
         )
+    }
+
+    object DiffCallback : DiffUtil.ItemCallback<ParentFolderPickerUiModel>() {
+
+        override fun areItemsTheSame(oldItem: ParentFolderPickerUiModel, newItem: ParentFolderPickerUiModel) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: ParentFolderPickerUiModel, newItem: ParentFolderPickerUiModel) =
+            oldItem == newItem
     }
 }
