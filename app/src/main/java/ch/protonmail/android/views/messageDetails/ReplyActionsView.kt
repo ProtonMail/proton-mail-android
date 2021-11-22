@@ -57,8 +57,9 @@ class ReplyActionsView @JvmOverloads constructor(
         forwardButton = binding.forwardButton
     }
 
-    fun bind(shouldShowReplyAllAction: Boolean) {
+    fun bind(shouldShowReplyAllAction: Boolean, shouldHideAllActions: Boolean) {
         replyAllButton.isVisible = shouldShowReplyAllAction
+        this.isVisible = !shouldHideAllActions
     }
 
     fun onReplyActionClicked(callback: (View) -> Unit) {
