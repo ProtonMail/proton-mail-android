@@ -190,6 +190,7 @@ internal class MessageDetailsAdapter(
     private fun createInMessageActionsView(): MessageDetailsActionsView {
         val detailsMessageActions = MessageDetailsActionsView(context)
         detailsMessageActions.id = R.id.item_message_body_actions_layout_id
+        detailsMessageActions.isVisible = false
         return detailsMessageActions
     }
 
@@ -343,8 +344,11 @@ internal class MessageDetailsAdapter(
             displayAttachmentInfo(listItem.message.attachments, attachmentsView)
             setUpViewDividers()
 
-            setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
-            setupReplyActionsView(message)
+            val shouldHideAllActions = htmlContent.isNullOrEmpty() || message.isDraft()
+            setupMessageActionsView(
+                message, listItem.messageFormattedHtmlWithQuotedHistory, webView, shouldHideAllActions
+            )
+            setupReplyActionsView(message, shouldHideAllActions)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
 
             setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
@@ -356,14 +360,15 @@ internal class MessageDetailsAdapter(
         private fun setupMessageActionsView(
             message: Message,
             messageHtmlWithQuotedHistory: String?,
-            webView: WebView
+            webView: WebView,
+            shouldHideAllActions: Boolean
         ) {
             val messageActionsView: MessageDetailsActionsView =
                 itemView.messageWebViewContainer.findViewById(R.id.item_message_body_actions_layout_id) ?: return
 
             val uiModel = MessageDetailsActionsView.UiModel(
                 messageHtmlWithQuotedHistory.isNullOrEmpty(),
-                message.isDraft()
+                shouldHideAllActions
             )
             messageActionsView.bind(uiModel)
 
@@ -374,11 +379,17 @@ internal class MessageDetailsAdapter(
             messageActionsView.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
         }
 
-        private fun setupReplyActionsView(message: Message) {
+        private fun setupReplyActionsView(
+            message: Message,
+            shouldHideAllActions: Boolean
+        ) {
             val replyActionsView: ReplyActionsView =
                 itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id) ?: return
 
-            replyActionsView.bind(message.toList.size + message.ccList.size > 1)
+            replyActionsView.bind(
+                shouldShowReplyAllAction = message.toList.size + message.ccList.size > 1,
+                shouldHideAllActions = shouldHideAllActions
+            )
 
             replyActionsView.onReplyActionClicked {
                 onReplyMessageClicked(Constants.MessageActionType.REPLY, message)
@@ -691,10 +702,6 @@ internal class MessageDetailsAdapter(
             }
 
             this.blockRemoteResources(!isAutoShowRemoteImages)
-
-            val replyActionsView: ReplyActionsView =
-                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id)
-            replyActionsView.isVisible = true
 
             super.onPageFinished(view, url)
         }
