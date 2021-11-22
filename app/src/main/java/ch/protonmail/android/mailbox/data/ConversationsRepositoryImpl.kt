@@ -466,7 +466,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateConversationsAfterDeletingMessages(userId: UserId, messageIds: List<String>) {
+    override suspend fun updateConversationsWhenDeletingMessages(userId: UserId, messageIds: List<String>) {
         messageIds.forEach forEachMessageId@{ messageId ->
             val message = messageDao.findMessageByIdOnce(messageId) ?: return@forEachMessageId
             val conversation = message.conversationId?.let {
@@ -502,6 +502,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
                 )
             }
         }
+    }
+
+    override suspend fun updateConversationsWhenEmptyingFolder(userId: UserId, labelId: LabelId) {
+        val messageIds = messageDao.getMessageIdsByLabelId(labelId.id)
+        updateConversationsWhenDeletingMessages(userId, messageIds)
     }
 
     override suspend fun label(

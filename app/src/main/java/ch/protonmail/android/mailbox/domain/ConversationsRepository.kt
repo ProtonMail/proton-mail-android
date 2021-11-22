@@ -20,6 +20,7 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.domain.model.Conversation
@@ -119,7 +120,9 @@ interface ConversationsRepository {
 
     suspend fun delete(conversationIds: List<String>, userId: UserId, currentFolderId: String)
 
-    suspend fun updateConversationsAfterDeletingMessages(userId: UserId, messageIds: List<String>)
+    suspend fun updateConversationsWhenDeletingMessages(userId: UserId, messageIds: List<String>)
+
+    suspend fun updateConversationsWhenEmptyingFolder(userId: UserId, labelId: LabelId)
 
     suspend fun label(
         conversationIds: List<String>,

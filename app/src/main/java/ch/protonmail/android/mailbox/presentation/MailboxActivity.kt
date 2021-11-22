@@ -99,8 +99,8 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager
 import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
-import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
@@ -807,23 +807,21 @@ internal class MailboxActivity :
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        return when (menuItem.itemId) {
-            R.id.empty -> {
-                if (!isFinishing) {
-                    showTwoButtonInfoDialog(
-                        titleStringId = R.string.empty_folder,
-                        messageStringId = R.string.are_you_sure_empty,
-                        leftStringId = R.string.no
-                    ) {
-                        mJobManager.addJobInBackground(
-                            EmptyFolderJob(mailboxViewModel.mailboxLocation.value, this.mailboxLabelId)
-                        )
-                        setLoadingMore(false)
-                    }
-                }
-                true
+        return if (menuItem.itemId == R.id.empty) {
+            showTwoButtonInfoDialog(
+                titleStringId = R.string.empty_folder,
+                messageStringId = R.string.are_you_sure_empty,
+                leftStringId = R.string.no
+            ) {
+                mailboxViewModel.emptyFolderAction(
+                    userManager.requireCurrentUserId(),
+                    LabelId(currentLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString())
+                )
+                setLoadingMore(false)
             }
-            else -> super.onOptionsItemSelected(menuItem)
+            true
+        } else {
+            super.onOptionsItemSelected(menuItem)
         }
     }
 

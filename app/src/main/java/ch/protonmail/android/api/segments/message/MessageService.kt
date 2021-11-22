@@ -132,7 +132,10 @@ interface MessageService {
 
     @DELETE("mail/v4/messages/empty")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun emptyFolder(@Query("LabelID") labelId: String): Call<ResponseBody>
+    suspend fun emptyFolder(
+        @Tag userIdTag: UserIdTag,
+        @Query("LabelID") labelId: String
+    ): ResponseBody
 
     @PUT("mail/v4/messages/unlabel")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

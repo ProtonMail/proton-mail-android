@@ -252,7 +252,7 @@ class MessageDetailsRepository @Inject constructor(
         messagesDao.deleteMessagesByLocation(location.messageLocationTypeValue)
 
     fun deleteMessagesByLabel(labelId: String) =
-        messagesDao.deleteMessagesByLabel(labelId)
+        messagesDao.deleteMessagesByLabelBlocking(labelId)
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
 

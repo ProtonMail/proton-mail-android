@@ -50,6 +50,7 @@ import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel
@@ -117,6 +118,7 @@ internal class ViewModelModule {
         moveConversationsToFolder: MoveConversationsToFolder,
         moveMessagesToFolder: MoveMessagesToFolder,
         deleteConversations: DeleteConversations,
+        emptyFolder: EmptyFolder,
         observeLabels: ObserveLabels,
         observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren,
         drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
@@ -144,6 +146,7 @@ internal class ViewModelModule {
         moveConversationsToFolder = moveConversationsToFolder,
         moveMessagesToFolder = moveMessagesToFolder,
         deleteConversations = deleteConversations,
+        emptyFolder = emptyFolder,
         observeLabels = observeLabels,
         observeLabelsAndFoldersWithChildren = observeLabelsAndFoldersWithChildren,
         drawerFoldersAndLabelsSectionUiModelMapper = drawerFoldersAndLabelsSectionUiModelMapper,

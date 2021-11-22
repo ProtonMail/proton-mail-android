@@ -68,6 +68,7 @@ import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.Event
@@ -135,6 +136,7 @@ internal class MailboxViewModel @Inject constructor(
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val deleteConversations: DeleteConversations,
+    private val emptyFolder: EmptyFolder,
     private val observeLabels: ObserveLabels,
     private val observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren,
     private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
@@ -791,6 +793,12 @@ internal class MailboxViewModel @Inject constructor(
                     userId
                 )
             }
+        }
+    }
+
+    fun emptyFolderAction(userId: UserId, labelId: LabelId) {
+        viewModelScope.launch {
+            emptyFolder(userId, labelId)
         }
     }
 

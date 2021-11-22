@@ -123,6 +123,16 @@ abstract class MessageDao : BaseDao<Message>() {
     )
     abstract fun getMessagesByLabelId(label: String): List<Message>
 
+    @Query(
+        """
+        SELECT $COLUMN_MESSAGE_ID
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """
+    )
+    abstract suspend fun getMessageIdsByLabelId(label: String): List<String>
+
     /** Since we have decided to use this query to also retrieve messages that are SENT
      now the query looks for the :label at the beginning, middle or end of the $COLUMN_MESSAGE_LABELS string.
      The $COLUMN_MESSAGE_LABELS string uses semicolon(;) as separator ex.
@@ -313,7 +323,10 @@ abstract class MessageDao : BaseDao<Message>() {
     abstract fun deleteMessagesByLocation(location: Int)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
-    abstract fun deleteMessagesByLabel(labelId: String)
+    abstract fun deleteMessagesByLabelBlocking(labelId: String)
+
+    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
+    abstract suspend fun deleteMessagesByLabel(labelId: String)
 
     @Query(
         """

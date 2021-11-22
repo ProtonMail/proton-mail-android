@@ -30,7 +30,7 @@ import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import io.reactivex.Observable
@@ -74,24 +74,8 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override suspend fun deleteMessage(messageDeleteRequest: MessageDeleteRequest) =
         service.delete(messageDeleteRequest)
 
-    @Throws(IOException::class)
-    override fun emptyDrafts() {
-        service.emptyFolder(Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()).execute()
-    }
-
-    @Throws(IOException::class)
-    override fun emptySpam() {
-        service.emptyFolder(Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()).execute()
-    }
-
-    @Throws(IOException::class)
-    override fun emptyTrash() {
-        service.emptyFolder(Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()).execute()
-    }
-
-    @Throws(IOException::class)
-    override fun emptyCustomFolder(labelId: String) {
-        service.emptyFolder(labelId).execute()
+    override suspend fun emptyFolder(userIdTag: UserIdTag, labelId: LabelId) {
+        service.emptyFolder(userIdTag, labelId.id)
     }
 
     @WorkerThread
