@@ -32,7 +32,7 @@
         android:id="@+id/compose"
         android:title="@string/compose_message"
         app:actionLayout="@layout/layout_compose_action"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/empty"
