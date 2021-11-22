@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Adicionar pasta</string>
+    <string name="x_add_label">Adicionar marcador</string>
     <string name="x_days">Dias</string>
     <string name="x_folders">Pastas</string>
     <string name="x_hours">Horas</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Configurações</string>
     <string name="drawer_subscription">Assinatura</string>
     <string name="drawer_sign_out">Encerrar sessão</string>
-    <string name="drawer_add_folder">Add folder</string>
-    <string name="drawer_add_label">Add label</string>
-    <string name="drawer_create_icon_description">Create new item</string>
+    <string name="drawer_create_folder_description">Criar nova pasta</string>
+    <string name="drawer_create_label_description">Criar um novo marcador</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Assunto:</string>
     <string name="composer_to">Para:</string>
     <string name="set_msg_password_title">Definir senha</string>
-    <string name="set_msg_password_info">Defina uma senha para criptografar esta mensagem para não-protonmail usuários. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saiba mais</a>
+    <string name="set_msg_password_info">Defina uma senha para criptografar esta mensagem para não-protonmail usuários. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saiba mais</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informações</string>
     <string name="set_msg_password_msg_password_title">Senha da mensagem</string>
@@ -960,8 +961,6 @@
     <string name="unstar">Remover estrela</string>
     <string name="star_unstar">Atribuir/retirar estrela</string>
     <string name="send_to_archive">Enviar para o arquivo?</string>
-    <string name="new_label">Novo marcador</string>
-    <string name="new_folder">Nova pasta</string>
     <string name="label_as">Marcar como…</string>
     <string name="mark_as_unread">Marcar como não lida</string>
     <string name="mark_as_read">Marcar como lida</string>

@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Tambah folder</string>
+    <string name="x_add_label">Tambah label</string>
     <string name="x_days">Hari</string>
     <string name="x_folders">Folder</string>
     <string name="x_hours">Jam</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Pengaturan</string>
     <string name="drawer_subscription">Langganan</string>
     <string name="drawer_sign_out">Keluar</string>
-    <string name="drawer_add_folder">Tambah folder</string>
-    <string name="drawer_add_label">Tambah label</string>
-    <string name="drawer_create_icon_description">Buat item baru</string>
+    <string name="drawer_create_folder_description">Buat folder baru</string>
+    <string name="drawer_create_label_description">Buat label baru</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
     <string name="set_msg_password_title">Setel kata sandi</string>
-    <string name="set_msg_password_info">Setel sandi untuk mengenkripsi pesan ini bagi pengguna non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Pelajari lebih lanjut</a>
+    <string name="set_msg_password_info">Setel sandi untuk mengenkripsi pesan ini bagi pengguna non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Pelajari lebih lanjut</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Kata sandi pesan</string>
@@ -92,7 +93,7 @@
     <string name="sign_in">Masuk</string>
     <string name="sign_out">Keluar</string>
     <string name="sign_out_question">Apakah Anda yakin anda ingin keluar?</string>
-    <string name="processing_request">Permintaan anda sedang diproses</string>
+    <string name="processing_request">Permintaan Anda sedang diproses</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Anda belum masuk!</string>
     <string name="forgot_mailbox_password">Untuk mengatur ulang kata sandi kotak surat Anda, mohon gunakan ProtonMail versi web di protonmail.com</string>
@@ -192,7 +193,7 @@
     <string name="days">Hari</string>
     <string name="hours">Jam</string>
     <string name="max_labels_exceeded">Pesan %1$s tidak boleh memiliki lebih dari %2$d label.</string>
-    <string name="max_labels_selected">Maksimum yang diizinkan adalah %d label</string>
+    <string name="max_labels_selected">Jumlah label maksimum yang diizinkan adalah %d</string>
     <string name="max_attachments_reached">Lampiran maksimum per pesan telah tercapai</string>
     <string name="max_attachments_size_reached">Ukuran maksimum lampiran per pesan telah tercapai</string>
     <plurals name="hours_string">
@@ -227,7 +228,7 @@
     <string name="add_contact">Tambah Kontak</string>
     <string name="delete_contact">Hapus %s dari Kontak?</string>
     <string name="confirm">Konfirmasi</string>
-    <string name="confirm_destructive_action">Apakah Anda yakin? Tindakan ini tidak dapat dibatalkan.</string>
+    <string name="confirm_destructive_action">Apakah Anda yakin? Tindakan ini tidak dapat diurungkan.</string>
     <string name="create">Buat</string>
     <string name="email">Email</string>
     <string name="phone">Nomor telepon</string>
@@ -764,8 +765,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="storage">Ukuran Kotak Surat</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Alamat</string>
-    <string name="default_mail_address">Alamat email utama</string>
-    <string name="default_address">Alamat bawaan</string>
+    <string name="default_mail_address">Alamat email default</string>
+    <string name="default_address">Alamat default</string>
     <string name="display_name_n_signature">Nama tampilan &amp; tanda tangan</string>
     <string name="display_name">Nama tampilan</string>
     <string name="edit_display_name">Edit nama tampilan</string>
@@ -943,8 +944,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="unstar">Hapus Bintang</string>
     <string name="star_unstar">Bintangi/Hapus Bintang</string>
     <string name="send_to_archive">Kirim ke arsip?</string>
-    <string name="new_label">Label Baru</string>
-    <string name="new_folder">Folder Baru</string>
     <string name="label_as">Labeli sebagai…</string>
     <string name="mark_as_unread">Tandai belum dibaca</string>
     <string name="mark_as_read">Tandai telah dibaca</string>
@@ -952,7 +951,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="move_message">Pindahkan pesan</string>
     <string name="manage">Kelola</string>
     <string name="message_from">Pesan dari %s</string>
-    <string name="not_spam_move_to_inbox">Bukan spam (Pindah ke kotak masuk)</string>
+    <string name="not_spam_move_to_inbox">Bukan spam (Pindahkan ke Kotak Masuk)</string>
     <plurals name="x_messages_count">
         <item quantity="other">%d pesan</item>
     </plurals>

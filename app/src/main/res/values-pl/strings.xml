@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Dodaj folder</string>
+    <string name="x_add_label">Dodaj etykietę</string>
     <string name="x_days">dni</string>
     <string name="x_folders">Foldery</string>
     <string name="x_hours">godziny</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Ustawienia</string>
     <string name="drawer_subscription">Subskrypcja</string>
     <string name="drawer_sign_out">Wyloguj</string>
-    <string name="drawer_add_folder">Dodaj folder</string>
-    <string name="drawer_add_label">Dodaj etykietę</string>
-    <string name="drawer_create_icon_description">Create new item</string>
+    <string name="drawer_create_folder_description">Utwórz nowy folder</string>
+    <string name="drawer_create_label_description">Utwórz nową etykietę</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Udw:</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Temat:</string>
     <string name="composer_to">Do:</string>
     <string name="set_msg_password_title">Ustaw hasło</string>
-    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Dowiedz się więcej</a>
+    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Dowiedz się więcej</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informacje</string>
     <string name="set_msg_password_msg_password_title">Hasło wiadomości</string>
@@ -337,7 +338,7 @@
     <string name="retry">Spróbuj ponownie</string>
     <string name="saving_failed_no_conn">Zapisywanie nie powiodło się. Brak połączenia z Internetem</string>
     <string name="close_engagement">zamknij przewodnik</string>
-    <string name="engagement_title_welcome">Witaj w ProtonMailu!</string>
+    <string name="engagement_title_welcome">Witaj w ProtonMail!</string>
     <string name="engagement_title_swipe">Szybkie gesty</string>
     <string name="engagement_title_labels">Zarządzanie etykietą</string>
     <string name="engagement_title_encryption">Szyfrowanie end-to-end</string>
@@ -992,8 +993,6 @@
     <string name="unstar">Usuń gwiazdkę</string>
     <string name="star_unstar">Oznacz gwiazdką / usuń gwiazdkę</string>
     <string name="send_to_archive">Przenieś do Archiwum?</string>
-    <string name="new_label">Nowa etykieta</string>
-    <string name="new_folder">Nowy folder</string>
     <string name="label_as">Oznacz jako…</string>
     <string name="mark_as_unread">Oznacz jako nieprzeczytane</string>
     <string name="mark_as_read">Oznacz jako przeczytane</string>

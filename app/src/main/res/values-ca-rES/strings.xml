@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Afegir carpeta</string>
+    <string name="x_add_label">Afegir etiqueta</string>
     <string name="x_days">Dies</string>
     <string name="x_folders">Carpetes</string>
     <string name="x_hours">Hores</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Preferències</string>
     <string name="drawer_subscription">Subscripció</string>
     <string name="drawer_sign_out">Tancar la sessió</string>
-    <string name="drawer_add_folder">Afegir carpeta</string>
-    <string name="drawer_add_label">Afegir etiqueta</string>
-    <string name="drawer_create_icon_description">Crear un element nou</string>
+    <string name="drawer_create_folder_description">Crear carpeta nova</string>
+    <string name="drawer_create_label_description">Crear etiqueta nova</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Assumpte:</string>
     <string name="composer_to">A:</string>
     <string name="set_msg_password_title">Establir contrasenya</string>
-    <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saber-ne més</a>
+    <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saber-ne més</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informació</string>
     <string name="set_msg_password_msg_password_title">Contrasenya del missatge</string>
@@ -959,8 +960,6 @@
     <string name="unstar">Treure de destacats</string>
     <string name="star_unstar">Destacar / no destacar</string>
     <string name="send_to_archive">Enviar a l\'arxiu?</string>
-    <string name="new_label">Etiqueta nova</string>
-    <string name="new_folder">Carpeta nova</string>
     <string name="label_as">Etiquetar com a…</string>
     <string name="mark_as_unread">Marcar com a no llegit</string>
     <string name="mark_as_read">Marcar com a llegit</string>

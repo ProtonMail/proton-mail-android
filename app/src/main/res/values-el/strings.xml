@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Προσθήκη φακέλου</string>
+    <string name="x_add_label">Προσθήκη ετικέτας</string>
     <string name="x_days">Ημέρες</string>
     <string name="x_folders">Φάκελοι</string>
     <string name="x_hours">Ώρες</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Ρυθμίσεις</string>
     <string name="drawer_subscription">Συνδρομή</string>
     <string name="drawer_sign_out">Αποσύνδεση</string>
-    <string name="drawer_add_folder">Προσθήκη φακέλου</string>
-    <string name="drawer_add_label">Προσθήκη ετικέτας</string>
-    <string name="drawer_create_icon_description">Δημιουργία νέου στοιχείου</string>
+    <string name="drawer_create_folder_description">Δημιουργία νέου φακέλου</string>
+    <string name="drawer_create_label_description">Δημιουργία νέας ετικέτας</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Κρυφή κοιν: </string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Θέμα:</string>
     <string name="composer_to">Προς:</string>
     <string name="set_msg_password_title">Ορισμός κωδικού</string>
-    <string name="set_msg_password_info">Ορίστε έναν κωδικό για να κρυπτογραφήσετε αυτό το μήνυμα, για τους χρήστες που δεν ανήκουν στη Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Μάθετε περισσότερα</a>
+    <string name="set_msg_password_info">Ορίστε έναν κωδικό για να κρυπτογραφήσετε αυτό το μήνυμα, για τους χρήστες που δεν ανήκουν στη Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Μάθετε περισσότερα</a>
     </string>
     <string name="set_msg_password_info_icon_description">Πληροφορίες</string>
     <string name="set_msg_password_msg_password_title">Κωδικός πρόσβασης μηνύματος</string>
@@ -81,7 +82,7 @@
     <string name="settings_swipe_right_to_left">Δεξιά προς αριστερά</string>
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Απόρριψη αλλαγών;</string>
-    <string name="dialog_discard_changes_message">Τυχόν αλλαγές που δεν έχουν αποθηκευτεί θα απορριφθούν.</string>
+    <string name="dialog_discard_changes_message">Τυχόν μη αποθηκευμένες αλλαγές θα απορριφθούν.</string>
     <string name="discard">Απόρριψη</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
@@ -194,7 +195,7 @@
     <string name="max_labels_exceeded">Το μήνυμα %1$s δεν μπορεί να έχει παραπάνω απο %2$d ετικέτες.</string>
     <string name="max_labels_selected">Επιτρέπονται έως %d ετικέτες</string>
     <string name="max_attachments_reached">Έχει συμπληρωθεί ο μέγιστος αριθμός συνημμένων ανά μήνυμα</string>
-    <string name="max_attachments_size_reached">Έχει επιτευχθεί το μέγιστο μέγεθος συνημμένων ανά μήνυμα</string>
+    <string name="max_attachments_size_reached">Εξάντληση μέγιστου μεγέθους συνημμένων ανά μήνυμα</string>
     <plurals name="hours_string">
         <item quantity="one">%d ώρα</item>
         <item quantity="other">%d ώρες</item>
@@ -302,7 +303,7 @@
     <string name="no_browser_found">Παρακαλούμε να εγκαταστήσετε μια εφαρμογή προγράμματος περιήγησης προκειμένου να ολοκληρώσετε αυτή την ενέργεια</string>
     <string name="no_application_found">Δεν βρέθηκε εφαρμογή να χειριστεί αυτή την ενέργεια</string>
     <string name="no_application_found_or_link_invalid">Δεν βρέθηκε εφαρμογή να χειριστεί αυτή την ενέργεια ή υπήρξε ένας μη έγκυρος σύνδεσμος URL</string>
-    <string name="also_archive">Επίσης Αρχειοθετείστε</string>
+    <string name="also_archive">Επίσης Αρχειοθέτηση</string>
     <string name="label_deleted">Η Ετικέτα Διαγράφηκε</string>
     <string name="label_deleted_error">Σφάλμα κατά την διαγραφή της ετικέτας</string>
     <string name="message_deleted_error">Σφάλμα κατά τη διαγραφή ορισμένων μηνυμάτων. Μερικά από τα επιλεγμένα μηνύματα βρίσκονται σε διαδικασία αποστολής;!</string>
@@ -365,7 +366,7 @@
     <string name="pin_subtitle_confirm">Επιβεβαιώστε το PIN εδώ</string>
     <string name="pin_subtitle_confirm_new">Επιβεβαιώστε το ΝΕΟ PIN εδώ</string>
     <string name="pin_invalid">Το PIN δεν είναι έγκυρο, εισάγετε ένα σωστό 4 ψήφιο PIN</string>
-    <string name="pin_confirmation_not_match">Η επιβεβαίωση του PIN δε ταιριάζει</string>
+    <string name="pin_confirmation_not_match">Το PIN επιβεβαίωσης δεν ταυτίζεται</string>
     <string name="pin_not_match">Το PIN δεν ταιριάζει</string>
     <string name="new_pin_saved">Αποθηκεύτηκε Νέο PIN</string>
     <string name="new_emails">%d Νέα E-Mail</string>
@@ -399,7 +400,7 @@
     <string name="logout_question_next_account">Θα μεταβείτε στο %s.</string>
     <string name="upgrade">Αναβάθμιση</string>
     <string name="country">Χώρα</string>
-    <string name="set_cont">Καθορίστε &amp; Συνέχεια</string>
+    <string name="set_cont">Καθορισμός &amp; Συνέχεια</string>
     <string name="error">Σφάλμα</string>
     <string name="storage_gb">%d GB αποθηκευτικός χώρος</string>
     <string name="storage_mb">%d MB αποθηκευτικός χώρος</string>
@@ -536,8 +537,8 @@
     <string name="download_in_progress">Λήψη σε εξέλιξη</string>
     <string name="message_expires_in">Αυτό το μήνυμα θα λήξει σε %s</string>
     <string name="unsaved_changes_title">Μη αποθηκευμένες αλλαγές</string>
-    <string name="unsaved_changes_subtitle">Υπάρχουν μη αποθηκευμένες καταχωρήσεις στη φόρμα. Είστε βέβαιοι ότι θέλετε να τα απορρίψετε;</string>
-    <string name="request_timeout">Η σύνδεση έληξε, παρακαλώ προσπαθήστε ξανά</string>
+    <string name="unsaved_changes_subtitle">Υπάρχουν μη αποθηκευμένες καταχωρήσεις στη φόρμα. Είστε βέβαιοι ότι θέλετε να τις απορρίψετε;</string>
+    <string name="request_timeout">Η αίτηση έληξε, παρακαλούμε δοκιμάστε ξανά</string>
     <string name="add_folder">Προσθήκη φακέλου</string>
     <string name="no_folders">Δεν υπάρχουν φάκελοι</string>
     <string name="folders_title_move">Μετακίνηση μηνυμάτων σε</string>
@@ -730,7 +731,7 @@
     <string name="fab_add_contact_group">Προσθήκη νέας ομάδας επαφών</string>
     <string name="contacts_add_photo_title">Προσθήκη Φωτογραφίας</string>
     <string name="contacts_add_photo_select_gallery">Επιλογή από το άλμπουμ</string>
-    <string name="contacts_add_photo_select_camera">Λήψη από τη Κάμερα</string>
+    <string name="contacts_add_photo_select_camera">Λήψη από Κάμερα</string>
     <string name="save_group_validation_error">Παρακαλώ καταχωρίστε ένα όνομα ομάδας</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Το όριο αποθήκευσης επιτεύχθηκε. Δεν είναι δυνατή η αποστολή ή λήψη μηνυμάτων ηλεκτρονικού ταχυδρομείου.
@@ -837,7 +838,7 @@
     <!-- endregion -->
     <string name="mailbox">Γραμματοκιβώτιο</string>
     <string name="privacy">Ιδιωτικότητα</string>
-    <string name="auto_download_messages_title">Αυτόματη-λήψη μηνυμάτων</string>
+    <string name="auto_download_messages_title">Αυτόματη λήψη μηνυμάτων</string>
     <string name="auto_download_messages_subtitle">Όταν αυτή η επιλογή είναι ενεργοποιημένη, τα αρχεία μηνυμάτων θα κατεβάζει αυτόματα κάθε φορά που θα λάβετε μια νέα ειδοποίηση μέσω E-mail (αυτό θα καταναλώνει περισσότερα δεδομένα). Εάν η επιλογή είναι απενεργοποιημένη, τα αρχεία μηνυμάτων θα μεταφορτωθούν μόνο όταν ανοίγετε ένα E-mail. (Σημείωση: με οποιαδήποτε από τις επιλογές, εάν διαγράψετε την προσωρινή μνήμη ή αποσυνδεθείτε, δεν θα μπορείτε να διαβάσετε τα μηνύματα όταν είστε εκτός σύνδεσης.)</string>
     <string name="settings_background_sync">Συγχρονισμός στο παρασκήνιο</string>
     <string name="settings_auto_show_images">Αυτόματη Εμφάνιση Απομακρυσμένων Εικόνων</string>
@@ -878,7 +879,7 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Όριο τοπικής αποθήκευσης</string>
-    <string name="storage_value">%1$d MB (%2$.2f MB χρησιμοποιείται)</string>
+    <string name="storage_value">%1$d MB (%2$.2f MB χρησιμοποιούνται)</string>
     <!-- endregion -->
     <string name="app_settings">Ρυθμίσεις εφαρμογής</string>
     <!-- region App Settings -->
@@ -892,8 +893,8 @@
     <string name="change_pin_code">Αλλάξτε κωδικό PIN</string>
     <string name="auto_lock_timer">Χρονικό Όριο Αυτόματου Κλειδώματος</string>
     <string name="connections_via_third_parties">Εναλλακτική δρομολόγηση</string>
-    <string name="allow_secure_connections_via_third_parties">Επιτρέψτε εναλλακτική δρομολόγηση</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">Σε περίπτωση που μπλοκάρουν τις ιστοσελίδες Proton, αυτή η ρύθμιση θα επιτρέψει στην εφαρμογή να δοκιμάσει εναλλακτική δρομολόγηση δικτύου ώστε να φτάσει στο Proton, το οποίο μπορεί να είναι χρήσιμο για παράκαμψη τείχους προστασίας ή ζητήματα δικτύου. Συνιστούμε να διατηρήσετε αυτήν τη ρύθμιση για μεγαλύτερη αξιοπιστία.</string>
+    <string name="allow_secure_connections_via_third_parties">Άδεια εναλλακτικής δρομολόγησης</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">Σε περίπτωση φραγής των ιστοσελίδων της Proton, αυτή η ρύθμιση επιτρέπει στην εφαρμογή να επιχειρήσει εναλλακτική δρομολόγηση δικτύου προκειμένου να φτάσει στην Proton, κάτι που μπορεί να φανεί χρήσιμο στην παράκαμψη τοίχων προστασίας ή προβλημάτων του δικτύου. Συνιστούμε τη διατήρηση αυτής της ρύθμισης για μεγαλύτερη αξιοπιστία.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Σε περίπτωση αποκλεισμού των ιστοτόπων Proton, αυτή η ρύθμιση θα επιτρέπει στην εφαρμογή να δοκιμάσει εναλλακτική δρομολόγηση δικτύου έτσι ώστε να φτάσει στο Proton, κάτι που μπορεί να είναι χρήσιμο για την παράκαμψη firewall ή προβλήματα δικτύου. Συνιστούμε να διατηρήσετε αυτήν τη ρύθμιση για μεγαλύτερη αξιοπιστία. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">&gt;Μάθετε περισσότερα</a>
     </string>
     <string name="app_language">Γλώσσα Εφαρμογής</string>
@@ -914,7 +915,7 @@
     <string name="remove_account_question">Αφαίρεση %s;</string>
     <string name="signed_in_with">Συνδέθηκε με %s</string>
     <string name="signed_in_with_logged_out_from">Αποσυνδεδεμένο από %1$s και συνδεδεμένο με %2$s</string>
-    <string name="connect_account_limit_title">Επίτευξη ορίου</string>
+    <string name="connect_account_limit_title">Εξάντληση ορίου</string>
     <string name="connect_account_limit_subtitle">Δεν μπορείτε να προσθέσετε κι άλλο δωρεάν λογαριασμό ProtonMail. Μόνο ένας δωρεάν λογαριασμός ProtonMail μπορεί να προστεθεί. Αποσυνδεθείτε από τον άλλο δωρεάν λογαριασμό σας ή αναβαθμίστε έναν από τους δωρεάν λογαριασμούς σας σε κάποιον λογαριασμό επι πληρωμής.</string>
     <string name="switch_accounts_question">Αλλαγή λογαριασμού;</string>
     <string name="switch_to_account">Αλλάξτε σε %s</string>
@@ -959,8 +960,6 @@
     <string name="unstar">Αφαίρεση αστεριού</string>
     <string name="star_unstar">Αστέρι/μη αστέρι</string>
     <string name="send_to_archive">Αποστολή στο αρχείο;</string>
-    <string name="new_label">Νέα ετικέτα</string>
-    <string name="new_folder">Νέος φάκελος</string>
     <string name="label_as">Ετικέτα ως…</string>
     <string name="mark_as_unread">Επισήμανση ως μη αναγνωσμένο</string>
     <string name="mark_as_read">Επισήμανση ως αναγνωσμένο</string>
@@ -968,7 +967,7 @@
     <string name="move_message">Μετακίνηση μηνύματος</string>
     <string name="manage">Διαχείριση</string>
     <string name="message_from">Μήνυμα από %s</string>
-    <string name="not_spam_move_to_inbox">Δεν είναι spam (Μετακίνηση στα Εισερχόμενα)</string>
+    <string name="not_spam_move_to_inbox">Μη ενοχλητικό (Μετακίνηση στα Εισερχόμενα)</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d μήνυμα</item>
         <item quantity="other">%d μηνύματα</item>
@@ -988,5 +987,5 @@
     <string name="details_show_history">Εμφάνιση ιστορικού</string>
     <string name="could_not_complete_action">Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας</string>
     <string name="decryption_of_message_failed">Σφάλμα αποκρυπτογράφησης: η αποκρυπτογράφηση του κρυπτογραφημένου περιεχομένου αυτού του μηνύματος απέτυχε.</string>
-    <string name="labels_selected_limit_reached">Επίτευξη ορίου</string>
+    <string name="labels_selected_limit_reached">Εξάντληση ορίου</string>
 </resources>

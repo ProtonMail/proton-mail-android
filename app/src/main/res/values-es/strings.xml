@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Añadir carpeta</string>
+    <string name="x_add_label">Añadir etiqueta</string>
     <string name="x_days">Días</string>
     <string name="x_folders">Carpetas</string>
     <string name="x_hours">Horas</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Configuración</string>
     <string name="drawer_subscription">Suscripción</string>
     <string name="drawer_sign_out">Cerrar sesión</string>
-    <string name="drawer_add_folder">Add folder</string>
-    <string name="drawer_add_label">Add label</string>
-    <string name="drawer_create_icon_description">Create new item</string>
+    <string name="drawer_create_folder_description">Crear nueva carpeta</string>
+    <string name="drawer_create_label_description">Crear una nueva etiqueta</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Asunto:</string>
     <string name="composer_to">Para:</string>
     <string name="set_msg_password_title">Establecer contraseña</string>
-    <string name="set_msg_password_info">Establece una contraseña para cifrar este mensaje para los usuarios que no son de ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Más información</a>
+    <string name="set_msg_password_info">Establece una contraseña para cifrar este mensaje para los usuarios que no son de ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Más información</a>
     </string>
     <string name="set_msg_password_info_icon_description">Información</string>
     <string name="set_msg_password_msg_password_title">Contraseña del mensaje</string>
@@ -770,9 +771,9 @@ compre más
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Método de pago</string>
     <string name="password_manager">Gestión de contraseñas</string>
-    <string name="password_changed">Password changed.</string>
+    <string name="password_changed">Contraseña cambiada.</string>
     <string name="recovery_email">Correo de recuperación</string>
-    <string name="recovery_email_changed">Recovery email changed.</string>
+    <string name="recovery_email_changed">Correo electrónico de recuperación cambiado.</string>
     <string name="info_for_missing_functionality">Inicia sesión a través de <a href="https://www.protonmail.com/">protonmail.com</a> y accede a tu configuración para editar esta información.</string>
     <string name="storage">Tamaño del buzón</string>
     <string name="storage_used">%1$s / %2$s</string>
@@ -960,8 +961,6 @@ compre más
     <string name="unstar">No destacar</string>
     <string name="star_unstar">Destacar/no destacar</string>
     <string name="send_to_archive">¿Enviar al archivo?</string>
-    <string name="new_label">Nueva etiqueta</string>
-    <string name="new_folder">Nueva carpeta</string>
     <string name="label_as">Etiquetar como…</string>
     <string name="mark_as_unread">Marcar como no leído</string>
     <string name="mark_as_read">Marcar como leído</string>

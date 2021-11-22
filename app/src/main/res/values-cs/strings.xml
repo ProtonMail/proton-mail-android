@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Přidat složku</string>
+    <string name="x_add_label">Přidat štítek</string>
     <string name="x_days">Dny</string>
     <string name="x_folders">Složky</string>
     <string name="x_hours">Hodiny</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Nastavení</string>
     <string name="drawer_subscription">Předplatné</string>
     <string name="drawer_sign_out">Odhlásit se</string>
-    <string name="drawer_add_folder">Přidat složku</string>
-    <string name="drawer_add_label">Přidat štítek</string>
-    <string name="drawer_create_icon_description">Vytvořit novou položku</string>
+    <string name="drawer_create_folder_description">Vytvořit novou složku</string>
+    <string name="drawer_create_label_description">Vytvořit nový štítek</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Skrytá kopie:</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Předmět:</string>
     <string name="composer_to">Komu:</string>
     <string name="set_msg_password_title">Nastavit heslo</string>
-    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy pro uživatele, kteří nepoužívají Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a>
+    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy pro uživatele, kteří nepoužívají Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Další informace</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informace</string>
     <string name="set_msg_password_msg_password_title">Heslo zprávy</string>
@@ -994,8 +995,6 @@
     <string name="unstar">Odebrat hvězdičku</string>
     <string name="star_unstar">Přidat/odebrat hvězdičku</string>
     <string name="send_to_archive">Odeslat do archivu?</string>
-    <string name="new_label">Nový štítek</string>
-    <string name="new_folder">Nová složka</string>
     <string name="label_as">Označit jako…</string>
     <string name="mark_as_unread">Označit jako nepřečtené</string>
     <string name="mark_as_read">Označit jako přečtené</string>
