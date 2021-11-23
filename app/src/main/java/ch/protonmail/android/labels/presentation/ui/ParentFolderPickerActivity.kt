@@ -30,12 +30,15 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ActivityParentFolderPickerBinding
 import ch.protonmail.android.databinding.ItemParentPickerFolderBinding
+import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.viewmodel.ParentFolderPickerViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
 
+@AndroidEntryPoint
 class ParentFolderPickerActivity : AppCompatActivity() {
 
     private val viewModel: ParentFolderPickerViewModel by viewModels()
@@ -63,7 +66,10 @@ class ParentFolderPickerActivity : AppCompatActivity() {
                     parentPickerFolderNameTextView.setText(R.string.x_none)
                 }
             }
-            parentPickerFolderNameTextView.setCheckmark(model.isChecked)
+            parentPickerFolderNameTextView.setCheckmark(model.isSelected)
+        },
+        onItemClick = { model ->
+            viewModel.process(ParentFolderPickerAction.SetSelected(model.id))
         }
     )
 
@@ -88,7 +94,7 @@ private fun ItemParentPickerFolderBinding.setMarginFor(folderLevel: Int) {
         folderLevel * root.context.resources.getDimensionPixelSize(R.dimen.gap_large)
 }
 
-private fun TextView.setCheckmark(isChecked: Boolean) {
-    val drawable = R.drawable.ic_check.takeIf { isChecked } ?: 0
+private fun TextView.setCheckmark(isSelected: Boolean) {
+    val drawable = R.drawable.ic_check.takeIf { isSelected } ?: 0
     setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, drawable, 0)
 }

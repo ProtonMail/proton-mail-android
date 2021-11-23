@@ -21,7 +21,7 @@ package ch.protonmail.android.labels.presentation.model
 
 import ch.protonmail.android.labels.domain.model.LabelId
 
-data class ParentFolderPickerState(
-    val selectedItemId: LabelId?,
-    val items: List<ParentFolderPickerItemUiModel>
-)
+sealed class ParentFolderPickerAction {
+
+    data class SetSelected(val folderId: LabelId?) : ParentFolderPickerAction()
+}

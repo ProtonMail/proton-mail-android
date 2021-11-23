@@ -20,20 +20,56 @@
 package ch.protonmail.android.labels.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
-@HiltViewModel
-class ParentFolderPickerViewModel @Inject constructor() : ViewModel() {
-
-    val state = MutableStateFlow(
-        ParentFolderPickerState(
-            items = listOf(
-                ParentFolderPickerItemUiModel.None(isChecked = true)
-            )
+// TODO: uncomment after test with dummy state @HiltViewModel
+class ParentFolderPickerViewModel @Inject constructor(
+    private val dispatchers: DispatcherProvider,
+    // TODO: for test only, replace with use case
+    initialState: ParentFolderPickerState = ParentFolderPickerState(
+        selectedItemId = null,
+        items = listOf(
+            ParentFolderPickerItemUiModel.None(isSelected = true)
         )
     )
+) : ViewModel() {
+
+    val state = MutableStateFlow(initialState)
+
+    fun process(action: ParentFolderPickerAction) {
+        viewModelScope.launch {
+            val newState = when (action) {
+                is ParentFolderPickerAction.SetSelected -> setSelected(action.folderId)
+            }
+            state.emit(newState)
+        }
+    }
+
+    private suspend fun setSelected(folderId: LabelId?): ParentFolderPickerState =
+        withContext(dispatchers.Comp) {
+            val prevState = state.value
+            if (folderId == prevState.selectedItemId) {
+                return@withContext prevState
+            }
+
+            val newItems = prevState.items.map { item ->
+                val shouldItBeSelected = item.id == folderId
+
+                if (shouldItBeSelected == item.isSelected) item
+                else when (item) {
+                    is ParentFolderPickerItemUiModel.Folder -> item.copy(isSelected = shouldItBeSelected)
+                    is ParentFolderPickerItemUiModel.None -> item.copy(isSelected = shouldItBeSelected)
+                }
+            }
+            return@withContext prevState.copy(selectedItemId = folderId, items = newItems)
+        }
 }

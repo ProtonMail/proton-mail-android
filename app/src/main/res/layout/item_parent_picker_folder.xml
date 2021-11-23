@@ -44,7 +44,7 @@
     <TextView
         android:id="@+id/parent_picker_folder_name_text_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:textAppearance="@style/Proton.Text.Default"
         android:textColor="@color/text_norm"

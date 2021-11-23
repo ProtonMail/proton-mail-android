@@ -30,9 +30,9 @@ import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiM
 sealed class ParentFolderPickerItemUiModel {
 
     open val id: LabelId? = null
-    abstract val isChecked: Boolean
+    abstract val isSelected: Boolean
 
-    data class None(override val isChecked: Boolean) : ParentFolderPickerItemUiModel()
+    data class None(override val isSelected: Boolean) : ParentFolderPickerItemUiModel()
 
     data class Folder(
         override val id: LabelId,
@@ -40,7 +40,7 @@ sealed class ParentFolderPickerItemUiModel {
         val colorInt: Int,
         val icon: Icon,
         val folderLevel: Int,
-        override val isChecked: Boolean
+        override val isSelected: Boolean
     ) : ParentFolderPickerItemUiModel() {
 
         /**
