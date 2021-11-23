@@ -22,7 +22,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/height_list_item_l"
+    android:padding="@dimen/padding_l"
     android:orientation="horizontal">
 
     <!-- Icon -->
@@ -32,17 +33,17 @@
         android:layout_width="@dimen/size_icon_m"
         android:layout_height="@dimen/size_icon_m"
         android:scaleType="center"
-        android:layout_margin="@dimen/padding_l"
+        android:layout_marginEnd="@dimen/padding_l"
         tools:src="@drawable/ic_folder_filled"
         tools:tint="@color/aqua_base"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        tools:visibility="visible"/>
 
     <!-- Name -->
     <TextView
         android:id="@+id/parent_picker_folder_name_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/padding_l"
         android:layout_gravity="center_vertical"
         android:textAppearance="@style/Proton.Text.Default"
         android:textColor="@color/text_norm"

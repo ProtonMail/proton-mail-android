@@ -38,6 +38,11 @@
     <dimen name="message_number_view_padding_horizontal">8dp</dimen>
     <dimen name="message_number_view_padding_vertical">2dp</dimen>
 
+    <!-- generic height -->
+    <dimen name="height_list_item_s">32dp</dimen>
+    <dimen name="height_list_item_m">48dp</dimen>
+    <dimen name="height_list_item_l">56dp</dimen>
+
     <!-- generic padding -->
     <dimen name="padding_xxs">1dp</dimen>
     <dimen name="padding_xs">2dp</dimen>
