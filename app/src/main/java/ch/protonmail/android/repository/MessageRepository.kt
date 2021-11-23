@@ -78,7 +78,6 @@ private const val FILE_PREFIX = "file://"
 class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val databaseProvider: DatabaseProvider,
-    private val messageDao: MessageDao,
     private val protonMailApiManager: ProtonMailApiManager,
     private val databaseToDomainUnreadCounterMapper: DatabaseToDomainUnreadCounterMapper,
     private val apiToDatabaseUnreadCounterMapper: ApiToDatabaseUnreadCounterMapper,
@@ -308,7 +307,7 @@ class MessageRepository @Inject constructor(
      */
     suspend fun emptyFolder(userId: UserId, labelId: LabelId) {
         emptyFolderRemoteWorker.enqueue(userId, labelId)
-
+        val messageDao = databaseProvider.provideMessageDao(userId)
         messageDao.deleteMessagesByLabel(labelId.id)
     }
 
