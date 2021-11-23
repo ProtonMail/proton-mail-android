@@ -134,7 +134,6 @@ class MessageRepositoryTest {
     private val messageRepository = MessageRepository(
         dispatcherProvider = TestDispatcherProvider,
         databaseProvider = databaseProvider,
-        messageDao = messageDao,
         protonMailApiManager = protonMailApiManager,
         databaseToDomainUnreadCounterMapper = DatabaseToDomainUnreadCounterMapper(),
         apiToDatabaseUnreadCounterMapper = ApiToDatabaseUnreadCounterMapper(),
