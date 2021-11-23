@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Ajouter un dossier</string>
+    <string name="x_add_label">Ajouter un label</string>
     <string name="x_days">Jours</string>
     <string name="x_folders">Dossiers</string>
     <string name="x_hours">Heures</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Paramètres</string>
     <string name="drawer_subscription">Abonnement</string>
     <string name="drawer_sign_out">Se déconnecter</string>
-    <string name="drawer_add_folder">Ajouter un dossier</string>
-    <string name="drawer_add_label">Ajouter un label</string>
-    <string name="drawer_create_icon_description">Créer un nouvel élément</string>
+    <string name="drawer_create_folder_description">Créer un nouveau dossier</string>
+    <string name="drawer_create_label_description">Créer un nouveau label</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cci :</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Objet :</string>
     <string name="composer_to">À :</string>
     <string name="set_msg_password_title">Définir le mot de passe</string>
-    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a>
+    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">En savoir plus</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Mot de passe du message</string>
@@ -960,8 +961,6 @@
     <string name="unstar">Retirer des favoris</string>
     <string name="star_unstar">Ajouter/retirer des favoris</string>
     <string name="send_to_archive">Envoyer vers les archives ?</string>
-    <string name="new_label">Nouveau label</string>
-    <string name="new_folder">Nouveau dossier</string>
     <string name="label_as">Labelliser comme…</string>
     <string name="mark_as_unread">Marquer comme non lu</string>
     <string name="mark_as_read">Marquer comme lu</string>

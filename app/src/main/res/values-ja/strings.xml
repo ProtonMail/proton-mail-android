@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Add folder</string>
+    <string name="x_add_label">Add label</string>
     <string name="x_days">日</string>
     <string name="x_folders">フォルダー</string>
     <string name="x_hours">時間</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">設定</string>
     <string name="drawer_subscription">サブスクリプション</string>
     <string name="drawer_sign_out">サインアウト</string>
-    <string name="drawer_add_folder">フォルダーを追加</string>
-    <string name="drawer_add_label">ラベルを追加</string>
-    <string name="drawer_create_icon_description">新しいアイテムの作成</string>
+    <string name="drawer_create_folder_description">Create new folder</string>
+    <string name="drawer_create_label_description">Create new label</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc：</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">件名：</string>
     <string name="composer_to">宛先：</string>
     <string name="set_msg_password_title">パスワードを設定</string>
-    <string name="set_msg_password_info">ProtonMail ユーザー以外がこのメッセージを読めるようにパスワードを設定してください <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a>
+    <string name="set_msg_password_info">ProtonMail ユーザー以外がこのメッセージを読めるようにパスワードを設定してください <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">詳細</a>
     </string>
     <string name="set_msg_password_info_icon_description">情報</string>
     <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>
@@ -934,8 +935,6 @@
     <string name="unstar">星印をはずす</string>
     <string name="star_unstar">Star/unstar</string>
     <string name="send_to_archive">アーカイブに送る</string>
-    <string name="new_label">新しいラベル</string>
-    <string name="new_folder">新規フォルダー</string>
     <string name="label_as">…としてラベル付け</string>
     <string name="mark_as_unread">未読にする</string>
     <string name="mark_as_read">既読にする</string>

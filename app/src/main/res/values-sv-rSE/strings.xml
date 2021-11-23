@@ -20,6 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_add_folder">Lägg till mapp</string>
+    <string name="x_add_label">Lägg till etikett</string>
     <string name="x_days">Dagar</string>
     <string name="x_folders">Mappar</string>
     <string name="x_hours">Timmar</string>
@@ -36,9 +38,8 @@
     <string name="drawer_settings">Inställningar</string>
     <string name="drawer_subscription">Prenumeration</string>
     <string name="drawer_sign_out">Logga ut</string>
-    <string name="drawer_add_folder">Lägg till mapp</string>
-    <string name="drawer_add_label">Lägg till etikett</string>
-    <string name="drawer_create_icon_description">Skapa nytt objekt</string>
+    <string name="drawer_create_folder_description">Skapa ny mapp</string>
+    <string name="drawer_create_label_description">Skapa ny etikett</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -48,7 +49,7 @@
     <string name="composer_subject">Ämne:</string>
     <string name="composer_to">Till:</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
-    <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Läs mer</a>
+    <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Läs mer</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
@@ -369,7 +370,7 @@
     <string name="pin_confirmation_not_match">Bekräftelse-PIN-koden stämmer inte</string>
     <string name="pin_not_match">PIN-koderna stämmer inte överens</string>
     <string name="new_pin_saved">Ny PIN-kod sparad</string>
-    <string name="new_emails">%d new emails</string>
+    <string name="new_emails">%d nya e-postmeddelanden</string>
     <string name="attachment_download_success">%s är nerladdade till filhanteraren</string>
     <string name="attachment_download_failed">%s kunde inte laddas ner</string>
     <string name="ringtone">Ringsignal</string>
@@ -956,8 +957,6 @@
     <string name="unstar">Ta bort stjärnmärkning</string>
     <string name="star_unstar">Star/unstar</string>
     <string name="send_to_archive">Arkivera?</string>
-    <string name="new_label">Ny etikett</string>
-    <string name="new_folder">Ny mapp</string>
     <string name="label_as">Märk som…</string>
     <string name="mark_as_unread">Markera som oläst</string>
     <string name="mark_as_read">Markera som läst</string>
