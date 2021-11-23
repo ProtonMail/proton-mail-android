@@ -19,19 +19,21 @@
 
 package ch.protonmail.android.utils.ui.screen
 
-import android.content.Context
 import android.util.DisplayMetrics
 import android.view.WindowManager
+import androidx.core.content.getSystemService
+import androidx.fragment.app.FragmentActivity
 import javax.inject.Inject
 
-class RenderDimensionsProvider @Inject constructor(
-    private val context: Context
-) {
+class RenderDimensionsProvider @Inject constructor() {
 
-    @Suppress("Deprecation")
-    fun getRenderWidth(): Int {
+    fun getRenderWidth(activity: FragmentActivity): Int {
         val metrics = DisplayMetrics()
-        context.getSystemService(WindowManager::class.java).defaultDisplay.getMetrics(metrics)
+        val windowManager = checkNotNull(activity.getSystemService<WindowManager>()) {
+            "Impossible to get WindowManager for current Activity"
+        }
+        @Suppress("DEPRECATION")
+        windowManager.defaultDisplay.getMetrics(metrics)
         return (metrics.widthPixels / metrics.density).toInt()
     }
 }
