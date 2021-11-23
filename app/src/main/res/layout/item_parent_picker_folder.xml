@@ -18,12 +18,13 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_list_item_l"
     android:padding="@dimen/padding_l"
+    android:background="?selectableItemBackground"
     android:orientation="horizontal">
 
     <!-- Icon -->
@@ -39,7 +40,7 @@
         tools:ignore="ContentDescription"
         tools:visibility="visible"/>
 
-    <!-- Name -->
+    <!-- Name TODO: color interaction_norm from Core -->
     <TextView
         android:id="@+id/parent_picker_folder_name_text_view"
         android:layout_width="match_parent"
@@ -47,6 +48,8 @@
         android:layout_gravity="center_vertical"
         android:textAppearance="@style/Proton.Text.Default"
         android:textColor="@color/text_norm"
-        tools:text="@string/inbox" />
+        tools:drawableEndCompat="@drawable/ic_check"
+        app:drawableTint="?attr/brand_norm"
+        tools:text="@string/inbox"/>
 
 </LinearLayout>

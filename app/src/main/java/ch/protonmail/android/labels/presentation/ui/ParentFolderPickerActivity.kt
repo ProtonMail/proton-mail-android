@@ -20,7 +20,7 @@
 package ch.protonmail.android.labels.presentation.ui
 
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -63,6 +63,7 @@ class ParentFolderPickerActivity : AppCompatActivity() {
                     parentPickerFolderNameTextView.setText(R.string.x_none)
                 }
             }
+            parentPickerFolderNameTextView.setCheckmark(model.isChecked)
         }
     )
 
@@ -85,4 +86,9 @@ class ParentFolderPickerActivity : AppCompatActivity() {
 private fun ItemParentPickerFolderBinding.setMarginFor(folderLevel: Int) {
     (root.layoutParams as RecyclerView.LayoutParams).marginStart =
         folderLevel * root.context.resources.getDimensionPixelSize(R.dimen.gap_large)
+}
+
+private fun TextView.setCheckmark(isChecked: Boolean) {
+    val drawable = R.drawable.ic_check.takeIf { isChecked } ?: 0
+    setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, drawable, 0)
 }
