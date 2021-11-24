@@ -159,29 +159,6 @@ class SetMessageExpirationActivityTest {
         onCustomPickerView().checkNotVisible()
     }
 
-    @Test
-    fun customInputIsSetCorrectly() {
-        // given
-        val expectedDays = 4
-        val expectedHours = 7
-
-        // when
-        launchActivity(expectedDays, expectedHours)
-
-        // then
-        onNoneCheck().checkNotSelected()
-        onOneHourCheck().checkNotSelected()
-        onOneDayCheck().checkNotSelected()
-        onThreeDaysCheck().checkNotSelected()
-        onOneWeekCheck().checkNotSelected()
-
-        onCustomCheck().checkSelected()
-        onCustomPickerView().checkVisible()
-        onCustomDaysView().matchesNumberText(expectedDays)
-        onCustomHoursView().matchesNumberText(expectedHours)
-    }
-    // endregion
-
     // region outputs
     @Test
     fun noneResultIsSetCorrectly() {
@@ -252,22 +229,6 @@ class SetMessageExpirationActivityTest {
         // when
         val scenario = launchActivity()
         onOneWeekView().performSelection()
-        performSetClick()
-
-        // then
-        assertResult(scenario, expectedDays, expectedHours)
-    }
-
-    @Test
-    fun customResultIsSetCorrectly() {
-        // given
-        val expectedDays = 4
-        val expectedHours = 7
-
-        // when
-        val scenario = launchActivity()
-        onCustomView().performSelection()
-        setCustomDaysAndHours(expectedDays, expectedHours)
         performSetClick()
 
         // then
