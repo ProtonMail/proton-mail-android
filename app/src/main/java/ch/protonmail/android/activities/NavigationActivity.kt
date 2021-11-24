@@ -304,8 +304,8 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     private fun checkUserId() {
         // Requested UserId match the current ?
-        intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
-            intent.extras?.remove(EXTRA_USER_ID)
+        intent.getStringExtra(EXTRA_USER_ID)?.let { extraUserId ->
+            intent.removeExtra(EXTRA_USER_ID)
             val requestedUserId = UserId(extraUserId)
             if (requestedUserId != accountStateManager.getPrimaryUserId().value) {
                 accountStateManager.switch(requestedUserId)
