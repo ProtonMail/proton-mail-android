@@ -29,13 +29,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
 
 // TODO: uncomment after test with dummy state @HiltViewModel
 class ParentFolderPickerViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     // TODO: for test only, replace with use case
-    initialState: ParentFolderPickerState = ParentFolderPickerState(
+    initialState: ParentFolderPickerState = ParentFolderPickerState.Editing(
         selectedItemId = null,
         items = listOf(
             ParentFolderPickerItemUiModel.None(isSelected = true)
@@ -49,27 +50,45 @@ class ParentFolderPickerViewModel @Inject constructor(
         viewModelScope.launch {
             val newState = when (action) {
                 is ParentFolderPickerAction.SetSelected -> setSelected(action.folderId)
+                is ParentFolderPickerAction.SaveAndClose -> saveAndClose()
             }
             state.emit(newState)
         }
     }
 
-    private suspend fun setSelected(folderId: LabelId?): ParentFolderPickerState =
+    private suspend fun setSelected(folderId: LabelId?): ParentFolderPickerState {
+        val prevState = state.value
+        if (folderId == prevState.selectedItemId) {
+            return prevState
+        }
+
+        return when (prevState) {
+            is ParentFolderPickerState.Editing -> prevState.updateSelectedItem(folderId)
+            is ParentFolderPickerState.SavingAndClose -> {
+                Timber.w("Previous state is 'SavingAndClose', ignoring the current change")
+                prevState
+            }
+        }
+    }
+
+    private suspend fun ParentFolderPickerState.Editing.updateSelectedItem(
+        folderId: LabelId?
+    ): ParentFolderPickerState.Editing = withContext(dispatchers.Comp) {
+        val newItems = items.map { item ->
+            val shouldItBeSelected = item.id == folderId
+
+            if (shouldItBeSelected == item.isSelected) item
+            else when (item) {
+                is ParentFolderPickerItemUiModel.Folder -> item.copy(isSelected = shouldItBeSelected)
+                is ParentFolderPickerItemUiModel.None -> item.copy(isSelected = shouldItBeSelected)
+            }
+        }
+        copy(selectedItemId = folderId, items = newItems)
+    }
+
+    private suspend fun saveAndClose(): ParentFolderPickerState =
         withContext(dispatchers.Comp) {
             val prevState = state.value
-            if (folderId == prevState.selectedItemId) {
-                return@withContext prevState
-            }
-
-            val newItems = prevState.items.map { item ->
-                val shouldItBeSelected = item.id == folderId
-
-                if (shouldItBeSelected == item.isSelected) item
-                else when (item) {
-                    is ParentFolderPickerItemUiModel.Folder -> item.copy(isSelected = shouldItBeSelected)
-                    is ParentFolderPickerItemUiModel.None -> item.copy(isSelected = shouldItBeSelected)
-                }
-            }
-            return@withContext prevState.copy(selectedItemId = folderId, items = newItems)
+            ParentFolderPickerState.SavingAndClose(selectedItemId = prevState.selectedItemId)
         }
 }

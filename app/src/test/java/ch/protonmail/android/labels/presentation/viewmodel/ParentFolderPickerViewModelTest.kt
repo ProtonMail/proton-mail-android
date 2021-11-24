@@ -24,18 +24,35 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
+import timber.log.Timber
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ParentFolderPickerViewModelTest : CoroutinesTest {
 
+    private val mockTimberTree: Timber.Tree = mockk()
+
+    @BeforeTest
+    fun setup() {
+        Timber.plant(mockTimberTree)
+    }
+
+    @AfterTest
+    fun teardown() {
+        Timber.uproot(mockTimberTree)
+    }
+
     @Test
     fun `ParentFolderPickerAction_SetSelected select the correct item`() = runBlockingTest {
         // given
-        val initialState = ParentFolderPickerState(
+        val initialState = ParentFolderPickerState.Editing(
             selectedItemId = null,
             items = listOf(
                 buildNoneUiModel(isSelected = true),
@@ -47,7 +64,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
 
         val action = ParentFolderPickerAction.SetSelected(TEST_FOLDER_ID_1)
 
-        val expectedState = ParentFolderPickerState(
+        val expectedState = ParentFolderPickerState.Editing(
             selectedItemId = TEST_FOLDER_ID_1,
             items = listOf(
                 buildNoneUiModel(isSelected = false),
@@ -66,8 +83,51 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
         }
     }
 
+    @Test
+    fun `ParentFolderPickerAction_SetSelected is ignored if previous state is SavingAndClose`() = runBlockingTest {
+        // given
+        val initialState = ParentFolderPickerState.SavingAndClose(selectedItemId = null)
+        val viewModel = buildViewModel(initialState)
+
+        val action = ParentFolderPickerAction.SetSelected(TEST_FOLDER_ID_1)
+
+        // when
+        viewModel.process(action)
+
+        // then
+        viewModel.state.test {
+
+            assertEquals(initialState, awaitItem())
+            verify { mockTimberTree.w("Previous state is 'SavingAndClose', ignoring the current change") }
+        }
+    }
+
+    @Test
+    fun `ParentFolderPickerAction_SaveAndClose emits SavingAndClose state with correct selected item`() =
+        runBlockingTest {
+            // given
+            val initialState = ParentFolderPickerState.Editing(
+                selectedItemId = TEST_FOLDER_ID_2,
+                items = emptyList()
+            )
+            val viewModel = buildViewModel(initialState)
+
+            val action = ParentFolderPickerAction.SaveAndClose
+
+            val expectedState = ParentFolderPickerState.SavingAndClose(TEST_FOLDER_ID_2)
+
+            // when
+            viewModel.process(action)
+
+            // then
+            viewModel.state.test {
+
+                assertEquals(expectedState, awaitItem())
+            }
+        }
+
     private fun buildViewModel(
-        initialState: ParentFolderPickerState = ParentFolderPickerState(
+        initialState: ParentFolderPickerState = ParentFolderPickerState.Editing(
             selectedItemId = null,
             listOf(buildNoneUiModel())
         )
@@ -77,8 +137,6 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
 
         val TEST_FOLDER_ID_1 = LabelId("folder 1")
         val TEST_FOLDER_ID_2 = LabelId("folder 2")
-        val TEST_FOLDER_ID_3 = LabelId("folder 3")
-        val TEST_FOLDER_ID_4 = LabelId("folder 4")
 
         fun buildNoneUiModel(isSelected: Boolean = true) =
             ParentFolderPickerItemUiModel.None(isSelected = isSelected)

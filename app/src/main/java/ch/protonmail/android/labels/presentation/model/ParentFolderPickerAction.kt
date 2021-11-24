@@ -20,8 +20,20 @@
 package ch.protonmail.android.labels.presentation.model
 
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.presentation.viewmodel.ParentFolderPickerViewModel
 
+/**
+ * Actions for [ParentFolderPickerViewModel]
+ */
 sealed class ParentFolderPickerAction {
 
+    /**
+     * Set an item selected among the others
+     */
     data class SetSelected(val folderId: LabelId?) : ParentFolderPickerAction()
+
+    /**
+     * Save the current selection and close the Picker
+     */
+    object SaveAndClose : ParentFolderPickerAction()
 }

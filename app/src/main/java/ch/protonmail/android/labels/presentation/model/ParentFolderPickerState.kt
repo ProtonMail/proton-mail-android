@@ -21,7 +21,22 @@ package ch.protonmail.android.labels.presentation.model
 
 import ch.protonmail.android.labels.domain.model.LabelId
 
-data class ParentFolderPickerState(
-    val selectedItemId: LabelId?,
-    val items: List<ParentFolderPickerItemUiModel>
-)
+sealed class ParentFolderPickerState {
+
+    abstract val selectedItemId: LabelId?
+
+    /**
+     * Picker is open and the user can change the selected item
+     */
+    data class Editing(
+        override val selectedItemId: LabelId?,
+        val items: List<ParentFolderPickerItemUiModel>
+    ) : ParentFolderPickerState()
+
+    /**
+     * The user requested to save the current selection, the Picker is about to be closed
+     */
+    data class SavingAndClose(
+        override val selectedItemId: LabelId?
+    ) : ParentFolderPickerState()
+}

@@ -32,6 +32,7 @@ import ch.protonmail.android.databinding.ActivityParentFolderPickerBinding
 import ch.protonmail.android.databinding.ItemParentPickerFolderBinding
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
+import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
 import ch.protonmail.android.labels.presentation.viewmodel.ParentFolderPickerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -84,8 +85,19 @@ class ParentFolderPickerActivity : AppCompatActivity() {
         }
 
         viewModel.state.onEach { state ->
-            adapter.submitList(state.items)
+            when (state) {
+                is ParentFolderPickerState.Editing -> onEditingState(state)
+                is ParentFolderPickerState.SavingAndClose -> onSavingAndCloseState(state)
+            }
         }.launchIn(lifecycleScope)
+    }
+
+    private fun onEditingState(state: ParentFolderPickerState.Editing) {
+        adapter.submitList(state.items)
+    }
+
+    private fun onSavingAndCloseState(state: ParentFolderPickerState.SavingAndClose) {
+        TODO("set result and finish")
     }
 }
 
