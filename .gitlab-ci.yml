@@ -33,6 +33,7 @@ stages:
     - large
   script:
     - ./gradlew detektBetaDebug
+    - cat config/detekt/reports/detekt.json | jq '.runs[0].results' | jq 'map(with_entries(if .key == "level" then .key = "severity" else . end))' | tee config/detekt/reports/deket.json
   artifacts:
     when: on_failure
     expire_in: 1 week
