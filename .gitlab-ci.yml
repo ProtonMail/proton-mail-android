@@ -3,12 +3,10 @@ default:
 
 before_script:
   - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
-  #  - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
-  - echo "App version name ${VERSION_NAME}"
-  - echo "App version name ${VERSION_CODE}"
+
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
@@ -26,8 +24,7 @@ stages:
   - bot-i18n
   - bot-release
 
-#####################
-.detekt-analysis-common:
+detekt analysis:
   stage: analyze
   tags:
     - large
@@ -35,41 +32,14 @@ stages:
     - ./gradlew detektBetaDebug
     - cat config/detekt/reports/detekt.json | jq '.runs[0].results' | jq 'map(with_entries(if .key == "level" then .key = "severity" else . end))' | tee config/detekt/reports/deket.json
   artifacts:
-    when: on_failure
     expire_in: 1 week
     paths:
       - config/detekt/reports/*
     reports:
       codequality: config/detekt/reports/detekt.json
 
-detekt analysis release:
-  extends: .detekt-analysis-common
-  allow_failure: true
-  only:
-    - release
-    - prerelease
-    - tags
-  except:
-    - schedules
-
-detekt analysis:
-  extends: .detekt-analysis-common
-  only:
-    refs:
-      - merge_requests
-      - develop
-      - schedules
-  except:
-    - release
-    - prerelease
-    - tags
-
-.build-debug-common:
+build debug:
   stage: build
-  only:
-    - merge_requests
-    - branches
-    - schedules
   tags:
     - large
   script:
@@ -80,45 +50,9 @@ detekt analysis:
     paths:
       - app/build/outputs/apk
 
-build debug:
-  extends: .build-debug-common
-  needs:
-    - job: detekt analysis
-  only:
-    - merge_requests
-
-build debug develop:
-  extends: .build-debug-common
-  needs:
-    - job: detekt analysis
-  only:
-    - develop
-  script:
-    - ./gradlew clean
-    - ./gradlew assembleBetaDebug
-    - ./gradlew assembleBetaDebugAndroidTest
-
-build debug uitests:
-  extends: .build-debug-common
-  only:
-    - schedules
-  script:
-    - ./gradlew clean
-    - ./gradlew assembleBetaDebug
-    - ./gradlew assembleBetaDebugAndroidTest
-
-build debug release:
-  extends: .build-debug-common
-  only:
-    - release
-    - prerelease
-    - tags
-
 build alpha:
   stage: build
   when: 'manual'
-  except:
-    - schedules
   only:
     - develop
   tags:
@@ -131,12 +65,13 @@ build alpha:
     paths:
       - app/build/outputs
 
-build prerelease:
+build release:
   stage: build
   except:
     - schedules
   only:
     - prerelease
+    - release
     - tags
   tags:
     - large
@@ -148,59 +83,16 @@ build prerelease:
     paths:
       - app/build/outputs
 
-build release:
-  stage: build
-  except:
-    - schedules
-  only:
-    - releases
-  tags:
-    - large
-  script:
-    - ./gradlew clean
-    - ./gradlew assembleProductionRelease
-  artifacts:
-    expire_in: 4 week
-    paths:
-      - app/build/outputs
-
-
-.unit-tests-common:
+unit tests:
   stage: test
-  only:
-    - merge_requests
-  except:
-    - schedules
   tags:
     - large
   script:
     - ./gradlew -Pci --console=plain allTest
 
-unit tests:
-  extends: .unit-tests-common
-  needs:
-    - job: build debug
-
-unit tests develop:
-  extends: .unit-tests-common
-  needs:
-    - job: build debug develop
-  only:
-    - develop
-
-unit tests release:
-  extends: .unit-tests-common
-  only:
-    - release
-    - prerelease
-    - tags
-
-
-.firebase-tests-common:
+firebase ui tests:
   stage: test
   when: "manual"
-  only:
-    - merge_requests
   except:
     - schedules
   tags:
@@ -225,30 +117,10 @@ unit tests release:
       --num-flaky-test-attempts=1
       --timeout 45m
 
-firebase tests:
-  extends: .firebase-tests-common
-  needs:
-    - job: build debug
-
-firebase tests develop:
-  extends: .firebase-tests-common
-  needs:
-    - job: build debug develop
-  only:
-    - develop
-
-firebase tests release:
-  extends: .firebase-tests-common
-  only:
-    - release
-    - prerelease
-    - tags
-
-
 firebase feature tests:
   stage: test
-  needs:
-    - job: build debug uitests
+  dependencies:
+    - build debug
   rules:
     - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
   tags:
@@ -282,8 +154,8 @@ firebase feature tests:
 
 firebase instrumentation tests:
   stage: test
-  needs:
-    - job: build debug uitests
+  dependencies:
+    - build debug
   tags:
     - small
   script:
@@ -335,8 +207,6 @@ startReview:
     - export REVIEW_APP_ARTIFACT_PATH="app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk"
     - echo ${REVIEW_APP_ARTIFACT_PATH}
   extends: .startReview
-  only:
-    - merge_requests
 
 stopReview:
   extends: .stopReview
@@ -366,12 +236,6 @@ i18n-commit-locales:
     variables:
       - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
 
-i18n-spellcheck:
-  stage: analyze
-  extends: .spellcheck-common
-  variables:
-    I18N_MAIN_BRANCH: develop
-
 release-publish-github:
   stage: manual-release
   when: 'manual'
@@ -386,9 +250,8 @@ release-publish-github:
 release-publish-github-tags:
   stage: bot-release
   when: 'manual'
-  needs:
-    - job: build prerelease
-      artifacts: true
+  dependencies:
+    - build release
   variables:
     RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
     RELEASE_SYNC_TO_BRANCH: 'release'
@@ -399,9 +262,9 @@ release-publish-github-tags:
 
 publish-github:
   stage: bot-release
-  needs:
-    - job: build prerelease
-      artifacts: true
+  when: 'manual'
+  dependencies:
+    - build release
   variables:
     RELEASE_APP: android-mail
     RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
@@ -409,12 +272,3 @@ publish-github:
   extends: .release-make-release
   tags:
     - small
-
-check for fixups:
-  stage: analyze
-  only:
-    - merge_requests
-  script:
-    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
-    - git fetch origin "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
-    - git log --pretty=%s "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" | awk '$0 ~ /^fixup/ {find = 1}; END { exit find }'
