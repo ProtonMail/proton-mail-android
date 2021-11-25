@@ -211,6 +211,30 @@ class AddressCrypto @AssistedInject constructor(
         }
     }
 
+    fun areActiveKeysDecryptable(): Boolean {
+        checkNotNull(mailboxPassword) { "Error creating KeyRing, invalid passphrase" }
+
+        currentKeys.filter { it.active }.forEach {  key ->
+            try {
+                val addressKeyPassphrase = passphraseFor(key)
+                val lockedAddressKey = GoOpenPgpCrypto.newKeyFromArmored(key.privateKey.string)
+                lockedAddressKey.unlock(addressKeyPassphrase)
+            } catch (decryptionError: Exception) {
+                Timber.e(
+                    decryptionError,
+                    """
+                    Found a non-decryptable key.
+                    User ID = ${userManager.user.id}
+                    Address ID = ${address.id}
+                    Address key ID = ${key.id}
+                    """.trimIndent()
+                )
+                return false
+            }
+        }
+        return true
+    }
+
     private fun createAndUnlockKeyRing(): KeyRing {
         checkNotNull(mailboxPassword) { "Error creating KeyRing, invalid passphrase" }
 

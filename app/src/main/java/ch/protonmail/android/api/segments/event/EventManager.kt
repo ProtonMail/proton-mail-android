@@ -148,6 +148,7 @@ class EventManager @Inject constructor(
         if (handler.stage(response.messageUpdates)) {
             // Write the updates since the staging was completed without any error
             handler.write(response)
+            handler.handleNewKeysIfNeeded(response)
             // Update next event id only after writing updates to local cache has finished successfully
             backupNextEventId(handler.username, response.eventID)
         }

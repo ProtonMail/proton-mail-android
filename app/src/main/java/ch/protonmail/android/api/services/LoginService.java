@@ -90,6 +90,7 @@ import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
+import ch.protonmail.android.usecase.keys.LogOutIfNotAllActiveKeysAreDecryptable;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.ConstantTime;
 import ch.protonmail.android.utils.Logger;
@@ -162,6 +163,8 @@ public class LoginService extends ProtonJobIntentService {
     QueueNetworkUtil networkUtils;
     @Inject
     LaunchInitialDataFetch launchInitialDataFetch;
+    @Inject
+    LogOutIfNotAllActiveKeysAreDecryptable logOutIfNotAllActiveKeysAreDecryptable;
 
     private TokenManager tokenManager;
 
@@ -552,6 +555,8 @@ public class LoginService extends ProtonJobIntentService {
                         userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
+                        boolean loggingOut = logOutIfNotAllActiveKeysAreDecryptable.invoke();
+                        if (loggingOut) return;
                         if (!signUp) {
                             if (networkUtils.isConnected() && userManager.isLoggedIn() && userManager.accessTokenExists()) {
                                 AlarmReceiver alarmReceiver = new AlarmReceiver();

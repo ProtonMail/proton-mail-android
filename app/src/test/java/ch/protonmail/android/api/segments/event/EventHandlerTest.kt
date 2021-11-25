@@ -25,12 +25,15 @@ import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.usecase.keys.LogOutIfNotAllActiveKeysAreDecryptable
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.Runs
+import io.mockk.called
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.spyk
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import java.util.concurrent.CopyOnWriteArrayList
@@ -56,6 +59,10 @@ class EventHandlerTest {
 
     private val messageDetailsRepository = mockk<MessageDetailsRepository>(relaxUnitFun = true)
 
+    private val logOutIfNotAllActiveKeysAreDecryptable = mockk<LogOutIfNotAllActiveKeysAreDecryptable> {
+        every { this@mockk() } returns true
+    }
+
     private val eventHandler = EventHandler(
         mockk(),
         mockk(),
@@ -64,6 +71,7 @@ class EventHandlerTest {
         mockk(),
         mockk(),
         mockk(),
+        logOutIfNotAllActiveKeysAreDecryptable,
         mockk(),
         mockk(),
         mockk(),
@@ -128,6 +136,47 @@ class EventHandlerTest {
 
         verify { mockUser.legacyAccount = true }
     }
+
+    @Test
+    fun `should not verify keys when user updates and address in the response are null`() {
+        // given
+        val ignoredEventResponse = EventResponse()
+
+        // when
+        eventHandler.handleNewKeysIfNeeded(ignoredEventResponse)
+
+        // then
+        verify { logOutIfNotAllActiveKeysAreDecryptable wasNot called }
+    }
+
+    @Test
+    fun `should verify keys when user updates in the response are not null`() {
+        // given
+        val ignoredEventResponse = spyk<EventResponse> {
+            every { userUpdates } returns User()
+        }
+
+        // when
+        eventHandler.handleNewKeysIfNeeded(ignoredEventResponse)
+
+        // then
+        verify { logOutIfNotAllActiveKeysAreDecryptable() }
+    }
+
+    @Test
+    fun `should verify keys when address updates in the response are not null`() {
+        // given
+        val ignoredEventResponse = spyk<EventResponse> {
+            every { addresses } returns listOf(AddressEventBody())
+        }
+
+        // when
+        eventHandler.handleNewKeysIfNeeded(ignoredEventResponse)
+
+        // then
+        verify { logOutIfNotAllActiveKeysAreDecryptable() }
+    }
+
 
     private fun mockEventResponse(listOf: List<EventResponse.AddressEventBody>) =
         mockk<EventResponse> {

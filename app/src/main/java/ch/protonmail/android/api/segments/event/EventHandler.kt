@@ -60,6 +60,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
+import ch.protonmail.android.usecase.keys.LogOutIfNotAllActiveKeysAreDecryptable
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.removeFirst
@@ -82,6 +83,7 @@ class EventHandler @AssistedInject constructor(
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
+    private val logOutIfNotAllActiveKeysAreDecryptable: LogOutIfNotAllActiveKeysAreDecryptable,
     private val pendingActionsDao: PendingActionsDao,
     private val contactsDao: ContactsDao,
     private val countersDao: CountersDao,
@@ -191,6 +193,12 @@ class EventHandler @AssistedInject constructor(
 
     fun write(response: EventResponse) {
         unsafeWrite(contactsDao, messagesDao, pendingActionsDao, response)
+    }
+
+    fun handleNewKeysIfNeeded(response: EventResponse) {
+        if (response.userUpdates != null || response.addresses != null) {
+            logOutIfNotAllActiveKeysAreDecryptable()
+        }
     }
 
     private fun eventMessageSortSelector(message: EventResponse.MessageEventBody): Int = message.type
