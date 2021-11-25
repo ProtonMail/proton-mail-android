@@ -41,6 +41,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
@@ -772,13 +773,10 @@ internal class MailboxActivity :
 
     private fun setUpMenuItems(composeMenuItem: MenuItem, searchMenuItem: MenuItem) {
         composeMenuItem.actionView.findViewById<ImageView>(R.id.composeImageButton)
-            .setOnClickListener {
-                mailboxViewModel.usedSpaceActionEvent(FLOW_TRY_COMPOSE)
-            }
+            .setOnClickListener { onOptionsItemSelected(R.id.compose) }
+
         searchMenuItem.actionView.findViewById<ImageView>(R.id.searchImageButton)
-            .setOnClickListener {
-                startSearchLauncher.launch(Unit)
-            }
+            .setOnClickListener { onOptionsItemSelected(R.id.search) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -806,9 +804,14 @@ internal class MailboxActivity :
         return super.onPrepareOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        return if (menuItem.itemId == R.id.empty) {
-            showTwoButtonInfoDialog(
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean =
+        onOptionsItemSelected(menuItem.itemId) || super.onOptionsItemSelected(menuItem)
+
+    private fun onOptionsItemSelected(@IdRes itemId: Int): Boolean {
+        when (itemId) {
+            R.id.compose -> mailboxViewModel.usedSpaceActionEvent(FLOW_TRY_COMPOSE)
+            R.id.search -> startSearchLauncher.launch(Unit)
+            R.id.empty -> showTwoButtonInfoDialog(
                 titleStringId = R.string.empty_folder,
                 messageStringId = R.string.are_you_sure_empty,
                 leftStringId = R.string.no
@@ -819,10 +822,9 @@ internal class MailboxActivity :
                 )
                 setLoadingMore(false)
             }
-            true
-        } else {
-            super.onOptionsItemSelected(menuItem)
+            else -> return false
         }
+        return true
     }
 
     override fun onBackPressed() {
