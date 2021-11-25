@@ -271,10 +271,6 @@
 # Coroutines
 -dontwarn kotlinx.atomicfu.AtomicBoolean
 
-# labels models
--keep public class ch.protonmail.android.labels.data.remote.model.LabelEventModel { }
--keep class ch.protonmail.android.labels.data.remote.model.** { *; }
-
 # kotlinx.serialization
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
@@ -300,4 +296,9 @@
 }
 -keepclasseswithmembers class ch.protonmail.android.** {
     kotlinx.serialization.KSerializer serializer(...);
+}
+
+# Prevent leaving Data object members always null
+-keepclasseswithmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
 }
