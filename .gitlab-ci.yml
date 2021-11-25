@@ -272,3 +272,9 @@ publish-github:
   extends: .release-make-release
   tags:
     - small
+check for fixups:
+  stage: analyze
+  script:
+    - git fetch origin $CI_COMMIT_BRANCH
+    - git fetch origin develop
+    - git log --pretty=%s "origin/develop..origin/$CI_COMMIT_BRANCH" | awk '$0 ~ /^fixup/ {find = 1}; END { exit find }'
