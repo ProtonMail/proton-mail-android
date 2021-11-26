@@ -37,7 +37,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import ch.protonmail.android.R
-import ch.protonmail.android.util.withTextInputEditTextId
+import ch.protonmail.android.util.withProtonInputEditTextId
 import org.hamcrest.core.AllOf
 import org.junit.runner.RunWith
 import kotlin.test.BeforeTest
@@ -302,10 +302,10 @@ class SetMessageExpirationActivityTest {
         onView(withId(R.id.set_msg_expiration_picker_view))
 
     private fun onCustomDaysView(): ViewInteraction =
-        onView(withTextInputEditTextId(R.id.days_and_hours_picker_days_input))
+        onView(withProtonInputEditTextId(R.id.days_and_hours_picker_days_input))
 
     private fun onCustomHoursView(): ViewInteraction =
-        onView(withTextInputEditTextId(R.id.days_and_hours_picker_hours_input))
+        onView(withProtonInputEditTextId(R.id.days_and_hours_picker_hours_input))
 
     private fun ViewInteraction.checkSelected(): ViewInteraction =
         checkVisible()
