@@ -44,16 +44,29 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
 
     private val defaultIconColor = context.getColor(R.color.icon_norm)
 
+    /**
+     * @param includeNoneUiModel whether [ParentFolderPickerItemUiModel.None] should be in the list ( at the first
+     *  position )
+     */
     fun toUiModels(
         folders: Collection<Folder>,
-        currentSelectedFolder: LabelId?
-    ): List<ParentFolderPickerItemUiModel> = folders.flatMap { label ->
-        labelToUiModels(
-            folder = label,
-            currentSelectedFolder = currentSelectedFolder,
-            folderLevel = 0,
-            parentColor = null
-        )
+        currentSelectedFolder: LabelId?,
+        includeNoneUiModel: Boolean
+    ): List<ParentFolderPickerItemUiModel> {
+        val noneUiModel = if (includeNoneUiModel) {
+            listOf(ParentFolderPickerItemUiModel.None(isSelected = currentSelectedFolder == null))
+        } else {
+            emptyList()
+        }
+
+        return noneUiModel + folders.flatMap { label ->
+            labelToUiModels(
+                folder = label,
+                currentSelectedFolder = currentSelectedFolder,
+                folderLevel = 0,
+                parentColor = null
+            )
+        }
     }
 
     private fun labelToUiModels(

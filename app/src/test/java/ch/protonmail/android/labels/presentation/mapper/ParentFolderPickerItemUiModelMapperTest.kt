@@ -60,10 +60,13 @@ class ParentFolderPickerItemUiModelMapperTest {
 
         // given
         val input = listOf(buildFolder(name = LABEL_NAME))
-        val expected = listOf(buildFolderUiModel(name = LABEL_NAME))
+        val expected = listOf(
+            ParentFolderPickerItemUiModel.None(isSelected = true),
+            buildFolderUiModel(name = LABEL_NAME)
+        )
 
         // when
-        val result = mapper.toUiModels(input, null)
+        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
 
         // then
         assertEquals(expected, result)
@@ -89,6 +92,7 @@ class ParentFolderPickerItemUiModelMapperTest {
             }
         }
         val expected = listOf(
+            ParentFolderPickerItemUiModel.None(isSelected = true),
             buildFolderUiModel(name = first, folderLevel = 0, hasChildren = true),
             buildFolderUiModel(name = firstFirst, folderLevel = 1),
             buildFolderUiModel(name = second, folderLevel = 0),
@@ -98,7 +102,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(input, null)
+        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
 
         // then
         assertEquals(expected, result)
@@ -122,6 +126,7 @@ class ParentFolderPickerItemUiModelMapperTest {
             }
         }
         val expected = listOf(
+            ParentFolderPickerItemUiModel.None(isSelected = false),
             buildFolderUiModel(name = first, folderLevel = 0, hasChildren = true),
             buildFolderUiModel(name = firstFirst, folderLevel = 1, isSelected = true),
             buildFolderUiModel(name = second, folderLevel = 0),
@@ -130,7 +135,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(input, LabelId(firstFirst))
+        val result = mapper.toUiModels(input, currentSelectedFolder = LabelId(firstFirst), includeNoneUiModel = true)
 
         // then
         assertEquals(expected, result)
@@ -154,12 +159,13 @@ class ParentFolderPickerItemUiModelMapperTest {
         every { Color.parseColor(blueString) } returns blueInt
 
         val expected = listOf(
+            ParentFolderPickerItemUiModel.None(isSelected = true),
             buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = redInt),
             buildFolderUiModel(name = child, folderLevel = 1, colorInt = blueInt),
         )
 
         // when
-        val result = mapper.toUiModels(input, null)
+        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
 
         // then
         assertEquals(expected, result)
@@ -183,12 +189,13 @@ class ParentFolderPickerItemUiModelMapperTest {
         }
 
         val expected = listOf(
+            ParentFolderPickerItemUiModel.None(isSelected = true),
             buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = redInt),
             buildFolderUiModel(name = child, folderLevel = 1, colorInt = redInt),
         )
 
         // when
-        val result = mapper.toUiModels(input, null)
+        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
 
         // then
         assertEquals(expected, result)
@@ -209,12 +216,13 @@ class ParentFolderPickerItemUiModelMapperTest {
         }
 
         val expected = listOf(
+            ParentFolderPickerItemUiModel.None(isSelected = true),
             buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = 0),
             buildFolderUiModel(name = child, folderLevel = 1, colorInt = 0),
         )
 
         // when
-        val result = mapper.toUiModels(input, null)
+        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
 
         // then
         assertEquals(expected, result)
