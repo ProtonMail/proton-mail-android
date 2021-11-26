@@ -36,7 +36,6 @@ import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.domain.entity.user.UserKeys
 import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
-import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.proton.gopenpgp.helper.Helper
@@ -148,17 +147,6 @@ class AddressKeyActivationWorker @WorkerInject constructor(
                         ),
                         addressKey.id.s
                     )
-                } else {
-                    Timber.v("Activate key for non-legacy user")
-                    val generatedTokenAndSignature =
-                        GenerateTokenAndSignature(userManager, openPgp).invoke(orgKeys?.toUserKey())
-                    val keyActivationBody = KeyActivationBody(
-                        newPrivateKey,
-                        signedKeyList,
-                        generatedTokenAndSignature.token,
-                        generatedTokenAndSignature.signature
-                    )
-                    api.activateKey(keyActivationBody, addressKey.id.s)
                 }
                 ActivationResult.Success
             } catch (exception: Exception) {
