@@ -249,7 +249,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     loadedMessage,
                     renderDimensionsProvider.getRenderWidth(this),
                     AppUtil.readTxt(this, R.raw.css_reset_with_custom_props),
-                    if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                    if (
+                        resources.configuration.uiMode and
+                        Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+                    ) {
                         AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only)
                     } else {
                         EMPTY_STRING
@@ -665,7 +668,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         val messageBodyIndexToScrollTo = if (messageToScrollTo == null) {
             messageExpandableAdapter.itemCount - 1
         } else {
-            messageExpandableAdapter.visibleItems.indexOfLast{
+            messageExpandableAdapter.visibleItems.indexOfLast {
                 it.message == messageToScrollTo
             }
         }

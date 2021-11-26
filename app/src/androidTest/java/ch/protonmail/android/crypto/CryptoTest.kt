@@ -26,24 +26,16 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
 import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
-import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
 import ch.protonmail.android.utils.crypto.OpenPGP
-import com.proton.gopenpgp.armor.Armor
-import com.proton.gopenpgp.crypto.Crypto.newKeyFromArmored
-import com.proton.gopenpgp.crypto.Crypto.newKeyRing
-import com.proton.gopenpgp.crypto.Crypto.newPGPMessageFromArmored
-import com.proton.gopenpgp.crypto.Crypto.newPGPSignatureFromArmored
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import javax.mail.internet.InternetHeaders
 import kotlin.test.Test
 
@@ -772,35 +764,6 @@ internal class CryptoTest {
     }
 
     @Test
-    fun decrypt_message_for_only_address_key() {
-        every { userManagerMock.currentUser } returns oneKeyUserMock
-
-        val encryptedMessage = """
-            -----BEGIN PGP MESSAGE-----
-            Version: ProtonMail
-
-            wcBMA5kajsUECZmgAQgAgJuGP/0+pUPu24mWeviRQ79s6fKKsKh6y1aBXwJM
-            eQ8mSaLvHNSaCa8s9yozs9gWo2/Uf8Lpmqb70SMh2npwI5hyOFqXsrMEoEHn
-            KTf86kSHnGZEtwrScXnekJjO1rfYynnAYuppTfpUc2E/uGZg6RChlwPbBZMw
-            tOk8n6iL6u0+Ren9fxAmmMTw66vc5PDejmfAgzbdxeD7qV8wzqmipgiErk/w
-            dPEzI5QGtGXUwsDfJeSGEdCslN1kHtZRj2B3tg6Ms7Ea/VIb3Kq6uyn2hQhS
-            MlWwjzauF5mryV4Kbi1RP6yTykbPnRz6ia22HwbWzOVJ2Nu534RqNYA/99Bd
-            G9JcAXjM6al21XdX0ZQww2R0Of3VzFVwQX+RSG1SWGq11u2nu5iXBVUJDa5x
-            MS2SksqmW3Bh7Tbz2zlrCNZxH8USiAxXt/3xjwNlXgCg4b8sKNHNN4+Wa6S8
-            HNwbYAc=
-            =9RxF
-            -----END PGP MESSAGE-----
-        """.trimIndent()
-
-        val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
-
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, AddressId(oneAddressKeyAddressId))
-        val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
-
-        assertEquals(expected, result)
-    }
-
-    @Test
     fun encrypt_and_decrypt_message() {
         val message = "Text to encrypt and decrypt."
 
@@ -827,43 +790,6 @@ internal class CryptoTest {
         assert(decrypted.hasSignature())
         assert(decrypted.isSignatureValid)
         assertEquals(message, decrypted.decryptedData)
-    }
-
-    @Test
-    fun decrypt_message_for_non_first_address_key() {
-        every { userManagerMock.currentUser } returns manyAddressKeysUserMock
-
-        val encryptedMessage = """
-            -----BEGIN PGP MESSAGE-----
-            Version: ProtonMail
-
-            wcBMA7M4YhTWmh7GAQgAxAdgbJWi7MKSMiMg5rOUu6Y6nFJK9pgU5MsrKYqO
-            /hXkkpocWTs4BDL+AXmy86e0C52mwsKJj/cFZ88erFLGMrkG+sVkDFi3fZ7Q
-            dqrqKrzbGg6NubQpCtwGv+KvtFcMfCUWD4jeH/saD4wW9ZAH3Ozu0s/VamIX
-            62VDi+l6TrZIUwsC6Pnyy5O8O1BnOultCjUP4bYApSfQIBDENBVyMVT9pp1/
-            ylfgUSZQCj2vWkbMtMH+SAgBgk+MMYVBTx+Pk1O9lhZdqXhjzEmi58AZMdq7
-            /+CGjJwnySBFCLaHddYfzvVVQEAJngRRl7WA+CVkskMc94w1nwlVeuARuAiy
-            /9LAaQHHE3Wb1en/rqK4IPK0qWaInpVualn6KeORmtnS3Kl2Xynt92Lcckoj
-            37WEdjXDCIhl4JyrldelRmaxBisnW3te4vsukGh87E4jL8oDvIMwHN0bm7KH
-            +kBnlxqrR6N5vZmcjFoU+n9XBYDkoPZ0MZCwCgMi2BbWrQv7zy/o3+35kgms
-            6c3Mwb7nIP15ksysLz884tF6k5cVoLFISL7OMqem1uKM66BgOYJovvRR1Y+v
-            70aQ/G2w7B44mzPBOlzOAzhDQDHtxNft1XT+LH2cjrExd0EzYE+8fpYpOHC0
-            KfHrt6wx/sj/O+e1M9F19UGDIJMFRmlgRIUJCEmpiaZnWjmdajfUpOPd47ac
-            GYmSnoyEOzjf1Lyy0M6w7BHPQgwaF7Ss94EAcsFcfw==
-            =iJT4
-            -----END PGP MESSAGE-----
-        """.trimIndent()
-
-        val expected = "Dear valued customer,\r\n\r\n" +
-            "Thank you for subscribing to ProtonMail! Your support will enable us to scale up ProtonMail and continue our mission to bring easy-to-use, encrypted email to people everywhere.\r\n\r\n" +
-            "Thank you,\r\n\r\n" +
-            "The ProtonMail Team\r\n"
-
-        val addressCrypto =
-            Crypto.forAddress(userManagerMock, manyAddressKeysUserId, AddressId(manyAddressKeysAddressId))
-        val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
-
-        assertEquals(expected, result)
     }
 
     @Test
@@ -1669,72 +1595,4 @@ internal class CryptoTest {
         )
     }
 
-    @Test
-    fun get_public_key() {
-
-        val expected = """
-            -----BEGIN PGP PUBLIC KEY BLOCK-----
-            Version: GopenPGP 0.0.1 (ddacebe0)
-            Comment: https://gopenpgp.org
-
-            xsBNBF1BfxUBCADUpiiG3AhQK08E2nBmQ50XeztOWArmknINQV41pqGFW5VQkfbQ
-            3FYsANhLGqbDBQ0XxmocjKL7W7W8Y4xmHCGgkCUy6gAqGbi+sXY9Sl8xqQNHuZDh
-            WVdqT8+Rtv+DRxp/XrGkzC1U8CBYUmmKS92ldy0/zZIvgQXT6t5Q+v+BeUSv4jCs
-            nY3BE0UBOljtrTXlOcXRZHQxORWG+kon0qgcJERdwwzhxY6eT8jEfAfJY0hzQaYg
-            +6bj6ZR0zkMtY2Psq2M05kzEw4On/dezZETAu1e9fSqfk1mp+H6BeLJ9RUyrFK/P
-            qIO48+pU8CmAvTdx5eIihyOM16CFg/3GgV85ABEBAAHNMWFkYW10c3RAcHJvdG9u
-            bWFpbC5ibHVlIDxhZGFtdHN0QHByb3Rvbm1haWwuYmx1ZT7CwGgEEwEIABwFAl1B
-            fxUJEBHDHo5eB/TQAhsDAhkBAgsJAhUIAADHoggACDYDZkyTMZX69k9uoAygAQ75
-            2kb52r0L3dSLge+hUelxJOiVUznbavzVhzjzF2FucXP0csOSJygHNejjS62BDtsX
-            iIoPiVDO1+Hr72X4gE277VeZ1b6VozJvKC0+H4fhg/EtkD07oVhHJRxOOVlgUXGK
-            nP2lz2ojny0McggvN+Nk8ILqt6ImlvEk6CnTs9XdmcmosMiQU+U+THKrKZ+5Yec8
-            4kzlHG8ee7Tim2yn9n/FuBStrYkTJUsDuAL/LOfF9DnzTzukK6kqpDB6kDfMeYQJ
-            Lq+Tu642n74P0lqOO0Wy7imI/hxM1W8yqcNdafS7PCuGHD99mecdKWVeYHCCY87A
-            TQRdQX8VAQgAyAIj6ytLB1CUinP6f6aVKlLSM9e9Figv1CAw53NHeQBbmwzU5bZn
-            tE6UERnvJy6ul7hJr9Jop+O1/jA6zaGanF5wv0nEvTHcoYRpJ4QiJgiQxvhOdItH
-            29+jBV1F44xOzlGnEzFAv7GbPecKHAsQgX9qYCj+5ydcttQ29gWQ6nN23G03R3Lb
-            KRS9H2uw1SIYGgif8FgKpJemwJjuSibyViXTf3JC8ZUtYbq+vIXqATFFtbrUHfKM
-            AKlHo0uLYGq1rRINGR6Dmhu6bGhZonuW0na4+5Wh86kg9c/YI7jSIIspRRkH+v7+
-            RXH51h8Rbc2Tiv64qy7cIJIH0Bk0lFAaIQARAQABwsBfBBgBCAATBQJdQX8VCRAR
-            wx6OXgf00AIbDAAAgvAIAGyLaHYTjiXG/ORIIAgdQhKBYOozrOS4EcOPNdMSPBwT
-            6P+BpNS/GD33pzANVKM9Mft8+NnePUFOR2f4QJrQ1VvSj9ko8P2sX7IAe7+rG614
-            LQfzjG5R16KlSVOMFW0K2L8ZxumDdYl/N0BhgtZmB1lg1xY2TPHoDetznMnHG8sL
-            6u6vyhGl5a6qcW2g1urlF0VF/CEqg1lwAKhFHIFiNR+X6jCjg0KJa9MjAW6oICOx
-            oX0jp195mWix6suRJSWVK14uieT6uL5yYC5tZMz+t9rs7YxCkHxFRT1H5ZLHUD/r
-            93liqW+pzUx+bVdz5qNMb0ZonHZRLe3/Fzb19x8UMPc=
-            =6gp8
-            -----END PGP PUBLIC KEY BLOCK-----
-        """.trimIndent()
-
-        val armoredKey = Armor.armorKey(openPgp.getPublicKey(oneAddressKeyAddressKeys[0].privateKey))
-
-        assertEquals(expected, armoredKey)
-    }
-
-    @Test
-    fun generate_token_and_signature_private_user() {
-        every { userManagerMock.currentUser } returns oneKeyUserMock
-        every { userManagerMock.getCurrentUserPassphrase() } returns passphrase
-        runBlocking {
-            val (token, signature) =
-                GenerateTokenAndSignature(userManagerMock, openPgpMock).invoke("")
-            val testMessage = newPGPMessageFromArmored(token)
-            val testKey = newKeyFromArmored(armoredPrivateKey)
-            val unlocked = testKey.unlock(passphrase)
-            val verificationKeyRing = newKeyRing(unlocked)
-            val decryptedTokenPlainMessage = verificationKeyRing.decrypt(testMessage, null, 0)
-            val decryptedTokenString = decryptedTokenPlainMessage.string
-            assertEquals(randomTokenString, decryptedTokenString)
-            val armoredSignature = newPGPSignatureFromArmored(signature)
-
-            verificationKeyRing.verifyDetached(
-                decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime()
-            )
-        }
-    }
-
-    @Test
-    @Ignore("Pending implementation")
-    fun generate_token_and_signature_org() {
-    }
 }

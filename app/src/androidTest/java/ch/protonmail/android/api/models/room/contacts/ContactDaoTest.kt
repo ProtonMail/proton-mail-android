@@ -31,7 +31,6 @@ import ch.protonmail.android.data.local.model.FullContactDetails
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.BeforeTest
@@ -309,13 +308,6 @@ internal class ContactDaoTest {
         assertDatabaseState()
     }
 
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun findAllContactsEmailsByContactGroupAsync() {
-        TODO()
-        assertDatabaseState()
-    }
-
     @Test
     fun clearByEmail() {
         val deletedEmail = contactEmails[1].email
@@ -407,111 +399,6 @@ internal class ContactDaoTest {
         assertDatabaseState(expectedContactEmails = expected)
     }
 
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun countContactEmails() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun findContactGroupById() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun findContactGroupByIdAsync() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun findContactGroupsLiveData() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun findContactGroupsObservable() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun clearContactGroupsLabelsTable() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun saveContactGroupLabel() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun updateFullContactGroup() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun saveAllContactGroups() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun clearContactGroupsList() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun saveContactGroupsList() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun deleteByContactGroupLabelId() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun deleteContactGroup() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun getAllContactGroupsByIds() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun updatePartially() {
-        TODO()
-        assertDatabaseState()
-    }
-
     @Test
     fun insertFullContactDetails() {
         val inserted = FullContactDetails(
@@ -558,35 +445,6 @@ internal class ContactDaoTest {
         Assert.assertNull(found)
         assertDatabaseState(expectedFullContactDetails = expected)
     }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun countContactEmailsByLabelId() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun saveContactEmailContactLabel() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun saveContactEmailContactLabel1() {
-        TODO()
-        assertDatabaseState()
-    }
-
-    @Ignore("Implement with contacts groups")
-    @Test
-    fun saveContactEmailContactLabel2() {
-        TODO()
-        assertDatabaseState()
-    }
-
 
     @Test
     fun testContactEmailsConverter() = runBlocking {
