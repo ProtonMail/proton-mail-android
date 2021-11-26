@@ -26,6 +26,8 @@ import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -34,17 +36,14 @@ import javax.inject.Inject
 
 // TODO: MAILAND-2614 uncomment after test with dummy state @HiltViewModel
 class ParentFolderPickerViewModel @Inject constructor(
-    private val dispatchers: DispatcherProvider,
-    // TODO: MAILAND-2614 for test only, replace with use case
-    initialState: ParentFolderPickerState = ParentFolderPickerState.Editing(
-        selectedItemId = null,
-        items = listOf(
-            ParentFolderPickerItemUiModel.None(isSelected = true)
-        )
-    )
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
-    val state = MutableStateFlow(initialState)
+    val state: StateFlow<ParentFolderPickerState> get() =
+        mutableState.asStateFlow()
+
+    private val mutableState: MutableStateFlow<ParentFolderPickerState> =
+        MutableStateFlow(ParentFolderPickerState.Loading(selectedItemId = null))
 
     fun process(action: ParentFolderPickerAction) {
         viewModelScope.launch {
@@ -52,7 +51,7 @@ class ParentFolderPickerViewModel @Inject constructor(
                 is ParentFolderPickerAction.SetSelected -> setSelected(action.folderId)
                 is ParentFolderPickerAction.SaveAndClose -> saveAndClose()
             }
-            state.emit(newState)
+            mutableState.emit(newState)
         }
     }
 
@@ -63,6 +62,7 @@ class ParentFolderPickerViewModel @Inject constructor(
         }
 
         return when (prevState) {
+            is ParentFolderPickerState.Loading -> prevState.copy(selectedItemId = folderId)
             is ParentFolderPickerState.Editing -> prevState.updateSelectedItem(folderId)
             is ParentFolderPickerState.SavingAndClose -> {
                 Timber.w("Previous state is 'SavingAndClose', ignoring the current change")

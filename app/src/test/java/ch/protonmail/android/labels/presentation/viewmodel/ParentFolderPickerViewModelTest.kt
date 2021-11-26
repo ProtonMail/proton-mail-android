@@ -50,7 +50,24 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `on select action selects the correct item`() = runBlockingTest {
+    fun `on select action selects the correct item in Loading`() = runBlockingTest {
+        // given
+        val viewModel = buildViewModel()
+        val action = ParentFolderPickerAction.SetSelected(TEST_FOLDER_ID_1)
+        val expectedState = ParentFolderPickerState.Loading(selectedItemId = TEST_FOLDER_ID_1)
+
+        // when
+        viewModel.process(action)
+
+        // then
+        viewModel.state.test {
+
+            assertEquals(expectedState, awaitItem())
+        }
+    }
+
+    @Test
+    fun `on select action selects the correct item in Editing`() = runBlockingTest {
         // given
         val initialState = ParentFolderPickerState.Editing(
             selectedItemId = null,
@@ -131,7 +148,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
             selectedItemId = null,
             listOf(buildNoneUiModel())
         )
-    ) = ParentFolderPickerViewModel(TestDispatcherProvider, initialState)
+    ) = ParentFolderPickerViewModel(TestDispatcherProvider)
 
     companion object TestData {
 
