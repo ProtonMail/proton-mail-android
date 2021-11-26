@@ -53,6 +53,13 @@ class SingleLineCollapsedLabelGroupViewTest :
     }
 
     @Test
+    fun whenHasLabelsShouldShowTheView() {
+        testView.setLabels(LabelList.withThreeItems)
+
+        onTestView().check(isVisible())
+    }
+
+    @Test
     fun whenHasThreeLabelsShouldShowThemAllWithoutMoreTextView() {
         runOnActivityThread {
             testView.setLabels(LabelList.withThreeItems)
