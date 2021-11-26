@@ -144,9 +144,9 @@ abstract class MessageDao : BaseDao<Message>() {
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_DELETED = 0
-          AND $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+          AND ($COLUMN_MESSAGE_LABELS LIKE :label || ';%'
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
-          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%'
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
