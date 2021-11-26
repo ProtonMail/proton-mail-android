@@ -20,9 +20,11 @@
 package ch.protonmail.android.util
 
 import android.view.View
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
+import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.google.android.material.textfield.TextInputEditText
+import me.proton.core.presentation.ui.view.ProtonInput
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.core.AllOf.allOf
@@ -34,5 +36,14 @@ import org.hamcrest.core.AllOf.allOf
 fun withTextInputEditTextId(id: Int): Matcher<View> =
     allOf(
         withId(id),
-        ViewMatchers.withClassName(Matchers.`is`(TextInputEditText::class.qualifiedName))
+        withClassName(Matchers.`is`(TextInputEditText::class.qualifiedName))
+    )
+
+/**
+ * Matches a [TextInputEditText] inside a [ProtonInput] with given [id]
+ */
+fun withProtonInputEditTextId(id: Int): Matcher<View> =
+    allOf(
+        isDescendantOfA(withId(id)),
+        withClassName(Matchers.`is`(TextInputEditText::class.qualifiedName))
     )
