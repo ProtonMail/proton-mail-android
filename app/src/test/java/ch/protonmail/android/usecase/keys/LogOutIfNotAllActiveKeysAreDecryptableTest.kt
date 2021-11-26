@@ -68,10 +68,10 @@ class LogOutIfNotAllActiveKeysAreDecryptableTest {
         every { userNotifierMock.showError(any()) } just runs
         every { getStringResourceMock(R.string.logged_out_description) } returns TestData.EXPECTED_ERROR_MESSAGE
 
-        // then
+        // when
         val loggingOut = logOutIfNotAllActiveKeysAreDecryptable()
 
-        // when
+        // then
         assertTrue(loggingOut)
         verify { userManagerMock.logoutLastActiveAccount() }
         verify { userNotifierMock.showError(TestData.EXPECTED_ERROR_MESSAGE) }
@@ -86,10 +86,10 @@ class LogOutIfNotAllActiveKeysAreDecryptableTest {
         every { userNotifierMock.showError(any()) } just runs
         every { getStringResourceMock(providedErrorMessage) } returns TestData.EXPECTED_ERROR_MESSAGE
 
-        // then
+        // when
         val loggingOut = logOutIfNotAllActiveKeysAreDecryptable(providedErrorMessage)
 
-        // when
+        // then
         assertTrue(loggingOut)
         verify { userManagerMock.logoutLastActiveAccount() }
         verify { userNotifierMock.showError(TestData.EXPECTED_ERROR_MESSAGE) }

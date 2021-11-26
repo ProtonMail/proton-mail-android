@@ -20,6 +20,6 @@
 package ch.protonmail.android.crypto
 
 class UserKeyVerificationException(
-    val userId: String,
+    val userKeyId: String,
     wrapped: Exception
 ) : Exception(wrapped.message, wrapped.fillInStackTrace())

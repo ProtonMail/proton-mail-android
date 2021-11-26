@@ -225,7 +225,7 @@ class AddressCrypto @AssistedInject constructor(
                 lockedAddressKey.unlock(addressKeyPassphrase)
             } catch (decryptionError: Exception) {
                 val errorType = if (decryptionError is UserKeyVerificationException) {
-                    "User key issue. User key ID = ${decryptionError.userId}"
+                    "User key issue. User key ID = ${decryptionError.userKeyId}"
                 } else {
                     "Address key issue. Address key ID = ${key.id}"
                 }
