@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.labels.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
@@ -46,6 +47,9 @@ import kotlin.test.assertEquals
 
 class ParentFolderPickerViewModelTest : CoroutinesTest {
 
+    private val savedStateHandle: SavedStateHandle = mockk {
+        every { get<String>(any()) } returns null
+    }
     private val accountManager: AccountManager = mockk {
         every { getPrimaryUserId() } returns flowOf(USER_ID)
     }
@@ -55,6 +59,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
 
     private val viewModel by lazy {
         ParentFolderPickerViewModel(
+            savedStateHandle = savedStateHandle,
             dispatchers = TestDispatcherProvider,
             accountManager = accountManager,
             observeFoldersEligibleAsParent = observeFoldersEligibleAsParent,
@@ -180,6 +185,19 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
 
             dataSourceFlow.emit(buildTwoFoldersList())
             assertEquals(secondExpectedState, awaitItem())
+        }
+    }
+
+    @Test
+    fun `selectedItemId is correctly retrieved from SavedStateHandled`() = runBlockingTest {
+        // given
+        every { savedStateHandle.get<String>(any()) } returns FOLDER_2_ID.id
+        val expectedState = ParentFolderPickerState.Loading(selectedItemId = FOLDER_2_ID)
+
+        // when
+        viewModel.state.test {
+
+            assertEquals(expectedState, awaitItem())
         }
     }
 

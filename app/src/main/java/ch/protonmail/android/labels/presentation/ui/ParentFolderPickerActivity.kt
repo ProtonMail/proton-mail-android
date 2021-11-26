@@ -43,8 +43,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
+import timber.log.Timber
 
-private const val EXTRA_PARENT_FOLDER_PICKER_LABEL_ID = "extra.labelId"
+const val EXTRA_PARENT_FOLDER_PICKER_LABEL_ID = "extra.labelId"
 
 @AndroidEntryPoint
 class ParentFolderPickerActivity : AppCompatActivity() {
@@ -92,7 +93,9 @@ class ParentFolderPickerActivity : AppCompatActivity() {
         }
 
         viewModel.state.onEach { state ->
+            Timber.v("Received state: $state")
             when (state) {
+                is ParentFolderPickerState.Loading -> {}
                 is ParentFolderPickerState.Editing -> onEditingState(state)
                 is ParentFolderPickerState.SavingAndClose -> onSavingAndCloseState(state)
             }

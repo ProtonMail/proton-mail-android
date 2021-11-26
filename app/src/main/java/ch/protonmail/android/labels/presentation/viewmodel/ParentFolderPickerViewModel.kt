@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.labels.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -27,6 +28,7 @@ import ch.protonmail.android.labels.presentation.mapper.ParentFolderPickerItemUi
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
+import ch.protonmail.android.labels.presentation.ui.EXTRA_PARENT_FOLDER_PICKER_LABEL_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,6 +47,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ParentFolderPickerViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val dispatchers: DispatcherProvider,
     accountManager: AccountManager,
     private val observeFoldersEligibleAsParent: ObserveFoldersEligibleAsParent,
@@ -54,8 +57,9 @@ class ParentFolderPickerViewModel @Inject constructor(
     val state: StateFlow<ParentFolderPickerState> get() =
         mutableState.asStateFlow()
 
-    private val mutableState: MutableStateFlow<ParentFolderPickerState> =
-        MutableStateFlow(ParentFolderPickerState.Loading(selectedItemId = null))
+    private val mutableState: MutableStateFlow<ParentFolderPickerState> = MutableStateFlow(
+        ParentFolderPickerState.Loading(selectedItemId = savedStateHandle.selectedItemId)
+    )
 
     init {
         accountManager.getPrimaryUserId()
@@ -131,3 +135,6 @@ private fun MutableStateFlow<ParentFolderPickerState>.updateItemsIfNeeded(
     }
     if (newState !== prevState) tryEmit(newState)
 }
+
+private val SavedStateHandle.selectedItemId get() =
+    get<String>(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID)?.let(::LabelId)
