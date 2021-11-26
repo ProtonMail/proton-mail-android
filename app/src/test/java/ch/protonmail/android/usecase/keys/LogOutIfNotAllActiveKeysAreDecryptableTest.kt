@@ -63,11 +63,10 @@ class LogOutIfNotAllActiveKeysAreDecryptableTest {
     @Test
     fun `should return true, log out and notify user when keys are not decryptable`() {
         // given
-        val expectedErrorMessage = "We logged you out, whatchu' gonna do about it?"
         every { areActiveKeysDecryptableMock() } returns false
         every { userManagerMock.logoutLastActiveAccount() } just runs
         every { userNotifierMock.showError(any()) } just runs
-        every { getStringResourceMock(R.string.logged_out_description) } returns expectedErrorMessage
+        every { getStringResourceMock(R.string.logged_out_description) } returns TestData.EXPECTED_ERROR_MESSAGE
 
         // then
         val loggingOut = logOutIfNotAllActiveKeysAreDecryptable()
@@ -75,6 +74,28 @@ class LogOutIfNotAllActiveKeysAreDecryptableTest {
         // when
         assertTrue(loggingOut)
         verify { userManagerMock.logoutLastActiveAccount() }
-        verify { userNotifierMock.showError(expectedErrorMessage) }
+        verify { userNotifierMock.showError(TestData.EXPECTED_ERROR_MESSAGE) }
+    }
+
+    @Test
+    fun `should return true, log out and notify user using the provided error message when keys are not decryptable`() {
+        // given
+        val providedErrorMessage = R.string.logged_out_contact_support
+        every { areActiveKeysDecryptableMock() } returns false
+        every { userManagerMock.logoutLastActiveAccount() } just runs
+        every { userNotifierMock.showError(any()) } just runs
+        every { getStringResourceMock(providedErrorMessage) } returns TestData.EXPECTED_ERROR_MESSAGE
+
+        // then
+        val loggingOut = logOutIfNotAllActiveKeysAreDecryptable(providedErrorMessage)
+
+        // when
+        assertTrue(loggingOut)
+        verify { userManagerMock.logoutLastActiveAccount() }
+        verify { userNotifierMock.showError(TestData.EXPECTED_ERROR_MESSAGE) }
+    }
+
+    private object TestData {
+        const val EXPECTED_ERROR_MESSAGE = "We logged you out, whatchu' gonna do about it?"
     }
 }

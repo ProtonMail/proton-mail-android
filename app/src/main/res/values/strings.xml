@@ -636,6 +636,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <string name="logged_out">Logged out</string>
     <string name="logged_out_description">You have been logged out. Please login again.</string>
+    <string name="logged_out_contact_support">There was a problem logging into your account on Android. Please contact customer support from the Web client.</string>
     <string name="verification_needed">Verification Required</string>
     <string name="verification_needed_description">For security reasons, please verify that you are not a robot.</string>
     <string name="verification_needed_description_notification">Please verify you are a human before sending this message: %s</string>

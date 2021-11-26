@@ -101,32 +101,32 @@ class CheckIfActiveKeysAreDecryptableTest {
             }
         )
     }
-}
 
-private object TestData {
-    object User {
-        const val USERNAME = "username"
-    }
+    private object TestData {
+        object User {
+            const val USERNAME = "username"
+        }
 
-    object Address {
-        const val DECRYPTABLE_ID = "address id"
-        const val NON_DECRYPTABLE_ID = "can't decrypt this"
-        val WITH_DECRYPTABLE_KEYS = addressWithId(DECRYPTABLE_ID)
-        val WITH_NON_DECRYPTABLE_KEYS = addressWithId(NON_DECRYPTABLE_ID)
+        object Address {
+            const val DECRYPTABLE_ID = "address id"
+            const val NON_DECRYPTABLE_ID = "can't decrypt this"
+            val WITH_DECRYPTABLE_KEYS = addressWithId(DECRYPTABLE_ID)
+            val WITH_NON_DECRYPTABLE_KEYS = addressWithId(NON_DECRYPTABLE_ID)
 
-        private fun addressWithId(id: String) = Address(
-            id,
-            null,
-            null,
-            0,
-            0,
-            0,
-            0,
-            0,
-            null,
-            null,
-            0,
-            null
-        )
+            private fun addressWithId(id: String) = Address(
+                id,
+                null,
+                null,
+                0,
+                0,
+                0,
+                0,
+                0,
+                null,
+                null,
+                0,
+                null
+            )
+        }
     }
 }

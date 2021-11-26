@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.keys
 
+import androidx.annotation.StringRes
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -32,12 +33,12 @@ class LogOutIfNotAllActiveKeysAreDecryptable @Inject constructor(
     private val getStringResource: StringResourceResolver
 ) {
 
-    operator fun invoke(): Boolean {
+    operator fun invoke(@StringRes errorMessage: Int = R.string.logged_out_description): Boolean {
         return if (areActiveKeysDecryptable()) {
             false
         } else {
             userManager.logoutLastActiveAccount()
-            userNotifier.showError(getStringResource(R.string.logged_out_description))
+            userNotifier.showError(getStringResource(errorMessage))
             true
         }
     }

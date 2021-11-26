@@ -44,6 +44,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import ch.protonmail.android.R;
 import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.ProtonMailApi;
 import ch.protonmail.android.api.ProtonMailApiManager;
@@ -555,7 +556,8 @@ public class LoginService extends ProtonJobIntentService {
                         userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
-                        boolean loggingOut = logOutIfNotAllActiveKeysAreDecryptable.invoke();
+                        boolean loggingOut = logOutIfNotAllActiveKeysAreDecryptable
+                                .invoke(R.string.logged_out_contact_support);
                         if (loggingOut) return;
                         if (!signUp) {
                             if (networkUtils.isConnected() && userManager.isLoggedIn() && userManager.accessTokenExists()) {
