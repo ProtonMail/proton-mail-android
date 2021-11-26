@@ -147,8 +147,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
         ) = ParentFolderPickerItemUiModel.Folder(
             id = labelId,
             name = "name",
-            colorInt = 0,
-            icon = ParentFolderPickerItemUiModel.Folder.Icon.WithoutChildren,
+            icon = ParentFolderPickerItemUiModel.Folder.Icon(0, 0, 0),
             folderLevel = 0,
             isSelected = isSelected
         )

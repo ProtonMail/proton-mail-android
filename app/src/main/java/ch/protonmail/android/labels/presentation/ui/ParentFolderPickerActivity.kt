@@ -63,7 +63,7 @@ class ParentFolderPickerActivity : AppCompatActivity() {
                     setMarginFor(folderLevel = model.folderLevel)
                     parentPickerFolderIconImageView.apply {
                         isVisible = true
-                        setColorFilter(model.colorInt)
+                        setColorFilter(model.icon.colorInt)
                         setImageResource(model.icon.drawableRes)
                         contentDescription = getString(model.icon.contentDescriptionRes)
                     }
