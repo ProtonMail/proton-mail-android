@@ -21,12 +21,21 @@ package ch.protonmail.android.labels.presentation.viewmodel
 
 import app.cash.turbine.test
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
+import ch.protonmail.android.labels.domain.usecase.ObserveFoldersEligibleAsParent
+import ch.protonmail.android.labels.presentation.mapper.ParentFolderPickerItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
+import ch.protonmail.android.labels.utils.buildFolders
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import timber.log.Timber
@@ -37,7 +46,21 @@ import kotlin.test.assertEquals
 
 class ParentFolderPickerViewModelTest : CoroutinesTest {
 
+    private val accountManager: AccountManager = mockk {
+        every { getPrimaryUserId() } returns flowOf(USER_ID)
+    }
+    private val observeFoldersEligibleAsParent: ObserveFoldersEligibleAsParent = mockk()
+    private val mapper: ParentFolderPickerItemUiModelMapper = mockk()
     private val mockTimberTree: Timber.Tree = mockk()
+
+    private val viewModel by lazy {
+        ParentFolderPickerViewModel(
+            dispatchers = TestDispatcherProvider,
+            accountManager = accountManager,
+            observeFoldersEligibleAsParent = observeFoldersEligibleAsParent,
+            mapper = mapper
+        )
+    }
 
     @BeforeTest
     fun setup() {
@@ -52,9 +75,9 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     @Test
     fun `on select action selects the correct item in Loading`() = runBlockingTest {
         // given
-        val viewModel = buildViewModel()
-        val action = ParentFolderPickerAction.SetSelected(TEST_FOLDER_ID_1)
-        val expectedState = ParentFolderPickerState.Loading(selectedItemId = TEST_FOLDER_ID_1)
+        every { observeFoldersEligibleAsParent(USER_ID) } returns flowOf()
+        val action = ParentFolderPickerAction.SetSelected(FOLDER_1_ID)
+        val expectedState = ParentFolderPickerState.Loading(selectedItemId = FOLDER_1_ID)
 
         // when
         viewModel.process(action)
@@ -69,25 +92,14 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     @Test
     fun `on select action selects the correct item in Editing`() = runBlockingTest {
         // given
-        val initialState = ParentFolderPickerState.Editing(
-            selectedItemId = null,
-            items = listOf(
-                buildNoneUiModel(isSelected = true),
-                buildFolderUiModel(TEST_FOLDER_ID_1, isSelected = false),
-                buildFolderUiModel(TEST_FOLDER_ID_2, isSelected = false)
-            )
-        )
-        val viewModel = buildViewModel(initialState)
+        every { observeFoldersEligibleAsParent(USER_ID) } returns flowOf(buildTwoFoldersList())
+        every { mapper.toUiModels(buildTwoFoldersList(), any(), any()) } returns buildTwoFoldersUiModelList()
 
-        val action = ParentFolderPickerAction.SetSelected(TEST_FOLDER_ID_1)
+        val action = ParentFolderPickerAction.SetSelected(FOLDER_1_ID)
 
         val expectedState = ParentFolderPickerState.Editing(
-            selectedItemId = TEST_FOLDER_ID_1,
-            items = listOf(
-                buildNoneUiModel(isSelected = false),
-                buildFolderUiModel(TEST_FOLDER_ID_1, isSelected = true),
-                buildFolderUiModel(TEST_FOLDER_ID_2, isSelected = false)
-            )
+            selectedItemId = FOLDER_1_ID,
+            items = buildTwoFoldersUiModelList(FOLDER_1_ID)
         )
 
         // when
@@ -103,18 +115,19 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     @Test
     fun `select action is ignored if is currently saving and closing`() = runBlockingTest {
         // given
-        val initialState = ParentFolderPickerState.SavingAndClose(selectedItemId = null)
-        val viewModel = buildViewModel(initialState)
+        val saveAndCloseAction = ParentFolderPickerAction.SaveAndClose
+        val setSelectedAction = ParentFolderPickerAction.SetSelected(FOLDER_1_ID)
 
-        val action = ParentFolderPickerAction.SetSelected(TEST_FOLDER_ID_1)
+        val expectedState = ParentFolderPickerState.SavingAndClose(selectedItemId = null)
 
         // when
-        viewModel.process(action)
+        viewModel.process(saveAndCloseAction)
+        viewModel.process(setSelectedAction)
 
         // then
         viewModel.state.test {
 
-            assertEquals(initialState, awaitItem())
+            assertEquals(expectedState, awaitItem())
             verify { mockTimberTree.w("Previous state is 'SavingAndClose', ignoring the current change") }
         }
     }
@@ -123,18 +136,14 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     fun `on save and close action emits correct state with correct selected item`() =
         runBlockingTest {
             // given
-            val initialState = ParentFolderPickerState.Editing(
-                selectedItemId = TEST_FOLDER_ID_2,
-                items = emptyList()
-            )
-            val viewModel = buildViewModel(initialState)
+            val setSelectedAction = ParentFolderPickerAction.SetSelected(FOLDER_2_ID)
+            val saveAndCloseAction = ParentFolderPickerAction.SaveAndClose
 
-            val action = ParentFolderPickerAction.SaveAndClose
-
-            val expectedState = ParentFolderPickerState.SavingAndClose(TEST_FOLDER_ID_2)
+            val expectedState = ParentFolderPickerState.SavingAndClose(FOLDER_2_ID)
 
             // when
-            viewModel.process(action)
+            viewModel.process(setSelectedAction)
+            viewModel.process(saveAndCloseAction)
 
             // then
             viewModel.state.test {
@@ -143,27 +152,75 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
             }
         }
 
-    private fun buildViewModel(
-        initialState: ParentFolderPickerState = ParentFolderPickerState.Editing(
+    @Test
+    fun `emits updated data from source`() = runBlockingTest {
+        // given
+        val dataSourceFlow = MutableSharedFlow<List<LabelOrFolderWithChildren.Folder>>()
+        every { observeFoldersEligibleAsParent(USER_ID) } returns dataSourceFlow
+        every { mapper.toUiModels(buildOneFolderList(), any(), any()) } returns buildOneFolderUiModelList()
+        every { mapper.toUiModels(buildTwoFoldersList(), any(), any()) } returns buildTwoFoldersUiModelList()
+
+        val firstExpectedState = ParentFolderPickerState.Editing(
             selectedItemId = null,
-            listOf(buildNoneUiModel())
+            items = buildOneFolderUiModelList()
         )
-    ) = ParentFolderPickerViewModel(TestDispatcherProvider)
+        val secondExpectedState = ParentFolderPickerState.Editing(
+            selectedItemId = null,
+            items = buildTwoFoldersUiModelList()
+        )
+
+        // when
+        viewModel.state.test {
+
+            assertEquals(ParentFolderPickerState.Loading(selectedItemId = null), awaitItem())
+
+            // then
+            dataSourceFlow.emit(buildOneFolderList())
+            assertEquals(firstExpectedState, awaitItem())
+
+            dataSourceFlow.emit(buildTwoFoldersList())
+            assertEquals(secondExpectedState, awaitItem())
+        }
+    }
 
     companion object TestData {
 
-        val TEST_FOLDER_ID_1 = LabelId("folder 1")
-        val TEST_FOLDER_ID_2 = LabelId("folder 2")
+        private const val FOLDER_1_NAME = "folder 1"
+        private const val FOLDER_2_NAME = "folder 2"
 
-        fun buildNoneUiModel(isSelected: Boolean = true) =
+        val USER_ID = UserId("user")
+        val FOLDER_1_ID = LabelId(FOLDER_1_NAME)
+        val FOLDER_2_ID = LabelId(FOLDER_2_NAME)
+
+        fun buildOneFolderList(): List<LabelOrFolderWithChildren.Folder> = buildFolders {
+            folder(FOLDER_1_NAME)
+        }
+
+        fun buildTwoFoldersList(): List<LabelOrFolderWithChildren.Folder> = buildFolders {
+            folder(FOLDER_1_NAME)
+            folder(FOLDER_2_NAME)
+        }
+
+        fun buildOneFolderUiModelList(selected: LabelId? = null): List<ParentFolderPickerItemUiModel> = listOf(
+            buildNoneUiModel(isSelected = selected == null),
+            buildFolderUiModel(FOLDER_1_NAME, isSelected = selected == FOLDER_1_ID)
+        )
+
+        fun buildTwoFoldersUiModelList(selected: LabelId? = null): List<ParentFolderPickerItemUiModel> = listOf(
+            buildNoneUiModel(isSelected = selected == null),
+            buildFolderUiModel(FOLDER_1_NAME, isSelected = selected == FOLDER_1_ID),
+            buildFolderUiModel(FOLDER_2_NAME, isSelected = selected == FOLDER_2_ID)
+        )
+
+        private fun buildNoneUiModel(isSelected: Boolean = true) =
             ParentFolderPickerItemUiModel.None(isSelected = isSelected)
 
-        fun buildFolderUiModel(
-            labelId: LabelId,
+        private fun buildFolderUiModel(
+            name: String,
             isSelected: Boolean = false,
         ) = ParentFolderPickerItemUiModel.Folder(
-            id = labelId,
-            name = "name",
+            id = LabelId(name),
+            name = name,
             icon = ParentFolderPickerItemUiModel.Folder.Icon(0, 0, 0),
             folderLevel = 0,
             isSelected = isSelected
