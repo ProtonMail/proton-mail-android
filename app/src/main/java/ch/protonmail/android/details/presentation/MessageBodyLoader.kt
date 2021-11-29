@@ -17,15 +17,16 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.details.presentation
 
 import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.messageDetails.body.MessageBodyDecryptor
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
+import ch.protonmail.android.details.domain.MessageBodyDecryptor
+import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.css.MessageBodyCssProvider
@@ -33,7 +34,7 @@ import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider
 import javax.inject.Inject
 
-internal class MessageBodyLoader @Inject constructor(
+class MessageBodyLoader @Inject constructor(
     private val userManager: UserManager,
     private val messageRepository: MessageRepository,
     private val renderDimensionsProvider: RenderDimensionsProvider,

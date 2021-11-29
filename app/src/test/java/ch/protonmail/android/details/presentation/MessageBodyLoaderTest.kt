@@ -17,13 +17,15 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.details.presentation
 
 import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.messageDetails.body.MessageBodyDecryptor
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.domain.MessageBodyDecryptor
+import ch.protonmail.android.details.domain.MessageBodyParser
+import ch.protonmail.android.details.domain.model.MessageBodyParts
 import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testdata.KeyInformationTestData
