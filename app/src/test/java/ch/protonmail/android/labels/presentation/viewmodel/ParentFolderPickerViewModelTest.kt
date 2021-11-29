@@ -50,7 +50,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `ParentFolderPickerAction_SetSelected select the correct item`() = runBlockingTest {
+    fun `on select action selects the correct item`() = runBlockingTest {
         // given
         val initialState = ParentFolderPickerState.Editing(
             selectedItemId = null,
@@ -84,7 +84,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `ParentFolderPickerAction_SetSelected is ignored if previous state is SavingAndClose`() = runBlockingTest {
+    fun `select action is ignored if is currently saving and closing`() = runBlockingTest {
         // given
         val initialState = ParentFolderPickerState.SavingAndClose(selectedItemId = null)
         val viewModel = buildViewModel(initialState)
@@ -103,7 +103,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `ParentFolderPickerAction_SaveAndClose emits SavingAndClose state with correct selected item`() =
+    fun `on save and close action emits correct state with correct selected item`() =
         runBlockingTest {
             // given
             val initialState = ParentFolderPickerState.Editing(
