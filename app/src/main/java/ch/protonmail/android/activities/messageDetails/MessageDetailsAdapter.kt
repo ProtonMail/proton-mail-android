@@ -48,11 +48,11 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.domain.model.SignatureVerification
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.details.presentation.mapper.MessageEncryptionUiModelMapper
+import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
 import ch.protonmail.android.labels.domain.model.Label
@@ -83,7 +83,7 @@ internal class MessageDetailsAdapter(
     private val context: Context,
     private var messages: List<Message>,
     private val messageDetailsRecyclerView: RecyclerView,
-    private val messageBodyParser: MessageBodyParser,
+    private val messageToMessageDetailsListItemMapper: MessageToMessageDetailsListItemMapper,
     private val userManager: UserManager,
     private val messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper,
     private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
@@ -504,19 +504,21 @@ internal class MessageDetailsAdapter(
 
         Timber.d("Show message details: $messageId")
         val validParsedBody = parsedBody ?: return
-        val messageBodyParts = messageBodyParser.splitBody(validParsedBody)
-
-        item.messageFormattedHtml = messageBodyParts.messageBody
-        item.messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
-        item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
-        item.showDecryptionError = showDecryptionError
-        item.message.setAttachmentList(attachments)
-        item.embeddedImageIds = embeddedImageIds
-        // Mark the message as read optimistically to reflect the change on the UI right away.
-        // Note that this message is being referenced to from both the header and the item.
-        item.message.Unread = false
+        val newItem = messageToMessageDetailsListItemMapper.toMessageDetailsListItem(
+            item.message,
+            validParsedBody,
+            showDecryptionError,
+            showLoadEmbeddedImagesButton
+        ).apply {
+            this.message.setAttachmentList(attachments)
+            this.embeddedImageIds = embeddedImageIds
+            // Mark the message as read optimistically to reflect the change on the UI right away.
+            // Note that this message is being referenced to from both the header and the item.
+            this.message.Unread = false
+        }
 
         visibleItems.indexOf(item).let { changedItemIndex ->
+            visibleItems[changedItemIndex] = newItem
             // Update both the message and its header to ensure the "read" status is shown
             val messageHeaderIndex = changedItemIndex - 1
             notifyItemRangeChanged(messageHeaderIndex, 2)

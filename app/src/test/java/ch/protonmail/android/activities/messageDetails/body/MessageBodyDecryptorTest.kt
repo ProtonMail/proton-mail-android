@@ -116,6 +116,24 @@ class MessageBodyDecryptorTest {
         assertFalse(decryptionSucceeded)
     }
 
+    @Test
+    fun `should return true and not try to decrypt if the message already has a decrypted html`() {
+        // given
+        val decryptedMessageSpy = MessageTestData.messageSpy().apply {
+            decryptedHTML = "I am decrypted"
+        }
+
+        // when
+        val decryptionSucceeded = messageBodyDecryptor(
+            message = decryptedMessageSpy,
+            publicKeys = KeyInformationTestData.listWithValidKey
+        )
+
+        // then
+        assertTrue(decryptionSucceeded)
+        verify(exactly = 0) { decryptedMessageSpy.decrypt(any(), any(), any()) }
+    }
+
     private fun Message.throwingException(
         publicKeys: List<KeyInformation>? = KeyInformationTestData.listWithValidKey
     ) = apply {

@@ -20,21 +20,14 @@
 package ch.protonmail.android.testdata
 
 import ch.protonmail.android.data.local.model.Message
-import io.mockk.every
-import io.mockk.just
-import io.mockk.runs
-import io.mockk.spyk
+import ch.protonmail.android.details.presentation.MessageDetailsListItem
 
-object MessageTestData {
-    const val MESSAGE_ID_RAW = "message_id"
-    const val MESSAGE_BODY = "<span>I just call, to say, hello world.</span>"
-    const val MESSAGE_BODY_FORMATTED = "<span>I just call, to say, hello world. But now I am formatted.</span>"
+object MessageDetailsListItemTestData {
+    fun withoutLoadedBodyFrom(message: Message) = MessageDetailsListItem(message, null, null)
 
-    fun messageSpy(messageId: String? = MESSAGE_ID_RAW) = Message(messageId).toSpy()
-
-    fun Message.toSpy(): Message {
-        return spyk(this).apply {
-            every { decrypt(any(), any(), any()) } just runs
-        }
-    }
+    fun withLoadedBodyFrom(message: Message) = MessageDetailsListItem(
+        message,
+        MessageTestData.MESSAGE_BODY_FORMATTED,
+        MessageTestData.MESSAGE_BODY_FORMATTED
+    )
 }

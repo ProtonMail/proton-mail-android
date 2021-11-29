@@ -53,8 +53,8 @@ import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsV
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.mapper.MessageEncryptionUiModelMapper
+import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
@@ -99,7 +99,7 @@ private const val ONE_HUNDRED_PERCENT = 1.0
 internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     @Inject
-    lateinit var messageBodyParser: MessageBodyParser
+    lateinit var messageToMessageDetailsListItemMapper: MessageToMessageDetailsListItemMapper
 
     @Inject
     lateinit var messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper
@@ -220,7 +220,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             this,
             emptyList(),
             messageDetailsRecyclerView,
-            messageBodyParser,
+            messageToMessageDetailsListItemMapper,
             mUserManager,
             messageEncryptionUiModelMapper,
             setUpWebViewDarkModeHandlingIfSupported,
