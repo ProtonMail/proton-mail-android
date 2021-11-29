@@ -373,7 +373,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** Show or hide the color picker */
     private fun toggleColorPicker(show: Boolean) {
-        label_color_parent.isVisible = show
+        edit_label_layout.isVisible = show
         labels_list_view_parent.isVisible = !show
     }
 
