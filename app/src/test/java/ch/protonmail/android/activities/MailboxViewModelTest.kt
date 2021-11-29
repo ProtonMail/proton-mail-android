@@ -319,7 +319,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isForwarded = false,
                     isInline = false
                 ),
-                isDeleted = false,
                 labels = emptyList(),
                 recipients = "",
                 isDraft = false
@@ -371,7 +370,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 isForwarded = false,
                 isInline = false
             ),
-            isDeleted = false,
             labels = emptyList(),
             recipients = "",
             isDraft = false
@@ -418,7 +416,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isForwarded = false,
                     isInline = false
                 ),
-                isDeleted = false,
                 labels = emptyList(),
                 recipients = "",
                 isDraft = false
@@ -464,7 +461,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isForwarded = false,
                     isInline = false
                 ),
-                isDeleted = false,
                 labels = emptyList(),
                 recipients = "",
                 isDraft = false
@@ -515,7 +511,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 isForwarded = false,
                 isInline = false
             ),
-            isDeleted = false,
             labels = emptyList(),
             recipients = "recipientName",
             isDraft = false
@@ -544,7 +539,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 isStarred = true
                 Unread = true
                 expirationTime = 82334L
-                deleted = false
                 allLabelIDs = listOf("0", "2")
                 toList = recipients
                 location = SENT.messageLocationTypeValue
@@ -581,7 +575,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 isForwarded = false,
                 isInline = false
             ),
-            isDeleted = false,
             labels = listOf(
                 LabelChipUiModel(LabelId("0"), Name("label 0"), testColorInt),
                 LabelChipUiModel(LabelId("2"), Name("label 2"), testColorInt)
@@ -684,7 +677,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 expirationTime = 823_764_623,
                 messagesCount = 4,
                 messageData = null,
-                isDeleted = false,
                 labels = emptyList(),
                 recipients = "",
                 isDraft = false
@@ -741,7 +733,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 expirationTime = 123423423,
                 messagesCount = 2,
                 messageData = null,
-                isDeleted = false,
                 labels = emptyList(),
                 recipients = "recipient, recipient1",
                 isDraft = false
@@ -793,7 +784,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 expirationTime = 0,
                 messagesCount = 2,
                 messageData = null,
-                isDeleted = false,
                 labels = listOf(LabelChipUiModel(LabelId("10"), Name("label 10"), testColorInt)),
                 recipients = "",
                 isDraft = false
@@ -841,7 +831,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 expirationTime = 0,
                 messagesCount = null,
                 messageData = null,
-                isDeleted = false,
                 labels = emptyList(),
                 recipients = "",
                 isDraft = false
@@ -894,7 +883,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 expirationTime = 0,
                 messagesCount = 2,
                 messageData = null,
-                isDeleted = false,
                 labels = listOf(
                     LabelChipUiModel(LabelId("0"), Name("label 0"), testColorInt),
                     LabelChipUiModel(LabelId("6"), Name("label 6"), testColorInt)
@@ -951,7 +939,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 expirationTime = 0,
                 messagesCount = 2,
                 messageData = null,
-                isDeleted = false,
                 labels = listOf(LabelChipUiModel(LabelId("6"), Name("label 6"), testColorInt)),
                 recipients = "",
                 isDraft = false
@@ -1002,7 +989,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 expirationTime = 0,
                 messagesCount = null,
                 messageData = null,
-                isDeleted = false,
                 labels = listOf(
                     LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
                     LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
@@ -1055,7 +1041,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 expirationTime = 0,
                 messagesCount = 2,
                 messageData = null,
-                isDeleted = false,
                 labels = listOf(
                     LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
                     LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
@@ -1118,7 +1103,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isForwarded = false,
                     isInline = false
                 ),
-                isDeleted = false,
                 labels = listOf(
                     LabelChipUiModel(LabelId("1"), Name("label 1"), testColorInt),
                     LabelChipUiModel(LabelId("8"), Name("label 8"), testColorInt)
@@ -1298,7 +1282,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         expirationTime: Long = 0,
         messagesCount: Int? = null,
         messageData: MessageData? = null,
-        isDeleted: Boolean = false,
         labels: List<LabelChipUiModel> = emptyList(),
         recipients: String = "",
         isDraft: Boolean = false
@@ -1313,7 +1296,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         expirationTime = expirationTime,
         messagesCount = messagesCount,
         messageData = messageData,
-        isDeleted = isDeleted,
         labels = labels,
         recipients = recipients,
         isDraft = isDraft

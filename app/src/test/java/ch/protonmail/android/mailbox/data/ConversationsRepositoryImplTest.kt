@@ -1180,7 +1180,7 @@ class ConversationsRepositoryImplTest : ArchTest {
                     every { labels } returns conversationLabels
                 }
             coEvery { messageDao.findAllConversationMessagesSortedByNewest(any()) } returns listOfMessages
-            coEvery { messageDao.saveMessages(listOfMessages) } just runs
+            coEvery { messageDao.deleteMessagesByIds(any()) } just runs
 
             // when
             conversationsRepository.delete(conversationIds, testUserId, currentFolderId)
@@ -1188,7 +1188,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             // then
             coVerify { conversationDao.updateLabels(conversationId1, any()) }
             coVerify { conversationDao.updateLabels(conversationId1, any()) }
-            coVerify(exactly = 2) { messageDao.saveMessages(any()) }
+            coVerify(exactly = 2) { messageDao.deleteMessagesByIds(any()) }
         }
     }
 

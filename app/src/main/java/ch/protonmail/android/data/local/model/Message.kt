@@ -205,9 +205,6 @@ data class Message @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_MESSAGE_BCC_LIST)
     var bccList: List<MessageRecipient> = emptyList(),
 
-    @ColumnInfo(name = COLUMN_MESSAGE_DELETED)
-    var deleted: Boolean = false,
-
     @Embedded(prefix = COLUMN_MESSAGE_PREFIX_SENDER)
     var sender: MessageSender? = MessageSender(null, null)
 

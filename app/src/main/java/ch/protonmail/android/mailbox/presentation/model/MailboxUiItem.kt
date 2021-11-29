@@ -33,7 +33,6 @@ data class MailboxUiItem(
     val expirationTime: Long,
     val messagesCount: Int?,
     val messageData: MessageData?,
-    val isDeleted: Boolean,
     val labels: List<LabelChipUiModel>,
     val recipients: String,
     val isDraft: Boolean

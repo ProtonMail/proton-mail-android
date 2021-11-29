@@ -365,6 +365,11 @@ class MessageRepository @Inject constructor(
         return message
     }
 
+    suspend fun deleteMessagesInDb(userId: UserId, messageIds: List<String>) {
+        val messageDao = databaseProvider.provideMessageDao(userId)
+        messageDao.deleteMessagesByIds(messageIds)
+    }
+
     private suspend fun Message.saveBodyToFileIfNeeded() {
         withContext(dispatcherProvider.Io) {
             messageBody = messageBody?.let {

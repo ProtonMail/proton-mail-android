@@ -19,16 +19,14 @@
 
 package ch.protonmail.android.usecase.delete
 
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.model.DeleteMessageResult
 import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -40,9 +38,9 @@ import javax.inject.Inject
  */
 class DeleteMessage @Inject constructor(
     private val databaseProvider: DatabaseProvider,
+    private val messageRepository: MessageRepository,
     private val conversationsRepository: ConversationsRepository,
     private val dispatchers: DispatcherProvider,
-    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val workerScheduler: DeleteMessageWorker.Enqueuer
 ) {
 
@@ -52,22 +50,10 @@ class DeleteMessage @Inject constructor(
         userId: UserId
     ): DeleteMessageResult =
         withContext(dispatchers.Io) {
-            val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
-
             val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(userId, messageIds)
 
-            val messagesToSave = mutableListOf<Message>()
-
-            for (id in validMessageIdList) {
-                ensureActive()
-                messageDetailsRepository.findMessageById(id).first()?.let { message ->
-                    message.deleted = true
-                    messagesToSave.add(message)
-                }
-            }
-
             ensureActive()
-            messageDetailsRepository.saveMessagesInOneTransaction(messagesToSave)
+            messageRepository.deleteMessagesInDb(userId, validMessageIdList)
             conversationsRepository.updateConversationsWhenDeletingMessages(userId, validMessageIdList)
 
             val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList, currentLabelId)
