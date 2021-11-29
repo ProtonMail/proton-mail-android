@@ -55,7 +55,6 @@ import me.proton.core.account.domain.entity.isReady
 import me.proton.core.account.domain.entity.isStepNeeded
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.AccountManagerObserver
-import me.proton.core.accountmanager.presentation.disableInitialNotReadyAccounts
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressFailed
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressNeeded
@@ -66,6 +65,8 @@ import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
 import me.proton.core.accountmanager.presentation.onSessionForceLogout
 import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
+import me.proton.core.accountmanager.presentation.onUserAddressKeyCheckFailed
+import me.proton.core.accountmanager.presentation.onUserKeyCheckFailed
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onAddAccountResult
 import me.proton.core.domain.entity.Product
@@ -149,7 +150,8 @@ internal class AccountStateManager @Inject constructor(
             .onAccountRemoved { onAccountDisabled(it) }
             .onAccountDisabled { onAccountDisabled(it) }
             .onAccountReady { onAccountReady(it) }
-            .disableInitialNotReadyAccounts()
+            .onUserKeyCheckFailed { /* errorToast("UserKeyCheckFailed")*/ }
+            .onUserAddressKeyCheckFailed { /*errorToast("UserAddressKeyCheckFailed")*/ }
     }
 
     /**

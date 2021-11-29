@@ -24,7 +24,7 @@ import androidx.core.content.edit
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.auth.domain.usecase.SetupAccountCheck
+import me.proton.core.auth.domain.usecase.PostLoginAccountSetup
 import me.proton.core.auth.presentation.DefaultUserCheck
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
@@ -36,7 +36,7 @@ class SetupAccountUserCheck(
     private val secureSharedPreferencesFactory: SecureSharedPreferences.Factory
 ) : DefaultUserCheck(context, accountManager, userManager) {
 
-    override suspend fun invoke(user: User): SetupAccountCheck.UserCheckResult {
+    override suspend fun invoke(user: User): PostLoginAccountSetup.UserCheckResult {
         // Workaround: Make sure we have the preference user name by userId.
         // See DatabaseFactory.usernameForUserId.
         secureSharedPreferencesFactory.userPreferences(user.userId).edit(commit = true) {

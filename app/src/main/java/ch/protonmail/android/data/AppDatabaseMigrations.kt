@@ -22,6 +22,7 @@ package ch.protonmail.android.data
 import android.content.Context
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
 import me.proton.core.account.data.entity.SessionDetailsEntity
@@ -34,6 +35,7 @@ import me.proton.core.key.data.entity.PublicAddressEntity
 import me.proton.core.key.data.entity.PublicAddressKeyEntity
 import me.proton.core.mailsettings.data.entity.MailSettingsEntity
 import me.proton.core.user.data.db.AddressDatabase
+import me.proton.core.user.data.db.UserDatabase
 import me.proton.core.user.data.entity.AddressEntity
 import me.proton.core.user.data.entity.AddressKeyEntity
 import me.proton.core.user.data.entity.UserEntity
@@ -105,6 +107,14 @@ object AppDatabaseMigrations {
             ContactDatabase.MIGRATION_0.migrate(database)
             AddressDatabase.MIGRATION_2.migrate(database)
             PublicAddressDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            AccountDatabase.MIGRATION_4.migrate(database)
+            AddressDatabase.MIGRATION_3.migrate(database)
+            UserDatabase.MIGRATION_1.migrate(database)
         }
     }
 }
