@@ -894,7 +894,7 @@ internal class MailboxActivity :
 
                 networkSnackBarUtil.getNoConnectionSnackBar(
                     parentView = snackBarLayout,
-                    user = userManager.requireCurrentLegacyUser(),
+                    user = userManager.currentLegacyUser,
                     netConfiguratorCallback = this@MailboxActivity,
                     onRetryClick = ::onConnectivityCheckRetry,
                     isOffline = connectivity == Constants.ConnectionState.NO_INTERNET,
