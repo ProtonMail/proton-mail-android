@@ -248,7 +248,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
         label_name.setText(label.name)
         add_label_container.isVisible = true
-        toggleColorPicker(true)
+        toggleEditor(true)
 
         val currentColorPosition = colorOptions.indexOf(label.color)
         colorsAdapter.setChecked(currentColorPosition)
@@ -291,7 +291,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
             State.UNDEFINED -> {
                 viewModel.onNewLabel()
-                toggleColorPicker(false)
+                toggleEditor(false)
                 closeKeyboard()
                 label_name.setText("")
                 save_button.setText(R.string.done)
@@ -299,12 +299,12 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
             State.CREATE -> {
                 selectRandomColor()
-                toggleColorPicker(true)
+                toggleEditor(true)
                 save_button.setText(R.string.done)
             }
 
             State.UPDATE -> {
-                toggleColorPicker(true)
+                toggleEditor(true)
 
                 save_button.setText(
                     when (type) {
@@ -371,10 +371,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         viewModel.setLabelColor(colorOptions[index])
     }
 
-    /** Show or hide the color picker */
-    private fun toggleColorPicker(show: Boolean) {
+    private fun toggleEditor(show: Boolean) {
         edit_label_layout.isVisible = show
         labels_list_view_parent.isVisible = !show
+        parent_folder_layout.isVisible = type == LabelType.FOLDER
     }
 
     /**
