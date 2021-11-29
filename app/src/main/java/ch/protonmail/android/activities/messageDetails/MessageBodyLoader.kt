@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.activities.messageDetails
 
+import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyDecryptor
 import ch.protonmail.android.core.UserManager
@@ -52,14 +53,17 @@ internal class MessageBodyLoader @Inject constructor(
             defaultErrorMessage: String
         ) -> String,
         handleEmbeddedImagesLoading: (Message) -> Boolean,
-        publicKeys: List<KeyInformation>?
+        publicKeys: List<KeyInformation>?,
+        // TODO: Rethink this- should not pass an activity instance here, perhaps should pass the
+        // render dimension as a param directly from the activity
+        fragmentActivity: FragmentActivity
     ): MessageDetailsListItem? {
         val fetchedMessage = fetchMessageBody(requireNotNull(expandedMessage.messageId))
         return if (fetchedMessage != null) {
             val messageDecrypted = decryptMessageBody(fetchedMessage, publicKeys)
             val messageBody = formatMessageHtmlBody(
                 fetchedMessage,
-                renderDimensionsProvider.getRenderWidth(),
+                renderDimensionsProvider.getRenderWidth(fragmentActivity),
                 messageBodyCssProvider.getMessageBodyCss(),
                 messageBodyCssProvider.getMessageBodyDarkModeCss(),
                 getStringResource(R.string.request_timeout)

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.activities.messageDetails
 
+import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyDecryptor
 import ch.protonmail.android.core.UserManager
@@ -44,12 +45,13 @@ import kotlin.test.assertNull
 
 class MessageBodyLoaderTest {
 
+    private val activityMock = mockk<FragmentActivity>()
     private val userManagerMock = mockk<UserManager> {
         every { requireCurrentUserId() } returns UserIdTestData.userId
     }
     private val messageRepositoryMock = mockk<MessageRepository>()
     private val renderDimensionsProviderMock = mockk<RenderDimensionsProvider> {
-        every { getRenderWidth() } returns TestData.RENDER_WIDTH
+        every { getRenderWidth(activityMock) } returns TestData.RENDER_WIDTH
     }
     private val messageBodyCssProviderMock = mockk<MessageBodyCssProvider> {
         every { getMessageBodyCss() } returns TestData.MESSAGE_BODY_CSS
@@ -77,7 +79,8 @@ class MessageBodyLoaderTest {
             expandedMessage = Message(messageId = null),
             formatMessageHtmlBody = mockk(),
             handleEmbeddedImagesLoading = mockk(),
-            publicKeys = KeyInformationTestData.listWithValidKey
+            publicKeys = KeyInformationTestData.listWithValidKey,
+            fragmentActivity = activityMock
         )
     }
 
@@ -91,7 +94,8 @@ class MessageBodyLoaderTest {
             expandedMessage = Message(messageId = MessageTestData.MESSAGE_ID_RAW),
             formatMessageHtmlBody = mockk(),
             handleEmbeddedImagesLoading = mockk(),
-            publicKeys = KeyInformationTestData.listWithValidKey
+            publicKeys = KeyInformationTestData.listWithValidKey,
+            fragmentActivity = activityMock
         )
 
         // then
@@ -124,7 +128,8 @@ class MessageBodyLoaderTest {
             expandedMessage = Message(messageId = MessageTestData.MESSAGE_ID_RAW),
             formatMessageHtmlBody = formatMessageBodyFor(fetchedMessage),
             handleEmbeddedImagesLoading = handleEmbeddedImageLoadingFor(fetchedMessage, showButton = true),
-            publicKeys = KeyInformationTestData.listWithValidKey
+            publicKeys = KeyInformationTestData.listWithValidKey,
+            fragmentActivity = activityMock
         )
 
         // then
@@ -164,7 +169,8 @@ class MessageBodyLoaderTest {
             expandedMessage = Message(messageId = MessageTestData.MESSAGE_ID_RAW),
             formatMessageHtmlBody = formatMessageBodyFor(fetchedMessage),
             handleEmbeddedImagesLoading = handleEmbeddedImageLoadingFor(fetchedMessage, showButton = false),
-            publicKeys = KeyInformationTestData.listWithValidKey
+            publicKeys = KeyInformationTestData.listWithValidKey,
+            fragmentActivity = activityMock
         )
 
         // then
