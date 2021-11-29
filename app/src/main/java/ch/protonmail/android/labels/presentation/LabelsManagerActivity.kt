@@ -38,11 +38,13 @@ import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.presentation.ui.ParentFolderPickerActivity
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.libs.core.utils.onClick
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
 import kotlinx.coroutines.flow.launchIn
@@ -120,6 +122,11 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private val viewModel: LabelsManagerViewModel by viewModels()
 
+    private val parentFolderPickerLauncher =
+        registerForActivityResult(ParentFolderPickerActivity.Launcher()) { labelId ->
+            TODO("Set label id")
+        }
+
     /** @return [LayoutRes] for the content View */
     override fun getLayoutId() = R.layout.activity_labels_manager
 
@@ -160,6 +167,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         label_name.onTextChange(::onLabelNameChange)
         save_button.setOnClickListener { saveCurrentLabel() }
         colors_grid_view.setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
+        parent_folder_layout.onClick { TODO("parentFolderPickerLauncher.launch(currentLabelId)") }
 
         // Setup Labels RecyclerView
         labels_recycler_view.apply {

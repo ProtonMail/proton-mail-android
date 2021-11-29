@@ -88,6 +88,7 @@ interface LabelRepository {
         color: String,
         isUpdate: Boolean,
         labelType: LabelType,
-        labelId: String?
+        labelId: String?,
+        parent: LabelId?
     ): Flow<WorkInfo>
 }

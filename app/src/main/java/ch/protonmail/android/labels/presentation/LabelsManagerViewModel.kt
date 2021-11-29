@@ -24,8 +24,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
@@ -63,7 +61,8 @@ internal class LabelsManagerViewModel @Inject constructor(
     private val labelRepository: LabelRepository,
     savedStateHandle: SavedStateHandle,
     private val deleteLabels: DeleteLabels,
-    private val accountManager: AccountManager
+    private val accountManager: AccountManager,
+    private val labelMapper: LabelUiModelMapper
 ) : ViewModel(), ViewStateStoreScope {
 
     // Extract the original form of the data
@@ -104,8 +103,6 @@ internal class LabelsManagerViewModel @Inject constructor(
         LabelType.CONTACT_GROUP -> throw IllegalArgumentException("We cannot manage contact groups here!")
     }
 
-    private val labelMapper = LabelUiModelMapper()
-
     /**
      * A Locked [PagedViewStateStore] of type [LabelUiModel]
      * This will emit every time a Label is changed in the database or the selection state is
@@ -119,28 +116,33 @@ internal class LabelsManagerViewModel @Inject constructor(
         }
     ).lock
 
-    /** A reference to a [LabelEditor] for edit a [Label] */
     private var labelEditor: LabelEditor? = null
 
-    /** [ColorInt] that hold the color for a new Label */
     @ColorInt
     private var tempLabelColor: Int = Color.WHITE
-
-    /** [CharSequence] that hold the name for a new Label */
     private var tempLabelName: CharSequence = ""
+    private var tempParentFolderId: LabelId? = null
 
     val createUpdateFlow = updateSaveTrigger
         .flatMapLatest {
             labelEditor?.let { editor ->
                 with(editor.buildParams()) {
-                    createOrUpdateLabel(labelName, color, update, type, labelId)
+                    createOrUpdateLabel(
+                        labelName = labelName,
+                        color = color,
+                        isUpdate = update,
+                        labelType = type,
+                        labelId = labelId,
+                        parent = parent
+                    )
                 }
             } ?: createOrUpdateLabel(
-                tempLabelName.toString(),
-                tempLabelColor.toColorHex(),
-                false,
-                type,
-                null
+                labelName = tempLabelName.toString(),
+                color = tempLabelColor.toColorHex(),
+                isUpdate = false,
+                labelType = type,
+                labelId = null,
+                parent = tempParentFolderId
             )
         }
 
@@ -184,30 +186,45 @@ internal class LabelsManagerViewModel @Inject constructor(
         labelEditor?.let { it.name = name } ?: run { tempLabelName = name }
     }
 
+    fun setParentFolder(id: LabelId) {
+        labelEditor?.let { it.parentFolderId = id } ?: run { tempParentFolderId = id }
+    }
+
     private fun createOrUpdateLabel(
         labelName: String,
         color: String,
         isUpdate: Boolean,
         labelType: LabelType,
-        labelId: String?
+        labelId: String?,
+        parent: LabelId?
     ): Flow<WorkInfo> = labelRepository.scheduleSaveLabel(
-        labelName,
-        color,
-        isUpdate,
-        labelType,
-        labelId
+        labelName = labelName,
+        color = color,
+        isUpdate = isUpdate,
+        labelType = labelType,
+        labelId = labelId,
+        parent = parent
     )
 }
 
 /** A class that hold editing progress of a Label */
 private class LabelEditor(private val initialLabel: LabelUiModel) {
 
-    /** [ColorInt] color for the current editing Label */
+    /**
+     * [ColorInt] color for the current editing Label
+     */
     @ColorInt
     var color: Int = initialLabel.color
 
-    /** [CharSequence] name for the current editing Label */
+    /**
+     * Name for the current editing Label
+     */
     var name: CharSequence = initialLabel.name
+
+    /**
+     * Id of the parent folder for the current editing Label ( only valid for Folders )
+     */
+    var parentFolderId: LabelId? = initialLabel.parent
 
     /** @return [SaveParams] */
     fun buildParams(): SaveParams {
@@ -217,7 +234,8 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
             expanded = initialLabel.expanded,
             isFolder = initialLabel.type == LabelType.FOLDER,
             update = true,
-            labelId = initialLabel.labelId.id
+            labelId = initialLabel.labelId.id,
+            parent = parentFolderId
         )
     }
 
@@ -228,7 +246,8 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
         val expanded: Int,
         val isFolder: Boolean,
         val update: Boolean,
-        val labelId: String
+        val labelId: String,
+        val parent: LabelId?
     )
 }
 

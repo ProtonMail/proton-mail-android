@@ -183,9 +183,6 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
     @Test
     fun verifyThatSaveWithWorkerSchedulesAppropriateWorker() = runBlockingTest {
         // given
-        val labelId1 = LabelId("id1")
-        val labelName = "labelName"
-        val color = "blue"
         val isUpdate = false
         val labelType = LabelType.MESSAGE_LABEL
         val expectedWorkInfo = mockk<WorkInfo> {
@@ -194,32 +191,35 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
         val workInfoLiveData = MutableLiveData<WorkInfo>()
         every {
             postLabelWorker.enqueue(
-                labelName,
-                color,
-                isUpdate,
-                labelType,
-                labelId1.id
+                labelName = labelName1,
+                color = labelColor,
+                isUpdate = isUpdate,
+                type = labelType,
+                labelId = labelId1,
+                parent = LabelId(testParentId)
             )
         } returns workInfoLiveData
         workInfoLiveData.postValue(expectedWorkInfo)
 
         // when
         repository.scheduleSaveLabel(
-            labelName,
-            color,
-            isUpdate,
-            labelType,
-            labelId1.id
+            labelName = labelName1,
+            color = labelColor,
+            isUpdate = isUpdate,
+            labelType = labelType,
+            labelId = labelId1,
+            parent = LabelId(testParentId)
         ).test {
 
             // then
             verify {
                 postLabelWorker.enqueue(
-                    labelName,
-                    color,
-                    isUpdate,
-                    labelType,
-                    labelId1.id
+                    labelName = labelName1,
+                    color = labelColor,
+                    isUpdate = isUpdate,
+                    type = labelType,
+                    labelId = labelId1,
+                    parent = LabelId(testParentId)
                 )
             }
             assertEquals(expectedWorkInfo, awaitItem())

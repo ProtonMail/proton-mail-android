@@ -22,18 +22,21 @@ import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
 import me.proton.core.domain.arch.Mapper
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * A Mapper of [LabelUiModel]
  *
  * @author Davide Farella
  */
-internal class LabelUiModelMapper : Mapper<Label, LabelUiModel> {
+internal class LabelUiModelMapper @Inject constructor() : Mapper<Label, LabelUiModel> {
 
     /** @return [LabelUiModel] from receiver [LabelEntity] Entity */
     fun toUiModel(label: Label): LabelUiModel {
@@ -49,6 +52,7 @@ internal class LabelUiModelMapper : Mapper<Label, LabelUiModel> {
             name = label.name,
             image = image,
             color = normalizeColor(label.color),
+            parent = label.parentId.takeIfNotBlank()?.let(::LabelId),
             isChecked = false,
             expanded = 0,
             type = label.type
