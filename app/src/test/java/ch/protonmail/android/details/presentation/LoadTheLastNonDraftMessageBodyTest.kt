@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.details.presentation
 
+import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.usecase.MarkMessageAsReadIfNeeded
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
@@ -39,6 +40,7 @@ import kotlin.test.assertNull
 
 class LoadTheLastNonDraftMessageBodyTest {
 
+    private val activityMock = mockk<FragmentActivity>()
     private val messageBodyLoaderMock = mockk<MessageBodyLoader>()
     private val markMessageAsReadIfNeededMock = mockk<MarkMessageAsReadIfNeeded> {
         every { this@mockk(any(), any()) } just runs
@@ -56,19 +58,20 @@ class LoadTheLastNonDraftMessageBodyTest {
             formatMessageHtmlBody = mockk(),
             handleEmbeddedImagesLoading = mockk(),
             publicKeys = KeyInformationTestData.listWithValidKey,
-            visibleToTheUser = false
+            visibleToTheUser = false,
+            fragmentActivity = activityMock
         )
 
         // then
         assertEquals(resultConversation, ConversationTestData.withDraftsOnly)
-        coVerify(exactly = 0) { messageBodyLoaderMock.loadExpandedMessageBody(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { messageBodyLoaderMock.loadExpandedMessageBodyOrNull(any(), any(), any(), any(), any()) }
         coVerify(exactly = 0) { markMessageAsReadIfNeededMock(any(), any()) }
     }
 
     @Test
     fun `should return the same conversation and not mark message as read when loading fails`() = runBlockingTest {
         // given
-        coEvery { messageBodyLoaderMock.loadExpandedMessageBody(any(), any(), any(), any()) } returns null
+        coEvery { messageBodyLoaderMock.loadExpandedMessageBodyOrNull(any(), any(), any(), any(), any()) } returns null
 
         // when
         val resultConversation = loadTheLastNonDraftMessageBody.invoke(
@@ -76,7 +79,8 @@ class LoadTheLastNonDraftMessageBodyTest {
             formatMessageHtmlBody = mockk(),
             handleEmbeddedImagesLoading = mockk(),
             publicKeys = KeyInformationTestData.listWithValidKey,
-            visibleToTheUser = false
+            visibleToTheUser = false,
+            fragmentActivity = activityMock
         )
 
         // then
@@ -98,7 +102,8 @@ class LoadTheLastNonDraftMessageBodyTest {
             formatMessageHtmlBody = mockk(),
             handleEmbeddedImagesLoading = mockk(),
             publicKeys = KeyInformationTestData.listWithValidKey,
-            visibleToTheUser = true
+            visibleToTheUser = true,
+            fragmentActivity = activityMock
         )
 
         // then
@@ -108,11 +113,12 @@ class LoadTheLastNonDraftMessageBodyTest {
 
     private fun givenMessageWithLoadedBodyFor(message: Message, messageWithLoadedBody: MessageDetailsListItem) {
         coEvery {
-            messageBodyLoaderMock.loadExpandedMessageBody(
+            messageBodyLoaderMock.loadExpandedMessageBodyOrNull(
                 eq(message),
                 any(),
                 any(),
-                eq(KeyInformationTestData.listWithValidKey)
+                eq(KeyInformationTestData.listWithValidKey),
+                any()
             )
         } returns messageWithLoadedBody
     }

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.details.presentation
 
+import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.usecase.MarkMessageAsReadIfNeeded
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
@@ -30,12 +31,14 @@ class LoadTheLastNonDraftMessageBody @Inject constructor(
     private val markMessageAsReadIfNeeded: MarkMessageAsReadIfNeeded
 ) {
 
+    @Suppress("LongParameterList")
     suspend operator fun invoke(
         conversation: ConversationUiModel,
         formatMessageHtmlBody: (Message, Int, String, String, String) -> String,
         handleEmbeddedImagesLoading: (Message) -> Boolean,
         publicKeys: List<KeyInformation>?,
-        visibleToTheUser: Boolean
+        visibleToTheUser: Boolean,
+        fragmentActivity: FragmentActivity
     ): ConversationUiModel {
         conversation.messages
             .withIndex()
@@ -48,12 +51,14 @@ class LoadTheLastNonDraftMessageBody @Inject constructor(
                     publicKeys,
                     visibleToTheUser,
                     conversation,
-                    index
+                    index,
+                    fragmentActivity
                 )
             }
             ?: return conversation
     }
 
+    @Suppress("LongParameterList")
     private suspend fun addMessageBodyToConversation(
         message: Message,
         formatMessageHtmlBody: (Message, Int, String, String, String) -> String,
@@ -61,13 +66,15 @@ class LoadTheLastNonDraftMessageBody @Inject constructor(
         publicKeys: List<KeyInformation>?,
         visibleToTheUser: Boolean,
         conversation: ConversationUiModel,
-        index: Int
+        index: Int,
+        fragmentActivity: FragmentActivity
     ): ConversationUiModel {
-        val messageWithLoadedBody = messageBodyLoader.loadExpandedMessageBody(
+        val messageWithLoadedBody = messageBodyLoader.loadExpandedMessageBodyOrNull(
             message,
             formatMessageHtmlBody,
             handleEmbeddedImagesLoading,
-            publicKeys
+            publicKeys,
+            fragmentActivity
         )
         return if (messageWithLoadedBody != null) {
             markMessageAsReadIfNeeded(message, visibleToTheUser)

@@ -20,7 +20,6 @@
 package ch.protonmail.android.details.domain.usecase
 
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.domain.usecase.MarkMessageAsReadIfNeeded
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testdata.MessageTestData
 import io.mockk.every
