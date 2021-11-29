@@ -47,14 +47,18 @@ class SingleLineCollapsedLabelGroupViewTest :
 
     @Test
     fun whenTheLabelsListEmptyShouldHideTheView() {
-        testView.setLabels(emptyList())
+        runOnActivityThread {
+            testView.setLabels(emptyList())
+        }
 
         onTestView().check(isGone())
     }
 
     @Test
     fun whenHasLabelsShouldShowTheView() {
-        testView.setLabels(LabelList.withThreeItems)
+        runOnActivityThread {
+            testView.setLabels(LabelList.withThreeItems)
+        }
 
         onTestView().check(isVisible())
     }
