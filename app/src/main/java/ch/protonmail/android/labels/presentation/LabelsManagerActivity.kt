@@ -19,6 +19,8 @@
 package ch.protonmail.android.labels.presentation
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.ImageSpan
 import android.util.DisplayMetrics
 import android.view.MenuItem
 import android.widget.LinearLayout
@@ -26,6 +28,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagedList
@@ -37,6 +40,7 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerViewModel
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.ParentFolderPickerActivity
 import ch.protonmail.android.uiModel.LabelUiModel
@@ -44,6 +48,7 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.libs.core.utils.EMPTY_STRING
 import ch.protonmail.libs.core.utils.onClick
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
@@ -122,9 +127,12 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private val viewModel: LabelsManagerViewModel by viewModels()
 
+    private var parentFolderId: LabelId? = null
+
     private val parentFolderPickerLauncher =
         registerForActivityResult(ParentFolderPickerActivity.Launcher()) { labelId ->
-            TODO("Set label id")
+            viewModel.setParentFolder(labelId)
+            updateParentFolder(labelId)
         }
 
     /** @return [LayoutRes] for the content View */
@@ -168,7 +176,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         save_button.setOnClickListener { saveCurrentLabel() }
         colors_grid_view.setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
         labels_manager_parent_folder_text_view.onClick {
-            TODO("parentFolderPickerLauncher.launch(currentLabelId)")
+            parentFolderPickerLauncher.launch(parentFolderId)
         }
 
         // Setup Labels RecyclerView
@@ -258,6 +266,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
         label_name.setText(label.name)
         add_label_container.isVisible = true
+        updateParentFolder(label.parent)
         toggleEditor(true)
 
         val currentColorPosition = colorOptions.indexOf(label.color)
@@ -268,6 +277,20 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             onLabelEdit(label)
             setLabelColor(colorOptions[currentColorPosition])
         }
+    }
+
+    private fun updateParentFolder(folderId: LabelId?) {
+        parentFolderId = folderId
+        val text = if (folderId != null) {
+            buildSpannedString {
+                append(getText(R.string.labels_manager_parent_folder_selected))
+                append(EMPTY_STRING, ImageSpan(this@LabelsManagerActivity, R.drawable.ic_check), 0)
+                append(getText(R.string.labels_manager_tap_to_change_parent_folder))
+            }
+        } else {
+            SpannableString(getText(R.string.labels_manager_select_parent_folder))
+        }
+        labels_manager_parent_folder_text_view.text = text
     }
 
     /** When Label color is changed in the [colors_grid_view] */

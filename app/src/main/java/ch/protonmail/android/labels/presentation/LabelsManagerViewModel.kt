@@ -186,7 +186,7 @@ internal class LabelsManagerViewModel @Inject constructor(
         labelEditor?.let { it.name = name } ?: run { tempLabelName = name }
     }
 
-    fun setParentFolder(id: LabelId) {
+    fun setParentFolder(id: LabelId?) {
         labelEditor?.let { it.parentFolderId = id } ?: run { tempParentFolderId = id }
     }
 
