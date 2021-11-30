@@ -88,12 +88,14 @@
                     tools:visibility="visible"
                     tools:text="@string/labels_manager_select_parent_folder"/>
 
+                <View style="@style/ViewSeparatorHorizontal"/>
+
                 <GridView
                     android:id="@+id/colors_grid_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/padding_m"
+                    android:layout_marginTop="@dimen/padding_l"
                     android:layout_marginHorizontal="@dimen/padding_xl"
                     android:divider="@null"
                     android:dividerHeight="0dp"

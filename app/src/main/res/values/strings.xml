@@ -92,8 +92,7 @@
 
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Select parent folder</string>
-    <string name="labels_manager_parent_folder_selected">Parent folder selected</string>
-    <string name="labels_manager_tap_to_change_parent_folder">Tap to change</string>
+    <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>
     <!-- endregion -->
 
     <!-- region Parent Folder Picker -->

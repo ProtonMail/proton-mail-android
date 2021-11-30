@@ -23,6 +23,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
@@ -86,6 +88,7 @@ class ParentFolderPickerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityParentFolderPickerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.parentPickerToolbar)
 
         binding.parentPickerRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
@@ -100,6 +103,25 @@ class ParentFolderPickerActivity : AppCompatActivity() {
                 is ParentFolderPickerState.SavingAndClose -> onSavingAndCloseState(state)
             }
         }.launchIn(lifecycleScope)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_parent_picker, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            R.id.parent_picker_done -> {
+                viewModel.process(ParentFolderPickerAction.SaveAndClose)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun onEditingState(state: ParentFolderPickerState.Editing) {

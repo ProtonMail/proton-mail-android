@@ -19,8 +19,6 @@
 package ch.protonmail.android.labels.presentation
 
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.style.ImageSpan
 import android.util.DisplayMetrics
 import android.view.MenuItem
 import android.widget.LinearLayout
@@ -28,7 +26,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
-import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagedList
@@ -48,12 +45,11 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.libs.core.utils.EMPTY_STRING
-import ch.protonmail.libs.core.utils.onClick
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.presentation.utils.onClick
 import studio.forface.viewstatestore.ViewStateActivity
 import kotlin.random.Random
 
@@ -281,16 +277,19 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private fun updateParentFolder(folderId: LabelId?) {
         parentFolderId = folderId
-        val text = if (folderId != null) {
-            buildSpannedString {
-                append(getText(R.string.labels_manager_parent_folder_selected))
-                append(EMPTY_STRING, ImageSpan(this@LabelsManagerActivity, R.drawable.ic_check), 0)
-                append(getText(R.string.labels_manager_tap_to_change_parent_folder))
-            }
-        } else {
-            SpannableString(getText(R.string.labels_manager_select_parent_folder))
-        }
-        labels_manager_parent_folder_text_view.text = text
+//        val text = if (folderId != null) {
+//            buildSpannedString {
+//                append(getText(R.string.labels_manager_parent_folder_selected))
+//                append("", ImageSpan(this@LabelsManagerActivity, R.drawable.ic_check), 0)
+//                append(getText(R.string.labels_manager_tap_to_change_parent_folder))
+//            }
+//        } else {
+//            SpannableString(getText(R.string.labels_manager_select_parent_folder))
+//        }
+        val textRes =
+            if (folderId != null) R.string.labels_manager_parent_folder_selected
+            else R.string.labels_manager_select_parent_folder
+        labels_manager_parent_folder_text_view.setText(textRes)
     }
 
     /** When Label color is changed in the [colors_grid_view] */
