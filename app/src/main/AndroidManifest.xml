@@ -347,6 +347,10 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_address_chooser"/>
+        <activity
+            android:name=".labels.presentation.ui.ParentFolderPickerActivity"
+            android:exported="true"/>
+
         <service
             android:name=".api.services.MessagesService"
             android:exported="false"
@@ -365,6 +369,7 @@
             android:name=".api.services.ConnectivityService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <!-- Core -->
         <activity
             android:name="me.proton.core.auth.presentation.ui.AuthHelpActivity"
