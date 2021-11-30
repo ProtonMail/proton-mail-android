@@ -167,7 +167,9 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         label_name.onTextChange(::onLabelNameChange)
         save_button.setOnClickListener { saveCurrentLabel() }
         colors_grid_view.setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
-        parent_folder_layout.onClick { TODO("parentFolderPickerLauncher.launch(currentLabelId)") }
+        labels_manager_parent_folder_text_view.onClick {
+            TODO("parentFolderPickerLauncher.launch(currentLabelId)")
+        }
 
         // Setup Labels RecyclerView
         labels_recycler_view.apply {
@@ -382,7 +384,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private fun toggleEditor(show: Boolean) {
         edit_label_layout.isVisible = show
         labels_list_view_parent.isVisible = !show
-        parent_folder_layout.isVisible = type == LabelType.FOLDER
+        labels_manager_parent_folder_text_view.isVisible = type == LabelType.FOLDER
     }
 
     /**

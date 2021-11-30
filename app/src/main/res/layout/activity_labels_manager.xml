@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/padding_l"
                 android:layout_marginEnd="@dimen/padding_l"
-                android:layout_marginBottom="@dimen/padding_xl">
+                android:layout_marginBottom="@dimen/padding_l">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/label_name"
@@ -75,34 +75,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="@dimen/padding_xl"
-                android:paddingEnd="@dimen/padding_xl"
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <LinearLayout
-                    android:id="@+id/parent_folder_layout"
+                <TextView
+                    android:id="@+id/labels_manager_parent_folder_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingVertical="@dimen/padding_m"
-                    android:background="?selectableItemBackground">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/x_parent_folder"
-                        android:textAppearance="@style/Proton.Text.Default"/>
-
-                    <TextView
-                        android:id="@+id/parent_folder_name_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/Proton.Text.DefaultSmall.Weak"
-                        android:textColor="@color/text_weak"
-                        tools:text="@string/x_none"/>
-
-                </LinearLayout>
+                    android:padding="@dimen/padding_l"
+                    android:textAppearance="@style/Proton.Text.Default"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="@string/labels_manager_select_parent_folder"/>
 
                 <GridView
                     android:id="@+id/colors_grid_view"
@@ -110,6 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/padding_m"
+                    android:layout_marginHorizontal="@dimen/padding_xl"
                     android:divider="@null"
                     android:dividerHeight="0dp"
                     android:listSelector="@android:color/transparent"

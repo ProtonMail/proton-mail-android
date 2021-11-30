@@ -31,7 +31,6 @@
     <string name="x_labels">Labels</string>
     <string name="x_more">More</string>
     <string name="x_none">None</string>
-    <string name="x_parent_folder">Parent folder</string>
     <string name="x_search">Search</string>
     <string name="x_set">Set</string>
     <string name="x_0">0</string>
@@ -89,6 +88,12 @@
     <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
     <string name="settings_swipe_left_to_right">Left to right</string>
     <string name="settings_swipe_right_to_left">Right to left</string>
+    <!-- endregion -->
+
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">Parent folder selected</string>
+    <string name="labels_manager_tap_to_change_parent_folder">Tap to change</string>
     <!-- endregion -->
 
     <!-- region Parent Folder Picker -->
