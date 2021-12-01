@@ -289,6 +289,9 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         checkUserId()
         closeDrawerAndDialog()
+
+        val alarmReceiver = AlarmReceiver()
+        alarmReceiver.setAlarm(this)
     }
 
     override fun onStart() {
