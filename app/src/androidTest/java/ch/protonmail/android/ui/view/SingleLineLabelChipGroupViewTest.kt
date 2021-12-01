@@ -38,9 +38,6 @@ import org.hamcrest.TypeSafeDiagnosingMatcher
 import org.junit.runner.RunWith
 import kotlin.test.Test
 
-/**
- * Test suite for [SingleLineLabelChipGroupView]
- */
 @RunWith(AndroidJUnit4ClassRunner::class)
 class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(::SingleLineLabelChipGroupView) {
 
@@ -80,9 +77,10 @@ class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(
 
         // given
         val labels = testLabelsList
-        val (expectedLabelId, expectedLabelName, expectedLabelColor) = with(labels.first()) {
-            Triple(id, name.s, checkNotNull(color))
-        }
+        val firstLabel = labels.first()
+        val expectedLabelId = firstLabel.id
+        val expectedLabelName = firstLabel.name.s
+        val expectedLabelColor = checkNotNull(firstLabel.color)
 
         // when
         runOnActivityThread {

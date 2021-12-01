@@ -47,9 +47,6 @@ import org.junit.runner.RunWith
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-/**
- * Test suite for [SetMessagePasswordActivity]
- */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4ClassRunner::class)
 @Suppress("SameParameterValue")
