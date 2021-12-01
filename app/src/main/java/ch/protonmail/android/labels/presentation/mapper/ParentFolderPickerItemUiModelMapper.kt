@@ -45,16 +45,19 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
     private val defaultIconColor = context.getColor(R.color.icon_norm)
 
     /**
+     * @param currentFolder the [LabelId] of the folder which we're picking a parent for
+     * @param selectedFolder the [LabelId] of the folder that is currently selected as a parent
      * @param includeNoneUiModel whether [ParentFolderPickerItemUiModel.None] should be in the list ( at the first
      *  position )
      */
     fun toUiModels(
         folders: Collection<Folder>,
-        currentSelectedFolder: LabelId?,
+        currentFolder: LabelId,
+        selectedFolder: LabelId?,
         includeNoneUiModel: Boolean
     ): List<ParentFolderPickerItemUiModel> {
         val noneUiModel = if (includeNoneUiModel) {
-            listOf(ParentFolderPickerItemUiModel.None(isSelected = currentSelectedFolder == null))
+            listOf(ParentFolderPickerItemUiModel.None(isSelected = selectedFolder == null))
         } else {
             emptyList()
         }
@@ -62,7 +65,9 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
         return noneUiModel + folders.flatMap { label ->
             labelToUiModels(
                 folder = label,
-                currentSelectedFolder = currentSelectedFolder,
+                currentFolder = currentFolder,
+                isEnabled = label.id != currentFolder,
+                selectedFolder = selectedFolder,
                 folderLevel = 0,
                 parentColor = null
             )
@@ -71,7 +76,9 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
 
     private fun labelToUiModels(
         folder: Folder,
-        currentSelectedFolder: LabelId?,
+        currentFolder: LabelId,
+        isEnabled: Boolean,
+        selectedFolder: LabelId?,
         folderLevel: Int,
         parentColor: Int?
     ): List<ParentFolderPickerItemUiModel.Folder> {
@@ -81,12 +88,15 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
             name = folder.name,
             icon = buildIcon(folder, parentColor),
             folderLevel = folderLevel,
-            isSelected = folder.id == currentSelectedFolder,
+            isSelected = folder.id == selectedFolder,
+            isEnabled = isEnabled && folder.id != currentFolder,
         )
         val children = folder.children.flatMap {
             labelToUiModels(
                 folder = it,
-                currentSelectedFolder = currentSelectedFolder,
+                currentFolder = currentFolder,
+                isEnabled = parent.isEnabled,
+                selectedFolder = selectedFolder,
                 folderLevel = folderLevel + 1,
                 parentColor = parent.icon.colorInt
             )
