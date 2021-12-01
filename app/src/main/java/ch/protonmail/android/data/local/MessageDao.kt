@@ -63,8 +63,7 @@ abstract class MessageDao : BaseDao<Message>() {
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_DELETED = 0
-          AND $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
+        WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
           OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
           OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
         ORDER BY $COLUMN_MESSAGE_TIME DESC
@@ -79,7 +78,6 @@ abstract class MessageDao : BaseDao<Message>() {
         """
         SELECT * FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_LOCATION = :location
-          AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
     )
@@ -89,7 +87,6 @@ abstract class MessageDao : BaseDao<Message>() {
         """
         SELECT * FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_IS_STARRED = 1
-          AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
     )
@@ -97,31 +94,11 @@ abstract class MessageDao : BaseDao<Message>() {
 
     @Query(
         """
-        SELECT COUNT($COLUMN_MESSAGE_ID)
-        FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'
-    """
-    )
-    abstract fun getMessagesCountByByLabelId(labelId: String): Int
-
-    @Query(
-        """
         SELECT * FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
     )
     abstract fun observeAllMessages(): Flow<List<Message>>
-
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """
-    )
-    abstract fun getMessagesByLabelId(label: String): List<Message>
 
     @Query(
         """
@@ -143,8 +120,7 @@ abstract class MessageDao : BaseDao<Message>() {
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_DELETED = 0
-          AND $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+        WHERE $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%'
         ORDER BY $COLUMN_MESSAGE_TIME DESC
@@ -230,7 +206,6 @@ abstract class MessageDao : BaseDao<Message>() {
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_CONVERSATION_ID = :conversationId
-          AND $COLUMN_MESSAGE_DELETED = 0
         ORDER BY $COLUMN_MESSAGE_TIME DESC
         """
     )
@@ -337,6 +312,15 @@ abstract class MessageDao : BaseDao<Message>() {
     """
     )
     abstract fun deleteExpiredMessages(currentTime: Long)
+
+    @Query(
+        """
+        DELETE
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_ID IN (:ids)
+    """
+    )
+    abstract suspend fun deleteMessagesByIds(ids: List<String>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun saveMessageInfo(message: Message): Long

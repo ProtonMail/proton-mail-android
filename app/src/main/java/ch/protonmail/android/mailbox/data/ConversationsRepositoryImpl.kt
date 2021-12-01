@@ -446,11 +446,10 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             val messagesFromConversation = getAllConversationMessagesSortedByNewest(conversationId)
             // The delete action deletes the messages that are in the current mailbox folder
-            val messagesToDelete = messagesFromConversation.filter {
-                currentFolderId in it.allLabelIDs
-            }
-            messagesToDelete.forEach { it.deleted = true }
-            messageDao.saveMessages(messagesToDelete)
+            val messagesToDelete = messagesFromConversation
+                .filter { currentFolderId in it.allLabelIDs }
+                .mapNotNull { it.messageId }
+            messageDao.deleteMessagesByIds(messagesToDelete)
 
             // If all the messages of the conversation are in the current folder, then delete the conversation
             // Else remove the current location from the conversation's labels list

@@ -20,13 +20,12 @@
 package ch.protonmail.android.usecase.delete
 
 import androidx.work.Operation
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.data.local.PendingActionDao
-import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.worker.DeleteMessageWorker
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -36,7 +35,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
@@ -49,12 +47,8 @@ class DeleteMessageTest {
 
     private val workScheduler: DeleteMessageWorker.Enqueuer = mockk()
 
-    private val messageDetailsRepository: MessageDetailsRepository = mockk()
-    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory = mockk() {
-        every { create(any()) } returns messageDetailsRepository
-    }
-
     private val pendingActionDao: PendingActionDao = mockk()
+    private val messageRepository: MessageRepository = mockk()
     private val conversationsRepository: ConversationsRepository = mockk()
 
     private val databaseProvider: DatabaseProvider = mockk {
@@ -69,8 +63,6 @@ class DeleteMessageTest {
 
     private val userId = UserId("userId")
 
-    private val message = mockk<Message>(relaxed = true)
-
     private val operation = mockk<Operation>(relaxed = true)
 
     @BeforeTest
@@ -78,14 +70,14 @@ class DeleteMessageTest {
         MockKAnnotations.init(this)
         deleteMessage = DeleteMessage(
             databaseProvider,
+            messageRepository,
             conversationsRepository,
             TestDispatcherProvider,
-            messageDetailsRepositoryFactory,
             workScheduler
         )
 
         coEvery {
-            messageDetailsRepository.saveMessagesInOneTransaction(any())
+            messageRepository.deleteMessagesInDb(userId, any())
         } just runs
         coEvery {
             conversationsRepository.updateConversationsWhenDeletingMessages(userId, any())
@@ -99,14 +91,13 @@ class DeleteMessageTest {
             // given
             every { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
             every { pendingActionDao.findPendingSendByMessageId(any()) } returns null
-            every { messageDetailsRepository.findMessageById(messId) } returns flowOf(message)
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
 
             // then
             coVerify {
-                messageDetailsRepository.saveMessagesInOneTransaction(listOf(message))
+                messageRepository.deleteMessagesInDb(userId, listOf(messId))
                 conversationsRepository.updateConversationsWhenDeletingMessages(userId, listOf(messId))
             }
             verify { workScheduler.enqueue(listOf(messId), currentLabelId) }
@@ -121,15 +112,13 @@ class DeleteMessageTest {
             val pendingUpload = mockk<PendingUpload>(relaxed = true)
             every { pendingActionDao.findPendingUploadByMessageId(any()) } returns pendingUpload
             every { pendingActionDao.findPendingSendByMessageId(any()) } returns null
-            every { messageDetailsRepository.findMessageByIdBlocking(messId) } returns message
-            coEvery { messageDetailsRepository.saveMessage(message) } returns 1L
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
 
             // then
             coVerify {
-                messageDetailsRepository.saveMessagesInOneTransaction(emptyList())
+                messageRepository.deleteMessagesInDb(userId, emptyList())
                 conversationsRepository.updateConversationsWhenDeletingMessages(userId, emptyList())
             }
             verify { workScheduler.enqueue(emptyList(), currentLabelId) }
@@ -146,15 +135,13 @@ class DeleteMessageTest {
             }
             every { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
             every { pendingActionDao.findPendingSendByMessageId(any()) } returns pendingSend
-            every { messageDetailsRepository.findMessageByIdBlocking(messId) } returns null
-            coEvery { messageDetailsRepository.saveMessage(message) } returns 1L
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
 
             // then
             coVerify {
-                messageDetailsRepository.saveMessagesInOneTransaction(emptyList())
+                messageRepository.deleteMessagesInDb(userId, emptyList())
                 conversationsRepository.updateConversationsWhenDeletingMessages(userId, emptyList())
             }
             verify { workScheduler.enqueue(emptyList(), currentLabelId) }

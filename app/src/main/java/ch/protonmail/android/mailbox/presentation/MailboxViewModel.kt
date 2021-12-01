@@ -513,7 +513,6 @@ internal class MailboxViewModel @Inject constructor(
                 expirationTime = conversation.expirationTime,
                 messagesCount = getDisplayMessageCount(conversation),
                 messageData = null,
-                isDeleted = false,
                 labels = labelChipUiModels,
                 recipients = conversation.receivers.joinToString { it.name },
                 isDraft = isDraft
@@ -583,7 +582,6 @@ internal class MailboxViewModel @Inject constructor(
                 expirationTime = message.expirationTime,
                 messagesCount = null,
                 messageData = messageData,
-                isDeleted = message.deleted,
                 labels = labelChipUiModels,
                 recipients = message.toList.joinToString {
                     getCorrespondentDisplayName(
