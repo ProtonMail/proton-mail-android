@@ -38,7 +38,8 @@ sealed class ParentFolderPickerItemUiModel {
         val name: String,
         val icon: Icon,
         val folderLevel: Int,
-        override val isSelected: Boolean
+        override val isSelected: Boolean,
+        val isEnabled: Boolean
     ) : ParentFolderPickerItemUiModel() {
 
         data class Icon(

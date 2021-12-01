@@ -47,7 +47,8 @@ import kotlinx.coroutines.flow.onEach
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
 import timber.log.Timber
 
-const val EXTRA_PARENT_FOLDER_PICKER_LABEL_ID = "extra.labelId"
+const val EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID = "extra.currentLabelId"
+const val EXTRA_PARENT_FOLDER_PICKER_PARENT_ID = "extra.parentLabelId"
 
 @AndroidEntryPoint
 class ParentFolderPickerActivity : AppCompatActivity() {
@@ -71,6 +72,7 @@ class ParentFolderPickerActivity : AppCompatActivity() {
                         contentDescription = getString(model.icon.contentDescriptionRes)
                     }
                     parentPickerFolderNameTextView.text = model.name
+                    setEnabled(model.isEnabled)
                 }
                 is ParentFolderPickerItemUiModel.None -> {
                     parentPickerFolderIconImageView.isVisible = false
@@ -129,25 +131,47 @@ class ParentFolderPickerActivity : AppCompatActivity() {
     }
 
     private fun onSavingAndCloseState(state: ParentFolderPickerState.SavingAndClose) {
-        val intent = intent.putExtra(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID, state.selectedItemId?.id)
+        val intent = intent.putExtra(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID, state.selectedItemId?.id)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
 
-    class Launcher : ActivityResultContract<LabelId?, LabelId?>() {
+    data class Input(
+        val currentFolder: LabelId,
+        val selectedParentFolder: LabelId?
+    )
 
-        override fun createIntent(context: Context, input: LabelId?) =
-            Intent(context, ParentFolderPickerActivity::class.java)
-                .putExtra(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID, input?.id)
+    class Launcher : ActivityResultContract<Input, LabelId?>() {
+
+        private var previousSelectedFolder: LabelId? = null
+
+        override fun createIntent(context: Context, input: Input): Intent {
+            previousSelectedFolder = input.selectedParentFolder
+            return Intent(context, ParentFolderPickerActivity::class.java)
+                .putExtra(EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID, input.currentFolder.id)
+                .putExtra(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID, previousSelectedFolder?.id)
+        }
 
         override fun parseResult(resultCode: Int, intent: Intent?): LabelId? =
-            intent?.getStringExtra(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID)?.let(::LabelId)
+            if (resultCode == Activity.RESULT_OK) {
+                intent?.getStringExtra(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID)?.let(::LabelId)
+            } else {
+                previousSelectedFolder
+            }
     }
 }
 
 private fun ItemParentPickerFolderBinding.setMarginFor(folderLevel: Int) {
     (root.layoutParams as RecyclerView.LayoutParams).marginStart =
         folderLevel * root.context.resources.getDimensionPixelSize(R.dimen.gap_large)
+}
+
+private fun ItemParentPickerFolderBinding.setEnabled(isEnabled: Boolean) {
+    root.isClickable = isEnabled
+    root.isEnabled = isEnabled
+    val alpha = if (isEnabled) 1f else 0.3f
+    parentPickerFolderIconImageView.alpha = alpha
+    parentPickerFolderNameTextView.alpha = alpha
 }
 
 private fun TextView.setCheckmark(isSelected: Boolean) {

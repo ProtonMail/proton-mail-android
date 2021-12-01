@@ -123,6 +123,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private val viewModel: LabelsManagerViewModel by viewModels()
 
+    private var currentEditingLabel: LabelId? = null
     private var parentFolderId: LabelId? = null
 
     private val parentFolderPickerLauncher =
@@ -172,7 +173,12 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         save_button.setOnClickListener { saveCurrentLabel() }
         colors_grid_view.setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
         labels_manager_parent_folder_text_view.onClick {
-            parentFolderPickerLauncher.launch(parentFolderId)
+            parentFolderPickerLauncher.launch(
+                ParentFolderPickerActivity.Input(
+                    currentFolder = checkNotNull(currentEditingLabel),
+                    selectedParentFolder = parentFolderId
+                )
+            )
         }
 
         // Setup Labels RecyclerView
@@ -258,6 +264,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** When a Label is clicked */
     private fun onLabelClick(label: LabelUiModel) {
+        currentEditingLabel = label.labelId
         state = State.UPDATE
 
         label_name.setText(label.name)
