@@ -25,7 +25,7 @@ import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.usecase.keys.LogOutIfNotAllActiveKeysAreDecryptable
+import ch.protonmail.android.usecase.keys.LogOutMigratedUserIfNotAllActiveKeysAreDecryptable
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.Runs
 import io.mockk.called
@@ -59,9 +59,10 @@ class EventHandlerTest {
 
     private val messageDetailsRepository = mockk<MessageDetailsRepository>(relaxUnitFun = true)
 
-    private val logOutIfNotAllActiveKeysAreDecryptable = mockk<LogOutIfNotAllActiveKeysAreDecryptable> {
-        every { this@mockk() } returns true
-    }
+    private val logOutMigratedUserIfNotAllActiveKeysAreDecryptable =
+        mockk<LogOutMigratedUserIfNotAllActiveKeysAreDecryptable> {
+            every { this@mockk() } returns true
+        }
 
     private val eventHandler = EventHandler(
         mockk(),
@@ -71,7 +72,7 @@ class EventHandlerTest {
         mockk(),
         mockk(),
         mockk(),
-        logOutIfNotAllActiveKeysAreDecryptable,
+        logOutMigratedUserIfNotAllActiveKeysAreDecryptable,
         mockk(),
         mockk(),
         mockk(),
@@ -146,7 +147,7 @@ class EventHandlerTest {
         eventHandler.handleNewKeysIfNeeded(ignoredEventResponse)
 
         // then
-        verify { logOutIfNotAllActiveKeysAreDecryptable wasNot called }
+        verify { logOutMigratedUserIfNotAllActiveKeysAreDecryptable wasNot called }
     }
 
     @Test
@@ -160,7 +161,7 @@ class EventHandlerTest {
         eventHandler.handleNewKeysIfNeeded(ignoredEventResponse)
 
         // then
-        verify { logOutIfNotAllActiveKeysAreDecryptable() }
+        verify { logOutMigratedUserIfNotAllActiveKeysAreDecryptable() }
     }
 
     @Test
@@ -174,7 +175,7 @@ class EventHandlerTest {
         eventHandler.handleNewKeysIfNeeded(ignoredEventResponse)
 
         // then
-        verify { logOutIfNotAllActiveKeysAreDecryptable() }
+        verify { logOutMigratedUserIfNotAllActiveKeysAreDecryptable() }
     }
 
 

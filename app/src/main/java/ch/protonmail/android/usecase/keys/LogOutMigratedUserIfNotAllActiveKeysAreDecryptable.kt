@@ -26,7 +26,7 @@ import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import javax.inject.Inject
 
-class LogOutIfNotAllActiveKeysAreDecryptable @Inject constructor(
+class LogOutMigratedUserIfNotAllActiveKeysAreDecryptable @Inject constructor(
     private val userManager: UserManager,
     private val areActiveKeysDecryptable: CheckIfActiveKeysAreDecryptable,
     private val userNotifier: UserNotifier,
@@ -34,7 +34,7 @@ class LogOutIfNotAllActiveKeysAreDecryptable @Inject constructor(
 ) {
 
     operator fun invoke(@StringRes errorMessage: Int = R.string.logged_out_description): Boolean {
-        return if (areActiveKeysDecryptable()) {
+        return if (userManager.user.legacyAccount || areActiveKeysDecryptable()) {
             false
         } else {
             userManager.logoutLastActiveAccount()

@@ -20,6 +20,7 @@
 package ch.protonmail.android.usecase.keys
 
 import ch.protonmail.android.R
+import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.utils.resources.StringResourceResolver
@@ -28,18 +29,22 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import io.mockk.spyk
 import io.mockk.verify
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class LogOutIfNotAllActiveKeysAreDecryptableTest {
+class LogOutMigratedUserIfNotAllActiveKeysAreDecryptableTest {
 
-    private val userManagerMock = mockk<UserManager>()
+    private val userSpy = spyk<User>()
+    private val userManagerMock = mockk<UserManager> {
+        every { user } returns userSpy
+    }
     private val areActiveKeysDecryptableMock = mockk<CheckIfActiveKeysAreDecryptable>()
     private val userNotifierMock = mockk<UserNotifier>()
     private val getStringResourceMock = mockk<StringResourceResolver>()
-    private val logOutIfNotAllActiveKeysAreDecryptable = LogOutIfNotAllActiveKeysAreDecryptable(
+    private val logOutMigratedUserIfNotAllActiveKeysAreDecryptable = LogOutMigratedUserIfNotAllActiveKeysAreDecryptable(
         userManagerMock,
         areActiveKeysDecryptableMock,
         userNotifierMock,
@@ -47,29 +52,61 @@ class LogOutIfNotAllActiveKeysAreDecryptableTest {
     )
 
     @Test
-    fun `should return false and not log out nor notify user when keys are decryptable`() {
+    fun `should return false and not log out nor notify user when keys are decryptable and user is migrated`() {
         // given
         every { areActiveKeysDecryptableMock() } returns true
+        every { userSpy.legacyAccount } returns false
 
         // when
-        val loggingOut = logOutIfNotAllActiveKeysAreDecryptable()
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
 
         // then
         assertFalse(loggingOut)
-        verify { userManagerMock wasNot called }
+        verify(exactly = 0) { userManagerMock.logoutLastActiveAccount() }
         verify { userNotifierMock wasNot called }
     }
 
     @Test
-    fun `should return true, log out and notify user when keys are not decryptable`() {
+    fun `should return false and not log out nor notify user when keys are decryptable and user is not migrated`() {
+        // given
+        every { areActiveKeysDecryptableMock() } returns true
+        every { userSpy.legacyAccount } returns true
+
+        // when
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
+
+        // then
+        assertFalse(loggingOut)
+        verify(exactly = 0) { userManagerMock.logoutLastActiveAccount() }
+        verify { userNotifierMock wasNot called }
+    }
+
+    @Test
+    fun `should return false and not log out nor notify user when keys are not decryptable and user is not migrated`() {
+        // given
+        every { areActiveKeysDecryptableMock() } returns false
+        every { userSpy.legacyAccount } returns true
+
+        // when
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
+
+        // then
+        assertFalse(loggingOut)
+        verify(exactly = 0) { userManagerMock.logoutLastActiveAccount() }
+        verify { userNotifierMock wasNot called }
+    }
+
+    @Test
+    fun `should return true, log out and notify user when keys are not decryptable and user is migrated`() {
         // given
         every { areActiveKeysDecryptableMock() } returns false
         every { userManagerMock.logoutLastActiveAccount() } just runs
         every { userNotifierMock.showError(any()) } just runs
         every { getStringResourceMock(R.string.logged_out_description) } returns TestData.EXPECTED_ERROR_MESSAGE
+        every { userSpy.legacyAccount } returns false
 
         // when
-        val loggingOut = logOutIfNotAllActiveKeysAreDecryptable()
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
 
         // then
         assertTrue(loggingOut)
@@ -78,16 +115,17 @@ class LogOutIfNotAllActiveKeysAreDecryptableTest {
     }
 
     @Test
-    fun `should return true, log out and notify user using the provided error message when keys are not decryptable`() {
+    fun `should return true, log out and notify with provided message if keys are not decryptable and user migrated`() {
         // given
         val providedErrorMessage = R.string.logged_out_contact_support
         every { areActiveKeysDecryptableMock() } returns false
         every { userManagerMock.logoutLastActiveAccount() } just runs
         every { userNotifierMock.showError(any()) } just runs
         every { getStringResourceMock(providedErrorMessage) } returns TestData.EXPECTED_ERROR_MESSAGE
+        every { userSpy.legacyAccount } returns false
 
         // when
-        val loggingOut = logOutIfNotAllActiveKeysAreDecryptable(providedErrorMessage)
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable(providedErrorMessage)
 
         // then
         assertTrue(loggingOut)
