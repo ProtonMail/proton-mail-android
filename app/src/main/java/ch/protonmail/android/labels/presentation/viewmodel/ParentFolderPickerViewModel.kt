@@ -143,9 +143,7 @@ private fun MutableStateFlow<ParentFolderPickerState>.updateItemsIfNeeded(
 }
 
 private val SavedStateHandle.currentItemId get() =
-    requireNotNull(get<String>(EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID)?.let(::LabelId)) {
-        "Current folder id is required"
-    }
+    get<String>(EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID)?.let(::LabelId)
 
 private val SavedStateHandle.selectedItemId get() =
     get<String>(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID)?.let(::LabelId)

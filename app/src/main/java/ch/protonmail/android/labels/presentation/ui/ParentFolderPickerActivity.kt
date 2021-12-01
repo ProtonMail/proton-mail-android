@@ -137,7 +137,7 @@ class ParentFolderPickerActivity : AppCompatActivity() {
     }
 
     data class Input(
-        val currentFolder: LabelId,
+        val currentFolder: LabelId?,
         val selectedParentFolder: LabelId?
     )
 
@@ -148,7 +148,7 @@ class ParentFolderPickerActivity : AppCompatActivity() {
         override fun createIntent(context: Context, input: Input): Intent {
             previousSelectedFolder = input.selectedParentFolder
             return Intent(context, ParentFolderPickerActivity::class.java)
-                .putExtra(EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID, input.currentFolder.id)
+                .putExtra(EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID, input.currentFolder?.id)
                 .putExtra(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID, previousSelectedFolder?.id)
         }
 

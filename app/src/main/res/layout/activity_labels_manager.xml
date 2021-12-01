@@ -86,7 +86,7 @@
                     android:textAppearance="@style/Proton.Text.Default"
                     android:visibility="gone"
                     tools:visibility="visible"
-                    tools:text="@string/labels_manager_select_parent_folder"/>
+                    android:text="@string/labels_manager_select_parent_folder"/>
 
                 <View style="@style/ViewSeparatorHorizontal"/>
 

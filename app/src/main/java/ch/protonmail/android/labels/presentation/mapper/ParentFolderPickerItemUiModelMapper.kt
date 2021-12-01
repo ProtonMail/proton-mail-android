@@ -52,7 +52,7 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
      */
     fun toUiModels(
         folders: Collection<Folder>,
-        currentFolder: LabelId,
+        currentFolder: LabelId?,
         selectedFolder: LabelId?,
         includeNoneUiModel: Boolean
     ): List<ParentFolderPickerItemUiModel> {
@@ -76,7 +76,7 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
 
     private fun labelToUiModels(
         folder: Folder,
-        currentFolder: LabelId,
+        currentFolder: LabelId?,
         isEnabled: Boolean,
         selectedFolder: LabelId?,
         folderLevel: Int,

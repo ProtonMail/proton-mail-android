@@ -175,7 +175,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         labels_manager_parent_folder_text_view.onClick {
             parentFolderPickerLauncher.launch(
                 ParentFolderPickerActivity.Input(
-                    currentFolder = checkNotNull(currentEditingLabel),
+                    currentFolder = currentEditingLabel,
                     selectedParentFolder = parentFolderId
                 )
             )
