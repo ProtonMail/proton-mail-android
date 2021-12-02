@@ -90,16 +90,20 @@ class AddressCrypto @AssistedInject constructor(
 
         val pgpMessage = GoOpenPgpCrypto.newPGPMessageFromArmored(token.string)
         userManager.user.keys.forEach { userKey ->
-            val userKeyRing = GoOpenPgpCrypto.newKeyRing(
-                GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey).unlock(mailboxPassword)
-            )
-            decryptToken(
-                pgpMessage,
-                userKeyRing
-            )?.let { decryptedToken ->
-                if (verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)) {
-                    return decryptedToken
+            try {
+                val userKeyRing = GoOpenPgpCrypto.newKeyRing(
+                    GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey).unlock(mailboxPassword)
+                )
+                decryptToken(
+                    pgpMessage,
+                    userKeyRing
+                )?.let { decryptedToken ->
+                    if (verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)) {
+                        return decryptedToken
+                    }
                 }
+            } catch (exception: Exception) {
+                throw UserKeyVerificationException(userKey.id, exception)
             }
         }
         Timber.e("Failed getting passphrase for key (id = ${key.id.s}) using user keys")
@@ -209,6 +213,34 @@ class AddressCrypto @AssistedInject constructor(
             val unarmored = Armor.unarmor(key.privateKey.string)
             openPgp.getSessionFromKeyPacketBinkeys(keyPacket, unarmored, passphraseFor(key))
         }
+    }
+
+    fun areActiveKeysDecryptable(): Boolean {
+        checkNotNull(mailboxPassword) { "Error creating KeyRing, invalid passphrase" }
+
+        currentKeys.filter { it.active }.forEach { key ->
+            try {
+                val addressKeyPassphrase = passphraseFor(key)
+                val lockedAddressKey = GoOpenPgpCrypto.newKeyFromArmored(key.privateKey.string)
+                lockedAddressKey.unlock(addressKeyPassphrase)
+            } catch (decryptionError: Exception) {
+                val errorType = if (decryptionError is UserKeyVerificationException) {
+                    "User key issue. User key ID = ${decryptionError.userKeyId}"
+                } else {
+                    "Address key issue. Address key ID = ${key.id}"
+                }
+                Timber.e(
+                    decryptionError,
+                    """
+                    $errorType
+                    User ID = ${userManager.user.id}
+                    Address ID = ${address.id}
+                    """.trimIndent()
+                )
+                return false
+            }
+        }
+        return true
     }
 
     private fun createAndUnlockKeyRing(): KeyRing {
