@@ -55,7 +55,7 @@ class NetworkSnackBarUtil @Inject constructor() {
      */
     fun getNoConnectionSnackBar(
         parentView: View,
-        user: User,
+        user: User?,
         netConfiguratorCallback: INetworkConfiguratorCallback,
         onRetryClick: (() -> Unit)?,
         @IdRes anchorViewId: Int? = null,
@@ -99,7 +99,9 @@ class NetworkSnackBarUtil @Inject constructor() {
                         isClickable = true
                         isFocusable = true
                         setOnClickListener {
-                            showNoConnectionTroubleshootDialog(context, user, netConfiguratorCallback)
+                            user?.let {
+                                showNoConnectionTroubleshootDialog(context, user, netConfiguratorCallback)
+                            }
                         }
                         findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
                             setTextColor(textColor)
