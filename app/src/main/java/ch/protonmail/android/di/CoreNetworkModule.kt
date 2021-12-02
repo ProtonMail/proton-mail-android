@@ -80,7 +80,8 @@ object NetworkModule {
         protonCookieStore,
         CoroutineScope(Job() + Dispatchers.Default),
         defaultApiPins,
-        alternativeApiPins
+        alternativeApiPins,
+        apiConnectionListener = null
     )
 
     @Provides

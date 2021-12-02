@@ -22,33 +22,33 @@ import studio.forface.easygradle.dsl.android.*
 
 // region Proton
 // Common
-val DependencyHandler.`Proton-kotlin-util` get() =                  protonUtil("kotlin") version `Proton-kotlin-util version`
-val DependencyHandler.`Proton-shared-preferences` get() =           protonUtil("android-shared-preferences") version `Proton-shared-preferences version`
-val DependencyHandler.`Proton-work-manager` get() =                 protonUtil("android-work-manager") version `Proton-work-manager version`
+val DependencyHandler.`Proton-kotlin-util` get() =                  protonUtil("kotlin") version `Proton-core version`
+val DependencyHandler.`Proton-shared-preferences` get() =           protonUtil("android-shared-preferences") version `Proton-core version`
+val DependencyHandler.`Proton-work-manager` get() =                 protonUtil("android-work-manager") version `Proton-core version`
 // Test
-val DependencyHandler.`Proton-android-test` get() =                 protonTest("android") version `Proton-android-test version`
-val DependencyHandler.`Proton-android-instrumented-test` get() =    protonTest("android-instrumented") version `Proton-android-instr-test version`
-val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("kotlin") version `Proton-kotlin-test version`
+val DependencyHandler.`Proton-android-test` get() =                 protonTest("android") version `Proton-core version`
+val DependencyHandler.`Proton-android-instrumented-test` get() =    protonTest("android-instrumented") version `Proton-core version`
+val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("kotlin") version `Proton-core version`
 
-val DependencyHandler.`Proton-account` get() =                      proton("account") version `Proton-account version`
-val DependencyHandler.`Proton-account-manager` get() =              proton("account-manager") version `Proton-account-manager version`
-val DependencyHandler.`Proton-auth` get() =                         proton("auth") version `Proton-auth version`
-val DependencyHandler.`Proton-contact` get() =                      proton("contact") version `Proton-contact version`
-val DependencyHandler.`Proton-country` get() =                      proton("country") version `Proton-country version`
-val DependencyHandler.`Proton-crypto` get() =                       proton("crypto") version `Proton-crypto version`
-val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-data version`
-val DependencyHandler.`Proton-data-room` get() =                    proton("data-room") version `Proton-data-room version`
-val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
-val DependencyHandler.`Proton-human-verification` get() =           proton("human-verification") version `Proton-human-verification version`
-val DependencyHandler.`Proton-key` get() =                          proton("key") version `Proton-key version`
-val DependencyHandler.`Proton-mail-settings` get() =                proton("mail-settings") version `Proton-mail-settings version`
-val DependencyHandler.`Proton-network` get() =                      proton("network") version `Proton-network version`
-val DependencyHandler.`Proton-payment` get() =                      proton("payment") version `Proton-payment version`
-val DependencyHandler.`Proton-plan` get() =                         proton("plan") version `Proton-plan version`
-val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-presentation version`
-val DependencyHandler.`Proton-user` get() =                         proton("user") version `Proton-user version`
-val DependencyHandler.`Proton-user-domain` get() =                  proton("user-domain") version `Proton-user version`
-val DependencyHandler.`Proton-user-settings` get() =                proton("user-settings") version `Proton-user-settings version`
+val DependencyHandler.`Proton-account` get() =                      proton("account") version `Proton-core version`
+val DependencyHandler.`Proton-account-manager` get() =              proton("account-manager") version `Proton-core version`
+val DependencyHandler.`Proton-auth` get() =                         proton("auth") version `Proton-core version`
+val DependencyHandler.`Proton-contact` get() =                      proton("contact") version `Proton-core version`
+val DependencyHandler.`Proton-country` get() =                      proton("country") version `Proton-core version`
+val DependencyHandler.`Proton-crypto` get() =                       proton("crypto") version `Proton-core version`
+val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-core version`
+val DependencyHandler.`Proton-data-room` get() =                    proton("data-room") version `Proton-core version`
+val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-core version`
+val DependencyHandler.`Proton-human-verification` get() =           proton("human-verification") version `Proton-core version`
+val DependencyHandler.`Proton-key` get() =                          proton("key") version `Proton-core version`
+val DependencyHandler.`Proton-mail-settings` get() =                proton("mail-settings") version `Proton-core version`
+val DependencyHandler.`Proton-network` get() =                      proton("network") version `Proton-core version`
+val DependencyHandler.`Proton-payment` get() =                      proton("payment") version `Proton-core version`
+val DependencyHandler.`Proton-plan` get() =                         proton("plan") version `Proton-core version`
+val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-core version`
+val DependencyHandler.`Proton-user` get() =                         proton("user") version `Proton-core version`
+val DependencyHandler.`Proton-user-domain` get() =                  proton("user-domain") version `Proton-core version`
+val DependencyHandler.`Proton-user-settings` get() =                proton("user-settings") version `Proton-core version`
 
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)

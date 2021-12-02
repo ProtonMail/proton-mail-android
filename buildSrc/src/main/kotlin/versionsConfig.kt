@@ -63,32 +63,7 @@ fun initVersions() {
 
 // Proton Core
 // Common
-const val `Proton-kotlin-util version` =        "1.15.2"        // Released: Sep 13, 2021
-const val `Proton-shared-preferences version` = "1.15"          // Released: Sep 13, 2021
-const val `Proton-work-manager version` =       "1.15"          // Released: Sep 13, 2021
-// Test
-const val `Proton-android-test version` =       "0.4.3"         // Released: Mar 22, 2021
-const val `Proton-android-instr-test version` = "0.3.3"         // Released: Mar 22, 2021
-const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct 21, 2020
-// Feature
-const val `Proton-account version` =            "1.15.2"        // Released: Sep 23, 2021
-const val `Proton-account-manager version` =    "1.16"          // Released: Oct 19, 2021
-const val `Proton-auth version` =               "1.18.1"          // Released: Nov 05, 2021
-const val `Proton-contact version` =            "1.18"          // Released: Oct 25, 2021
-const val `Proton-country version` =            "1.16"          // Released: Oct 19, 2021
-const val `Proton-crypto version` =             "1.16"          // Released: Oct 28, 2021
-const val `Proton-data version` =               "1.15"          // Released: Sep 13, 2021
-const val `Proton-data-room version` =          "1.16"          // Released: Oct 04, 2021
-const val `Proton-domain version` =             "1.18"          // Released: Oct 25, 2021
-const val `Proton-human-verification version` = "1.16.1"        // Released: Oct 22, 2021
-const val `Proton-key version` =                "1.16.1"        // Released: Nov 08, 2021
-const val `Proton-mail-settings version` =      "1.18"          // Released: Sep 22, 2021
-const val `Proton-network version` =            "1.15.7"        // Released: Oct 12, 2021
-const val `Proton-payment version` =            "1.17.2"        // Released: Oct 26, 2021
-const val `Proton-plan version` =               "1.18"          // Released: Oct 19, 2021
-const val `Proton-presentation version` =       "1.18.3"        // Released: Nov 05, 2021
-const val `Proton-user version` =               "1.18"          // Released: Oct 25, 2021
-const val `Proton-user-settings version` =      "1.18.2"        // Released: Oct 28, 2021
+const val `Proton-core version` = "2.0.0" // Released: Nov 25, 2021
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 
