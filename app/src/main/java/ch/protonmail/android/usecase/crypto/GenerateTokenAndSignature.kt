@@ -25,6 +25,11 @@ import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.crypto.Crypto
 import javax.inject.Inject
 
+/**
+ *
+ * This class is gonna be needed when we start generating keys for non-legacy users on signup
+ *
+ */
 class GenerateTokenAndSignature @Inject constructor (
     private val userManager: UserManager,
     private val openPgp: OpenPGP
@@ -33,7 +38,7 @@ class GenerateTokenAndSignature @Inject constructor (
         val tokenManager = userManager.getTokenManager(userManager.username)
         val secret = openPgp.randomToken()
         val tokenString = secret.joinToString("") { String.format("%02x", (it.toInt() and 0xff)) }
-        val binMessage = Crypto.newPlainMessageFromString(tokenString)
+        val binMessage = Crypto.newPlainMessage(tokenString.toByteArray())
         val armoredPrivateKey: String? = tokenManager?.encPrivateKey
         val mailboxPassword = userManager.getMailboxPassword()
         val unlockedUserKey = Crypto.newKeyFromArmored(armoredPrivateKey).unlock(mailboxPassword)
