@@ -19,10 +19,17 @@
 
 package ch.protonmail.android.ui.view
 
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import ch.protonmail.android.R
 import ch.protonmail.android.ui.view.DaysAndHoursPickerView.Companion.MAX_DAYS
 import ch.protonmail.android.ui.view.DaysAndHoursPickerView.Companion.MAX_HOURS
 import ch.protonmail.android.util.ViewTest
+import ch.protonmail.android.util.withProtonInputEditTextId
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -31,11 +38,114 @@ import org.junit.runner.RunWith
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Test suite for [DaysAndHoursPickerView]
- */
 @RunWith(AndroidJUnit4ClassRunner::class)
 class DaysAndHoursPickerViewTest : ViewTest<DaysAndHoursPickerView>(::DaysAndHoursPickerView), CoroutinesTest {
+
+    // Days
+    @Test
+    fun daysAreNotChangedIfCorrect() {
+
+        // given
+        val input = 14
+
+        // when
+        testView.set(days = input, hours = 0)
+
+        // then
+        onDaysView().check(matches(withText("14")))
+    }
+
+    @Test
+    fun daysAreSetToZeroIfBelowZero() {
+
+        // given
+        val input = -14
+
+        // when
+        testView.set(days = input, hours = 0)
+
+        // then
+        onDaysView().check(matches(withText("0")))
+    }
+
+    @Test
+    fun daysAreSetToMaxIfTooHigh() {
+
+        // given
+        val input = 999
+
+        // when
+        testView.set(days = input, hours = 0)
+
+        // then
+        onDaysView().check(matches(withText("$MAX_DAYS")))
+    }
+
+    @Test
+    fun daysAreSetToZeroIfInvalidInput() {
+
+        // given
+        val input = "hello"
+
+        // when
+        onDaysView().perform(ViewActions.typeText(input))
+
+        // then
+        onDaysView().check(matches(withText("0")))
+    }
+
+    // Hours
+    @Test
+    fun hoursAreNotChangedIfCorrect() {
+
+        // given
+        val input = 14
+
+        // when
+        testView.set(days = 0, hours = input)
+
+        // then
+        onHoursView().check(matches(withText("14")))
+    }
+
+    @Test
+    fun hoursAreSetToZeroIfBelowZero() {
+
+        // given
+        val input = -14
+
+        // when
+        testView.set(days = 0, hours = input)
+
+        // then
+        onHoursView().check(matches(withText("0")))
+    }
+
+    @Test
+    fun hoursAreSetToMaxIfTooHigh() {
+
+        // given
+        val input = 999
+
+        // when
+        testView.set(days = 0, hours = input)
+
+        // then
+        onHoursView().check(matches(withText("$MAX_HOURS")))
+    }
+
+    @Test
+    fun hoursAreSetToZeroIfInvalidInput() {
+
+        // given
+        val input = "hello"
+
+        // when
+        onHoursView().perform(ViewActions.typeText(input))
+
+        // then
+        onHoursView().check(matches(withText("0")))
+    }
 
     // Callback
     @Test
@@ -90,4 +200,10 @@ class DaysAndHoursPickerViewTest : ViewTest<DaysAndHoursPickerView>(::DaysAndHou
         job.cancel()
     }
 
+
+    private fun onDaysView(): ViewInteraction =
+        onView(withProtonInputEditTextId(R.id.days_and_hours_picker_days_input))
+
+    private fun onHoursView(): ViewInteraction =
+        onView(withProtonInputEditTextId(R.id.days_and_hours_picker_hours_input))
 }
