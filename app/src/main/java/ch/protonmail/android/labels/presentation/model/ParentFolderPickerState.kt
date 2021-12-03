@@ -26,6 +26,13 @@ sealed class ParentFolderPickerState {
     abstract val selectedItemId: LabelId?
 
     /**
+     * Picker has just been opened, items are being laoded
+     */
+    data class Loading(
+        override val selectedItemId: LabelId?
+    ) : ParentFolderPickerState()
+
+    /**
      * Picker is open and the user can change the selected item
      */
     data class Editing(

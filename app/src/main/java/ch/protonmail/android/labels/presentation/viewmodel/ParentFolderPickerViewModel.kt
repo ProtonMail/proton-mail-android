@@ -19,32 +19,59 @@
 
 package ch.protonmail.android.labels.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.usecase.ObserveFoldersEligibleAsParent
+import ch.protonmail.android.labels.presentation.mapper.ParentFolderPickerItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
+import ch.protonmail.android.labels.presentation.ui.EXTRA_PARENT_FOLDER_PICKER_LABEL_ID
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
-// TODO: MAILAND-2614 uncomment after test with dummy state @HiltViewModel
+@HiltViewModel
 class ParentFolderPickerViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val dispatchers: DispatcherProvider,
-    // TODO: MAILAND-2614 for test only, replace with use case
-    initialState: ParentFolderPickerState = ParentFolderPickerState.Editing(
-        selectedItemId = null,
-        items = listOf(
-            ParentFolderPickerItemUiModel.None(isSelected = true)
-        )
-    )
+    accountManager: AccountManager,
+    private val observeFoldersEligibleAsParent: ObserveFoldersEligibleAsParent,
+    private val mapper: ParentFolderPickerItemUiModelMapper
 ) : ViewModel() {
 
-    val state = MutableStateFlow(initialState)
+    val state: StateFlow<ParentFolderPickerState> get() =
+        mutableState.asStateFlow()
+
+    private val mutableState: MutableStateFlow<ParentFolderPickerState> = MutableStateFlow(
+        ParentFolderPickerState.Loading(selectedItemId = savedStateHandle.selectedItemId)
+    )
+
+    init {
+        accountManager.getPrimaryUserId()
+            .filterNotNull()
+            .flatMapLatest { observeFoldersEligibleAsParent(userId = it) }
+            .mapLatest { folders ->
+                val currentSelectedFolder = state.value.selectedItemId
+                mapper.toUiModels(folders, currentSelectedFolder, includeNoneUiModel = true)
+            }
+            .onEach { mutableState.updateItemsIfNeeded(newItems = it) }
+            .launchIn(viewModelScope)
+    }
 
     fun process(action: ParentFolderPickerAction) {
         viewModelScope.launch {
@@ -52,7 +79,7 @@ class ParentFolderPickerViewModel @Inject constructor(
                 is ParentFolderPickerAction.SetSelected -> setSelected(action.folderId)
                 is ParentFolderPickerAction.SaveAndClose -> saveAndClose()
             }
-            state.emit(newState)
+            mutableState.emit(newState)
         }
     }
 
@@ -63,6 +90,7 @@ class ParentFolderPickerViewModel @Inject constructor(
         }
 
         return when (prevState) {
+            is ParentFolderPickerState.Loading -> prevState.copy(selectedItemId = folderId)
             is ParentFolderPickerState.Editing -> prevState.updateSelectedItem(folderId)
             is ParentFolderPickerState.SavingAndClose -> {
                 Timber.w("Previous state is 'SavingAndClose', ignoring the current change")
@@ -92,3 +120,21 @@ class ParentFolderPickerViewModel @Inject constructor(
             ParentFolderPickerState.SavingAndClose(selectedItemId = prevState.selectedItemId)
         }
 }
+
+private fun MutableStateFlow<ParentFolderPickerState>.updateItemsIfNeeded(
+    newItems: List<ParentFolderPickerItemUiModel>
+) {
+    val prevState = value
+    val newState = when (prevState) {
+        is ParentFolderPickerState.Loading -> ParentFolderPickerState.Editing(
+            selectedItemId = prevState.selectedItemId,
+            items = newItems
+        )
+        is ParentFolderPickerState.Editing -> prevState.copy(items = newItems)
+        is ParentFolderPickerState.SavingAndClose -> prevState
+    }
+    if (newState !== prevState) tryEmit(newState)
+}
+
+private val SavedStateHandle.selectedItemId get() =
+    get<String>(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID)?.let(::LabelId)

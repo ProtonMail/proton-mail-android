@@ -19,8 +19,12 @@
 
 package ch.protonmail.android.labels.presentation.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -30,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ActivityParentFolderPickerBinding
 import ch.protonmail.android.databinding.ItemParentPickerFolderBinding
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
@@ -38,6 +43,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
+import timber.log.Timber
+
+const val EXTRA_PARENT_FOLDER_PICKER_LABEL_ID = "extra.labelId"
 
 @AndroidEntryPoint
 class ParentFolderPickerActivity : AppCompatActivity() {
@@ -56,7 +64,7 @@ class ParentFolderPickerActivity : AppCompatActivity() {
                     setMarginFor(folderLevel = model.folderLevel)
                     parentPickerFolderIconImageView.apply {
                         isVisible = true
-                        setColorFilter(model.colorInt)
+                        setColorFilter(model.icon.colorInt)
                         setImageResource(model.icon.drawableRes)
                         contentDescription = getString(model.icon.contentDescriptionRes)
                     }
@@ -85,7 +93,9 @@ class ParentFolderPickerActivity : AppCompatActivity() {
         }
 
         viewModel.state.onEach { state ->
+            Timber.v("Received state: $state")
             when (state) {
+                is ParentFolderPickerState.Loading -> {}
                 is ParentFolderPickerState.Editing -> onEditingState(state)
                 is ParentFolderPickerState.SavingAndClose -> onSavingAndCloseState(state)
             }
@@ -97,7 +107,19 @@ class ParentFolderPickerActivity : AppCompatActivity() {
     }
 
     private fun onSavingAndCloseState(state: ParentFolderPickerState.SavingAndClose) {
-        TODO("set result and finish")
+        val intent = intent.putExtra(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID, state.selectedItemId?.id)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
+    }
+
+    class Launcher : ActivityResultContract<LabelId?, LabelId?>() {
+
+        override fun createIntent(context: Context, input: LabelId?) =
+            Intent(context, ParentFolderPickerActivity::class.java)
+                .putExtra(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID, input?.id)
+
+        override fun parseResult(resultCode: Int, intent: Intent?): LabelId? =
+            intent?.getStringExtra(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID)?.let(::LabelId)
     }
 }
 

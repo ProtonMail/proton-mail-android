@@ -19,13 +19,12 @@
 
 package ch.protonmail.android.labels.presentation.model
 
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel.Folder.Icon.WithChildren
-import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel.Folder.Icon.WithoutChildren
 
 sealed class ParentFolderPickerItemUiModel {
 
@@ -37,33 +36,26 @@ sealed class ParentFolderPickerItemUiModel {
     data class Folder(
         override val id: LabelId,
         val name: String,
-        val colorInt: Int,
         val icon: Icon,
         val folderLevel: Int,
         override val isSelected: Boolean
     ) : ParentFolderPickerItemUiModel() {
 
-        /**
-         * @see WithChildren The target folder has DISPLAYED children
-         * @see WithoutChildren The target folder has not DISPLAYED children
-         *
-         * DISPLAYED children defer from the Folder's children because, having a limited level of nesting, the max
-         *  level won't be displayed
-         */
-        sealed class Icon(
+        data class Icon(
             @DrawableRes val drawableRes: Int,
+            @ColorInt val colorInt: Int,
             @StringRes val contentDescriptionRes: Int
         ) {
 
-            object WithChildren : Icon(
-                R.drawable.ic_folder_multiple_filled,
-                R.string.parent_picker_parent_folder_icon_description
-            )
+            companion object {
 
-            object WithoutChildren : Icon(
-                R.drawable.ic_folder_filled,
-                R.string.parent_picker_folder_icon_description
-            )
+                const val WITH_CHILDREN_COLORED_ICON_RES = R.drawable.ic_folder_multiple_filled
+                const val WITHOUT_CHILDREN_COLORED_ICON_RES = R.drawable.ic_folder_filled
+                const val WITH_CHILDREN_BW_ICON_RES = R.drawable.ic_folder_multiple
+                const val WITHOUT_CHILDREN_BW_ICON_RES = R.drawable.ic_folder
+                const val WITH_CHILDREN_CONTENT_DESCRIPTION_RES = R.string.parent_picker_parent_folder_icon_description
+                const val WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES = R.string.parent_picker_folder_icon_description
+            }
         }
     }
 
