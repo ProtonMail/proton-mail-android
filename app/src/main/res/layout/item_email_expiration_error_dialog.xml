@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:background="@color/fog_gray"
     android:padding="@dimen/activity_vertical_margin_xsmall">
 
     <TextView
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/fog_gray"
         android:ellipsize="end"
-        android:gravity="left"
+        android:gravity="start"
         android:padding="@dimen/activity_horizontal_margin_small"
         android:singleLine="true"
         android:textSize="@dimen/h4" />
