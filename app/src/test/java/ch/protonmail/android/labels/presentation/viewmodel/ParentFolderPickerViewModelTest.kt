@@ -78,7 +78,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `on select action selects the correct item in Loading`() = runBlockingTest {
+    fun `on select action selects the correct item while loading`() = runBlockingTest {
         // given
         every { observeFoldersEligibleAsParent(USER_ID) } returns flowOf()
         val action = ParentFolderPickerAction.SetSelected(FOLDER_1_ID)
@@ -95,7 +95,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `on select action selects the correct item in Editing`() = runBlockingTest {
+    fun `on select action selects the correct item while picking`() = runBlockingTest {
         // given
         every { observeFoldersEligibleAsParent(USER_ID) } returns flowOf(buildTwoFoldersList())
         every { mapper.toUiModels(buildTwoFoldersList(), any(), any()) } returns buildTwoFoldersUiModelList()
@@ -189,7 +189,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `selectedItemId is correctly retrieved from SavedStateHandled`() = runBlockingTest {
+    fun `selectedItemId is correctly retrieved from SavedStateHandle`() = runBlockingTest {
         // given
         every { savedStateHandle.get<String>(any()) } returns FOLDER_2_ID.id
         val expectedState = ParentFolderPickerState.Loading(selectedItemId = FOLDER_2_ID)
