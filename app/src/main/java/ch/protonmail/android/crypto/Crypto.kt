@@ -92,7 +92,6 @@ abstract class Crypto<K>(
         passphrase
     )
 
-
     /**
      * Encrypt for Message or Contact
      */
@@ -144,7 +143,6 @@ abstract class Crypto<K>(
         return newKey.armoredPublicKey
             .also { newKey.clearPrivateParams() }
     }
-
 
     fun getUnarmoredKeys(): List<ByteArray> =
         currentKeys.map { Armor.unarmor(it.privateKey.string) }

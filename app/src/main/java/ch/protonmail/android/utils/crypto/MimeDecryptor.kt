@@ -27,7 +27,7 @@ class MimeDecryptor(
     private val mimeMessage: String,
     private val openPGP: OpenPGP,
     private val decryptionKeys: List<ByteArray>,
-    private val keyPassphrase: String
+    private val keyPassphrase: ByteArray?
 ) { // TODO this works as long as it is passphrase matching one of correct keys
 
     private var current: Thread? = null
@@ -43,12 +43,15 @@ class MimeDecryptor(
             null,
             {
                 openPGP.decryptMIMEMessage(
-                    mimeMessage, keys.toByteArray(), decryptionKeys, keyPassphrase.toByteArray() /*TODO gopenpgp*/,
-                    callbacks, time
+                    mimeMessage,
+                    keys.toByteArray(),
+                    decryptionKeys,
+                    keyPassphrase,
+                    callbacks,
+                    time
                 )
             },
-            "MIMEDecryptor"
-        )
+            "MIMEDecryptor")
         current = thread
         thread.start()
     }

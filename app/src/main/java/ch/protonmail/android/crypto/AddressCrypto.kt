@@ -41,6 +41,7 @@ import com.squareup.inject.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
 import timber.log.Timber
+import javax.mail.internet.InternetHeaders
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
 class AddressCrypto @AssistedInject constructor(
@@ -87,15 +88,15 @@ class AddressCrypto @AssistedInject constructor(
         }
 
         val pgpMessage = GoOpenPgpCrypto.newPGPMessageFromArmored(token.string)
-        userManager.currentLegacyUser?.keys?.forEach { userKey ->
+        userManager.currentUser?.keys?.keys?.forEach { userKey ->
             val userKeyRing = GoOpenPgpCrypto.newKeyRing(
-                GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey).unlock(mailboxPassword)
+                GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey.string).unlock(mailboxPassword)
             )
             decryptToken(
                 pgpMessage,
                 userKeyRing
             )?.let { decryptedToken ->
-                if (verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.id)) {
+                if (verifySignature(userKeyRing, decryptedToken, signature, userKey.id.id, key.id.id)) {
                     return decryptedToken
                 }
             }
@@ -126,7 +127,10 @@ class AddressCrypto @AssistedInject constructor(
     }.fold(
         onSuccess = { true },
         onFailure = {
-            Timber.e(it, "Verification of token for address key (id = $addressKeyId) with user key (id = $userKeyId) failed")
+            Timber.e(
+                it, "Verification of token for address key (id = $addressKeyId) " +
+                "with user key (id = $userKeyId) failed"
+            )
             false
         }
     )
@@ -187,8 +191,45 @@ class AddressCrypto @AssistedInject constructor(
         }
     }
 
-    fun decryptMime(message: CipherText): MimeDecryptor =
-        MimeDecryptor(message.armored, openPgp, getUnarmoredKeys(), String(passphrase!!))
+    fun decryptMime(
+        message: CipherText,
+        onBody: (String, String) -> Unit,
+        onError: (Exception) -> Unit,
+        onVerified: (Boolean, Boolean) -> Unit,
+        onAttachment: (InternetHeaders, ByteArray) -> Unit,
+        keys: List<ByteArray>?,
+        time: Long
+    ) {
+        var decrypted = false
+        var lastError: Exception? = null
+        currentKeys.forEach { addressKey ->
+            val unarmor = Armor.unarmor(addressKey.privateKey.string)
+            val keyPassphrase = passphraseFor(addressKey)
+            with(MimeDecryptor(message.armored, openPgp, listOf(unarmor), keyPassphrase)) {
+                this.onBody = { eventBody: String, eventMimeType: String ->
+                    onBody(eventBody, eventMimeType)
+                    decrypted = true
+                }
+                this.onError = {
+                    lastError = it
+                }
+                if (keys != null && keys.isNotEmpty()) {
+                    for (key in keys) {
+                        withVerificationKey(key)
+                    }
+                    this.onVerified = onVerified
+                }
+                this.onAttachment = onAttachment
+                withMessageTime(time)
+
+                start()
+                await()
+
+            }
+            if (decrypted) return
+        }
+        lastError?.let { onError(it) }
+    }
 
     fun generateEOToken(password: ByteArray): EOToken {
         // generate a 256 bit token.
@@ -200,7 +241,6 @@ class AddressCrypto @AssistedInject constructor(
 
     fun getFingerprint(key: String): String =
         openPgp.getFingerprint(key)
-
 
     fun getSessionKey(keyPacket: ByteArray): SessionKey {
         return withCurrentKeys("Error getting Session") { key ->
