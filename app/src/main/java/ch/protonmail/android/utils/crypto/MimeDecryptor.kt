@@ -21,15 +21,16 @@ package ch.protonmail.android.utils.crypto
 import com.proton.gopenpgp.crypto.MIMECallbacks
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.lang.Exception
 import javax.mail.internet.InternetHeaders
 
-class MimeDecryptor(private val mimeMessage : String,
-                    private val openPGP: OpenPGP,
-                    private val decryptionKeys : List<ByteArray>,
-                    private val keyPassphrase: String) { // TODO this works as long as it is passphrase matching one of correct keys
+class MimeDecryptor(
+    private val mimeMessage: String,
+    private val openPGP: OpenPGP,
+    private val decryptionKeys: List<ByteArray>,
+    private val keyPassphrase: ByteArray?
+) { // TODO this works as long as it is passphrase matching one of correct keys
 
-    private var current : Thread? = null
+    private var current: Thread? = null
     private val callbacks = Callbacks()
     private val keys = ByteArrayOutputStream()
     private var time = 0L
@@ -39,26 +40,32 @@ class MimeDecryptor(private val mimeMessage : String,
             throw IllegalStateException("Decryption already started")
         }
         val thread = Thread(null, Runnable {
-            openPGP.decryptMIMEMessage(mimeMessage, keys.toByteArray(), decryptionKeys, keyPassphrase.toByteArray() /*TODO gopenpgp*/,
-                    callbacks, time)
-        },  "MIMEDecryptor")
+            openPGP.decryptMIMEMessage(
+                mimeMessage,
+                keys.toByteArray(),
+                decryptionKeys,
+                keyPassphrase,
+                callbacks,
+                time
+            )
+        }, "MIMEDecryptor")
         current = thread
         thread.start()
     }
 
-    fun withVerificationKey(verificationKey : ByteArray) {
+    fun withVerificationKey(verificationKey: ByteArray) {
         keys.write(verificationKey)
     }
 
-    fun withMessageTime(messageTime : Long) {
+    fun withMessageTime(messageTime: Long) {
         time = messageTime
     }
 
-    var onVerified = { _ : Boolean, _ : Boolean -> }
-    var onAttachment = { _ : InternetHeaders, _ : ByteArray -> }
-    var onError = { _ : Exception -> }
-    var onEncryptedHeaders = { _ : InternetHeaders -> }
-    var onBody : (String, String) -> Unit = { _: String, _ : String -> }
+    var onVerified = { _: Boolean, _: Boolean -> }
+    var onAttachment = { _: InternetHeaders, _: ByteArray -> }
+    var onError = { _: Exception -> }
+    var onEncryptedHeaders = { _: InternetHeaders -> }
+    var onBody: (String, String) -> Unit = { _: String, _: String -> }
 
     fun await() {
         current?.join()
@@ -88,6 +95,5 @@ class MimeDecryptor(private val mimeMessage : String,
         override fun onBody(body: String, mimetype: String) {
             this@MimeDecryptor.onBody(body, mimetype)
         }
-
     }
 }

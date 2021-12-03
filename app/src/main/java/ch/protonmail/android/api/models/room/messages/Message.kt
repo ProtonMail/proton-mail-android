@@ -391,34 +391,30 @@ data class Message @JvmOverloads constructor(
 
     private fun decryptMime(addressCrypto: AddressCrypto, keys: List<ByteArray>? = null) {
         val messageBody = checkNotNull(messageBody)
-        val mimeDecryptor = addressCrypto.decryptMime(CipherText(messageBody))
         var body: String? = null
         var mimetype: String? = null
         var exception: Exception? = null
         val attachments = ArrayList<Attachment>()
-        mimeDecryptor.onBody = { eventbody: String, eventmimetype: String ->
-            body = eventbody
-            mimetype = eventmimetype
-        }
-        mimeDecryptor.onError = {
-            exception = it
-        }
-        if (keys != null && keys.isNotEmpty()) {
-            for (key in keys) {
-                mimeDecryptor.withVerificationKey(key)
-            }
-            mimeDecryptor.onVerified = { hasSig: Boolean, hasValidSig: Boolean ->
+        var attechmentCount = 0
+        addressCrypto.decryptMime(
+            message = CipherText(messageBody),
+            onBody = { eventBody: String, eventMimeType: String ->
+                body = eventBody
+                mimetype = eventMimeType
+            },
+            onError = {
+                exception = it
+            },
+            onVerified = { hasSig: Boolean, hasValidSig: Boolean ->
                 hasValidSignature = hasSig && hasValidSig
                 hasInvalidSignature = hasSig && !hasValidSig
-            }
-        }
-        var count = 0
-        mimeDecryptor.onAttachment = { headers: InternetHeaders, content: ByteArray ->
-            attachments.add(Attachment.fromMimeAttachment(content, headers, messageId!!, count++))
-        }
-        mimeDecryptor.withMessageTime(time)
-        mimeDecryptor.start()
-        mimeDecryptor.await()
+            },
+            onAttachment = { headers: InternetHeaders, content: ByteArray ->
+                attachments.add(Attachment.fromMimeAttachment(content, headers, messageId!!, attechmentCount++))
+            },
+            keys = keys,
+            time = time
+        )
 
         if (exception != null) {
             throw exception!!
