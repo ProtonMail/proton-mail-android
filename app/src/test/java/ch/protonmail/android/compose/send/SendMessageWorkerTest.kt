@@ -42,6 +42,7 @@ import ch.protonmail.android.api.models.factories.SendPreferencesFactory
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendKey
 import ch.protonmail.android.api.models.messages.send.MessageSendPackage
+import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.core.Constants
@@ -284,6 +285,35 @@ class SendMessageWorkerTest : CoroutinesTest {
         assertEquals(
             ListenableWorker.Result.failure(
                 workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "DraftCreationFailed")
+            ),
+            result
+        )
+    }
+
+    @Test
+    fun workerFailsWithoutNotifyingUserWhenSaveDraftFailsWithUploadAttachmentError() = runBlockingTest {
+        // we notify the user from the Save Draft Worker,
+        // refer to test `SaveDraftTest.notifyUserWithUploadAttachmentErrorWhenAttachmentIsBroken`
+        val messageDbId = 2834L
+        val messageId = "823472"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 003"
+            this.Attachments = listOf(Attachment(attachmentId = "attachmentId234", fileName = "Attachment_234.jpg"))
+        }
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns SaveDraftResult.UploadDraftAttachmentsFailed
+        every { parameters.runAttemptCount } returns 0
+
+        val result = worker.doWork()
+
+        verify { pendingActionsDao.deletePendingSendByMessageId("823472") }
+        verify { userNotifier wasNot Called }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "UploadAttachmentsFailed")
             ),
             result
         )

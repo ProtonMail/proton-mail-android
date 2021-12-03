@@ -28,5 +28,6 @@ enum class SendMessageWorkerError {
     ErrorPerformingApiRequest,
     UserVerificationNeeded,
     ApiRequestReturnedBadBodyCode,
-    MessageAlreadySent
+    MessageAlreadySent,
+    UploadAttachmentsFailed
 }

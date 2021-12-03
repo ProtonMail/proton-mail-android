@@ -69,6 +69,7 @@ private const val CHANNEL_ID_ONGOING_OPS = "ongoingOperations"
 private const val CHANNEL_ID_ACCOUNT = "account"
 private const val CHANNEL_ID_ATTACHMENTS = "attachments"
 private const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
+private const val NOTIFICATION_ID_ATTACHMENT_ERROR = 6813
 private const val NOTIFICATION_GROUP_ID_EMAIL = 99
 private const val NOTIFICATION_ID_VERIFICATION = 2
 private const val NOTIFICATION_ID_LOGGED_OUT = 3
@@ -347,7 +348,7 @@ class NotificationServer @Inject constructor(
                             "com.android.systemui", ringtoneUri, Intent.FLAG_GRANT_READ_URI_PERMISSION
                         )
                     }
-                }  ?: RingtoneManager.getDefaultUri(TYPE_NOTIFICATION)
+                } ?: RingtoneManager.getDefaultUri(TYPE_NOTIFICATION)
             } catch (e: Exception) {
                 Timber.i(e, "Unable to set notification ringtone")
                 RingtoneManager.getDefaultUri(TYPE_NOTIFICATION)
@@ -557,41 +558,67 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 
-    override fun notifyMultipleErrorSendingMessage(
-        unreadSendingFailedNotifications: List<SendingFailedNotification>,
-        user: User
+    private fun notifyErrorWithTitle(
+        username: String,
+        title: String,
+        bigText: String,
+        summaryText: String = username,
+        notificationID: Int
     ) {
-
-        val notificationTitle = context.getString(R.string.message_sending_failures, unreadSendingFailedNotifications.size)
-
-        // Create Notification Style
-        val bigTextStyle = NotificationCompat.BigTextStyle()
-            .setBigContentTitle(notificationTitle)
-            .setSummaryText(user.defaultEmail ?: user.username ?: context.getString(R.string.app_name))
-            .bigText(createSpannableBigText(unreadSendingFailedNotifications))
-
-        // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user.username)
-            .setStyle(bigTextStyle)
-
-        // Build and show notification
-        val notification = notificationBuilder.build()
-        notificationManager.notify(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
-    }
-
-    override fun notifySaveDraftError(errorMessage: String, messageSubject: String?, username: String) {
-        val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
-
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .setBigContentTitle(title)
-            .setSummaryText(username)
-            .bigText(errorMessage)
+            .setSummaryText(summaryText)
+            .bigText(bigText)
 
         val notificationBuilder = createGenericErrorSendingMessageNotification(username)
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()
-        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SAVE_DRAFT_ERROR, notification)
+        notificationManager.notify(username.hashCode() + notificationID, notification)
     }
 
+    override fun notifyMultipleErrorSendingMessage(
+        unreadSendingFailedNotifications: List<SendingFailedNotification>,
+        user: User
+    ) {
+        val notificationTitle = context.getString(
+            R.string.message_sending_failures, unreadSendingFailedNotifications.size
+        )
+
+        notifyErrorWithTitle(
+            user.username,
+            notificationTitle,
+            createSpannableBigText(unreadSendingFailedNotifications).toString(),
+            user.defaultEmail ?: user.username ?: context.getString(R.string.app_name),
+            NOTIFICATION_ID_SENDING_FAILED
+        )
+    }
+
+    override fun notifySaveDraftError(
+        errorMessage: String,
+        messageSubject: String?,
+        username: String
+    ) {
+        val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
+        notifyErrorWithTitle(
+            username,
+            title,
+            errorMessage,
+            notificationID = NOTIFICATION_ID_SAVE_DRAFT_ERROR
+        )
+    }
+
+    override fun notifyAttachmentUploadError(
+        errorMessage: String,
+        messageSubject: String?,
+        username: String
+    ) {
+        val title = context.getString(R.string.failed_uploading_attachment_online, messageSubject)
+        notifyErrorWithTitle(
+            username,
+            title,
+            errorMessage,
+            notificationID = NOTIFICATION_ID_ATTACHMENT_ERROR
+        )
+    }
 }

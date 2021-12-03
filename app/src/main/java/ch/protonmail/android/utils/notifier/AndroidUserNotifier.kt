@@ -53,6 +53,10 @@ class AndroidUserNotifier @Inject constructor(
         notificationServer.notifySingleErrorSendingMessage(error, userManager.username)
     }
 
+    override fun showAttachmentUploadError(errorMessage: String, messageSubject: String?) {
+        notificationServer.notifyAttachmentUploadError(errorMessage, messageSubject, userManager.username)
+    }
+
     override suspend fun showMessageSent() {
         withContext(dispatchers.Main) {
             context.showToast(R.string.message_sent)
@@ -68,5 +72,4 @@ class AndroidUserNotifier @Inject constructor(
             message.addressID
         )
     }
-
 }

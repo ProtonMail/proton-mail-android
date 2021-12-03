@@ -29,6 +29,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.MessageUtils.isLocalAttachmentId
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.io.ByteArrayOutputStream
@@ -79,7 +80,7 @@ data class Attachment @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_ATTACHMENT_MESSAGE_ID)
     var messageId: String = "",
     @ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADED)
-    var isUploaded: Boolean = false,
+    var isUploaded: Boolean = !isLocalAttachmentId(attachmentId),
     @ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADING)
     var isUploading: Boolean = false,
     @ColumnInfo(name = COLUMN_ATTACHMENT_SIGNATURE)
@@ -203,17 +204,16 @@ data class Attachment @JvmOverloads constructor(
                 keyPackets = localAttachment.keyPackets,
                 headers = localAttachment.headers
             )
-
         }
 
         @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
-        fun fromMimeAttachment(part: Part, message_id: String, count: Int): Attachment {
+        fun fromMimeAttachment(part: Part, messageId: String, count: Int): Attachment {
             val data = getBytesFromInputStream(part.inputStream)
-            return fromMimeAttachment(part, data, message_id, count)
+            return fromMimeAttachment(part, data, messageId, count)
         }
 
         @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
-        fun fromMimeAttachment(part: Part, data: ByteArray, message_id: String, count: Int): Attachment {
+        fun fromMimeAttachment(part: Part, data: ByteArray, messageId: String, count: Int): Attachment {
             val attachment = Attachment()
 
             attachment.fileName = part.fileName ?: "default"
@@ -237,18 +237,18 @@ data class Attachment @JvmOverloads constructor(
                 md5.digest().forEach { b ->
                     format.format("%02x", b)
                 }
-                attachment.attachmentId = "PGPAttachment/$message_id/$format/$count"
+                attachment.attachmentId = "PGPAttachment/$messageId/$format/$count"
             }
             attachment.fileSize = data.size.toLong()
             attachment.mimeType = part.contentType.replace("(\\s*)?[\\r\\n]+(\\s*)".toRegex(), "")
             attachment.mimeData = data
-            attachment.messageId = message_id
+            attachment.messageId = messageId
             return attachment
         }
 
         @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
-        fun fromMimeAttachment(data: ByteArray, headers: InternetHeaders, message_id: String, count: Int): Attachment {
-            return fromMimeAttachment(MimeBodyPart(headers, ByteArray(0)), data, message_id, count)
+        fun fromMimeAttachment(data: ByteArray, headers: InternetHeaders, messageId: String, count: Int): Attachment {
+            return fromMimeAttachment(MimeBodyPart(headers, ByteArray(0)), data, messageId, count)
         }
 
         @Throws(IOException::class)
@@ -273,7 +273,12 @@ data class Attachment @JvmOverloads constructor(
             useRandomIds: Boolean = true
         ): List<Attachment> {
             return localAttachmentList.map { localAttachment ->
-                fromLocalAttachment(messagesDatabase, localAttachment, localAttachmentList.indexOf(localAttachment).toLong(), useRandomIds)
+                fromLocalAttachment(
+                    messagesDatabase,
+                    localAttachment,
+                    localAttachmentList.indexOf(localAttachment).toLong(),
+                    useRandomIds
+                )
             }
         }
 
