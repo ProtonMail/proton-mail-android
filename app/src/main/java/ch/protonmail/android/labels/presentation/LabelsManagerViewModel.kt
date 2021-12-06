@@ -133,7 +133,7 @@ internal class LabelsManagerViewModel @Inject constructor(
                         isUpdate = update,
                         labelType = type,
                         labelId = labelId,
-                        parent = parent
+                        parentId = parentId
                     )
                 }
             } ?: createOrUpdateLabel(
@@ -142,7 +142,7 @@ internal class LabelsManagerViewModel @Inject constructor(
                 isUpdate = false,
                 labelType = type,
                 labelId = null,
-                parent = tempParentFolderId
+                parentId = tempParentFolderId
             )
         }
 
@@ -196,14 +196,14 @@ internal class LabelsManagerViewModel @Inject constructor(
         isUpdate: Boolean,
         labelType: LabelType,
         labelId: String?,
-        parent: LabelId?
+        parentId: LabelId?
     ): Flow<WorkInfo> = labelRepository.scheduleSaveLabel(
         labelName = labelName,
         color = color,
         isUpdate = isUpdate,
         labelType = labelType,
         labelId = labelId,
-        parent = parent
+        parentId = parentId
     )
 }
 
@@ -224,7 +224,7 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
     /**
      * Id of the parent folder for the current editing Label ( only valid for Folders )
      */
-    var parentFolderId: LabelId? = initialLabel.parent
+    var parentFolderId: LabelId? = initialLabel.parentId
 
     /** @return [SaveParams] */
     fun buildParams(): SaveParams {
@@ -235,7 +235,7 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
             isFolder = initialLabel.type == LabelType.FOLDER,
             update = true,
             labelId = initialLabel.labelId.id,
-            parent = parentFolderId
+            parentId = parentFolderId
         )
     }
 
@@ -247,7 +247,7 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
         val isFolder: Boolean,
         val update: Boolean,
         val labelId: String,
-        val parent: LabelId?
+        val parentId: LabelId?
     )
 }
 

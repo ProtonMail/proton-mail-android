@@ -30,6 +30,6 @@ data class LabelUiModel(
     @ColorInt val color: Int,
     val isChecked: Boolean,
     val expanded: Int,
-    val parent: LabelId?,
+    val parentId: LabelId?,
     val type: LabelType
 )

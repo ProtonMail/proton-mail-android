@@ -214,14 +214,14 @@ internal class LabelRepositoryImpl @Inject constructor(
         isUpdate: Boolean,
         labelType: LabelType,
         labelId: String?,
-        parent: LabelId?
+        parentId: LabelId?
     ): Flow<WorkInfo> = postLabelWorker.enqueue(
         labelName,
         color,
         isUpdate,
         labelType,
         labelId,
-        parent
+        parentId
     ).asFlow()
 
     private fun Flow<List<LabelEntity>>.mapToLabels(): Flow<List<Label>> = map { entities ->

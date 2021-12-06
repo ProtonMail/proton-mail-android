@@ -52,7 +52,7 @@ internal class LabelUiModelMapper @Inject constructor() : Mapper<Label, LabelUiM
             name = label.name,
             image = image,
             color = normalizeColor(label.color),
-            parent = label.parentId.takeIfNotBlank()?.let(::LabelId),
+            parentId = label.parentId.takeIfNotBlank()?.let(::LabelId),
             isChecked = false,
             expanded = 0,
             type = label.type

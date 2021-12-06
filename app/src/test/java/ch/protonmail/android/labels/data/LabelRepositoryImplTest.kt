@@ -196,7 +196,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
                 isUpdate = isUpdate,
                 type = labelType,
                 labelId = labelId1,
-                parent = LabelId(testParentId)
+                parentId = LabelId(testParentId)
             )
         } returns workInfoLiveData
         workInfoLiveData.postValue(expectedWorkInfo)
@@ -208,7 +208,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
             isUpdate = isUpdate,
             labelType = labelType,
             labelId = labelId1,
-            parent = LabelId(testParentId)
+            parentId = LabelId(testParentId)
         ).test {
 
             // then
@@ -219,7 +219,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
                     isUpdate = isUpdate,
                     type = labelType,
                     labelId = labelId1,
-                    parent = LabelId(testParentId)
+                    parentId = LabelId(testParentId)
                 )
             }
             assertEquals(expectedWorkInfo, awaitItem())

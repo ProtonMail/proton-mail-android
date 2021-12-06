@@ -269,7 +269,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
         label_name.setText(label.name)
         add_label_container.isVisible = true
-        updateParentFolder(label.parent)
+        updateParentFolder(label.parentId)
         toggleEditor(true)
 
         val currentColorPosition = colorOptions.indexOf(label.color)
