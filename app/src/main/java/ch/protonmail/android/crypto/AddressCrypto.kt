@@ -200,35 +200,22 @@ class AddressCrypto @AssistedInject constructor(
         keys: List<ByteArray>?,
         time: Long
     ) {
-        var decrypted = false
-        var lastError: Exception? = null
-        currentKeys.forEach { addressKey ->
-            val unarmor = Armor.unarmor(addressKey.privateKey.string)
-            val keyPassphrase = passphraseFor(addressKey)
-            with(MimeDecryptor(message.armored, openPgp, listOf(unarmor), keyPassphrase)) {
-                this.onBody = { eventBody: String, eventMimeType: String ->
-                    onBody(eventBody, eventMimeType)
-                    decrypted = true
+        val keyRing = createAndUnlockKeyRing()
+        with(MimeDecryptor(message.armored, openPgp, keyRing)) {
+            this.onBody = onBody
+            this.onError = onError
+            this.onAttachment = onAttachment
+            if (keys != null && keys.isNotEmpty()) {
+                for (key in keys) {
+                    withVerificationKey(key)
                 }
-                this.onError = {
-                    lastError = it
-                }
-                if (keys != null && keys.isNotEmpty()) {
-                    for (key in keys) {
-                        withVerificationKey(key)
-                    }
-                    this.onVerified = onVerified
-                }
-                this.onAttachment = onAttachment
-                withMessageTime(time)
-
-                start()
-                await()
-
+                this.onVerified = onVerified
             }
-            if (decrypted) return
+            withMessageTime(time)
+
+            start()
+            await()
         }
-        lastError?.let { onError(it) }
     }
 
     fun generateEOToken(password: ByteArray): EOToken {

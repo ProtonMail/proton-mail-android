@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.utils.crypto
 
+import com.proton.gopenpgp.crypto.KeyRing
 import com.proton.gopenpgp.crypto.MIMECallbacks
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -26,8 +27,7 @@ import javax.mail.internet.InternetHeaders
 class MimeDecryptor(
     private val mimeMessage: String,
     private val openPGP: OpenPGP,
-    private val decryptionKeys: List<ByteArray>,
-    private val keyPassphrase: ByteArray?
+    private val keyRing: KeyRing
 ) { // TODO this works as long as it is passphrase matching one of correct keys
 
     private var current: Thread? = null
@@ -45,8 +45,7 @@ class MimeDecryptor(
                 openPGP.decryptMIMEMessage(
                     mimeMessage,
                     keys.toByteArray(),
-                    decryptionKeys,
-                    keyPassphrase,
+                    keyRing,
                     callbacks,
                     time
                 )
