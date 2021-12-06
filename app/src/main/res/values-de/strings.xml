@@ -383,7 +383,7 @@
     <string name="hyperlink_confirmation_dialog_text_html">Nun wird Ihr Browser geöffnet und leitet Sie weiter
 zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten Sie fortfahren?</string>
     <string name="dont_ask_again">Nicht erneut nachfragen</string>
-    <string name="none">Keine</string>
+    <string name="x_none">Keine</string>
     <string name="changes_affected_after_closing">Änderungen werden erst nach dem Schließen der App wirksam</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Ungültiger PIN-Code, %d verbleibender Versuch</item>
@@ -393,7 +393,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
         <item quantity="one">%d Versuch bis zur sicheren Datenlöschung!</item>
         <item quantity="other">%d Versuche bis zur sicheren Datenlöschung!</item>
     </plurals>
-    <string name="done">Fertig</string>
+    <string name="x_done">Fertig</string>
     <string name="logout">Abmelden</string>
     <string name="log_out">%s abmelden?</string>
     <string name="logout_question">Möchten Sie sich wirklich abmelden?</string>

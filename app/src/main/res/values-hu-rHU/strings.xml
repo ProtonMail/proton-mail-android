@@ -384,7 +384,7 @@ Svájci székhellyel</string>
     <string name="processing_attachment">Melléklet feldolgozása</string>
     <string name="hyperlink_confirmation_dialog_text_html">Megnyitja a következő címet a böngészőben:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Kívánja folytatni?</string>
     <string name="dont_ask_again">Don\'t ask again</string>
-    <string name="none">Egyik sem</string>
+    <string name="x_none">Egyik sem</string>
     <string name="changes_affected_after_closing">A módosítások az alkalmazás bezárása után lépnek életbe</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Érvénytelen PIN, %d próbálkozás maradt</item>
@@ -394,7 +394,7 @@ Svájci székhellyel</string>
         <item quantity="one">%d próbálkozás az adattörlésig!</item>
         <item quantity="other">%d próbálkozás az adattörlésig!</item>
     </plurals>
-    <string name="done">Kész</string>
+    <string name="x_done">Kész</string>
     <string name="logout">Kijelentkezés</string>
     <string name="log_out">Kijelentkezés %s?</string>
     <string name="logout_question">Biztos, hogy ki szeretne jelentkezni?</string>

@@ -384,7 +384,7 @@
     <string name="processing_attachment">Processament adjunt</string>
     <string name="hyperlink_confirmation_dialog_text_html">Esteu a punt d\'obrir el navegador web i anar a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Voleu continuar?</string>
     <string name="dont_ask_again">No m\'ho demaneu més</string>
-    <string name="none">Cap</string>
+    <string name="x_none">Cap</string>
     <string name="changes_affected_after_closing">Els canvis es veuran afectats després de tancar l\'aplicació</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Codi PIN incorrecte, %d intent restant</item>
@@ -394,7 +394,7 @@
         <item quantity="one">%d intent fins un esborrat de dades de seguretat!</item>
         <item quantity="other">%d intents fins un esborrat de dades de seguretat!</item>
     </plurals>
-    <string name="done">Fet</string>
+    <string name="x_done">Fet</string>
     <string name="logout">Tanca sessió</string>
     <string name="log_out">Tancar sessió de %s?</string>
     <string name="logout_question">Està segur que desitja tancar la sessió?</string>

@@ -382,7 +382,7 @@
     <string name="processing_attachment">Ek işleniyor</string>
     <string name="hyperlink_confirmation_dialog_text_html">Web tarayıcısını başlatmak ve yönlendirmek üzeresiniz: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Devam etmek istiyor musunuz?</string>
     <string name="dont_ask_again">Bir daha sorma</string>
-    <string name="none">Hiçbiri</string>
+    <string name="x_none">Hiçbiri</string>
     <string name="changes_affected_after_closing">Değişiklikler uygulama kapatıldıktan sonra geçerli olacak</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Yanlış PIN, %d deneme kaldı</item>
@@ -392,7 +392,7 @@
         <item quantity="one">Güvenli veri silinene kadar %d deneme kaldı!</item>
         <item quantity="other">Güvenli veriler silinene kadar %d deneme kaldı!</item>
     </plurals>
-    <string name="done">Bitti</string>
+    <string name="x_done">Bitti</string>
     <string name="logout">Oturumu Kapat</string>
     <string name="log_out">%s oturumu kapatılsın mı?</string>
     <string name="logout_question">Oturumu kapatmak istediğinden emin misiniz?</string>

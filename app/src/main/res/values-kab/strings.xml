@@ -384,7 +384,7 @@
     <string name="processing_attachment">Asesfer n ufaylu yeddan</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ad tsnekreḍ iminig web akken zd terzuḍ ɣer:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Tebɣiḍ ad tkemleḍ?</string>
     <string name="dont_ask_again">Ur ssutur ara tikelt-nniḍen</string>
-    <string name="none">Ula yiwen</string>
+    <string name="x_none">Ula yiwen</string>
     <string name="changes_affected_after_closing">Abeddel ad d-yili seld amdal n usnas </string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>
@@ -394,7 +394,7 @@
         <item quantity="one">%d n uɛraḍ i d-yeqqimen arama d tukksa taɣelsant n isefka!</item>
         <item quantity="other">%d n uɛraḍ i d-yeqqimen arama d tukksa taɣelsant n isefka!</item>
     </plurals>
-    <string name="done">Immed</string>
+    <string name="x_done">Immed</string>
     <string name="logout">Tuffɣa</string>
     <string name="log_out">Ad teffɣeḍ %s?</string>
     <string name="logout_question">Tebɣiḍ ad teffɣeḍ?</string>

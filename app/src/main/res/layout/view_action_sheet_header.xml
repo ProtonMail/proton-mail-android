@@ -91,7 +91,7 @@
         android:paddingStart="@dimen/padding_l"
         android:paddingTop="@dimen/padding_l"
         android:paddingBottom="@dimen/padding_l"
-        android:text="@string/done"
+        android:text="@string/x_done"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

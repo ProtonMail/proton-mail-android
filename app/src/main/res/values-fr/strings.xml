@@ -384,7 +384,7 @@
     <string name="processing_attachment">Traitement des pièces jointes</string>
     <string name="hyperlink_confirmation_dialog_text_html">Vous êtes sur le point de lancer le navigateur web et de visiter : &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Souhaitez-vous continuer ?</string>
     <string name="dont_ask_again">Ne plus demander</string>
-    <string name="none">Aucun</string>
+    <string name="x_none">Aucun</string>
     <string name="changes_affected_after_closing">Les modifications prendront effet après la fermeture de l\'application</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Code PIN incorrect, %d tentative restante</item>
@@ -394,7 +394,7 @@
         <item quantity="one">%d tentative restante avant l’effacement sécurisé des données !</item>
         <item quantity="other">%d tentatives restantes avant l’effacement sécurisé des données !</item>
     </plurals>
-    <string name="done">Terminé</string>
+    <string name="x_done">Terminé</string>
     <string name="logout">Déconnexion</string>
     <string name="log_out">Déconnecter %s ?</string>
     <string name="logout_question">Êtes-vous sûr de vouloir vous déconnecter ?</string>

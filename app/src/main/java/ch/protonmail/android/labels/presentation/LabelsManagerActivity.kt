@@ -333,13 +333,13 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
                 toggleEditor(false)
                 closeKeyboard()
                 label_name.setText("")
-                save_button.setText(R.string.done)
+                save_button.setText(R.string.x_done)
             }
 
             State.CREATE -> {
                 selectRandomColor()
                 toggleEditor(true)
-                save_button.setText(R.string.done)
+                save_button.setText(R.string.x_done)
             }
 
             State.UPDATE -> {

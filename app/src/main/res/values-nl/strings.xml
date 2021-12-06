@@ -384,7 +384,7 @@
     <string name="processing_attachment">Bijlage verwerken</string>
     <string name="hyperlink_confirmation_dialog_text_html">U staat op het punt om de webbrowser te starten en te navigeren naar:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Wilt u doorgaan?</string>
     <string name="dont_ask_again">Niet opnieuw vragen</string>
-    <string name="none">Geen</string>
+    <string name="x_none">Geen</string>
     <string name="changes_affected_after_closing">Wijzigingen worden van kracht na het sluiten van de app</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Onjuiste PIN-code, %d poging resterend</item>
@@ -394,7 +394,7 @@
         <item quantity="one">%d poging tot het vernietigen van alle gegevens!</item>
         <item quantity="other">%d pogingen tot het vernietigen van alle gegevens!</item>
     </plurals>
-    <string name="done">Klaar</string>
+    <string name="x_done">Klaar</string>
     <string name="logout">Afmelden</string>
     <string name="log_out">%s uitloggen?</string>
     <string name="logout_question">Weet u zeker dat u wilt uitloggen?</string>
