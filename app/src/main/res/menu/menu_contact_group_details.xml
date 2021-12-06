@@ -17,20 +17,18 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
-    android:padding="@dimen/activity_vertical_margin_xsmall">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:gravity="start"
-        android:padding="@dimen/activity_horizontal_margin_small"
-        android:singleLine="true"
-        android:textSize="@dimen/h4" />
+    <item
+        android:id="@+id/contact_group_details_delete"
+        android:title="@string/delete"
+        android:icon="@drawable/ic_trash"
+        app:showAsAction="ifRoom" />
 
-</LinearLayout>
+    <item
+        android:id="@+id/contact_group_details_edit"
+        android:title="@string/x_edit"
+        android:icon="@drawable/ic_pencil"
+        app:showAsAction="always" />
+</menu>

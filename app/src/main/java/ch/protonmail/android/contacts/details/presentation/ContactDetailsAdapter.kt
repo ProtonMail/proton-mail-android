@@ -238,7 +238,14 @@ class ContactDetailsAdapter(
             }
         }
 
-        private fun getAddressToDisplay(item: ContactDetailsUiItem.Address): String =
-            "${item.street}, ${item.locality} ${item.region} ${item.postalCode} ${item.country}"
+        private fun getAddressToDisplay(item: ContactDetailsUiItem.Address): String = with(item) {
+            buildString {
+                street?.let { append("$it, ") }
+                locality?.let { append("$it ") }
+                region?.let { append("$it ") }
+                postalCode?.let { append("$it ") }
+                country?.let(::append)
+            }
+        }
     }
 }

@@ -44,9 +44,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
-import kotlinx.android.synthetic.main.content_contact_group_details.contactEmailsRecyclerView
-import kotlinx.android.synthetic.main.content_contact_group_details.noResults
-import kotlinx.android.synthetic.main.content_edit_create_contact_group_header.*
 import timber.log.Timber
 import java.io.Serializable
 import javax.inject.Inject
@@ -79,11 +76,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
         contactGroupDetailsViewModel.setData(bundle?.getParcelable(EXTRA_CONTACT_GROUP))
 
         initFilterView()
-        editFab.setOnClickListener {
-            val intent = Intent(this, ContactGroupEditCreateActivity::class.java)
-            intent.putExtra(EXTRA_CONTACT_GROUP, contactGroupDetailsViewModel.getData() as Parcelable)
-            startActivity(AppUtil.decorInAppIntent(intent))
-        }
 
         contact_group_details_send_message.setOnClickListener {
             onWriteToContacts()
@@ -101,7 +93,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.delete_menu, menu)
+        menuInflater.inflate(R.menu.menu_contact_group_details, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -212,21 +204,24 @@ class ContactGroupDetailsActivity : BaseActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        android.R.id.home -> consume { onBackPressed() }
-        R.id.action_delete -> consume {
-            DialogUtils.showDeleteConfirmationDialog(
-                this, getString(R.string.delete),
-                resources.getQuantityString(R.plurals.are_you_sure_delete_group, 1)
-            ) {
-                contactGroupDetailsViewModel.delete()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            R.id.contact_group_details_delete -> {
+                DialogUtils.showDeleteConfirmationDialog(
+                    this, getString(R.string.delete),
+                    resources.getQuantityString(R.plurals.are_you_sure_delete_group, 1)
+                ) {
+                    contactGroupDetailsViewModel.delete()
+                }
             }
+            R.id.contact_group_details_edit -> {
+                val intent = Intent(this, ContactGroupEditCreateActivity::class.java)
+                intent.putExtra(EXTRA_CONTACT_GROUP, contactGroupDetailsViewModel.getData() as Parcelable)
+                startActivity(AppUtil.decorInAppIntent(intent))
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
-        else -> super.onOptionsItemSelected(item)
-    }
-
-    private inline fun consume(f: () -> Unit): Boolean {
-        f()
         return true
     }
 
