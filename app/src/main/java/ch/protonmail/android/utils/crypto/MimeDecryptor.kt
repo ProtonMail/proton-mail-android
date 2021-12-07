@@ -27,12 +27,12 @@ import javax.mail.internet.InternetHeaders
 class MimeDecryptor(
     private val mimeMessage: String,
     private val openPGP: OpenPGP,
-    private val keyRing: KeyRing
-) { // TODO this works as long as it is passphrase matching one of correct keys
+    private val addressKeyRing: KeyRing
+) {
 
     private var current: Thread? = null
     private val callbacks = Callbacks()
-    private val keys = ByteArrayOutputStream()
+    private val verificationKeys = ByteArrayOutputStream()
     private var time = 0L
 
     fun start() {
@@ -42,8 +42,8 @@ class MimeDecryptor(
         val thread = Thread(null, Runnable {
             openPGP.decryptMIMEMessage(
                 mimeMessage,
-                keys.toByteArray(),
-                keyRing,
+                verificationKeys.toByteArray(),
+                addressKeyRing,
                 callbacks,
                 time
             )
@@ -53,7 +53,7 @@ class MimeDecryptor(
     }
 
     fun withVerificationKey(verificationKey: ByteArray) {
-        keys.write(verificationKey)
+        verificationKeys.write(verificationKey)
     }
 
     fun withMessageTime(messageTime: Long) {

@@ -395,7 +395,7 @@ data class Message @JvmOverloads constructor(
         var mimetype: String? = null
         var exception: Exception? = null
         val attachments = ArrayList<Attachment>()
-        var attechmentCount = 0
+        var attachmentCount = 0
         addressCrypto.decryptMime(
             message = CipherText(messageBody),
             onBody = { eventBody: String, eventMimeType: String ->
@@ -410,7 +410,7 @@ data class Message @JvmOverloads constructor(
                 hasInvalidSignature = hasSig && !hasValidSig
             },
             onAttachment = { headers: InternetHeaders, content: ByteArray ->
-                attachments.add(Attachment.fromMimeAttachment(content, headers, messageId!!, attechmentCount++))
+                attachments.add(Attachment.fromMimeAttachment(content, headers, messageId!!, attachmentCount++))
             },
             keys = keys,
             time = time
