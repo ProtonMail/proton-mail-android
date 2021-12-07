@@ -42,6 +42,7 @@ import com.proton.gopenpgp.crypto.SessionKey
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import timber.log.Timber
+import javax.mail.internet.InternetHeaders
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
 class AddressCrypto @AssistedInject constructor(
@@ -132,7 +133,8 @@ class AddressCrypto @AssistedInject constructor(
     }.fold(
         onSuccess = { true },
         onFailure = {
-            Timber.e(it, "Verification of token for address key (id = $addressKeyId) with user key (id = $userKeyId) failed")
+            Timber.e(it, "Verification of token for address key (id = $addressKeyId) " +
+                "with user key (id = $userKeyId) failed")
             false
         }
     )
@@ -193,8 +195,32 @@ class AddressCrypto @AssistedInject constructor(
         }
     }
 
-    fun decryptMime(message: CipherText): MimeDecryptor =
-        MimeDecryptor(message.armored, openPgp, getUnarmoredKeys(), String(passphrase!!))
+    fun decryptMime(
+        message: CipherText,
+        onBody: (String, String) -> Unit,
+        onError: (Exception) -> Unit,
+        onVerified: (Boolean, Boolean) -> Unit,
+        onAttachment: (InternetHeaders, ByteArray) ->Unit,
+        keys: List<ByteArray>?,
+        time: Long
+    ) {
+        val keyRing = createAndUnlockKeyRing()
+        with(MimeDecryptor(message.armored, openPgp, keyRing)) {
+            this.onBody = onBody
+            this.onError = onError
+            this.onAttachment = onAttachment
+            if (keys != null && keys.isNotEmpty()) {
+                for (key in keys) {
+                    withVerificationKey(key)
+                }
+                this.onVerified = onVerified
+            }
+            withMessageTime(time)
+
+            start()
+            await()
+        }
+    }
 
     fun generateEOToken(password: ByteArray): EOToken {
         // generate a 256 bit token.
@@ -206,7 +232,6 @@ class AddressCrypto @AssistedInject constructor(
 
     fun getFingerprint(key: String): String =
         openPgp.getFingerprint(key)
-
 
     fun getSessionKey(keyPacket: ByteArray): SessionKey {
         return withCurrentKeys("Error getting Session") { key ->
