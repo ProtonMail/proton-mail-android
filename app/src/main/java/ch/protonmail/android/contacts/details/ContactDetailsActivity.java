@@ -146,7 +146,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     public static final String EXTRA_CONTACT = "extra_contact";
     private static final int REQUEST_CODE_EDIT_CONTACT = 1;
-    private static final int REQUEST_CODE_UPGRADE = 2;
 
     @BindView(R.id.animToolbar)
     Toolbar toolbar;
@@ -378,6 +377,13 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     private void updateDisplayedContact() {
         new ExtractFullContactDetailsTask(contactsDatabase, mContactId, fullContactDetails -> {
+            // Reset variables, they will be reassigned a value in decryptAndFillVCard
+            mVCardType0 = null;
+            mVCardType1 = null;
+            mVCardType2 = null;
+            mVCardType3 = null;
+            mVCardType2Signature = null;
+            mVCardType3Signature = null;
             decryptAndFillVCard(fullContactDetails);
             onEditContact(fullContactDetails, mContactId);
             return Unit.INSTANCE;
@@ -1052,13 +1058,18 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     }
 
     private void startEditContacts() {
-        String vCardFilePath = "";
+        String vCardFilePath1 = "";
+        if (mVCardType1 != null && mVCardType1.length() > 0) {
+            vCardFilePath1 = getCacheDir().toString() + File.separator + "1" + VCARD_TEMP_FILE_NAME;
+            fileHelper.saveStringToFile(vCardFilePath1, mVCardType1);
+        }
+        String vCardFilePath3 = "";
         if (mVCardType3 != null && mVCardType3.length() > 0) {
-            vCardFilePath = getCacheDir().toString() + File.separator +  VCARD_TEMP_FILE_NAME;
-            fileHelper.saveStringToFile(vCardFilePath, mVCardType3);
+            vCardFilePath3 = getCacheDir().toString() + File.separator + "3" + VCARD_TEMP_FILE_NAME;
+            fileHelper.saveStringToFile(vCardFilePath3, mVCardType3);
         }
         EditContactDetailsActivity.startEditContactActivity(
-                this, mContactId, REQUEST_CODE_EDIT_CONTACT, mVCardType0, mVCardType2, vCardFilePath
+                this, mContactId, REQUEST_CODE_EDIT_CONTACT, mVCardType0, vCardFilePath1, mVCardType2, vCardFilePath3
         );
     }
 

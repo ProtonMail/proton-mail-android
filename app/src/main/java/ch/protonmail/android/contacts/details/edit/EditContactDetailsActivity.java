@@ -120,6 +120,7 @@ import timber.log.Timber;
 
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE0;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE1_PATH;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE2;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE3_PATH;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_EMAIL;
@@ -198,6 +199,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             String contactId,
             int requestCode,
             String vCardType0,
+            String vCardType1FilePath,
             String vCardType2,
             String vCardType3FilePath
     ) {
@@ -206,6 +208,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         intent.putExtra(EXTRA_FLOW, FLOW_EDIT_CONTACT)
                 .putExtra(EXTRA_CONTACT, contactId)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE0, vCardType0)
+                .putExtra(EXTRA_CONTACT_VCARD_TYPE1_PATH, vCardType1FilePath)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE2, vCardType2)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE3_PATH, vCardType3FilePath);
 
@@ -244,6 +247,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 Arrays.asList(getResources().getStringArray(R.array.vcard_option_address_val)),
                 Arrays.asList(getResources().getStringArray(R.array.vcard_option_other)),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE0),
+                extras.getString(EXTRA_CONTACT_VCARD_TYPE1_PATH),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE2),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE3_PATH));
 
@@ -544,7 +548,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 vCardEncrypted.addNote(note);
             }
         }
-        List<RawProperty> vCardExtendedProperties = viewModel.getExtendedPropertiesType3();
+        List<RawProperty> vCardExtendedProperties = viewModel.getExtendedPropertiesEncrypted();
         if (vCardExtendedProperties.size() > 0) {
             for (RawProperty rawProperty : vCardExtendedProperties) {
                 vCardEncrypted.addProperty(rawProperty);
@@ -964,9 +968,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         getSupportActionBar().setTitle(R.string.edit_contact);
         fillTopPart(editContactCardsHolder.getVCardType0(), editContactCardsHolder.getVCardType2());
         initEmptyEmailView();
+        VCard vCardType1 = editContactCardsHolder.getVCardType1();
         VCard vCardType3 = editContactCardsHolder.getVCardType3();
-        List<Telephone> vCardPhones = vCardType3.getTelephoneNumbers();
-        if (vCardPhones != null && vCardPhones.size() > 0) {
+        List<Telephone> vCardPhones = new ArrayList<>(vCardType1.getTelephoneNumbers());
+        vCardPhones.addAll(vCardType3.getTelephoneNumbers());
+        if (vCardPhones.size() > 0) {
             for (Telephone phone : vCardPhones) {
                 List<TelephoneType> types = phone.getTypes();
                 String typeUIPhone = viewModel.getDefaultPhoneUIOption();
@@ -982,7 +988,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             createPhoneView(viewModel.getDefaultPhoneOption(), viewModel.getDefaultPhoneUIOption(), "");
         }
         initPhone();
-        initAddresses(vCardType3);
+        initAddresses(vCardType1, vCardType3);
         initNewAddressRow();
 
         List<Photo> vCardPhotos = viewModel.getPhotos();
@@ -994,9 +1000,9 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         List<Role> vCardRoles = viewModel.getRoles();
         List<Url> vCardUrls = viewModel.getUrls();
         Gender vCardGender = viewModel.getGender();
-        List<RawProperty> vCardCustomFields = viewModel.getExtendedPropertiesType3();
+        List<RawProperty> vCardCustomFields = viewModel.getExtendedPropertiesEncrypted();
 
-        if (vCardPhotos != null && vCardPhotos.size() > 0) {
+        if (vCardPhotos.size() > 0) {
             photoCardViewWrapper.setVisibility(View.VISIBLE);
             contactInitials.setVisibility(View.GONE);
             if (vCardPhotos.get(0).getData() != null) {
@@ -1017,7 +1023,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 .isEmpty()) || (vCardUrls != null && !vCardUrls.isEmpty()) || vCardGender != null || (vCardCustomFields != null && !vCardCustomFields
                 .isEmpty())) {
             //region other info
-            if (vCardOrganizations != null && vCardOrganizations.size() > 0) {
+            if (vCardOrganizations.size() > 0) {
                 for (Organization organization : vCardOrganizations) {
                     String organizationType = getString(R.string.vcard_other_option_org);
                     String organizationValue = organization.getValues().get(0);
@@ -1025,20 +1031,20 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 }
             }
 
-            if (vCardTitles != null && vCardTitles.size() > 0) {
+            if (vCardTitles.size() > 0) {
                 for (Title title : vCardTitles) {
                     createOtherView(getString(R.string.vcard_other_option_title), title.getValue(), Constants.VCardOtherInfoType.TITLE);
                 }
             }
 
-            if (vCardNicknames != null && vCardNicknames.size() > 0) {
+            if (vCardNicknames.size() > 0) {
                 for (Nickname nickname : vCardNicknames) {
                     String nicknameValue = nickname.getValues().get(0);
                     createOtherView(nickname.getType(), nicknameValue, Constants.VCardOtherInfoType.NICKNAME);
                 }
             }
 
-            if (vCardBirthdays != null && vCardBirthdays.size() > 0) {
+            if (vCardBirthdays.size() > 0) {
                 for (Birthday birthday : vCardBirthdays) {
                     Date birthdayDate = birthday.getDate();
                     PartialDate birthdayPartialDate = birthday.getPartialDate();
@@ -1062,7 +1068,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 }
             }
 
-            if (vCardCustomFields != null && vCardCustomFields.size() > 0) {
+            if (vCardCustomFields.size() > 0) {
                 for (RawProperty rawProperty : vCardCustomFields) {
                     String name = rawProperty.getPropertyName();
                     String value = rawProperty.getValue();
@@ -1072,7 +1078,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 }
             }
 
-            if (vCardAnniversary != null && vCardAnniversary.size() > 0) {
+            if (vCardAnniversary.size() > 0) {
                 for (Anniversary anniversary : vCardAnniversary) {
                     Date anniversaryDate = anniversary.getDate();
                     PartialDate anniversariPartialDate = anniversary.getPartialDate();
@@ -1089,13 +1095,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 }
             }
 
-            if (vCardRoles != null && vCardRoles.size() > 0) {
+            if (vCardRoles.size() > 0) {
                 for (Role role : vCardRoles) {
                     createOtherView(getString(R.string.vcard_other_option_role), role.getValue(), Constants.VCardOtherInfoType.ROLE);
                 }
             }
 
-            if (vCardUrls != null && vCardUrls.size() > 0) {
+            if (vCardUrls.size() > 0) {
                 for (Url url : vCardUrls) {
                     createOtherView(getString(R.string.vcard_other_option_url), url.getValue(), Constants.VCardOtherInfoType.URL);
                 }
@@ -1112,7 +1118,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         initNewOptionRow();
 
         List<Note> vCardNotes = viewModel.getNotes();
-        if (vCardNotes != null && vCardNotes.size() > 0) {
+        if (vCardNotes.size() > 0) {
             for (Note note : vCardNotes) {
                 mEncryptedDataNote.addView(
                         createExistingVCardOptionRow(getString(R.string.contact_vcard_note),
@@ -1193,9 +1199,10 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 viewModel.getAddressOptions(), mEncryptedDataAddress));
     }
 
-    private void initAddresses(VCard vCardType3) {
-        List<Address> vCardAddresses = vCardType3.getAddresses();
-        if (vCardAddresses != null && vCardAddresses.size() > 0) {
+    private void initAddresses(VCard vCardType1, VCard vCardType3) {
+        List<Address> vCardAddresses = new ArrayList<>(vCardType1.getAddresses());
+        vCardAddresses.addAll(vCardType3.getAddresses());
+        if (vCardAddresses.size() > 0) {
             for (Address address : vCardAddresses) {
                 List<AddressType> addressTypes = address.getTypes();
                 String typeUIAddress = viewModel.getDefaultAddressUIOption();
