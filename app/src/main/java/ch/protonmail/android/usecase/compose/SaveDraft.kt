@@ -22,7 +22,7 @@ package ch.protonmail.android.usecase.compose
 import androidx.work.WorkInfo
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
-import ch.protonmail.android.attachments.UploadAttachments
+import ch.protonmail.android.attachments.UploadAttachmentsWorker
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
@@ -55,7 +55,7 @@ class SaveDraft @Inject constructor(
     private val pendingActionDao: PendingActionDao,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
     @CurrentUserId private val userId: UserId,
-    private val uploadAttachments: UploadAttachments.Enqueuer,
+    private val uploadAttachmentsWorker: UploadAttachmentsWorker.Enqueuer,
     private val userNotifier: UserNotifier
 ) {
 
@@ -135,7 +135,7 @@ class SaveDraft @Inject constructor(
         localDraft: Message
     ): SaveDraftResult {
         val isMessageSending = params.trigger == SaveDraftTrigger.SendingMessage
-        return uploadAttachments.enqueue(params.newAttachmentIds, createdDraftId, isMessageSending)
+        return uploadAttachmentsWorker.enqueue(params.newAttachmentIds, createdDraftId, isMessageSending)
             .filter { it?.state?.isFinished == true }
             .map {
                 if (it?.state == WorkInfo.State.FAILED) {

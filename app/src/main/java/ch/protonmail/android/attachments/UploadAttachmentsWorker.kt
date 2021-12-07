@@ -62,7 +62,7 @@ private const val UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX = "uploadAttachmentUniqueW
 private const val UPLOAD_ATTACHMENTS_MAX_RETRIES = 1
 
 @HiltWorker
-class UploadAttachments @AssistedInject constructor(
+class UploadAttachmentsWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
@@ -211,7 +211,7 @@ class UploadAttachments @AssistedInject constructor(
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val uploadAttachmentsRequest = OneTimeWorkRequestBuilder<UploadAttachments>()
+            val uploadAttachmentsRequest = OneTimeWorkRequestBuilder<UploadAttachmentsWorker>()
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(

@@ -24,7 +24,7 @@ import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
-import ch.protonmail.android.attachments.UploadAttachments
+import ch.protonmail.android.attachments.UploadAttachmentsWorker
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY
@@ -66,7 +66,7 @@ class SaveDraftTest : CoroutinesTest {
 
     private val userNotifier: UserNotifier = mockk(relaxed = true)
 
-    private val uploadAttachmentsEnqueuer: UploadAttachments.Enqueuer = mockk(relaxed = true)
+    private val uploadAttachmentsWorkerEnqueuer: UploadAttachmentsWorker.Enqueuer = mockk(relaxed = true)
 
     private val createDraftScheduler: Enqueuer = mockk(relaxed = true)
 
@@ -359,7 +359,7 @@ class SaveDraftTest : CoroutinesTest {
                     previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
-            coEvery { uploadAttachmentsEnqueuer.enqueue(any(), "createdDraftMessageId", false) } returns buildWorkerResponse(
+            coEvery { uploadAttachmentsWorkerEnqueuer.enqueue(any(), "createdDraftMessageId", false) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -413,7 +413,7 @@ class SaveDraftTest : CoroutinesTest {
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
             every { addressCryptoFactory.create(currentUserId, AddressId("addressId")) } returns addressCrypto
-            coEvery { uploadAttachmentsEnqueuer.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
+            coEvery { uploadAttachmentsWorkerEnqueuer.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -430,7 +430,7 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            coVerify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
+            coVerify { uploadAttachmentsWorkerEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
         }
     }
 
@@ -466,7 +466,7 @@ class SaveDraftTest : CoroutinesTest {
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
             every { addressCryptoFactory.create(currentUserId, AddressId("addressId")) } returns addressCrypto
-            coEvery { uploadAttachmentsEnqueuer.enqueue(any(), "createdDraftMessageId346", true) } returns buildWorkerResponse(
+            coEvery { uploadAttachmentsWorkerEnqueuer.enqueue(any(), "createdDraftMessageId346", true) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -483,7 +483,7 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            coVerify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId346", true) }
+            coVerify { uploadAttachmentsWorkerEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId346", true) }
             assertEquals(SaveDraftResult.Success(apiDraft.messageId!!), result)
         }
     }
@@ -534,7 +534,7 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            coVerify(exactly = 0) { uploadAttachmentsEnqueuer.enqueue(any(), any(), any()) }
+            coVerify(exactly = 0) { uploadAttachmentsWorkerEnqueuer.enqueue(any(), any(), any()) }
             assertEquals(SaveDraftResult.Success(apiDraft.messageId!!), result)
         }
     }
@@ -656,7 +656,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("newDraftId") } returns flowOf(message.copy(messageId = "newDraftId"))
             coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
-            coEvery { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "newDraftId", false) } returns buildWorkerResponse(
+            coEvery { uploadAttachmentsWorkerEnqueuer.enqueue(newAttachmentIds, "newDraftId", false) } returns buildWorkerResponse(
                 WorkInfo.State.FAILED,
                 uploadWorkOutputData
             )
@@ -711,7 +711,7 @@ class SaveDraftTest : CoroutinesTest {
                 messageDetailsRepository.findMessageById("UploadDraftAttachmentsFailed")
             } returns flowOf(message.copy(messageId = "newDraftId2384"))
             coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
-            coEvery { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "newDraftId2384", false) } returns buildWorkerResponse(
+            coEvery { uploadAttachmentsWorkerEnqueuer.enqueue(newAttachmentIds, "newDraftId2384", false) } returns buildWorkerResponse(
                 WorkInfo.State.CANCELLED
             )
             every {
@@ -773,7 +773,7 @@ class SaveDraftTest : CoroutinesTest {
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
             every { addressCryptoFactory.create(currentUserId, AddressId("addressId")) } returns addressCrypto
-            coEvery { uploadAttachmentsEnqueuer.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
+            coEvery { uploadAttachmentsWorkerEnqueuer.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -790,7 +790,7 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            verify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
+            verify { uploadAttachmentsWorkerEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
             assertEquals(SaveDraftResult.Success("createdDraftMessageId345"), result)
         }
     }
