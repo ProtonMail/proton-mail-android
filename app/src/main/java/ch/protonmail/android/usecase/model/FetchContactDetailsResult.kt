@@ -24,6 +24,7 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 sealed class FetchContactDetailsResult {
     data class Data(
         val decryptedVCardType0: String = EMPTY_STRING,
+        val decryptedVCardType1: String = EMPTY_STRING,
         val decryptedVCardType2: String = EMPTY_STRING,
         val decryptedVCardType3: String = EMPTY_STRING,
         val vCardType2Signature: String = EMPTY_STRING,

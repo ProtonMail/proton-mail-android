@@ -83,6 +83,7 @@ class FetchContactDetails @Inject constructor(
         if (!encryptedDataList.isNullOrEmpty()) {
             val crypto = UserCrypto(userManager, userManager.openPgp, Name(userManager.username))
             var decryptedVCardType0: String = EMPTY_STRING
+            var decryptedVCardType1: String = EMPTY_STRING
             var decryptedVCardType2: String = EMPTY_STRING
             var decryptedVCardType3: String = EMPTY_STRING
             var vCardType2Signature: String = EMPTY_STRING
@@ -99,6 +100,10 @@ class FetchContactDetails @Inject constructor(
                         decryptedVCardType2 = contactEncryptedData.data
                         vCardType2Signature = contactEncryptedData.signature
                     }
+                    Constants.VCardType.ENCRYPTED -> {
+                        val tct = CipherText(contactEncryptedData.data)
+                        decryptedVCardType1 = crypto.decrypt(tct).decryptedData
+                    }
                     Constants.VCardType.UNSIGNED -> {
                         decryptedVCardType0 = contactEncryptedData.data
                     }
@@ -106,6 +111,7 @@ class FetchContactDetails @Inject constructor(
             }
             return FetchContactDetailsResult.Data(
                 decryptedVCardType0,
+                decryptedVCardType1,
                 decryptedVCardType2,
                 decryptedVCardType3,
                 vCardType2Signature,

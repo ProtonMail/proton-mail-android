@@ -199,6 +199,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     private LayoutInflater inflater;
     private String mContactId;
     private String mVCardType0;
+    private String mVCardType1;
     private String mVCardType2;
     private String mVCardType3;
     private String mVCardType2Signature;
@@ -407,7 +408,15 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         for (ContactEncryptedData contactEncryptedData : encData) {
             if (contactEncryptedData.getType() == 0) {
                 mVCardType0 = contactEncryptedData.getData();
-
+            } else if (contactEncryptedData.getType() == 1) {
+                try {
+                    CipherText tct = new CipherText(contactEncryptedData.getData());
+                    TextDecryptionResult tdr = crypto.decrypt(tct);
+                    mVCardType1 = tdr.getDecryptedData();
+                } catch (Exception e) {
+                    hasDecryptionError = true;
+                    Logger.doLogException(e);
+                }
             } else if (contactEncryptedData.getType() == 2) {
                 mVCardType2 = contactEncryptedData.getData();
                 mVCardType2Signature = contactEncryptedData.getSignature();
@@ -609,6 +618,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             }
             FetchContactDetailsResult.Data data = (FetchContactDetailsResult.Data) result;
             mVCardType0 = data.getDecryptedVCardType0();
+            mVCardType1 = data.getDecryptedVCardType1();
             mVCardType2 = data.getDecryptedVCardType2();
             mVCardType3 = data.getDecryptedVCardType3();
             mVCardType2Signature = data.getVCardType2Signature();
@@ -676,6 +686,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             showSignatureErrorBottomPart();
         }
         final VCard vCardType0 = mVCardType0 != null ? Ezvcard.parse(mVCardType0).first() : null;
+        final VCard vCardType1 = mVCardType1 != null ? Ezvcard.parse(mVCardType1).first() : null;
         final VCard vCardType2 = mVCardType2 != null ? Ezvcard.parse(mVCardType2).first() : null;
         final VCard vCardType3 = mVCardType3 != null ? Ezvcard.parse(mVCardType3).first() : null;
         boolean isEmpty = true;
@@ -708,6 +719,9 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             startActivity(intent);
         });
 
+        if (vCardType1 != null) {
+            isEmpty = fillVCard(vCardType1); // fills bottom part
+        }
         if (vCardType3 != null) {
             isEmpty = fillVCard(vCardType3); // fills bottom part
         }
