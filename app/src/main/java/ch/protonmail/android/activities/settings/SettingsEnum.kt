@@ -20,12 +20,18 @@ package ch.protonmail.android.activities.settings
 
 import android.content.Context
 import ch.protonmail.android.R
+import me.proton.core.util.kotlin.EMPTY_STRING
 
 enum class SettingsEnum {
     ACCOUNT {
 
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = ""
+    },
+    APP_THEME {
+
+        override fun getHint(context: Context) = EMPTY_STRING
+        override fun getHeader(context: Context) = context.getString(R.string.settings_theme_title)
     },
     SUBSCRIPTION {
 

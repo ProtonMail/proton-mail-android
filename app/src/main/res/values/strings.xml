@@ -81,6 +81,7 @@
     <!-- endregion -->
 
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Set PIN code</string>
     <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
     <string name="settings_pins_dont_match">The PIN codes must match!</string>
