@@ -31,7 +31,6 @@ import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.di.AppProcessLifecycleOwner
 import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.fcm.UnregisterDeviceWorker
-import ch.protonmail.android.feature.user.waitPrimaryKeyPassphraseAvailable
 import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
@@ -252,18 +251,13 @@ internal class AccountStateManager @Inject constructor(
 
     private suspend fun onAccountReady(account: Account) = withContext(NonCancellable + dispatchers.Io) {
         // Only initialize user once.
-        val userId = UserId(account.userId.id)
-        val prefs = oldUserManager.preferencesFor(userId)
+        val prefs = oldUserManager.preferencesFor(account.userId)
         val initialized = prefs.getBoolean(Constants.Prefs.PREF_USER_INITIALIZED, false)
         if (!initialized) {
             prefs.edit { putBoolean(Constants.Prefs.PREF_USER_INITIALIZED, true) }
-            // Workaround: Wait the primary key passphrase before proceeding.
-            userManager.waitPrimaryKeyPassphraseAvailable(account.userId)
-            // Workaround: Make sure this uninitialized User is fresh.
-            oldUserManager.clearCache()
             // Launch Initial Data Fetch.
             launchInitialDataFetch.invoke(
-                userId = userId,
+                userId = account.userId,
                 shouldRefreshDetails = true,
                 shouldRefreshContacts = true
             )
@@ -274,15 +268,14 @@ internal class AccountStateManager @Inject constructor(
 
     private suspend fun onAccountDisabled(account: Account) = withContext(NonCancellable + dispatchers.Io) {
         // Only clear user once.
-        val userId = UserId(account.userId.id)
-        val prefs = oldUserManager.preferencesFor(userId)
+        val prefs = oldUserManager.preferencesFor(account.userId)
         val initialized = prefs.getBoolean(Constants.Prefs.PREF_USER_INITIALIZED, false)
         if (initialized) {
             // FCM Unregister.
             unregisterDeviceWorkerEnqueuer(account.userId, account.sessionId)
             // Clear Data/State.
-            clearUserData.invoke(userId)
-            eventManager.clearState(userId)
+            clearUserData.invoke(account.userId)
+            eventManager.clearState(account.userId)
             prefs.clearAll(/*excludedKeys*/ PREF_PIN, Constants.Prefs.PREF_USER_NAME)
         }
     }

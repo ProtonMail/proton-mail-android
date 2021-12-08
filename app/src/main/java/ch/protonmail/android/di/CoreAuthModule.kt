@@ -61,6 +61,6 @@ object CoreAuthModule {
         @ApplicationContext context: Context,
         accountManager: AccountManager,
         userManager: UserManager,
-        factory: SecureSharedPreferences.Factory
-    ): PostLoginAccountSetup.UserCheck = SetupAccountUserCheck(context, accountManager, userManager, factory)
+        oldUserManager: ch.protonmail.android.core.UserManager,
+    ): PostLoginAccountSetup.UserCheck = SetupAccountUserCheck(context, accountManager, userManager, oldUserManager)
 }
