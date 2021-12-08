@@ -33,6 +33,7 @@ import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_CONTACT_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_EMAIL
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABEL_IDS
+import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LAST_TIME_USED
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_ID
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -139,6 +140,7 @@ interface ContactDao {
         FROM $TABLE_CONTACT_DATA
         JOIN $TABLE_CONTACT_EMAILS
         ON $TABLE_CONTACT_DATA.$COLUMN_CONTACT_DATA_ID = $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_CONTACT_ID
+        ORDER BY $COLUMN_CONTACT_EMAILS_LAST_TIME_USED COLLATE NOCASE DESC
     """
     )
     fun findAllMessageRecipients(): Flowable<List<MessageRecipient>>

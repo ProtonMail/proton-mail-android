@@ -51,10 +51,6 @@ interface ContactService {
 
     @GET("contacts/emails")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun contactsEmailsCall(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): Call<ContactEmailsResponseV2>
-
-    @GET("contacts/emails")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun contactsEmails(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): ContactEmailsResponseV2
 
     @GET("contacts/emails")

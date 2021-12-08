@@ -123,7 +123,8 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         )
         val contactEmailId = "emailId1"
         val labelIds = listOf(labelId1)
-        val contactEmail = ContactEmail(contactEmailId, "test1@abc.com", "name1", labelIds = labelIds)
+        val contactEmail =
+            ContactEmail(contactEmailId, "test1@abc.com", "name1", labelIds = labelIds, lastUsedTime = "111")
         val newContactEmails = listOf(contactEmail)
         coEvery { api.getContactGroups(testUserId) } returns apiResult
         val emailsResponse = mockk<ContactEmailsResponseV2> {
@@ -181,11 +182,16 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         val contactEmailId4 = "emailId4"
         val contactEmailId5 = "emailId5"
         val labelIds = listOf(labelId1)
-        val contactEmail1 = ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds)
-        val contactEmail2 = ContactEmail(contactEmailId2, "test2@abc.com", "name2", labelIds = labelIds)
-        val contactEmail3 = ContactEmail(contactEmailId3, "test3@abc.com", "name3", labelIds = labelIds)
-        val contactEmail4 = ContactEmail(contactEmailId4, "test4@abc.com", "name4", labelIds = labelIds)
-        val contactEmail5 = ContactEmail(contactEmailId5, "test5@abc.com", "name5", labelIds = labelIds)
+        val contactEmail1 =
+            ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds, lastUsedTime = "111")
+        val contactEmail2 =
+            ContactEmail(contactEmailId2, "test2@abc.com", "name2", labelIds = labelIds, lastUsedTime = "113")
+        val contactEmail3 =
+            ContactEmail(contactEmailId3, "test3@abc.com", "name3", labelIds = labelIds, lastUsedTime = "115")
+        val contactEmail4 =
+            ContactEmail(contactEmailId4, "test4@abc.com", "name4", labelIds = labelIds, lastUsedTime = "114")
+        val contactEmail5 =
+            ContactEmail(contactEmailId5, "test5@abc.com", "name5", labelIds = labelIds, lastUsedTime = "112")
         val newContactEmails1 = listOf(contactEmail1, contactEmail2)
         val newContactEmails2 = listOf(contactEmail3, contactEmail4)
         val newContactEmails3 = listOf(contactEmail5)

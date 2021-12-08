@@ -84,8 +84,8 @@ class CreateContactTest : CoroutinesTest {
     private val encryptedData = "encryptedContactData"
     private val signedData = "signedContactData"
     private val contactEmails = listOf(
-        ContactEmail("ID1", "email@proton.com", "Tom"),
-        ContactEmail("ID2", "secondary@proton.com", "Mike")
+        ContactEmail("ID1", "email@proton.com", "Tom", lastUsedTime = "111"),
+        ContactEmail("ID2", "secondary@proton.com", "Mike", lastUsedTime = "112")
     )
 
     private val cacheDirPath = "CacheDirPath"
@@ -107,9 +107,10 @@ class CreateContactTest : CoroutinesTest {
 
             createContact("Mike", contactEmails, encryptedData, signedData)
 
-            val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
+            val emailWithContactId =
+                ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId", lastUsedTime = "111")
             val secondaryEmailWithContactId =
-                ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
+                ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId", lastUsedTime = "112")
             val expectedContactEmails = listOf(emailWithContactId, secondaryEmailWithContactId)
             coVerify { contactsRepository.saveContactEmails(expectedContactEmails) }
         }
@@ -198,14 +199,16 @@ class CreateContactTest : CoroutinesTest {
                     order = 1,
                     defaults = 1,
                     type = mutableListOf("email"),
-                    labelIds = emptyList()
+                    labelIds = emptyList(),
+                    lastUsedTime = "111"
                 ),
                 ContactEmail(
                     "HsdksdkjnZ8A-I6w==",
                     "secondary@proton.com",
                     "Mike",
                     contactId = "jB_6lbgFc7QA12w==",
-                    labelIds = emptyList()
+                    labelIds = emptyList(),
+                    lastUsedTime = "112"
                 )
             )
             val serverEmailsJson = """
@@ -225,7 +228,8 @@ class CreateContactTest : CoroutinesTest {
                         "selected": false,
                         "type": [
                             "email"
-                        ]
+                        ],
+                        "lastUsedTime": "111"
                     },
                     {
                         "contactEmailId": "HsdksdkjnZ8A-I6w==",
@@ -240,7 +244,8 @@ class CreateContactTest : CoroutinesTest {
                         "pgpIcon": 0,
                         "pgpIconColor": 0,
                         "selected": false,
-                        "type": null
+                        "type": null,
+                        "lastUsedTime": "112"
                     }
                 ]
 

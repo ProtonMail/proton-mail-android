@@ -40,7 +40,7 @@ import org.apache.commons.lang3.StringEscapeUtils
         ContactEmail::class,
         FullContactDetails::class,
     ],
-    version = 2
+    version = 3
 )
 @TypeConverters(
     FullContactDetailsConverter::class,

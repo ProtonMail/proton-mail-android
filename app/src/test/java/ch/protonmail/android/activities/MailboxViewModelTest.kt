@@ -290,7 +290,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 }
             )
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("contactId", "anotherContact@pm.me", "anotherContactName"))
+                listOf(ContactEmail("contactId", "anotherContact@pm.me", "anotherContactName", lastUsedTime = "111"))
             )
 
             val expected = MailboxUiItem(
@@ -340,7 +340,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery {
             contactsRepository.findContactsByEmail(match { emails -> emails.contains(senderEmailAddress) })
         } returns flowOf(
-            listOf(ContactEmail("contactId", senderEmailAddress, contactName))
+            listOf(ContactEmail("contactId", senderEmailAddress, contactName, lastUsedTime = "111"))
         )
 
         every { conversationModeEnabled(any()) } returns false
@@ -481,7 +481,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery {
             contactsRepository.findContactsByEmail(match { emails -> emails.contains(recipientEmailAddress) })
         } returns flowOf(
-            listOf(ContactEmail("contactId", recipientEmailAddress, contactName))
+            listOf(ContactEmail("contactId", recipientEmailAddress, contactName, lastUsedTime = "111"))
         )
 
         every { conversationModeEnabled(any()) } returns false
@@ -695,7 +695,11 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+                listOf(
+                    ContactEmail(
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                    )
+                )
             )
             viewModel.setNewMailboxLocation(location)
 
@@ -746,7 +750,11 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val successResult = GetConversationsResult.Success(listOf(conversation))
             val labelId = "labelId923842"
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+                listOf(
+                    ContactEmail(
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                    )
+                )
             )
             viewModel.setNewMailboxLocation(location)
 
@@ -793,7 +801,11 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+                listOf(
+                    ContactEmail(
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                    )
+                )
             )
             viewModel.setNewMailboxLocation(location)
 
@@ -845,7 +857,11 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+                listOf(
+                    ContactEmail(
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                    )
+                )
             )
             viewModel.setNewMailboxLocation(location)
 
@@ -900,7 +916,11 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+                listOf(
+                    ContactEmail(
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                    )
+                )
             )
 
             viewModel.setNewMailboxLabel(customLabelId)
@@ -951,7 +971,11 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+                listOf(
+                    ContactEmail(
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                    )
+                )
             )
             viewModel.setNewMailboxLocation(location)
 
@@ -1003,7 +1027,11 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+                listOf(
+                    ContactEmail(
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                    )
+                )
             )
             viewModel.setNewMailboxLocation(location)
 

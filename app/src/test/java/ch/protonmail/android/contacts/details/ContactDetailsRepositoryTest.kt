@@ -74,8 +74,8 @@ class ContactDetailsRepositoryTest {
     fun saveContactEmailsSavesAllTheContactEmailsToContactsDb() {
         runBlockingTest {
             val emails = listOf(
-                ContactEmail("ID1", "email@proton.com", "Tom"),
-                ContactEmail("ID2", "secondary@proton.com", "Mike")
+                ContactEmail("ID1", "email@proton.com", "Tom", lastUsedTime = "111"),
+                ContactEmail("ID2", "secondary@proton.com", "Mike", lastUsedTime = "112")
             )
 
             repository.saveContactEmails(emails)
@@ -105,12 +105,12 @@ class ContactDetailsRepositoryTest {
         runBlockingTest {
             val contactId = "contactId"
             val localContactEmails = listOf(
-                ContactEmail("ID1", "email@proton.com", "Tom"),
-                ContactEmail("ID2", "secondary@proton.com", "Mike")
+                ContactEmail("ID1", "email@proton.com", "Tom", lastUsedTime = "111"),
+                ContactEmail("ID2", "secondary@proton.com", "Mike", lastUsedTime = "112")
             )
             val serverEmails = listOf(
-                ContactEmail("ID3", "martin@proton.com", "Martin"),
-                ContactEmail("ID4", "kent@proton.com", "kent")
+                ContactEmail("ID3", "martin@proton.com", "Martin", lastUsedTime = "111"),
+                ContactEmail("ID4", "kent@proton.com", "kent", lastUsedTime = "112")
             )
             coEvery { contactDao.findContactEmailsByContactId(contactId) } returns localContactEmails
 
