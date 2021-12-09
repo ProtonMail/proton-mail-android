@@ -20,7 +20,7 @@ package ch.protonmail.android.utils
 
 import android.content.Context
 import android.content.Intent
-import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
+import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.mailbox.presentation.MailboxActivity

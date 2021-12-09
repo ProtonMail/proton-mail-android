@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities.dialogs;
 
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,7 +43,7 @@ import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity;
 import ch.protonmail.android.views.CustomQuickSnoozeDialog;
 import dagger.hilt.android.AndroidEntryPoint;
 
-import static ch.protonmail.android.activities.NavigationActivityKt.REQUEST_CODE_SNOOZED_NOTIFICATIONS;
+import static ch.protonmail.android.navigation.presentation.NavigationActivityKt.REQUEST_CODE_SNOOZED_NOTIFICATIONS;
 
 @AndroidEntryPoint
 public class QuickSnoozeDialogFragment

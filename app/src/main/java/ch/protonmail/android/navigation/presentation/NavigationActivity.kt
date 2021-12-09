@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities
+package ch.protonmail.android.navigation.presentation
 
 import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
@@ -35,13 +35,16 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.BaseActivity
+import ch.protonmail.android.activities.StartContacts
+import ch.protonmail.android.activities.StartReportBugs
+import ch.protonmail.android.activities.StartSettings
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelItemUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.CreateItem
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.Type
@@ -61,6 +64,7 @@ import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -111,10 +115,8 @@ internal abstract class NavigationActivity : BaseActivity() {
     @Inject
     lateinit var userManager: UserManager
 
-    @Inject
-    lateinit var drawerLabelMapper: DrawerLabelItemUiModelMapper
-
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
+    private val navigationViewModel by viewModels<NavigationViewModel>()
 
     private val startSettingsLauncher = registerForActivityResult(StartSettings()) {}
     private val startContactsLauncher = registerForActivityResult(StartContacts()) {}
@@ -143,11 +145,12 @@ internal abstract class NavigationActivity : BaseActivity() {
         }
     }
 
-    protected open fun onPrimaryUserId(userId: UserId) {
+    open fun onPrimaryUserId(userId: UserId) {
+        // Fetch the events immediately after switching the users to avoid the mailbox refresh
+        // when the first scheduled event comes in at a later point.
+        // TODO: Investigate why the first event after logging in triggers a refresh to start with; MAILAND-2654
         app.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
-        val alarmReceiver = AlarmReceiver()
-        alarmReceiver.setAlarm(this)
     }
 
     protected abstract fun onInbox(type: Constants.DrawerOptionType)
@@ -200,6 +203,7 @@ internal abstract class NavigationActivity : BaseActivity() {
 
             getPrimaryUserId().filterNotNull()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+                .filter { userId -> navigationViewModel.verifyPrimaryUserId(userId) }
                 .onEach { userId -> onPrimaryUserId(userId) }
                 .launchIn(lifecycleScope)
         }
