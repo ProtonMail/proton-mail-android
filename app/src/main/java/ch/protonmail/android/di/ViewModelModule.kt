@@ -54,12 +54,10 @@ import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel
-import com.birbit.android.jobqueue.JobManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.util.kotlin.DispatcherProvider
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -99,9 +97,7 @@ internal class ViewModelModule {
     fun provideMailboxViewModel(
         messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
         userManager: UserManager,
-        jobManager: JobManager,
         deleteMessage: DeleteMessage,
-        dispatchers: DispatcherProvider,
         contactsRepository: ContactsRepository,
         labelRepository: LabelRepository,
         verifyConnection: VerifyConnection,
@@ -127,9 +123,7 @@ internal class ViewModelModule {
     ) = MailboxViewModel(
         messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
         userManager = userManager,
-        jobManager = jobManager,
         deleteMessage = deleteMessage,
-        dispatchers = dispatchers,
         contactsRepository = contactsRepository,
         labelRepository = labelRepository,
         verifyConnection = verifyConnection,

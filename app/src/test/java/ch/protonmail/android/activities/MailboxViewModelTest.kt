@@ -76,9 +76,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
-import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.EntryPoints
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -87,7 +85,6 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.unmockkStatic
-import io.mockk.verify
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -125,10 +122,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { currentUserId } returns testUserId
         coEvery { primaryUserId } returns MutableStateFlow(testUserId)
         every { requireCurrentUserId() } returns testUserId
-    }
-
-    private val jobManager: JobManager = mockk {
-        every { addJobInBackground(any()) } just Runs
     }
 
     private val deleteMessage: DeleteMessage = mockk()
@@ -222,9 +215,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         viewModel = MailboxViewModel(
             messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
             userManager = userManager,
-            jobManager = jobManager,
             deleteMessage = deleteMessage,
-            dispatchers = dispatchers,
             contactsRepository = contactsRepository,
             labelRepository = labelRepository,
             verifyConnection = verifyConnection,
@@ -628,20 +619,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 assertEquals(expectedState, expectItem())
             }
         }
-
-    @Test
-    fun getMailboxItemsCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabelOrFolder() {
-        val location = ARCHIVE
-        // Represents pagination. Only messages older than the given timestamp will be returned
-        val userId = UserId("userId")
-        every { userManager.currentUserId } returns userId
-        every { conversationModeEnabled(location) } returns false
-
-        viewModel.setNewMailboxLocation(location)
-        viewModel.loadMore()
-
-        verify(exactly = 0) { jobManager.addJobInBackground(any()) }
-    }
 
     @Test
     fun getMailboxItemsReturnsMailboxItemsMappedFromConversationsWhenGetConversationsUseCaseSucceeds() =

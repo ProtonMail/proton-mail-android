@@ -39,8 +39,6 @@ import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
-import ch.protonmail.android.jobs.ApplyLabelJob
-import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -73,9 +71,7 @@ import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
@@ -95,31 +91,25 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.collections.set
 
 const val FLOW_START_ACTIVITY = 1
 const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
 private const val STARRED_LABEL_ID = "10"
 private const val MIN_MESSAGES_TO_SHOW_COUNT = 2
-private typealias ApplyRemoveLabelsPair = Pair<List<String>, List<String>>
 
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
 internal class MailboxViewModel @Inject constructor(
     private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val userManager: UserManager,
-    private val jobManager: JobManager,
     private val deleteMessage: DeleteMessage,
-    private val dispatchers: DispatcherProvider,
     private val contactsRepository: ContactsRepository,
     private val labelRepository: LabelRepository,
     verifyConnection: VerifyConnection,
@@ -299,66 +289,6 @@ internal class MailboxViewModel @Inject constructor(
                 FLOW_TRY_COMPOSE -> {
                     _manageLimitReachedWarningOnTryCompose.postValue(Event(limitReached))
                 }
-            }
-        }
-    }
-
-    fun processLabels(
-        messageIds: List<String>,
-        checkedLabelIds: List<String>,
-        unchangedLabels: List<String>
-    ) {
-        val iterator = messageIds.iterator()
-
-        val labelsToApplyMap = HashMap<String, MutableList<String>>()
-        val labelsToRemoveMap = HashMap<String, MutableList<String>>()
-        var result: Pair<Map<String, List<String>>, Map<String, List<String>>>? = null
-
-        viewModelScope.launch {
-            withContext(dispatchers.Comp) {
-                while (iterator.hasNext()) {
-                    val messageId = iterator.next()
-                    val message = messageDetailsRepository.findMessageById(messageId).first()
-
-                    if (message != null) {
-                        val currentLabelsIds = message.labelIDsNotIncludingLocations
-                        val labels = getAllLabelsByIds(currentLabelsIds, userManager.requireCurrentUserId())
-                        val applyRemoveLabels = resolveMessageLabels(
-                            message, ArrayList(checkedLabelIds),
-                            ArrayList(unchangedLabels),
-                            labels
-                        )
-                        val apply = applyRemoveLabels?.first
-                        val remove = applyRemoveLabels?.second
-                        apply?.forEach {
-                            var labelsToApply: MutableList<String>? = labelsToApplyMap[it]
-                            if (labelsToApply == null) {
-                                labelsToApply = ArrayList()
-                            }
-                            labelsToApply.add(messageId)
-                            labelsToApplyMap[it] = labelsToApply
-                        }
-                        remove?.forEach {
-                            var labelsToRemove: MutableList<String>? = labelsToRemoveMap[it]
-                            if (labelsToRemove == null) {
-                                labelsToRemove = ArrayList()
-                            }
-                            labelsToRemove.add(messageId)
-                            labelsToRemoveMap[it] = labelsToRemove
-                        }
-                    }
-                }
-
-                result = Pair(labelsToApplyMap, labelsToRemoveMap)
-            }
-            val applyKeySet = result?.first?.keys
-            val removeKeySet = result?.second?.keys
-            applyKeySet?.forEach {
-                jobManager.addJobInBackground(ApplyLabelJob(labelsToApplyMap[it], it))
-            }
-
-            removeKeySet?.forEach {
-                jobManager.addJobInBackground(RemoveLabelJob(labelsToRemoveMap[it], it))
             }
         }
     }
@@ -614,49 +544,6 @@ internal class MailboxViewModel @Inject constructor(
         return senderNameFromContacts?.takeIfNotBlank()?.takeIf { it != correspondent.address }
             ?: correspondent.name.takeIfNotBlank()
             ?: correspondent.address
-    }
-
-    private suspend fun getAllLabelsByIds(labelIds: List<String>, userId: UserId) =
-        messageDetailsRepository.findLabelsWithIds(labelIds)
-
-    private fun resolveMessageLabels(
-        message: Message,
-        checkedLabelIds: MutableList<String>,
-        unchangedLabels: List<String>,
-        currentContactLabels: List<Label>?
-    ): ApplyRemoveLabelsPair? {
-        val labelsToRemove = ArrayList<String>()
-
-        currentContactLabels?.forEach {
-            val labelId = it.id.id
-            if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(
-                    labelId
-                ) && it.type == LabelType.MESSAGE_LABEL
-            ) {
-                labelsToRemove.add(labelId)
-            } else if (checkedLabelIds.contains(labelId)) {
-                checkedLabelIds.remove(labelId)
-            }
-        }
-
-        val labelList = ArrayList(message.labelIDsNotIncludingLocations)
-        labelList.addAll(checkedLabelIds)
-        labelList.removeAll(labelsToRemove)
-        val labelSet = labelList.toSet()
-        val maxLabelsAllowed = UserUtils.getMaxAllowedLabels(userManager)
-
-        if (labelSet.size > maxLabelsAllowed) {
-            _toastMessageMaxLabelsReached.value = Event(MaxLabelsReached(message.subject, maxLabelsAllowed))
-            return null
-        }
-
-        message.addLabels(checkedLabelIds)
-        message.removeLabels(labelsToRemove)
-        viewModelScope.launch {
-            messageDetailsRepository.saveMessage(message)
-        }
-
-        return ApplyRemoveLabelsPair(checkedLabelIds, labelsToRemove)
     }
 
     fun deleteAction(
