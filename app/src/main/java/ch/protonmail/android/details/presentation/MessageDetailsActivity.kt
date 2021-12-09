@@ -630,10 +630,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
         }
 
+        val hasMultipleRecipients = message.toList.size + message.ccList.size > 1
         val actionsUiModel = BottomActionsView.UiModel(
+            if (hasMultipleRecipients) R.drawable.ic_reply_all else R.drawable.ic_reply,
             R.drawable.ic_envelope_dot,
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_trash_empty else R.drawable.ic_trash,
-            R.drawable.ic_folder_move,
             R.drawable.ic_label
         )
         messageDetailsActionsView.bind(actionsUiModel)
@@ -641,9 +642,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             showLabelsActionSheet(LabelType.MESSAGE_LABEL)
         }
         messageDetailsActionsView.setOnThirdActionClickListener {
-            showLabelsActionSheet(LabelType.FOLDER)
-        }
-        messageDetailsActionsView.setOnSecondActionClickListener {
             if (viewModel.shouldShowDeleteActionInBottomActionBar()) {
                 showDeleteConfirmationDialog(
                     this,
@@ -658,9 +656,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 onBackPressed()
             }
         }
-        messageDetailsActionsView.setOnFirstActionClickListener {
+        messageDetailsActionsView.setOnSecondActionClickListener {
             onBackPressed()
             viewModel.markUnread()
+        }
+        messageDetailsActionsView.setOnFirstActionClickListener {
+            executeMessageAction(
+                if (hasMultipleRecipients) Constants.MessageActionType.REPLY_ALL else Constants.MessageActionType.REPLY,
+                messageOrConversationId
+            )
         }
     }
 
