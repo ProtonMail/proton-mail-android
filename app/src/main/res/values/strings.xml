@@ -91,6 +91,13 @@
     <string name="settings_swipe_right_to_left">Right to left</string>
     <!-- endregion -->
 
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Select parent folder</string>
     <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>

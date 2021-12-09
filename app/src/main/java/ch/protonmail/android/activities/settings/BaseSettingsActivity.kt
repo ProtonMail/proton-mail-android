@@ -75,6 +75,7 @@ import ch.protonmail.android.settings.presentation.EXTRA_SETTINGS_ATTACHMENT_STO
 import ch.protonmail.android.settings.presentation.SettingsDividerItemDecoration
 import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
 import ch.protonmail.android.settings.presentation.SwipeSettingFragment
+import ch.protonmail.android.settings.presentation.ui.ThemeChooserActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
@@ -131,6 +132,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     private val settingsAdapter = SettingsAdapter()
 
     var settingsUiList: List<SettingsItemUiModel> = ArrayList()
+
+    private val themeChooserLauncher = registerForActivityResult(ThemeChooserActivity.Launcher()) {}
 
     var contactDao: ContactDao? = null
     var messageDao: MessageDao? = null
@@ -398,6 +401,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 )
                 startActivity(AppUtil.decorInAppIntent(attachmentStorageIntent))
             }
+            APP_THEME -> themeChooserLauncher.launch(Unit)
             PUSH_NOTIFICATION -> {
                 val privateNotificationsIntent =
                     AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
@@ -461,8 +465,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                         )
                     )
                 }
-            }
-            else -> { /* ignored */
             }
         }
     }

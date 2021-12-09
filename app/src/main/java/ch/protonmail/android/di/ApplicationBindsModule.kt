@@ -29,10 +29,13 @@ import ch.protonmail.android.labels.data.LabelRepositoryImpl
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.mailbox.data.ConversationsRepositoryImpl
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.settings.domain.DeviceSettingsRepository
+import ch.protonmail.android.settings.domain.model.AppThemeSettings
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Inject
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -45,6 +48,9 @@ internal interface ApplicationBindsModule {
     fun DefaultImageDecoder.imageDecoder(): ImageDecoder
 
     @Binds
+    fun DeviceSettingsRepositoryImpl.deviceSettingsRepository(): DeviceSettingsRepository
+
+    @Binds
     fun provideLabelRepository(repo: LabelRepositoryImpl): LabelRepository
 
     @Binds
@@ -52,5 +58,17 @@ internal interface ApplicationBindsModule {
 
     @Binds
     fun provideCounterRepository(repo: CounterRepositoryImpl): CounterRepository
+
+}
+
+class DeviceSettingsRepositoryImpl @Inject constructor() : DeviceSettingsRepository {
+
+    override suspend fun getAppThemeSettings(): AppThemeSettings {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveAppThemeSettings(settings: AppThemeSettings) {
+        TODO("Not yet implemented")
+    }
 
 }
