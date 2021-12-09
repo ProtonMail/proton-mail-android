@@ -44,9 +44,9 @@ open class DatabaseFactory<T : RoomDatabase>(
 
     @Synchronized
     fun deleteDatabase(context: Context, userId: UserId) {
-        val username = CounterDatabase.usernameForUserId(context, userId)
+        val username = usernameForUserId(context, userId)
 
-        val baseFileName = CounterDatabase.databaseName(username)
+        val baseFileName = databaseName(username)
         val databaseFile = context.getDatabasePath(baseFileName)
         val databaseFileShm = context.getDatabasePath("$baseFileName-shm")
         val databaseFileWal = context.getDatabasePath("$baseFileName-wal")
@@ -72,12 +72,12 @@ open class DatabaseFactory<T : RoomDatabase>(
             .build()
     }
 
-    protected fun usernameForUserId(context: Context, userId: UserId): String {
+    private fun usernameForUserId(context: Context, userId: UserId): String {
         val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
         return checkNotNull(prefs.getString(Constants.Prefs.PREF_USER_NAME, null))
     }
 
-    protected fun databaseName(username: String) =
+    private fun databaseName(username: String) =
         "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-$baseDatabaseName"
 
     @VisibleForTesting

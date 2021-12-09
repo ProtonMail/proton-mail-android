@@ -57,11 +57,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
+import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
-import ch.protonmail.android.activities.NavigationActivity
+import ch.protonmail.android.navigation.presentation.NavigationActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.activities.StartMessageDetails
@@ -86,8 +86,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES
 import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
-import ch.protonmail.android.data.local.CounterDao
-import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.data.local.model.Message
@@ -130,7 +128,6 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
-import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flatMapLatest
@@ -167,7 +164,6 @@ internal class MailboxActivity :
     ActionMode.Callback,
     OnRefreshListener {
 
-    private lateinit var counterDao: CounterDao
     private lateinit var pendingActionDao: PendingActionDao
 
     @Inject
@@ -521,10 +517,7 @@ internal class MailboxActivity :
     private var firstLogin: Boolean? = null
 
     override fun onPrimaryUserId(userId: UserId) {
-        super.onPrimaryUserId(userId)
-
         mJobManager.start()
-        counterDao = CounterDatabase.getInstance(this, userId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, userId).getDao()
 
         setUpDrawer()
