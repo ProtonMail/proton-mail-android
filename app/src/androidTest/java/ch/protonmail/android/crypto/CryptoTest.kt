@@ -24,7 +24,6 @@ import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
-import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
 import ch.protonmail.android.utils.crypto.OpenPGP
 import io.mockk.every
@@ -42,7 +41,8 @@ import kotlin.test.Test
 @LargeTest
 internal class CryptoTest {
 
-    private val userManagerMock: UserManager = mockk()
+    private val oneAddressKeyUserManagerMock: UserManager = mockk()
+    private val manyAddressKeysUserManagerMock: UserManager = mockk()
     private val openPgp = OpenPGP()
 
     private val openPgpMock: OpenPGP = mockk()
@@ -515,7 +515,7 @@ internal class CryptoTest {
             1
         )
     )
-    val manyAddressKeysUserKeys = listOf(
+    private val manyAddressKeysUserKeys = listOf(
         Keys(
             "IB2lsghg5bLlCJkSu7eNPq-PD7Ae9ZXn_yy52sObxxF1NzlM8iuVY-oFvfFFxE4egvWMqse402s_ERB9SbM7HQ==",
             """
@@ -678,7 +678,6 @@ internal class CryptoTest {
     //endregion
 
     private val addressKeyMapper = AddressKeyBridgeMapper()
-    private val addressKeysMapper = AddressKeysBridgeMapper(addressKeyMapper)
     private val userKeyMapper = UserKeyBridgeMapper()
 
     private val oneKeyUserMock: ch.protonmail.android.domain.entity.user.User = mockk {
@@ -720,7 +719,8 @@ internal class CryptoTest {
     init {
         mockkStatic(TextUtils::class)
 
-        every { userManagerMock.openPgp } returns openPgp
+        every { oneAddressKeyUserManagerMock.openPgp } returns openPgp
+        every { manyAddressKeysUserManagerMock.openPgp } returns openPgp
 
         // one address key
         /*
@@ -728,9 +728,9 @@ internal class CryptoTest {
         every { oneKeyUserMock.getAddressById(oneAddressKeyAddressId) } returns mockk {
             every { keys } returns oneAddressKeyAddressKeys
         }*/
-        every { userManagerMock.getUserBlocking(oneAddressKeyUserId) } returns oneKeyUserMock
+        every { oneAddressKeyUserManagerMock.getUserBlocking(oneAddressKeyUserId) } returns oneKeyUserMock
         every {
-            userManagerMock.getUserPassphraseBlocking(
+            oneAddressKeyUserManagerMock.getUserPassphraseBlocking(
                 oneAddressKeyUserId
             )
         } returns oneAddressKeyMailboxPassword.toByteArray()
@@ -741,18 +741,25 @@ internal class CryptoTest {
         every { manyAddressKeysUserMock.getAddressById(manyAddressKeysAddressId) } returns mockk {
             every { keys } returns manyAddressKeysAddressKeys
         }*/
-        every { userManagerMock.getUserBlocking(manyAddressKeysUserId) } returns manyAddressKeysUserMock
+        every { manyAddressKeysUserManagerMock.getUserBlocking(manyAddressKeysUserId) } returns manyAddressKeysUserMock
         every {
-            userManagerMock.getUserPassphraseBlocking(
+            manyAddressKeysUserManagerMock.getUserPassphraseBlocking(
                 manyAddressKeysUserId
             )
         } returns manyAddressKeysMailboxPassword.toByteArray()
 
         // token and signature generation
-        every { userManagerMock.currentUserId } returns tokenAndSignatureUserId
-        every { userManagerMock.requireCurrentUserId() } returns tokenAndSignatureUserId
-        every { userManagerMock.getUserPassphraseBlocking(tokenAndSignatureUserId) } returns passphrase
+        every { oneAddressKeyUserManagerMock.currentUserId } returns tokenAndSignatureUserId
+        every { oneAddressKeyUserManagerMock.requireCurrentUserId() } returns tokenAndSignatureUserId
+        every { oneAddressKeyUserManagerMock.getUserPassphraseBlocking(tokenAndSignatureUserId) } returns passphrase
         every { openPgpMock.randomToken() } returns randomToken
+
+
+        // token and signature generation
+        every { manyAddressKeysUserManagerMock.currentUser } returns manyAddressKeysUserMock
+        every { manyAddressKeysUserManagerMock.currentUserId } returns tokenAndSignatureUserId
+        every { manyAddressKeysUserManagerMock.requireCurrentUserId() } returns tokenAndSignatureUserId
+        every { manyAddressKeysUserManagerMock.getUserPassphraseBlocking(tokenAndSignatureUserId) } returns passphrase
     }
 
     @Test
@@ -767,7 +774,7 @@ internal class CryptoTest {
     fun encrypt_and_decrypt_message() {
         val message = "Text to encrypt and decrypt."
 
-        val userCrypto = Crypto.forUser(userManagerMock, oneAddressKeyUserId)
+        val userCrypto = Crypto.forUser(oneAddressKeyUserManagerMock, oneAddressKeyUserId)
         val encrypted = userCrypto.encrypt(message, false)
         val decrypted = userCrypto.decrypt(encrypted)
 
@@ -783,7 +790,7 @@ internal class CryptoTest {
     fun encrypt_and_decrypt_signed_message() {
         val message = "Text to encrypt and decrypt, signed."
 
-        val userCrypto = Crypto.forUser(userManagerMock, oneAddressKeyUserId)
+        val userCrypto = Crypto.forUser(oneAddressKeyUserManagerMock, oneAddressKeyUserId)
         val encryptedAndSigned = userCrypto.encrypt(message, true)
         val decrypted = userCrypto.decrypt(encryptedAndSigned)
 
@@ -831,18 +838,88 @@ internal class CryptoTest {
 
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, AddressId(oneAddressKeyAddressId))
-        val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
+        val addressCrypto = Crypto.forAddress(
+            oneAddressKeyUserManagerMock,
+            oneAddressKeyUserId,
+            AddressId(oneAddressKeyAddressId)
+        )
 
+        var errorCallbackCalled = false
         lateinit var resultBody: String
-        decryptor.onBody = { eventBody: String, _ ->
-            resultBody = eventBody
-        }
 
-        decryptor.start()
-        decryptor.await()
+        addressCrypto.decryptMime(
+            message = CipherText(encryptedMessage),
+            onBody = { eventBody: String, _ ->
+                resultBody = eventBody
+            },
+            onError = { errorCallbackCalled = true },
+            onVerified = { _, _ -> },
+            onAttachment = { _, _ -> },
+            keys = listOf(),
+            time = 0
+        )
 
         assertEquals(expected, resultBody)
+        assertFalse(errorCallbackCalled)
+    }
+
+    @Test
+    fun call_error_callback_when_none_of_the_address_keys_works() {
+        val encryptedMessage = """
+            -----BEGIN PGP MESSAGE-----
+            Version: ProtonMail
+
+            wcBMA5kajsUECZmgAQf/ZPNo2ycCcSfoHJpRvHBpaxDOhj+pJmynsIwptekE
+            ygoiPTUhLRtVCGSoAZOBzWYGU2wxWUAUZupJx3enkY9GGUTNFYxNgoWIjSqZ
+            G0BmASdgQBLGfINjNACdafiFtm1to2z4s41Vwv9ENBornkABzR7VqbrSe5EY
+            fef+ZwtXDzg5lyO6G4HqOMHmrX+H8gbDKslS3OgHk66+e58HsWPRDK9DvUfz
+            YqGAybRZpMwAs0UXhr9MXrnUBzzd010NGo58iWugt4zggyO/xfiMaC4cXLrm
+            2LmGlTQrJ8+gNUSTPcOqpDtovS/Ve0LbFAcXjLMZsxyTx5UwQSFTgDZiaQwz
+            gcHBTANv03LIBj82fgEQAIC2NiDaRLanLPwlDZx12YbrgDKcjywDWTdJDg3X
+            ABmKK2RlnMpK8xV3ffRN+MHQv6o1a1kz8U+l5PZx1NxFwEUPEFzCgU43hg/t
+            qgWkZDs20BfPEv84uwnxB0UKvN0BqUorCRfIqrGmcAgj/9ZcbQqp9xUGk3Wo
+            rM3CbgCDjkL6uu9USpPdiT+sVx/I4BatZQFBBGUn6IBkTGA4jivBmlCOyoed
+            q0IKXLL/HhcdaiicY3EgVkSVOmzv4Qvl5rS2NhqUuuzhm7J/Q0pBTjD09MuB
+            ypFpxZ3SChTdCvYrSzXSdTHV0A3WzmjcWAPxFBQeu6EyAKDFY8xlbIGmJcuw
+            x1xd36IZ3Lz9wvHjVkK6AGUwLX4Gbr4LqI+cv0737Kylsn8nZqNYzYyu1pIJ
+            SRtOigIERnQQ7tJUdB9MPCQYV1HNoqtERyIsWsYxHxxIBjyh08574IbRFov0
+            SYvBGyeiWuUbxIWIYKNRloezrr1VdO3Ir2NXpOQcg9X5bLmFcyWLb+HkmP0L
+            IoqPip2oj8p9bK3W5eugGpuB0Wg4rtLMC/y4uGagZWQEuIfDwbaU1DJY53Gd
+            gLOrrwugxokWpff46nsJm7fDuKtS9JRRSrIf0kEK9U9r2PiZJ5EZGk6Xlfls
+            rf+/B//B6CraAxchCuBKZWfiSkwzlp5JLNCHoJ9ClfiQ0sDMAUuVdfoLxykG
+            pEgYd7WZWhL/HWqL6wnJwIgLWc0KNlNfLTe3xDzsrH40TrggeLkhxt5SMt+/
+            Z1qHe1I2ySAG71T+h9nXQvf59/TCJCrYeovONMytFWWM86IAlWdaGUf3UgQJ
+            2nbRBA1mjdlDXLASnR026jQZCGLvwI/AtEtwf/rFZCr+9BHRp3xqL/7N5eAM
+            rQkeVtR4GHQ/5b2k/nAgikHSwPZVq3rWW7zq6LZov5o+bWrpkTC/jADoPJhS
+            17culs74jO0+uJIDvrXjs15/2wy8gCorjP1+uVo9jSwEl7R0YXe3N1Dk3GLJ
+            qfXCH7M6YagGA+QrKPGVbf+u9mzW8Xa0a0LkiztOQAjVeIATQchc2CULuDaQ
+            3GQI5plpG+UXk56hKaHaWqOW4DFUwqytfpUouqC8HYtkNK/U/qof7W7XyK0a
+            IQDm/u9BGpUTGi0RRIKw3MceOaqhx4CsVY+4KI8TZxTBUgz0FEolsSGc3n4z
+            b84EjTEttONJFdRubt7KSWkoibrlQ7BBLfkd
+            =47eC
+            -----END PGP MESSAGE-----
+        """.trimIndent()
+
+        val addressCrypto = Crypto.forAddress(
+            manyAddressKeysUserManagerMock,
+            manyAddressKeysUserId,
+            AddressId(manyAddressKeysAddressId)
+        )
+        var errorCallbackCalled = false
+        var onBodyCallbackCalled = false
+
+        addressCrypto.decryptMime(
+            message = CipherText(encryptedMessage),
+            onBody = { _, _ -> onBodyCallbackCalled = true },
+            onError = { errorCallbackCalled = true },
+            onVerified = { _, _ -> },
+            onAttachment = { _, _ -> },
+            keys = listOf(),
+            time = 0
+        )
+
+        assertTrue(errorCallbackCalled)
+        assertFalse(onBodyCallbackCalled)
     }
 
     @Test
@@ -1556,20 +1633,25 @@ internal class CryptoTest {
             }
         )
 
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, AddressId(oneAddressKeyAddressId))
-        val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
-
         lateinit var resultBody: String
-        decryptor.onBody = { eventBody: String, _ ->
-            resultBody = eventBody
-        }
+        var errorCallbackCalled = false
         val attachments = mutableListOf<Attachment>()
-        decryptor.onAttachment = { headers: InternetHeaders, content: ByteArray ->
-            attachments.add(Attachment.fromMimeAttachment(content, headers, mockedMessageId, attachments.size))
-        }
+        val addressCrypto =
+            Crypto.forAddress(oneAddressKeyUserManagerMock, oneAddressKeyUserId, AddressId(oneAddressKeyAddressId))
 
-        decryptor.start()
-        decryptor.await()
+        addressCrypto.decryptMime(
+            message = CipherText(encryptedMessage),
+            onBody = { eventBody: String, _ ->
+                resultBody = eventBody
+            },
+            onAttachment = { headers: InternetHeaders, content: ByteArray ->
+                attachments.add(Attachment.fromMimeAttachment(content, headers, mockedMessageId, attachments.size))
+            },
+            onError = { errorCallbackCalled = true },
+            onVerified = { _, _ -> },
+            keys = emptyList(),
+            time = 0
+        )
 
         attachments.forEachIndexed { i, attachment ->
             val expected = mockedAttachments[i]
@@ -1583,6 +1665,7 @@ internal class CryptoTest {
 
         assertEquals(expectedBody, resultBody)
         assertEquals(attachments.size, mockedAttachments.size)
+        assertFalse(errorCallbackCalled)
     }
 
     @Test

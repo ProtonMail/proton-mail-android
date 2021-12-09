@@ -62,7 +62,13 @@ public class OpenPGP {
         return Helper.decryptMessageArmored(Armor.armorKey(privateKey), passphrase, encryptedText);
     }
 
-    public TextDecryptionResult decryptMessageVerifyBinKeyPrivbinkeys(String encryptedText, List<byte[]> veriferKeys, List<byte[]> privateKeys, byte[] passphrase, long verifyTime) throws Exception {
+    public TextDecryptionResult decryptMessageVerifyBinKeyPrivbinkeys(
+            String encryptedText,
+            List<byte[]> veriferKeys,
+            List<byte[]> privateKeys,
+            byte[] passphrase,
+            long verifyTime
+    ) throws Exception {
 
         KeyRing privateKeyRing = null;
         try {
@@ -169,11 +175,13 @@ public class OpenPGP {
         return com.proton.gopenpgp.crypto.Crypto.randomToken(32); // 32 bytes
     }
 
-    public void decryptMIMEMessage(String encryptedText, byte[] verifierKey,
-                                   List<byte[]> privateKeys, byte[] passphrase,
-                                   MIMECallbacks callbacks, long verifyTime) throws Exception {
+    public void decryptMIMEMessage(String encryptedText,
+                                   byte[] verifierKey,
+                                   KeyRing privateKeyRing,
+                                   MIMECallbacks callbacks,
+                                   long verifyTime
+    ) {
 
-        KeyRing privateKeyRing = buildPrivateKeyRing(privateKeys, passphrase);
         if (verifierKey == null || verifierKey.length == 0) {
             privateKeyRing.decryptMIMEMessage(new PGPMessage(encryptedText), null, callbacks, verifyTime);
         } else {
