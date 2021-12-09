@@ -21,6 +21,7 @@ package ch.protonmail.android.settings.domain.usecase
 
 import androidx.appcompat.app.AppCompatDelegate
 import ch.protonmail.android.settings.domain.model.AppThemeSettings
+import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.exhaustive
 import javax.inject.Inject
 
@@ -39,5 +40,9 @@ class ApplyAppThemeFromSettings @Inject constructor(
             AppThemeSettings.DARK -> AppCompatDelegate.MODE_NIGHT_YES
         }.exhaustive
         AppCompatDelegate.setDefaultNightMode(flag)
+    }
+
+    fun blocking() {
+        runBlocking { this@ApplyAppThemeFromSettings() }
     }
 }
