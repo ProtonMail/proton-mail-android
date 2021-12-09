@@ -27,7 +27,7 @@ enum class AppThemeSettings(val int: Int) {
 
     companion object {
 
-        fun fromIntOrDefault(int: Int, default: AppThemeSettings = FOLLOW_SYSTEM): AppThemeSettings =
+        fun fromIntOrDefault(int: Int?, default: AppThemeSettings = FOLLOW_SYSTEM): AppThemeSettings =
             values().firstOrNull { it.int == int } ?: default
     }
 }
