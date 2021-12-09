@@ -68,6 +68,7 @@ internal abstract class LabelDao : BaseDao<LabelEntity>() {
         SELECT * FROM LabelEntity 
         WHERE userId = :userId
         AND type in (:labelTypes)
+        ORDER BY labelOrder
         """
     )
     abstract fun observeLabelsByType(userId: UserId, vararg labelTypes: LabelType): Flow<List<LabelEntity>>
