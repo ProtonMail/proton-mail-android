@@ -42,9 +42,9 @@ import ch.protonmail.android.activities.StartSettings
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.event.AlarmReceiver
+import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.drawer.presentation.mapper.DrawerLabelItemUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.CreateItem
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.Type
@@ -115,9 +115,6 @@ internal abstract class NavigationActivity : BaseActivity() {
     @Inject
     lateinit var userManager: UserManager
 
-    @Inject
-    lateinit var drawerLabelMapper: DrawerLabelItemUiModelMapper
-
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
     private val navigationViewModel by viewModels<NavigationViewModel>()
 
@@ -148,7 +145,13 @@ internal abstract class NavigationActivity : BaseActivity() {
         }
     }
 
-    protected abstract fun onPrimaryUserId(userId: UserId)
+    open fun onPrimaryUserId(userId: UserId) {
+        // Fetch the events immediately after switching the users to avoid the mailbox refresh
+        // when the first scheduled event comes in at a later point.
+        // TODO: Investigate why the first event after logging in triggers a refresh to start with; MAILAND-2654
+        app.startJobManager()
+        mJobManager.addJobInBackground(FetchUpdatesJob())
+    }
 
     protected abstract fun onInbox(type: Constants.DrawerOptionType)
 

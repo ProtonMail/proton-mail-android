@@ -517,6 +517,8 @@ internal class MailboxActivity :
     private var firstLogin: Boolean? = null
 
     override fun onPrimaryUserId(userId: UserId) {
+        super.onPrimaryUserId(userId)
+
         mJobManager.start()
         pendingActionDao = PendingActionDatabase.getInstance(this, userId).getDao()
 
