@@ -286,6 +286,8 @@ dependencies {
         `Proton-country`,
         `Proton-payment`,
         `Proton-plan`,
+        `Proton-report`,
+        `Proton-report-dagger`,
 
         // Modules
         project(Module.domain),

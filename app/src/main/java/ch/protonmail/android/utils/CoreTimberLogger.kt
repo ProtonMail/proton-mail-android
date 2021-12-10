@@ -51,7 +51,7 @@ class CoreTimberLogger : Logger {
         Timber.tag(tag).v(e, message)
 
     override fun log(tag: LoggerLogTag, message: String) = when (tag) {
-        LogTag.API_CALL -> Timber.tag(tag.name).d(message)
+        LogTag.API_REQUEST -> Timber.tag(tag.name).d(message)
         LogTag.REFRESH_TOKEN -> Timber.tag(tag.name).d(message)
         else -> Timber.tag(tag.name).d(message)
     }

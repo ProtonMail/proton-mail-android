@@ -29,6 +29,7 @@ object Constants {
     const val API_HOST = "api.protonmail.ch"
     const val BASE_URL = "https://$API_HOST"
     const val DUMMY_URL_PREFIX = "http://androidlinksfix.protonmail.com"
+    const val HUMAN_VERIFICATION_URL = "https://verify.protonmail.com"
 
     // Mail domains
     const val MAIL_DOMAIN_COM = "protonmail.com"

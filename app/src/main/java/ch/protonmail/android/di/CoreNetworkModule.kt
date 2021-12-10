@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import me.proton.core.auth.domain.ClientSecret
 import me.proton.core.crypto.common.context.CryptoContext
+import me.proton.core.humanverification.data.utils.NetworkRequestOverriderImpl
+import me.proton.core.humanverification.domain.utils.NetworkRequestOverrider
 import me.proton.core.network.data.ApiManagerFactory
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.data.NetworkManager
@@ -30,6 +32,7 @@ import me.proton.core.network.domain.humanverification.HumanVerificationProvider
 import me.proton.core.network.domain.server.ServerTimeListener
 import me.proton.core.network.domain.session.SessionListener
 import me.proton.core.network.domain.session.SessionProvider
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
@@ -119,6 +122,9 @@ object NetworkModule {
     fun provideExtraHeaderProvider(): ExtraHeaderProvider = ExtraHeaderProviderImpl().apply {
         // BuildConfig.PROXY_TOKEN?.takeIfNotBlank()?.let { addHeaders("X-atlas-secret" to it) }
     }
+
+    @Provides
+    fun provideNetworkRequestOverrider(): NetworkRequestOverrider = NetworkRequestOverriderImpl(OkHttpClient())
 }
 
 @Module

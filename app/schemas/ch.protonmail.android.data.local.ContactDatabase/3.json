@@ -1,0 +1,230 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "91a6b75e129bbe06c81ae53e6d83bf54",
+    "entities": [
+      {
+        "tableName": "contact_data",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT, `Name` TEXT NOT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "fields": [
+          {
+            "fieldPath": "contactId",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dbId",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_contact_data_ID",
+            "unique": true,
+            "columnNames": [
+              "ID"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contact_data_ID` ON `${TABLE_NAME}` (`ID`)"
+          },
+          {
+            "name": "index_contact_data_Name",
+            "unique": false,
+            "columnNames": [
+              "Name"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_contact_data_Name` ON `${TABLE_NAME}` (`Name`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "contact_emailsv3",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT NOT NULL, `Email` TEXT NOT NULL, `Name` TEXT, `ContactID` TEXT, `LabelIDs` TEXT, `LastUsedTime` INTEGER NOT NULL, `selected` INTEGER NOT NULL, `pgpIcon` INTEGER NOT NULL, `pgpIconColor` INTEGER NOT NULL, `pgpDescription` INTEGER NOT NULL, `isPGP` INTEGER NOT NULL, PRIMARY KEY(`ID`))",
+        "fields": [
+          {
+            "fieldPath": "contactEmailId",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "Email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "contactId",
+            "columnName": "ContactID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "labelIds",
+            "columnName": "LabelIDs",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastUsedTime",
+            "columnName": "LastUsedTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selected",
+            "columnName": "selected",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pgpIcon",
+            "columnName": "pgpIcon",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pgpIconColor",
+            "columnName": "pgpIconColor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pgpDescription",
+            "columnName": "pgpDescription",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPGP",
+            "columnName": "isPGP",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_contact_emailsv3_ID",
+            "unique": true,
+            "columnNames": [
+              "ID"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contact_emailsv3_ID` ON `${TABLE_NAME}` (`ID`)"
+          },
+          {
+            "name": "index_contact_emailsv3_Email",
+            "unique": false,
+            "columnNames": [
+              "Email"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_contact_emailsv3_Email` ON `${TABLE_NAME}` (`Email`)"
+          },
+          {
+            "name": "index_contact_emailsv3_ContactID",
+            "unique": false,
+            "columnNames": [
+              "ContactID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_contact_emailsv3_ContactID` ON `${TABLE_NAME}` (`ContactID`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "fullContactsDetails",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT NOT NULL, `Name` TEXT, `Uid` TEXT, `CreateTime` INTEGER NOT NULL, `ModifyTIme` INTEGER NOT NULL, `Size` INTEGER NOT NULL, `Defaults` INTEGER NOT NULL, `EncryptedData` TEXT, PRIMARY KEY(`ID`))",
+        "fields": [
+          {
+            "fieldPath": "contactId",
+            "columnName": "ID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "uid",
+            "columnName": "Uid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createTime",
+            "columnName": "CreateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modifyTime",
+            "columnName": "ModifyTIme",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "size",
+            "columnName": "Size",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "defaults",
+            "columnName": "Defaults",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "encryptedData",
+            "columnName": "EncryptedData",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '91a6b75e129bbe06c81ae53e6d83bf54')"
+    ]
+  }
+}
