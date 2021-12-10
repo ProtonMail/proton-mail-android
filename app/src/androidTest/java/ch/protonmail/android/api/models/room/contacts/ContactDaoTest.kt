@@ -21,6 +21,7 @@ package ch.protonmail.android.api.models.room.contacts
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.api.models.ContactEncryptedData
+import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
@@ -60,35 +61,40 @@ internal class ContactDaoTest {
             email = "a@a.com",
             contactId = "aa",
             labelIds = listOf("aaa", "aaaa", "aaaaa"),
-            name = "ce1"
+            name = "ce1",
+            lastUsedTime = "111"
         ),
         ContactEmail(
             contactEmailId = "b",
             email = "b@b.com",
             contactId = "bb",
             labelIds = listOf("bbb", "bbbb", "bbbbb"),
-            name = "ce2"
+            name = "ce2",
+            lastUsedTime = "113"
         ),
         ContactEmail(
             contactEmailId = "c",
             email = "c@c.com",
             contactId = "bb",
             labelIds = listOf("ccc", "cccc", "ccccc"),
-            name = "ce3"
+            name = "ce3",
+            lastUsedTime = "115"
         ),
         ContactEmail(
             contactEmailId = "d",
             email = "b@b.com",
             contactId = "dd",
             labelIds = listOf("ddd", "dddd", "ddddd"),
-            name = "ce4"
+            name = "ce4",
+            lastUsedTime = "114"
         ),
         ContactEmail(
             contactEmailId = "e",
             email = "e@e.com",
             contactId = "ee",
             labelIds = listOf("eee", "eeee", "eeeee"),
-            name = "ce5"
+            name = "ce5",
+            lastUsedTime = "112"
         )
     )
 
@@ -309,6 +315,23 @@ internal class ContactDaoTest {
     }
 
     @Test
+    fun findAllMessageRecipients() {
+        // given
+        val expected = contactEmails
+            .sortedByDescending { it.lastUsedTime }
+            .map { contactEmail ->
+                MessageRecipient(contactData.find { it.contactId == contactEmail.contactId }?.name, contactEmail.email)
+            }.toSet()
+
+        // when
+        val actual = database.findAllMessageRecipients().blockingFirst().toSet()
+
+        // then
+        Assert.assertEquals(expected, actual)
+        assertDatabaseState()
+    }
+
+    @Test
     fun clearByEmail() {
         val deletedEmail = contactEmails[1].email
         val expected = contactEmails.filterNot { it.email == deletedEmail }
@@ -346,7 +369,8 @@ internal class ContactDaoTest {
             "z@z.com",
             contactId = "zzz",
             labelIds = listOf("zzzz", "zzzzz", "zzzzzz"),
-            name = "ce1"
+            name = "ce1",
+            lastUsedTime = "116"
         )
         val expected = contactEmails + inserted
         database.saveContactEmail(inserted)
@@ -361,14 +385,16 @@ internal class ContactDaoTest {
                 "y@y.com",
                 contactId = "yyy",
                 labelIds = listOf("yyyy", "yyyyy", "yyyyyy"),
-                name = "ce1"
+                name = "ce1",
+                lastUsedTime = "118"
             ),
             ContactEmail(
                 "z",
                 "z@z.com",
                 contactId = "zzz",
                 labelIds = listOf("zzzz", "zzzzz", "zzzzzz"),
-                name = "ce2"
+                name = "ce2",
+                lastUsedTime = "116"
             )
         )
         val expected = contactEmails + inserted
@@ -384,14 +410,16 @@ internal class ContactDaoTest {
                 "y@y.com",
                 contactId = "yyy",
                 labelIds = listOf("yyyy", "yyyyy", "yyyyyy"),
-                name = "ce1"
+                name = "ce1",
+                lastUsedTime = "118"
             ),
             ContactEmail(
                 "z",
                 "z@z.com",
                 contactId = "zzz",
                 labelIds = listOf("zzzz", "zzzzz", "zzzzzz"),
-                name = "ce2"
+                name = "ce2",
+                lastUsedTime = "116"
             )
         )
         val expected = contactEmails + inserted
@@ -452,19 +480,22 @@ internal class ContactDaoTest {
             "e1",
             "1@1.1",
             "a",
-            labelIds = listOf("la", "lc")
+            labelIds = listOf("la", "lc"),
+            lastUsedTime = "121"
         )
         val email2 = ContactEmail(
             "e2",
             "2@2.2",
             "b",
-            labelIds = listOf("la", "lc")
+            labelIds = listOf("la", "lc"),
+            lastUsedTime = "123"
         )
         val email3 = ContactEmail(
             "e3",
             "3@3.3",
             "c",
-            labelIds = listOf("la", "lc")
+            labelIds = listOf("la", "lc"),
+            lastUsedTime = "122"
         )
         initiallyEmptyDatabase.saveAllContactsEmails(listOf(email1, email2, email3))
         val emailFromDb = initiallyEmptyDatabase.findContactEmailById("e1")

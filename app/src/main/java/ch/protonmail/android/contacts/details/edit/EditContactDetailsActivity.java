@@ -406,7 +406,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             }
             if (!TextUtils.isEmpty(optionValue)) {
                 emailsToBeRemoved.add(optionValue);
-                emails.add(new ContactEmail(viewModel.getContactId(), optionValue, contactName));
+                emails.add(new ContactEmail(viewModel.getContactId(), optionValue, contactName, ""));
                 Email vCardEmail = new Email(optionValue);
                 if (!TextUtils.isEmpty(optionType)) {
                     EmailType emailType = EmailType.find(optionType);

@@ -38,6 +38,7 @@ const val COLUMN_CONTACT_EMAILS_ORDER = "Order"
 const val COLUMN_CONTACT_EMAILS_CONTACT_ID = "ContactID"
 const val COLUMN_CONTACT_EMAILS_LABEL_IDS = "LabelIDs"
 const val COLUMN_CONTACT_EMAILS_DEFAULTS = "Defaults"
+const val COLUMN_CONTACT_EMAILS_LAST_TIME_USED = "LastUsedTime"
 
 @Entity(
     tableName = TABLE_CONTACT_EMAILS,
@@ -81,7 +82,11 @@ data class ContactEmail @JvmOverloads constructor(
 
     @SerializedName(COLUMN_CONTACT_EMAILS_LABEL_IDS)
     @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LABEL_IDS)
-    var labelIds: List<String>? = null
+    var labelIds: List<String>? = null,
+
+    @SerializedName(COLUMN_CONTACT_EMAILS_LAST_TIME_USED)
+    @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LAST_TIME_USED)
+    val lastUsedTime: String
 
 ) : Serializable {
 
