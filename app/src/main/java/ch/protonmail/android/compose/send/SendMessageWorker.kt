@@ -51,6 +51,7 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPrefer
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageAlreadySent
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
+import ch.protonmail.android.compose.send.SendMessageWorkerError.UploadAttachmentsFailed
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_SENT
@@ -71,8 +72,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import me.proton.core.domain.entity.UserId
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
@@ -171,7 +172,10 @@ class SendMessageWorker @AssistedInject constructor(
                 saveMessageAsSent(message)
                 failureWithError(MessageAlreadySent)
             }
-
+            is SaveDraftResult.UploadDraftAttachmentsFailed -> {
+                pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
+                failureWithError(UploadAttachmentsFailed)
+            }
             else -> {
                 pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
                 showSendMessageError(message.subject)

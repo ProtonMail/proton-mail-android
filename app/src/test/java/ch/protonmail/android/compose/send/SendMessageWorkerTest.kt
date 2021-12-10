@@ -48,6 +48,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.core.apiError
 import ch.protonmail.android.core.messageId
 import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
@@ -287,6 +288,35 @@ class SendMessageWorkerTest : CoroutinesTest {
         )
         verify { pendingActionDao.deletePendingSendByMessageId("823472") }
         verify { userNotifier.showSendMessageError("error message 9216", "Subject 003") }
+    }
+
+    @Test
+    fun workerFailsWithoutNotifyingUserWhenSaveDraftFailsWithUploadAttachmentError() = runBlockingTest {
+        // we notify the user from the Save Draft Worker,
+        // refer to test `SaveDraftTest.notifyUserWithUploadAttachmentErrorWhenAttachmentIsBroken`
+        val messageDbId = 2834L
+        val messageId = "823472"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 003"
+            this.attachments = listOf(Attachment(attachmentId = "attachmentId234", fileName = "Attachment_234.jpg"))
+        }
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+        coEvery { saveDraft(any()) } returns SaveDraftResult.UploadDraftAttachmentsFailed
+        every { parameters.runAttemptCount } returns 0
+
+        val result = worker.doWork()
+
+        verify { pendingActionDao.deletePendingSendByMessageId("823472") }
+        verify { userNotifier wasNot Called }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "UploadAttachmentsFailed")
+            ),
+            result
+        )
     }
 
     @Test

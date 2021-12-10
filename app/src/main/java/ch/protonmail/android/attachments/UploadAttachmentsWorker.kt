@@ -32,6 +32,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.segments.TEN_SECONDS
@@ -62,8 +63,8 @@ private const val UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX = "uploadAttachmentUniqueW
 private const val UPLOAD_ATTACHMENTS_MAX_RETRIES = 1
 
 @HiltWorker
-class UploadAttachments @AssistedInject constructor(
-    @Assisted context: Context,
+class UploadAttachmentsWorker @AssistedInject constructor(
+    @Assisted private val context: Context,
     @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
@@ -86,11 +87,18 @@ class UploadAttachments @AssistedInject constructor(
 
             return@withContext when (val result = upload(newAttachments, message, addressCrypto, isMessageSending)) {
                 is Result.Success -> ListenableWorker.Result.success()
-                is Result.Failure -> retryOrFail(result.error)
+                is Result.Failure.UploadAttachment -> retryOrFail(
+                    result.error,
+                    messageId = message.messageId
+                )
+                is Result.Failure.InvalidAttachment -> failureWithError(
+                    result.error,
+                    messageId = message.messageId
+                )
             }
         }
 
-        return@withContext failureWithError("Message not found")
+        return@withContext failureWithError("Message not found", messageId = messageId)
     }
 
     private suspend fun upload(
@@ -116,7 +124,7 @@ class UploadAttachments @AssistedInject constructor(
 
                 if (result is AttachmentsRepository.Result.Failure) {
                     pendingActionDao.deletePendingUploadByMessageId(messageId)
-                    return@withContext Result.Failure(result.error)
+                    return@withContext Result.Failure.UploadAttachment(result.error)
                 }
             }
 
@@ -131,12 +139,21 @@ class UploadAttachments @AssistedInject constructor(
         messageId: String
     ): Result.Failure? {
         attachmentIds.forEach { attachmentId ->
-            val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
+            val attachment = messageDetailsRepository.findAttachmentById(attachmentId) ?: return@forEach
 
-            if (attachment?.filePath == null || attachment.isUploaded || attachment.doesFileExist.not()) {
+            if (!attachment.isUploaded && (attachment.filePath == null || attachment.doesFileExist.not())) {
+                return Result.Failure.InvalidAttachment(
+                    String.format(
+                        context.getString(R.string.attachment_failed_message_drafted),
+                        attachment.fileName
+                    )
+                )
+            }
+
+            if (attachment.isUploaded) {
                 Timber.d(
-                    "Skipping attachment ${attachment?.attachmentId}: " +
-                        "not found, invalid or was already uploaded = ${attachment?.isUploaded}"
+                    "Skipping attachment ${attachment.attachmentId}: " +
+                        "was already uploaded = ${attachment.isUploaded}"
                 )
                 return@forEach
             }
@@ -152,7 +169,7 @@ class UploadAttachments @AssistedInject constructor(
                 is AttachmentsRepository.Result.Failure -> {
                     Timber.e("UploadAttachment $attachmentId to API for messageId $messageId FAILED.")
                     pendingActionDao.deletePendingUploadByMessageId(messageId)
-                    return Result.Failure(result.error)
+                    return Result.Failure.UploadAttachment(result.error)
                 }
             }
 
@@ -181,24 +198,41 @@ class UploadAttachments @AssistedInject constructor(
 
     private fun retryOrFail(
         error: String,
-        exception: Throwable? = null
+        exception: Throwable? = null,
+        messageId: String?
     ): ListenableWorker.Result {
         if (runAttemptCount < UPLOAD_ATTACHMENTS_MAX_RETRIES) {
             Timber.d("UploadAttachments Worker failed with error = $error, exception = $exception. Retrying...")
             return ListenableWorker.Result.retry()
         }
-        return failureWithError(error, exception)
+        return failureWithError(error, exception, messageId)
     }
 
-    private fun failureWithError(error: String, exception: Throwable? = null): ListenableWorker.Result {
-        Timber.e("UploadAttachments Worker failed permanently. error = $error, exception = $exception. FAILING")
-        val errorData = workDataOf(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to error)
+    private fun failureWithError(
+        error: String,
+        exception: Throwable? = null,
+        messageId: String?
+    ): ListenableWorker.Result {
+        Timber.e(
+            "UploadAttachments Worker failed permanently for " +
+                "$messageId. error = $error, exception = $exception. FAILING"
+        )
+        val errorData = workDataOf(
+            KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to error,
+        )
+        messageId?.let { pendingActionDao.deletePendingUploadByMessageId(it) }
         return ListenableWorker.Result.failure(errorData)
     }
 
     sealed class Result {
         object Success : Result()
-        data class Failure(val error: String) : Result()
+        sealed class Failure : Result() {
+
+            abstract val error: String
+
+            class UploadAttachment(override val error: String) : Failure()
+            class InvalidAttachment(override val error: String) : Failure()
+        }
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
@@ -211,7 +245,7 @@ class UploadAttachments @AssistedInject constructor(
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val uploadAttachmentsRequest = OneTimeWorkRequestBuilder<UploadAttachments>()
+            val uploadAttachmentsRequest = OneTimeWorkRequestBuilder<UploadAttachmentsWorker>()
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(

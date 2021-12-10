@@ -27,5 +27,6 @@ interface UserNotifier {
     fun showError(errorMessage: String)
     fun showError(@StringRes errorMessageRes: Int)
     fun showSendMessageError(errorMessage: String, messageSubject: String?)
+    fun showAttachmentUploadError(errorMessage: String, messageSubject: String?)
     suspend fun showMessageSent()
 }
