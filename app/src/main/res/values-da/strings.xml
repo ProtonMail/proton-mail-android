@@ -384,7 +384,7 @@
     <string name="processing_attachment">Behandler vedhæftninger</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Ønsker du at fortsætte?</string>
     <string name="dont_ask_again">Spørg ikke igen</string>
-    <string name="none">Ingen</string>
+    <string name="x_none">Ingen</string>
     <string name="changes_affected_after_closing">Ændringer effektueres efter lukning af app\'en</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Forkert PIN-kode, %d forsøg tilbage</item>
@@ -394,7 +394,7 @@
         <item quantity="one">%d forsøg inden sikker datarydning!</item>
         <item quantity="other">%d forsøg inden sikker datarydning!</item>
     </plurals>
-    <string name="done">Udført</string>
+    <string name="x_done">Udført</string>
     <string name="logout">Log ud</string>
     <string name="log_out">Log %s ud?</string>
     <string name="logout_question">Sikker på, at du vil logge ud?</string>

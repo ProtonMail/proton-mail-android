@@ -384,7 +384,7 @@
     <string name="processing_attachment">Bearbetar bilaga</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du är på väg att starta webbläsaren och gå till:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vill du fortsätta?</string>
     <string name="dont_ask_again">Fråga inte igen</string>
-    <string name="none">Ingen</string>
+    <string name="x_none">Ingen</string>
     <string name="changes_affected_after_closing">Ändringar kommer att träda i kraft efter att appen stängts</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Felaktig PIN-kod, %d försök återstår</item>
@@ -394,7 +394,7 @@
         <item quantity="one">%d försök tills datat raderas!</item>
         <item quantity="other">%d försök tills datat raderas!</item>
     </plurals>
-    <string name="done">Klar</string>
+    <string name="x_done">Klar</string>
     <string name="logout">Logga ut</string>
     <string name="log_out">Logga ut %s?</string>
     <string name="logout_question">Är du säker på att du vill logga ut?</string>

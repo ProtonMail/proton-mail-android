@@ -397,7 +397,7 @@
     <string name="processing_attachment">Обробка вкладення</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ви збираєтеся запустити браузер і перейти до:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Хочете продовжити?</string>
     <string name="dont_ask_again">Не питати знову</string>
-    <string name="none">Немає</string>
+    <string name="x_none">Немає</string>
     <string name="changes_affected_after_closing">Зміни застосуються після закриття програми</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильний ПІН. Залишилась %d спроба</item>
@@ -411,7 +411,7 @@
         <item quantity="many">%d спроб до стирання захищених даних!</item>
         <item quantity="other">%d спроб до стирання захищених даних!</item>
     </plurals>
-    <string name="done">Виконано</string>
+    <string name="x_done">Виконано</string>
     <string name="logout">Вихiд</string>
     <string name="log_out">Вийти з %s?</string>
     <string name="logout_question">Ви дійсно хочете вийти?</string>

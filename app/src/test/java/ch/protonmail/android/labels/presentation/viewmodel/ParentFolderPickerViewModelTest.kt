@@ -98,7 +98,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
     fun `on select action selects the correct item while picking`() = runBlockingTest {
         // given
         every { observeFoldersEligibleAsParent(USER_ID) } returns flowOf(buildTwoFoldersList())
-        every { mapper.toUiModels(buildTwoFoldersList(), any(), any()) } returns buildTwoFoldersUiModelList()
+        every { mapper.toUiModels(buildTwoFoldersList(), any(), any(), any()) } returns buildTwoFoldersUiModelList()
 
         val action = ParentFolderPickerAction.SetSelected(FOLDER_1_ID)
 
@@ -162,8 +162,8 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
         // given
         val dataSourceFlow = MutableSharedFlow<List<LabelOrFolderWithChildren.Folder>>()
         every { observeFoldersEligibleAsParent(USER_ID) } returns dataSourceFlow
-        every { mapper.toUiModels(buildOneFolderList(), any(), any()) } returns buildOneFolderUiModelList()
-        every { mapper.toUiModels(buildTwoFoldersList(), any(), any()) } returns buildTwoFoldersUiModelList()
+        every { mapper.toUiModels(buildOneFolderList(), any(), any(), any()) } returns buildOneFolderUiModelList()
+        every { mapper.toUiModels(buildTwoFoldersList(), any(), any(), any()) } returns buildTwoFoldersUiModelList()
 
         val firstExpectedState = ParentFolderPickerState.Editing(
             selectedItemId = null,
@@ -241,7 +241,8 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
             name = name,
             icon = ParentFolderPickerItemUiModel.Folder.Icon(0, 0, 0),
             folderLevel = 0,
-            isSelected = isSelected
+            isSelected = isSelected,
+            isEnabled = true
         )
     }
 }

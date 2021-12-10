@@ -396,7 +396,7 @@
     <string name="processing_attachment">Przetwarzanie załączników</string>
     <string name="hyperlink_confirmation_dialog_text_html">Masz zamiar uruchomić przeglądarkę i przejść do:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Czy chcesz kontynuować?</string>
     <string name="dont_ask_again">Nie pytaj ponownie</string>
-    <string name="none">Brak</string>
+    <string name="x_none">Brak</string>
     <string name="changes_affected_after_closing">Zmiany zostaną wprowadzone po zamknięciu aplikacji</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Kod PIN jest nieprawidłowy, pozostała %d próba</item>
@@ -410,7 +410,7 @@
         <item quantity="many">Pozostało %d prób do bezpiecznego wymazania danych!</item>
         <item quantity="other">Pozostało %d prób do bezpiecznego wymazania danych!</item>
     </plurals>
-    <string name="done">Gotowe</string>
+    <string name="x_done">Gotowe</string>
     <string name="logout">Wyloguj</string>
     <string name="log_out">Wylogować się z konta %s?</string>
     <string name="logout_question">Czy na pewno chcesz się wylogować?</string>

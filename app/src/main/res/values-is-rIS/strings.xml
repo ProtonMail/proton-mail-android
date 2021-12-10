@@ -384,7 +384,7 @@
     <string name="processing_attachment">Vinn með viðhengi</string>
     <string name="hyperlink_confirmation_dialog_text_html">Þú ert í þann mund að fara að ræsa vafrann og fara á:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Viltu halda áfram?</string>
     <string name="dont_ask_again">Ekki spyrja aftur</string>
-    <string name="none">Ekkert</string>
+    <string name="x_none">Ekkert</string>
     <string name="changes_affected_after_closing">Breytingar munu taka gildi eftir að forritinu hefur verið lokað</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Rangt PIN-númer, %d tilraun eftir</item>
@@ -394,7 +394,7 @@
         <item quantity="one">%d tilraun eftir þar til tækið verður hreinsað í öryggisskyni!</item>
         <item quantity="other">%d tilraunir eftir þar til tækið verður hreinsað í öryggisskyni!</item>
     </plurals>
-    <string name="done">Lokið</string>
+    <string name="x_done">Lokið</string>
     <string name="logout">Útskráning</string>
     <string name="log_out">Skrá út %s?</string>
     <string name="logout_question">Ertu viss að þú viljir skrá þig út?</string>

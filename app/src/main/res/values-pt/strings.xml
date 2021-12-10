@@ -383,7 +383,7 @@
     <string name="processing_attachment">A processar o anexo</string>
     <string name="hyperlink_confirmation_dialog_text_html">Está prestes a abrir o navegador na página: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Deseja continuar?</string>
     <string name="dont_ask_again">Não perguntar novamente</string>
-    <string name="none">Nenhum</string>
+    <string name="x_none">Nenhum</string>
     <string name="changes_affected_after_closing">As alterações terão efeito após fechar a aplicação</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorrecto, resta %d tentativa</item>
@@ -393,7 +393,7 @@
         <item quantity="one">%d tentativa até à limpeza segura dos dados!</item>
         <item quantity="other">%d tentativas até à limpeza segura dos dados!</item>
     </plurals>
-    <string name="done">Concluído</string>
+    <string name="x_done">Concluído</string>
     <string name="logout">Terminar sessão</string>
     <string name="log_out">Terminar sessão em %s?</string>
     <string name="logout_question">Tem certeza de que deseja encerrar a sessão?</string>

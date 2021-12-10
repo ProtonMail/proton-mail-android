@@ -376,7 +376,7 @@
     <string name="processing_attachment">正在处理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即将在浏览器中打开：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;确定要继续吗？</string>
     <string name="dont_ask_again">不再询问</string>
-    <string name="none">无</string>
+    <string name="x_none">无</string>
     <string name="changes_affected_after_closing">所作更改将在程序退出后生效</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">口令错误，还可尝试 %d 次</item>
@@ -384,7 +384,7 @@
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">若再输错 %d 次数据将被清除！</item>
     </plurals>
-    <string name="done">完成</string>
+    <string name="x_done">完成</string>
     <string name="logout">退出账户</string>
     <string name="log_out">退出账户 %s？</string>
     <string name="logout_question">确定要退出账户吗？</string>

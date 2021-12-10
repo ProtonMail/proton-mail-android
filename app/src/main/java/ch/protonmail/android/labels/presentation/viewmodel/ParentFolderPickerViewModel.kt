@@ -28,7 +28,8 @@ import ch.protonmail.android.labels.presentation.mapper.ParentFolderPickerItemUi
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
-import ch.protonmail.android.labels.presentation.ui.EXTRA_PARENT_FOLDER_PICKER_LABEL_ID
+import ch.protonmail.android.labels.presentation.ui.EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID
+import ch.protonmail.android.labels.presentation.ui.EXTRA_PARENT_FOLDER_PICKER_PARENT_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -58,7 +59,7 @@ class ParentFolderPickerViewModel @Inject constructor(
         mutableState.asStateFlow()
 
     private val mutableState: MutableStateFlow<ParentFolderPickerState> = MutableStateFlow(
-        ParentFolderPickerState.Loading(selectedItemId = savedStateHandle.selectedItemId)
+        ParentFolderPickerState.Loading(selectedItemId = savedStateHandle.selectedParentFolderId)
     )
 
     init {
@@ -67,7 +68,12 @@ class ParentFolderPickerViewModel @Inject constructor(
             .flatMapLatest { observeFoldersEligibleAsParent(userId = it) }
             .mapLatest { folders ->
                 val currentSelectedFolder = state.value.selectedItemId
-                mapper.toUiModels(folders, currentSelectedFolder, includeNoneUiModel = true)
+                mapper.toUiModels(
+                    folders = folders,
+                    currentFolder = savedStateHandle.currentFolderId,
+                    selectedParentFolder = currentSelectedFolder,
+                    includeNoneUiModel = true
+                )
             }
             .onEach { mutableState.updateItemsIfNeeded(newItems = it) }
             .launchIn(viewModelScope)
@@ -136,5 +142,8 @@ private fun MutableStateFlow<ParentFolderPickerState>.updateItemsIfNeeded(
     if (newState !== prevState) tryEmit(newState)
 }
 
-private val SavedStateHandle.selectedItemId get() =
-    get<String>(EXTRA_PARENT_FOLDER_PICKER_LABEL_ID)?.let(::LabelId)
+private val SavedStateHandle.currentFolderId get() =
+    get<String>(EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID)?.let(::LabelId)
+
+private val SavedStateHandle.selectedParentFolderId get() =
+    get<String>(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID)?.let(::LabelId)

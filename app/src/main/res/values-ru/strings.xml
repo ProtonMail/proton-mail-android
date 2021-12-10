@@ -396,7 +396,7 @@
     <string name="processing_attachment">Обработка вложений</string>
     <string name="hyperlink_confirmation_dialog_text_html">Вы собираетесь запустить веб-браузер и перейти по адресу:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Вы хотите продолжить?</string>
     <string name="dont_ask_again">Больше не спрашивать</string>
-    <string name="none">Нет</string>
+    <string name="x_none">Нет</string>
     <string name="changes_affected_after_closing">Изменения будут применены после закрытия приложения</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильный PIN-код, осталась %d попытка</item>
@@ -410,7 +410,7 @@
         <item quantity="many">%d попыток до полного удаления данных!</item>
         <item quantity="other">%d попыток до полного удаления данных!</item>
     </plurals>
-    <string name="done">Готово</string>
+    <string name="x_done">Готово</string>
     <string name="logout">Выход</string>
     <string name="log_out">Выйти из %s?</string>
     <string name="logout_question">Вы уверены, что хотите выйти?</string>

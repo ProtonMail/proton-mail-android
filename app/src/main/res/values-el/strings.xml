@@ -383,7 +383,7 @@
     <string name="processing_attachment">Επεξεργασία συνημμένου</string>
     <string name="hyperlink_confirmation_dialog_text_html">Πρόκειται να ξεκινήσει το πρόγραμμα περιήγησης ιστού και να περιηγηθείτε στο &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;;br/Θα θέλατε να συνεχίσετε;</string>
     <string name="dont_ask_again">Να μην ερωτηθώ ξανά</string>
-    <string name="none">Κανένα</string>
+    <string name="x_none">Κανένα</string>
     <string name="changes_affected_after_closing">Οι αλλαγές θα τεθούν σε ισχύ μετά το κλείσιμο της εφαρμογής</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Λάθος κωδικός PIN, %d προσπάθεια απομένει</item>
@@ -393,7 +393,7 @@
         <item quantity="one">%d προσπάθεια μέχρι την ασφαλή διαγραφή δεδομένων!</item>
         <item quantity="other">%d προσπάθειες μέχρι την ασφαλή διαγραφή δεδομένων!</item>
     </plurals>
-    <string name="done">Ολοκληρώθηκε</string>
+    <string name="x_done">Ολοκληρώθηκε</string>
     <string name="logout">Αποσύνδεση</string>
     <string name="log_out">Αποσύνδεση %s;</string>
     <string name="logout_question">Είστε βέβαιοι ότι θέλετε να αποσυνδεθείτε;</string>

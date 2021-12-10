@@ -377,7 +377,7 @@
     <string name="processing_attachment">正在處理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即將啟動網頁瀏覽器並導航到:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;您想繼續嗎？</string>
     <string name="dont_ask_again">不要再詢問</string>
-    <string name="none">無</string>
+    <string name="x_none">無</string>
     <string name="changes_affected_after_closing">變更將會在關閉應用程式後才生效</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN 碼不正確，剩下 %d 次嘗試</item>
@@ -385,7 +385,7 @@
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">%d 次嘗試無效後將安全抹除資料！</item>
     </plurals>
-    <string name="done">完成</string>
+    <string name="x_done">完成</string>
     <string name="logout">登出</string>
     <string name="log_out">登出 %s？</string>
     <string name="logout_question">您確定要登出嗎？</string>

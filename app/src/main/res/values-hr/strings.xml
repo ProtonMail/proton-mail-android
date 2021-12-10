@@ -390,7 +390,7 @@
     <string name="processing_attachment">Obrada privitka</string>
     <string name="hyperlink_confirmation_dialog_text_html">Spremate se pokreniti web preglednik i ići na::&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Želite li nastaviti?</string>
     <string name="dont_ask_again">Ne pitaj ponovno</string>
-    <string name="none">Ništa</string>
+    <string name="x_none">Ništa</string>
     <string name="changes_affected_after_closing">Promjene će biti primijenjene nakon zatvaranja aplikacije</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Neispravan PIN, %d pokušaj ostao</item>
@@ -402,7 +402,7 @@
         <item quantity="few">%d pokušaja do sigurnog brisanja podataka!</item>
         <item quantity="other">%d pokušaja do sigurnog brisanja podataka!</item>
     </plurals>
-    <string name="done">Gotovo</string>
+    <string name="x_done">Gotovo</string>
     <string name="logout">Odjava</string>
     <string name="log_out">Odjavi %s?</string>
     <string name="logout_question">Jesi li siguran da se želiš odjaviti?</string>

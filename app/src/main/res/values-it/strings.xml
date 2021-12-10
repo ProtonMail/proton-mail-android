@@ -384,7 +384,7 @@
     <string name="processing_attachment">Elaborando l\'allegato</string>
     <string name="hyperlink_confirmation_dialog_text_html">Stai per avviare il browser web e navigare in:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vuoi continuare?</string>
     <string name="dont_ask_again">Non chiedermelo più</string>
-    <string name="none">Nessuno</string>
+    <string name="x_none">Nessuno</string>
     <string name="changes_affected_after_closing">I cambiamenti avranno effetto dopo aver chiuso l\'app</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN errato, %d tentativo rimasto</item>
@@ -394,7 +394,7 @@
         <item quantity="one">%d tentativo rimasto prima dell\'eliminazione dei dati!</item>
         <item quantity="other">%d tentativi rimasti prima dell\'eliminazione dei dati!</item>
     </plurals>
-    <string name="done">Fatto</string>
+    <string name="x_done">Fatto</string>
     <string name="logout">Esci</string>
     <string name="log_out">Uscire %s?</string>
     <string name="logout_question">È sicuro di voler uscire?</string>

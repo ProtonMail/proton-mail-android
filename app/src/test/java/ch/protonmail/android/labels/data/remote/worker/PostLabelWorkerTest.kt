@@ -149,34 +149,42 @@ class PostLabelWorkerTest {
     }
 
     @Test
-    fun `worker invokes create label API when it's a create label request`() {
-        runBlockingTest {
-            every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
-            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
-            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
-            every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns LabelType.CONTACT_GROUP.typeInt
+    fun `worker invokes create label API when it's a create label request`() = runBlockingTest {
+        // given
+        val expectedLabelBody = buildLabelBody()
+        every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
+        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns expectedLabelBody.name
+        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns expectedLabelBody.color
+        every { parameters.inputData.getString(KEY_INPUT_DATA_PARENT_ID) } returns expectedLabelBody.parentId
+        every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns
+            checkNotNull(expectedLabelBody.type)
 
-            val result = worker.doWork()
+        // when
+        val result = worker.doWork()
 
-            coVerify { apiManager.createLabel(any(), buildLabelBody()) }
-            assertEquals(ListenableWorker.Result.success(), result)
-        }
+        // then
+        coVerify { apiManager.createLabel(any(), expectedLabelBody) }
+        assertEquals(ListenableWorker.Result.success(), result)
     }
 
     @Test
-    fun `worker invokes update label API when it's a update label request`() {
-        runBlockingTest {
-            every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns true
-            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
-            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
-            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns "labelID"
-            every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns LabelType.CONTACT_GROUP.typeInt
+    fun `worker invokes update label API when it's a update label request`() = runBlockingTest {
+        // given
+        val expectedLabelBody = buildLabelBody()
+        every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns true
+        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns expectedLabelBody.name
+        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns expectedLabelBody.color
+        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns "labelID"
+        every { parameters.inputData.getString(KEY_INPUT_DATA_PARENT_ID) } returns expectedLabelBody.parentId
+        every { parameters.inputData.getInt(KEY_INPUT_DATA_LABEL_TYPE, any()) } returns
+            checkNotNull(expectedLabelBody.type)
 
-            val result = worker.doWork()
+        // when
+        val result = worker.doWork()
 
-            coVerify { apiManager.updateLabel(any(), "labelID", buildLabelBody()) }
-            assertEquals(ListenableWorker.Result.success(), result)
-        }
+        // then
+        coVerify { apiManager.updateLabel(any(), "labelID", expectedLabelBody) }
+        assertEquals(ListenableWorker.Result.success(), result)
     }
 
     @Test

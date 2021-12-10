@@ -396,7 +396,7 @@
     <string name="processing_attachment">Zpracování přílohy</string>
     <string name="hyperlink_confirmation_dialog_text_html">Chystáte se spustit webový prohlížeč a přejít na&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Chcete pokračovat?</string>
     <string name="dont_ask_again">Příště se neptat</string>
-    <string name="none">Žádné</string>
+    <string name="x_none">Žádné</string>
     <string name="changes_affected_after_closing">Změny se projeví až po zavření aplikace</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Nesprávný kód PIN, zbývá %d pokus</item>
@@ -410,7 +410,7 @@
         <item quantity="many">Počet pokusů před bezpečným smazáním dat: %d!</item>
         <item quantity="other">Počet pokusů před bezpečným smazáním dat: %d!</item>
     </plurals>
-    <string name="done">Hotovo</string>
+    <string name="x_done">Hotovo</string>
     <string name="logout">Odhlásit se</string>
     <string name="log_out">Odhlásit %s?</string>
     <string name="logout_question">Opravdu se chcete odhlásit?</string>

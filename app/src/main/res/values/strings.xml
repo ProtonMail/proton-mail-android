@@ -90,6 +90,11 @@
     <string name="settings_swipe_right_to_left">Right to left</string>
     <!-- endregion -->
 
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Parent folder</string>
     <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
@@ -420,7 +425,6 @@
     <string name="processing_attachment">Processing attachment</string>
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/>&lt;br/>&lt;u>%s&lt;/u>&lt;br/>&lt;br/>Do you want to continue?</string>
     <string name="dont_ask_again">Don\'t ask again</string>
-    <string name="none">None</string>
     <string name="changes_affected_after_closing">Changes will take effect after closing the app</string>
 
     <plurals name="incorrect_pin_remaining_attempts">
@@ -431,7 +435,6 @@
         <item quantity="one">%d attempt until secure data wipe!</item>
         <item quantity="other">%d attempts until secure data wipe!</item>
     </plurals>
-    <string name="done">Done</string>
     <string name="logout">Logout</string>
     <string name="log_out">Log out %s?</string>
     <string name="logout_question">Are you sure you want to log out?</string>

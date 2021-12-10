@@ -66,7 +66,12 @@ class ParentFolderPickerItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
+        val result = mapper.toUiModels(
+            input,
+            currentFolder = ANOTHER_FOLDER_ID,
+            selectedParentFolder = null,
+            includeNoneUiModel = true
+        )
 
         // then
         assertEquals(expected, result)
@@ -102,7 +107,12 @@ class ParentFolderPickerItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
+        val result = mapper.toUiModels(
+            input,
+            currentFolder = ANOTHER_FOLDER_ID,
+            selectedParentFolder = null,
+            includeNoneUiModel = true
+        )
 
         // then
         assertEquals(expected, result)
@@ -135,7 +145,12 @@ class ParentFolderPickerItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(input, currentSelectedFolder = LabelId(firstFirst), includeNoneUiModel = true)
+        val result = mapper.toUiModels(
+            input,
+            currentFolder = ANOTHER_FOLDER_ID,
+            selectedParentFolder = LabelId(firstFirst),
+            includeNoneUiModel = true
+        )
 
         // then
         assertEquals(expected, result)
@@ -165,7 +180,12 @@ class ParentFolderPickerItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
+        val result = mapper.toUiModels(
+            input,
+            currentFolder = ANOTHER_FOLDER_ID,
+            selectedParentFolder = null,
+            includeNoneUiModel = true
+        )
 
         // then
         assertEquals(expected, result)
@@ -195,7 +215,12 @@ class ParentFolderPickerItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
+        val result = mapper.toUiModels(
+            input,
+            currentFolder = ANOTHER_FOLDER_ID,
+            selectedParentFolder = null,
+            includeNoneUiModel = true
+        )
 
         // then
         assertEquals(expected, result)
@@ -222,56 +247,128 @@ class ParentFolderPickerItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModels(input, currentSelectedFolder = null, includeNoneUiModel = true)
+        val result = mapper.toUiModels(
+            input,
+            currentFolder = ANOTHER_FOLDER_ID,
+            selectedParentFolder = null,
+            includeNoneUiModel = true
+        )
 
         // then
         assertEquals(expected, result)
     }
 
-    private fun buildFolder(
-        name: String = LABEL_NAME,
-        color: String = EMPTY_STRING,
-        children: Collection<LabelOrFolderWithChildren.Folder> = emptyList()
-    ) = LabelOrFolderWithChildren.Folder(
-        id = LabelId(name),
-        name = name,
-        color = color,
-        parentId = null,
-        path = name,
-        children = children
-    )
-
-    private fun buildFolderUiModel(
-        name: String,
-        folderLevel: Int = 0,
-        hasChildren: Boolean = false,
-        colorInt: Int = COLOR_INT,
-        isSelected: Boolean = false
-    ) = ParentFolderPickerItemUiModel.Folder(
-        id = LabelId(name),
-        name = name,
-        icon = buildIcon(colorInt, hasChildren),
-        folderLevel = folderLevel,
-        isSelected = isSelected
-    )
-
-    private fun buildIcon(colorInt: Int, hasChildren: Boolean): Icon {
-        val (drawableRes, contentDescriptionRes) =
-            if (hasChildren) {
-                Icon.WITH_CHILDREN_COLORED_ICON_RES to Icon.WITH_CHILDREN_CONTENT_DESCRIPTION_RES
-            } else {
-                Icon.WITHOUT_CHILDREN_COLORED_ICON_RES to Icon.WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES
+    @Test
+    fun `set not enabled current folder and its children`() {
+        // given
+        val input = buildFolders {
+            folder("first") {
+                folder("first.first")
             }
-        return Icon(
-            drawableRes = drawableRes,
-            colorInt = colorInt,
-            contentDescriptionRes = contentDescriptionRes
+            folder("second") {
+                folder("second.first")
+                folder("second.second")
+            }
+        }
+        val expected = listOf(
+            buildFolderUiModel(name = "first", folderLevel = 0, hasChildren = true, isEnabled = true),
+            buildFolderUiModel(name = "first.first", folderLevel = 1, hasChildren = false, isEnabled = true),
+            buildFolderUiModel(name = "second", folderLevel = 0, hasChildren = true, isEnabled = false),
+            buildFolderUiModel(name = "second.first", folderLevel = 1, hasChildren = false, isEnabled = false),
+            buildFolderUiModel(name = "second.second", folderLevel = 1, hasChildren = false, isEnabled = false),
         )
+
+        // when
+        val result = mapper.toUiModels(
+            input,
+            currentFolder = LabelId("second"),
+            selectedParentFolder = null,
+            includeNoneUiModel = false
+        )
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `set not enabled current folder when it's a child`() {
+        // given
+        val input = buildFolders {
+            folder("first") {
+                folder("first.first")
+            }
+            folder("second") {
+                folder("second.first")
+                folder("second.second")
+            }
+        }
+        val expected = listOf(
+            buildFolderUiModel(name = "first", folderLevel = 0, hasChildren = true, isEnabled = true),
+            buildFolderUiModel(name = "first.first", folderLevel = 1, hasChildren = false, isEnabled = true),
+            buildFolderUiModel(name = "second", folderLevel = 0, hasChildren = true, isEnabled = true),
+            buildFolderUiModel(name = "second.first", folderLevel = 1, hasChildren = false, isEnabled = false),
+            buildFolderUiModel(name = "second.second", folderLevel = 1, hasChildren = false, isEnabled = true),
+        )
+
+        // when
+        val result = mapper.toUiModels(
+            input,
+            currentFolder = LabelId("second.first"),
+            selectedParentFolder = null,
+            includeNoneUiModel = false
+        )
+
+        // then
+        assertEquals(expected, result)
     }
 
     companion object TestData {
 
         private const val LABEL_NAME = "label"
         private const val COLOR_INT = 123
+        private val ANOTHER_FOLDER_ID = LabelId("another")
+
+        private fun buildFolder(
+            name: String = LABEL_NAME,
+            color: String = EMPTY_STRING,
+            children: Collection<LabelOrFolderWithChildren.Folder> = emptyList()
+        ) = LabelOrFolderWithChildren.Folder(
+            id = LabelId(name),
+            name = name,
+            color = color,
+            parentId = null,
+            path = name,
+            children = children
+        )
+
+        private fun buildFolderUiModel(
+            name: String,
+            folderLevel: Int = 0,
+            hasChildren: Boolean = false,
+            colorInt: Int = COLOR_INT,
+            isSelected: Boolean = false,
+            isEnabled: Boolean = true
+        ) = ParentFolderPickerItemUiModel.Folder(
+            id = LabelId(name),
+            name = name,
+            icon = buildIcon(colorInt, hasChildren),
+            folderLevel = folderLevel,
+            isSelected = isSelected,
+            isEnabled = isEnabled
+        )
+
+        private fun buildIcon(colorInt: Int, hasChildren: Boolean): Icon {
+            val (drawableRes, contentDescriptionRes) =
+                if (hasChildren) {
+                    Icon.WITH_CHILDREN_COLORED_ICON_RES to Icon.WITH_CHILDREN_CONTENT_DESCRIPTION_RES
+                } else {
+                    Icon.WITHOUT_CHILDREN_COLORED_ICON_RES to Icon.WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES
+                }
+            return Icon(
+                drawableRes = drawableRes,
+                colorInt = colorInt,
+                contentDescriptionRes = contentDescriptionRes
+            )
+        }
     }
 }

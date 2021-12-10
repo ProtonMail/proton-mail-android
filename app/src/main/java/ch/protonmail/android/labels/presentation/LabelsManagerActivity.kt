@@ -37,7 +37,9 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerViewModel
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.presentation.ui.ParentFolderPickerActivity
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -47,6 +49,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.presentation.utils.onClick
 import studio.forface.viewstatestore.ViewStateActivity
 import kotlin.random.Random
 
@@ -120,6 +123,15 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private val viewModel: LabelsManagerViewModel by viewModels()
 
+    private var currentEditingLabel: LabelId? = null
+    private var parentFolderId: LabelId? = null
+
+    private val parentFolderPickerLauncher =
+        registerForActivityResult(ParentFolderPickerActivity.Launcher()) { labelId ->
+            viewModel.setParentFolder(labelId)
+            updateParentFolder(labelId)
+        }
+
     /** @return [LayoutRes] for the content View */
     override fun getLayoutId() = R.layout.activity_labels_manager
 
@@ -160,6 +172,14 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         label_name.onTextChange(::onLabelNameChange)
         save_button.setOnClickListener { saveCurrentLabel() }
         colors_grid_view.setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
+        labels_manager_parent_folder_text_view.onClick {
+            parentFolderPickerLauncher.launch(
+                ParentFolderPickerActivity.Input(
+                    currentFolder = currentEditingLabel,
+                    selectedParentFolder = parentFolderId
+                )
+            )
+        }
 
         // Setup Labels RecyclerView
         labels_recycler_view.apply {
@@ -244,11 +264,13 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** When a Label is clicked */
     private fun onLabelClick(label: LabelUiModel) {
+        currentEditingLabel = label.labelId
         state = State.UPDATE
 
         label_name.setText(label.name)
         add_label_container.isVisible = true
-        toggleColorPicker(true)
+        updateParentFolder(label.parentId)
+        toggleEditor(true)
 
         val currentColorPosition = colorOptions.indexOf(label.color)
         colorsAdapter.setChecked(currentColorPosition)
@@ -258,6 +280,14 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             onLabelEdit(label)
             setLabelColor(colorOptions[currentColorPosition])
         }
+    }
+
+    private fun updateParentFolder(folderId: LabelId?) {
+        parentFolderId = folderId
+        val textRes =
+            if (folderId != null) R.string.labels_manager_parent_folder_selected
+            else R.string.labels_manager_select_parent_folder
+        labels_manager_parent_folder_text_view.setText(textRes)
     }
 
     /** When Label color is changed in the [colors_grid_view] */
@@ -291,20 +321,20 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
             State.UNDEFINED -> {
                 viewModel.onNewLabel()
-                toggleColorPicker(false)
+                toggleEditor(false)
                 closeKeyboard()
                 label_name.setText("")
-                save_button.setText(R.string.done)
+                save_button.setText(R.string.x_done)
             }
 
             State.CREATE -> {
                 selectRandomColor()
-                toggleColorPicker(true)
-                save_button.setText(R.string.done)
+                toggleEditor(true)
+                save_button.setText(R.string.x_done)
             }
 
             State.UPDATE -> {
-                toggleColorPicker(true)
+                toggleEditor(true)
 
                 save_button.setText(
                     when (type) {
@@ -371,10 +401,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         viewModel.setLabelColor(colorOptions[index])
     }
 
-    /** Show or hide the color picker */
-    private fun toggleColorPicker(show: Boolean) {
-        label_color_parent.isVisible = show
+    private fun toggleEditor(show: Boolean) {
+        edit_label_layout.isVisible = show
         labels_list_view_parent.isVisible = !show
+        labels_manager_parent_folder_text_view.isVisible = type == LabelType.FOLDER
     }
 
     /**

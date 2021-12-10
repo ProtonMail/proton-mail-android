@@ -34,6 +34,7 @@ import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
 import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -44,6 +45,7 @@ import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
+internal const val KEY_INPUT_DATA_PARENT_ID = "keyInputDataParentId"
 internal const val KEY_INPUT_DATA_IS_UPDATE = "keyInputDataIsUpdate"
 internal const val KEY_INPUT_DATA_LABEL_COLOR = "keyInputDataLabelColor"
 internal const val KEY_INPUT_DATA_LABEL_TYPE = "keyInputDataLabelType"
@@ -64,8 +66,9 @@ internal class PostLabelWorker @AssistedInject constructor(
         val labelName = getLabelNameParam() ?: return Result.failure()
         val color = getLabelColorParam() ?: return Result.failure()
         val type = getTypeParam().takeIf { it != -1 } ?: return Result.failure()
+        val parentId = getParentId()
 
-        return when (val response = createOrUpdateLabel(labelName, color, type)) {
+        return when (val response = createOrUpdateLabel(labelName, color, parentId, type)) {
             is ApiResult.Success -> {
                 val labelResponse = response.value
                 if (labelResponse.label.id.isEmpty()) {
@@ -95,13 +98,14 @@ internal class PostLabelWorker @AssistedInject constructor(
     private suspend fun createOrUpdateLabel(
         labelName: String,
         color: String,
+        parentId: LabelId?,
         type: Int
     ): ApiResult<LabelResponse> {
         val requestBody = LabelRequestBody(
             name = labelName,
             color = color,
             type = type,
-            parentId = null,
+            parentId = parentId?.id,
             notify = 0,
             expanded = 0,
             sticky = 0
@@ -125,6 +129,8 @@ internal class PostLabelWorker @AssistedInject constructor(
 
     private fun getLabelNameParam() = inputData.getString(KEY_INPUT_DATA_LABEL_NAME)
 
+    private fun getParentId() = inputData.getString(KEY_INPUT_DATA_PARENT_ID)?.let(::LabelId)
+
     private fun isUpdateParam() = inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false)
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
@@ -134,7 +140,8 @@ internal class PostLabelWorker @AssistedInject constructor(
             color: String,
             isUpdate: Boolean? = false,
             type: LabelType,
-            labelId: String? = null
+            labelId: String? = null,
+            parentId: LabelId?
         ): LiveData<WorkInfo> {
 
             val postLabelWorkerRequest = OneTimeWorkRequestBuilder<PostLabelWorker>()
@@ -142,6 +149,7 @@ internal class PostLabelWorker @AssistedInject constructor(
                     workDataOf(
                         KEY_INPUT_DATA_LABEL_ID to labelId,
                         KEY_INPUT_DATA_LABEL_NAME to labelName,
+                        KEY_INPUT_DATA_PARENT_ID to parentId?.id,
                         KEY_INPUT_DATA_LABEL_COLOR to color,
                         KEY_INPUT_DATA_LABEL_TYPE to type.typeInt,
                         KEY_INPUT_DATA_IS_UPDATE to isUpdate,

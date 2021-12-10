@@ -375,7 +375,7 @@
     <string name="processing_attachment">添付ファイルの処理中</string>
     <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
     <string name="dont_ask_again">今後表示しない</string>
-    <string name="none">なし</string>
+    <string name="x_none">なし</string>
     <string name="changes_affected_after_closing">アプリを閉じた後で変更が反映されます。</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PINコードが間違っています。 あと%d回試すことができます。</item>
@@ -383,7 +383,7 @@
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">完全なデータ抹消まで残り%d回です。</item>
     </plurals>
-    <string name="done">完了</string>
+    <string name="x_done">完了</string>
     <string name="logout">ログアウト</string>
     <string name="log_out">%s からログアウトしてよろしいですか？</string>
     <string name="logout_question">本当にログアウトしてよろしいですか？</string>

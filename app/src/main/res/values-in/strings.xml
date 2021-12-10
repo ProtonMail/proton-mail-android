@@ -380,7 +380,7 @@
     <string name="hyperlink_confirmation_dialog_text_html">Anda akan meluncurkan peramban web dan pindah
 ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda ingin melanjutkan?</string>
     <string name="dont_ask_again">Jangan tanya lagi</string>
-    <string name="none">Tidak ada</string>
+    <string name="x_none">Tidak ada</string>
     <string name="changes_affected_after_closing">Perubahan terjadi setelah aplikasi ditutup</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN salah, %d upaya tersisa</item>
@@ -388,7 +388,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">%d upaya sampai data yang aman dihapus!</item>
     </plurals>
-    <string name="done">Selesai</string>
+    <string name="x_done">Selesai</string>
     <string name="logout">Keluar</string>
     <string name="log_out">Keluar %s?</string>
     <string name="logout_question">Yakin ingin keluar?</string>
