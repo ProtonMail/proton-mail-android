@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.labels.presentation.model
 
+import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.labels.domain.model.LabelId
 
 sealed class LabelsManagerItemUiModel {
@@ -42,4 +43,17 @@ sealed class LabelsManagerItemUiModel {
         val folderLevel: Int,
         override val isChecked: Boolean
     ) : LabelsManagerItemUiModel()
+
+    object DiffCallback : DiffUtil.ItemCallback<LabelsManagerItemUiModel>() {
+
+        override fun areItemsTheSame(
+            oldItem: LabelsManagerItemUiModel,
+            newItem: LabelsManagerItemUiModel
+        ) = oldItem.id == newItem.id
+
+        override fun areContentsTheSame(
+            oldItem: LabelsManagerItemUiModel,
+            newItem: LabelsManagerItemUiModel
+        ) = oldItem == newItem
+    }
 }

@@ -66,17 +66,16 @@ internal class LabelsAdapter :
     internal class ViewHolder(itemView: View) :
         SelectableAdapter.ViewHolder<LabelUiModel>(itemView) {
 
-        @Suppress("RemoveExplicitTypeArguments") // `with` needs to always return `Unit`
-        override fun onBind(item: LabelUiModel) = with<View, Unit>(itemView) {
+        override fun onBind(item: LabelUiModel) = with(itemView) {
             super.onBind(item)
 
-            val check = itemView.findViewById<MaterialCheckBox>(R.id.label_check)
-            val color = itemView.findViewById<ImageView>(R.id.label_color)
-            val name = itemView.findViewById<TextView>(R.id.label_name)
+            val check = itemView.findViewById<MaterialCheckBox>(R.id.label_check_box)
+            val color = itemView.findViewById<ImageView>(R.id.label_icon_image_view)
+            val name = itemView.findViewById<TextView>(R.id.label_name_text_view)
 
             // Selection listener
             check.setOnClickListener {
-                itemView.label_check.toggle()
+                itemView.label_check_box.toggle()
                 setSelected(item, !item.isChecked)
             }
 

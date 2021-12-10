@@ -89,7 +89,6 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         intent?.extras?.getBoolean(EXTRA_CREATE_ONLY, false) ?: false
     }
 
-    /** [LabelsAdapter] for show `Labels` or `Folders` */
     private val labelsAdapter = LabelsAdapter().apply {
         onItemClick = ::onLabelClick
         onItemSelect = ::onLabelSelectionChange
@@ -168,7 +167,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
         // Set listeners
         delete_labels.setOnClickListener { showDeleteConfirmation() }
-        label_name.onTextChange(::onLabelNameChange)
+        label_name_text_view.onTextChange(::onLabelNameChange)
         save_button.setOnClickListener { saveCurrentLabel() }
         colors_grid_view.setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
         labels_manager_parent_folder_text_view.onClick {
@@ -251,7 +250,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** Close the soft keyboard */
     private fun closeKeyboard() {
-        UiUtil.hideKeyboard(this, label_name)
+        UiUtil.hideKeyboard(this, label_name_text_view)
     }
 
     /** When labels are received from [LabelsManagerViewModel] */
@@ -266,7 +265,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         currentEditingLabel = label.labelId
         state = State.UPDATE
 
-        label_name.setText(label.name)
+        label_name_text_view.setText(label.name)
         add_label_container.isVisible = true
         updateParentFolder(label.parentId)
         toggleEditor(true)
@@ -296,7 +295,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         closeKeyboard()
     }
 
-    /** When Label name is changed in the [label_name] `EditText` */
+    /** When Label name is changed in the [label_name_text_view] `EditText` */
     private fun onLabelNameChange(name: CharSequence) {
         save_button.isVisible = name.isNotBlank()
 
@@ -322,7 +321,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
                 viewModel.onNewLabel()
                 toggleEditor(false)
                 closeKeyboard()
-                label_name.setText("")
+                label_name_text_view.setText("")
                 save_button.setText(R.string.x_done)
             }
 
@@ -435,7 +434,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             }
         )
 
-        label_name.setHint(
+        label_name_text_view.setHint(
             when (type) {
                 LabelType.MESSAGE_LABEL -> R.string.label_name
                 LabelType.FOLDER -> R.string.folder_name
