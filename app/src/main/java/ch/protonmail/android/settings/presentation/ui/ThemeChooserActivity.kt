@@ -72,8 +72,10 @@ class ThemeChooserActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.app_theme_done) onBackPressed()
-        else return super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            R.id.app_theme_done, android.R.id.home -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
+        }
         return true
     }
 
