@@ -105,6 +105,7 @@ import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import leakcanary.DefaultOnHeapAnalyzedListener;
 import leakcanary.LeakCanary;
+import me.proton.core.accountmanager.data.AccountStateHandler;
 import me.proton.core.accountmanager.domain.AccountManager;
 import me.proton.core.domain.entity.UserId;
 import me.proton.core.util.kotlin.CoreLogger;
@@ -122,6 +123,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
     UserManager userManager;
     @Inject
     AccountManager accountManager;
+    @Inject
+    AccountStateHandler accountStateHandler;
     @Inject
     EventManager eventManager;
     @Inject
@@ -230,6 +233,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         accountManagerUserIdMigration.blocking();
         coreAccountManagerMigration.migrateBlocking();
+
+        // Start internal mandatory Account state handling.
+        accountStateHandler.start();
 
         checkForUpdateAndClearCache();
     }

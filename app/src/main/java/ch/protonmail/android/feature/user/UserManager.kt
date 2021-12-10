@@ -107,10 +107,3 @@ fun User.getMailboxPassword(coreKeyStoreCrypto: KeyStoreCrypto): ByteArray? {
     val decryptedPassphrase = passphrase?.decrypt(coreKeyStoreCrypto)
     return decryptedPassphrase?.array
 }
-
-suspend fun UserManager.waitPrimaryKeyPassphraseAvailable(userId: UserId) {
-    getUserFlow(userId)
-        .filterIsInstance<DataResult.Success<User>>()
-        .filter { it.value.keys.primary()?.privateKey?.passphrase != null }
-        .first()
-}

@@ -126,7 +126,7 @@ internal abstract class AppDatabase :
 
     companion object {
 
-        const val version = 2
+        const val version = 3
         private const val name = "proton-mail.db"
 
         private fun getDbCreationCallback(context: Context): Callback = object : Callback() {
@@ -146,7 +146,8 @@ internal abstract class AppDatabase :
 
         private fun getMigrations(): Array<Migration> {
             val migrations = arrayOf(
-                AppDatabaseMigrations.MIGRATION_1_2
+                AppDatabaseMigrations.MIGRATION_1_2,
+                AppDatabaseMigrations.MIGRATION_2_3,
             )
             Timber.v("Db migrations list size ${migrations.size}")
             return migrations

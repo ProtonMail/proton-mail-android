@@ -69,7 +69,7 @@ class GetMailSettingsTest {
         AccountState.Ready,
         null,
         null,
-        AccountDetails(null)
+        AccountDetails(null, null)
     )
 
     @BeforeTest

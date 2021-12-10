@@ -23,15 +23,22 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.account.data.repository.AccountRepositoryImpl
 import me.proton.core.account.domain.repository.AccountRepository
 import me.proton.core.accountmanager.data.AccountManagerImpl
+import me.proton.core.accountmanager.data.AccountMigratorImpl
+import me.proton.core.accountmanager.data.AccountStateHandler
+import me.proton.core.accountmanager.data.AccountStateHandlerCoroutineScope
 import me.proton.core.accountmanager.data.SessionListenerImpl
 import me.proton.core.accountmanager.data.SessionManagerImpl
 import me.proton.core.accountmanager.data.SessionProviderImpl
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.SessionManager
+import me.proton.core.accountmanager.domain.migrator.AccountMigrator
 import me.proton.core.auth.domain.AccountWorkflowHandler
 import me.proton.core.auth.domain.repository.AuthRepository
 import me.proton.core.crypto.android.context.AndroidCryptoContext
@@ -42,11 +49,18 @@ import me.proton.core.domain.entity.Product
 import me.proton.core.network.domain.session.SessionListener
 import me.proton.core.network.domain.session.SessionProvider
 import me.proton.core.user.domain.UserManager
+import me.proton.core.user.domain.repository.UserRepository
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AccountManagerModule {
+
+    @Provides
+    @Singleton
+    @AccountStateHandlerCoroutineScope
+    fun provideAccountStateHandlerCoroutineScope(): CoroutineScope =
+        CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @Provides
     @Singleton
@@ -78,6 +92,32 @@ object AccountManagerModule {
         userManager: UserManager
     ): AccountManagerImpl =
         AccountManagerImpl(product, accountRepository, authRepository, userManager)
+
+    @Provides
+    @Singleton
+    fun provideAccountMigrator(
+        accountManager: AccountManager,
+        accountRepository: AccountRepository,
+        userRepository: UserRepository
+    ): AccountMigrator =
+        AccountMigratorImpl(accountManager, accountRepository, userRepository)
+
+    @Provides
+    @Singleton
+    fun provideAccountStateHandler(
+        @AccountStateHandlerCoroutineScope
+        scope: CoroutineScope,
+        userManager: UserManager,
+        accountManager: AccountManager,
+        accountRepository: AccountRepository,
+        accountMigrator: AccountMigrator
+    ): AccountStateHandler = AccountStateHandler(
+        scope,
+        userManager,
+        accountManager,
+        accountRepository,
+        accountMigrator
+    )
 
     @Provides
     @Singleton
