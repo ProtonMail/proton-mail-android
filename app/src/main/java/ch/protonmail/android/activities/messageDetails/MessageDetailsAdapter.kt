@@ -348,7 +348,8 @@ internal class MessageDetailsAdapter(
             setupMessageActionsView(
                 message, listItem.messageFormattedHtmlWithQuotedHistory, webView, shouldHideAllActions
             )
-            setupReplyActionsView(message, shouldHideAllActions)
+            // TODO: To be decided whether we will need these actions moving forward or they can be removed completely
+            setupReplyActionsView(message, true)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
 
             setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
