@@ -35,11 +35,8 @@ import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.labels.presentation.LabelsActionAdapter
-import ch.protonmail.android.labels.presentation.LabelsActionSheetViewModel
-import ch.protonmail.android.labels.presentation.LabelsManagerActivity
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
+import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils

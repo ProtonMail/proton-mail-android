@@ -17,10 +17,9 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.presentation
+package ch.protonmail.android.labels.presentation.model
 
 import androidx.recyclerview.widget.DiffUtil
-import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 
 class ManageLabelItemDiffUtil : DiffUtil.ItemCallback<LabelActonItemUiModel>() {
 

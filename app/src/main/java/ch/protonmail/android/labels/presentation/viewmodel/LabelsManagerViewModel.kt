@@ -33,8 +33,8 @@ import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.DeleteLabels
-import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
+import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.uiModel.LabelUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
