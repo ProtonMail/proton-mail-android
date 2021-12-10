@@ -69,7 +69,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         val result = mapper.toUiModels(
             input,
             currentFolder = ANOTHER_FOLDER_ID,
-            selectedFolder = null,
+            selectedParentFolder = null,
             includeNoneUiModel = true
         )
 
@@ -110,7 +110,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         val result = mapper.toUiModels(
             input,
             currentFolder = ANOTHER_FOLDER_ID,
-            selectedFolder = null,
+            selectedParentFolder = null,
             includeNoneUiModel = true
         )
 
@@ -148,7 +148,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         val result = mapper.toUiModels(
             input,
             currentFolder = ANOTHER_FOLDER_ID,
-            selectedFolder = LabelId(firstFirst),
+            selectedParentFolder = LabelId(firstFirst),
             includeNoneUiModel = true
         )
 
@@ -183,7 +183,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         val result = mapper.toUiModels(
             input,
             currentFolder = ANOTHER_FOLDER_ID,
-            selectedFolder = null,
+            selectedParentFolder = null,
             includeNoneUiModel = true
         )
 
@@ -218,7 +218,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         val result = mapper.toUiModels(
             input,
             currentFolder = ANOTHER_FOLDER_ID,
-            selectedFolder = null,
+            selectedParentFolder = null,
             includeNoneUiModel = true
         )
 
@@ -250,7 +250,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         val result = mapper.toUiModels(
             input,
             currentFolder = ANOTHER_FOLDER_ID,
-            selectedFolder = null,
+            selectedParentFolder = null,
             includeNoneUiModel = true
         )
 
@@ -282,7 +282,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         val result = mapper.toUiModels(
             input,
             currentFolder = LabelId("second"),
-            selectedFolder = null,
+            selectedParentFolder = null,
             includeNoneUiModel = false
         )
 
@@ -314,7 +314,7 @@ class ParentFolderPickerItemUiModelMapperTest {
         val result = mapper.toUiModels(
             input,
             currentFolder = LabelId("second.first"),
-            selectedFolder = null,
+            selectedParentFolder = null,
             includeNoneUiModel = false
         )
 

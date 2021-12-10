@@ -59,7 +59,7 @@ class ParentFolderPickerViewModel @Inject constructor(
         mutableState.asStateFlow()
 
     private val mutableState: MutableStateFlow<ParentFolderPickerState> = MutableStateFlow(
-        ParentFolderPickerState.Loading(selectedItemId = savedStateHandle.selectedItemId)
+        ParentFolderPickerState.Loading(selectedItemId = savedStateHandle.selectedParentFolderId)
     )
 
     init {
@@ -70,8 +70,8 @@ class ParentFolderPickerViewModel @Inject constructor(
                 val currentSelectedFolder = state.value.selectedItemId
                 mapper.toUiModels(
                     folders = folders,
-                    currentFolder = savedStateHandle.currentItemId,
-                    selectedFolder = currentSelectedFolder,
+                    currentFolder = savedStateHandle.currentFolderId,
+                    selectedParentFolder = currentSelectedFolder,
                     includeNoneUiModel = true
                 )
             }
@@ -142,8 +142,8 @@ private fun MutableStateFlow<ParentFolderPickerState>.updateItemsIfNeeded(
     if (newState !== prevState) tryEmit(newState)
 }
 
-private val SavedStateHandle.currentItemId get() =
+private val SavedStateHandle.currentFolderId get() =
     get<String>(EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID)?.let(::LabelId)
 
-private val SavedStateHandle.selectedItemId get() =
+private val SavedStateHandle.selectedParentFolderId get() =
     get<String>(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID)?.let(::LabelId)

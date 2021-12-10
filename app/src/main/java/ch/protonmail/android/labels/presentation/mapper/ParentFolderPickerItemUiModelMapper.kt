@@ -46,18 +46,18 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
 
     /**
      * @param currentFolder the [LabelId] of the folder which we're picking a parent for
-     * @param selectedFolder the [LabelId] of the folder that is currently selected as a parent
+     * @param selectedParentFolder the [LabelId] of the folder that is currently selected as a parent
      * @param includeNoneUiModel whether [ParentFolderPickerItemUiModel.None] should be in the list ( at the first
      *  position )
      */
     fun toUiModels(
         folders: Collection<Folder>,
         currentFolder: LabelId?,
-        selectedFolder: LabelId?,
+        selectedParentFolder: LabelId?,
         includeNoneUiModel: Boolean
     ): List<ParentFolderPickerItemUiModel> {
         val noneUiModel = if (includeNoneUiModel) {
-            listOf(ParentFolderPickerItemUiModel.None(isSelected = selectedFolder == null))
+            listOf(ParentFolderPickerItemUiModel.None(isSelected = selectedParentFolder == null))
         } else {
             emptyList()
         }
@@ -67,7 +67,7 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
                 folder = label,
                 currentFolder = currentFolder,
                 isEnabled = label.id != currentFolder,
-                selectedFolder = selectedFolder,
+                selectedParentFolder = selectedParentFolder,
                 folderLevel = 0,
                 parentColor = null
             )
@@ -78,7 +78,7 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
         folder: Folder,
         currentFolder: LabelId?,
         isEnabled: Boolean,
-        selectedFolder: LabelId?,
+        selectedParentFolder: LabelId?,
         folderLevel: Int,
         parentColor: Int?
     ): List<ParentFolderPickerItemUiModel.Folder> {
@@ -88,7 +88,7 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
             name = folder.name,
             icon = buildIcon(folder, parentColor),
             folderLevel = folderLevel,
-            isSelected = folder.id == selectedFolder,
+            isSelected = folder.id == selectedParentFolder,
             isEnabled = isEnabled && folder.id != currentFolder,
         )
         val children = folder.children.flatMap {
@@ -96,7 +96,7 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
                 folder = it,
                 currentFolder = currentFolder,
                 isEnabled = parent.isEnabled,
-                selectedFolder = selectedFolder,
+                selectedParentFolder = selectedParentFolder,
                 folderLevel = folderLevel + 1,
                 parentColor = parent.icon.colorInt
             )

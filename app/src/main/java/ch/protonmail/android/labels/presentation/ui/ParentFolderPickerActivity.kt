@@ -143,20 +143,20 @@ class ParentFolderPickerActivity : AppCompatActivity() {
 
     class Launcher : ActivityResultContract<Input, LabelId?>() {
 
-        private var previousSelectedFolder: LabelId? = null
+        private var previousSelectedParentFolder: LabelId? = null
 
         override fun createIntent(context: Context, input: Input): Intent {
-            previousSelectedFolder = input.selectedParentFolder
+            previousSelectedParentFolder = input.selectedParentFolder
             return Intent(context, ParentFolderPickerActivity::class.java)
                 .putExtra(EXTRA_PARENT_FOLDER_PICKER_CURRENT_ID, input.currentFolder?.id)
-                .putExtra(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID, previousSelectedFolder?.id)
+                .putExtra(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID, previousSelectedParentFolder?.id)
         }
 
         override fun parseResult(resultCode: Int, intent: Intent?): LabelId? =
             if (resultCode == Activity.RESULT_OK) {
                 intent?.getStringExtra(EXTRA_PARENT_FOLDER_PICKER_PARENT_ID)?.let(::LabelId)
             } else {
-                previousSelectedFolder
+                previousSelectedParentFolder
             }
     }
 }

@@ -284,15 +284,6 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private fun updateParentFolder(folderId: LabelId?) {
         parentFolderId = folderId
-//        val text = if (folderId != null) {
-//            buildSpannedString {
-//                append(getText(R.string.labels_manager_parent_folder_selected))
-//                append("", ImageSpan(this@LabelsManagerActivity, R.drawable.ic_check), 0)
-//                append(getText(R.string.labels_manager_tap_to_change_parent_folder))
-//            }
-//        } else {
-//            SpannableString(getText(R.string.labels_manager_select_parent_folder))
-//        }
         val textRes =
             if (folderId != null) R.string.labels_manager_parent_folder_selected
             else R.string.labels_manager_select_parent_folder
