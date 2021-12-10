@@ -21,7 +21,7 @@ package ch.protonmail.android.labels.presentation.model
 
 import androidx.recyclerview.widget.DiffUtil
 
-class ManageLabelItemDiffUtil : DiffUtil.ItemCallback<LabelActonItemUiModel>() {
+class LabelActionItemUiModelDiffCallback : DiffUtil.ItemCallback<LabelActonItemUiModel>() {
 
     override fun areItemsTheSame(oldItem: LabelActonItemUiModel, newItem: LabelActonItemUiModel) =
         oldItem.labelId == newItem.labelId

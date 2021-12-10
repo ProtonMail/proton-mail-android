@@ -54,8 +54,8 @@ sealed class ParentFolderPickerItemUiModel {
                 const val WITHOUT_CHILDREN_COLORED_ICON_RES = R.drawable.ic_folder_filled
                 const val WITH_CHILDREN_BW_ICON_RES = R.drawable.ic_folder_multiple
                 const val WITHOUT_CHILDREN_BW_ICON_RES = R.drawable.ic_folder
-                const val WITH_CHILDREN_CONTENT_DESCRIPTION_RES = R.string.parent_picker_parent_folder_icon_description
-                const val WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES = R.string.parent_picker_folder_icon_description
+                const val WITH_CHILDREN_CONTENT_DESCRIPTION_RES = R.string.x_parent_folder_icon_description
+                const val WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES = R.string.x_folder_icon_description
             }
         }
     }

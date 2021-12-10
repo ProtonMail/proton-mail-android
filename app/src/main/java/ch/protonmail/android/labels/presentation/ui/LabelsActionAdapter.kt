@@ -30,13 +30,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
+import ch.protonmail.android.labels.presentation.model.LabelActionItemUiModelDiffCallback
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemDiffUtil
 import timber.log.Timber
 
 class LabelsActionAdapter(
     private val clickListener: (LabelActonItemUiModel) -> Unit
-) : ListAdapter<LabelActonItemUiModel, RecyclerView.ViewHolder>(ManageLabelItemDiffUtil()) {
+) : ListAdapter<LabelActonItemUiModel, RecyclerView.ViewHolder>(LabelActionItemUiModelDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = ItemManageLabelsActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
