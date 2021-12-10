@@ -19,11 +19,7 @@
 
 package ch.protonmail.android.labels.presentation.model
 
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
-import ch.protonmail.android.R
 import ch.protonmail.android.labels.domain.model.LabelId
 
 sealed class ParentFolderPickerItemUiModel {
@@ -36,29 +32,11 @@ sealed class ParentFolderPickerItemUiModel {
     data class Folder(
         override val id: LabelId,
         val name: String,
-        val icon: Icon,
+        val icon: LabelIcon.Folder,
         val folderLevel: Int,
         override val isSelected: Boolean,
         val isEnabled: Boolean
-    ) : ParentFolderPickerItemUiModel() {
-
-        data class Icon(
-            @DrawableRes val drawableRes: Int,
-            @ColorInt val colorInt: Int,
-            @StringRes val contentDescriptionRes: Int
-        ) {
-
-            companion object {
-
-                const val WITH_CHILDREN_COLORED_ICON_RES = R.drawable.ic_folder_multiple_filled
-                const val WITHOUT_CHILDREN_COLORED_ICON_RES = R.drawable.ic_folder_filled
-                const val WITH_CHILDREN_BW_ICON_RES = R.drawable.ic_folder_multiple
-                const val WITHOUT_CHILDREN_BW_ICON_RES = R.drawable.ic_folder
-                const val WITH_CHILDREN_CONTENT_DESCRIPTION_RES = R.string.x_parent_folder_icon_description
-                const val WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES = R.string.x_folder_icon_description
-            }
-        }
-    }
+    ) : ParentFolderPickerItemUiModel()
 
     object DiffCallback : DiffUtil.ItemCallback<ParentFolderPickerItemUiModel>() {
 

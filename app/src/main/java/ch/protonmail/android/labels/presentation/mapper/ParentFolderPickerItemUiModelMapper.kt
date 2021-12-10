@@ -24,8 +24,8 @@ import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren.Folder
+import ch.protonmail.android.labels.presentation.model.LabelIcon
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
-import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel.Folder.Icon
 import me.proton.core.domain.arch.Mapper
 import timber.log.Timber
 import javax.inject.Inject
@@ -107,35 +107,19 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
     private fun buildIcon(
         folder: Folder,
         parentColor: Int?
-    ): Icon {
+    ): LabelIcon.Folder {
         val folderColorInt = folder.color.toColorIntOrNull() ?: parentColor ?: defaultIconColor
         return if (folder.children.isNotEmpty()) {
             if (useFolderColor) {
-                Icon(
-                    drawableRes = Icon.WITH_CHILDREN_COLORED_ICON_RES,
-                    colorInt = folderColorInt,
-                    contentDescriptionRes = Icon.WITH_CHILDREN_CONTENT_DESCRIPTION_RES
-                )
+                LabelIcon.Folder.WithChildren.Colored(folderColorInt)
             } else {
-                Icon(
-                    drawableRes = Icon.WITH_CHILDREN_BW_ICON_RES,
-                    colorInt = defaultIconColor,
-                    contentDescriptionRes = Icon.WITH_CHILDREN_CONTENT_DESCRIPTION_RES
-                )
+                LabelIcon.Folder.WithChildren.BlackWhite(defaultIconColor)
             }
         } else {
             if (useFolderColor) {
-                Icon(
-                    drawableRes = Icon.WITHOUT_CHILDREN_COLORED_ICON_RES,
-                    colorInt = folderColorInt,
-                    contentDescriptionRes = Icon.WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES
-                )
+                LabelIcon.Folder.WithoutChildren.Colored(folderColorInt)
             } else {
-                Icon(
-                    drawableRes = Icon.WITHOUT_CHILDREN_BW_ICON_RES,
-                    colorInt = defaultIconColor,
-                    contentDescriptionRes = Icon.WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES
-                )
+                LabelIcon.Folder.WithoutChildren.BlackWhite(defaultIconColor)
             }
         }
     }
