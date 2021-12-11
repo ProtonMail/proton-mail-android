@@ -34,6 +34,8 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.DeleteLabels
 import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
+import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel
+import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel.Folder
 import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.uiModel.LabelUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,8 +75,8 @@ internal class LabelsManagerViewModel @Inject constructor(
     }
 
     /** Triggered when a selection has changed */
-    private val selectedLabelIds = MutableLiveData(mutableSetOf<String>())
-    private var deleteLabelIds = MutableSharedFlow<List<String>>(extraBufferCapacity = 1)
+    private val selectedLabelIds = MutableLiveData(mutableSetOf<LabelId>())
+    private var deleteLabelIds = MutableSharedFlow<List<LabelId>>(extraBufferCapacity = 1)
     private var updateSaveTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     /** Triggered when [selectedLabelIds] has changed */
@@ -82,7 +84,7 @@ internal class LabelsManagerViewModel @Inject constructor(
 
     val hasSuccessfullyDeletedMessages: Flow<Boolean>
         get() = deleteLabelIds.flatMapLatest { ids ->
-            deleteLabels(ids.map(::LabelId))
+            deleteLabels(ids)
         }
 
     /**
@@ -111,7 +113,7 @@ internal class LabelsManagerViewModel @Inject constructor(
     val labels = ViewStateStore.from(
         selectedLabelIds.switchMap { selectedList ->
             labelsSource.map {
-                labelMapper.toUiModel(it).copy(isChecked = it.id.id in selectedList)
+                labelMapper.toUiModel(it).copy(isChecked = it.id in selectedList)
             }.toLiveData(20)
         }
     ).lock
@@ -156,13 +158,15 @@ internal class LabelsManagerViewModel @Inject constructor(
         selectedLabelIds.clear()
     }
 
-    /** Initialize the editing of a Label */
-    fun onLabelEdit(label: LabelUiModel) {
+    /**
+     * Initialize the editing of a Label
+     */
+    fun onLabelEdit(label: LabelsManagerItemUiModel) {
         labelEditor = LabelEditor(label)
     }
 
     /** Update the selected state of the Label with the given [labelId] */
-    fun onLabelSelected(labelId: String, isChecked: Boolean) {
+    fun onLabelSelected(labelId: LabelId, isChecked: Boolean) {
         if (isChecked) selectedLabelIds += labelId
         else selectedLabelIds -= labelId
     }
@@ -195,7 +199,7 @@ internal class LabelsManagerViewModel @Inject constructor(
         color: String,
         isUpdate: Boolean,
         labelType: LabelType,
-        labelId: String?,
+        labelId: LabelId?,
         parentId: LabelId?
     ): Flow<WorkInfo> = labelRepository.scheduleSaveLabel(
         labelName = labelName,
@@ -208,13 +212,13 @@ internal class LabelsManagerViewModel @Inject constructor(
 }
 
 /** A class that hold editing progress of a Label */
-private class LabelEditor(private val initialLabel: LabelUiModel) {
+private class LabelEditor(private val initialLabel: LabelsManagerItemUiModel) {
 
     /**
      * [ColorInt] color for the current editing Label
      */
     @ColorInt
-    var color: Int = initialLabel.color
+    var color: Int = initialLabel.icon.colorInt
 
     /**
      * Name for the current editing Label
@@ -222,19 +226,18 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
     var name: CharSequence = initialLabel.name
 
     /**
-     * Id of the parent folder for the current editing Label ( only valid for Folders )
+     * Id of the parent folder for the current editing Label ( only valid for [Folder]s )
      */
-    var parentFolderId: LabelId? = initialLabel.parentId
+    var parentFolderId: LabelId? = (initialLabel as? Folder)?.parentId
 
     /** @return [SaveParams] */
     fun buildParams(): SaveParams {
         return SaveParams(
             labelName = name.toString(),
             color = color.toColorHex(),
-            expanded = initialLabel.expanded,
-            isFolder = initialLabel.type == LabelType.FOLDER,
+            isFolder = initialLabel is Folder,
             update = true,
-            labelId = initialLabel.labelId.id,
+            labelId = initialLabel.id,
             parentId = parentFolderId
         )
     }
@@ -243,10 +246,9 @@ private class LabelEditor(private val initialLabel: LabelUiModel) {
     data class SaveParams(
         val labelName: String,
         val color: String,
-        val expanded: Int,
         val isFolder: Boolean,
         val update: Boolean,
-        val labelId: String,
+        val labelId: LabelId,
         val parentId: LabelId?
     )
 }
@@ -257,19 +259,19 @@ private const val WHITE_COLOR_MASK = 0xFFFFFF
 private fun Int.toColorHex() = String.format(Locale.getDefault(), "#%06X", WHITE_COLOR_MASK and this)
 
 // region Selected Labels extensions
-private typealias MutableLiveStringSet = MutableLiveData<MutableSet<String>>
+private typealias MutableLiveIdsSet = MutableLiveData<MutableSet<LabelId>>
 
-private fun MutableLiveStringSet.clear() {
+private fun MutableLiveIdsSet.clear() {
     value = mutableSetOf()
 }
 
-private fun <V> MutableLiveStringSet.mapValue(f: (String) -> V) = value!!.map(f)
+private fun <V> MutableLiveIdsSet.mapValue(f: (LabelId) -> V) = value!!.map(f)
 
-private operator fun MutableLiveStringSet.minusAssign(element: String) {
+private operator fun MutableLiveIdsSet.minusAssign(element: LabelId) {
     value = value!!.minus(element).toMutableSet()
 }
 
-private operator fun MutableLiveStringSet.plusAssign(element: String) {
+private operator fun MutableLiveIdsSet.plusAssign(element: LabelId) {
     value = value!!.plus(element).toMutableSet()
 }
 // endregion

@@ -140,14 +140,14 @@ internal class PostLabelWorker @AssistedInject constructor(
             color: String,
             isUpdate: Boolean? = false,
             type: LabelType,
-            labelId: String? = null,
+            labelId: LabelId? = null,
             parentId: LabelId?
         ): LiveData<WorkInfo> {
 
             val postLabelWorkerRequest = OneTimeWorkRequestBuilder<PostLabelWorker>()
                 .setInputData(
                     workDataOf(
-                        KEY_INPUT_DATA_LABEL_ID to labelId,
+                        KEY_INPUT_DATA_LABEL_ID to labelId?.id,
                         KEY_INPUT_DATA_LABEL_NAME to labelName,
                         KEY_INPUT_DATA_PARENT_ID to parentId?.id,
                         KEY_INPUT_DATA_LABEL_COLOR to color,

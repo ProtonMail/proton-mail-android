@@ -40,6 +40,7 @@ sealed class LabelsManagerItemUiModel {
         override val id: LabelId,
         override val name: String,
         override val icon: LabelIcon.Folder,
+        val parentId: LabelId?,
         val folderLevel: Int,
         override val isChecked: Boolean
     ) : LabelsManagerItemUiModel()

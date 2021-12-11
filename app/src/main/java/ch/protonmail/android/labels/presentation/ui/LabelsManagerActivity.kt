@@ -35,10 +35,10 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.labelsManager.LabelsManagerViewModel
 import ch.protonmail.android.adapters.LabelColorsAdapter
-import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -64,8 +64,6 @@ const val EXTRA_CREATE_ONLY = "create_only"
  * An `Activity` for manage Labels and Folders
  * Inherit from [BaseActivity]
  * Implements [ViewStateActivity] for bind `ViewStateStore`s implicitly to the Lifecycle
- *
- * @author Davide Farella
  */
 @AndroidEntryPoint
 class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
@@ -89,10 +87,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         intent?.extras?.getBoolean(EXTRA_CREATE_ONLY, false) ?: false
     }
 
-    private val labelsAdapter = LabelsAdapter().apply {
-        onItemClick = ::onLabelClick
-        onItemSelect = ::onLabelSelectionChange
-    }
+    private val labelsAdapter = LabelsManagerAdapter(
+        onItemClick = ::onLabelClick,
+        onItemCheck = ::onLabelSelectionChange
+    )
 
     /** Whether this `Activity` must use a Popup Style. Default is `false` */
     private val popupStyle by lazy {
@@ -253,24 +251,22 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         UiUtil.hideKeyboard(this, label_name_text_view)
     }
 
-    /** When labels are received from [LabelsManagerViewModel] */
     private fun onLabels(labels: PagedList<LabelUiModel>) {
         no_labels.isVisible = labels.isEmpty()
         delete_labels.isVisible = labels.isNotEmpty()
         labelsAdapter.submitList(labels)
     }
 
-    /** When a Label is clicked */
-    private fun onLabelClick(label: LabelUiModel) {
-        currentEditingLabel = label.labelId
+    private fun onLabelClick(label: LabelsManagerItemUiModel) {
+        currentEditingLabel = label.id
         state = State.UPDATE
 
         label_name_text_view.setText(label.name)
         add_label_container.isVisible = true
-        updateParentFolder(label.parentId)
+        if (label is LabelsManagerItemUiModel.Folder) updateParentFolder(label.parentId)
         toggleEditor(true)
 
-        val currentColorPosition = colorOptions.indexOf(label.color)
+        val currentColorPosition = colorOptions.indexOf(label.icon.colorInt)
         colorsAdapter.setChecked(currentColorPosition)
 
         // Set viewModel
@@ -307,10 +303,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     }
 
     /** When a Label is selected or unselected */
-    private fun onLabelSelectionChange(label: LabelUiModel, isSelected: Boolean) {
-        viewModel.onLabelSelected(
-            label.labelId.id, isSelected
-        )
+    private fun onLabelSelectionChange(label: LabelsManagerItemUiModel, isSelected: Boolean) {
+        viewModel.onLabelSelected(label.id, isSelected)
     }
 
     /** When the [state] is changed */
