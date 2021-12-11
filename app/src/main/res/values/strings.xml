@@ -81,6 +81,7 @@
     <!-- endregion -->
 
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Set PIN code</string>
     <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
     <string name="settings_pins_dont_match">The PIN codes must match!</string>
@@ -88,6 +89,13 @@
     <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
     <string name="settings_swipe_left_to_right">Left to right</string>
     <string name="settings_swipe_right_to_left">Right to left</string>
+    <!-- endregion -->
+
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
     <!-- endregion -->
 
     <!-- region Labels Manger -->

@@ -92,6 +92,7 @@ import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.servers.notification.NotificationServer;
+import ch.protonmail.android.settings.domain.usecase.ApplyAppThemeFromSettings;
 import ch.protonmail.android.utils.CoreTimberLogger;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.DownloadUtils;
@@ -138,6 +139,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Inject
     OpenPGP mOpenPGP;
 
+    @Inject
+    ApplyAppThemeFromSettings applyAppThemeFromSettings;
     @Inject
     NetworkConfigurator networkConfigurator;
     @Inject
@@ -230,6 +233,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         // Try to upgrade TLS Provider if needed
         upgradeTlsProviderIfNeeded();
+
+        applyAppThemeFromSettings.blocking();
 
         accountManagerUserIdMigration.blocking();
         coreAccountManagerMigration.migrateBlocking();

@@ -1,0 +1,83 @@
+/*
+ * Copyright (c) 2020 Proton Technologies AG
+ *
+ * This file is part of ProtonMail.
+ *
+ * ProtonMail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ProtonMail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ */
+
+package ch.protonmail.android.settings.presentation.viewmodel
+
+import app.cash.turbine.test
+import ch.protonmail.android.settings.domain.model.AppThemeSettings
+import ch.protonmail.android.settings.domain.usecase.ApplyAppThemeFromSettings
+import ch.protonmail.android.settings.domain.usecase.GetAppThemeSettings
+import ch.protonmail.android.settings.domain.usecase.SaveAppThemeSettings
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.CoroutinesTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class ThemeChooserViewModelTest : CoroutinesTest {
+
+    private val getAppThemeSettings: GetAppThemeSettings = mockk()
+    private val saveAppThemeSettings: SaveAppThemeSettings = mockk(relaxUnitFun = true)
+    private val applyAppThemeFromSettings: ApplyAppThemeFromSettings = mockk(relaxUnitFun = true)
+
+    private val viewModel by lazy {
+        ThemeChooserViewModel(
+            getAppThemeSettings = getAppThemeSettings,
+            saveAppThemeSettings = saveAppThemeSettings,
+            applyAppThemeFromSettings = applyAppThemeFromSettings
+        )
+    }
+
+    @Test
+    fun `correct theme is emitted`() = runBlockingTest {
+        // given
+        val expectedTheme = AppThemeSettings.DARK
+        coEvery { getAppThemeSettings() } returns expectedTheme
+
+        // when
+        viewModel.state.test {
+
+            // then
+            assertEquals(expectedTheme, awaitItem())
+        }
+    }
+
+    @Test
+    fun `saves correct theme`() = runBlockingTest {
+        // given
+        val expectedTheme = AppThemeSettings.FOLLOW_SYSTEM
+
+        // when
+        viewModel.process(ThemeChooserViewModel.Action.SetSystemTheme)
+
+        // then
+        coVerify { saveAppThemeSettings(expectedTheme) }
+    }
+
+    @Test
+    fun `correctly requests to apply the theme`() = runBlockingTest {
+        // when
+        viewModel.process(ThemeChooserViewModel.Action.SetLightTheme)
+
+        coVerify { applyAppThemeFromSettings() }
+    }
+
+}

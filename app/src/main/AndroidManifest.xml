@@ -350,6 +350,9 @@
         <activity
             android:name=".labels.presentation.ui.ParentFolderPickerActivity"
             android:exported="true"/>
+        <activity
+            android:name=".settings.presentation.ui.ThemeChooserActivity"
+            android:exported="false"/>
 
         <service
             android:name=".api.services.MessagesService"

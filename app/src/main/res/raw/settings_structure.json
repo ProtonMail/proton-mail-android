@@ -15,6 +15,13 @@
     "is_section": true
   },
   {
+    "setting_id": "app_theme",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": false,
+    "setting_type": "drill"
+  },
+  {
     "setting_id": "push_notification",
     "is_section": false,
     "setting_value": "",
