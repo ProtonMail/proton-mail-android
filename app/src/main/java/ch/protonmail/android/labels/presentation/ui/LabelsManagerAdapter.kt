@@ -20,12 +20,16 @@
 package ch.protonmail.android.labels.presentation.ui
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import ch.protonmail.android.R
 import ch.protonmail.android.databinding.LabelsListItemBinding
 import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel
-import ch.protonmail.libs.core.utils.onClick
+import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel.Folder
 import me.proton.core.presentation.ui.adapter.ClickableAdapter
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
+import me.proton.core.presentation.utils.onClick
 
 class LabelsManagerAdapter(
     override val onItemClick: (LabelsManagerItemUiModel) -> Unit,
@@ -50,13 +54,14 @@ class LabelsManagerAdapter(
         onItemClick: (LabelsManagerItemUiModel) -> Unit,
         private val onItemCheck: (LabelsManagerItemUiModel, isChecked: Boolean) -> Unit,
         private val onItemEditClick: (LabelsManagerItemUiModel) -> Unit
-    ): ClickableAdapter.ViewHolder<LabelsManagerItemUiModel, LabelsListItemBinding>(binding, onItemClick) {
+    ) : ClickableAdapter.ViewHolder<LabelsManagerItemUiModel, LabelsListItemBinding>(binding, onItemClick) {
 
         override fun onBind(item: LabelsManagerItemUiModel, position: Int) {
             super.onBind(item, position)
 
             viewRef.apply {
                 labelIconImageView.apply {
+                    if (item is Folder) applyMarginForSubFolders(item.folderLevel)
                     setImageResource(item.icon.drawableRes)
                     setColorFilter(item.icon.colorInt)
                     contentDescription = getString(item.icon.contentDescriptionRes)
@@ -67,6 +72,11 @@ class LabelsManagerAdapter(
                 labelCheckBox.setOnCheckedChangeListener { _, isChecked -> onItemCheck(item, isChecked) }
                 labelEditImageButton.onClick { onItemEditClick(item) }
             }
+        }
+
+        private fun View.applyMarginForSubFolders(folderLevel: Int) {
+            (layoutParams as ConstraintLayout.LayoutParams).marginStart =
+                folderLevel * context.resources.getDimensionPixelSize(R.dimen.gap_large)
         }
     }
 }
