@@ -22,7 +22,6 @@ package ch.protonmail.android.settings.presentation.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
@@ -66,16 +65,9 @@ class ThemeChooserActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_app_theme, menu)
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.app_theme_done, android.R.id.home -> onBackPressed()
-            else -> return super.onOptionsItemSelected(item)
-        }
+        if (item.itemId == android.R.id.home) onBackPressed()
+        else return super.onOptionsItemSelected(item)
         return true
     }
 

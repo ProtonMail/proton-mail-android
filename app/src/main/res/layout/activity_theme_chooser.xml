@@ -31,8 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/app_theme_title"
-        app:menu="@menu/menu_app_theme"/>
+        app:title="@string/app_theme_title"/>
 
     <RadioGroup
         android:id="@+id/app_theme_radio_group"
