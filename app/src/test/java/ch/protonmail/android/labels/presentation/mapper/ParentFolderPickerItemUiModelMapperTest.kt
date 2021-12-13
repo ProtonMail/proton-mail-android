@@ -23,8 +23,8 @@ import android.content.Context
 import android.graphics.Color
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
+import ch.protonmail.android.labels.presentation.model.LabelIcon
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
-import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel.Folder.Icon
 import ch.protonmail.android.labels.utils.buildFolders
 import io.mockk.every
 import io.mockk.mockk
@@ -357,18 +357,8 @@ class ParentFolderPickerItemUiModelMapperTest {
             isEnabled = isEnabled
         )
 
-        private fun buildIcon(colorInt: Int, hasChildren: Boolean): Icon {
-            val (drawableRes, contentDescriptionRes) =
-                if (hasChildren) {
-                    Icon.WITH_CHILDREN_COLORED_ICON_RES to Icon.WITH_CHILDREN_CONTENT_DESCRIPTION_RES
-                } else {
-                    Icon.WITHOUT_CHILDREN_COLORED_ICON_RES to Icon.WITHOUT_CHILDREN_CONTENT_DESCRIPTION_RES
-                }
-            return Icon(
-                drawableRes = drawableRes,
-                colorInt = colorInt,
-                contentDescriptionRes = contentDescriptionRes
-            )
-        }
+        private fun buildIcon(colorInt: Int, hasChildren: Boolean): LabelIcon.Folder =
+            if (hasChildren) LabelIcon.Folder.WithChildren.Colored(colorInt)
+            else LabelIcon.Folder.WithoutChildren.Colored(colorInt)
     }
 }

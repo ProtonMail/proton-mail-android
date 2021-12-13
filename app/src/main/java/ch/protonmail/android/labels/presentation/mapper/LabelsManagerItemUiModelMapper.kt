@@ -23,89 +23,96 @@ import android.content.Context
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren.Folder
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.presentation.model.LabelIcon
-import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
+import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel
 import me.proton.core.domain.arch.Mapper
 import timber.log.Timber
 import javax.inject.Inject
 
 /**
- * A Mapper of [ParentFolderPickerItemUiModel]
+ * A Mapper of [LabelsManagerItemUiModel]
  *
  * @property useFolderColor whether the user enabled the settings for use Colors for Folders.
  *  TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`
  */
-class ParentFolderPickerItemUiModelMapper @Inject constructor(
+class LabelsManagerItemUiModelMapper @Inject constructor(
     context: Context
-) : Mapper<Collection<Folder>, List<ParentFolderPickerItemUiModel>> {
+) : Mapper<Collection<LabelOrFolderWithChildren>, List<LabelsManagerItemUiModel>> {
 
     private val useFolderColor: Boolean = true
 
     private val defaultIconColor = context.getColor(R.color.icon_norm)
 
-    /**
-     * @param currentFolder the [LabelId] of the folder which we're picking a parent for
-     * @param selectedParentFolder the [LabelId] of the folder that is currently selected as a parent
-     * @param includeNoneUiModel whether [ParentFolderPickerItemUiModel.None] should be in the list ( at the first
-     *  position )
-     */
     fun toUiModels(
-        folders: Collection<Folder>,
-        currentFolder: LabelId?,
-        selectedParentFolder: LabelId?,
-        includeNoneUiModel: Boolean
-    ): List<ParentFolderPickerItemUiModel> {
-        val noneUiModel = if (includeNoneUiModel) {
-            listOf(ParentFolderPickerItemUiModel.None(isSelected = selectedParentFolder == null))
-        } else {
-            emptyList()
+        labels: Collection<LabelOrFolderWithChildren>,
+        checkedLabels: Collection<LabelId>
+    ): List<LabelsManagerItemUiModel> =
+        labels.flatMap { labelOrFolder ->
+            labelOrFolderToUiModels(labelOrFolder, checkedLabels)
         }
 
-        return noneUiModel + folders.flatMap { label ->
-            labelToUiModels(
+    private fun labelOrFolderToUiModels(
+        label: LabelOrFolderWithChildren,
+        checkedLabels: Collection<LabelId>
+    ): List<LabelsManagerItemUiModel> =
+        when (label) {
+            is LabelOrFolderWithChildren.Label -> labelToUiModel(
+                label = label,
+                checkedLabels = checkedLabels
+            )
+            is LabelOrFolderWithChildren.Folder -> folderToUiModels(
                 folder = label,
-                currentFolder = currentFolder,
-                isEnabled = label.id != currentFolder,
-                selectedParentFolder = selectedParentFolder,
+                checkedLabels = checkedLabels,
                 folderLevel = 0,
+                parentId = null,
                 parentColor = null
             )
         }
+
+    private fun labelToUiModel(
+        label: LabelOrFolderWithChildren.Label,
+        checkedLabels: Collection<LabelId>
+    ): List<LabelsManagerItemUiModel.Label> {
+        val uiModel = LabelsManagerItemUiModel.Label(
+            id = label.id,
+            name = label.name,
+            icon = LabelIcon.Label(label.color.toColorIntOrDefault()),
+            isChecked = label.id in checkedLabels
+        )
+        return listOf(uiModel)
     }
 
-    private fun labelToUiModels(
-        folder: Folder,
-        currentFolder: LabelId?,
-        isEnabled: Boolean,
-        selectedParentFolder: LabelId?,
+    private fun folderToUiModels(
+        folder: LabelOrFolderWithChildren.Folder,
+        checkedLabels: Collection<LabelId>,
         folderLevel: Int,
+        parentId: LabelId?,
         parentColor: Int?
-    ): List<ParentFolderPickerItemUiModel.Folder> {
+    ): List<LabelsManagerItemUiModel.Folder> {
 
-        val parent = ParentFolderPickerItemUiModel.Folder(
+        val parent = LabelsManagerItemUiModel.Folder(
             id = folder.id,
             name = folder.name,
-            icon = buildIcon(folder, parentColor),
+            icon = buildFolderIcon(folder, parentColor),
             folderLevel = folderLevel,
-            isSelected = folder.id == selectedParentFolder,
-            isEnabled = isEnabled && folder.id != currentFolder,
+            parentId = parentId,
+            isChecked = folder.id in checkedLabels,
         )
         val children = folder.children.flatMap {
-            labelToUiModels(
+            folderToUiModels(
                 folder = it,
-                currentFolder = currentFolder,
-                isEnabled = parent.isEnabled,
-                selectedParentFolder = selectedParentFolder,
+                checkedLabels = checkedLabels,
                 folderLevel = folderLevel + 1,
+                parentId = parent.id,
                 parentColor = parent.icon.colorInt
             )
         }
         return listOf(parent) + children
     }
 
-    private fun buildIcon(
-        folder: Folder,
+    private fun buildFolderIcon(
+        folder: LabelOrFolderWithChildren.Folder,
         parentColor: Int?
     ): LabelIcon.Folder {
         val folderColorInt = folder.color.toColorIntOrNull() ?: parentColor ?: defaultIconColor
@@ -130,4 +137,7 @@ class ParentFolderPickerItemUiModelMapper @Inject constructor(
         Timber.e(exc, "Unknown label color: $this")
         null
     }
+
+    private fun String.toColorIntOrDefault(): Int =
+        toColorIntOrNull() ?: defaultIconColor
 }

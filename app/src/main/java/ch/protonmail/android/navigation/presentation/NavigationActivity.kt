@@ -52,8 +52,8 @@ import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
 import ch.protonmail.android.drawer.presentation.ui.view.ProtonSideDrawer
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.labels.presentation.LabelsManagerActivity
+import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
+import ch.protonmail.android.labels.presentation.ui.LabelsManagerActivity
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
 import ch.protonmail.android.settings.pin.ValidatePinActivity

@@ -62,8 +62,8 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.labels.presentation.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.labels.presentation.LabelsManagerActivity
+import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
+import ch.protonmail.android.labels.presentation.ui.LabelsManagerActivity
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity

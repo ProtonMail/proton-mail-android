@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.labels.presentation
+package ch.protonmail.android.labels.presentation.ui
 
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -28,19 +28,16 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.labelsManager.LabelsManagerViewModel
 import ch.protonmail.android.adapters.LabelColorsAdapter
-import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.labels.presentation.ui.ParentFolderPickerActivity
-import ch.protonmail.android.uiModel.LabelUiModel
+import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
@@ -65,8 +62,6 @@ const val EXTRA_CREATE_ONLY = "create_only"
  * An `Activity` for manage Labels and Folders
  * Inherit from [BaseActivity]
  * Implements [ViewStateActivity] for bind `ViewStateStore`s implicitly to the Lifecycle
- *
- * @author Davide Farella
  */
 @AndroidEntryPoint
 class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
@@ -90,11 +85,11 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         intent?.extras?.getBoolean(EXTRA_CREATE_ONLY, false) ?: false
     }
 
-    /** [LabelsAdapter] for show `Labels` or `Folders` */
-    private val labelsAdapter = LabelsAdapter().apply {
-        onItemClick = ::onLabelClick
-        onItemSelect = ::onLabelSelectionChange
-    }
+    private val labelsAdapter = LabelsManagerAdapter(
+        onItemClick = ::onLabelClick,
+        onItemCheck = ::onLabelSelectionChange,
+        onItemEditClick = ::onLabelClick
+    )
 
     /** Whether this `Activity` must use a Popup Style. Default is `false` */
     private val popupStyle by lazy {
@@ -169,7 +164,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
         // Set listeners
         delete_labels.setOnClickListener { showDeleteConfirmation() }
-        label_name.onTextChange(::onLabelNameChange)
+        label_name_text_view.onTextChange(::onLabelNameChange)
         save_button.setOnClickListener { saveCurrentLabel() }
         colors_grid_view.setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
         labels_manager_parent_folder_text_view.onClick {
@@ -188,25 +183,25 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         }
 
         // Observe labels
-        viewModel.labels.observeData(::onLabels)
+        with(viewModel) {
+            labels
+                .onEach(::onLabels)
+                .launchIn(lifecycleScope)
 
-        // Observe labels selection
-        viewModel.hasSelectedLabels.observeData { delete_labels.isEnabled = it }
+            // Observe labels selection
+            hasSelectedLabels
+                .onEach { delete_labels.isEnabled = it }
+                .launchIn(lifecycleScope)
 
-        // Observe deleted labels
-        viewModel.hasSuccessfullyDeletedMessages
-            .onEach {
-                onLabelDeletedEvent(it)
-            }
-            .launchIn(lifecycleScope)
+            // Observe deleted labels
+            hasSuccessfullyDeletedMessages
+                .onEach(::onLabelDeletedEvent)
+                .launchIn(lifecycleScope)
 
-        viewModel.createUpdateFlow
-            .onEach {
-                if (it.state.isFinished) {
-                    displayLabelCreationOutcome(it)
-                }
-            }
-            .launchIn(lifecycleScope)
+            createUpdateFlow
+                .onEach { if (it.state.isFinished) displayLabelCreationOutcome(it) }
+                .launchIn(lifecycleScope)
+        }
     }
 
     /** Custom setup if [popupStyle] */
@@ -252,27 +247,25 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** Close the soft keyboard */
     private fun closeKeyboard() {
-        UiUtil.hideKeyboard(this, label_name)
+        UiUtil.hideKeyboard(this, label_name_text_view)
     }
 
-    /** When labels are received from [LabelsManagerViewModel] */
-    private fun onLabels(labels: PagedList<LabelUiModel>) {
+    private fun onLabels(labels: List<LabelsManagerItemUiModel>) {
         no_labels.isVisible = labels.isEmpty()
         delete_labels.isVisible = labels.isNotEmpty()
         labelsAdapter.submitList(labels)
     }
 
-    /** When a Label is clicked */
-    private fun onLabelClick(label: LabelUiModel) {
-        currentEditingLabel = label.labelId
+    private fun onLabelClick(label: LabelsManagerItemUiModel) {
+        currentEditingLabel = label.id
         state = State.UPDATE
 
-        label_name.setText(label.name)
+        label_name_text_view.setText(label.name)
         add_label_container.isVisible = true
-        updateParentFolder(label.parentId)
+        if (label is LabelsManagerItemUiModel.Folder) updateParentFolder(label.parentId)
         toggleEditor(true)
 
-        val currentColorPosition = colorOptions.indexOf(label.color)
+        val currentColorPosition = colorOptions.indexOf(label.icon.colorInt)
         colorsAdapter.setChecked(currentColorPosition)
 
         // Set viewModel
@@ -297,7 +290,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         closeKeyboard()
     }
 
-    /** When Label name is changed in the [label_name] `EditText` */
+    /** When Label name is changed in the [label_name_text_view] `EditText` */
     private fun onLabelNameChange(name: CharSequence) {
         save_button.isVisible = name.isNotBlank()
 
@@ -309,10 +302,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     }
 
     /** When a Label is selected or unselected */
-    private fun onLabelSelectionChange(label: LabelUiModel, isSelected: Boolean) {
-        viewModel.onLabelSelected(
-            label.labelId.id, isSelected
-        )
+    private fun onLabelSelectionChange(label: LabelsManagerItemUiModel, isSelected: Boolean) {
+        viewModel.onLabelSelected(label.id, isSelected)
     }
 
     /** When the [state] is changed */
@@ -323,7 +314,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
                 viewModel.onNewLabel()
                 toggleEditor(false)
                 closeKeyboard()
-                label_name.setText("")
+                label_name_text_view.setText("")
                 save_button.setText(R.string.x_done)
             }
 
@@ -405,6 +396,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         edit_label_layout.isVisible = show
         labels_list_view_parent.isVisible = !show
         labels_manager_parent_folder_text_view.isVisible = type == LabelType.FOLDER
+        if (show.not()) {
+            currentEditingLabel = null
+            updateParentFolder(null)
+        }
     }
 
     /**
@@ -436,7 +431,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             }
         )
 
-        label_name.setHint(
+        label_name_text_view.setHint(
             when (type) {
                 LabelType.MESSAGE_LABEL -> R.string.label_name
                 LabelType.FOLDER -> R.string.folder_name

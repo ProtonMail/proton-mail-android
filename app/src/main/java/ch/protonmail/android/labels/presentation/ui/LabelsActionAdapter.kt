@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.presentation
+package ch.protonmail.android.labels.presentation.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -30,12 +30,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
+import ch.protonmail.android.labels.presentation.model.LabelActionItemUiModelDiffCallback
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import timber.log.Timber
 
 class LabelsActionAdapter(
     private val clickListener: (LabelActonItemUiModel) -> Unit
-) : ListAdapter<LabelActonItemUiModel, RecyclerView.ViewHolder>(ManageLabelItemDiffUtil()) {
+) : ListAdapter<LabelActonItemUiModel, RecyclerView.ViewHolder>(LabelActionItemUiModelDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = ItemManageLabelsActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)

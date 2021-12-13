@@ -22,32 +22,39 @@ package ch.protonmail.android.labels.presentation.model
 import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.labels.domain.model.LabelId
 
-sealed class ParentFolderPickerItemUiModel {
+sealed class LabelsManagerItemUiModel {
 
-    open val id: LabelId? = null
-    abstract val isSelected: Boolean
+    abstract val id: LabelId
+    abstract val name: String
+    abstract val icon: LabelIcon
+    abstract val isChecked: Boolean
 
-    data class None(override val isSelected: Boolean) : ParentFolderPickerItemUiModel()
+    data class Label(
+        override val id: LabelId,
+        override val name: String,
+        override val icon: LabelIcon.Label,
+        override val isChecked: Boolean
+    ) : LabelsManagerItemUiModel()
 
     data class Folder(
         override val id: LabelId,
-        val name: String,
-        val icon: LabelIcon.Folder,
+        override val name: String,
+        override val icon: LabelIcon.Folder,
+        val parentId: LabelId?,
         val folderLevel: Int,
-        override val isSelected: Boolean,
-        val isEnabled: Boolean
-    ) : ParentFolderPickerItemUiModel()
+        override val isChecked: Boolean
+    ) : LabelsManagerItemUiModel()
 
-    object DiffCallback : DiffUtil.ItemCallback<ParentFolderPickerItemUiModel>() {
+    object DiffCallback : DiffUtil.ItemCallback<LabelsManagerItemUiModel>() {
 
         override fun areItemsTheSame(
-            oldItem: ParentFolderPickerItemUiModel,
-            newItem: ParentFolderPickerItemUiModel
+            oldItem: LabelsManagerItemUiModel,
+            newItem: LabelsManagerItemUiModel
         ) = oldItem.id == newItem.id
 
         override fun areContentsTheSame(
-            oldItem: ParentFolderPickerItemUiModel,
-            newItem: ParentFolderPickerItemUiModel
+            oldItem: LabelsManagerItemUiModel,
+            newItem: LabelsManagerItemUiModel
         ) = oldItem == newItem
     }
 }

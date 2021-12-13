@@ -25,6 +25,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.usecase.ObserveFoldersEligibleAsParent
 import ch.protonmail.android.labels.presentation.mapper.ParentFolderPickerItemUiModelMapper
+import ch.protonmail.android.labels.presentation.model.LabelIcon
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerAction
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerItemUiModel
 import ch.protonmail.android.labels.presentation.model.ParentFolderPickerState
@@ -239,7 +240,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
         ) = ParentFolderPickerItemUiModel.Folder(
             id = LabelId(name),
             name = name,
-            icon = ParentFolderPickerItemUiModel.Folder.Icon(0, 0, 0),
+            icon = LabelIcon.Folder.WithChildren.Colored(0),
             folderLevel = 0,
             isSelected = isSelected,
             isEnabled = true

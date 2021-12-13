@@ -57,7 +57,7 @@
                 android:layout_marginBottom="@dimen/padding_l">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/label_name"
+                    android:id="@+id/label_name_text_view"
                     style="@style/ProtonInput.Mail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

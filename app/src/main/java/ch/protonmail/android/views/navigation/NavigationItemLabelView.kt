@@ -46,7 +46,7 @@ class NavigationItemLabelView @JvmOverloads constructor(
         @ColorInt labelColor: Int,
         notificationCount: Int
     ) {
-        label_name.text = name
+        label_name_text_view.text = name
 
         val normalDrawable =
             ContextCompat.getDrawable(context, labelRes) ?: throw IllegalArgumentException(
