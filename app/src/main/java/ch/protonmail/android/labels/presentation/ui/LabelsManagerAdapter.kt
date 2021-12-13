@@ -68,8 +68,7 @@ class LabelsManagerAdapter(
                 }
                 labelNameTextView.text = item.name
                 labelCheckBox.isChecked = item.isChecked
-
-                labelCheckBox.setOnCheckedChangeListener { _, isChecked -> onItemCheck(item, isChecked) }
+                labelCheckBox.onClick { onItemCheck(item, labelCheckBox.isChecked) }
                 labelEditImageButton.onClick { onItemEditClick(item) }
             }
         }

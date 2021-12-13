@@ -96,7 +96,7 @@ class LabelsManagerItemUiModelMapper @Inject constructor(
             name = folder.name,
             icon = buildFolderIcon(folder, parentColor),
             folderLevel = folderLevel,
-            parentId = null,
+            parentId = parentId,
             isChecked = folder.id in checkedLabels,
         )
         val children = folder.children.flatMap {
