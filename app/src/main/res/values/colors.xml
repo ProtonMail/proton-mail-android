@@ -27,7 +27,7 @@
     <color name="ocean_blue">#384C5F</color>
     <color name="black">#000000</color>
 
-    <color name="icon_background">@color/cornflower_blue</color>
+    <color name="icon_background">#515060</color>
 
     <!-- new color scheme -->
     <color name="dark_purple">#4F4F60</color>
