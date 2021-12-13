@@ -20,35 +20,33 @@ package ch.protonmail.android.activities.labelsManager
 
 import android.graphics.Color
 import androidx.annotation.ColorInt
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
-import androidx.lifecycle.switchMap
-import androidx.paging.PagedList
-import androidx.paging.toLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.DeleteLabels
-import ch.protonmail.android.labels.presentation.mapper.LabelUiModelMapper
+import ch.protonmail.android.labels.domain.usecase.ObserveLabelsOrFoldersWithChildrenByType
+import ch.protonmail.android.labels.presentation.mapper.LabelsManagerItemUiModelMapper
 import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel
 import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel.Folder
 import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.uiModel.LabelUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import me.proton.core.accountmanager.domain.AccountManager
 import studio.forface.viewstatestore.ViewStateStore
-import studio.forface.viewstatestore.from
-import studio.forface.viewstatestore.paging.PagedViewStateStore
 import studio.forface.viewstatestore.paging.ViewStateStoreScope
 import java.util.Locale
 import javax.inject.Inject
@@ -62,9 +60,10 @@ import javax.inject.Inject
 internal class LabelsManagerViewModel @Inject constructor(
     private val labelRepository: LabelRepository,
     savedStateHandle: SavedStateHandle,
+    private val observeLabelsOrFoldersWithChildrenByType: ObserveLabelsOrFoldersWithChildrenByType,
+    private val mapper: LabelsManagerItemUiModelMapper,
     private val deleteLabels: DeleteLabels,
-    private val accountManager: AccountManager,
-    private val labelMapper: LabelUiModelMapper
+    accountManager: AccountManager
 ) : ViewModel(), ViewStateStoreScope {
 
     // Extract the original form of the data
@@ -75,48 +74,32 @@ internal class LabelsManagerViewModel @Inject constructor(
     }
 
     /** Triggered when a selection has changed */
-    private val selectedLabelIds = MutableLiveData(mutableSetOf<LabelId>())
+    private val selectedLabelIds = MutableStateFlow(emptySet<LabelId>())
     private var deleteLabelIds = MutableSharedFlow<List<LabelId>>(extraBufferCapacity = 1)
     private var updateSaveTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     /** Triggered when [selectedLabelIds] has changed */
-    val hasSelectedLabels = ViewStateStore.from(selectedLabelIds.map { it.isNotEmpty() }).lock
+    val hasSelectedLabels: StateFlow<Boolean> =
+        selectedLabelIds
+            .map { it.isNotEmpty() }
+            .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     val hasSuccessfullyDeletedMessages: Flow<Boolean>
         get() = deleteLabelIds.flatMapLatest { ids ->
             deleteLabels(ids)
         }
 
-    /**
-     * [LiveData] of [PagedList] of [LabelUiModel]
-     * Triggered when a Labels are updated in DB
-     */
-    private val labelsSource = when (type) {
-        LabelType.MESSAGE_LABEL -> labelRepository.findAllLabelsPaged(
-            runBlocking {
-                accountManager.getPrimaryUserId().filterNotNull().first()
+    private val labelsSource: Flow<List<LabelOrFolderWithChildren>> =
+        accountManager.getPrimaryUserId()
+            .filterNotNull()
+            .flatMapLatest { userId ->
+                observeLabelsOrFoldersWithChildrenByType(userId, type)
             }
-        )
-        LabelType.FOLDER -> labelRepository.findAllFoldersPaged(
-            runBlocking {
-                accountManager.getPrimaryUserId().filterNotNull().first()
-            }
-        )
-        LabelType.CONTACT_GROUP -> throw IllegalArgumentException("We cannot manage contact groups here!")
-    }
 
-    /**
-     * A Locked [PagedViewStateStore] of type [LabelUiModel]
-     * This will emit every time a Label is changed in the database or the selection state is
-     * changed for one of them
-     */
-    val labels = ViewStateStore.from(
-        selectedLabelIds.switchMap { selectedList ->
-            labelsSource.map {
-                labelMapper.toUiModel(it).copy(isChecked = it.id in selectedList)
-            }.toLiveData(20)
-        }
-    ).lock
+    val labels: StateFlow<List<LabelsManagerItemUiModel>> =
+        combine(labelsSource, selectedLabelIds) { labels, selectedLabels ->
+            mapper.toUiModels(labels, selectedLabels)
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private var labelEditor: LabelEditor? = null
 
@@ -148,13 +131,9 @@ internal class LabelsManagerViewModel @Inject constructor(
             )
         }
 
-    init {
-        labels.setLoading()
-    }
-
     /** Delete all Labels which id is in [selectedLabelIds] */
     fun deleteSelectedLabels() {
-        deleteLabelIds.tryEmit(selectedLabelIds.mapValue { it })
+        deleteLabelIds.tryEmit(selectedLabelIds.value.toList())
         selectedLabelIds.clear()
     }
 
@@ -259,19 +238,15 @@ private const val WHITE_COLOR_MASK = 0xFFFFFF
 private fun Int.toColorHex() = String.format(Locale.getDefault(), "#%06X", WHITE_COLOR_MASK and this)
 
 // region Selected Labels extensions
-private typealias MutableLiveIdsSet = MutableLiveData<MutableSet<LabelId>>
-
-private fun MutableLiveIdsSet.clear() {
-    value = mutableSetOf()
+private fun MutableStateFlow<Set<LabelId>>.clear() {
+    tryEmit(emptySet())
 }
 
-private fun <V> MutableLiveIdsSet.mapValue(f: (LabelId) -> V) = value!!.map(f)
-
-private operator fun MutableLiveIdsSet.minusAssign(element: LabelId) {
-    value = value!!.minus(element).toMutableSet()
+private operator fun MutableStateFlow<Set<LabelId>>.minusAssign(element: LabelId) {
+    tryEmit(value - element)
 }
 
-private operator fun MutableLiveIdsSet.plusAssign(element: LabelId) {
-    value = value!!.plus(element).toMutableSet()
+private operator fun MutableStateFlow<Set<LabelId>>.plusAssign(element: LabelId) {
+    tryEmit(value + element)
 }
 // endregion

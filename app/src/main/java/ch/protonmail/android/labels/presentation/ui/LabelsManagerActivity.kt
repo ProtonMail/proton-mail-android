@@ -28,7 +28,6 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
@@ -39,7 +38,6 @@ import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RES
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel
-import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
@@ -90,7 +88,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private val labelsAdapter = LabelsManagerAdapter(
         onItemClick = ::onLabelClick,
         onItemCheck = ::onLabelSelectionChange,
-        onItemEditClick = { TODO("not implemented") }
+        onItemEditClick = ::onLabelClick
     )
 
     /** Whether this `Activity` must use a Popup Style. Default is `false` */
@@ -185,25 +183,25 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         }
 
         // Observe labels
-        viewModel.labels.observeData(::onLabels)
+        with(viewModel) {
+            viewModel.labels
+                .onEach(::onLabels)
+                .launchIn(lifecycleScope)
 
-        // Observe labels selection
-        viewModel.hasSelectedLabels.observeData { delete_labels.isEnabled = it }
+            // Observe labels selection
+            viewModel.hasSelectedLabels
+                .onEach { delete_labels.isEnabled = it }
+                .launchIn(lifecycleScope)
 
-        // Observe deleted labels
-        viewModel.hasSuccessfullyDeletedMessages
-            .onEach {
-                onLabelDeletedEvent(it)
-            }
-            .launchIn(lifecycleScope)
+            // Observe deleted labels
+            hasSuccessfullyDeletedMessages
+                .onEach(::onLabelDeletedEvent)
+                .launchIn(lifecycleScope)
 
-        viewModel.createUpdateFlow
-            .onEach {
-                if (it.state.isFinished) {
-                    displayLabelCreationOutcome(it)
-                }
-            }
-            .launchIn(lifecycleScope)
+            createUpdateFlow
+                .onEach { if (it.state.isFinished) displayLabelCreationOutcome(it) }
+                .launchIn(lifecycleScope)
+        }
     }
 
     /** Custom setup if [popupStyle] */
@@ -252,10 +250,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         UiUtil.hideKeyboard(this, label_name_text_view)
     }
 
-    private fun onLabels(labels: PagedList<LabelUiModel>) {
+    private fun onLabels(labels: List<LabelsManagerItemUiModel>) {
         no_labels.isVisible = labels.isEmpty()
         delete_labels.isVisible = labels.isNotEmpty()
-        TODO("labelsAdapter.submitList(labels)")
+        labelsAdapter.submitList(labels)
     }
 
     private fun onLabelClick(label: LabelsManagerItemUiModel) {

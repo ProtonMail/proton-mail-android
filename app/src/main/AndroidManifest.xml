@@ -314,7 +314,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".labels.presentation.LabelsManagerActivity"
+            android:name=".labels.presentation.ui.LabelsManagerActivity"
             android:exported="false"
             android:label="@string/labels_and_folders"
             android:windowSoftInputMode="adjustResize|stateHidden" />
