@@ -396,6 +396,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         edit_label_layout.isVisible = show
         labels_list_view_parent.isVisible = !show
         labels_manager_parent_folder_text_view.isVisible = type == LabelType.FOLDER
+        if (show.not()) {
+            currentEditingLabel = null
+            updateParentFolder(null)
+        }
     }
 
     /**
