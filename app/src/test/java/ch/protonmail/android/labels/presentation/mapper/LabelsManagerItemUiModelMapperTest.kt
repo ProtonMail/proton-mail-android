@@ -175,10 +175,10 @@ class LabelsManagerItemUiModelMapperTest {
         )
         val expected = listOf(
             buildFolderUiModel(name = "first", folderLevel = 0, hasChildren = true, isChecked = true),
-            buildFolderUiModel(name = "first.first", folderLevel = 1),
+            buildFolderUiModel(name = "first.first", parentId = "first", folderLevel = 1),
             buildFolderUiModel(name = "second", folderLevel = 0),
             buildFolderUiModel(name = "third", folderLevel = 0, hasChildren = true),
-            buildFolderUiModel(name = "third.first", folderLevel = 1, isChecked = true)
+            buildFolderUiModel(name = "third.first", parentId = "third", folderLevel = 1, isChecked = true)
         )
 
         // when

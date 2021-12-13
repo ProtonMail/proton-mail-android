@@ -49,10 +49,9 @@ sealed class LabelIcon {
 
             override val contentDescriptionRes = R.string.x_parent_folder_icon_description
 
-            data class BlackWhite(
-                @ColorInt override val colorInt: Int
-            ) : WithChildren() {
+            object BlackWhite : WithChildren() {
 
+                override val colorInt = R.color.icon_norm
                 override val drawableRes = R.drawable.ic_folder_multiple
             }
 
@@ -68,10 +67,9 @@ sealed class LabelIcon {
 
             override val contentDescriptionRes = R.string.x_folder_icon_description
 
-            data class BlackWhite(
-                @ColorInt override val colorInt: Int
-            ) : WithChildren() {
+            object BlackWhite : WithoutChildren() {
 
+                override val colorInt = R.color.icon_norm
                 override val drawableRes = R.drawable.ic_folder
             }
 

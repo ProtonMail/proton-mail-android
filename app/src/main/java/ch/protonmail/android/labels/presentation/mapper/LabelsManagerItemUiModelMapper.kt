@@ -120,13 +120,13 @@ class LabelsManagerItemUiModelMapper @Inject constructor(
             if (useFolderColor) {
                 LabelIcon.Folder.WithChildren.Colored(folderColorInt)
             } else {
-                LabelIcon.Folder.WithChildren.BlackWhite(defaultIconColor)
+                LabelIcon.Folder.WithChildren.BlackWhite
             }
         } else {
             if (useFolderColor) {
                 LabelIcon.Folder.WithoutChildren.Colored(folderColorInt)
             } else {
-                LabelIcon.Folder.WithoutChildren.BlackWhite(defaultIconColor)
+                LabelIcon.Folder.WithoutChildren.BlackWhite
             }
         }
     }
