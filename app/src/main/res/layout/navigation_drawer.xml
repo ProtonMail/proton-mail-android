@@ -23,7 +23,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="start"
     android:fitsSystemWindows="true"
-    android:background="@color/nav_view_background"
+    android:background="?attr/proton_sidebar_background"
     android:orientation="vertical">
 
     <me.proton.core.accountmanager.presentation.view.AccountPrimaryView

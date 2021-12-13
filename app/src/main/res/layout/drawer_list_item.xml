@@ -19,15 +19,14 @@
   -->
 
 <!-- TODO: hardcoded values -->
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/menuItem"
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_drawer_primaryitem"
     android:background="?attr/selectableItemBackground"
-    tools:background="@color/nav_view_background">
+    tools:background="?attr/proton_sidebar_background">
 
     <!-- Selection -->
     <View
@@ -38,7 +37,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="?attr/brand_darken_40"
+        android:background="?attr/proton_sidebar_interaction_weak_pressed"
         android:visibility="invisible"
         tools:visibility="visible"/>
 
@@ -52,7 +51,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:tint="@color/icon_weak"
+        app:tint="?attr/proton_sidebar_icon_weak"
         tools:src="@drawable/ic_inbox" />
 
     <!-- Badge -->
@@ -79,7 +78,7 @@
         android:layout_marginHorizontal="@dimen/padding_l"
         android:textAlignment="viewStart"
         android:textAppearance="@style/ProtonNavigationViewItemTextAppearance"
-        android:textColor="@color/nav_view_item_text"
+        android:textColor="?attr/proton_sidebar_text_norm"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/drawer_item_icon_view"

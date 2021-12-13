@@ -22,6 +22,6 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_drawer_footer"
     android:textAppearance="@style/Proton.Text.Caption"
-    android:textColor="@color/text_weak"
+    android:textColor="?attr/proton_sidebar_text_weak"
     android:gravity="center"
     tools:text="ProtonMail 1.2.3 (123)" />
