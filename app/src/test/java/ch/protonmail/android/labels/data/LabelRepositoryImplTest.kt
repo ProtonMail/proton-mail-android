@@ -195,7 +195,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
                 color = labelColor,
                 isUpdate = isUpdate,
                 type = labelType,
-                labelId = labelId1,
+                labelId = LabelId(labelId1),
                 parentId = LabelId(testParentId)
             )
         } returns workInfoLiveData
@@ -207,7 +207,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
             color = labelColor,
             isUpdate = isUpdate,
             labelType = labelType,
-            labelId = labelId1,
+            labelId = LabelId(labelId1),
             parentId = LabelId(testParentId)
         ).test {
 
@@ -218,7 +218,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
                     color = labelColor,
                     isUpdate = isUpdate,
                     type = labelType,
-                    labelId = labelId1,
+                    labelId = LabelId(labelId1),
                     parentId = LabelId(testParentId)
                 )
             }

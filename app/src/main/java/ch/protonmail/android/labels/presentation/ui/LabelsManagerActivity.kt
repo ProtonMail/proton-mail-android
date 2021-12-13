@@ -89,7 +89,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private val labelsAdapter = LabelsManagerAdapter(
         onItemClick = ::onLabelClick,
-        onItemCheck = ::onLabelSelectionChange
+        onItemCheck = ::onLabelSelectionChange,
+        onItemEditClick = { TODO("not implemented") }
     )
 
     /** Whether this `Activity` must use a Popup Style. Default is `false` */
@@ -254,7 +255,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private fun onLabels(labels: PagedList<LabelUiModel>) {
         no_labels.isVisible = labels.isEmpty()
         delete_labels.isVisible = labels.isNotEmpty()
-        labelsAdapter.submitList(labels)
+        TODO("labelsAdapter.submitList(labels)")
     }
 
     private fun onLabelClick(label: LabelsManagerItemUiModel) {
