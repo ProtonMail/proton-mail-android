@@ -18,8 +18,7 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<View
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<View xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="1dp"
-    android:background="@color/nav_view_divider" />
+    android:background="?attr/proton_sidebar_separator" />

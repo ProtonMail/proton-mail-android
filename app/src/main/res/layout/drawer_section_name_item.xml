@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/Proton.Text.Default"
-        android:textColor="@color/text_weak"
+        android:textColor="?attr/proton_sidebar_text_weak"
         tools:text="Folders"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -55,7 +55,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_plus"
-        app:tint="@color/icon_weak"
+        app:tint="?attr/proton_sidebar_icon_weak"
         android:visibility="gone"
         tools:visibility="visible"
         tools:ignore="ContentDescription" />
