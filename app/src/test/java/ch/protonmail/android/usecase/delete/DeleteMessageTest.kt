@@ -72,7 +72,6 @@ class DeleteMessageTest {
             databaseProvider,
             messageRepository,
             conversationsRepository,
-            TestDispatcherProvider,
             workScheduler
         )
 
@@ -89,8 +88,8 @@ class DeleteMessageTest {
     fun verifyThatMessageIsSuccessfullyDeletedWithoutPendingMessagesInTheDb() {
         runBlockingTest {
             // given
-            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
-            every { pendingActionDao.findPendingSendByMessageId(any()) } returns null
+            coEvery { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
+            coEvery { pendingActionDao.findPendingSendByMessageId(any()) } returns null
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
@@ -110,8 +109,8 @@ class DeleteMessageTest {
         runBlockingTest {
             // given
             val pendingUpload = mockk<PendingUpload>(relaxed = true)
-            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns pendingUpload
-            every { pendingActionDao.findPendingSendByMessageId(any()) } returns null
+            coEvery { pendingActionDao.findPendingUploadByMessageId(any()) } returns pendingUpload
+            coEvery { pendingActionDao.findPendingSendByMessageId(any()) } returns null
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
@@ -133,8 +132,8 @@ class DeleteMessageTest {
             val pendingSend = mockk<PendingSend>(relaxed = true) {
                 every { sent } returns true
             }
-            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
-            every { pendingActionDao.findPendingSendByMessageId(any()) } returns pendingSend
+            coEvery { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
+            coEvery { pendingActionDao.findPendingSendByMessageId(any()) } returns pendingSend
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)

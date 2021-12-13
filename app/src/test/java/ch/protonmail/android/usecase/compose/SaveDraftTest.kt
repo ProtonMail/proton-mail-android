@@ -325,7 +325,7 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            coVerify(exactly = 0) { pendingActionDao.findPendingSendByMessageId("456") }
+            coVerify(exactly = 0) { pendingActionDao.findPendingSendByMessageIdBlocking("456") }
         }
     }
 
@@ -342,7 +342,7 @@ class SaveDraftTest : CoroutinesTest {
             }
             coEvery { messageDetailsRepository.findMessageById(any()) } returns flowOf(null)
             coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
-            every { pendingActionDao.findPendingSendByMessageId("45623") } answers {
+            every { pendingActionDao.findPendingSendByMessageIdBlocking("45623") } answers {
                 PendingSend(
                     "234234", localMessageId, null, false, 834L
                 )

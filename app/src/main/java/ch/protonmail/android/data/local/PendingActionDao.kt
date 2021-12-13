@@ -45,7 +45,10 @@ interface PendingActionDao {
     fun findAllPendingSendsAsync(): LiveData<List<PendingSend>>
 
     @Query("SELECT * FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_MESSAGE_ID = :messageId")
-    fun findPendingSendByMessageId(messageId: String): PendingSend?
+    fun findPendingSendByMessageIdBlocking(messageId: String): PendingSend?
+
+    @Query("SELECT * FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_MESSAGE_ID = :messageId")
+    suspend fun findPendingSendByMessageId(messageId: String): PendingSend?
 
     @Query("DELETE FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_MESSAGE_ID = :messageId")
     fun deletePendingSendByMessageId(messageId: String)
@@ -72,7 +75,10 @@ interface PendingActionDao {
     fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>>
 
     @Query("SELECT * FROM $TABLE_PENDING_UPLOADS WHERE $COLUMN_PENDING_UPLOAD_MESSAGE_ID = :messageId")
-    fun findPendingUploadByMessageId(messageId: String): PendingUpload?
+    fun findPendingUploadByMessageIdBlocking(messageId: String): PendingUpload?
+
+    @Query("SELECT * FROM $TABLE_PENDING_UPLOADS WHERE $COLUMN_PENDING_UPLOAD_MESSAGE_ID = :messageId")
+    suspend fun findPendingUploadByMessageId(messageId: String): PendingUpload?
 
     @Query("DELETE FROM $TABLE_PENDING_UPLOADS WHERE $COLUMN_PENDING_UPLOAD_MESSAGE_ID IN (:messageId)")
     fun deletePendingUploadByMessageId(vararg messageId: String)
