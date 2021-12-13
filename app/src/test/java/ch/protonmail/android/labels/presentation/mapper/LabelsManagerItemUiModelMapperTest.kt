@@ -56,7 +56,6 @@ class LabelsManagerItemUiModelMapperTest {
 
     @Test
     fun `single folder is mapped correctly`() {
-
         // given
         val input = listOf(buildFolder(name = LABEL_NAME))
         val expected = listOf(buildFolderUiModel(name = LABEL_NAME))
@@ -70,7 +69,6 @@ class LabelsManagerItemUiModelMapperTest {
 
     @Test
     fun `single label is mapped correctly`() {
-
         // given
         val input = listOf(buildLabel(name = LABEL_NAME))
         val expected = listOf(buildLabelUiModel(name = LABEL_NAME))
@@ -118,11 +116,11 @@ class LabelsManagerItemUiModelMapperTest {
         }
         val expected = listOf(
             buildFolderUiModel(name = "first", folderLevel = 0, hasChildren = true),
-            buildFolderUiModel(name = "first.first", folderLevel = 1),
+            buildFolderUiModel(name = "first.first", parentId = "first", folderLevel = 1),
             buildFolderUiModel(name = "second", folderLevel = 0),
             buildFolderUiModel(name = "third", folderLevel = 0, hasChildren = true),
-            buildFolderUiModel(name = "third.first", folderLevel = 1),
-            buildFolderUiModel(name = "third.second", folderLevel = 1)
+            buildFolderUiModel(name = "third.first", parentId = "third", folderLevel = 1),
+            buildFolderUiModel(name = "third.second", parentId = "third", folderLevel = 1)
         )
 
         // when
@@ -209,7 +207,7 @@ class LabelsManagerItemUiModelMapperTest {
 
         val expected = listOf(
             buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = redInt),
-            buildFolderUiModel(name = child, folderLevel = 1, colorInt = blueInt),
+            buildFolderUiModel(name = child, parentId = parent, folderLevel = 1, colorInt = blueInt),
         )
 
         // when
@@ -238,7 +236,7 @@ class LabelsManagerItemUiModelMapperTest {
 
         val expected = listOf(
             buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = redInt),
-            buildFolderUiModel(name = child, folderLevel = 1, colorInt = redInt),
+            buildFolderUiModel(name = child, parentId = parent, folderLevel = 1, colorInt = redInt),
         )
 
         // when
@@ -264,7 +262,7 @@ class LabelsManagerItemUiModelMapperTest {
 
         val expected = listOf(
             buildFolderUiModel(name = parent, folderLevel = 0, hasChildren = true, colorInt = 0),
-            buildFolderUiModel(name = child, folderLevel = 1, colorInt = 0),
+            buildFolderUiModel(name = child, parentId = parent, folderLevel = 1, colorInt = 0),
         )
 
         // when
@@ -315,6 +313,7 @@ class LabelsManagerItemUiModelMapperTest {
         private fun buildFolderUiModel(
             name: String,
             folderLevel: Int = 0,
+            parentId: String? = null,
             hasChildren: Boolean = false,
             colorInt: Int = COLOR_INT,
             isChecked: Boolean = false
@@ -322,7 +321,7 @@ class LabelsManagerItemUiModelMapperTest {
             id = LabelId(name),
             name = name,
             icon = buildFolderIcon(colorInt, hasChildren),
-            parentId = null,
+            parentId = parentId?.let(::LabelId),
             folderLevel = folderLevel,
             isChecked = isChecked
         )

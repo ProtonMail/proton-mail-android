@@ -184,12 +184,12 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
         // Observe labels
         with(viewModel) {
-            viewModel.labels
+            labels
                 .onEach(::onLabels)
                 .launchIn(lifecycleScope)
 
             // Observe labels selection
-            viewModel.hasSelectedLabels
+            hasSelectedLabels
                 .onEach { delete_labels.isEnabled = it }
                 .launchIn(lifecycleScope)
 
