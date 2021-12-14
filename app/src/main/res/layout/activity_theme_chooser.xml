@@ -39,20 +39,20 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_theme_toolbar">
+        app:layout_constraintTop_toBottomOf="@id/app_theme_toolbar"
+        android:paddingStart="@dimen/padding_l"
+        android:paddingEnd="@dimen/padding_m">
 
         <me.proton.core.presentation.ui.view.ProtonRadioButton
             android:id="@+id/app_theme_system_radio_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/padding_l"
             android:text="@string/app_theme_system"/>
 
         <me.proton.core.presentation.ui.view.ProtonRadioButton
             android:id="@+id/app_theme_light_radio_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/padding_l"
             android:text="@string/app_theme_light"
             tools:checked="true"/>
 
@@ -60,7 +60,6 @@
             android:id="@+id/app_theme_dark_radio_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/padding_l"
             android:text="@string/app_theme_dark"/>
     </RadioGroup>
 
