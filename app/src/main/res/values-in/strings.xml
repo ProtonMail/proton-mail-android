@@ -23,10 +23,13 @@
     <string name="x_add_folder">Tambah folder</string>
     <string name="x_add_label">Tambah label</string>
     <string name="x_days">Hari</string>
+    <string name="x_done">Selesai</string>
+    <string name="x_edit">Sunting</string>
     <string name="x_folders">Folder</string>
     <string name="x_hours">Jam</string>
     <string name="x_labels">Label</string>
     <string name="x_more">Lainnya</string>
+    <string name="x_none">Tidak ada</string>
     <string name="x_search">Pencarian</string>
     <string name="x_set">Setel</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
     <string name="set_msg_password_title">Setel kata sandi</string>
-    <string name="set_msg_password_info">Setel sandi untuk mengenkripsi pesan ini bagi pengguna non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Pelajari lebih lanjut</a>
+    <string name="set_msg_password_info">Tentukan kata sandi untuk mengekripsi pesan ini bagi para pengguna non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Pelajari lebih lanjut</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Kata sandi pesan</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Item ini sudah dicentang</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Atur kode PIN</string>
     <string name="settings_confirm_pin_code_title">Ulangi kode PIN</string>
     <string name="settings_pins_dont_match">Kode PIN harus cocok!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Atur gestur usap untuk mengakses tindakan yang paling sering digunakan.</string>
     <string name="settings_swipe_left_to_right">Kiri ke kanan</string>
     <string name="settings_swipe_right_to_left">Kanan ke kiri</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">Tema aplikasi</string>
+    <string name="app_theme_light">Terang</string>
+    <string name="app_theme_dark">Gelap</string>
+    <string name="app_theme_system">Bawaan sistem</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Pilih folder induk</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Folder induk telah terpilih.</b> Ketuk untuk mengubahnya</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Folder induk</string>
+    <string name="parent_picker_header">Apabila Anda tidak menentukan folder induk, folder baru ini akan dibuat sebagai folder dengan level paling atas.</string>
+    <string name="parent_picker_folder_icon_description">Ikon folder</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder yang memiliki sub-folder</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Buang perubahan?</string>
     <string name="dialog_discard_changes_message">Perubahan yang belum disimpan akan dibuang.</string>
     <string name="discard">Buang</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">EMAIL TERENKRIPSI</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">Alamat email adalah duplikat</string>
     <string name="invalid_code">Kode tidak valid</string>
     <string name="message_drafted">Gagal mengirim pesan. Pesan Anda disimpan dalam folder draf</string>
+    <string name="attachment_failed_message_drafted">Harap hapus dan lampirkan ulang \"%s\" dan kirim ulang pesan ini setelahnya. Pesan yang bersangkutan dapat Anda temukan pada folder \"Draf\".</string>
     <string name="open_drawer">Buka</string>
     <string name="close_drawer">Tutup</string>
     <string name="inbox_option">Kotak masuk</string>
@@ -380,7 +403,6 @@
     <string name="hyperlink_confirmation_dialog_text_html">Anda akan meluncurkan peramban web dan pindah
 ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda ingin melanjutkan?</string>
     <string name="dont_ask_again">Jangan tanya lagi</string>
-    <string name="x_none">Tidak ada</string>
     <string name="changes_affected_after_closing">Perubahan terjadi setelah aplikasi ditutup</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN salah, %d upaya tersisa</item>
@@ -388,7 +410,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">%d upaya sampai data yang aman dihapus!</item>
     </plurals>
-    <string name="x_done">Selesai</string>
     <string name="logout">Keluar</string>
     <string name="log_out">Keluar %s?</string>
     <string name="logout_question">Yakin ingin keluar?</string>
@@ -414,7 +435,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="available_addresses">Alamat yang tersedia</string>
     <string name="inactive_addresses">Alamat tidak aktif</string>
     <string name="not_set">Tidak diatur</string>
-    <string name="edit_notification_email">Edit Alamat Email Pemulihan</string>
+    <string name="edit_notification_email">Sunting Alamat Email Pemulihan</string>
     <string name="available_swipe_actions">Tindakan yang tersedia</string>
     <string name="no_available_addresses">Anda tidak memiliki alamat yang tersedia</string>
     <string name="no_inactive_addresses">Anda tidak memiliki alamat tidak aktif</string>
@@ -425,7 +446,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="delete_selected">Hapus yang Dipilih</string>
     <string name="pin_not_activated">PIN tidak diaktifkan</string>
     <string name="available_options">Pilihan yang tersedia</string>
-    <string name="change_recovery_email">Ubah Email Sekarang untuk Atur Ulang/Notifikasi</string>
+    <string name="change_recovery_email">Ubah Email Pengaturan Ulang/Notifikasi</string>
     <string name="background_sync_subtitle">Jika opsi ini diaktifkan, aplikasi akan disinkronkan dengan server di latar belakang. Menonaktifkan fitur ini akan menonaktifkan notifikasi push.</string>
     <string-array name="notification_options">
         <item>Tidak ada getaran atau suara</item>
@@ -591,7 +612,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="convert_question_subtitle">Ini akan mengunggah kontak lokal pada perangkat Anda ke direktori kontak ProtonMail Anda. Anda kemudian dapat mengakses kontak ini di perangkat Anda yang lain melalui ProtonMail.</string>
     <string name="refresh_contacts">Muat Ulang</string>
     <string name="upload">Unggah</string>
-    <string name="invalid_email_some_contacts">Alamat email tidak valid untuk beberapa kontak Anda</string>
+    <string name="invalid_email_some_contacts">Alamat email sebagian kontak Anda tidak valid</string>
     <string name="protonmail_contacts">Kontak ProtonMail</string>
     <string name="device_contacts">Kontak Perangkat</string>
     <string name="print_date_template">Tanggal: %s</string>
@@ -608,7 +629,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="load_embedded_images_failed_no_network">Gagal memuat gambar yang disematkan. Mohon periksa koneksi jaringan Anda.</string>
     <string name="load_embedded_images_failed">Gagal memuat gambar yang disematkan.</string>
     <string name="unlimited">Tanpa Batas</string>
-    <string name="local_storage_cleared">Penyimpanan lokal dihapus</string>
+    <string name="local_storage_cleared">Ruang penyimpanan lokal dikosongkan</string>
     <string name="recipient_popup_compose_to">Tulis untuk</string>
     <string name="recipient_popup_copy_address">Salin alamat</string>
     <string name="recipient_popup_see_details">Lihat rincian kontak</string>
@@ -734,8 +755,10 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         Silakan pertimbangkan untuk membebaskan ruang atau membayar penyimpanan lebih sebelum kapasitas penyimpanan Anda habis.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Izin</string>
-    <string name="need_storage_permissions_add_attachment_text">Untuk menambah lampiran, Anda harus mengizinkan         akses ke penyimpanan.</string>
-    <string name="need_storage_permissions_download_attachment_text">Untuk mengunduh lampiran, Anda harus mengizinkan         akses ke penyimpanan.</string>
+    <string name="need_storage_permissions_add_attachment_text">Untuk dapat menambahkan lampiran, Anda harus terlebih dahulu
+        memberikan kami izin akses ke dalam perangkat Anda.</string>
+    <string name="need_storage_permissions_download_attachment_text">Untuk dapat mengunduh lampiran, Anda harus terlebih dahulu
+        memberikan kami izin akses ke dalam perangkat Anda.</string>
     <string name="need_contacts_permissions_text">Untuk mengimpor kontak, Anda harus mengizinkan akses ke kontak.</string>
     <string name="push_notifications_alert_title">Notifikasi Pemberitahuan Push</string>
     <string name="push_notifications_alert_subtitle">Pemberitahuan Push untuk ProtonMail tidak dapat berfungsi tanpa memperbarui layanan Google Play.</string>
@@ -835,8 +858,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="labels_and_folders">Label &amp; folder </string>
     <string name="folders">Folder</string>
     <string name="labels">Label</string>
-    <string name="labels_manager">Pengelola Label</string>
-    <string name="folders_manage">Pengelola Folder</string>
     <string name="swipe_actions">Tindakan geser</string>
     <string name="swipe_action_right">Geser kanan</string>
     <string name="swipe_action_left">Geser kiri</string>
@@ -862,7 +883,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         <item quantity="other">Pesan telah diarsipkan</item>
     </plurals>
     <!-- endregion -->
-    <string name="local_storage">Batas penyimpanan lokal</string>
+    <string name="local_storage">Batas kuota penyimpanan lokal</string>
     <string name="storage_value">%1$d MB (%2$.2f MB telah digunakan)</string>
     <!-- endregion -->
     <string name="app_settings">Pengaturan aplikasi</string>
@@ -934,6 +955,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Kunci API Firebase tidak valid. Notifikasi dorong tidak akan bekerja.</string>
     <string name="failed_saving_draft_online">Gagal menyimpan draf daring pesan: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Terdapat kesalahan pada lampiran pesan berikut: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Tidak dapat membuka pesan ini saat sedang dikirim</string>
     <string name="enable_conversation_mode">Aktifkan mode percakapan</string>
     <!-- endregion -->

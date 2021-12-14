@@ -23,10 +23,13 @@
     <string name="x_add_folder">Lägg till mapp</string>
     <string name="x_add_label">Lägg till etikett</string>
     <string name="x_days">Dagar</string>
+    <string name="x_done">Färdig</string>
+    <string name="x_edit">Edit</string>
     <string name="x_folders">Mappar</string>
     <string name="x_hours">Timmar</string>
     <string name="x_labels">Etiketter</string>
     <string name="x_more">Mer</string>
+    <string name="x_none">Ingen</string>
     <string name="x_search">Sök</string>
     <string name="x_set">Ställ in</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Ämne:</string>
     <string name="composer_to">Till:</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
-    <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Läs mer</a>
+    <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Läs mer</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Detta objekt är markerat</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Ställ in PIN-kod</string>
     <string name="settings_confirm_pin_code_title">Upprepa PIN-kod</string>
     <string name="settings_pins_dont_match">PIN-koderna måste matcha!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Ställ in svepgester för att komma åt de mest använda åtgärderna.</string>
     <string name="settings_swipe_left_to_right">Vänster till höger</string>
     <string name="settings_swipe_right_to_left">Höger till vänster</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Överordnad mapp</string>
+    <string name="parent_picker_header">Om du inte väljer en överordnad mapp kommer den nya mappen att skapas som en mapp i toppnivå.</string>
+    <string name="parent_picker_folder_icon_description">Mappikon</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Ignorera ändringar?</string>
     <string name="dialog_discard_changes_message">Alla osparade ändringar kommer gå förlorade.</string>
     <string name="discard">Förkasta</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">KRYPTERAD E-POST</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">E-postadress är en dubblett</string>
     <string name="invalid_code">Kod är inte giltig</string>
     <string name="message_drafted">Det gick inte att skicka. Dina meddelanden finns sparade i Utkast.</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Öppna</string>
     <string name="close_drawer">Stäng</string>
     <string name="inbox_option">Inkorg</string>
@@ -169,11 +192,11 @@
     <string name="no_messages">Inga meddelanden</string>
     <string name="no_labels">Inga etiketter</string>
     <string name="to">Till</string>
-    <string name="cc">Kopia</string>
-    <string name="bcc">Hemlig kopia</string>
+    <string name="cc">Cc</string>
+    <string name="bcc">Bcc</string>
     <string name="to_prefix">Till:</string>
-    <string name="cc_prefix">Kopia:</string>
-    <string name="bcc_prefix">Hemlig kopia:</string>
+    <string name="cc_prefix">Cc:</string>
+    <string name="bcc_prefix">Bcc:</string>
     <string name="from_prefix">Från:</string>
     <string name="date_prefix">Datum:</string>
     <string name="view_details">DETALJER</string>
@@ -294,10 +317,10 @@
     <string name="label_name_empty">Etikett måste ha ett namn</string>
     <string name="label_name_duplicate">Detta etikettnamn finns redan</string>
     <string name="label_created">Etikett skapad</string>
-    <string name="label_invalid">Etiketten skapades inte på grund av ogiltigt namn.</string>
+    <string name="label_invalid">Etikett lades inte till på grund av ogiltigt namn.</string>
     <string name="undo">Ångra</string>
     <string name="customize_swipe_actions">Anpassa svep-åtgärder</string>
-    <string name="message_can_not_edit">Kan inte svara/vidarebefordra. Meddelandet har inte skickats än.</string>
+    <string name="message_can_not_edit">Kan inte svara/vidarebefordra, detta meddelande har ännu inte skickats</string>
     <string name="label_apply">Tillämpa</string>
     <string name="label_delete">Radera</string>
     <string name="label_add">Lägg till</string>
@@ -340,7 +363,7 @@
     <string name="engagement_subtitle_expire">Meddelanden du skickar kan ställas in att automatiskt raderas efter en viss tid.</string>
     <string name="engagement_subtitle_help">Du kan får hjälp och support på protonmail.com/support. Fel kan också rapporteras via appen.</string>
     <string name="attachment_exists">Bilagan är redan bifogad</string>
-    <string name="sending_email_success">Verifieringskod har skickats</string>
+    <string name="sending_email_success">Verifieringskod skickad</string>
     <string name="sending_email_failed">Det gick inte att skicka verifieringskoden</string>
     <string name="send_code_wait">Vänta %d sekunder och klicka igen</string>
     <string name="eo_password_not_completed">Lösenord för meddelandet är inte angivet.</string>
@@ -384,7 +407,6 @@
     <string name="processing_attachment">Bearbetar bilaga</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du är på väg att starta webbläsaren och gå till:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vill du fortsätta?</string>
     <string name="dont_ask_again">Fråga inte igen</string>
-    <string name="x_none">Ingen</string>
     <string name="changes_affected_after_closing">Ändringar kommer att träda i kraft efter att appen stängts</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Felaktig PIN-kod, %d försök återstår</item>
@@ -394,7 +416,6 @@
         <item quantity="one">%d försök tills datat raderas!</item>
         <item quantity="other">%d försök tills datat raderas!</item>
     </plurals>
-    <string name="x_done">Klar</string>
     <string name="logout">Logga ut</string>
     <string name="log_out">Logga ut %s?</string>
     <string name="logout_question">Är du säker på att du vill logga ut?</string>
@@ -431,7 +452,7 @@
     <string name="delete_selected">Ta bort valda</string>
     <string name="pin_not_activated">PIN-kod inte aktiverad</string>
     <string name="available_options">Tillgängliga alternativ</string>
-    <string name="change_recovery_email">Ändra återställningsadress</string>
+    <string name="change_recovery_email">Ändra e-postadress för återställning/avisering</string>
     <string name="background_sync_subtitle">Om detta alternativ är aktiverat, kommer appen att synkronisera med servern i bakgrunden. Om den avaktivers så kommer push-notifieringar att avaktiveras.</string>
     <string-array name="notification_options">
         <item>Inga vibrationer eller ljud</item>
@@ -561,7 +582,7 @@
     <string name="update_label">Uppdatera etikett</string>
     <string name="max_labels_in_message">Meddelandet %1$s kan inte ha mer än %2$d etiketter.</string>
     <string name="delete">Radera</string>
-    <string name="subject_copied">Ämnesraden kopierad till urklipp</string>
+    <string name="subject_copied">Ämnet kopierad till urklipp</string>
     <string name="details_copied">Detaljer kopierades till urklipp</string>
     <string name="saving">Sparar...</string>
     <string name="update_folder">Uppdatera mapp</string>
@@ -749,7 +770,7 @@
     <string name="push_notifications_alert_title">Push-notifieringar</string>
     <string name="push_notifications_alert_subtitle">Push-meddelanden för ProtonMail fungerar inte utan uppdaterade Google Play-tjänster.</string>
     <string name="app_locked">Appen är låst</string>
-    <string name="use_pin_instead">Använd PIN-kod istället</string>
+    <string name="use_pin_instead">Använd PIN istället</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Inga biometriska data registrerade</string>
     <string name="log_in_using_biometric_credential">Lås upp med dina biometriska inloggningsuppgifter</string>
@@ -766,7 +787,7 @@
     <string name="subscription">Prenumeration</string>
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Betalningsmetod</string>
-    <string name="password_manager">Lösenordshanterare</string>
+    <string name="password_manager">Lösenordshantering</string>
     <string name="password_changed">Lösenord ändrades.</string>
     <string name="recovery_email">E-postadress för återställning</string>
     <string name="recovery_email_changed">E-postadressen för återställning ändrades.</string>
@@ -786,7 +807,7 @@
     <string name="mobile_footer_is_premium">Endast betalande användare tillåts att ändra mobil-sidfoten</string>
     <string name="mobile_footer_info">Denna sidfot läggs till efter din signatur</string>
     <!-- region Snooze Settings -->
-    <string name="snooze_header">Snooza</string>
+    <string name="snooze_header">Skjut upp</string>
     <string name="notifications_snooze">Notifications snooze</string>
     <string-array name="quick_snooze_values">
         <item>30 minuter</item>
@@ -798,7 +819,7 @@
         <item>Anpassad</item>
         <item>Schemalagd</item>
     </string-array>
-    <string name="notifications_snoozed">Notifieringar snoozade</string>
+    <string name="notifications_snoozed">Aviseringar uppskjutna</string>
     <string name="notifications_snooze_scheduled">Schemalagd</string>
     <string name="notifications_snooze_scheduled_settings">Inställningar för schemalagda Snooze</string>
     <string name="notifications_snooze_current_status">Status</string>
@@ -837,7 +858,7 @@
     <string name="privacy">Integritet</string>
     <string name="auto_download_messages_title">Automatisk nedladdning av meddelanden</string>
     <string name="auto_download_messages_subtitle">När det här alternativet är aktiverat laddas meddelandets innehåll automatiskt ner varje gång du får ett nytt e-postmeddelande (detta kommer att konsumera mer data). Om det här alternativet inte är aktiverat kommer meddelandets innehåll endast att laddas ner när du öppnar ett e-postmeddelande. (Observera: om du antingen rensar cachen eller loggar ut kommer du inte att kunna läsa meddelandets innehåll när du är offline.)</string>
-    <string name="settings_background_sync">Synka i bakgrunden</string>
+    <string name="settings_background_sync">Bakgrundssynkronisering</string>
     <string name="settings_auto_show_images">Visa externa bilder automatiskt</string>
     <string name="settings_auto_show_embedded_images">Visa inbäddade bilder automatiskt</string>
     <string name="settings_prevent_taking_screenshots">Förhindra skärmdumpar</string>
@@ -845,8 +866,6 @@
     <string name="labels_and_folders">Etiketter &amp; mappar </string>
     <string name="folders">Mappar</string>
     <string name="labels">Etiketter</string>
-    <string name="labels_manager">Etiketthanterare</string>
-    <string name="folders_manage">Mapphantering</string>
     <string name="swipe_actions">Svepåtgärder</string>
     <string name="swipe_action_right">Svep höger</string>
     <string name="swipe_action_left">Svep vänster</string>
@@ -885,7 +904,7 @@
     <string name="extended_notifications_description">Aktivera denna inställning om du vill se e-postens avsändare i aviseringarna.</string>
     <string name="notification_settings">Aviseringsinställningar</string>
     <string name="auto_lock">Autolås</string>
-    <string name="auto_lock_app">Autolås applikationen</string>
+    <string name="auto_lock_app">Lås app automatiskt</string>
     <string name="auto_lock_description">Slå på den här funktionen för att automatiskt låsa din app och använd en PIN-kod eller fingeravtryck för att låsa upp den.</string>
     <string name="change_pin_code">Ändra PIN-kod</string>
     <string name="auto_lock_timer">Autolås timer</string>
@@ -911,7 +930,7 @@
     <!-- region Multi Account -->
     <string name="remove_account_question">Ta bort %s?</string>
     <string name="signed_in_with">Inloggad med %s</string>
-    <string name="signed_in_with_logged_out_from">Utloggad från %1$s och loggade in med %2$s</string>
+    <string name="signed_in_with_logged_out_from">Loggade ut från %1$s och loggade in med %2$s</string>
     <string name="connect_account_limit_title">Gräns uppnådd</string>
     <string name="connect_account_limit_subtitle">Du kan inte lägga till ytterligare ett gratis ProtonMail-konto. Endast ett gratis ProtonMail-konto kan läggas till. Logga ut från ditt andra gratiskonto eller uppgradera ett av dina gratiskonton till ett betalt konto.</string>
     <string name="switch_accounts_question">Byt konto?</string>
@@ -947,6 +966,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ogiltig Firebase API-nyckel. Push-meddelanden kommer inte fungera.</string>
     <string name="failed_saving_draft_online">Det gick inte att spara utkast för meddelande: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Kan inte öppna detta meddelande när det skickas</string>
     <string name="enable_conversation_mode">Aktivera konversationsläge</string>
     <!-- endregion -->

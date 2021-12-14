@@ -23,10 +23,13 @@
     <string name="x_add_folder">新增資料夾</string>
     <string name="x_add_label">新增標籤</string>
     <string name="x_days">天</string>
+    <string name="x_done">完成</string>
+    <string name="x_edit">編輯</string>
     <string name="x_folders">資料夾</string>
     <string name="x_hours">小時</string>
     <string name="x_labels">標籤</string>
     <string name="x_more">更多</string>
+    <string name="x_none">無</string>
     <string name="x_search">搜尋</string>
     <string name="x_set">設定</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">主旨：</string>
     <string name="composer_to">收件人：</string>
     <string name="set_msg_password_title">設定密碼</string>
-    <string name="set_msg_password_info">為非 ProtonMail 使用者設定加密此郵件的密碼。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">瞭解更多</a>
+    <string name="set_msg_password_info">設定密碼以加密此郵件給非 Protonmail 使用者。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">瞭解更多</a>
     </string>
     <string name="set_msg_password_info_icon_description">資訊</string>
     <string name="set_msg_password_msg_password_title">郵件密碼</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">此項目已保留。</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">佈景主題</string>
     <string name="settings_create_pin_code_title">設定 PIN 碼</string>
     <string name="settings_confirm_pin_code_title">重複輸入 PIN 碼</string>
     <string name="settings_pins_dont_match">PIN 碼必須相符！</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">設定滑動手勢以存取最常用動作。</string>
     <string name="settings_swipe_left_to_right">由左至右</string>
     <string name="settings_swipe_right_to_left">從右到左</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App 主題</string>
+    <string name="app_theme_light">淺色</string>
+    <string name="app_theme_dark">深色</string>
+    <string name="app_theme_system">系統預設</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">選取主資料夾</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>已選取主資料夾</b> 點擊可變更</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">上層資料夾</string>
+    <string name="parent_picker_header">若你沒有選定上層資料夾，此資料夾將會以頂層資料夾建立。</string>
+    <string name="parent_picker_folder_icon_description">資料夾圖示</string>
+    <string name="parent_picker_parent_folder_icon_description">帶有兒童圖示的資料夾</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">放棄變更？</string>
     <string name="dialog_discard_changes_message">未儲存的變更將會被丟棄。</string>
     <string name="discard">捨棄</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">加密的電子郵件</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">電子郵件地址是重複的</string>
     <string name="invalid_code">代碼無效</string>
     <string name="message_drafted">訊息發送失敗。你的郵件已保存在「草稿」資料夾中</string>
+    <string name="attachment_failed_message_drafted">請移除並重新附加「%s」然後再次寄送郵件。您可以在「草稿」資料夾中找到您的郵件。</string>
     <string name="open_drawer">打開</string>
     <string name="close_drawer">關閉</string>
     <string name="inbox_option">收件匣</string>
@@ -377,7 +400,6 @@
     <string name="processing_attachment">正在處理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即將啟動網頁瀏覽器並導航到:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;您想繼續嗎？</string>
     <string name="dont_ask_again">不要再詢問</string>
-    <string name="x_none">無</string>
     <string name="changes_affected_after_closing">變更將會在關閉應用程式後才生效</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN 碼不正確，剩下 %d 次嘗試</item>
@@ -385,7 +407,6 @@
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">%d 次嘗試無效後將安全抹除資料！</item>
     </plurals>
-    <string name="x_done">完成</string>
     <string name="logout">登出</string>
     <string name="log_out">登出 %s？</string>
     <string name="logout_question">您確定要登出嗎？</string>
@@ -832,8 +853,6 @@
     <string name="labels_and_folders">標籤與資料夾 </string>
     <string name="folders">資料夾</string>
     <string name="labels">標籤</string>
-    <string name="labels_manager">標籤管理程式</string>
-    <string name="folders_manage">資料夾管理員</string>
     <string name="swipe_actions">滑動動作</string>
     <string name="swipe_action_right">向右滑動</string>
     <string name="swipe_action_left">向左滑動</string>
@@ -931,6 +950,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">無效的 Firebase API 金鑰。推送通知將無法運作。</string>
     <string name="failed_saving_draft_online">無法儲存郵件的線上草稿：「%s」</string>
+    <string name="failed_uploading_attachment_online">郵件的附件錯誤：「%s」</string>
     <string name="cannot_open_message_while_being_sent">傳送時無法開啟此郵件</string>
     <string name="enable_conversation_mode">啟用會話模式</string>
     <!-- endregion -->

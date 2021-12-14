@@ -23,10 +23,13 @@
     <string name="x_add_folder">Ajouter un dossier</string>
     <string name="x_add_label">Ajouter un label</string>
     <string name="x_days">Jours</string>
+    <string name="x_done">Terminé</string>
+    <string name="x_edit">Modifier</string>
     <string name="x_folders">Dossiers</string>
     <string name="x_hours">Heures</string>
     <string name="x_labels">Labels</string>
     <string name="x_more">Plus</string>
+    <string name="x_none">Aucun</string>
     <string name="x_search">Recherche</string>
     <string name="x_set">Définir</string>
     <string name="x_0">0</string>
@@ -44,12 +47,12 @@
     <!-- region Composer -->
     <string name="composer_bcc">Cci :</string>
     <string name="composer_cc">Cc :</string>
-    <string name="composer_compose_email">Écrire un courriel</string>
+    <string name="composer_compose_email">Écrire un e-mail</string>
     <string name="composer_from">De :</string>
     <string name="composer_subject">Objet :</string>
     <string name="composer_to">À :</string>
     <string name="set_msg_password_title">Définir le mot de passe</string>
-    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">En savoir plus</a>
+    <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Mot de passe du message</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Cet élément est coché</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Définir le code PIN</string>
     <string name="settings_confirm_pin_code_title">Répéter le code PIN</string>
     <string name="settings_pins_dont_match">Les codes PIN doivent être identiques !</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Configurez des gestes de balayage pour accéder aux actions les plus utilisées.</string>
     <string name="settings_swipe_left_to_right">De gauche à droite</string>
     <string name="settings_swipe_right_to_left">De droite à gauche</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Dossier parent</string>
+    <string name="parent_picker_header">Si vous ne sélectionnez pas de dossier parent, ce nouveau dossier sera créé en tant que dossier de niveau supérieur.</string>
+    <string name="parent_picker_folder_icon_description">Icône de dossier</string>
+    <string name="parent_picker_parent_folder_icon_description">Dossier avec icône héritée</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Abandonner les modifications ?</string>
     <string name="dialog_discard_changes_message">Tous les changements non enregistrés seront perdus.</string>
     <string name="discard">Abandonner</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">MESSAGERIE CHIFFRÉE</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">L’adresse électronique est un doublon</string>
     <string name="invalid_code">Le code est invalide</string>
     <string name="message_drafted">L\'envoi du message a échoué. Vos messages sont sauvegardés dans le dossier brouillons</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Ouvrir</string>
     <string name="close_drawer">Fermer</string>
     <string name="inbox_option">Boîte de réception</string>
@@ -182,7 +205,7 @@
     <string name="reply_all">Répondre à tous</string>
     <string name="forward">Transférer</string>
     <string name="subject">Objet</string>
-    <string name="email_subject">Objet du courriel</string>
+    <string name="email_subject">Objet de l\'e-mail</string>
     <string name="define_message_password">Mot de passe du message</string>
     <string name="confirm_message_password">Confirmer le mot de passe</string>
     <string name="define_password_hint">Définir un indice (facultatif)</string>
@@ -336,7 +359,7 @@
     <string name="engagement_subtitle_welcome">Votre nouveau compte de messagerie chiffrée a été mis en place et est prêt à envoyer et recevoir des messages chiffrés.</string>
     <string name="engagement_subtitle_swipe">Vous pouvez personnaliser les gestes de défilement dans les paramètres de l\'application ProtonMail.</string>
     <string name="engagement_subtitle_labels">Créez et ajoutez des labels pour organiser votre boîte de réception. Appuyez et maintenez sur un message pour afficher toutes les options.</string>
-    <string name="engagement_subtitle_encryption">Votre boîte de réception est désormais protégée par un chiffrement de bout en bout. Pour envoyer automatiquement des courriels sécurisés à vos contacts, invitez-les à rejoindre ProtonMail ! Vous pouvez également chiffrer manuellement vos messages s\'ils n\'utilisent pas ProtonMail.</string>
+    <string name="engagement_subtitle_encryption">Votre boîte de réception est désormais protégée par un chiffrement de bout en bout. Pour envoyer automatiquement des e-mails sécurisés à vos contacts, invitez-les à rejoindre ProtonMail ! Vous pouvez également chiffrer manuellement vos messages s\'ils n\'utilisent pas ProtonMail.</string>
     <string name="engagement_subtitle_expire">Il est possible de mettre en place un délai d\'expiration après lequel les messages que vous envoyez s\'effacent automatiquement.</string>
     <string name="engagement_subtitle_help">Vous pouvez obtenir de l\'aide via protonmail.com/support. Les bugs peuvent également être signalés depuis l\'application.</string>
     <string name="attachment_exists">Pièce jointe déjà ajoutée</string>
@@ -384,7 +407,6 @@
     <string name="processing_attachment">Traitement des pièces jointes</string>
     <string name="hyperlink_confirmation_dialog_text_html">Vous êtes sur le point de lancer le navigateur web et de visiter : &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Souhaitez-vous continuer ?</string>
     <string name="dont_ask_again">Ne plus demander</string>
-    <string name="x_none">Aucun</string>
     <string name="changes_affected_after_closing">Les modifications prendront effet après la fermeture de l\'application</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Code PIN incorrect, %d tentative restante</item>
@@ -394,7 +416,6 @@
         <item quantity="one">%d tentative restante avant l’effacement sécurisé des données !</item>
         <item quantity="other">%d tentatives restantes avant l’effacement sécurisé des données !</item>
     </plurals>
-    <string name="x_done">Terminé</string>
     <string name="logout">Déconnexion</string>
     <string name="log_out">Déconnecter %s ?</string>
     <string name="logout_question">Êtes-vous sûr de vouloir vous déconnecter ?</string>
@@ -565,8 +586,8 @@
     <string name="details_copied">Détails copiés dans le presse-papiers</string>
     <string name="saving">Enregistrement en cours...</string>
     <string name="update_folder">Mettre à jour le dossier</string>
-    <string name="spam_score_100">Ce courriel semble provenir d\'une adresse ProtonMail, mais ne provient pas de notre système et a échoué aux exigences d\'authentification. Il a peut-être été falsifié ou transmis de manière incorrecte !</string>
-    <string name="spam_score_101">Ce courriel a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement !</string>
+    <string name="spam_score_100">Cet e-mail semble provenir d\'une adresse ProtonMail, mais ne provient pas de notre système et a échoué aux exigences d\'authentification. Il a peut-être été falsifié ou transmis de manière incorrecte !</string>
+    <string name="spam_score_101">Cet e-mail a échoué aux tests d\'authentification de son domaine. Il a peut-être été falsifié ou transféré incorrectement !</string>
     <string name="spam_score_102">Ce message peut être une tentative d’hameçonnage. Veuillez vérifier l’expéditeur et le contenu afin de vous assurer qu’ils sont légitimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">EN SAVOIR PLUS</a>
     </string>
     <string name="print_from_template">De : %s</string>
@@ -654,8 +675,8 @@
     </string>
     <string name="channel_name_attachments">Pièces jointes</string>
     <string name="channel_description_attachments">Informe sur l\'état du téléchargement des pièces jointes</string>
-    <string name="channel_name_emails">Courriels</string>
-    <string name="channel_description_emails">Notifications entrantes par courriel</string>
+    <string name="channel_name_emails">E-mails</string>
+    <string name="channel_description_emails">Notifications entrantes par e-mail</string>
     <string name="channel_name_account">Compte</string>
     <string name="channel_description_account">État du compte</string>
     <string name="channel_name_ongoing_operations">Opérations en cours</string>
@@ -735,7 +756,7 @@
     <string name="contacts_add_photo_select_camera">Utiliser l\'appareil photo</string>
     <string name="save_group_validation_error">Veuillez fournir un nom de groupe</string>
     <!-- region Storage Limit Reached -->
-    <string name="storage_limit_alert">Limite de stockage atteinte. Impossible d\'envoyer ou de recevoir des courriels.
+    <string name="storage_limit_alert">Limite de stockage atteinte. Impossible d\'envoyer ou de recevoir des e-mails.
         Appuyez pour en savoir plus.</string>
     <string name="storage_limit_warning_title">Avertissement</string>
     <string name="storage_limit_reached_text">Vous avez atteint 100 % de votre capacité de stockage. Vous
@@ -840,7 +861,7 @@
     <string name="mailbox">Messagerie</string>
     <string name="privacy">Confidentialité</string>
     <string name="auto_download_messages_title">Téléchargement automatique des messages</string>
-    <string name="auto_download_messages_subtitle">Lorsque cette option sera activée, les corps des messages seront automatiquement téléchargés dès que vous recevrez la notification de réception d\'un message (ceci consommera plus de données). Si cette option n\'est pas activée, les corps des messages ne seront téléchargés qu\'à l\'ouverture des courriels (note : quelle que soit l\'option choisie, si vous effacez le cache ou si vous vous déconnectez, vous ne pourrez pas lire les corps des messages lorsque vous êtes hors ligne).</string>
+    <string name="auto_download_messages_subtitle">Lorsque cette option sera activée, les corps des messages seront automatiquement téléchargés dès que vous recevrez la notification de réception d\'un message (ceci consommera plus de données). Si cette option n\'est pas activée, les corps des messages ne seront téléchargés qu\'à l\'ouverture des e-mails (note : quelle que soit l\'option choisie, si vous effacez le cache ou si vous vous déconnectez, vous ne pourrez pas lire les corps des messages lorsque vous êtes hors ligne).</string>
     <string name="settings_background_sync">Synchronisation en arrière-plan</string>
     <string name="settings_auto_show_images">Afficher automatiquement les images distantes</string>
     <string name="settings_auto_show_embedded_images">Afficher automatiquement les images incorporées</string>
@@ -849,8 +870,6 @@
     <string name="labels_and_folders">Labels &amp; dossiers </string>
     <string name="folders">Dossiers</string>
     <string name="labels">Labels</string>
-    <string name="labels_manager">Gestionnaire de labels</string>
-    <string name="folders_manage">Gestionnaire de dossiers</string>
     <string name="swipe_actions">Actions de balayage</string>
     <string name="swipe_action_right">Balayer vers la droite</string>
     <string name="swipe_action_left">Balayer vers la gauche</string>
@@ -886,7 +905,7 @@
     <!-- region App Settings -->
     <string name="push_notifications">Notifications push</string>
     <string name="extended_notifications">Notifications étendues</string>
-    <string name="extended_notifications_description">Activez cette fonctionnalité pour voir l\'expéditeur\ndes courriels dans les notifications push.</string>
+    <string name="extended_notifications_description">Activez cette fonctionnalité pour voir l\'expéditeur\ndes e-mails dans les notifications push.</string>
     <string name="notification_settings">Paramètres de notification</string>
     <string name="auto_lock">Verrouillage automatique</string>
     <string name="auto_lock_app">Verrouillage automatique de l\'application</string>
@@ -951,6 +970,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Clé API pour Firebase invalide. Les notifications push ne fonctionneront pas.</string>
     <string name="failed_saving_draft_online">Échec de l\'enregistrement du brouillon en ligne pour le message : \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Impossible d\'ouvrir ce message lors de son envoi</string>
     <string name="enable_conversation_mode">Activer le mode conversation</string>
     <!-- endregion -->

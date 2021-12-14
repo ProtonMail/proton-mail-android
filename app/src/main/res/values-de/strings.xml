@@ -23,10 +23,13 @@
     <string name="x_add_folder">Ordner hinzufügen</string>
     <string name="x_add_label">Kategorie hinzufügen</string>
     <string name="x_days">Tage</string>
+    <string name="x_done">Fertig</string>
+    <string name="x_edit">Bearbeiten</string>
     <string name="x_folders">Ordner</string>
     <string name="x_hours">Stunden</string>
     <string name="x_labels">Kategorien</string>
     <string name="x_more">Mehr</string>
+    <string name="x_none">Keine</string>
     <string name="x_search">Suchen</string>
     <string name="x_set">Festlegen</string>
     <string name="x_0">0</string>
@@ -42,14 +45,14 @@
     <string name="drawer_create_label_description">Neue Kategorie erstellen</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">BCC:</string>
-    <string name="composer_cc">CC:</string>
-    <string name="composer_compose_email">Neue E-Mail verfassen</string>
+    <string name="composer_bcc">Bcc:</string>
+    <string name="composer_cc">Cc:</string>
+    <string name="composer_compose_email">E-Mail verfassen</string>
     <string name="composer_from">Von:</string>
     <string name="composer_subject">Betreff:</string>
     <string name="composer_to">An:</string>
     <string name="set_msg_password_title">Passwort festlegen</string>
-    <string name="set_msg_password_info">Legen Sie ein Passwort fest, um diese Nachricht für Nicht-Protonmail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Mehr erfahren</a>
+    <string name="set_msg_password_info">Legen Sie ein Passwort fest, um diese Nachricht für Nicht-Protonmail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Mehr erfahren</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Nachrichtenpasswort</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Dieser Eintrag wurde markiert</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Farbschema</string>
     <string name="settings_create_pin_code_title">PIN festlegen</string>
     <string name="settings_confirm_pin_code_title">PIN erneut eingeben</string>
     <string name="settings_pins_dont_match">PINs stimmen nicht überein!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Richten Sie Wischgesten ein, um Zugriff auf die am häufigsten verwendeten Aktionen zu bekommen.</string>
     <string name="settings_swipe_left_to_right">Von links nach rechts</string>
     <string name="settings_swipe_right_to_left">Von rechts nach links</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App-Farbschema</string>
+    <string name="app_theme_light">Hell</string>
+    <string name="app_theme_dark">Dunkel</string>
+    <string name="app_theme_system">Von System übernehmen</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Übergeordneten Ordner auswählen</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Übergeordneter Ordner ausgewählt.</b> Zum Ändern antippen</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Übergeordneter Ordner</string>
+    <string name="parent_picker_header">Wenn Sie keinen übergeordneten Ordner auswählen, wird dieser neue Ordner als übergeordneter Ordner erstellt.</string>
+    <string name="parent_picker_folder_icon_description">Ordnersymbol</string>
+    <string name="parent_picker_parent_folder_icon_description">Ordner mit Unterordner-Symbol</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Änderungen verwerfen?</string>
     <string name="dialog_discard_changes_message">Alle nicht gespeicherten Änderungen werden verworfen.</string>
     <string name="discard">Verwerfen</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">Verschlüsselte Nachrichten</string>
@@ -115,12 +137,13 @@
     <string name="api_offline_title">Die ProtonMail-API ist derzeit nicht erreichbar</string>
     <string name="api_offline">ProtonMail ist derzeit nicht erreichbar. Den aktuellen Status finden Sie unter https://protonstatus.com oder https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt gespeichert</string>
-    <string name="contact_saved_offline">Kontakt gespeichert. Wird synchronisiert, sobald eine Verbindung verfügbar ist.</string>
+    <string name="contact_saved_offline">Kontakt gespeichert. Wird synchronisiert, sobald eine Verbindung verfügbar ist</string>
     <string name="contact_exist">E-Mail-Adresse des Kontaktes bereits vorhanden</string>
     <string name="invalid_email">Ungültige E-Mail-Adresse</string>
     <string name="duplicate_email">Die E-Mail-Adresse ist ein Duplikat</string>
     <string name="invalid_code">Ungültiger Schlüssel</string>
     <string name="message_drafted">Das Senden der Nachricht ist fehlgeschlagen. Ihre Nachrichten werden im Ordner „Entwürfe” gespeichert.</string>
+    <string name="attachment_failed_message_drafted">Bitte entferne „%s”, füge es erneut ein und sende die Nachricht erneut. Deine Nachricht wurde im Ordner „Entwürfe” abgelegt.</string>
     <string name="open_drawer">Öffnen</string>
     <string name="close_drawer">Schließen</string>
     <string name="inbox_option">Posteingang</string>
@@ -186,7 +209,7 @@
     <string name="define_message_password">Passwort der Nachricht</string>
     <string name="confirm_message_password">Passwort bestätigen</string>
     <string name="define_password_hint">Hinweis angeben (optional)</string>
-    <string name="message_passwords_do_not_match">Passwörter stimmen nicht überein</string>
+    <string name="message_passwords_do_not_match">Login-Passwörter stimmen nicht überein</string>
     <string name="eo_passwords_do_not_match">Passwörter stimmen nicht überein</string>
     <string name="define_expiration_period">Gültigkeitsdauer festlegen</string>
     <string name="set_message_expiration">Gültigkeitsdauer der Nachricht festlegen</string>
@@ -194,7 +217,7 @@
     <string name="hours">Stunden</string>
     <string name="max_labels_exceeded">Die Nachricht %1$s darf höchstens %2$d Kategorien enthalten.</string>
     <string name="max_labels_selected">Maximal %d Kategorien erlaubt</string>
-    <string name="max_attachments_reached">Die maximale Anzahl von Anhängen pro Nachricht ist erreicht.</string>
+    <string name="max_attachments_reached">Die maximale Anzahl von Anhängen pro Nachricht wurde erreicht</string>
     <string name="max_attachments_size_reached">Die maximale Größe der Anhänge pro Nachricht wurde erreicht</string>
     <plurals name="hours_string">
         <item quantity="one">%d Stunde</item>
@@ -208,7 +231,7 @@
         <item quantity="one">%d Minute</item>
         <item quantity="other">%d Minuten</item>
     </plurals>
-    <string name="expiration_days">%d Tag(en)</string>
+    <string name="expiration_days">%dT</string>
     <string name="expiration_hours">%d Std.</string>
     <string name="expiration_minutes">%d Min.</string>
     <plurals name="attachments">
@@ -383,7 +406,6 @@
     <string name="hyperlink_confirmation_dialog_text_html">Nun wird Ihr Browser geöffnet und leitet Sie weiter
 zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten Sie fortfahren?</string>
     <string name="dont_ask_again">Nicht erneut nachfragen</string>
-    <string name="x_none">Keine</string>
     <string name="changes_affected_after_closing">Änderungen werden erst nach dem Schließen der App wirksam</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Ungültiger PIN-Code, %d verbleibender Versuch</item>
@@ -393,7 +415,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
         <item quantity="one">%d Versuch bis zur sicheren Datenlöschung!</item>
         <item quantity="other">%d Versuche bis zur sicheren Datenlöschung!</item>
     </plurals>
-    <string name="x_done">Fertig</string>
     <string name="logout">Abmelden</string>
     <string name="log_out">%s abmelden?</string>
     <string name="logout_question">Möchten Sie sich wirklich abmelden?</string>
@@ -839,8 +860,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="labels_and_folders">Kategorien und Ordner </string>
     <string name="folders">Ordner</string>
     <string name="labels">Kategorien</string>
-    <string name="labels_manager">Kategorien verwalten</string>
-    <string name="folders_manage">Ordnerverwaltung</string>
     <string name="swipe_actions">Wischgesten</string>
     <string name="swipe_action_right">Nach rechts wischen</string>
     <string name="swipe_action_left">Nach links wischen</string>
@@ -940,6 +959,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ungültiger Firebase API-Schlüssel. Push-Benachrichtigungen werden nicht funktionieren.</string>
     <string name="failed_saving_draft_online">Speichern des Online-Entwurfs für Nachricht „%s” fehlgeschlagen</string>
+    <string name="failed_uploading_attachment_online">Fehler beim Anhängen an die Nachricht: „%s”</string>
     <string name="cannot_open_message_while_being_sent">Nachricht kann während des Sendens nicht geöffnet werden</string>
     <string name="enable_conversation_mode">Themenbaum aktivieren</string>
     <!-- endregion -->

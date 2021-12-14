@@ -23,10 +23,13 @@
     <string name="x_add_folder">Aggiungi cartella</string>
     <string name="x_add_label">Aggiungi etichetta</string>
     <string name="x_days">Giorni</string>
+    <string name="x_done">Completato</string>
+    <string name="x_edit">Modifica</string>
     <string name="x_folders">Cartelle</string>
     <string name="x_hours">Ore</string>
     <string name="x_labels">Etichette</string>
     <string name="x_more">Altro</string>
+    <string name="x_none">Nessuno</string>
     <string name="x_search">Ricerca</string>
     <string name="x_set">Imposta</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Oggetto:</string>
     <string name="composer_to">A:</string>
     <string name="set_msg_password_title">Imposta password</string>
-    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per utenti non protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Per saperne di più</a>
+    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per utenti non protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Per saperne di più</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Password messaggio</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Questo elemento è controllato</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Imposta codice PIN</string>
     <string name="settings_confirm_pin_code_title">Ripeti il codice PIN</string>
     <string name="settings_pins_dont_match">I codici PIN devono corrispondere!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Configura i gesti di scorrimento per accedere alle azioni più usate.</string>
     <string name="settings_swipe_left_to_right">Da sinistra a destra</string>
     <string name="settings_swipe_right_to_left">Da destra a sinistra</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App tema</string>
+    <string name="app_theme_light">Chiaro</string>
+    <string name="app_theme_dark">Scuro</string>
+    <string name="app_theme_system">Predefinito di sistema</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Seleziona la cartella principale</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Cartella principale selezionata.</b> Tocca per modificare</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Cartella principale</string>
+    <string name="parent_picker_header">Se non selezioni una cartella principale, questa nuova cartella verrà creata come cartella di primo livello.</string>
+    <string name="parent_picker_folder_icon_description">Icona della cartella</string>
+    <string name="parent_picker_parent_folder_icon_description">Cartella con icona bambini</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Annullare le modifiche?</string>
     <string name="dialog_discard_changes_message">Eventuali modifiche non salvate verranno scartate.</string>
     <string name="discard">Annulla</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">EMAIL CRIPTATA</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">L\'indirizzo email è un duplicato</string>
     <string name="invalid_code">Codice non valido</string>
     <string name="message_drafted">Invio del messaggio fallito. I messaggi sono salvati nella cartella Bozze.</string>
+    <string name="attachment_failed_message_drafted">Sei pregato di rimuovere e riallegare \"%s\" e reinviare il messaggio. Il tuo messaggio si può trovare nella cartella \"Bozze\".</string>
     <string name="open_drawer">Apri</string>
     <string name="close_drawer">Chiudi</string>
     <string name="inbox_option">Posta in arrivo</string>
@@ -384,7 +407,6 @@
     <string name="processing_attachment">Elaborando l\'allegato</string>
     <string name="hyperlink_confirmation_dialog_text_html">Stai per avviare il browser web e navigare in:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vuoi continuare?</string>
     <string name="dont_ask_again">Non chiedermelo più</string>
-    <string name="x_none">Nessuno</string>
     <string name="changes_affected_after_closing">I cambiamenti avranno effetto dopo aver chiuso l\'app</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN errato, %d tentativo rimasto</item>
@@ -394,7 +416,6 @@
         <item quantity="one">%d tentativo rimasto prima dell\'eliminazione dei dati!</item>
         <item quantity="other">%d tentativi rimasti prima dell\'eliminazione dei dati!</item>
     </plurals>
-    <string name="x_done">Fatto</string>
     <string name="logout">Esci</string>
     <string name="log_out">Uscire %s?</string>
     <string name="logout_question">È sicuro di voler uscire?</string>
@@ -849,8 +870,6 @@
     <string name="labels_and_folders">Etichette e cartelle </string>
     <string name="folders">Cartelle</string>
     <string name="labels">Etichette</string>
-    <string name="labels_manager">Gestione etichette</string>
-    <string name="folders_manage">Gestore cartelle</string>
     <string name="swipe_actions">Azioni di scorrimento</string>
     <string name="swipe_action_right">Scorri a destra</string>
     <string name="swipe_action_left">Scorri a sinistra</string>
@@ -951,6 +970,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Chiave API Firebase non valida. Le notifiche push non funzioneranno.</string>
     <string name="failed_saving_draft_online">Salvataggio della bozza online per il messaggio: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Errore d\'allegato per il messaggio: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Impossibile aprire questo messaggio mentre viene inviato</string>
     <string name="enable_conversation_mode">Abilita modalità conversazione</string>
     <!-- endregion -->

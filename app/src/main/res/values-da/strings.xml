@@ -23,10 +23,13 @@
     <string name="x_add_folder">Tilføj mappe</string>
     <string name="x_add_label">Tilføj etiket</string>
     <string name="x_days">Dage</string>
+    <string name="x_done">Done</string>
+    <string name="x_edit">Edit</string>
     <string name="x_folders">Mapper</string>
     <string name="x_hours">Timer</string>
     <string name="x_labels">Etiketter</string>
     <string name="x_more">Mere</string>
+    <string name="x_none">None</string>
     <string name="x_search">Søg</string>
     <string name="x_set">Indstil</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Emne:</string>
     <string name="composer_to">Til:</string>
     <string name="set_msg_password_title">Indstil adgangskode</string>
-    <string name="set_msg_password_info">Angiv en adgangskode for at kryptere denne besked til ikke-protonmail-brugere. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Få mere at vide</a>
+    <string name="set_msg_password_info">Indstil en adgangskode til at kryptere denne besked for ikke-protonmail-brugere. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lær mere</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Beskedadgangskode</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Dette emne er afmærket</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Angiv pinkode</string>
     <string name="settings_confirm_pin_code_title">Gentag pinkode</string>
     <string name="settings_pins_dont_match">Pinkoderne skal matche!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Indstil strygebevægelser som adgang til de mest brugte handlinger.</string>
     <string name="settings_swipe_left_to_right">Venstre mod højre</string>
     <string name="settings_swipe_right_to_left">Højre mod venstre</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App-tema</string>
+    <string name="app_theme_light">Lys</string>
+    <string name="app_theme_dark">Mørk</string>
+    <string name="app_theme_system">Systemstandard</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Vælg overordnet mappe</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Overordnet mappe valgt.</b> Tryk for at ændre</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Overordnet mappe</string>
+    <string name="parent_picker_header">Hvis du ikke vælger en overordnet mappe, vil denne nye mappe blive oprettet som en mappe på øverste niveau.</string>
+    <string name="parent_picker_folder_icon_description">Mappeikon</string>
+    <string name="parent_picker_parent_folder_icon_description">Ikon for mappe med underordnede mapper</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Kassér ændringer?</string>
     <string name="dialog_discard_changes_message">Alle ikke-gemte ændringer vil blive kasseret.</string>
     <string name="discard">Kassér</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">KRYPTERET E-MAIL</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">E-mail er en dublet</string>
     <string name="invalid_code">Kode er ugyldig</string>
     <string name="message_drafted">Beskedafsendelse mislykkedes. Beskeder gemmes i mappen Kladder.</string>
+    <string name="attachment_failed_message_drafted">Fjern og vedhæft igen \"%s\", og send meddelelsen igen. Din besked kan findes i mappen \"Kladder\".</string>
     <string name="open_drawer">Åbn</string>
     <string name="close_drawer">Luk</string>
     <string name="inbox_option">Indbakke</string>
@@ -384,7 +407,6 @@
     <string name="processing_attachment">Behandler vedhæftninger</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Ønsker du at fortsætte?</string>
     <string name="dont_ask_again">Spørg ikke igen</string>
-    <string name="x_none">Ingen</string>
     <string name="changes_affected_after_closing">Ændringer effektueres efter lukning af app\'en</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Forkert PIN-kode, %d forsøg tilbage</item>
@@ -394,7 +416,6 @@
         <item quantity="one">%d forsøg inden sikker datarydning!</item>
         <item quantity="other">%d forsøg inden sikker datarydning!</item>
     </plurals>
-    <string name="x_done">Udført</string>
     <string name="logout">Log ud</string>
     <string name="log_out">Log %s ud?</string>
     <string name="logout_question">Sikker på, at du vil logge ud?</string>
@@ -849,8 +870,6 @@
     <string name="labels_and_folders">Etiketter &amp; mapper </string>
     <string name="folders">Mapper</string>
     <string name="labels">Etiketter</string>
-    <string name="labels_manager">Etikethåndtering</string>
-    <string name="folders_manage">Mappehåndtering</string>
     <string name="swipe_actions">Strygehandlinger</string>
     <string name="swipe_action_right">Stryg til højre</string>
     <string name="swipe_action_left">Stryg til venstre</string>
@@ -951,6 +970,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ugyldig Firebase API-nøgle. Push-meddelelser vil ikke fungere.</string>
     <string name="failed_saving_draft_online">Kunne ikke gemme online kladde til besked: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Vedhæftningsfejl for besked: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Kan ikke åbne denne besked, mens den bliver sendt</string>
     <string name="enable_conversation_mode">Aktivér samtaletilstand</string>
     <!-- endregion -->

@@ -23,10 +23,13 @@
     <string name="x_add_folder">Добавить папку</string>
     <string name="x_add_label">Добавить ярлык</string>
     <string name="x_days">Дней</string>
+    <string name="x_done">Done</string>
+    <string name="x_edit">Редактировать</string>
     <string name="x_folders">Папки</string>
     <string name="x_hours">Часов</string>
     <string name="x_labels">Ярлыки</string>
     <string name="x_more">Ещё</string>
+    <string name="x_none">None</string>
     <string name="x_search">Поиск</string>
     <string name="x_set">Установить</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
     <string name="set_msg_password_title">Задать пароль</string>
-    <string name="set_msg_password_info">Задайте пароль для шифрования этого сообщения для пользователей не использующих protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Подробнее</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">Информация</string>
     <string name="set_msg_password_msg_password_title">Пароль сообщения</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Этот элемент отмечен</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Установите PIN-код</string>
     <string name="settings_confirm_pin_code_title">Повторите PIN-код</string>
     <string name="settings_pins_dont_match">PIN-коды должны совпадать!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Настройте жесты для доступа к наиболее часто используемым действиям.</string>
     <string name="settings_swipe_left_to_right">Слева направо</string>
     <string name="settings_swipe_right_to_left">Справа налево</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Parent folder</string>
+    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_folder_icon_description">Folder icon</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Отменить изменения?</string>
     <string name="dialog_discard_changes_message">Все несохраненные изменения будут потеряны.</string>
     <string name="discard">Не сохранять</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ЗАШИФРОВАННАЯ ПОЧТА</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">Адрес эл. почты повторяется</string>
     <string name="invalid_code">Указан неверный код</string>
     <string name="message_drafted">Сбой отправки сообщения. Ваши сообщения сохранены в папке Черновики</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Открыть</string>
     <string name="close_drawer">Закрыть</string>
     <string name="inbox_option">Входящие</string>
@@ -396,7 +419,6 @@
     <string name="processing_attachment">Обработка вложений</string>
     <string name="hyperlink_confirmation_dialog_text_html">Вы собираетесь запустить веб-браузер и перейти по адресу:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Вы хотите продолжить?</string>
     <string name="dont_ask_again">Больше не спрашивать</string>
-    <string name="x_none">Нет</string>
     <string name="changes_affected_after_closing">Изменения будут применены после закрытия приложения</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильный PIN-код, осталась %d попытка</item>
@@ -410,7 +432,6 @@
         <item quantity="many">%d попыток до полного удаления данных!</item>
         <item quantity="other">%d попыток до полного удаления данных!</item>
     </plurals>
-    <string name="x_done">Готово</string>
     <string name="logout">Выход</string>
     <string name="log_out">Выйти из %s?</string>
     <string name="logout_question">Вы уверены, что хотите выйти?</string>
@@ -829,7 +850,7 @@
         <item>Запланировано</item>
     </string-array>
     <string name="notifications_snoozed">Уведомления приглушены</string>
-    <string name="notifications_snooze_scheduled">Расписание</string>
+    <string name="notifications_snooze_scheduled">Запланировано</string>
     <string name="notifications_snooze_scheduled_settings">Настройки приглушения по расписанию</string>
     <string name="notifications_snooze_current_status">Состояние</string>
     <string name="snooze_start_time">Время начала:</string>
@@ -862,8 +883,8 @@
     <string name="quick_only_enabled">Быстрое приглушение включено</string>
     <string name="scheduled_only_enabled">Приглушение по расписанию включено</string>
     <string name="quick_and_scheduled_disabled">Быстрое и отложенное приглушения отключены</string>
-    <string name="scheduled_snooze_on">Расписание (Вкл)</string>
-    <string name="scheduled_snooze_off">Расписание (Выкл)</string>
+    <string name="scheduled_snooze_on">Запланировано (Вкл)</string>
+    <string name="scheduled_snooze_off">Запланировано (Выкл)</string>
     <!-- endregion -->
     <string name="mailbox">Почтовый ящик</string>
     <string name="privacy">Конфиденциальность</string>
@@ -877,8 +898,6 @@
     <string name="labels_and_folders">Ярлыки &amp; папки </string>
     <string name="folders">Папки</string>
     <string name="labels">Ярлыки</string>
-    <string name="labels_manager">Управление ярлыками</string>
-    <string name="folders_manage">Управление папками</string>
     <string name="swipe_actions">Жесты пролистывания</string>
     <string name="swipe_action_right">Свайп вправо</string>
     <string name="swipe_action_left">Свайп влево</string>
@@ -985,6 +1004,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Неверный ключ API Firebase. Push-уведомления не будут работать.</string>
     <string name="failed_saving_draft_online">Не удалось сохранить онлайн черновик сообщения: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Невозможно открыть сообщение пока оно отправляется</string>
     <string name="enable_conversation_mode">Включить режим цепочек писем</string>
     <!-- endregion -->

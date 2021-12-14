@@ -23,10 +23,13 @@
     <string name="x_add_folder">Adicionar pasta</string>
     <string name="x_add_label">Adicionar marcador</string>
     <string name="x_days">Dias</string>
+    <string name="x_done">Concluído</string>
+    <string name="x_edit">Editar</string>
     <string name="x_folders">Pastas</string>
     <string name="x_hours">Horas</string>
     <string name="x_labels">Marcadores</string>
     <string name="x_more">Mais</string>
+    <string name="x_none">Nenhum</string>
     <string name="x_search">Pesquisar</string>
     <string name="x_set">Definir</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Assunto:</string>
     <string name="composer_to">Para:</string>
     <string name="set_msg_password_title">Definir senha</string>
-    <string name="set_msg_password_info">Defina uma senha para criptografar esta mensagem para não-protonmail usuários. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saiba mais</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informações</string>
     <string name="set_msg_password_msg_password_title">Senha da mensagem</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Este item está selecionado</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Definir código PIN</string>
     <string name="settings_confirm_pin_code_title">Repetir código PIN</string>
     <string name="settings_pins_dont_match">Códigos PIN digitados não coincidem!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Configure gestos de deslize para acessar as ações mais usadas.</string>
     <string name="settings_swipe_left_to_right">Da esquerda para a direita</string>
     <string name="settings_swipe_right_to_left">Da direita para a esquerda</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">Tema do aplicativo</string>
+    <string name="app_theme_light">Claro</string>
+    <string name="app_theme_dark">Escuro</string>
+    <string name="app_theme_system">Padrão do sistema</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Pasta acima</string>
+    <string name="parent_picker_header">Se você não selecionar uma pasta principal, essa nova pasta será criada como uma pasta de nível superior.</string>
+    <string name="parent_picker_folder_icon_description">Ícone da pasta</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Descartar alterações?</string>
     <string name="dialog_discard_changes_message">Todas as alterações não salvas serão perdidas.</string>
     <string name="discard">Descartar</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">E-MAIL CRIPTOGRAFADO</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">Endereço de e-mail duplicado</string>
     <string name="invalid_code">Código inválido</string>
     <string name="message_drafted">Falha ao enviar a mensagem. Suas mensagens foram salvas na pasta de rascunhos.</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Abrir</string>
     <string name="close_drawer">Fechar</string>
     <string name="inbox_option">Caixa de entrada</string>
@@ -384,7 +407,6 @@
     <string name="processing_attachment">Processando anexo</string>
     <string name="hyperlink_confirmation_dialog_text_html">Você está prestes a ser redirecionado para para:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Você tem certeza que deseja continuar?</string>
     <string name="dont_ask_again">Não perguntar novamente</string>
-    <string name="x_none">Nenhum</string>
     <string name="changes_affected_after_closing">As alterações serão feitas após reiniciar o aplicativo</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorreto, %d tentativa restante</item>
@@ -394,7 +416,6 @@
         <item quantity="one">%d tentativa até a limpeza segura dos dados!</item>
         <item quantity="other">%d tentativas até a limpeza segura dos dados!</item>
     </plurals>
-    <string name="x_done">Concluído</string>
     <string name="logout">Encerrar sessão</string>
     <string name="log_out">Encerrar sessão %s?</string>
     <string name="logout_question">Você tem certeza que deseja encerrar a sessão?</string>
@@ -635,12 +656,12 @@
     <string name="sender_lock_pgp_encrypted_verified">Mensagem criptografada por PGP de ponta a ponta de um endereço verificado</string>
     <string name="sender_lock_pgp_signed_verified_sender">Mensagem assinada por PGP de um endereço verificado</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">End-to-end encrypted and signed message</string>
+    <string name="sender_lock_internal">Mensagem criptografada de ponta a ponta e assinada</string>
     <string name="sender_lock_internal_verified">Mensagem criptografada de ponta a ponta de um endereço verificado</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Criptografado de ponta a ponta</string>
     <string name="composer_lock_internal_pinned">Criptografado de ponta a ponta para um destinatário verificado</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted to verified recipient</string>
+    <string name="composer_lock_pgp_encrypted_pinned">Criptografado com PGP para um destinatário verificado</string>
     <string name="composer_lock_pgp_signed">Assinado com PGP</string>
     <string name="recipient_not_found_and_removed">Destinatário não pôde ser encontrado: %s e foi removido</string>
     <string name="recipient_error_and_removed">Ocorreu um erro ao recuperar as informações do destinatário. O destinatário foi removido: %s</string>
@@ -849,8 +870,6 @@
     <string name="labels_and_folders">Marcadores &amp; pastas </string>
     <string name="folders">Pastas</string>
     <string name="labels">Marcadores</string>
-    <string name="labels_manager">Gerenciador de marcadores</string>
-    <string name="folders_manage">Gerenciador de pastas</string>
     <string name="swipe_actions">Ações de deslizar</string>
     <string name="swipe_action_right">Deslize para direita</string>
     <string name="swipe_action_left">Deslize para esquerda</string>
@@ -865,7 +884,7 @@
     <string name="swipe_action_archive">Mensagem arquivada</string>
     <string name="swipe_action_archive_short">Arquivar</string>
     <string name="swipe_action_mark_read">Mensagem marcada como lida</string>
-    <string name="swipe_action_mark_read_short">Lido</string>
+    <string name="swipe_action_mark_read_short">Lidas</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Mensagem movida para a lixeira</item>
         <item quantity="other">Mensagens movidas para a lixeira</item>
@@ -951,6 +970,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Chave API do Firebase inválida. As notificações push não funcionarão.</string>
     <string name="failed_saving_draft_online">Falha ao salvar o rascunho da mensagem: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Não é possível abrir esta mensagem enquanto ela está sendo enviada</string>
     <string name="enable_conversation_mode">Ativar modo conversa</string>
     <!-- endregion -->

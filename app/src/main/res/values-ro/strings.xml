@@ -23,10 +23,13 @@
     <string name="x_add_folder">Adăugare folder</string>
     <string name="x_add_label">Adăugare etichetă</string>
     <string name="x_days">zile</string>
+    <string name="x_done">Gata</string>
+    <string name="x_edit">Editare</string>
     <string name="x_folders">Foldere</string>
     <string name="x_hours">ore</string>
     <string name="x_labels">Etichete</string>
     <string name="x_more">Detalii</string>
+    <string name="x_none">Nimic</string>
     <string name="x_search">Căutare</string>
     <string name="x_set">Setare</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Subiect:</string>
     <string name="composer_to">Către:</string>
     <string name="set_msg_password_title">Setare parolă</string>
-    <string name="set_msg_password_info">Setaţi o parolă pentru criptarea acestui mesaj pentru utilizatorii non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Mai multe detalii</a>
+    <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai Protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Detalii</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informaţii</string>
     <string name="set_msg_password_msg_password_title">Parolă mesaj</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Acest articol este selectat</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Setare cod PIN</string>
     <string name="settings_confirm_pin_code_title">Repere cod PIN</string>
     <string name="settings_pins_dont_match">Codurile PIN trebuie să corespundă!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Configurare gesturi de glisare pentru a accesa cele mai utilizate acțiuni.</string>
     <string name="settings_swipe_left_to_right">De la stânga la dreapta</string>
     <string name="settings_swipe_right_to_left">De la dreapta la stânga</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">Tema aplicației</string>
+    <string name="app_theme_light">Deschisă</string>
+    <string name="app_theme_dark">Întunecată</string>
+    <string name="app_theme_system">Sistem implicit</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Selectați folderul părinte</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Folderul părinte selectat.</b> Atingeți pentru a schimba</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Folder părinte</string>
+    <string name="parent_picker_header">Dacă nu selectați un folder părinte, acesta va fi creat ca un folder de nivel superior.</string>
+    <string name="parent_picker_folder_icon_description">Pictogramă folder</string>
+    <string name="parent_picker_parent_folder_icon_description">Pictogramă folder părinte</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Anulare modificări?</string>
     <string name="dialog_discard_changes_message">Toate modificările nesalvate vor fi pierdute.</string>
     <string name="discard">Renunțare</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">E-MAIL CRIPTAT</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">Adresa de e-mail este o dublură</string>
     <string name="invalid_code">Codul nu este valid</string>
     <string name="message_drafted">Trimitere mesaj eșuată. Mesajele sunt salvate în folderul «Ciorne»</string>
+    <string name="attachment_failed_message_drafted">Vă rugăm să scoateți și să reatașați \"%s\" și să trimiteți din nou mesajul. Mesajul dumneavoastră se găsește în dosarul \"Drafts\".</string>
     <string name="open_drawer">Deschidere</string>
     <string name="close_drawer">Închidere</string>
     <string name="inbox_option">Primite</string>
@@ -334,7 +357,7 @@
     <string name="engagement_title_welcome">Bine ați venit la ProtonMail!</string>
     <string name="engagement_title_swipe">Acțiuni rapide glisare</string>
     <string name="engagement_title_labels">Gestionare etichete</string>
-    <string name="engagement_title_encryption">Criptare la ambele capete</string>
+    <string name="engagement_title_encryption">Criptare în ambele părți</string>
     <string name="engagement_title_expire">Mesaje care expiră</string>
     <string name="engagement_title_help">Ajutor &amp; Asistență</string>
     <string name="engagement_title_support_protonmail">Asistență ProtonMail</string>
@@ -389,7 +412,6 @@
     <string name="processing_attachment">Procesare fișier atașat</string>
     <string name="hyperlink_confirmation_dialog_text_html">Se va lansa navigatorul web la pagina: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;. Continuați?</string>
     <string name="dont_ask_again">Nu mai întreba</string>
-    <string name="x_none">Niciuna</string>
     <string name="changes_affected_after_closing">Modificările vor avea efect după oprirea aplicației</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorect, o încercare rămasă</item>
@@ -401,7 +423,6 @@
         <item quantity="few">%d încercări până la distrugerea sigură a datelor!</item>
         <item quantity="other">%d de încercări până la distrugerea sigură a datelor!</item>
     </plurals>
-    <string name="x_done">Gata</string>
     <string name="logout">Deconectare</string>
     <string name="log_out">Deconectare %s?</string>
     <string name="logout_question">Sigur doriţi să vă deconectați?</string>
@@ -862,8 +883,6 @@
     <string name="labels_and_folders">Etichete și foldere </string>
     <string name="folders">Foldere</string>
     <string name="labels">Etichete</string>
-    <string name="labels_manager">Gestionare etichete</string>
-    <string name="folders_manage">Gestionare foldere</string>
     <string name="swipe_actions">Acțiuni de glisare</string>
     <string name="swipe_action_right">Glisare la dreapta</string>
     <string name="swipe_action_left">Glisare la stânga</string>
@@ -967,6 +986,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Cheie API Firebase nevalidă. Notificările push nu vor funcționa.</string>
     <string name="failed_saving_draft_online">Nu s-a reușit salvarea ciornei pentru mesajul: „%s”</string>
+    <string name="failed_uploading_attachment_online">Eroare de atașare a mesajului: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Acest mesaj nu poate fi deschis în timp ce este trimis</string>
     <string name="enable_conversation_mode">Activare mod conversaţie</string>
     <!-- endregion -->

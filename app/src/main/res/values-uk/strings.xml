@@ -23,10 +23,13 @@
     <string name="x_add_folder">Додати теку</string>
     <string name="x_add_label">Додати мітку</string>
     <string name="x_days">Днів</string>
+    <string name="x_done">Готово</string>
+    <string name="x_edit">Змінити</string>
     <string name="x_folders">Теки</string>
     <string name="x_hours">Годин</string>
     <string name="x_labels">Мітки</string>
     <string name="x_more">Докладніше</string>
+    <string name="x_none">None</string>
     <string name="x_search">Пошук</string>
     <string name="x_set">Встановити</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
     <string name="set_msg_password_title">Встановити пароль</string>
-    <string name="set_msg_password_info">Встановіть пароль для шифрування цього повідомлення для користувачів інших постачальників пошти. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Докладніше</a>
+    <string name="set_msg_password_info">Встановіть пароль для шифрування цього повідомлення для користувачів інших постачальників пошти. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Докладніше</a>
     </string>
     <string name="set_msg_password_info_icon_description">Відомості</string>
     <string name="set_msg_password_msg_password_title">Пароль повідомлення</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Цей елемент позначено</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Встановити ПІН-код</string>
     <string name="settings_confirm_pin_code_title">Повторіть ПІН-код</string>
     <string name="settings_pins_dont_match">ПІН-коди повинні збігатися!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Налаштуйте жести посування для швидких дій.</string>
     <string name="settings_swipe_left_to_right">Зліва направо</string>
     <string name="settings_swipe_right_to_left">Справа наліво</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Тека вищого рівня</string>
+    <string name="parent_picker_header">Якщо вибрати теку вищого рівня, нову теку буде створено текою верхнього рівня.</string>
+    <string name="parent_picker_folder_icon_description">Піктограма теки</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Відхилити зміни?</string>
     <string name="dialog_discard_changes_message">Незбережені зміни будуть відхилені.</string>
     <string name="discard">Відхилити</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ЗАШИФРОВАНА ПОШТА</string>
@@ -122,6 +144,7 @@
     <string name="duplicate_email">Дублікат адреси е-пошти</string>
     <string name="invalid_code">Код недійсний</string>
     <string name="message_drafted">Не вдалося надіслати повідомлення. Ваші повідомлення збережені в теці Чернетки</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Відкрити</string>
     <string name="close_drawer">Закрити</string>
     <string name="inbox_option">Вхідні</string>
@@ -163,7 +186,7 @@
     <string name="move_to_trash">Перемістити до смітника</string>
     <string name="move_to_spam">Перемістити до спаму</string>
     <string name="move_to_inbox">Перемістити до вхідних</string>
-    <string name="move_to">Перемістити до…</string>
+    <string name="move_to">Перемістити…</string>
     <string name="are_you_sure_empty">Ви дійсно хочете видалити всі повідомлення з цієї теки?</string>
     <string name="send">Надіслати</string>
     <string name="selected">Вибрано</string>
@@ -397,7 +420,6 @@
     <string name="processing_attachment">Обробка вкладення</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ви збираєтеся запустити браузер і перейти до:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Хочете продовжити?</string>
     <string name="dont_ask_again">Не питати знову</string>
-    <string name="x_none">Немає</string>
     <string name="changes_affected_after_closing">Зміни застосуються після закриття програми</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Неправильний ПІН. Залишилась %d спроба</item>
@@ -411,7 +433,6 @@
         <item quantity="many">%d спроб до стирання захищених даних!</item>
         <item quantity="other">%d спроб до стирання захищених даних!</item>
     </plurals>
-    <string name="x_done">Виконано</string>
     <string name="logout">Вихiд</string>
     <string name="log_out">Вийти з %s?</string>
     <string name="logout_question">Ви дійсно хочете вийти?</string>
@@ -878,8 +899,6 @@
     <string name="labels_and_folders">Мітки й теки </string>
     <string name="folders">Теки</string>
     <string name="labels">Мітки</string>
-    <string name="labels_manager">Менеджер міток</string>
-    <string name="folders_manage">Менеджер тек</string>
     <string name="swipe_actions">Жести посування</string>
     <string name="swipe_action_right">Посунути вправо</string>
     <string name="swipe_action_left">Посунути вліво</string>
@@ -986,6 +1005,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Недійсний ключ API Firebas. Push-сповіщення не працюватимуть.</string>
     <string name="failed_saving_draft_online">Не вдалося зберегти в мережі чернетку повідомлення: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Це повідомлення не можна відкрити, доки воно надсилається</string>
     <string name="enable_conversation_mode">Увімкнути режим розмов</string>
     <!-- endregion -->
