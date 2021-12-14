@@ -23,10 +23,13 @@
     <string name="x_add_folder">Afegir carpeta</string>
     <string name="x_add_label">Afegir etiqueta</string>
     <string name="x_days">Dies</string>
+    <string name="x_done">Fet</string>
+    <string name="x_edit">Editar</string>
     <string name="x_folders">Carpetes</string>
     <string name="x_hours">Hores</string>
     <string name="x_labels">Etiquetes</string>
     <string name="x_more">Més</string>
+    <string name="x_none">Cap</string>
     <string name="x_search">Cercar</string>
     <string name="x_set">Establir</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Assumpte:</string>
     <string name="composer_to">A:</string>
     <string name="set_msg_password_title">Establir contrasenya</string>
-    <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saber-ne més</a>
+    <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saber-ne més</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informació</string>
     <string name="set_msg_password_msg_password_title">Contrasenya del missatge</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">S\'ha comprovat aquest element</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Establir codi PIN</string>
     <string name="settings_confirm_pin_code_title">Repetir codi PIN</string>
     <string name="settings_pins_dont_match">Els codis PIN han de coincidir!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Establir gestos de lliscament per accedir a les accions més utilitzades.</string>
     <string name="settings_swipe_left_to_right">Esquerra a dreta</string>
     <string name="settings_swipe_right_to_left">Dreta a esquerra</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Carpeta superior</string>
+    <string name="parent_picker_header">Si no seleccioneu una carpeta superior, aquesta carpeta nova es crearà a la carpeta arrel.</string>
+    <string name="parent_picker_folder_icon_description">Icona de la carpeta</string>
+    <string name="parent_picker_parent_folder_icon_description">Icona de carpeta amb subcarpetes</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Descartar els canvis?</string>
     <string name="dialog_discard_changes_message">Qualsevol canvi no desat es descartarà.</string>
     <string name="discard">Descartar</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">CORREU XIFRAT</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">Adreça de correu electrònic és un duplicat</string>
     <string name="invalid_code">Codi invàlid</string>
     <string name="message_drafted">Ha fallat l\'enviament del missatge. Els teus missatges es desaran a la carpeta d\'esborranys</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Obrir</string>
     <string name="close_drawer">Tancar</string>
     <string name="inbox_option">Safata d\'entrada</string>
@@ -384,7 +407,6 @@
     <string name="processing_attachment">Processament adjunt</string>
     <string name="hyperlink_confirmation_dialog_text_html">Esteu a punt d\'obrir el navegador web i anar a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Voleu continuar?</string>
     <string name="dont_ask_again">No m\'ho demaneu més</string>
-    <string name="x_none">Cap</string>
     <string name="changes_affected_after_closing">Els canvis es veuran afectats després de tancar l\'aplicació</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Codi PIN incorrecte, %d intent restant</item>
@@ -394,7 +416,6 @@
         <item quantity="one">%d intent fins un esborrat de dades de seguretat!</item>
         <item quantity="other">%d intents fins un esborrat de dades de seguretat!</item>
     </plurals>
-    <string name="x_done">Fet</string>
     <string name="logout">Tanca sessió</string>
     <string name="log_out">Tancar sessió de %s?</string>
     <string name="logout_question">Està segur que desitja tancar la sessió?</string>
@@ -849,8 +870,6 @@
     <string name="labels_and_folders">Etiquetes i carpetes </string>
     <string name="folders">Carpetes</string>
     <string name="labels">Etiquetes</string>
-    <string name="labels_manager">Administrador d\'etiquetes</string>
-    <string name="folders_manage">Administrar carpetes</string>
     <string name="swipe_actions">Accions de lliscament</string>
     <string name="swipe_action_right">Llisca a dreta</string>
     <string name="swipe_action_left">Llisca a l\'esquerra</string>
@@ -950,6 +969,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clau de l\'API de Firebase no és vàlida. Les notificacions Push no funcionaran.</string>
     <string name="failed_saving_draft_online">Error en desar un borrador en línia pel missatge: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">No es pot obrir aquest missatge mentre s\'envia</string>
     <string name="enable_conversation_mode">Habilitar el mode de conversa</string>
     <!-- endregion -->

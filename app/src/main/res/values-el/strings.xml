@@ -23,10 +23,13 @@
     <string name="x_add_folder">Προσθήκη φακέλου</string>
     <string name="x_add_label">Προσθήκη ετικέτας</string>
     <string name="x_days">Ημέρες</string>
+    <string name="x_done">Ολοκληρώθηκε</string>
+    <string name="x_edit">Επεξεργασία</string>
     <string name="x_folders">Φάκελοι</string>
     <string name="x_hours">Ώρες</string>
     <string name="x_labels">Ετικέτες</string>
     <string name="x_more">Περισσότερα</string>
+    <string name="x_none">Κανένα</string>
     <string name="x_search">Αναζήτηση</string>
     <string name="x_set">Ορισμός</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Θέμα:</string>
     <string name="composer_to">Προς:</string>
     <string name="set_msg_password_title">Ορισμός κωδικού</string>
-    <string name="set_msg_password_info">Ορίστε έναν κωδικό για να κρυπτογραφήσετε αυτό το μήνυμα, για τους χρήστες που δεν ανήκουν στη Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Μάθετε περισσότερα</a>
+    <string name="set_msg_password_info">Ορίστε έναν κωδικό για να κρυπτογραφήσετε αυτό το μήνυμα, για τους χρήστες που δεν ανήκουν στη Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Μάθετε περισσότερα</a>
     </string>
     <string name="set_msg_password_info_icon_description">Πληροφορίες</string>
     <string name="set_msg_password_msg_password_title">Κωδικός πρόσβασης μηνύματος</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Αυτό το στοιχείο είναι επιλεγμένο</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Ορισμός κωδικού PIN</string>
     <string name="settings_confirm_pin_code_title">Επανάληψη κωδικού PIN</string>
     <string name="settings_pins_dont_match">Οι κωδικοί PIN πρέπει να ταιριάζουν!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Ρύθμιση χειρονομιών συρσίματος για πρόσβαση στις πιο χρησιμοποιούμενες ενέργειες.</string>
     <string name="settings_swipe_left_to_right">Αριστερά προς δεξιά</string>
     <string name="settings_swipe_right_to_left">Δεξιά προς αριστερά</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Επιλέξτε γονικό φάκελο</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Γονικός φάκελος</string>
+    <string name="parent_picker_header">Αν δεν επιλέξετε γονικό φάκελο, αυτός ο καινούριος φάκελος θα δημιουργηθεί ως ανώτατου επιπέδου.</string>
+    <string name="parent_picker_folder_icon_description">Εικονίδιο φακέλου</string>
+    <string name="parent_picker_parent_folder_icon_description">Εικονίδιο φακέλου με υποφακέλους</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Απόρριψη αλλαγών;</string>
     <string name="dialog_discard_changes_message">Τυχόν μη αποθηκευμένες αλλαγές θα απορριφθούν.</string>
     <string name="discard">Απόρριψη</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ΚΡΥΠΤΟΓΡΑΦΗΜΕΝΟ E-MAIL</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">Η διεύθυνση email είναι διπλότυπη</string>
     <string name="invalid_code">Μη έγκυρος κωδικός</string>
     <string name="message_drafted">Η αποστολή μηνύματος απέτυχε. Τα μηνύματά σας αποθηκεύτηκαν στο φάκελο πρόχειρα</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Άνοιγμα</string>
     <string name="close_drawer">Κλείσιμο</string>
     <string name="inbox_option">Εισερχόμενα</string>
@@ -383,7 +406,6 @@
     <string name="processing_attachment">Επεξεργασία συνημμένου</string>
     <string name="hyperlink_confirmation_dialog_text_html">Πρόκειται να ξεκινήσει το πρόγραμμα περιήγησης ιστού και να περιηγηθείτε στο &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;;br/Θα θέλατε να συνεχίσετε;</string>
     <string name="dont_ask_again">Να μην ερωτηθώ ξανά</string>
-    <string name="x_none">Κανένα</string>
     <string name="changes_affected_after_closing">Οι αλλαγές θα τεθούν σε ισχύ μετά το κλείσιμο της εφαρμογής</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Λάθος κωδικός PIN, %d προσπάθεια απομένει</item>
@@ -393,7 +415,6 @@
         <item quantity="one">%d προσπάθεια μέχρι την ασφαλή διαγραφή δεδομένων!</item>
         <item quantity="other">%d προσπάθειες μέχρι την ασφαλή διαγραφή δεδομένων!</item>
     </plurals>
-    <string name="x_done">Ολοκληρώθηκε</string>
     <string name="logout">Αποσύνδεση</string>
     <string name="log_out">Αποσύνδεση %s;</string>
     <string name="logout_question">Είστε βέβαιοι ότι θέλετε να αποσυνδεθείτε;</string>
@@ -848,8 +869,6 @@
     <string name="labels_and_folders">Ετικέτες &amp; φακέλους </string>
     <string name="folders">Φάκελοι</string>
     <string name="labels">Ετικέτες</string>
-    <string name="labels_manager">Διαχειριστής ετικετών</string>
-    <string name="folders_manage">Διαχειριστής Φακέλων</string>
     <string name="swipe_actions">Ενέργειες ολίσθησης</string>
     <string name="swipe_action_right">Σύρσιμο δεξιά</string>
     <string name="swipe_action_left">Σύρετε αριστερά</string>
@@ -950,6 +969,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Μη έγκυρο κλειδί API Firebase. Οι ειδοποιήσεις push δεν θα λειτουργήσουν.</string>
     <string name="failed_saving_draft_online">Απέτυχε η αποθήκευση του online προσχεδίου για το μήνυμα: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Δεν μπορεί να ανοίξει αυτό το μήνυμα κατά την αποστολή του</string>
     <string name="enable_conversation_mode">Ενεργοποίηση λειτουργίας συνομιλίας</string>
     <!-- endregion -->

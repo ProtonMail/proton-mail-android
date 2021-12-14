@@ -23,10 +23,13 @@
     <string name="x_add_folder">Dodaj folder</string>
     <string name="x_add_label">Dodaj etykietę</string>
     <string name="x_days">dni</string>
+    <string name="x_done">Gotowe</string>
+    <string name="x_edit">Edytuj</string>
     <string name="x_folders">Foldery</string>
     <string name="x_hours">godziny</string>
     <string name="x_labels">Etykiety</string>
     <string name="x_more">Więcej</string>
+    <string name="x_none">Brak</string>
     <string name="x_search">Szukaj</string>
     <string name="x_set">Ustaw</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Temat:</string>
     <string name="composer_to">Do:</string>
     <string name="set_msg_password_title">Ustaw hasło</string>
-    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Dowiedz się więcej</a>
+    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Dowiedz się więcej</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informacje</string>
     <string name="set_msg_password_msg_password_title">Hasło wiadomości</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Ten element jest zaznaczony</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Motyw</string>
     <string name="settings_create_pin_code_title">Ustaw kod PIN</string>
     <string name="settings_confirm_pin_code_title">Powtórz kod PIN</string>
     <string name="settings_pins_dont_match">Kody PIN muszą pasować do siebie!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Ustaw gesty przesunięcia palcem, aby uzyskać dostęp do najczęściej używanych akcji.</string>
     <string name="settings_swipe_left_to_right">Od lewej do prawej</string>
     <string name="settings_swipe_right_to_left">Od prawej do lewej</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">Motyw aplikacji</string>
+    <string name="app_theme_light">Jasny</string>
+    <string name="app_theme_dark">Ciemny</string>
+    <string name="app_theme_system">Domyślny systemu</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Wybierz folder nadrzędny</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Folder nadrzędny został wybrany.</b> Kliknij, aby zmienić</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Folder nadrzędny</string>
+    <string name="parent_picker_header">Jeśli nie wybierzesz folderu nadrzędnego, nowy folder zostanie utworzony jako folder najwyższego poziomu.</string>
+    <string name="parent_picker_folder_icon_description">Ikona folderu</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder z ikoną podfolderu</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Czy chcesz odrzucić zmiany?</string>
     <string name="dialog_discard_changes_message">Wszystkie niezapisane zmiany zostaną odrzucone.</string>
     <string name="discard">Odrzuć</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">SZYFROWANA POCZTA E-MAIL</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">Adres e-mail jest zduplikowany</string>
     <string name="invalid_code">Kod nie jest prawidłowy</string>
     <string name="message_drafted">Wysyłanie wiadomości nie powiodło się. Wiadomość została zapisana w folderze Szkice.</string>
+    <string name="attachment_failed_message_drafted">Usuń i dołącz ponownie załącznik \"%s\", aby wysłać wiadomość. Wiadomość została zapisana w folderze Szkice.</string>
     <string name="open_drawer">Otwórz</string>
     <string name="close_drawer">Zamknij</string>
     <string name="inbox_option">Odebrane</string>
@@ -396,7 +419,6 @@
     <string name="processing_attachment">Przetwarzanie załączników</string>
     <string name="hyperlink_confirmation_dialog_text_html">Masz zamiar uruchomić przeglądarkę i przejść do:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Czy chcesz kontynuować?</string>
     <string name="dont_ask_again">Nie pytaj ponownie</string>
-    <string name="x_none">Brak</string>
     <string name="changes_affected_after_closing">Zmiany zostaną wprowadzone po zamknięciu aplikacji</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Kod PIN jest nieprawidłowy, pozostała %d próba</item>
@@ -410,7 +432,6 @@
         <item quantity="many">Pozostało %d prób do bezpiecznego wymazania danych!</item>
         <item quantity="other">Pozostało %d prób do bezpiecznego wymazania danych!</item>
     </plurals>
-    <string name="x_done">Gotowe</string>
     <string name="logout">Wyloguj</string>
     <string name="log_out">Wylogować się z konta %s?</string>
     <string name="logout_question">Czy na pewno chcesz się wylogować?</string>
@@ -426,7 +447,7 @@
     <string name="inline_header">Osadzone obrazy w wiadomości: %d</string>
     <string name="select">Zaznacz</string>
     <string name="warning">Ostrzeżenie</string>
-    <string name="empty_recovery_email_question">Ostrzeżenie: Nie dodałeś adresu pomocniczego. Jeśli zapomnisz hasła, to nie odzyskasz już swojego konta. Czy chcesz przejść dalej bez wpisywania tego adresu?</string>
+    <string name="empty_recovery_email_question">Ostrzeżenie: Nie dodano adresu pomocniczego. Jeśli zapomnisz hasła, to nie odzyskasz już swojego konta. Czy chcesz przejść dalej bez wpisywania tego adresu?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Data ważności %s</string>
     <string name="no_payment_methods">Nie posiadasz zapisanych metod płatności.</string>
@@ -627,8 +648,8 @@
     <string name="load_embedded_images">Załaduj osadzone obrazy</string>
     <string name="remove_password">Usuń hasło</string>
     <string name="remove_password_question">Usunąć hasło?</string>
-    <string name="attachment_storage_value_current">Obecnie wybrałeś: %d MB</string>
-    <string name="attachment_storage_value_current_unlimited">Obecnie wybrałeś: Bez limitu</string>
+    <string name="attachment_storage_value_current">Obecnie wybrano: %d MB</string>
+    <string name="attachment_storage_value_current_unlimited">Obecnie wybrano: Bez limitu</string>
     <string name="attachment_offline_max_storage">Ustawia maksymalną ilość miejsca, jaką aplikacja ProtonMail może używać na tym urządzeniu.</string>
     <string name="load_embedded_images_failed_no_network">Ładowanie osadzonych obrazów nie powiodło się. Sprawdź połączenie sieciowe.</string>
     <string name="load_embedded_images_failed">Ładowanie osadzonych obrazów nie powiodło się.</string>
@@ -759,13 +780,13 @@
     <string name="contacts_add_photo_select_camera">Przechwyć z aparatu</string>
     <string name="save_group_validation_error">Wpisz nazwę grupy</string>
     <!-- region Storage Limit Reached -->
-    <string name="storage_limit_alert">Wykorzystałeś limit przestrzeni dyskowej. Nie można wysyłać ani odbierać wiadomości e-mail.
+    <string name="storage_limit_alert">Wykorzystano limit przestrzeni dyskowej. Nie można wysyłać ani odbierać wiadomości e-mail.
         Kliknij, aby dowiedzieć się więcej.</string>
     <string name="storage_limit_warning_title">Ostrzeżenie</string>
-    <string name="storage_limit_reached_text">Wykorzystałeś 100% dostępnej przestrzeni dyskowej.
+    <string name="storage_limit_reached_text">Wykorzystano 100% dostępnej przestrzeni dyskowej.
         Nie możesz wysyłać ani odbierać wiadomości e-mail, chyba że trwale usuniesz część z nich lub kupisz więcej
         miejsca.</string>
-    <string name="storage_limit_approaching_text">Wykorzystałeś 90% dostępnej przestrzeni dyskowej.
+    <string name="storage_limit_approaching_text">Wykorzystano 90% dostępnej przestrzeni dyskowej.
         Rozważ zwolnienie części miejsca lub zakup dodatkowej przestrzeni dyskowej, zanim skończy Ci się miejsce.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Uprawnienia</string>
@@ -875,8 +896,6 @@
     <string name="labels_and_folders">Etykiety i foldery </string>
     <string name="folders">Foldery</string>
     <string name="labels">Etykiety</string>
-    <string name="labels_manager">Menedżer etykiet</string>
-    <string name="folders_manage">Menedżer folderów</string>
     <string name="swipe_actions">Gesty przesunięcia</string>
     <string name="swipe_action_right">Przesuń palcem w prawo</string>
     <string name="swipe_action_left">Przesuń palcem w lewo</string>
@@ -947,7 +966,7 @@
     <!-- region Multi Account -->
     <string name="remove_account_question">Usunąć konto %s?</string>
     <string name="signed_in_with">Jesteś zalogowany jako %s</string>
-    <string name="signed_in_with_logged_out_from">Zostałeś wylogowany z konta %1$s i zalogowany do %2$s</string>
+    <string name="signed_in_with_logged_out_from">Wylogowano z konta %1$s i zalogowano do %2$s</string>
     <string name="connect_account_limit_title">Limit został osiągnięty</string>
     <string name="connect_account_limit_subtitle">Możesz dodać tylko jedno darmowe konto. Wyloguj się z darmowego konta lub ulepsz je do płatnego konta.</string>
     <string name="switch_accounts_question">Przełączyć konto?</string>
@@ -983,6 +1002,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Klucz interfejsu API Firebase jest nieprawidłowy. Powiadomienia nie będą działać.</string>
     <string name="failed_saving_draft_online">Nie udało się zapisać szkicu: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Wystąpił błąd załącznika dla wiadomości: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nie można otworzyć wiadomości podczas jej wysyłania</string>
     <string name="enable_conversation_mode">Włącz tryb wątku</string>
     <!-- endregion -->

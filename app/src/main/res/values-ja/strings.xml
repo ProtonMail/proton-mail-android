@@ -20,13 +20,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_add_folder">Add folder</string>
-    <string name="x_add_label">Add label</string>
+    <string name="x_add_folder">フォルダーの追加</string>
+    <string name="x_add_label">ラベルの追加</string>
     <string name="x_days">日</string>
+    <string name="x_done">Done</string>
+    <string name="x_edit">Edit</string>
     <string name="x_folders">フォルダー</string>
     <string name="x_hours">時間</string>
     <string name="x_labels">ラベル</string>
     <string name="x_more">その他</string>
+    <string name="x_none">None</string>
     <string name="x_search">検索</string>
     <string name="x_set">設定</string>
     <string name="x_0">0</string>
@@ -42,14 +45,14 @@
     <string name="drawer_create_label_description">Create new label</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">Bcc：</string>
+    <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>
     <string name="composer_compose_email">Eメールの作成</string>
-    <string name="composer_from">差出人：</string>
-    <string name="composer_subject">件名：</string>
-    <string name="composer_to">宛先：</string>
+    <string name="composer_from">差出人:</string>
+    <string name="composer_subject">件名:</string>
+    <string name="composer_to">宛先:</string>
     <string name="set_msg_password_title">パスワードを設定</string>
-    <string name="set_msg_password_info">ProtonMail ユーザー以外がこのメッセージを読めるようにパスワードを設定してください <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">詳細</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">情報</string>
     <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">このアイテムはチェックされています</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">PIN コードを設定</string>
     <string name="settings_confirm_pin_code_title">PIN コードを確認</string>
     <string name="settings_pins_dont_match">PIN コードが一致しません！</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
     <string name="settings_swipe_left_to_right">左から右</string>
     <string name="settings_swipe_right_to_left">右から左</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Parent folder</string>
+    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_folder_icon_description">Folder icon</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">変更を破棄してよろしいですか？</string>
     <string name="dialog_discard_changes_message">未保存の変更箇所は全て破棄されます。</string>
     <string name="discard">破棄</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">暗号化されたメール</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">メール アドレスが重複しています。</string>
     <string name="invalid_code">コードが無効です。</string>
     <string name="message_drafted">メッセージの送信に失敗しました。メッセージは下書きフォルダーに保存されます。</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">開く</string>
     <string name="close_drawer">閉じる</string>
     <string name="inbox_option">受信箱</string>
@@ -302,7 +325,7 @@
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
     <string name="no_connectivity_detected">接続が検出できません...</string>
-    <string name="server_not_reachable_troubleshoot">サーバーに通信できません… (<u>トラブルシューティング</u>)</string>
+    <string name="server_not_reachable_troubleshoot">サーバーに接続できません… (<u>トラブルシューティング</u>)</string>
     <string name="connectivity_checking">接続を確認しています...</string>
     <string name="sync_short">同期</string>
     <string name="draft_attachments_uploading">まだ下書きをアップロードしている最中です...</string>
@@ -373,9 +396,8 @@
     <string name="share_link">リンクを共有する</string>
     <string name="sync_attachments">添付ファイルを同期しています...</string>
     <string name="processing_attachment">添付ファイルの処理中</string>
-    <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
+    <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次の URL を開こうとしています:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
     <string name="dont_ask_again">今後表示しない</string>
-    <string name="x_none">なし</string>
     <string name="changes_affected_after_closing">アプリを閉じた後で変更が反映されます。</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PINコードが間違っています。 あと%d回試すことができます。</item>
@@ -383,7 +405,6 @@
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="other">完全なデータ抹消まで残り%d回です。</item>
     </plurals>
-    <string name="x_done">完了</string>
     <string name="logout">ログアウト</string>
     <string name="log_out">%s からログアウトしてよろしいですか？</string>
     <string name="logout_question">本当にログアウトしてよろしいですか？</string>
@@ -435,7 +456,7 @@
         <item>Professional</item>
     </string-array>
     <plurals name="custom_domains">
-        <item quantity="other">独自ドメインの使用（例：john@smith. com）
+        <item quantity="other">独自ドメインの使用（例: john@smith. com）
 %d ドメインまでのサポート</item>
     </plurals>
     <string-array name="months_array">
@@ -515,13 +536,13 @@
     </string-array>
     <string name="logged_out">ログアウトしました。</string>
     <string name="logged_out_description">ログアウトされています。もう一度ログインをしてください。</string>
-    <string name="error_message_zip_code_invalid">エラー：郵便番号が無効です。</string>
-    <string name="error_message_cvc_invalid">エラー：CVC 番号が無効です。</string>
-    <string name="error_message_card_name_invalid">エラー：カード名が無効です。</string>
+    <string name="error_message_zip_code_invalid">エラー: 郵便番号が無効です</string>
+    <string name="error_message_cvc_invalid">エラー: CVC が無効です</string>
+    <string name="error_message_card_name_invalid">エラー: カード名が無効です</string>
     <string name="error_message_select_country">国名を選んでください。</string>
-    <string name="error_message_exp_date_invalid">エラー：無効な有効期限です。</string>
-    <string name="error_message_exp_date_past">エラー：無効な有効期限です。</string>
-    <string name="error_message_card_number_invalid">エラー：カード番号が無効です。</string>
+    <string name="error_message_exp_date_invalid">エラー: 有効期限が切れています</string>
+    <string name="error_message_exp_date_past">エラー: 有効期限が切れています</string>
+    <string name="error_message_card_number_invalid">エラー: カード番号が無効です</string>
     <string name="print_error">印刷エラー</string>
     <string name="download_complete">ダウンロード完了</string>
     <string name="download_in_progress">ダウンロードが進行中</string>
@@ -558,13 +579,13 @@
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。送信者と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">より詳しく</a>
     </string>
-    <string name="print_from_template">差出人：%s</string>
-    <string name="print_to_template">宛先：%s;  </string>
-    <string name="print_cc_template">CC：%s; </string>
-    <string name="print_bcc_template">BCC：%s; </string>
+    <string name="print_from_template">差出人: %s</string>
+    <string name="print_to_template">宛先: %s;   </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="signature_error">検証エラーが発生しました。</string>
     <string name="signature_error_desc">このコンテンツの署名の検証に失敗しました。</string>
-    <string name="address">アドレス：</string>
+    <string name="address">アドレス: </string>
     <string name="address_street">番地</string>
     <string name="address_city">市区町村</string>
     <string name="address_region">都道府県</string>
@@ -590,16 +611,16 @@
     <string name="invalid_email_some_contacts">一部の連絡先でメールアドレスが有効ではありません。</string>
     <string name="protonmail_contacts">ProtonMailの連絡先</string>
     <string name="device_contacts">デバイスの連絡先</string>
-    <string name="print_date_template">日付： %s</string>
-    <string name="print_attachment_template">添付ファイル： %s;  </string>
+    <string name="print_date_template">日付: %s</string>
+    <string name="print_attachment_template">添付ファイル: %s;  </string>
     <string name="pm_me_changed">\@pm.meアドレスからのメッセージ送信は有料の機能です。メッセージは既定アドレスの%sから送信されます。</string>
     <string name="pm_me_can_not_be_default">%s のアドレスを既定にするためには有料プランにアップグレードしてください。</string>
     <string name="dont_remind_again">今後このメッセージを表示しない</string>
     <string name="load_embedded_images">埋め込み画像を読み込む</string>
     <string name="remove_password">パスワードを削除</string>
     <string name="remove_password_question">パスワードを削除しますか？</string>
-    <string name="attachment_storage_value_current">現在の選択：%dMB</string>
-    <string name="attachment_storage_value_current_unlimited">現在の選択：無制限</string>
+    <string name="attachment_storage_value_current">現在の選択: %dMB</string>
+    <string name="attachment_storage_value_current_unlimited">現在の選択: 無制限</string>
     <string name="attachment_offline_max_storage">モバイル端末でProtonMailが使用できるストレージの最大容量を設定してください。</string>
     <string name="load_embedded_images_failed_no_network">埋め込み画像の読み込みに失敗しました。ネットワーク接続を確認してください。</string>
     <string name="load_embedded_images_failed">埋め込み画像の読み込みに失敗しました。</string>
@@ -631,11 +652,11 @@
     <string name="composer_lock_internal_pinned">検証済みアドレスへの、エンドツーエンド暗号化による送信</string>
     <string name="composer_lock_pgp_encrypted_pinned">検証済みの宛先への、PGP 暗号化による送信</string>
     <string name="composer_lock_pgp_signed">PGP署名のみ（暗号化なし）</string>
-    <string name="recipient_not_found_and_removed">宛先が見つかりません：%sは削除されています</string>
-    <string name="recipient_error_and_removed">宛先の情報の受信中に問題が発生しました。宛先が削除されています：%s</string>
+    <string name="recipient_not_found_and_removed">宛先が見つかりません: %s は削除されています</string>
+    <string name="recipient_error_and_removed">宛先の情報の受信中に問題が発生しました。宛先が削除されています: %s</string>
     <string name="send_anyway">このまま送信</string>
     <string name="expiration_error_title">メッセージの有効期限を有効にしましたが、全ての宛先でこの機能が利用できるわけではありません。</string>
-    <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください：</string>
+    <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください:</string>
     <string name="expiration_error_disable_pgp_sending">次の宛先に対して期限付きメッセージを送信するには、PGPを無効にしてください：</string>
     <string name="expiration_error_proceed">タップしてこれらの宛先には有効期限なしでそのまま送信する</string>
     <string name="expiration_error_learn_more">
@@ -784,9 +805,9 @@
     <string name="notifications_snooze_scheduled">計画休止</string>
     <string name="notifications_snooze_scheduled_settings">停止計画の設定</string>
     <string name="notifications_snooze_current_status">状態</string>
-    <string name="snooze_start_time">開始時刻：</string>
-    <string name="snooze_end_time">終了時刻：</string>
-    <string name="snooze_repeat">繰り返し：</string>
+    <string name="snooze_start_time">開始時刻:</string>
+    <string name="snooze_end_time">終了時刻:</string>
+    <string name="snooze_repeat">繰り返し:</string>
     <plurals name="quick_snooze_resume_min">
         <item quantity="other">通知は、%d分後に再開されます。</item>
     </plurals>
@@ -817,17 +838,15 @@
     <string name="mailbox">受信箱</string>
     <string name="privacy">プライバシー</string>
     <string name="auto_download_messages_title">メッセージの自動ダウンロード</string>
-    <string name="auto_download_messages_subtitle">このオプションが有効な場合、メールを受信するたびに、本文が自動的にダウンロードされます（より多くの通信量を消費します）。 このオプションが無効な場合、メールを開いたときにのみ本文がダウンロードされます。 （注：どちらのオプションでも、キャッシュをクリアするかログアウトすると、オフライン中にメッセージ本文を読むことができなくなります。）</string>
+    <string name="auto_download_messages_subtitle">このオプションが有効な場合、メールを受信するたびに、本文が自動的にダウンロードされます（より多くの通信量を消費します）。このオプションが無効な場合、メールを開いたときにのみ本文がダウンロードされます。（注: どちらのオプションでも、キャッシュをクリアするかログアウトすると、オフライン中にメッセージ本文を読むことができなくなります）</string>
     <string name="settings_background_sync">バックグラウンド同期</string>
     <string name="settings_auto_show_images">外部画像の自動表示</string>
     <string name="settings_auto_show_embedded_images">埋め込み画像の自動表示</string>
-    <string name="settings_prevent_taking_screenshots">画面撮影の防止</string>
+    <string name="settings_prevent_taking_screenshots">スクリーンショットを禁止する</string>
     <string name="hyperlink_confirmation">リンク先を開くときに確認する</string>
     <string name="labels_and_folders">ラベルとフォルダー </string>
     <string name="folders">フォルダー</string>
     <string name="labels">ラベル</string>
-    <string name="labels_manager">ラベルの管理</string>
-    <string name="folders_manage">フォルダーの管理</string>
     <string name="swipe_actions">スワイプ操作</string>
     <string name="swipe_action_right">右にスワイプ</string>
     <string name="swipe_action_left">左にスワイプ</string>
@@ -844,7 +863,7 @@
     <string name="swipe_action_mark_read">メッセージを既読にする</string>
     <string name="swipe_action_mark_read_short">既読</string>
     <plurals name="action_move_to_trash">
-        <item quantity="other">メッセージをごみ箱に移動する</item>
+        <item quantity="other">メッセージをごみ箱に移動しました</item>
     </plurals>
     <plurals name="action_move_to_spam">
         <item quantity="other">メッセージを迷惑メールとする</item>
@@ -925,6 +944,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Firebase API キーが無効です。プッシュ通知は動作しません。</string>
     <string name="failed_saving_draft_online">ドラフトメッセージの保存に失敗しました:\"%s \"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">送信中にこのメッセージを開くことはできません</string>
     <string name="enable_conversation_mode">会話モードを有効化</string>
     <!-- endregion -->
@@ -953,12 +973,12 @@
     <string name="contacts_send_group_message">グループメッセージを送信</string>
     <string name="inbox_this_folder_is_empty">このフォルダーは空です</string>
     <string name="inbox_nothing_to_see_here">何もありません</string>
-    <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
+    <string name="inbox_could_not_retrieve_messages">メッセージの取得に失敗しました。</string>
     <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
     <string name="edit_draft">下書きを編集</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
+    <string name="primary_user_error">何らかの問題が発生したため、アップグレードに失敗しました。</string>
     <string name="details_show_history">履歴を表示</string>
     <string name="could_not_complete_action">アクションを完了できませんでした</string>
-    <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
+    <string name="decryption_of_message_failed">メッセージの復号化に失敗しました。</string>
     <string name="labels_selected_limit_reached">アカウントのご利用限度に達しました</string>
 </resources>

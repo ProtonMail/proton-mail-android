@@ -23,10 +23,13 @@
     <string name="x_add_folder">Añadir carpeta</string>
     <string name="x_add_label">Añadir etiqueta</string>
     <string name="x_days">Días</string>
+    <string name="x_done">Hecho</string>
+    <string name="x_edit">Editar</string>
     <string name="x_folders">Carpetas</string>
     <string name="x_hours">Horas</string>
     <string name="x_labels">Etiquetas</string>
     <string name="x_more">Más</string>
+    <string name="x_none">Ninguno</string>
     <string name="x_search">Buscar</string>
     <string name="x_set">Establecer</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Asunto:</string>
     <string name="composer_to">Para:</string>
     <string name="set_msg_password_title">Establecer contraseña</string>
-    <string name="set_msg_password_info">Establece una contraseña para cifrar este mensaje para los usuarios que no son de ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Más información</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">Información</string>
     <string name="set_msg_password_msg_password_title">Contraseña del mensaje</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Este elemento está marcado</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Establecer código PIN</string>
     <string name="settings_confirm_pin_code_title">Repetir código PIN</string>
     <string name="settings_pins_dont_match">¡Los códigos PIN deben coincidir!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Establecer gestos de deslizamiento para acceder a las acciones más utilizadas.</string>
     <string name="settings_swipe_left_to_right">Izquierda a derecha</string>
     <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Claro</string>
+    <string name="app_theme_dark">Oscuro</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Parent folder</string>
+    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_folder_icon_description">Folder icon</string>
+    <string name="parent_picker_parent_folder_icon_description">Icono de la carpeta con carpetas secundarias</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">¿Descartar los cambios?</string>
     <string name="dialog_discard_changes_message">Se perderán todos los cambios que no se hayan guardado.</string>
     <string name="discard">Descartar</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">CORREO ELECTRÓNICO CIFRADO</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">El correo electrónico es un duplicado</string>
     <string name="invalid_code">El código es inválido</string>
     <string name="message_drafted">Falló el envío del mensaje. Su mensaje se guardará en la carpeta de borradores.</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Abrir</string>
     <string name="close_drawer">Cerrar</string>
     <string name="inbox_option">Bandeja de entrada</string>
@@ -384,7 +407,6 @@
     <string name="processing_attachment">Procesando archivo adjunto</string>
     <string name="hyperlink_confirmation_dialog_text_html">Estás a punto de iniciar el navegador e ir a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;¿Deseas continuar?</string>
     <string name="dont_ask_again">No preguntar de nuevo</string>
-    <string name="x_none">Ninguno</string>
     <string name="changes_affected_after_closing">Los cambios tendrán efecto después de cerrar la aplicación</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorrecto, %d intento restante</item>
@@ -394,7 +416,6 @@
         <item quantity="one">¡%d intento antes de borrar los datos seguros!</item>
         <item quantity="other">¡%d intentos antes de borrar los datos seguros!</item>
     </plurals>
-    <string name="x_done">Hecho</string>
     <string name="logout">Cerrar sesión</string>
     <string name="log_out">¿Cerrar sesión %s?</string>
     <string name="logout_question">¿Seguro que quiere cerrar la sesión?</string>
@@ -849,8 +870,6 @@ compre más
     <string name="labels_and_folders">Etiquetas &amp; carpetas </string>
     <string name="folders">Carpetas</string>
     <string name="labels">Etiquetas</string>
-    <string name="labels_manager">Administrar etiquetas</string>
-    <string name="folders_manage">Gestionar carpetas</string>
     <string name="swipe_actions">Acciones al deslizar</string>
     <string name="swipe_action_right">Deslizar hacia la derecha</string>
     <string name="swipe_action_left">Deslizar hacia la izquierda</string>
@@ -951,6 +970,7 @@ compre más
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clave de la API de Firebase no es válida. Las notificaciones Push no funcionarán.</string>
     <string name="failed_saving_draft_online">Error al guardar el borrador en línea para el mensaje: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">No se puede abrir este mensaje mientras está siendo enviado</string>
     <string name="enable_conversation_mode">Habilitar modo de conversación</string>
     <!-- endregion -->

@@ -23,10 +23,13 @@
     <string name="x_add_folder">Add folder</string>
     <string name="x_add_label">Add label</string>
     <string name="x_days">Dana</string>
+    <string name="x_done">Done</string>
+    <string name="x_edit">Edit</string>
     <string name="x_folders">Mape</string>
     <string name="x_hours">Sati</string>
     <string name="x_labels">Oznake</string>
     <string name="x_more">Više</string>
+    <string name="x_none">None</string>
     <string name="x_search">Pretraga</string>
     <string name="x_set">Postavi</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Predmet:</string>
     <string name="composer_to">Za:</string>
     <string name="set_msg_password_title">Postavi lozinku</string>
-    <string name="set_msg_password_info">Postavite lozinku za šifriranje ove poruke za one koji nisu korisnici ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saznajte više</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informacije</string>
     <string name="set_msg_password_msg_password_title">Lozinka poruke</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Stavka je označena</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">Postavite PIN kôd</string>
     <string name="settings_confirm_pin_code_title">Ponovite PIN kôd</string>
     <string name="settings_pins_dont_match">PIN kôdovi se moraju podudarati!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Postavite radnje povlačenja prstom za pristup najčešće korištenim radnjama.</string>
     <string name="settings_swipe_left_to_right">S lijeva na desno</string>
     <string name="settings_swipe_right_to_left">S desna na lijevo</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Parent folder</string>
+    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_folder_icon_description">Folder icon</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Odbaci promjene?</string>
     <string name="dialog_discard_changes_message">Sve vaše nespremljene promjene će biti odbačene.</string>
     <string name="discard">Odbaci</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ŠIFRIRANA E-POŠTA</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">Adresa e-pošte je duplikat</string>
     <string name="invalid_code">Kôd nije ispravan</string>
     <string name="message_drafted">Slanje poruke nije uspjelo. Poruka je spremljena u skice</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Otvori</string>
     <string name="close_drawer">Zatvori</string>
     <string name="inbox_option">Pristigla pošta</string>
@@ -390,7 +413,6 @@
     <string name="processing_attachment">Obrada privitka</string>
     <string name="hyperlink_confirmation_dialog_text_html">Spremate se pokreniti web preglednik i ići na::&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Želite li nastaviti?</string>
     <string name="dont_ask_again">Ne pitaj ponovno</string>
-    <string name="x_none">Ništa</string>
     <string name="changes_affected_after_closing">Promjene će biti primijenjene nakon zatvaranja aplikacije</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Neispravan PIN, %d pokušaj ostao</item>
@@ -402,7 +424,6 @@
         <item quantity="few">%d pokušaja do sigurnog brisanja podataka!</item>
         <item quantity="other">%d pokušaja do sigurnog brisanja podataka!</item>
     </plurals>
-    <string name="x_done">Gotovo</string>
     <string name="logout">Odjava</string>
     <string name="log_out">Odjavi %s?</string>
     <string name="logout_question">Jesi li siguran da se želiš odjaviti?</string>
@@ -863,8 +884,6 @@
     <string name="labels_and_folders">Labels &amp; folders </string>
     <string name="folders">Mape</string>
     <string name="labels">Oznake</string>
-    <string name="labels_manager">Upravljanje oznakama</string>
-    <string name="folders_manage">Upravljanje mapama</string>
     <string name="swipe_actions">Akcija potezanjem prsta</string>
     <string name="swipe_action_right">Prelazak prstom udesno</string>
     <string name="swipe_action_left">Prelazak prstom ulijevo</string>
@@ -968,6 +987,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Nevažeći API ključ za Firebase. Push obavijesti neće raditi.</string>
     <string name="failed_saving_draft_online">Spremanje online skice za poruku nije uspjelo: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nije moguće otvoriti ovu poruku dok se šalje</string>
     <string name="enable_conversation_mode">Omogući način razgovora</string>
     <!-- endregion -->

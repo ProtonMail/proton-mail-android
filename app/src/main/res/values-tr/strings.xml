@@ -23,10 +23,13 @@
     <string name="x_add_folder">Add folder</string>
     <string name="x_add_label">Add label</string>
     <string name="x_days">Gün</string>
+    <string name="x_done">Done</string>
+    <string name="x_edit">Edit</string>
     <string name="x_folders">Klasör</string>
     <string name="x_hours">Saat</string>
     <string name="x_labels">Etiket</string>
     <string name="x_more">Dahası</string>
+    <string name="x_none">None</string>
     <string name="x_search">Ara</string>
     <string name="x_set">Ayarla</string>
     <string name="x_0">0</string>
@@ -49,7 +52,7 @@
     <string name="composer_subject">Konu:</string>
     <string name="composer_to">Alıcı:</string>
     <string name="set_msg_password_title">Parola belirle</string>
-    <string name="set_msg_password_info">Protonmail kullanmayan kullanıcılar için bu mesajı şifrelemek amacıyla bir parola belirleyin. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Daha fazla bilgi edin</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">Bilgi</string>
     <string name="set_msg_password_msg_password_title">İleti parolası</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Bu öğe kontrol edildi</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_create_pin_code_title">PIN kodu ayarla</string>
     <string name="settings_confirm_pin_code_title">PIN kodunu tekrarla</string>
     <string name="settings_pins_dont_match">Girilen PIN kodları aynı olmalıdır!</string>
@@ -80,11 +84,29 @@
     <string name="settings_swipe_settings_info">Sık kullanılan komutlara erişmek için kaydırma özelliğini ayarlayın.</string>
     <string name="settings_swipe_left_to_right">Soldan sağa</string>
     <string name="settings_swipe_right_to_left">Sağdan sola</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_light">Light</string>
+    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_system">System default</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Parent folder</string>
+    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_folder_icon_description">Folder icon</string>
+    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Değişiklikler yoksayılsın mı?</string>
     <string name="dialog_discard_changes_message">Kaydedilmemiş tüm değişiklikler yok sayılacaktır.</string>
     <string name="discard">Vazgeç</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ŞİFRELİ E-POSTA</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">E-posta adresi bir kopyadır</string>
     <string name="invalid_code">Geçersiz kod</string>
     <string name="message_drafted">İleti gönderilemedi. İletileriniz Taslaklar klasörüne kaydedilir.</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Aç</string>
     <string name="close_drawer">Kapat</string>
     <string name="inbox_option">Gelen Kutusu</string>
@@ -382,7 +405,6 @@
     <string name="processing_attachment">Ek işleniyor</string>
     <string name="hyperlink_confirmation_dialog_text_html">Web tarayıcısını başlatmak ve yönlendirmek üzeresiniz: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Devam etmek istiyor musunuz?</string>
     <string name="dont_ask_again">Bir daha sorma</string>
-    <string name="x_none">Hiçbiri</string>
     <string name="changes_affected_after_closing">Değişiklikler uygulama kapatıldıktan sonra geçerli olacak</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Yanlış PIN, %d deneme kaldı</item>
@@ -392,7 +414,6 @@
         <item quantity="one">Güvenli veri silinene kadar %d deneme kaldı!</item>
         <item quantity="other">Güvenli veriler silinene kadar %d deneme kaldı!</item>
     </plurals>
-    <string name="x_done">Bitti</string>
     <string name="logout">Oturumu Kapat</string>
     <string name="log_out">%s oturumu kapatılsın mı?</string>
     <string name="logout_question">Oturumu kapatmak istediğinden emin misiniz?</string>
@@ -843,8 +864,6 @@
     <string name="labels_and_folders">Etiketler &amp; klasörler </string>
     <string name="folders">Klasörler</string>
     <string name="labels">Etiketler</string>
-    <string name="labels_manager">Etiket yöneticisi</string>
-    <string name="folders_manage">Klasör yöneticisi</string>
     <string name="swipe_actions">Kaydırma işlemleri</string>
     <string name="swipe_action_right">Sağa kaydır</string>
     <string name="swipe_action_left">Sola kaydır</string>
@@ -945,6 +964,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Geçersiz Firebase API anahtarı. Anlık bildirimler çalışmayacaktır.</string>
     <string name="failed_saving_draft_online">İleti taslağı çevrimiçi olarak kaydedilemedi: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Bu ileti gönderilirken açılamaz</string>
     <string name="enable_conversation_mode">Konuşma modunu etkinleştir</string>
     <!-- endregion -->

@@ -23,10 +23,13 @@
     <string name="x_add_folder">Přidat složku</string>
     <string name="x_add_label">Přidat štítek</string>
     <string name="x_days">Dny</string>
+    <string name="x_done">Hotovo</string>
+    <string name="x_edit">Upravit</string>
     <string name="x_folders">Složky</string>
     <string name="x_hours">Hodiny</string>
     <string name="x_labels">Štítky</string>
     <string name="x_more">Více</string>
+    <string name="x_none">Žádné</string>
     <string name="x_search">Hledat</string>
     <string name="x_set">Nastavit</string>
     <string name="x_0">0</string>
@@ -44,12 +47,12 @@
     <!-- region Composer -->
     <string name="composer_bcc">Skrytá kopie:</string>
     <string name="composer_cc">Kopie:</string>
-    <string name="composer_compose_email">Vytvořit email</string>
+    <string name="composer_compose_email">Vytvořit e-mail</string>
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Předmět:</string>
     <string name="composer_to">Komu:</string>
     <string name="set_msg_password_title">Nastavit heslo</string>
-    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy pro uživatele, kteří nepoužívají Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Další informace</a>
+    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy uživatelům, kteří nepoužívají ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informace</string>
     <string name="set_msg_password_msg_password_title">Heslo zprávy</string>
@@ -73,6 +76,7 @@
     <string name="set_msg_expiration_check_description">Tato položka je zaškrtnuta</string>
     <!-- endregion -->
     <!-- region Settings -->
+    <string name="settings_theme_title">Motiv</string>
     <string name="settings_create_pin_code_title">Nastavit PIN kód</string>
     <string name="settings_confirm_pin_code_title">Opakovat PIN kód</string>
     <string name="settings_pins_dont_match">PIN kódy se musí shodovat!</string>
@@ -80,15 +84,33 @@
     <string name="settings_swipe_settings_info">Nastavte gesta pro přístup k nejpoužívanějším akcím.</string>
     <string name="settings_swipe_left_to_right">Zleva doprava</string>
     <string name="settings_swipe_right_to_left">Zprava doleva</string>
+    <!-- endregion -->
+    <!-- region App Theme -->
+    <string name="app_theme_title">Použit motiv</string>
+    <string name="app_theme_light">Světlý</string>
+    <string name="app_theme_dark">Tmavý</string>
+    <string name="app_theme_system">Podle systému</string>
+    <!-- endregion -->
+    <!-- region Labels Manger -->
+    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_parent_folder_selected">
+        <b>Parent folder selected.</b> Tap to change</string>
+    <!-- endregion -->
+    <!-- region Parent Folder Picker -->
+    <string name="parent_picker_title">Nadřazená složka</string>
+    <string name="parent_picker_header">Nevyberete-li nadřazenou složku, bude nová složka vytvořena jako složka nejvyšší úrovně.</string>
+    <string name="parent_picker_folder_icon_description">Ikona složky</string>
+    <string name="parent_picker_parent_folder_icon_description">Ikona složky obsahující podsložky</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Zrušit změny?</string>
     <string name="dialog_discard_changes_message">Všechny neuložené změny budou zahozeny.</string>
     <string name="discard">Zahodit</string>
-    <!-- end region -->
+    <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">ŠIFROVANÝ EMAIL</string>
-    <string name="secure_email_swiss">Bezpečný email sídlící <br/>ve Švýcarsku</string>
+    <string name="encrypted_emails">ŠIFROVANÝ E-MAIL</string>
+    <string name="secure_email_swiss">Zabezpečný e-mail se sídlem\nve Švýcarsku</string>
     <string name="decrypt">Dešifrovat</string>
     <string name="sign_in">Přihlásit se</string>
     <string name="sign_out">Odhlásit se</string>
@@ -121,6 +143,7 @@
     <string name="duplicate_email">E-mailová adresa je duplicitní</string>
     <string name="invalid_code">Neplatný kód</string>
     <string name="message_drafted">Odeslání zprávy se nezdařilo. Zprávy jsou uloženy ve skožce Koncepty.</string>
+    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Otevřít</string>
     <string name="close_drawer">Zavřít</string>
     <string name="inbox_option">Doručená pošta</string>
@@ -246,7 +269,7 @@
     <string name="confirm">Potvrdit</string>
     <string name="confirm_destructive_action">Jste si jisti? Nelze to vrátit zpět.</string>
     <string name="create">Nové</string>
-    <string name="email">Email</string>
+    <string name="email">E-mail</string>
     <string name="phone">Telefonní číslo</string>
     <string name="save">Uložit</string>
     <string name="syncing_messages">Synchronizování...</string>
@@ -382,7 +405,7 @@
     <string name="pin_confirmation_not_match">Potvrzení kódu PIN nesouhlasí</string>
     <string name="pin_not_match">PIN se neshoduje</string>
     <string name="new_pin_saved">Nový PIN uložen</string>
-    <string name="new_emails">Počet nových emailů: %d</string>
+    <string name="new_emails">Počet nových e-mailů: %d</string>
     <string name="attachment_download_success">Počet úspěšně stažených souborů do Správce Souborů: %s</string>
     <string name="attachment_download_failed">%s se nepodařilo správně stáhnout</string>
     <string name="ringtone">Vyzváněcí tón</string>
@@ -396,7 +419,6 @@
     <string name="processing_attachment">Zpracování přílohy</string>
     <string name="hyperlink_confirmation_dialog_text_html">Chystáte se spustit webový prohlížeč a přejít na&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Chcete pokračovat?</string>
     <string name="dont_ask_again">Příště se neptat</string>
-    <string name="x_none">Žádné</string>
     <string name="changes_affected_after_closing">Změny se projeví až po zavření aplikace</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Nesprávný kód PIN, zbývá %d pokus</item>
@@ -410,7 +432,6 @@
         <item quantity="many">Počet pokusů před bezpečným smazáním dat: %d!</item>
         <item quantity="other">Počet pokusů před bezpečným smazáním dat: %d!</item>
     </plurals>
-    <string name="x_done">Hotovo</string>
     <string name="logout">Odhlásit se</string>
     <string name="log_out">Odhlásit %s?</string>
     <string name="logout_question">Opravdu se chcete odhlásit?</string>
@@ -426,7 +447,7 @@
     <string name="inline_header">%d Vložené obrázky</string>
     <string name="select">Vybrat</string>
     <string name="warning">Upozornění</string>
-    <string name="empty_recovery_email_question">Upozornění: Nenastavili jste sekundární email, v případě ztráty hesla, nebude možné účet obnovit. Pokračovat bez sekundárního e-mailu?</string>
+    <string name="empty_recovery_email_question">Upozornění: Nenastavili jste sekundární e-mail, v případě ztráty hesla, nebude možné účet obnovit. Pokračovat bez sekundárního e-mailu?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Vypršení platnosti %s</string>
     <string name="no_payment_methods">Nemáte žádné uložené způsoby platby.</string>
@@ -447,7 +468,7 @@
     <string name="delete_selected">Smazat vybrané</string>
     <string name="pin_not_activated">PIN nebyl aktivován</string>
     <string name="available_options">Dostupné možnosti</string>
-    <string name="change_recovery_email">Změna sekundární emailové adresy</string>
+    <string name="change_recovery_email">Změna sekundární e-mailové adresy</string>
     <string name="background_sync_subtitle">Pokud je tato volba povolena, synchronizace aplikace se serverem proběhne na pozadí. Zakázáním této volby vypnete upozornění push.</string>
     <string-array name="notification_options">
         <item>Bez zvuku a vibrací</item>
@@ -775,7 +796,7 @@
         k úložišti.</string>
     <string name="need_storage_permissions_download_attachment_text">Pro možnost stahování příloh musíte povolit přístup
         k úložišti.</string>
-    <string name="need_contacts_permissions_text">Pro možnost importu kontaktů musíte povolit přístut ke kontaktům.</string>
+    <string name="need_contacts_permissions_text">Chcete-li importovat kontakty, musíte ke kontaktům povolit přístup.</string>
     <string name="push_notifications_alert_title">Oznámení Push notifikací</string>
     <string name="push_notifications_alert_subtitle">Push notifikace pro ProtonMail nefungují bez aktuální verze služeb Google Play.</string>
     <string name="app_locked">Aplikace uzamčena</string>
@@ -868,7 +889,7 @@
     <string name="mailbox">E-mailová schránka</string>
     <string name="privacy">Ochrana soukromí</string>
     <string name="auto_download_messages_title">Automaticky stahovat zprávy</string>
-    <string name="auto_download_messages_subtitle">Jakmile je tato volba povolena, tělo zpráv bude automaticky staženo pokaždé když obdržíte emailové oznámení (větší spotřeba dat). Pokud tato volba není povolena, tělo zpráv bude stahováno pouze když otevřete email. (Upozornění: s každou možností, jestliže vyčistíte mezipaměť nebo se odhlásíte, nebudete moci číst tělo zpráv, jakmile budete offline)</string>
+    <string name="auto_download_messages_subtitle">Jakmile je tato volba povolena, tělo zpráv bude automaticky staženo pokaždé když obdržíte e-mailové oznámení (větší spotřeba dat). Pokud tato volba není povolena, tělo zpráv bude stahováno pouze když otevřete e-mail. (Upozornění: s každou možností, jestliže vyčistíte mezipaměť nebo se odhlásíte, nebudete moci číst tělo zpráv, jakmile budete offline)</string>
     <string name="settings_background_sync">Synchronizace na pozadí</string>
     <string name="settings_auto_show_images">Automaticky zobrazovat externí obrázky</string>
     <string name="settings_auto_show_embedded_images">Automaticky zobrazovat vnořené obrázky</string>
@@ -877,8 +898,6 @@
     <string name="labels_and_folders">Štítky &amp; složky </string>
     <string name="folders">Složky</string>
     <string name="labels">Štítky</string>
-    <string name="labels_manager">Správce štítků</string>
-    <string name="folders_manage">Správce složek</string>
     <string name="swipe_actions">Akce po přejetí prstem</string>
     <string name="swipe_action_right">Odsunutí doprava</string>
     <string name="swipe_action_left">Odsunutí doleva</string>
@@ -920,10 +939,10 @@
     <!-- region App Settings -->
     <string name="push_notifications">Push Notifikace</string>
     <string name="extended_notifications">Rozšířená oznámení</string>
-    <string name="extended_notifications_description">Zapněte tuto funkci, aby jste viděli odesílatele emailů v notifikaci push.</string>
+    <string name="extended_notifications_description">Zapněte tuto funkci, aby jste viděli odesílatele e-mailů v notifikaci push.</string>
     <string name="notification_settings">Nastavení notifikací</string>
     <string name="auto_lock">Automatické uzamčení</string>
-    <string name="auto_lock_app">Auto-lock aplikace</string>
+    <string name="auto_lock_app">Automatický zámek aplikací</string>
     <string name="auto_lock_description">Zapněte tuto funkci automatického zamknutí aplikace a použijte kód PIN nebo čtečku prstu pro odemčení.</string>
     <string name="change_pin_code">Změnit PIN kód</string>
     <string name="auto_lock_timer">Auto-lock časovač</string>
@@ -985,6 +1004,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Klíč Firebase API není platný. Oznámení nebudou fungovat.</string>
     <string name="failed_saving_draft_online">Nepodařilo se uložit koncept zprávy: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Tuto zprávu nelze během odesílání otevřít</string>
     <string name="enable_conversation_mode">Povolit mód konverzace</string>
     <!-- endregion -->
