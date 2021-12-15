@@ -29,6 +29,9 @@ import ch.protonmail.android.labels.data.local.model.LabelEntity
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.mapper.LabelOrFolderWithChildrenMapper
+import ch.protonmail.android.labels.data.remote.model.LabelApiModel
+import ch.protonmail.android.labels.data.remote.model.LabelResponse
+import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
 import ch.protonmail.android.labels.data.remote.worker.DeleteLabelsWorker
 import ch.protonmail.android.labels.data.remote.worker.PostLabelWorker
@@ -38,6 +41,7 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelOrFolderWithChildren
 import ch.protonmail.android.labels.domain.model.LabelType
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -47,6 +51,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
+import me.proton.core.network.domain.onError
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -183,12 +189,19 @@ internal class LabelRepositoryImpl @Inject constructor(
     private suspend fun fetchAndSaveAllLabels(
         userId: UserId
     ): List<LabelEntity> = coroutineScope {
-        val serverLabels = async { api.getLabels(userId).valueOrThrow.labels }
-        val serverFolders = async { api.getFolders(userId).valueOrThrow.labels }
-        val serverContactGroups = async { api.getContactGroups(userId).valueOrThrow.labels }
-        val allLabels = serverLabels.await() + serverFolders.await() + serverContactGroups.await()
+        val errors = mutableSetOf<ApiResult.Error>()
+        suspend fun Deferred<ApiResult<LabelsResponse>>.takeOrLog(): List<LabelApiModel> =
+            await()
+                .onError { errors += it }
+                .valueOrNull?.labels
+                ?: emptyList()
+
+        val serverLabels = async { api.getLabels(userId) }
+        val serverFolders = async { api.getFolders(userId) }
+        val serverContactGroups = async { api.getContactGroups(userId) }
+        val allLabels = serverLabels.takeOrLog() + serverFolders.takeOrLog() + serverContactGroups.takeOrLog()
         val allLabelsEntities = allLabels.map { labelApiMapper.toEntity(it, userId) }
-        Timber.v("fetchAndSaveAllLabels size: ${allLabelsEntities.size} user: $userId")
+        Timber.v("Refreshing labels. Fetched: ${allLabelsEntities.size} for user: $userId. Errors: $errors")
         saveLabels(allLabelsEntities)
         allLabelsEntities
     }
