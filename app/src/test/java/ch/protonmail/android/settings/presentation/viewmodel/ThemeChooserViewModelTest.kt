@@ -49,14 +49,15 @@ class ThemeChooserViewModelTest : CoroutinesTest {
     @Test
     fun `correct theme is emitted`() = runBlockingTest {
         // given
-        val expectedTheme = AppThemeSettings.DARK
-        coEvery { getAppThemeSettings() } returns expectedTheme
+        val theme = AppThemeSettings.DARK
+        val expectedState = ThemeChooserViewModel.State.Data(theme)
+        coEvery { getAppThemeSettings() } returns theme
 
         // when
         viewModel.state.test {
 
             // then
-            assertEquals(expectedTheme, awaitItem())
+            assertEquals(expectedState, awaitItem())
         }
     }
 
