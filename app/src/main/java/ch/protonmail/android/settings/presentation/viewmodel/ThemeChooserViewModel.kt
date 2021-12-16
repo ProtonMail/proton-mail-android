@@ -39,12 +39,12 @@ class ThemeChooserViewModel @Inject constructor(
     private val applyAppThemeFromSettings: ApplyAppThemeFromSettings
 ) : ViewModel() {
 
-    val state: StateFlow<AppThemeSettings> get() = mutableState.asStateFlow()
-    private val mutableState = MutableStateFlow(AppThemeSettings.FOLLOW_SYSTEM)
+    val state: StateFlow<State> get() = mutableState.asStateFlow()
+    private val mutableState = MutableStateFlow<State>(State.Loading)
 
     init {
         viewModelScope.launch {
-            mutableState.value = getAppThemeSettings()
+            mutableState.value = State.Data(getAppThemeSettings())
         }
     }
 
@@ -58,6 +58,13 @@ class ThemeChooserViewModel @Inject constructor(
             saveAppThemeSettings(theme)
             applyAppThemeFromSettings()
         }
+    }
+
+    sealed class State {
+
+        object Loading : State()
+
+        data class Data(val settings: AppThemeSettings) : State()
     }
 
     enum class Action {

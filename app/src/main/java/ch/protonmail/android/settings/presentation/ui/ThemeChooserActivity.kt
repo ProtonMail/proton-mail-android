@@ -71,7 +71,11 @@ class ThemeChooserActivity : AppCompatActivity() {
         return true
     }
 
-    private fun updateThemeSelection(theme: AppThemeSettings) {
+    private fun updateThemeSelection(state: ThemeChooserViewModel.State) {
+        val theme = when (state) {
+            ThemeChooserViewModel.State.Loading -> return
+            is ThemeChooserViewModel.State.Data -> state.settings
+        }
         val radioButton = when (theme) {
             AppThemeSettings.LIGHT -> binding.appThemeLightRadioButton
             AppThemeSettings.DARK -> binding.appThemeDarkRadioButton
