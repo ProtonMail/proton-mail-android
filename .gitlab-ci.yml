@@ -28,6 +28,8 @@ detekt analysis:
   stage: analyze
   tags:
     - large
+  except:
+    - schedules
   script:
     - ./gradlew detektBetaDebug
     - cat config/detekt/reports/detekt.json | jq '.runs[0].results' | jq 'map(with_entries(if .key == "level" then .key = "severity" else . end))' | tee config/detekt/reports/deket.json
@@ -156,6 +158,8 @@ firebase instrumentation tests:
   stage: test
   dependencies:
     - build debug
+  except:
+    - schedules
   tags:
     - small
   script:
@@ -207,6 +211,8 @@ startReview:
     - export REVIEW_APP_ARTIFACT_PATH="app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk"
     - echo ${REVIEW_APP_ARTIFACT_PATH}
   extends: .startReview
+  except:
+    - schedules
 
 stopReview:
   extends: .stopReview
@@ -272,9 +278,12 @@ publish-github:
   extends: .release-make-release
   tags:
     - small
+
 check for fixups:
   stage: analyze
   script:
     - git fetch origin $CI_COMMIT_BRANCH
     - git fetch origin develop
     - git log --pretty=%s "origin/develop..origin/$CI_COMMIT_BRANCH" | awk '$0 ~ /^fixup/ {find = 1}; END { exit find }'
+  except:
+    - schedules

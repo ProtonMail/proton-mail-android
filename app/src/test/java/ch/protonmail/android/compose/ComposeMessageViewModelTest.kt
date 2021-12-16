@@ -23,9 +23,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.compose.presentation.model.AddExpirationTimeToMessage
-import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.compose.presentation.util.HtmlToSpanned
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.core.Constants
@@ -363,33 +361,6 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             assertTrue(firstScheduledJob?.isCancelled ?: false)
             assertTrue(viewModel.autoSaveJob?.isActive ?: false)
             assertEquals(false, viewModel.messageDataResult.uploadAttachments)
-        }
-    }
-
-    @Test
-    fun sendMessageCallsSendMessageUseCaseWithMessageParameters() {
-        runBlockingTest {
-            // Given
-            val message = Message(messageId = "message id")
-            val messageWithExpirationTime = message.copy(expirationTime = 42L)
-            givenViewModelPropertiesAreInitialised()
-            viewModel.setPassword(MessagePasswordUiModel.Set("messagePassword", "a hint to discover it"))
-            every { workManager.cancelUniqueWork(any()) } returns mockk()
-            every { addExpirationTimeToMessage(eq(message), any()) } returns messageWithExpirationTime
-
-            // When
-            viewModel.sendMessage(message)
-
-            // Then
-            val params = SendMessage.SendMessageParameters(
-                messageWithExpirationTime,
-                listOf(),
-                "parentId823",
-                Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId",
-                MessageSecurityOptions("messagePassword", "a hint to discover it", 0)
-            )
-            coVerify { sendMessage(params) }
         }
     }
 
