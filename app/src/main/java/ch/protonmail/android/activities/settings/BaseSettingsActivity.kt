@@ -123,6 +123,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     @Inject
     lateinit var userSettingsOrchestrator: UserSettingsOrchestrator
+
     @Inject
     lateinit var accountManager: AccountManager
 
@@ -165,12 +166,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     init {
         settingsAdapter.onItemClick = { settingItem ->
 
-            if (settingItem.isSection.not() &&
-                (
-                    settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN ||
-                        settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.BUTTON
-                    )
-            ) {
+            val isDrillDownOrButton = settingItem.settingType in listOf(
+                SettingsItemTypeEnum.DRILL_DOWN,
+                SettingsItemTypeEnum.BUTTON
+            )
+            if (settingItem.isSection.not() && isDrillDownOrButton) {
                 selectItem(settingItem.settingId)
             }
         }

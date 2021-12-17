@@ -65,8 +65,8 @@ class DisplayNameAndSignatureFragment : Fragment() {
     var newMobileFooter: String? = null
 
     var displayNameOrSignatureChanged = {
-        val displayName = user?.addresses?.primary?.displayName?.s ?: user?.addresses?.primary?.email?.s
-        val signature = user?.addresses?.primary?.signature?.s
+        val displayName = user.addresses.primary?.displayName?.s ?: user.addresses.primary?.email?.s
+        val signature = user.addresses.primary?.signature?.s
         newDisplayName != displayName || newSignature != signature
     }
 
@@ -106,7 +106,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
                         newSignature = newSignature,
                         addressId = newAddressId
                     )
-                    jobManager?.addJobInBackground(job)
+                    jobManager.addJobInBackground(job)
                 }
                 if (newMobileFooter != legacyUser.mobileFooter) {
                     legacyUser.mobileFooter = newMobileFooter
@@ -130,7 +130,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val selectedAddress = checkNotNull(user?.addresses?.primary)
+        val selectedAddress = checkNotNull(user.addresses.primary)
         newAddressId = selectedAddress.id
 
         binding.settingsInputDisplayName.setText(selectedAddress.displayName?.s ?: selectedAddress.email.s)
@@ -142,7 +142,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
             val containsBannedChars = newDisplayName.matches(".*[<>].*".toRegex())
             if (containsBannedChars) {
                 context?.showToast(R.string.display_name_banned_chars, Toast.LENGTH_SHORT, Gravity.CENTER)
-                val primaryAddress = checkNotNull(user?.addresses?.primary)
+                val primaryAddress = checkNotNull(user.addresses.primary)
                 newDisplayName = primaryAddress.displayName?.s ?: primaryAddress.email.s
             }
         }
