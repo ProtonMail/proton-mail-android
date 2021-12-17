@@ -290,7 +290,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 }
             )
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
-                listOf(ContactEmail("contactId", "anotherContact@pm.me", "anotherContactName", lastUsedTime = "111"))
+                listOf(ContactEmail("contactId", "anotherContact@pm.me", "anotherContactName"))
             )
 
             val expected = MailboxUiItem(
@@ -340,7 +340,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery {
             contactsRepository.findContactsByEmail(match { emails -> emails.contains(senderEmailAddress) })
         } returns flowOf(
-            listOf(ContactEmail("contactId", senderEmailAddress, contactName, lastUsedTime = "111"))
+            listOf(ContactEmail("contactId", senderEmailAddress, contactName))
         )
 
         every { conversationModeEnabled(any()) } returns false
@@ -481,7 +481,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery {
             contactsRepository.findContactsByEmail(match { emails -> emails.contains(recipientEmailAddress) })
         } returns flowOf(
-            listOf(ContactEmail("contactId", recipientEmailAddress, contactName, lastUsedTime = "111"))
+            listOf(ContactEmail("contactId", recipientEmailAddress, contactName))
         )
 
         every { conversationModeEnabled(any()) } returns false
@@ -697,7 +697,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(
                     ContactEmail(
-                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName"
                     )
                 )
             )
@@ -752,7 +752,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(
                     ContactEmail(
-                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName"
                     )
                 )
             )
@@ -803,7 +803,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(
                     ContactEmail(
-                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName"
                     )
                 )
             )
@@ -859,7 +859,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(
                     ContactEmail(
-                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName"
                     )
                 )
             )
@@ -918,7 +918,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(
                     ContactEmail(
-                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName"
                     )
                 )
             )
@@ -973,7 +973,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(
                     ContactEmail(
-                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName"
                     )
                 )
             )
@@ -1029,7 +1029,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(
                     ContactEmail(
-                        "firstContactId", "firstsender@protonmail.com", "firstContactName", lastUsedTime = "111"
+                        "firstContactId", "firstsender@protonmail.com", "firstContactName"
                     )
                 )
             )

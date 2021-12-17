@@ -62,7 +62,7 @@ internal class ContactDaoTest {
             contactId = "aa",
             labelIds = listOf("aaa", "aaaa", "aaaaa"),
             name = "ce1",
-            lastUsedTime = "111"
+            lastUsedTime = 111
         ),
         ContactEmail(
             contactEmailId = "b",
@@ -70,7 +70,7 @@ internal class ContactDaoTest {
             contactId = "bb",
             labelIds = listOf("bbb", "bbbb", "bbbbb"),
             name = "ce2",
-            lastUsedTime = "113"
+            lastUsedTime = 113
         ),
         ContactEmail(
             contactEmailId = "c",
@@ -78,7 +78,7 @@ internal class ContactDaoTest {
             contactId = "bb",
             labelIds = listOf("ccc", "cccc", "ccccc"),
             name = "ce3",
-            lastUsedTime = "115"
+            lastUsedTime = 115
         ),
         ContactEmail(
             contactEmailId = "d",
@@ -86,7 +86,7 @@ internal class ContactDaoTest {
             contactId = "dd",
             labelIds = listOf("ddd", "dddd", "ddddd"),
             name = "ce4",
-            lastUsedTime = "114"
+            lastUsedTime = 114
         ),
         ContactEmail(
             contactEmailId = "e",
@@ -94,7 +94,7 @@ internal class ContactDaoTest {
             contactId = "ee",
             labelIds = listOf("eee", "eeee", "eeeee"),
             name = "ce5",
-            lastUsedTime = "112"
+            lastUsedTime = 112
         )
     )
 
@@ -370,7 +370,7 @@ internal class ContactDaoTest {
             contactId = "zzz",
             labelIds = listOf("zzzz", "zzzzz", "zzzzzz"),
             name = "ce1",
-            lastUsedTime = "116"
+            lastUsedTime = 116
         )
         val expected = contactEmails + inserted
         database.saveContactEmail(inserted)
@@ -386,7 +386,7 @@ internal class ContactDaoTest {
                 contactId = "yyy",
                 labelIds = listOf("yyyy", "yyyyy", "yyyyyy"),
                 name = "ce1",
-                lastUsedTime = "118"
+                lastUsedTime = 118
             ),
             ContactEmail(
                 "z",
@@ -394,7 +394,7 @@ internal class ContactDaoTest {
                 contactId = "zzz",
                 labelIds = listOf("zzzz", "zzzzz", "zzzzzz"),
                 name = "ce2",
-                lastUsedTime = "116"
+                lastUsedTime = 116
             )
         )
         val expected = contactEmails + inserted
@@ -411,7 +411,7 @@ internal class ContactDaoTest {
                 contactId = "yyy",
                 labelIds = listOf("yyyy", "yyyyy", "yyyyyy"),
                 name = "ce1",
-                lastUsedTime = "118"
+                lastUsedTime = 118
             ),
             ContactEmail(
                 "z",
@@ -419,7 +419,7 @@ internal class ContactDaoTest {
                 contactId = "zzz",
                 labelIds = listOf("zzzz", "zzzzz", "zzzzzz"),
                 name = "ce2",
-                lastUsedTime = "116"
+                lastUsedTime = 116
             )
         )
         val expected = contactEmails + inserted
@@ -481,21 +481,21 @@ internal class ContactDaoTest {
             "1@1.1",
             "a",
             labelIds = listOf("la", "lc"),
-            lastUsedTime = "121"
+            lastUsedTime = 121
         )
         val email2 = ContactEmail(
             "e2",
             "2@2.2",
             "b",
             labelIds = listOf("la", "lc"),
-            lastUsedTime = "123"
+            lastUsedTime = 123
         )
         val email3 = ContactEmail(
             "e3",
             "3@3.3",
             "c",
             labelIds = listOf("la", "lc"),
-            lastUsedTime = "122"
+            lastUsedTime = 122
         )
         initiallyEmptyDatabase.saveAllContactsEmails(listOf(email1, email2, email3))
         val emailFromDb = initiallyEmptyDatabase.findContactEmailById("e1")

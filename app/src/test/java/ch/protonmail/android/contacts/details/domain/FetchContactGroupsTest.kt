@@ -57,9 +57,9 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val labelId2 = LabelId("labelId2")
         val labelIds = listOf(labelId1.id)
         val contactEmail1 =
-            ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds, lastUsedTime = "111")
+            ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds, lastUsedTime = 111)
         val contactEmail2 =
-            ContactEmail(contactEmailId2, "test2@abc.com", "name1", labelIds = labelIds, lastUsedTime = "112")
+            ContactEmail(contactEmailId2, "test2@abc.com", "name1", labelIds = labelIds, lastUsedTime = 112)
         val list1 = listOf(contactEmail1, contactEmail2)
         val contactLabel1 =
             Label(
@@ -96,11 +96,11 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         val labelId3 = LabelId("labelId3")
         val labelIds = listOf(labelId1.id)
         val contactEmail1 =
-            ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds, lastUsedTime = "111")
+            ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds, lastUsedTime = 111)
         val contactEmail2 =
-            ContactEmail(contactEmailId2, "test2@abc.com", "name2", labelIds = labelIds, lastUsedTime = "113")
+            ContactEmail(contactEmailId2, "test2@abc.com", "name2", labelIds = labelIds, lastUsedTime = 113)
         val contactEmail3 =
-            ContactEmail(contactEmailId3, "test3@abc.com", "name3", labelIds = labelIds, lastUsedTime = "112")
+            ContactEmail(contactEmailId3, "test3@abc.com", "name3", labelIds = labelIds, lastUsedTime = 112)
         val list1 = listOf(contactEmail1, contactEmail2)
         val list2 = listOf(contactEmail3)
         val contactLabel1 =

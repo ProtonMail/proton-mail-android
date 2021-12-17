@@ -86,7 +86,7 @@ data class ContactEmail @JvmOverloads constructor(
 
     @SerializedName(COLUMN_CONTACT_EMAILS_LAST_TIME_USED)
     @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LAST_TIME_USED)
-    val lastUsedTime: String
+    var lastUsedTime: Int = 0
 
 ) : Serializable {
 

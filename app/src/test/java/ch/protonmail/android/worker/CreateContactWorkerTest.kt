@@ -151,10 +151,10 @@ class CreateContactWorkerTest {
         runBlockingTest {
             val contactId = "serverContactId"
             val serverContactEmails =
-                listOf(ContactEmail("emailId", "first@pm.me", "firstcontact", lastUsedTime = "111"))
+                listOf(ContactEmail("emailId", "first@pm.me", "firstcontact", lastUsedTime = 111))
             val serverContactEmails1 = listOf(
-                ContactEmail("emailId1", "second@pm.me", "secondcontact", lastUsedTime = "113"),
-                ContactEmail("emailId2", "third@pm.me", "thirdcontact", lastUsedTime = "112")
+                ContactEmail("emailId1", "second@pm.me", "secondcontact", lastUsedTime = 113),
+                ContactEmail("emailId2", "third@pm.me", "thirdcontact", lastUsedTime = 112)
             )
             val responses = mockk<ContactResponse.Responses> {
                 every { response.contact.emails } returns serverContactEmails

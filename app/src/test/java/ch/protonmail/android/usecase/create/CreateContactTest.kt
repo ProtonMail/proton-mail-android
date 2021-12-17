@@ -84,8 +84,8 @@ class CreateContactTest : CoroutinesTest {
     private val encryptedData = "encryptedContactData"
     private val signedData = "signedContactData"
     private val contactEmails = listOf(
-        ContactEmail("ID1", "email@proton.com", "Tom", lastUsedTime = "111"),
-        ContactEmail("ID2", "secondary@proton.com", "Mike", lastUsedTime = "112")
+        ContactEmail("ID1", "email@proton.com", "Tom", lastUsedTime = 111),
+        ContactEmail("ID2", "secondary@proton.com", "Mike", lastUsedTime = 112)
     )
 
     private val cacheDirPath = "CacheDirPath"
@@ -108,9 +108,9 @@ class CreateContactTest : CoroutinesTest {
             createContact("Mike", contactEmails, encryptedData, signedData)
 
             val emailWithContactId =
-                ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId", lastUsedTime = "111")
+                ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId", lastUsedTime = 111)
             val secondaryEmailWithContactId =
-                ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId", lastUsedTime = "112")
+                ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId", lastUsedTime = 112)
             val expectedContactEmails = listOf(emailWithContactId, secondaryEmailWithContactId)
             coVerify { contactsRepository.saveContactEmails(expectedContactEmails) }
         }
@@ -200,7 +200,7 @@ class CreateContactTest : CoroutinesTest {
                     defaults = 1,
                     type = mutableListOf("email"),
                     labelIds = emptyList(),
-                    lastUsedTime = "111"
+                    lastUsedTime = 111
                 ),
                 ContactEmail(
                     "HsdksdkjnZ8A-I6w==",
@@ -208,7 +208,7 @@ class CreateContactTest : CoroutinesTest {
                     "Mike",
                     contactId = "jB_6lbgFc7QA12w==",
                     labelIds = emptyList(),
-                    lastUsedTime = "112"
+                    lastUsedTime = 112
                 )
             )
             val serverEmailsJson = """
