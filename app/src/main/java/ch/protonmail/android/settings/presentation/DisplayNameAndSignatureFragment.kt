@@ -32,24 +32,27 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.settings.BaseSettingsActivity
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.databinding.SettingsFragmentDisplayNameAndSignatureBinding
-import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
-import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
-import ch.protonmail.android.api.models.User as LegacyUser
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DisplayNameAndSignatureFragment : Fragment() {
 
-    var user: User? = null
-    var jobManager: JobManager? = null
-    lateinit var legacyUser: LegacyUser
+    @Inject
+    lateinit var jobManager: JobManager
+
+    @Inject
+    lateinit var userManager: UserManager
+
+    private val user get() = userManager.requireCurrentUser()
+    private val legacyUser get() = userManager.requireCurrentLegacyUser()
 
     private var _binding: SettingsFragmentDisplayNameAndSignatureBinding? = null
 
@@ -62,8 +65,8 @@ class DisplayNameAndSignatureFragment : Fragment() {
     var newMobileFooter: String? = null
 
     var displayNameOrSignatureChanged = {
-        val displayName = user?.addresses?.primary?.displayName?.s ?: user?.addresses?.primary?.email?.s
-        val signature = user?.addresses?.primary?.signature?.s
+        val displayName = user.addresses.primary?.displayName?.s ?: user.addresses.primary?.email?.s
+        val signature = user.addresses.primary?.signature?.s
         newDisplayName != displayName || newSignature != signature
     }
 
@@ -103,7 +106,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
                         newSignature = newSignature,
                         addressId = newAddressId
                     )
-                    jobManager?.addJobInBackground(job)
+                    jobManager.addJobInBackground(job)
                 }
                 if (newMobileFooter != legacyUser.mobileFooter) {
                     legacyUser.mobileFooter = newMobileFooter
@@ -127,12 +130,11 @@ class DisplayNameAndSignatureFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        legacyUser = (activity as BaseSettingsActivity).legacyUser
-        val selectedAddress = checkNotNull(user?.addresses?.primary)
+        val selectedAddress = checkNotNull(user.addresses.primary)
         newAddressId = selectedAddress.id
 
         binding.settingsInputDisplayName.setText(selectedAddress.displayName?.s ?: selectedAddress.email.s)
-        newDisplayName = (selectedAddress.displayName?.s ?: selectedAddress.email.s)
+        newDisplayName = selectedAddress.displayName?.s ?: selectedAddress.email.s
 
         binding.settingsInputDisplayName.doAfterTextChanged {
             newDisplayName = it.toString()
@@ -140,7 +142,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
             val containsBannedChars = newDisplayName.matches(".*[<>].*".toRegex())
             if (containsBannedChars) {
                 context?.showToast(R.string.display_name_banned_chars, Toast.LENGTH_SHORT, Gravity.CENTER)
-                val primaryAddress = checkNotNull(user?.addresses?.primary)
+                val primaryAddress = checkNotNull(user.addresses.primary)
                 newDisplayName = primaryAddress.displayName?.s ?: primaryAddress.email.s
             }
         }
@@ -178,11 +180,6 @@ class DisplayNameAndSignatureFragment : Fragment() {
 
     companion object {
 
-        fun newInstance(user: User, jobManager: JobManager): DisplayNameAndSignatureFragment {
-            return DisplayNameAndSignatureFragment().apply {
-                this.user = user
-                this.jobManager = jobManager
-            }
-        }
+        fun newInstance() = DisplayNameAndSignatureFragment()
     }
 }

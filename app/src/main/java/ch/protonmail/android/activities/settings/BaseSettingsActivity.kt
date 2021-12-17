@@ -77,6 +77,7 @@ import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
 import ch.protonmail.android.settings.presentation.SwipeSettingFragment
 import ch.protonmail.android.settings.presentation.ui.ThemeChooserActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
+import ch.protonmail.android.uiModel.SettingsItemUiModel.SettingsItemTypeEnum
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
@@ -122,6 +123,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     @Inject
     lateinit var userSettingsOrchestrator: UserSettingsOrchestrator
+
     @Inject
     lateinit var accountManager: AccountManager
 
@@ -156,20 +158,19 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     var mSignature: String = ""
 
     @Deprecated("Use new User model", ReplaceWith("user"))
-    lateinit var legacyUser: LegacyUser
-    lateinit var user: User
+    protected val legacyUser: LegacyUser get() = userManager.requireCurrentLegacyUser()
+    protected val user: User get() = userManager.requireCurrentUser()
 
     private var canClick = AtomicBoolean(true)
 
     init {
         settingsAdapter.onItemClick = { settingItem ->
 
-            if (settingItem.isSection.not() &&
-                (
-                    settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN ||
-                        settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.BUTTON
-                    )
-            ) {
+            val isDrillDownOrButton = settingItem.settingType in listOf(
+                SettingsItemTypeEnum.DRILL_DOWN,
+                SettingsItemTypeEnum.BUTTON
+            )
+            if (settingItem.isSection.not() && isDrillDownOrButton) {
                 selectItem(settingItem.settingId)
             }
         }
@@ -179,8 +180,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         super.onCreate(savedInstanceState)
 
         userSettingsOrchestrator.register(this)
-        legacyUser = userManager.requireCurrentLegacyUser()
-        user = legacyUser.toNewUser()
         val userId = user.id
 
         contactDao = ContactDatabase.getInstance(applicationContext, userId).getDao()
@@ -211,8 +210,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     override fun onResume() {
         super.onResume()
-        legacyUser = userManager.requireCurrentLegacyUser()
-        user = legacyUser.toNewUser()
         settingsAdapter.notifyDataSetChanged()
         viewModel.checkConnectivity()
     }
@@ -297,8 +294,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     }
 
     private fun selectItem(settingsId: String) {
-        legacyUser = userManager.requireCurrentLegacyUser()
-        user = legacyUser.toNewUser()
         when (valueOf(settingsId.uppercase())) {
             ACCOUNT -> {
                 val accountSettingsIntent =
@@ -342,7 +337,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 showSortAliasDialog()
             }
             DISPLAY_NAME_N_SIGNATURE -> {
-                val displayAndSignatureFragment = DisplayNameAndSignatureFragment.newInstance(user, mJobManager)
+                val displayAndSignatureFragment = DisplayNameAndSignatureFragment.newInstance()
                 supportFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
                     .add(R.id.settings_fragment_container, displayAndSignatureFragment)
