@@ -26,12 +26,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import ch.protonmail.android.data.ProtonMailConverters
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABEL_IDS
+import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LAST_TIME_USED
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsConverter
 import ch.protonmail.android.data.local.model.TABLE_CONTACT_EMAILS
 import me.proton.core.data.room.db.CommonConverters
+import me.proton.core.data.room.db.extension.addTableColumn
 import org.apache.commons.lang3.StringEscapeUtils
 
 @Database(
@@ -55,7 +57,8 @@ abstract class ContactDatabase : RoomDatabase() {
     companion object : DatabaseFactory<ContactDatabase>(
         ContactDatabase::class,
         "ContactsDatabase.db",
-        MIGRATION_1_2
+        MIGRATION_1_2,
+        MIGRATION_2_3
     )
 }
 
@@ -96,4 +99,15 @@ private val MIGRATION_1_2 = object : Migration(1, 2) {
 
     private fun SupportSQLiteDatabase.dropContactEmailsLabelJoinTable() =
         execSQL("DROP TABLE $CONTACT_EMAILS_LABEL_JOIN_TABLE")
+}
+
+private val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.addTableColumn(
+            table = TABLE_CONTACT_EMAILS,
+            column = COLUMN_CONTACT_EMAILS_LAST_TIME_USED,
+            type = "INTEGER NOT NULL",
+            defaultValue = "0"
+        )
+    }
 }
