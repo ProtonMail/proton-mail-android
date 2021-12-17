@@ -65,6 +65,7 @@ class CoreAccountManagerMigration @Inject constructor(
     private val keyStoreCrypto: KeyStoreCrypto,
     private val accountManager: AccountManager,
     private val userManager: UserManager,
+    private val oldUserManager: ch.protonmail.android.core.UserManager,
     private val oldAccountManager: ch.protonmail.android.api.AccountManager,
     @DefaultSharedPreferences private val appPrefs: SharedPreferences
 ) {
@@ -139,6 +140,8 @@ class CoreAccountManagerMigration @Inject constructor(
             // Clear migrated data.
             tokenManager.clear()
             userPrefs.edit { remove(PREF_MAILBOX_PASSWORD) }
+            // Clear cached User/Address/Key.
+            oldUserManager.clearCache()
         }
     }
 
