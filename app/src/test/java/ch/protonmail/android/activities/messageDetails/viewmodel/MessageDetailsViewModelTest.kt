@@ -137,8 +137,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val testSenderContactEmail = ContactEmail(
         "defaultMockContactEmailId",
         "defaultMockContactEmailAddress",
-        "defaultMockContactName",
-        lastUsedTime = "111"
+        "defaultMockContactName"
     )
     private val contactsRepository: ContactsRepository = mockk {
         coEvery { findContactEmailByEmail(any()) } returns testSenderContactEmail

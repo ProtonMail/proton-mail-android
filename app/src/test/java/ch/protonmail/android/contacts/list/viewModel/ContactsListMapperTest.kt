@@ -104,11 +104,11 @@ class ContactsListMapperTest {
         val dataList = listOf(contact1, contact2)
         val contactEmail1 = ContactEmail(
             contactEmailId = "contactEmailId1", email = email1, name = "emailName1", contactId = contactId1,
-            lastUsedTime = "111"
+            lastUsedTime = 111
         )
         val contactEmail2 = ContactEmail(
             contactEmailId = "contactEmailId2", email = email2, name = "emailName1", contactId = contactId2,
-            lastUsedTime = "112"
+            lastUsedTime = 112
         )
         val emailsList = listOf(contactEmail1, contactEmail2)
         val expected = listOf(

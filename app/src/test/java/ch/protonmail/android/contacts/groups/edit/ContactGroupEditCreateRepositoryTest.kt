@@ -230,8 +230,7 @@ class ContactGroupEditCreateRepositoryTest {
             contactEmailId = testMember1,
             email = "firstsender@protonmail.com",
             name = "firstContactName",
-            labelIds = listOf(testLabel1Id, testLabel2Id, testLabel3Id),
-            lastUsedTime = "111"
+            labelIds = listOf(testLabel1Id, testLabel2Id, testLabel3Id)
         )
         val inputContactEmails = listOf(inputContactEmail)
         coEvery { contactsRepository.findAllContactEmailsByContactGroupId(testGroupId) } returns inputContactEmails
@@ -266,8 +265,7 @@ class ContactGroupEditCreateRepositoryTest {
             contactEmailId = testMember1,
             email = "firstsender@protonmail.com",
             name = "firstContactName",
-            labelIds = listOf(testLabel1Id, testLabel2Id),
-            lastUsedTime = "111"
+            labelIds = listOf(testLabel1Id, testLabel2Id)
         )
         coEvery { contactsRepository.findAllContactEmailsById(testMember1) } returns existingContactEmail
 
