@@ -31,14 +31,13 @@ detekt analysis:
   except:
     - schedules
   script:
-    - ./gradlew detektBetaDebug
-    - cat config/detekt/reports/detekt.json | jq '.runs[0].results' | jq 'map(with_entries(if .key == "level" then .key = "severity" else . end))' | tee config/detekt/reports/deket.json
+    - ./gradlew multiModuleDetekt
   artifacts:
     expire_in: 1 week
     paths:
       - config/detekt/reports/*
     reports:
-      codequality: config/detekt/reports/detekt.json
+      codequality: config/detekt/reports/mergedReport.json
 
 build debug:
   stage: build
