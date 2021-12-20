@@ -178,6 +178,9 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                     break;
                 }
             }
+            // Set the encrypted data to be null before adding the updated encrypted data
+            contact = contact.copy(contact.getContactId(), contact.getName(), contact.getUid(), contact.getCreateTime(), contact.getModifyTime(),
+                    contact.getSize(), contact.getDefaults(), contact.getEmails(), null);
             if (contactEncryptedDataType0 != null) {
                 String vCardType0String = contactEncryptedDataType0.getData();
                 final VCard vCardType0 = vCardType0String != null ? Ezvcard.parse(vCardType0String).first() : null;
