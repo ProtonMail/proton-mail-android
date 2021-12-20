@@ -105,7 +105,7 @@ class FetchContactDetails @Inject constructor(
                         decryptedVCardType1 = crypto.decrypt(tct).decryptedData
                     }
                     Constants.VCardType.UNSIGNED -> {
-                        decryptedVCardType0 = contactEncryptedData.data
+                        if (decryptedVCardType0 == EMPTY_STRING) decryptedVCardType0 = contactEncryptedData.data
                     }
                 }
             }

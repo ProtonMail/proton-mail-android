@@ -413,7 +413,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
         for (ContactEncryptedData contactEncryptedData : encData) {
             if (contactEncryptedData.getType() == 0) {
-                mVCardType0 = contactEncryptedData.getData();
+                if (mVCardType0 == null) mVCardType0 = contactEncryptedData.getData();
             } else if (contactEncryptedData.getType() == 1) {
                 try {
                     CipherText tct = new CipherText(contactEncryptedData.getData());
