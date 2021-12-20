@@ -45,6 +45,9 @@ import timber.log.Timber
 import javax.mail.internet.InternetHeaders
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
+const val HEX_DIGITS = "0123456789abcdefABCDEF"
+const val EXPECTED_TOKEN_LENGTH = 64
+
 class AddressCrypto @AssistedInject constructor(
     val userManager: UserManager,
     openPgp: OpenPGP,
@@ -80,7 +83,7 @@ class AddressCrypto @AssistedInject constructor(
     protected override val AddressKey.privateKey: PgpField.PrivateKey
         get() = privateKey
 
-    protected override fun passphraseFor(key: AddressKey): ByteArray? {
+    override fun passphraseFor(key: AddressKey): ByteArray? {
         // This is for smart-cast support
         val token = key.token
         val signature = key.signature
@@ -99,7 +102,10 @@ class AddressCrypto @AssistedInject constructor(
                     pgpMessage,
                     userKeyRing
                 )?.let { decryptedToken ->
-                    if (verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)) {
+                    if (
+                        verifyTokenFormat(decryptedToken) &&
+                        verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)
+                    ) {
                         return decryptedToken
                     }
                 }
@@ -109,6 +115,21 @@ class AddressCrypto @AssistedInject constructor(
         }
         Timber.e("Failed getting passphrase for key (id = ${key.id.s}) using user keys")
         return null
+    }
+
+    /**
+     * Check that the key token is a 32 byte value encoded in hexadecimal form.
+     */
+    private fun verifyTokenFormat(decryptedToken: ByteArray): Boolean {
+        if (decryptedToken.size != EXPECTED_TOKEN_LENGTH) {
+            return false
+        }
+        for (char in decryptedToken) {
+            if (!HEX_DIGITS.contains(char.toInt().toChar())) {
+                return false
+            }
+        }
+        return true
     }
 
     private fun decryptToken(

@@ -77,7 +77,7 @@ abstract class Crypto<K>(
     protected fun requirePrimaryKey(): K =
         checkNotNull(primaryKey) { "No primary key found" }
 
-    protected abstract fun passphraseFor(key: K): ByteArray?
+    abstract fun passphraseFor(key: K): ByteArray?
 
     protected abstract val K.privateKey: PgpField.PrivateKey
 
