@@ -44,6 +44,9 @@ import timber.log.Timber
 import javax.mail.internet.InternetHeaders
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
+const val EXPECTED_TOKEN_LENGTH = 64
+const val HEX_DIGITS = "0123456789abcdefABCDEF"
+
 class AddressCrypto @AssistedInject constructor(
     val userManager: UserManager,
     openPgp: OpenPGP,
@@ -96,13 +99,31 @@ class AddressCrypto @AssistedInject constructor(
                 pgpMessage,
                 userKeyRing
             )?.let { decryptedToken ->
-                if (verifySignature(userKeyRing, decryptedToken, signature, userKey.id.id, key.id.id)) {
+                if (
+                    verifyTokenFormat(decryptedToken) &&
+                    verifySignature(userKeyRing, decryptedToken, signature, userKey.id.id, key.id.id)
+                ) {
                     return decryptedToken
                 }
             }
         }
         Timber.e("Failed getting passphrase for key (id = ${key.id.id}) using user keys")
         return null
+    }
+
+    /**
+     * Check that the key token is a 32 byte value encoded in hexadecimal form.
+     */
+    private fun verifyTokenFormat(decryptedToken: ByteArray): Boolean {
+        if (decryptedToken.size != EXPECTED_TOKEN_LENGTH) {
+            return false
+        }
+        for (char in decryptedToken) {
+            if (!HEX_DIGITS.contains(char.toInt().toChar())) {
+                return false
+            }
+        }
+        return true
     }
 
     private fun decryptToken(
@@ -128,8 +149,9 @@ class AddressCrypto @AssistedInject constructor(
         onSuccess = { true },
         onFailure = {
             Timber.e(
-                it, "Verification of token for address key (id = $addressKeyId) " +
-                "with user key (id = $userKeyId) failed"
+                it,
+                "Verification of token for address key (id = $addressKeyId) " +
+                    "with user key (id = $userKeyId) failed"
             )
             false
         }
