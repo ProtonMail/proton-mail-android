@@ -34,6 +34,11 @@
     <string name="x_set">Setare</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Pictogramă etichetă</string>
+    <string name="x_folder_icon_description">Pictogramă folder</string>
+    <string name="x_parent_folder_icon_description">Pictogramă folder părinte</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contacte</string>
     <string name="drawer_lock_the_app">Blocare aplicație</string>
@@ -86,21 +91,19 @@
     <string name="settings_swipe_right_to_left">De la dreapta la stânga</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">Tema aplicației</string>
-    <string name="app_theme_light">Deschisă</string>
-    <string name="app_theme_dark">Întunecată</string>
-    <string name="app_theme_system">Sistem implicit</string>
+    <string name="app_theme_title">Temă aplicație</string>
+    <string name="app_theme_light">Albă</string>
+    <string name="app_theme_dark">Neagră</string>
+    <string name="app_theme_system">Implicit din sistem</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Selectați folderul părinte</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Folderul părinte selectat.</b> Atingeți pentru a schimba</string>
+        <b>Folderul părinte a fost selectat.</b> Atingeți pentru a schimba.</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Folder părinte</string>
     <string name="parent_picker_header">Dacă nu selectați un folder părinte, acesta va fi creat ca un folder de nivel superior.</string>
-    <string name="parent_picker_folder_icon_description">Pictogramă folder</string>
-    <string name="parent_picker_parent_folder_icon_description">Pictogramă folder părinte</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Anulare modificări?</string>
@@ -143,7 +146,7 @@
     <string name="duplicate_email">Adresa de e-mail este o dublură</string>
     <string name="invalid_code">Codul nu este valid</string>
     <string name="message_drafted">Trimitere mesaj eșuată. Mesajele sunt salvate în folderul «Ciorne»</string>
-    <string name="attachment_failed_message_drafted">Vă rugăm să scoateți și să reatașați \"%s\" și să trimiteți din nou mesajul. Mesajul dumneavoastră se găsește în dosarul \"Drafts\".</string>
+    <string name="attachment_failed_message_drafted">Vă rugăm să scoateți și să reatașați „%s” și să retrimiteți mesajul. Mesajul se găsește în folderul „Ciorne”.</string>
     <string name="open_drawer">Deschidere</string>
     <string name="close_drawer">Închidere</string>
     <string name="inbox_option">Primite</string>
@@ -986,7 +989,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Cheie API Firebase nevalidă. Notificările push nu vor funcționa.</string>
     <string name="failed_saving_draft_online">Nu s-a reușit salvarea ciornei pentru mesajul: „%s”</string>
-    <string name="failed_uploading_attachment_online">Eroare de atașare a mesajului: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Eroare atașament la mesajului: „%s”</string>
     <string name="cannot_open_message_while_being_sent">Acest mesaj nu poate fi deschis în timp ce este trimis</string>
     <string name="enable_conversation_mode">Activare mod conversaţie</string>
     <!-- endregion -->

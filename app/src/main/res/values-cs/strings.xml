@@ -34,6 +34,11 @@
     <string name="x_set">Nastavit</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Label icon</string>
+    <string name="x_folder_icon_description">Folder icon</string>
+    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakty</string>
     <string name="drawer_lock_the_app">Zamknout aplikaci</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Nadřazená složka</string>
     <string name="parent_picker_header">Nevyberete-li nadřazenou složku, bude nová složka vytvořena jako složka nejvyšší úrovně.</string>
-    <string name="parent_picker_folder_icon_description">Ikona složky</string>
-    <string name="parent_picker_parent_folder_icon_description">Ikona složky obsahující podsložky</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Zrušit změny?</string>

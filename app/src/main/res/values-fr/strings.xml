@@ -34,6 +34,11 @@
     <string name="x_set">Définir</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Icône de label</string>
+    <string name="x_folder_icon_description">Icône de dossier</string>
+    <string name="x_parent_folder_icon_description">Dossier avec icône héritée</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contacts</string>
     <string name="drawer_lock_the_app">Verrouiller l\'application</string>
@@ -76,7 +81,7 @@
     <string name="set_msg_expiration_check_description">Cet élément est coché</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_title">Thème</string>
     <string name="settings_create_pin_code_title">Définir le code PIN</string>
     <string name="settings_confirm_pin_code_title">Répéter le code PIN</string>
     <string name="settings_pins_dont_match">Les codes PIN doivent être identiques !</string>
@@ -86,21 +91,19 @@
     <string name="settings_swipe_right_to_left">De droite à gauche</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App theme</string>
-    <string name="app_theme_light">Light</string>
-    <string name="app_theme_dark">Dark</string>
-    <string name="app_theme_system">System default</string>
+    <string name="app_theme_title">Thème de l\'application</string>
+    <string name="app_theme_light">Clair</string>
+    <string name="app_theme_dark">Sombre</string>
+    <string name="app_theme_system">Identique au système</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_select_parent_folder">Sélectionner le dossier parent</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Parent folder selected.</b> Tap to change</string>
+        <b>Dossier parent sélectionné.</b> Appuyez pour modifier</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Dossier parent</string>
     <string name="parent_picker_header">Si vous ne sélectionnez pas de dossier parent, ce nouveau dossier sera créé en tant que dossier de niveau supérieur.</string>
-    <string name="parent_picker_folder_icon_description">Icône de dossier</string>
-    <string name="parent_picker_parent_folder_icon_description">Dossier avec icône héritée</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Abandonner les modifications ?</string>
@@ -143,7 +146,7 @@
     <string name="duplicate_email">L’adresse électronique est un doublon</string>
     <string name="invalid_code">Le code est invalide</string>
     <string name="message_drafted">L\'envoi du message a échoué. Vos messages sont sauvegardés dans le dossier brouillons</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">Veuillez supprimer et rattacher « %s » et renvoyer le message. Votre message se trouve dans le dossier « Brouillons ».</string>
     <string name="open_drawer">Ouvrir</string>
     <string name="close_drawer">Fermer</string>
     <string name="inbox_option">Boîte de réception</string>
@@ -970,7 +973,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Clé API pour Firebase invalide. Les notifications push ne fonctionneront pas.</string>
     <string name="failed_saving_draft_online">Échec de l\'enregistrement du brouillon en ligne pour le message : \"%s\"</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Erreur de pièce jointe pour le message : « %s »</string>
     <string name="cannot_open_message_while_being_sent">Impossible d\'ouvrir ce message lors de son envoi</string>
     <string name="enable_conversation_mode">Activer le mode conversation</string>
     <!-- endregion -->

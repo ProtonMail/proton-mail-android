@@ -34,6 +34,11 @@
     <string name="x_set">設定</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">標籤圖示</string>
+    <string name="x_folder_icon_description">資料夾圖示</string>
+    <string name="x_parent_folder_icon_description">含資料夾之圖示</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">聯絡人</string>
     <string name="drawer_lock_the_app">鎖定應用程式</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">上層資料夾</string>
     <string name="parent_picker_header">若你沒有選定上層資料夾，此資料夾將會以頂層資料夾建立。</string>
-    <string name="parent_picker_folder_icon_description">資料夾圖示</string>
-    <string name="parent_picker_parent_folder_icon_description">帶有兒童圖示的資料夾</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">放棄變更？</string>

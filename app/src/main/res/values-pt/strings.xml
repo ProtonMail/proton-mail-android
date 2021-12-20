@@ -34,6 +34,11 @@
     <string name="x_set">Definir</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Label icon</string>
+    <string name="x_folder_icon_description">Folder icon</string>
+    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contactos</string>
     <string name="drawer_lock_the_app">Bloquear a aplicação</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Parent folder</string>
     <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
-    <string name="parent_picker_folder_icon_description">Folder icon</string>
-    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Descartar alterações?</string>

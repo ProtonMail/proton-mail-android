@@ -23,16 +23,21 @@
     <string name="x_add_folder">Добавить папку</string>
     <string name="x_add_label">Добавить ярлык</string>
     <string name="x_days">Дней</string>
-    <string name="x_done">Done</string>
+    <string name="x_done">Готово</string>
     <string name="x_edit">Редактировать</string>
     <string name="x_folders">Папки</string>
     <string name="x_hours">Часов</string>
     <string name="x_labels">Ярлыки</string>
     <string name="x_more">Ещё</string>
-    <string name="x_none">None</string>
+    <string name="x_none">Нет</string>
     <string name="x_search">Поиск</string>
     <string name="x_set">Установить</string>
     <string name="x_0">0</string>
+    <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Значек ярлыка</string>
+    <string name="x_folder_icon_description">Значок папки</string>
+    <string name="x_parent_folder_icon_description">Папка с детским значком</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Контакты</string>
@@ -52,7 +57,7 @@
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
     <string name="set_msg_password_title">Задать пароль</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
+    <string name="set_msg_password_info">Установите пароль для шифрования этого сообщения для пользователей, не являющихся пользователями Protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Узнать больше</a>
     </string>
     <string name="set_msg_password_info_icon_description">Информация</string>
     <string name="set_msg_password_msg_password_title">Пароль сообщения</string>
@@ -76,7 +81,7 @@
     <string name="set_msg_expiration_check_description">Этот элемент отмечен</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_title">Тема</string>
     <string name="settings_create_pin_code_title">Установите PIN-код</string>
     <string name="settings_confirm_pin_code_title">Повторите PIN-код</string>
     <string name="settings_pins_dont_match">PIN-коды должны совпадать!</string>
@@ -86,21 +91,19 @@
     <string name="settings_swipe_right_to_left">Справа налево</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App theme</string>
-    <string name="app_theme_light">Light</string>
-    <string name="app_theme_dark">Dark</string>
-    <string name="app_theme_system">System default</string>
+    <string name="app_theme_title">Тема приложения</string>
+    <string name="app_theme_light">Светлая</string>
+    <string name="app_theme_dark">Тёмная</string>
+    <string name="app_theme_system">Системная по умолчанию</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_select_parent_folder">Выберите родительскую папку</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Parent folder selected.</b> Tap to change</string>
+        <b>Выбрана родительская папка.</b> Коснитесь, чтобы изменить</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
-    <string name="parent_picker_title">Parent folder</string>
-    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
-    <string name="parent_picker_folder_icon_description">Folder icon</string>
-    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <string name="parent_picker_title">Родительская папка</string>
+    <string name="parent_picker_header">Если не выбрать родительскую папку, новая папка будет создана как папка верхнего уровня.</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Отменить изменения?</string>
@@ -143,7 +146,7 @@
     <string name="duplicate_email">Адрес эл. почты повторяется</string>
     <string name="invalid_code">Указан неверный код</string>
     <string name="message_drafted">Сбой отправки сообщения. Ваши сообщения сохранены в папке Черновики</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">Пожалуйста, удалите и прикрепите повторно \"%s\", и отправьте сообщение заново. Ваше сообщение осталось в папке \"Черновики\".</string>
     <string name="open_drawer">Открыть</string>
     <string name="close_drawer">Закрыть</string>
     <string name="inbox_option">Входящие</string>
@@ -1004,7 +1007,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Неверный ключ API Firebase. Push-уведомления не будут работать.</string>
     <string name="failed_saving_draft_online">Не удалось сохранить онлайн черновик сообщения: \"%s\"</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Ошибка вложения для сообщения: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Невозможно открыть сообщение пока оно отправляется</string>
     <string name="enable_conversation_mode">Включить режим цепочек писем</string>
     <!-- endregion -->

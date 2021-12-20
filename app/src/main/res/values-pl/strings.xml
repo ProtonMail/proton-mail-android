@@ -34,6 +34,11 @@
     <string name="x_set">Ustaw</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Ikona etykiety</string>
+    <string name="x_folder_icon_description">Ikona folderu</string>
+    <string name="x_parent_folder_icon_description">Folder z ikoną podfolderu</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakty</string>
     <string name="drawer_lock_the_app">Zablokuj aplikację</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Folder nadrzędny</string>
     <string name="parent_picker_header">Jeśli nie wybierzesz folderu nadrzędnego, nowy folder zostanie utworzony jako folder najwyższego poziomu.</string>
-    <string name="parent_picker_folder_icon_description">Ikona folderu</string>
-    <string name="parent_picker_parent_folder_icon_description">Folder z ikoną podfolderu</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Czy chcesz odrzucić zmiany?</string>
