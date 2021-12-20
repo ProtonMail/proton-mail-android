@@ -34,6 +34,11 @@
     <string name="x_set">Indstil</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Etiketteikon</string>
+    <string name="x_folder_icon_description">Mappeikon</string>
+    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakter</string>
     <string name="drawer_lock_the_app">Lås appen</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Overordnet mappe</string>
     <string name="parent_picker_header">Hvis du ikke vælger en overordnet mappe, vil denne nye mappe blive oprettet som en mappe på øverste niveau.</string>
-    <string name="parent_picker_folder_icon_description">Mappeikon</string>
-    <string name="parent_picker_parent_folder_icon_description">Ikon for mappe med underordnede mapper</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Kassér ændringer?</string>

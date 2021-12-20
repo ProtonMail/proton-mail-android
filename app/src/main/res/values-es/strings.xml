@@ -34,6 +34,11 @@
     <string name="x_set">Establecer</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Icono de etiqueta</string>
+    <string name="x_folder_icon_description">Icono de carpeta</string>
+    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contactos</string>
     <string name="drawer_lock_the_app">Bloquear la aplicación</string>
@@ -92,15 +97,13 @@
     <string name="app_theme_system">System default</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_select_parent_folder">Seleccionar carpeta principal</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Parent folder selected.</b> Tap to change</string>
+        <b>Carpeta principal seleccionada.</b> Toca para cambiar</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
-    <string name="parent_picker_title">Parent folder</string>
+    <string name="parent_picker_title">Carpeta principal</string>
     <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
-    <string name="parent_picker_folder_icon_description">Folder icon</string>
-    <string name="parent_picker_parent_folder_icon_description">Icono de la carpeta con carpetas secundarias</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">¿Descartar los cambios?</string>

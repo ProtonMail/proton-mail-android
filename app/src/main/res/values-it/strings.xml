@@ -34,6 +34,11 @@
     <string name="x_set">Imposta</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Icona etichetta</string>
+    <string name="x_folder_icon_description">Icona della cartella</string>
+    <string name="x_parent_folder_icon_description">Cartella con icona bambini</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contatti</string>
     <string name="drawer_lock_the_app">Blocca l\'app</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Cartella principale</string>
     <string name="parent_picker_header">Se non selezioni una cartella principale, questa nuova cartella verrà creata come cartella di primo livello.</string>
-    <string name="parent_picker_folder_icon_description">Icona della cartella</string>
-    <string name="parent_picker_parent_folder_icon_description">Cartella con icona bambini</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Annullare le modifiche?</string>

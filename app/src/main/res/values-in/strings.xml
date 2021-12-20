@@ -34,6 +34,11 @@
     <string name="x_set">Setel</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Ikon label</string>
+    <string name="x_folder_icon_description">Ikon folder</string>
+    <string name="x_parent_folder_icon_description">Folder dengan ikon sub-folder</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontak</string>
     <string name="drawer_lock_the_app">Kunci aplikasi</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Folder induk</string>
     <string name="parent_picker_header">Apabila Anda tidak menentukan folder induk, folder baru ini akan dibuat sebagai folder dengan level paling atas.</string>
-    <string name="parent_picker_folder_icon_description">Ikon folder</string>
-    <string name="parent_picker_parent_folder_icon_description">Folder yang memiliki sub-folder</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Buang perubahan?</string>

@@ -34,6 +34,11 @@
     <string name="x_set">Festlegen</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Kategorie-Symbol</string>
+    <string name="x_folder_icon_description">Ordner-Symbol</string>
+    <string name="x_parent_folder_icon_description">Ordner mit Unterordner-Symbol</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakte</string>
     <string name="drawer_lock_the_app">App sperren</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Übergeordneter Ordner</string>
     <string name="parent_picker_header">Wenn Sie keinen übergeordneten Ordner auswählen, wird dieser neue Ordner als übergeordneter Ordner erstellt.</string>
-    <string name="parent_picker_folder_icon_description">Ordnersymbol</string>
-    <string name="parent_picker_parent_folder_icon_description">Ordner mit Unterordner-Symbol</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Änderungen verwerfen?</string>

@@ -34,6 +34,11 @@
     <string name="x_set">Establir</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Label icon</string>
+    <string name="x_folder_icon_description">Folder icon</string>
+    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contactes</string>
     <string name="drawer_lock_the_app">Bloquejar l\'aplicació</string>
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Carpeta superior</string>
     <string name="parent_picker_header">Si no seleccioneu una carpeta superior, aquesta carpeta nova es crearà a la carpeta arrel.</string>
-    <string name="parent_picker_folder_icon_description">Icona de la carpeta</string>
-    <string name="parent_picker_parent_folder_icon_description">Icona de carpeta amb subcarpetes</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Descartar els canvis?</string>

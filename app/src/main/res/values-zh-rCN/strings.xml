@@ -34,6 +34,11 @@
     <string name="x_set">设置</string>
     <string name="x_0">0</string>
     <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">标签图标</string>
+    <string name="x_folder_icon_description">文件夹图标</string>
+    <string name="x_parent_folder_icon_description">有儿童图标的文件夹</string>
+    <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">通讯录</string>
     <string name="drawer_lock_the_app">锁定程序</string>
@@ -76,7 +81,7 @@
     <string name="set_msg_expiration_check_description">已勾选该项</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_theme_title">主题</string>
+    <string name="settings_theme_title">配色</string>
     <string name="settings_create_pin_code_title">设置口令</string>
     <string name="settings_confirm_pin_code_title">再次输入口令</string>
     <string name="settings_pins_dont_match">两次输入的口令必须一致！</string>
@@ -86,7 +91,7 @@
     <string name="settings_swipe_right_to_left">从右向左</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">应用主题</string>
+    <string name="app_theme_title">界面配色</string>
     <string name="app_theme_light">浅色</string>
     <string name="app_theme_dark">深色</string>
     <string name="app_theme_system">跟随系统</string>
@@ -98,9 +103,7 @@
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">父文件夹</string>
-    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
-    <string name="parent_picker_folder_icon_description">Folder icon</string>
-    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
+    <string name="parent_picker_header">如果您不选择母文件夹，此新文件夹将被创建至根目录。</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">确定要放弃更改吗？</string>
@@ -143,7 +146,7 @@
     <string name="duplicate_email">邮箱地址重复</string>
     <string name="invalid_code">验证码错误</string>
     <string name="message_drafted">邮件发送失败，已存为草稿</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">请删除并重新添加附件“%s”并重新发送此信息。您的信息可在“草稿”文件夹中被找到。</string>
     <string name="open_drawer">打开</string>
     <string name="close_drawer">关闭</string>
     <string name="inbox_option">收件箱</string>
@@ -942,7 +945,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">无效的 Firebase API 密钥。推送通知将无法使用。</string>
     <string name="failed_saving_draft_online">未能在线保存邮件“%s”的草稿</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">此信息的附件出现错误：“%s”</string>
     <string name="cannot_open_message_while_being_sent">此邮件正在发送中，不能打开</string>
     <string name="enable_conversation_mode">启用对话模式</string>
     <!-- endregion -->

@@ -24,7 +24,7 @@
     <string name="x_add_label">Lägg till etikett</string>
     <string name="x_days">Dagar</string>
     <string name="x_done">Färdig</string>
-    <string name="x_edit">Edit</string>
+    <string name="x_edit">Redigera</string>
     <string name="x_folders">Mappar</string>
     <string name="x_hours">Timmar</string>
     <string name="x_labels">Etiketter</string>
@@ -33,6 +33,11 @@
     <string name="x_search">Sök</string>
     <string name="x_set">Ställ in</string>
     <string name="x_0">0</string>
+    <!-- endregion -->
+    <!-- region Content descriptions: accessibility description for icons -->
+    <string name="x_label_icon_description">Etikettikon</string>
+    <string name="x_folder_icon_description">Mappikon</string>
+    <string name="x_parent_folder_icon_description">Folder with children icon</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakter</string>
@@ -76,7 +81,7 @@
     <string name="set_msg_expiration_check_description">Detta objekt är markerat</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">Ställ in PIN-kod</string>
     <string name="settings_confirm_pin_code_title">Upprepa PIN-kod</string>
     <string name="settings_pins_dont_match">PIN-koderna måste matcha!</string>
@@ -86,9 +91,9 @@
     <string name="settings_swipe_right_to_left">Höger till vänster</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App theme</string>
-    <string name="app_theme_light">Light</string>
-    <string name="app_theme_dark">Dark</string>
+    <string name="app_theme_title">Apptema</string>
+    <string name="app_theme_light">Ljust</string>
+    <string name="app_theme_dark">Mörkt</string>
     <string name="app_theme_system">System default</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
@@ -99,8 +104,6 @@
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Överordnad mapp</string>
     <string name="parent_picker_header">Om du inte väljer en överordnad mapp kommer den nya mappen att skapas som en mapp i toppnivå.</string>
-    <string name="parent_picker_folder_icon_description">Mappikon</string>
-    <string name="parent_picker_parent_folder_icon_description">Folder with children icon</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Ignorera ändringar?</string>
@@ -908,8 +911,8 @@
     <string name="auto_lock_description">Slå på den här funktionen för att automatiskt låsa din app och använd en PIN-kod eller fingeravtryck för att låsa upp den.</string>
     <string name="change_pin_code">Ändra PIN-kod</string>
     <string name="auto_lock_timer">Autolås timer</string>
-    <string name="connections_via_third_parties">Alternative routing</string>
-    <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
+    <string name="connections_via_third_parties">Alternativ routing</string>
+    <string name="allow_secure_connections_via_third_parties">Tillåt alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
     </string>
