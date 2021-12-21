@@ -107,7 +107,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:clickable="true"
                 android:focusable="true"
                 android:paddingBottom="@dimen/fields_default_space_small"
-                android:singleLine="true"
+                android:maxLines="7"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textAlignment="viewStart"

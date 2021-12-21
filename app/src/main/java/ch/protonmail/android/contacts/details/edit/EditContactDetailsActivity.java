@@ -460,28 +460,35 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             optionType = (String) optionTypeView.getTag();
             EditText addressStreetView = rowView.findViewById(R.id.address_street);
-            EditText addressCityView = rowView.findViewById(R.id.address_city);
-            EditText addressRegionView = rowView.findViewById(R.id.address_region);
+            EditText addressExtendedStreetView = rowView.findViewById(R.id.address_street_extended);
             EditText addressPostcodeView = rowView.findViewById(R.id.address_postcode);
+            EditText addressCityView = rowView.findViewById(R.id.address_city);
+            EditText addressPoBoxView = rowView.findViewById(R.id.address_po_box);
+            EditText addressRegionView = rowView.findViewById(R.id.address_region);
             EditText addressCountryView = rowView.findViewById(R.id.address_country);
 
             String streetAddress = addressStreetView.getText().toString();
-            String localityAddress = addressCityView.getText().toString();
-            String regionAddress = addressRegionView.getText().toString();
+            String extendedStreetAddress = addressExtendedStreetView.getText().toString();
             String postalCodeAddress = addressPostcodeView.getText().toString();
+            String localityAddress = addressCityView.getText().toString();
+            String poBoxAddress = addressPoBoxView.getText().toString();
+            String regionAddress = addressRegionView.getText().toString();
             String countryAddress = addressCountryView.getText().toString();
-            boolean isEmpty = TextUtils.isEmpty(streetAddress) && TextUtils.isEmpty(
-                    localityAddress) && TextUtils.isEmpty(regionAddress) && TextUtils.isEmpty(
-                    postalCodeAddress) && TextUtils.isEmpty(countryAddress);
+            boolean isEmpty = TextUtils.isEmpty(streetAddress) && TextUtils.isEmpty(extendedStreetAddress)
+                    && TextUtils.isEmpty(localityAddress) && TextUtils.isEmpty(regionAddress)
+                    && TextUtils.isEmpty(poBoxAddress) && TextUtils.isEmpty(postalCodeAddress)
+                    && TextUtils.isEmpty(countryAddress);
             if (!isEmpty) {
                 Address address = new Address();
                 if (!TextUtils.isEmpty(optionType)) {
                     address.addParameter("TYPE", optionType);
                 }
                 address.setStreetAddress(addressStreetView.getText().toString());
-                address.setLocality(addressCityView.getText().toString());
-                address.setRegion(addressRegionView.getText().toString());
+                address.setExtendedAddress(addressExtendedStreetView.getText().toString());
                 address.setPostalCode(addressPostcodeView.getText().toString());
+                address.setLocality(addressCityView.getText().toString());
+                address.setPoBox(addressPoBoxView.getText().toString());
+                address.setRegion(addressRegionView.getText().toString());
                 address.setCountry(addressCountryView.getText().toString());
                 vCardEncrypted.addAddress(address);
             }
