@@ -551,28 +551,36 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         titleIcon.setImageResource(R.drawable.ic_contact_address);
         titleIcon.setColorFilter(getResources().getColor(R.color.contact_heading));
         String street = address.getStreetAddress();
-        String locality = address.getLocality();
-        String region = address.getRegion();
+        String extendedStreet = address.getExtendedAddress();
         String postalCode = address.getPostalCode();
+        String locality = address.getLocality();
+        String poBox = address.getPoBox();
+        String region = address.getRegion();
         String country = address.getCountry();
         List<String> addressParts = new ArrayList<>();
         if (!TextUtils.isEmpty(street)) {
             addressParts.add(street);
         }
-        if (!TextUtils.isEmpty(locality)) {
-            addressParts.add(locality);
-        }
-        if (!TextUtils.isEmpty(region)) {
-            addressParts.add(region);
+        if (!TextUtils.isEmpty(extendedStreet)) {
+            addressParts.add(extendedStreet);
         }
         if (!TextUtils.isEmpty(postalCode)) {
             addressParts.add(postalCode);
+        }
+        if (!TextUtils.isEmpty(locality)) {
+            addressParts.add(locality);
+        }
+        if (!TextUtils.isEmpty(poBox)) {
+            addressParts.add(poBox);
+        }
+        if (!TextUtils.isEmpty(region)) {
+            addressParts.add(region);
         }
         if (!TextUtils.isEmpty(country)) {
             addressParts.add(country);
         }
         titleView.setText(title);
-        final String value = TextUtils.join(" ", addressParts);
+        final String value = TextUtils.join("\n", addressParts);
         addressFullCombined.setText(value);
         addressFullCombined.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_UP) {
