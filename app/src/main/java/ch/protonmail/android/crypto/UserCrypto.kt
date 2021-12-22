@@ -46,7 +46,7 @@ class UserCrypto(
     override val passphrase: ByteArray?
         get() = mailboxPassword
 
-    protected override fun passphraseFor(key: UserKey): ByteArray? = passphrase
+    override fun passphraseFor(key: UserKey): ByteArray? = passphrase
 
     fun verify(data: String, signature: String): TextDecryptionResult {
         val valid = openPgp.verifyTextSignDetachedBinKey(signature, data, getVerificationKeys(), openPgp.time)
