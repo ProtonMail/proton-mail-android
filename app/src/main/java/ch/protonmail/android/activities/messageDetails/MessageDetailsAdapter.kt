@@ -247,7 +247,10 @@ internal class MessageDetailsAdapter(
                 ::onHeaderCollapsed
             )
 
+            val isMultiMessageConversation = visibleItems.size > 2
             messageDetailsHeaderView.setOnClickListener { view ->
+                // For single message we don't want to allow collapsing the message
+                if (!isMultiMessageConversation) return@setOnClickListener
                 val headerView = view as MessageDetailsHeaderView
 
                 if (isMessageBodyExpanded()) {
