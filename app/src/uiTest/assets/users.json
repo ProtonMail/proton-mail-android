@@ -1,0 +1,89 @@
+[
+  {
+    "name": "plus",
+    "password": "plus",
+    "plan": "Plus",
+    "recoveryMethods": {
+      "email": "plus@gmail.com"
+    }
+  },
+  {
+    "name": "free",
+    "password": "free",
+    "plan": "Free",
+    "recoveryMethods": {
+      "email": "free@gmail.com"
+    }
+  },
+  {
+    "name": "pro",
+    "password": "pro",
+    "plan": "Professional",
+    "recoveryMethods": {
+      "email": "pro@gmail.com"
+    }
+  },
+  {
+    "name": "calendar",
+    "password": "calendar",
+    "plan": "Visionary",
+    "recoveryMethods": {
+      "email": "calendar@gmail.com"
+    }
+  },
+  {
+    "name": "twopasswords",
+    "password": "thisisarandomp45w0rd_*&-/?",
+    "passphrase": "thisisarandomp45w0rd_*&-/?"
+  },
+  {
+    "name": "twofa",
+    "password": "a",
+    "twoFa": "Not implemented"
+  },
+  {
+    "name": "gmail",
+    "email": "gmPGPEncrypted@gmail.com",
+    "password": "PGPEncrypted1!"
+  },
+  {
+    "name": "outlook",
+    "email": "outPGPSigned@outlook.com",
+    "password": "PGPSigned1!"
+  },
+  {
+    "name": "internalTrustedKeys",
+    "email": "internalTrustedKeys@protonmail.com",
+    "password": "auto123"
+  },
+  {
+    "name": "internalUntrustedKeys",
+    "email": "internalUntrustedKeys@protonmail.com",
+    "password": "auto123"
+  },
+  {
+    "name": "onePassUser",
+    "email": "onePassUser@protonmail.com",
+    "password": "auto123"
+  },
+  {
+    "name": "twoPassUser",
+    "email": "twoPassUser@protonmail.com",
+    "password": "auto123"
+  },
+  {
+    "name": "onePassUserWith2FA",
+    "email": "onePassUserWith2FA@protonmail.com",
+    "password": "auto123"
+  },
+  {
+    "name": "twoPassUserWith2FA",
+    "email": "twoPassUserWith2FA@protonmail.com",
+    "password": "auto123"
+  },
+  {
+    "name": "autoAttachPublicKeyUser",
+    "email": "autoattachpublickey@protonmail.com",
+    "password": "auto123"
+  }
+]

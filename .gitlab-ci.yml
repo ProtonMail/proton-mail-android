@@ -93,7 +93,6 @@ unit tests:
 
 firebase ui tests:
   stage: test
-  when: "manual"
   except:
     - schedules
   tags:
@@ -104,15 +103,17 @@ firebase ui tests:
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
     - /opt/google-cloud-sdk/install.sh --quiet
     - source /opt/google-cloud-sdk/path.bash.inc
-    - gcloud components update
+    - gcloud components install beta --quiet
+    - gcloud components update --quiet
     - echo $CLOUD_PROJECT_ID_MAIL
     - gcloud config set project $CLOUD_PROJECT_ID_MAIL
     - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
     - gcloud auth activate-service-account --key-file /tmp/service-account.json
-    - gcloud --quiet firebase test android run
+    - gcloud beta firebase test android run
+      --quiet
       --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
       --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
-      --device model=Pixel2,version=28
+      --device model=Pixel2,version=29
       --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
       --use-orchestrator
       --num-flaky-test-attempts=1
@@ -135,6 +136,7 @@ firebase feature tests:
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
     - /opt/google-cloud-sdk/install.sh --quiet
     - source /opt/google-cloud-sdk/path.bash.inc
+    - gcloud components install beta --quiet
     - gcloud components update --quiet
     - echo $CLOUD_PROJECT_ID_MAIL
     - gcloud config set project $CLOUD_PROJECT_ID_MAIL --quiet

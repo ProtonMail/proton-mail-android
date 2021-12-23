@@ -69,6 +69,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
         bodyRecyclerView = RecyclerView(context).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = bodyAdapter
+            id = R.id.menu_recycler_view
         }
 
         val linearLayout = LinearLayout(context).apply {
