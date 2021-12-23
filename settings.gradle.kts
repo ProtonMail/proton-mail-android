@@ -28,10 +28,6 @@ println("Modules: ${modules.sorted().joinToString()}")
 for (p in projects) includeBuild(p)
 for (m in modules) include(m)
 
-// Uncomment this line to use core libs from git submodule instead of using artifacts published on maven.
-// See https://docs.gradle.org/current/userguide/composite_builds.html
-// includeBuild("proton-libs")
-
 pluginManagement {
     repositories {
         mavenCentral()
@@ -50,8 +46,7 @@ fun File.projectsAndModules() : Pair<Set<String>, Set<String>> {
         "buildSrc",
         "config",
         "build",
-        "src",
-        "proton-libs"
+        "src"
     )
 
     fun File.childrenDirectories() = listFiles { _, name -> name !in blacklist }!!
