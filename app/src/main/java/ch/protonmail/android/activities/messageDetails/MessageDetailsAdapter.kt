@@ -160,12 +160,11 @@ internal class MessageDetailsAdapter(
     }
 
     private fun setInitialMessageBodyHeight(messageWebViewContainer: LinearLayout) {
-        val isMultiMessageConversation = visibleItems.size > 2
         // For single message conversations, we don't need to artificially expand the height while loading, as the
         // top of the only message will always be attached to the top of the screen. For multi-message conversations,
         // we need to expand it to make sure it occupies enough space on the screen to stay attached to the top
         // until the content is loaded.
-        if (isMultiMessageConversation) {
+        if (showingMoreThanOneMessage()) {
             setMessageContentExpandedLoadingHeight(messageWebViewContainer)
         } else {
             setMessageContentFixedLoadingHeight(messageWebViewContainer)
@@ -247,10 +246,9 @@ internal class MessageDetailsAdapter(
                 ::onHeaderCollapsed
             )
 
-            val isMultiMessageConversation = visibleItems.size > 2
             messageDetailsHeaderView.setOnClickListener { view ->
                 // For single message we don't want to allow collapsing the message
-                if (!isMultiMessageConversation) return@setOnClickListener
+                if (!showingMoreThanOneMessage()) return@setOnClickListener
                 val headerView = view as MessageDetailsHeaderView
 
                 if (isMessageBodyExpanded()) {
