@@ -89,6 +89,7 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -210,9 +211,11 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private var visibleToTheUser = true
 
+    private var conversationFlowJob: Job? = null
+
     init {
         // message render flow
-        userManager.primaryUserId
+        conversationFlowJob = userManager.primaryUserId
             .filterNotNull()
             .flatMapLatest { userId ->
                 if (isConversationEnabled()) {
@@ -283,6 +286,8 @@ internal class MessageDetailsViewModel @Inject constructor(
             ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
         return LabelChipUiModel(id, Name(name), labelColor)
     }
+
+    fun cancelConversationFlowJob() = conversationFlowJob?.cancel()
 
     fun markUnread() {
         viewModelScope.launch {
