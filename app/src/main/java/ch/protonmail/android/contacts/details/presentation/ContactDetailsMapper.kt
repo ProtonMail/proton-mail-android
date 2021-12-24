@@ -169,6 +169,7 @@ class ContactDetailsMapper @Inject constructor() {
             fetchResult.isType2SignatureValid,
             fetchResult.isType3SignatureValid,
             fetchResult.vDecryptedCardType0,
+            fetchResult.vDecryptedCardType1,
             fetchResult.vDecryptedCardType2,
             fetchResult.vDecryptedCardType3
         )

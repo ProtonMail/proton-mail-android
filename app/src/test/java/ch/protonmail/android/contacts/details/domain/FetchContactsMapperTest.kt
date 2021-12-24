@@ -143,6 +143,7 @@ class FetchContactsMapperTest {
                 isType2SignatureValid = null,
                 isType3SignatureValid = null,
                 vDecryptedCardType0 = testCardTypeO,
+                vDecryptedCardType1 = "",
                 vDecryptedCardType2 = "",
                 vDecryptedCardType3 = ""
             )
@@ -203,6 +204,7 @@ class FetchContactsMapperTest {
                 isType2SignatureValid = true,
                 isType3SignatureValid = null,
                 vDecryptedCardType0 = "",
+                vDecryptedCardType1 = "",
                 vDecryptedCardType2 = testCardType2,
                 vDecryptedCardType3 = ""
             )
@@ -260,6 +262,7 @@ class FetchContactsMapperTest {
                 true,
                 null,
                 vDecryptedCardType0 = testCardTypeO,
+                vDecryptedCardType1 = null,
                 vDecryptedCardType2 = null,
                 vDecryptedCardType3 = null
             )

@@ -53,6 +53,7 @@ data class FetchContactDetailsResult(
     val isType2SignatureValid: Boolean?,
     val isType3SignatureValid: Boolean?,
     val vDecryptedCardType0: String?,
+    val vDecryptedCardType1: String?,
     val vDecryptedCardType2: String?,
     val vDecryptedCardType3: String?
 )

@@ -80,6 +80,7 @@ class ContactDetailsActivity : AppCompatActivity() {
     private var contactEmail: String = EMPTY_STRING
     private var contactPhone: String = EMPTY_STRING
     private var decryptedCardType0: String? = null
+    private var decryptedCardType1: String? = null
     private var decryptedCardType2: String? = null
     private var decryptedCardType3: String? = null
     private val viewModel: ContactDetailsViewModel by viewModels()
@@ -239,6 +240,7 @@ class ContactDetailsActivity : AppCompatActivity() {
         vCardToShare = state.vCardToShare
         contactId = state.contactId
         decryptedCardType0 = state.vDecryptedCardType0
+        decryptedCardType1 = state.vDecryptedCardType1
         decryptedCardType2 = state.vDecryptedCardType2
         decryptedCardType3 = state.vDecryptedCardType3
 

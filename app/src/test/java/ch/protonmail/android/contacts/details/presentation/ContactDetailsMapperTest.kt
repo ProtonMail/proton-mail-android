@@ -63,6 +63,7 @@ class ContactDetailsMapperTest {
         isType2SignatureValid = true,
         isType3SignatureValid = null,
         vDecryptedCardType0 = decryptedCardType0,
+        vDecryptedCardType1 = null,
         vDecryptedCardType2 = null,
         vDecryptedCardType3 = null,
     )
@@ -112,6 +113,7 @@ class ContactDetailsMapperTest {
             true,
             null,
             decryptedCardType0,
+            null,
             null,
             null
         )
