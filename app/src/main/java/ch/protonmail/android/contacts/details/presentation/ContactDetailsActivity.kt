@@ -178,7 +178,14 @@ class ContactDetailsActivity : AppCompatActivity() {
 
     private fun onEditContacts() {
 
-        val vCardFilePath = if (!decryptedCardType3.isNullOrEmpty()) {
+        val vCardFilePath1 = if (!decryptedCardType1.isNullOrEmpty()) {
+            val filePath = "$cacheDir${File.separator}$VCARD_TEMP_FILE_NAME"
+            fileHelper.saveStringToFile(filePath, checkNotNull(decryptedCardType1))
+            filePath
+        } else {
+            EMPTY_STRING
+        }
+        val vCardFilePath3 = if (!decryptedCardType3.isNullOrEmpty()) {
             val filePath = "$cacheDir${File.separator}$VCARD_TEMP_FILE_NAME"
             fileHelper.saveStringToFile(filePath, checkNotNull(decryptedCardType3))
             filePath
@@ -189,8 +196,9 @@ class ContactDetailsActivity : AppCompatActivity() {
             this, contactId,
             EditContactDetailsActivity.REQUEST_CODE_EDIT_CONTACT,
             decryptedCardType0,
+            vCardFilePath1,
             decryptedCardType2,
-            vCardFilePath
+            vCardFilePath3
         )
     }
 
