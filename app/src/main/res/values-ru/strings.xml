@@ -797,7 +797,7 @@
     <string name="need_permissions_title">Разрешения</string>
     <string name="need_storage_permissions_add_attachment_text">Чтобы добавлять вложения, вам нужно разрешить
         доступ к хранилищу.</string>
-    <string name="need_storage_permissions_download_attachment_text">Чтобы загрузить вложения, вам нужно разрешить
+    <string name="need_storage_permissions_download_attachment_text">Чтобы скачать вложения, вам нужно разрешить
         доступ к хранилищу.</string>
     <string name="need_contacts_permissions_text">Чтобы импортировать контакты вам надо предоставить доступ к контактам.</string>
     <string name="push_notifications_alert_title">Предупреждение о push-уведомлениях</string>

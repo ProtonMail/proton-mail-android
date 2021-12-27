@@ -37,7 +37,7 @@
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">Ícone de etiqueta</string>
     <string name="x_folder_icon_description">Ícone da pasta</string>
-    <string name="x_parent_folder_icon_description">Pasta com ícone infantil</string>
+    <string name="x_parent_folder_icon_description">Ícone de pasta com subpastas</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contatos</string>
@@ -146,7 +146,7 @@
     <string name="duplicate_email">Endereço de e-mail duplicado</string>
     <string name="invalid_code">Código inválido</string>
     <string name="message_drafted">Falha ao enviar a mensagem. Suas mensagens foram salvas na pasta de rascunhos.</string>
-    <string name="attachment_failed_message_drafted">Remova e anexe novamente \"%s\" e envie a mensagem novamente. Sua mensagem pode ser encontrada na pasta \"Rascunhos\".</string>
+    <string name="attachment_failed_message_drafted">Remova e anexe novamente \"%s\" e reenvie a mensagem. Sua mensagem pode ser encontrada na pasta \"Rascunhos\".</string>
     <string name="open_drawer">Abrir</string>
     <string name="close_drawer">Fechar</string>
     <string name="inbox_option">Caixa de entrada</string>
