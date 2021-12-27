@@ -72,9 +72,11 @@ class ContactDetailsMapper @Inject constructor() {
             ContactDetailsUiItem.Address(
                 type = getType(address.types),
                 street = address.streetAddress,
-                locality = address.locality,
-                region = address.region,
+                extendedStreet = address.extendedAddress,
                 postalCode = address.postalCode,
+                locality = address.locality,
+                poBox = address.poBox,
+                region = address.region,
                 country = address.country
             )
         }

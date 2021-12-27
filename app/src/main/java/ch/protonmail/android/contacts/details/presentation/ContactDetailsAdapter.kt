@@ -240,10 +240,12 @@ class ContactDetailsAdapter(
 
         private fun getAddressToDisplay(item: ContactDetailsUiItem.Address): String = with(item) {
             buildString {
-                street?.let { append("$it, ") }
-                locality?.let { append("$it ") }
-                region?.let { append("$it ") }
-                postalCode?.let { append("$it ") }
+                street?.let { append("$it\n") }
+                extendedStreet?.let { append("$it\n") }
+                postalCode?.let { append("$it\n") }
+                locality?.let { append("$it\n") }
+                poBox?.let { append("$it\n") }
+                region?.let { append("$it\n") }
                 country?.let(::append)
             }
         }

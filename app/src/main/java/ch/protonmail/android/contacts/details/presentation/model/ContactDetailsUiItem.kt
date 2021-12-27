@@ -44,9 +44,11 @@ sealed class ContactDetailsUiItem {
     data class Address(
         val type: String,
         var street: String?,
-        var locality: String?,
-        var region: String?,
+        var extendedStreet: String?,
         var postalCode: String?,
+        var locality: String?,
+        var poBox: String?,
+        var region: String?,
         var country: String?
     ) : ContactDetailsUiItem()
 
