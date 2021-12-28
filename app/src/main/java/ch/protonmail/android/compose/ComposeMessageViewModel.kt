@@ -449,13 +449,13 @@ class ComposeMessageViewModel @Inject constructor(
                 //endregion
             } else {
                 //region new draft here
-                if (draftId.isEmpty() && message.messageId.isNullOrEmpty()) {
-                    val newDraftId = UUID.randomUUID().toString()
-                    _draftId.set(newDraftId)
-                    message.messageId = newDraftId
-                    saveMessage(message)
-                    watchForMessageSent()
+                if (message.messageId.isNullOrEmpty()) {
+                    initMessage(message)
                 }
+
+                _draftId.set(message.messageId)
+                watchForMessageSent()
+
                 var newAttachmentIds: List<String> = ArrayList()
                 val listOfAttachments = ArrayList(message.attachments)
                 if (uploadAttachments && listOfAttachments.isNotEmpty()) {
@@ -478,6 +478,12 @@ class ComposeMessageViewModel @Inject constructor(
 
             _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).build()
         }
+    }
+
+    private suspend fun initMessage(message: Message) {
+        val newDraftId = UUID.randomUUID().toString()
+        message.messageId = newDraftId
+        saveMessage(message)
     }
 
     private suspend fun invokeSaveDraftUseCase(
@@ -804,7 +810,11 @@ class ComposeMessageViewModel @Inject constructor(
      */
     fun saveImportedAttachmentsToDB() {
         viewModelScope.launch {
-            composeMessageRepository.saveAttachments(_draftId.get(), messageDataResult.attachmentList)
+            buildMessage()
+            val message = _messageDataResult.message
+            initMessage(message)
+            _draftId.set(message.messageId)
+            message.messageId?.let { composeMessageRepository.saveAttachments(it, messageDataResult.attachmentList) }
         }
     }
 
