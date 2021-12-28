@@ -528,13 +528,13 @@
     </string-array>
     <string-array name="vcard_option_email">
         <item>Adresse électronique</item>
-        <item>Personnel</item>
+        <item>Personnelle</item>
         <item>Travail</item>
         <item>Autre</item>
     </string-array>
     <string-array name="vcard_option_address">
         <item>Addresse</item>
-        <item>Personnel</item>
+        <item>Personnelle</item>
         <item>Travail</item>
         <item>Autre</item>
     </string-array>
@@ -839,7 +839,7 @@
     </plurals>
     <string name="quick_snooze_resume_hours">Les notifications reprendront dans %1$d heure(s) et %2$d min(s)</string>
     <string name="minutes">Minutes</string>
-    <string name="set_custom_quick_snooze">Configurer une durée personnalisée</string>
+    <string name="set_custom_quick_snooze">Configurer une valeur de répétition personnalisée</string>
     <string name="turn_off">Désactiver</string>
     <string name="snooze_will_repeat">L\'interruption se répétera</string>
     <string name="work_days">Jours ouvrables</string>
@@ -918,7 +918,7 @@
     <string name="connections_via_third_parties">Routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties">Autoriser le routage alternatif</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En cas de blocage des sites Proton, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour atteindre Proton, ce qui peut être utile pour contourner les pare-feu ou les problèmes de réseau. Nous vous recommandons de conserver ce paramètre activé pour une plus grande fiabilité.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En cas de blocage des sites Proton, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour atteindre Proton, ce qui peut être utile pour contourner les pare-feu ou les problèmes de réseau. Nous vous recommandons de conserver ce paramètre activé pour une plus grande fiabilité. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">En savoir plus</a>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En cas de blocage des sites Proton, ce paramètre permet à l\'application d\'essayer un routage réseau alternatif pour atteindre Proton, ce qui peut être utile pour contourner les pare-feux ou les problèmes de réseau. Nous vous recommandons de conserver ce paramètre activé pour une plus grande fiabilité. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">En savoir plus</a>
     </string>
     <string name="app_language">Langue de l\'application</string>
     <string name="custom_language_dialog_title">Sélectionner la langue de l\'application</string>

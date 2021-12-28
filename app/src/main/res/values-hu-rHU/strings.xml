@@ -20,11 +20,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_add_folder">Add folder</string>
-    <string name="x_add_label">Add label</string>
+    <string name="x_add_folder">Új mappa</string>
+    <string name="x_add_label">Új címke</string>
     <string name="x_days">Nap</string>
-    <string name="x_done">Done</string>
-    <string name="x_edit">Edit</string>
+    <string name="x_done">Kész</string>
+    <string name="x_edit">Szerkesztés</string>
     <string name="x_folders">Mappa</string>
     <string name="x_hours">Óra</string>
     <string name="x_labels">Címke</string>

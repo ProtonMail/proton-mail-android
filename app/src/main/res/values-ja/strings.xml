@@ -35,9 +35,9 @@
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
-    <string name="x_label_icon_description">Label icon</string>
-    <string name="x_folder_icon_description">Folder icon</string>
-    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <string name="x_label_icon_description">ラベルのアイコン</string>
+    <string name="x_folder_icon_description">フォルダのアイコン</string>
+    <string name="x_parent_folder_icon_description">サブフォルダを含むフォルダのアイコン</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">連絡先</string>
@@ -46,8 +46,8 @@
     <string name="drawer_settings">設定</string>
     <string name="drawer_subscription">サブスクリプション</string>
     <string name="drawer_sign_out">サインアウト</string>
-    <string name="drawer_create_folder_description">Create new folder</string>
-    <string name="drawer_create_label_description">Create new label</string>
+    <string name="drawer_create_folder_description">新しいフォルダを作成</string>
+    <string name="drawer_create_label_description">新しいラベルを作成</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -57,7 +57,7 @@
     <string name="composer_subject">件名:</string>
     <string name="composer_to">宛先:</string>
     <string name="set_msg_password_title">パスワードを設定</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
+    <string name="set_msg_password_info">ProtonMailユーザー以外への暗号化パスワードを設定してください <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a>
     </string>
     <string name="set_msg_password_info_icon_description">情報</string>
     <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>
@@ -86,7 +86,7 @@
     <string name="settings_confirm_pin_code_title">PIN コードを確認</string>
     <string name="settings_pins_dont_match">PIN コードが一致しません！</string>
     <string name="settings_enter_pin_code_title">PIN コードを入力</string>
-    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_settings_info">スワイプ操作を登録するとよく使う機能に簡単にアクセスできます。</string>
     <string name="settings_swipe_left_to_right">左から右</string>
     <string name="settings_swipe_right_to_left">右から左</string>
     <!-- endregion -->
@@ -103,7 +103,7 @@
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">親フォルダー</string>
-    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_header">親フォルダーを選択しない場合、このフォルダが親フォルダーとして作成されます。</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">変更を破棄してよろしいですか？</string>
@@ -146,7 +146,7 @@
     <string name="duplicate_email">メール アドレスが重複しています。</string>
     <string name="invalid_code">コードが無効です。</string>
     <string name="message_drafted">メッセージの送信に失敗しました。メッセージは下書きフォルダーに保存されます。</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">\"%s\"を添付ファイルから削除し、再度添付して送信してください。メッセージは\"下書き\"フォルダに保存されています。</string>
     <string name="open_drawer">開く</string>
     <string name="close_drawer">閉じる</string>
     <string name="inbox_option">受信箱</string>
@@ -897,8 +897,8 @@
     <string name="app_language">アプリ言語</string>
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>
-    <string name="combined_contacts">Combined contacts</string>
-    <string name="turn_combined_contacts_on">この機能を有効化すると、ログイン済みのアカウントの連絡先を、メールアドレスの自動補完に利用可能になります。</string>
+    <string name="combined_contacts">連絡先の相互利用</string>
+    <string name="turn_combined_contacts_on">この機能を有効にすると、ログイン済みアカウントの連絡先をメールアドレスの自動補完に利用することができます。</string>
     <string name="local_cache_management">ローカルキャッシュ</string>
     <string name="cache_cleared">端末のキャッシュが更新されました。</string>
     <string name="empty_data">データをクリア</string>
@@ -947,7 +947,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Firebase API キーが無効です。プッシュ通知は動作しません。</string>
     <string name="failed_saving_draft_online">ドラフトメッセージの保存に失敗しました:\"%s \"</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">添付ファイルのエラー: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">送信中にこのメッセージを開くことはできません</string>
     <string name="enable_conversation_mode">会話モードを有効化</string>
     <!-- endregion -->
@@ -956,7 +956,7 @@
     <string name="error_loading_conversations">会話の読み込み中にエラーが発生しました。もう一度やり直してください。</string>
     <string name="star">星印</string>
     <string name="unstar">星印をはずす</string>
-    <string name="star_unstar">Star/unstar</string>
+    <string name="star_unstar">スター/スターを外す</string>
     <string name="send_to_archive">アーカイブに送る</string>
     <string name="label_as">…としてラベル付け</string>
     <string name="mark_as_unread">未読にする</string>
@@ -977,7 +977,7 @@
     <string name="inbox_this_folder_is_empty">このフォルダーは空です</string>
     <string name="inbox_nothing_to_see_here">何もありません</string>
     <string name="inbox_could_not_retrieve_messages">メッセージの取得に失敗しました。</string>
-    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
+    <string name="inbox_pull_down_to_retry">引っ張って再試行</string>
     <string name="edit_draft">下書きを編集</string>
     <string name="primary_user_error">何らかの問題が発生したため、アップグレードに失敗しました。</string>
     <string name="details_show_history">履歴を表示</string>

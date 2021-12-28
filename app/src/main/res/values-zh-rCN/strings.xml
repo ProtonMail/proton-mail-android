@@ -37,7 +37,7 @@
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">标签图标</string>
     <string name="x_folder_icon_description">文件夹图标</string>
-    <string name="x_parent_folder_icon_description">有儿童图标的文件夹</string>
+    <string name="x_parent_folder_icon_description">含子文件夹的文件夹图标</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">通讯录</string>
@@ -103,7 +103,7 @@
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">父文件夹</string>
-    <string name="parent_picker_header">如果您不选择母文件夹，此新文件夹将被创建至根目录。</string>
+    <string name="parent_picker_header">若不选取上层文件夹，则将创建顶层文件夹。</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">确定要放弃更改吗？</string>
@@ -146,7 +146,7 @@
     <string name="duplicate_email">邮箱地址重复</string>
     <string name="invalid_code">验证码错误</string>
     <string name="message_drafted">邮件发送失败，已存为草稿</string>
-    <string name="attachment_failed_message_drafted">请删除并重新添加附件“%s”并重新发送此信息。您的信息可在“草稿”文件夹中被找到。</string>
+    <string name="attachment_failed_message_drafted">请删除并重新添加附件“%s”后再发送。该邮件可在“草稿”文件夹中查看。</string>
     <string name="open_drawer">打开</string>
     <string name="close_drawer">关闭</string>
     <string name="inbox_option">收件箱</string>
@@ -945,7 +945,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">无效的 Firebase API 密钥。推送通知将无法使用。</string>
     <string name="failed_saving_draft_online">未能在线保存邮件“%s”的草稿</string>
-    <string name="failed_uploading_attachment_online">此信息的附件出现错误：“%s”</string>
+    <string name="failed_uploading_attachment_online">此邮件的附件出现错误：“%s”</string>
     <string name="cannot_open_message_while_being_sent">此邮件正在发送中，不能打开</string>
     <string name="enable_conversation_mode">启用对话模式</string>
     <!-- endregion -->
