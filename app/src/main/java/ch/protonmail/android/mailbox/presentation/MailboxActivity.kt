@@ -1292,7 +1292,7 @@ internal class MailboxActivity :
 
         override fun doInBackground(vararg params: Unit): Boolean {
             // return true if message is not in sending process and can be opened
-            val pendingForSending = pendingActionDao?.findPendingSendByMessageId(messageId!!)
+            val pendingForSending = pendingActionDao?.findPendingSendByMessageIdBlocking(messageId!!)
             return pendingForSending == null ||
                 pendingForSending.sent != null &&
                 !pendingForSending.sent!!

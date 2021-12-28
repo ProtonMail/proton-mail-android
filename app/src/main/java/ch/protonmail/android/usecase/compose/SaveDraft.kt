@@ -154,7 +154,7 @@ class SaveDraft @Inject constructor(
     }
 
     private fun updatePendingForSendMessage(createdDraftId: String, messageId: String) {
-        val pendingForSending = pendingActionDao.findPendingSendByMessageId(messageId)
+        val pendingForSending = pendingActionDao.findPendingSendByMessageIdBlocking(messageId)
         pendingForSending?.let {
             pendingForSending.messageId = createdDraftId
             pendingActionDao.insertPendingForSend(pendingForSending)

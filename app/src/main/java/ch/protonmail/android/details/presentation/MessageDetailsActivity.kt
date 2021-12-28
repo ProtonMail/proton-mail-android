@@ -648,6 +648,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     getString(R.string.delete_messages),
                     getString(R.string.confirm_destructive_action)
                 ) {
+                    // Cancel observing the message/conversation in order for it not to be fetched again
+                    // after it has been deleted from DB optimistically
+                    viewModel.cancelConversationFlowJob()
                     viewModel.delete()
                     onBackPressed()
                 }

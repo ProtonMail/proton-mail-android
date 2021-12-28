@@ -444,7 +444,7 @@ internal class EventHandler @AssistedInject constructor(
     }
 
     private fun checkPendingForSending(pendingActionDao: PendingActionDao, messageId: String): Boolean {
-        var pendingForSending = pendingActionDao.findPendingSendByMessageId(messageId)
+        var pendingForSending = pendingActionDao.findPendingSendByMessageIdBlocking(messageId)
         if (pendingForSending != null) {
             return true
         }

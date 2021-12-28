@@ -64,6 +64,7 @@ import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
@@ -72,6 +73,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
@@ -107,7 +109,8 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer,
     private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer,
     private val markUnreadLatestNonDraftMessageInLocation: MarkUnreadLatestNonDraftMessageInLocation,
-    connectivityManager: NetworkConnectivityManager
+    connectivityManager: NetworkConnectivityManager,
+    private val externalScope: CoroutineScope
 ) : ConversationsRepository {
 
     private val conversationDao: ConversationDao
@@ -441,25 +444,27 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         currentFolderId: String
     ) {
-        deleteConversationsRemoteWorker.enqueue(conversationIds, currentFolderId, userId)
+        externalScope.launch {
+            deleteConversationsRemoteWorker.enqueue(conversationIds, currentFolderId, userId)
 
-        conversationIds.forEach { conversationId ->
-            val messagesFromConversation = getAllConversationMessagesSortedByNewest(conversationId)
-            // The delete action deletes the messages that are in the current mailbox folder
-            val messagesToDelete = messagesFromConversation
-                .filter { currentFolderId in it.allLabelIDs }
-                .mapNotNull { it.messageId }
-            messageDao.deleteMessagesByIds(messagesToDelete)
+            conversationIds.forEach { conversationId ->
+                val messagesFromConversation = getAllConversationMessagesSortedByNewest(conversationId)
+                // The delete action deletes the messages that are in the current mailbox folder
+                val messagesToDelete = messagesFromConversation
+                    .filter { currentFolderId in it.allLabelIDs }
+                    .mapNotNull { it.messageId }
+                messageDao.deleteMessagesByIds(messagesToDelete)
 
-            // If all the messages of the conversation are in the current folder, then delete the conversation
-            // Else remove the current location from the conversation's labels list
-            if (messagesFromConversation.size == messagesToDelete.size) {
-                conversationDao.deleteConversation(userId.id, conversationId)
-            } else {
-                val conversation = conversationDao.findConversation(userId.id, conversationId)
-                if (conversation != null) {
-                    val newLabels = conversation.labels.filter { it.id != currentFolderId }
-                    conversationDao.updateLabels(conversationId, newLabels)
+                // If all the messages of the conversation are in the current folder, then delete the conversation
+                // Else remove the current location from the conversation's labels list
+                if (messagesFromConversation.size == messagesToDelete.size) {
+                    conversationDao.deleteConversation(userId.id, conversationId)
+                } else {
+                    val conversation = conversationDao.findConversation(userId.id, conversationId)
+                    if (conversation != null) {
+                        val newLabels = conversation.labels.filter { it.id != currentFolderId }
+                        conversationDao.updateLabels(conversationId, newLabels)
+                    }
                 }
             }
         }

@@ -60,7 +60,7 @@ class DatabaseProvider @Inject constructor(
 
     // Message
     fun provideMessageDao(userId: UserId): MessageDao =
-        MessageDatabase.getInstance(context, userId).getDao()
+        MessageDatabase.getInstance(context, userId).getMessageDao()
 
     // TODO remove once the usage in ClearUserData use-case is removed
     // Conversation

@@ -35,9 +35,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -72,8 +72,8 @@ class DeleteMessageTest {
             databaseProvider,
             messageRepository,
             conversationsRepository,
-            TestDispatcherProvider,
-            workScheduler
+            workScheduler,
+            TestCoroutineScope()
         )
 
         coEvery {
@@ -89,8 +89,8 @@ class DeleteMessageTest {
     fun verifyThatMessageIsSuccessfullyDeletedWithoutPendingMessagesInTheDb() {
         runBlockingTest {
             // given
-            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
-            every { pendingActionDao.findPendingSendByMessageId(any()) } returns null
+            coEvery { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
+            coEvery { pendingActionDao.findPendingSendByMessageId(any()) } returns null
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
@@ -110,8 +110,8 @@ class DeleteMessageTest {
         runBlockingTest {
             // given
             val pendingUpload = mockk<PendingUpload>(relaxed = true)
-            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns pendingUpload
-            every { pendingActionDao.findPendingSendByMessageId(any()) } returns null
+            coEvery { pendingActionDao.findPendingUploadByMessageId(any()) } returns pendingUpload
+            coEvery { pendingActionDao.findPendingSendByMessageId(any()) } returns null
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
@@ -133,8 +133,8 @@ class DeleteMessageTest {
             val pendingSend = mockk<PendingSend>(relaxed = true) {
                 every { sent } returns true
             }
-            every { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
-            every { pendingActionDao.findPendingSendByMessageId(any()) } returns pendingSend
+            coEvery { pendingActionDao.findPendingUploadByMessageId(any()) } returns null
+            coEvery { pendingActionDao.findPendingSendByMessageId(any()) } returns pendingSend
 
             // when
             val response = deleteMessage(listOf(messId), currentLabelId, userId)

@@ -168,8 +168,6 @@ class MessageDetailsRepository @Inject constructor(
     @Deprecated("Use suspend function", ReplaceWith("saveAttachment(attachment)"))
     fun saveAttachmentBlocking(attachment: Attachment) = messagesDao.saveAttachmentBlocking(attachment)
 
-    fun findPendingSendByMessageId(messageId: String) = pendingActionDao.findPendingSendByMessageId(messageId)
-
     suspend fun saveMessage(message: Message): Long {
         saveFile(message)
         return messagesDao.saveMessage(message)
