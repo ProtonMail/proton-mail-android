@@ -25,7 +25,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:layout_centerVertical="true"
     android:layout_gravity="center_vertical">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headingContainer"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -41,9 +41,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <TextView
             android:id="@+id/headingText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/Proton.Text.Default" />
+            android:textAppearance="@style/Proton.Text.Default"
+            app:layout_constraintEnd_toEndOf="@+id/guideline_03"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/valueText"
@@ -54,7 +57,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:duplicateParentState="true"
             android:orientation="vertical"
             android:paddingTop="@dimen/padding_s"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headingText" />
 
         <Spinner
             android:id="@+id/timeoutSpinner"
@@ -63,8 +70,21 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:background="@android:color/transparent"
             android:clickable="false"
             android:duplicateParentState="true"
-            android:visibility="gone" />
-    </LinearLayout>
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_03"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.8" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/actionSwitch"
