@@ -63,7 +63,7 @@ class ComposeMessageRepository @Inject constructor(
     private val accountManager: AccountManager,
     private val userManager: UserManager,
     private val labelRepository: LabelRepository,
-    private val contactRepository: ContactsRepository
+    private val contactRepository: ContactsRepository,
     private val dispatcherProvider: DispatcherProvider,
 ) {
 
