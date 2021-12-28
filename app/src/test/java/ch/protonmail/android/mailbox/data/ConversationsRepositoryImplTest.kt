@@ -94,6 +94,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
@@ -286,7 +287,8 @@ class ConversationsRepositoryImplTest : ArchTest {
         deleteConversationsRemoteWorker = deleteConversationsRemoteWorker,
         connectivityManager = connectivityManager,
         markUnreadLatestNonDraftMessageInLocation = markUnreadLatestNonDraftMessageInLocation,
-        labelsRepository = labelsRepository
+        labelsRepository = labelsRepository,
+        externalScope = TestCoroutineScope()
     )
 
     @Test

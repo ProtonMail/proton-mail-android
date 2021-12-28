@@ -35,9 +35,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -72,7 +72,8 @@ class DeleteMessageTest {
             databaseProvider,
             messageRepository,
             conversationsRepository,
-            workScheduler
+            workScheduler,
+            TestCoroutineScope()
         )
 
         coEvery {

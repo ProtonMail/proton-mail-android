@@ -26,6 +26,8 @@ import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.model.DeleteMessageResult
 import ch.protonmail.android.worker.DeleteMessageWorker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
@@ -37,25 +39,26 @@ class DeleteMessage @Inject constructor(
     private val databaseProvider: DatabaseProvider,
     private val messageRepository: MessageRepository,
     private val conversationsRepository: ConversationsRepository,
-    private val workerScheduler: DeleteMessageWorker.Enqueuer
+    private val workerScheduler: DeleteMessageWorker.Enqueuer,
+    private val externalScope: CoroutineScope
 ) {
 
     suspend operator fun invoke(
         messageIds: List<String>,
         currentLabelId: String?,
         userId: UserId
-    ): DeleteMessageResult {
+    ): DeleteMessageResult = externalScope.async {
         val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(userId, messageIds)
 
         conversationsRepository.updateConversationsWhenDeletingMessages(userId, validMessageIdList)
         messageRepository.deleteMessagesInDb(userId, validMessageIdList)
 
         val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList, currentLabelId)
-        return DeleteMessageResult(
+        return@async DeleteMessageResult(
             invalidMessageIdList.isEmpty(),
             scheduleWorkerResult
         )
-    }
+    }.await()
 
     private suspend fun getValidAndInvalidMessages(
         userId: UserId,
