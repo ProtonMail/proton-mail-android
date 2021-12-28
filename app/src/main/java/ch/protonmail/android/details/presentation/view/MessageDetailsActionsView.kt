@@ -53,7 +53,8 @@ class MessageDetailsActionsView @JvmOverloads constructor(
 
     fun bind(uiModel: UiModel) {
         showHistoryButton.isVisible = !uiModel.hideShowHistory
-        this.isVisible = !uiModel.hideAllActions
+        moreActionsButton.isVisible = !uiModel.hideMoreActions
+        this.isVisible = !uiModel.hideMoreActions || !uiModel.hideShowHistory
     }
 
     fun onShowHistoryClicked(callback: (View) -> Unit) {
@@ -66,6 +67,6 @@ class MessageDetailsActionsView @JvmOverloads constructor(
 
     data class UiModel(
         val hideShowHistory: Boolean,
-        val hideAllActions: Boolean
+        val hideMoreActions: Boolean
     )
 }

@@ -145,10 +145,8 @@ internal class MessageDetailsAdapter(
             val messageBodyProgress = createMessageBodyProgressBar()
             itemView.messageWebViewContainer.addView(messageBodyProgress)
 
-            if (showingMoreThanOneMessage()) {
-                val detailsMessageActions = createInMessageActionsView()
-                itemView.messageWebViewContainer.addView(detailsMessageActions)
-            }
+            val detailsMessageActions = createInMessageActionsView()
+            itemView.messageWebViewContainer.addView(detailsMessageActions)
 
             val replyActionsView = createReplyActionsView()
             itemView.messageWebViewContainer.addView(replyActionsView)
@@ -333,21 +331,21 @@ internal class MessageDetailsAdapter(
                 onLoadMessageBody(message)
             }
 
-            val htmlContent = if (showingMoreThanOneMessage() || messageHasNoQuotedPart(listItem)) {
-                listItem.messageFormattedHtml
-            } else {
-                listItem.messageFormattedHtmlWithQuotedHistory
-            }
-            htmlContent?.let {
+            listItem.messageFormattedHtml?.let {
                 loadHtmlDataIntoWebView(webView, it)
             }
 
             displayAttachmentInfo(listItem.message.attachments, attachmentsView)
             setUpViewDividers()
 
-            val shouldHideAllActions = htmlContent.isNullOrEmpty() || message.isDraft()
+            val hideMoreActionsButton = listItem.messageFormattedHtml.isNullOrEmpty() ||
+                message.isDraft() ||
+                !showingMoreThanOneMessage()
             setupMessageActionsView(
-                message, listItem.messageFormattedHtmlWithQuotedHistory, webView, shouldHideAllActions
+                message,
+                listItem.messageFormattedHtmlWithQuotedHistory,
+                webView,
+                hideMoreActionsButton
             )
             // TODO: To be decided whether we will need these actions moving forward or they can be removed completely
             setupReplyActionsView(message, true)
@@ -356,21 +354,18 @@ internal class MessageDetailsAdapter(
             setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
         }
 
-        private fun messageHasNoQuotedPart(listItem: MessageDetailsListItem) =
-            listItem.messageFormattedHtmlWithQuotedHistory == null
-
         private fun setupMessageActionsView(
             message: Message,
             messageHtmlWithQuotedHistory: String?,
             webView: WebView,
-            shouldHideAllActions: Boolean
+            shouldHideMoreActionsButton: Boolean
         ) {
             val messageActionsView: MessageDetailsActionsView =
                 itemView.messageWebViewContainer.findViewById(R.id.item_message_body_actions_layout_id) ?: return
 
             val uiModel = MessageDetailsActionsView.UiModel(
-                messageHtmlWithQuotedHistory.isNullOrEmpty(),
-                shouldHideAllActions
+                hideShowHistory = messageHtmlWithQuotedHistory.isNullOrEmpty(),
+                hideMoreActions = shouldHideMoreActionsButton
             )
             messageActionsView.bind(uiModel)
 
