@@ -143,7 +143,7 @@ class EditContactDetailsRepository @Inject constructor(
         Timber.v("Saving updated emails: $updatedEmails")
         contactDao.saveAllContactsEmails(updatedEmails)
 
-        val contact = try {
+        var contact = try {
             contactDao.observeFullContactDetailsById(contactId).first()
         } catch (tooBigException: SQLiteBlobTooBigException) {
             Timber.i(tooBigException, "Data too big to be fetched")
@@ -163,6 +163,8 @@ class EditContactDetailsRepository @Inject constructor(
                     }
                 }
             }
+            // Set the encrypted data to be null before adding the updated encrypted data
+            contact = contact.copy(encryptedData = null)
             if (contactEncryptedDataType0 != null) {
                 val vCardType0String = contactEncryptedDataType0.data
                 val vCardType0 = if (vCardType0String != null) Ezvcard.parse(vCardType0String).first() else null

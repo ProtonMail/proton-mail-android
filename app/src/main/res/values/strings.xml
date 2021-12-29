@@ -650,9 +650,11 @@
     <string name="signature_error_desc">Verification of this content\'s signature failed</string>
     <string name="address">Address: </string>
     <string name="address_street">Street</string>
+    <string name="address_extended_street">Extended street</string>
     <string name="address_city">City</string>
     <string name="address_region">Region (state or province)</string>
     <string name="address_postcode">Post code</string>
+    <string name="address_po_box">PO Box</string>
     <string name="address_country">Country</string>
     <string name="recheck_delinquency">Check Again</string>
     <string name="close_app">Close App</string>

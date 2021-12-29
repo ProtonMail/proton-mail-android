@@ -86,7 +86,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:paddingBottom="@dimen/padding_s"
-                android:singleLine="true"
+                android:maxLines="7"
                 android:textAlignment="viewStart"
                 android:textColor="@color/text_norm"
                 android:textStyle="bold" />

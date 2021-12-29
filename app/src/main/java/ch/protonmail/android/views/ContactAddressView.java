@@ -32,7 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,12 +52,16 @@ public class ContactAddressView extends LinearLayout {
     ImageButton mBtnOptionTypeView;
     @BindView(R.id.address_street)
     ProtonInput mAddressStreetView;
+    @BindView(R.id.address_street_extended)
+    ProtonInput mAddressExtendedStreetView;
     @BindView(R.id.address_city)
     ProtonInput mAddressCityView;
     @BindView(R.id.address_region)
     ProtonInput mAddressRegionView;
     @BindView(R.id.address_postcode)
     ProtonInput mAddressPostcodeView;
+    @BindView(R.id.address_po_box)
+    ProtonInput mAddressPoBoxView;
     @BindView(R.id.address_country)
     ProtonInput mAddressCountryView;
     @BindView(R.id.address_full_combined)
@@ -100,7 +104,7 @@ public class ContactAddressView extends LinearLayout {
 
         mAddressDetailsParentView.setVisibility(View.VISIBLE);
         mAddressFullCombinedView.setVisibility(GONE);
-        mAddressFullCombinedView.setOnClickListener(new AddressClickListener(mAddressFullCombinedView, mAddressDetailsParentView, mAddressStreetView, mAddressCityView, mAddressRegionView, mAddressPostcodeView, mAddressCountryView));
+        mAddressFullCombinedView.setOnClickListener(new AddressClickListener(mAddressFullCombinedView, mAddressDetailsParentView, mAddressStreetView, mAddressExtendedStreetView, mAddressPostcodeView, mAddressCityView, mAddressPoBoxView, mAddressRegionView, mAddressCountryView));
         final FragmentManager fragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
         mOptionTitleView.setText(optionTitleText);
         mRowTitleView.setOnClickListener(v -> {
@@ -147,51 +151,84 @@ public class ContactAddressView extends LinearLayout {
 
         fillAddressValues();
 
-        mAddressFullCombinedView.setOnClickListener(new AddressClickListener(mAddressFullCombinedView, mAddressDetailsParentView, mAddressStreetView, mAddressCityView, mAddressRegionView, mAddressPostcodeView, mAddressCountryView));
+        mAddressFullCombinedView.setOnClickListener(new AddressClickListener(mAddressFullCombinedView, mAddressDetailsParentView, mAddressStreetView, mAddressExtendedStreetView, mAddressPostcodeView, mAddressCityView, mAddressPoBoxView, mAddressRegionView, mAddressCountryView));
     }
 
-    private void fillAddressValues(String streetAddress, String localityAddress, String regionAddress, String postalCodeAddress, String countryAddress) {
+    private void fillAddressValues(String streetAddress, String extendedStreetAddress, String postalCodeAddress, String localityAddress, String poBoxAddress, String regionAddress, String countryAddress) {
         mAddressStreetView.setText(streetAddress);
+        mAddressExtendedStreetView.setText(extendedStreetAddress);
         mAddressCityView.setText(localityAddress);
         mAddressRegionView.setText(regionAddress);
         mAddressPostcodeView.setText(postalCodeAddress);
+        mAddressPoBoxView.setText(poBoxAddress);
         mAddressCountryView.setText(countryAddress);
 
         mAddressFullCombinedView.setHint(mOptionHint);
 
+        List<String> addressParts = new ArrayList<>();
+        if (!TextUtils.isEmpty(streetAddress)) {
+            addressParts.add(streetAddress);
+        }
+        if (!TextUtils.isEmpty(extendedStreetAddress)) {
+            addressParts.add(extendedStreetAddress);
+        }
+        if (!TextUtils.isEmpty(postalCodeAddress)) {
+            addressParts.add(postalCodeAddress);
+        }
+        if (!TextUtils.isEmpty(localityAddress)) {
+            addressParts.add(localityAddress);
+        }
+        if (!TextUtils.isEmpty(poBoxAddress)) {
+            addressParts.add(poBoxAddress);
+        }
+        if (!TextUtils.isEmpty(regionAddress)) {
+            addressParts.add(regionAddress);
+        }
+        if (!TextUtils.isEmpty(countryAddress)) {
+            addressParts.add(countryAddress);
+        }
+
         boolean isEmpty = TextUtils.isEmpty(streetAddress) && TextUtils.isEmpty(localityAddress) &&
                 TextUtils.isEmpty(regionAddress) && TextUtils.isEmpty(postalCodeAddress) && TextUtils.isEmpty(countryAddress);
         if (!isEmpty) {
-            mAddressFullCombinedView.setText(TextUtils.join(" ", Arrays.asList(streetAddress, localityAddress, regionAddress, postalCodeAddress, countryAddress)));
+            mAddressFullCombinedView.setText(TextUtils.join("\n", addressParts));
         }
     }
 
     private void fillAddressValues() {
         String streetAddress = mAddress.getStreetAddress();
         streetAddress = streetAddress == null ? "" : streetAddress;
-        String localityAddress = mAddress.getLocality();
-        localityAddress = localityAddress == null ? "" : localityAddress;
-        String regionAddress = mAddress.getRegion();
-        regionAddress = regionAddress == null ? "" : regionAddress;
+        String extendedStreetAddress = mAddress.getExtendedAddress();
+        extendedStreetAddress = extendedStreetAddress == null ? "" : extendedStreetAddress;
         String postalCodeAddress = mAddress.getPostalCode();
         postalCodeAddress = postalCodeAddress == null ? "" : postalCodeAddress;
+        String localityAddress = mAddress.getLocality();
+        localityAddress = localityAddress == null ? "" : localityAddress;
+        String poBox = mAddress.getPoBox();
+        poBox = poBox == null ? "" : poBox;
+        String regionAddress = mAddress.getRegion();
+        regionAddress = regionAddress == null ? "" : regionAddress;
         String countryAddress = mAddress.getCountry();
         countryAddress = countryAddress == null ? "" : countryAddress;
 
-        fillAddressValues(streetAddress, localityAddress, regionAddress, postalCodeAddress, countryAddress);
+        fillAddressValues(streetAddress, extendedStreetAddress, postalCodeAddress, localityAddress, poBox, regionAddress, countryAddress);
     }
 
     private void setHandlers() {
         mAddressStreetView.addTextChangedListener(new DirtyWatcher());
-        mAddressCityView.addTextChangedListener(new DirtyWatcher());
-        mAddressRegionView.addTextChangedListener(new DirtyWatcher());
+        mAddressExtendedStreetView.addTextChangedListener(new DirtyWatcher());
         mAddressPostcodeView.addTextChangedListener(new DirtyWatcher());
+        mAddressCityView.addTextChangedListener(new DirtyWatcher());
+        mAddressPoBoxView.addTextChangedListener(new DirtyWatcher());
+        mAddressRegionView.addTextChangedListener(new DirtyWatcher());
         mAddressCountryView.addTextChangedListener(new DirtyWatcher());
 
         mAddressStreetView.setOnFocusChangeListener(new FocusWatcher());
-        mAddressCityView.setOnFocusChangeListener(new FocusWatcher());
-        mAddressRegionView.setOnFocusChangeListener(new FocusWatcher());
+        mAddressExtendedStreetView.setOnFocusChangeListener(new FocusWatcher());
         mAddressPostcodeView.setOnFocusChangeListener(new FocusWatcher());
+        mAddressCityView.setOnFocusChangeListener(new FocusWatcher());
+        mAddressPoBoxView.setOnFocusChangeListener(new FocusWatcher());
+        mAddressRegionView.setOnFocusChangeListener(new FocusWatcher());
         mAddressCountryView.setOnFocusChangeListener(new FocusWatcher());
     }
 
@@ -220,8 +257,10 @@ public class ContactAddressView extends LinearLayout {
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            mHasFocus = mAddressStreetView.hasFocus() || mAddressCityView.hasFocus() || mAddressRegionView.hasFocus()
-                    || mAddressPostcodeView.hasFocus() || mAddressCountryView.hasFocus();
+            mHasFocus = mAddressStreetView.hasFocus() || mAddressExtendedStreetView.hasFocus()
+                    || mAddressCityView.hasFocus() || mAddressPostcodeView.hasFocus()
+                    || mAddressPoBoxView.hasFocus() || mAddressRegionView.hasFocus()
+                    || mAddressCountryView.hasFocus();
 
             if (mHasFocus) {
                 mAddressDetailsParentView.setVisibility(View.VISIBLE);
@@ -230,15 +269,19 @@ public class ContactAddressView extends LinearLayout {
                 mAddressDetailsParentView.setVisibility(View.GONE);
                 String streetAddress = mAddressStreetView.getText().toString();
                 streetAddress = streetAddress == null ? "" : streetAddress;
-                String localityAddress = mAddressCityView.getText().toString();
-                localityAddress = localityAddress == null ? "" : localityAddress;
-                String regionAddress = mAddressRegionView.getText().toString();
-                regionAddress = regionAddress == null ? "" : regionAddress;
+                String extendedStreetAddress = mAddressExtendedStreetView.getText().toString();
+                extendedStreetAddress = extendedStreetAddress == null ? "" : extendedStreetAddress;
                 String postalCodeAddress = mAddressPostcodeView.getText().toString();
                 postalCodeAddress = postalCodeAddress == null ? "" : postalCodeAddress;
+                String localityAddress = mAddressCityView.getText().toString();
+                localityAddress = localityAddress == null ? "" : localityAddress;
+                String poBoxAddress = mAddressPoBoxView.getText().toString();
+                poBoxAddress = poBoxAddress == null ? "" : poBoxAddress;
+                String regionAddress = mAddressRegionView.getText().toString();
+                regionAddress = regionAddress == null ? "" : regionAddress;
                 String countryAddress = mAddressCountryView.getText().toString();
                 countryAddress = countryAddress == null ? "" : countryAddress;
-                fillAddressValues(streetAddress, localityAddress, regionAddress, postalCodeAddress, countryAddress);
+                fillAddressValues(streetAddress, extendedStreetAddress, postalCodeAddress, localityAddress, poBoxAddress, regionAddress, countryAddress);
                 mAddressFullCombinedView.setVisibility(View.VISIBLE);
             }
         }
@@ -278,24 +321,26 @@ public class ContactAddressView extends LinearLayout {
         private final View addressDetailsParent;
 
         private final ProtonInput addressStreetView;
-        private final ProtonInput addressCityView;
-        private final ProtonInput addressRegionView;
+        private final ProtonInput addressExtendedStreetView;
         private final ProtonInput addressPostcodeView;
+        private final ProtonInput addressCityView;
+        private final ProtonInput addressPoBoxView;
+        private final ProtonInput addressRegionView;
         private final ProtonInput addressCountryView;
 
-        public AddressClickListener(TextView addressFullCombined,
-                                    View addressDetailsParent,
-                                    ProtonInput addressStreetView,
-                                    ProtonInput addressCityView,
-                                    ProtonInput addressRegionView,
-                                    ProtonInput addressPostcodeView,
+        public AddressClickListener(TextView addressFullCombined, View addressDetailsParent,
+                                    ProtonInput addressStreetView, ProtonInput addressExtendedStreetView,
+                                    ProtonInput addressPostcodeView, ProtonInput addressCityView,
+                                    ProtonInput addressPoBoxView, ProtonInput addressRegionView,
                                     ProtonInput addressCountryView) {
             this.addressFullCombined = addressFullCombined;
             this.addressDetailsParent = addressDetailsParent;
             this.addressStreetView = addressStreetView;
-            this.addressCityView = addressCityView;
-            this.addressRegionView = addressRegionView;
+            this.addressExtendedStreetView = addressExtendedStreetView;
             this.addressPostcodeView = addressPostcodeView;
+            this.addressCityView = addressCityView;
+            this.addressPoBoxView = addressPoBoxView;
+            this.addressRegionView = addressRegionView;
             this.addressCountryView = addressCountryView;
         }
 
@@ -315,24 +360,55 @@ public class ContactAddressView extends LinearLayout {
 
                 String streetAddress = addressStreetView.getText().toString();
                 streetAddress = streetAddress == null ? "" : streetAddress;
-                String localityAddress = addressCityView.getText().toString();
-                localityAddress = localityAddress == null ? "" : localityAddress;
-                String regionAddress = addressRegionView.getText().toString();
-                regionAddress = regionAddress == null ? "" : regionAddress;
+                String extendedStreetAddress = addressExtendedStreetView.getText().toString();
+                extendedStreetAddress = extendedStreetAddress == null ? "" : extendedStreetAddress;
                 String postalCodeAddress = addressPostcodeView.getText().toString();
                 postalCodeAddress = postalCodeAddress == null ? "" : postalCodeAddress;
+                String localityAddress = addressCityView.getText().toString();
+                localityAddress = localityAddress == null ? "" : localityAddress;
+                String poBoxAddress = addressPoBoxView.getText().toString();
+                poBoxAddress = poBoxAddress == null ? "" : poBoxAddress;
+                String regionAddress = addressRegionView.getText().toString();
+                regionAddress = regionAddress == null ? "" : regionAddress;
                 String countryAddress = addressCountryView.getText().toString();
                 countryAddress = countryAddress == null ? "" : countryAddress;
                 addressStreetView.setText(streetAddress);
-                addressCityView.setText(localityAddress);
-                addressRegionView.setText(regionAddress);
+                addressExtendedStreetView.setText(extendedStreetAddress);
                 addressPostcodeView.setText(postalCodeAddress);
+                addressCityView.setText(localityAddress);
+                addressPoBoxView.setText(poBoxAddress);
+                addressRegionView.setText(regionAddress);
                 addressCountryView.setText(countryAddress);
 
-                boolean isEmpty = TextUtils.isEmpty(streetAddress) && TextUtils.isEmpty(localityAddress) &&
-                        TextUtils.isEmpty(regionAddress) && TextUtils.isEmpty(postalCodeAddress) && TextUtils.isEmpty(countryAddress);
+                List<String> addressParts = new ArrayList<>();
+                if (!TextUtils.isEmpty(streetAddress)) {
+                    addressParts.add(streetAddress);
+                }
+                if (!TextUtils.isEmpty(extendedStreetAddress)) {
+                    addressParts.add(extendedStreetAddress);
+                }
+                if (!TextUtils.isEmpty(postalCodeAddress)) {
+                    addressParts.add(postalCodeAddress);
+                }
+                if (!TextUtils.isEmpty(localityAddress)) {
+                    addressParts.add(localityAddress);
+                }
+                if (!TextUtils.isEmpty(poBoxAddress)) {
+                    addressParts.add(poBoxAddress);
+                }
+                if (!TextUtils.isEmpty(regionAddress)) {
+                    addressParts.add(regionAddress);
+                }
+                if (!TextUtils.isEmpty(countryAddress)) {
+                    addressParts.add(countryAddress);
+                }
+
+                boolean isEmpty = TextUtils.isEmpty(streetAddress) && TextUtils.isEmpty(extendedStreetAddress)
+                        && TextUtils.isEmpty(postalCodeAddress) && TextUtils.isEmpty(localityAddress)
+                        && TextUtils.isEmpty(poBoxAddress) && TextUtils.isEmpty(regionAddress)
+                        && TextUtils.isEmpty(countryAddress);
                 if (!isEmpty) {
-                    addressFullCombined.setText(TextUtils.join(" ", Arrays.asList(streetAddress, localityAddress, regionAddress, postalCodeAddress, countryAddress)));
+                    addressFullCombined.setText(TextUtils.join("\n", addressParts));
                 }
             }
         }

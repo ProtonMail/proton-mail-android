@@ -80,6 +80,7 @@ class ContactDetailsActivity : AppCompatActivity() {
     private var contactEmail: String = EMPTY_STRING
     private var contactPhone: String = EMPTY_STRING
     private var decryptedCardType0: String? = null
+    private var decryptedCardType1: String? = null
     private var decryptedCardType2: String? = null
     private var decryptedCardType3: String? = null
     private val viewModel: ContactDetailsViewModel by viewModels()
@@ -177,7 +178,14 @@ class ContactDetailsActivity : AppCompatActivity() {
 
     private fun onEditContacts() {
 
-        val vCardFilePath = if (!decryptedCardType3.isNullOrEmpty()) {
+        val vCardFilePath1 = if (!decryptedCardType1.isNullOrEmpty()) {
+            val filePath = "$cacheDir${File.separator}$VCARD_TEMP_FILE_NAME"
+            fileHelper.saveStringToFile(filePath, checkNotNull(decryptedCardType1))
+            filePath
+        } else {
+            EMPTY_STRING
+        }
+        val vCardFilePath3 = if (!decryptedCardType3.isNullOrEmpty()) {
             val filePath = "$cacheDir${File.separator}$VCARD_TEMP_FILE_NAME"
             fileHelper.saveStringToFile(filePath, checkNotNull(decryptedCardType3))
             filePath
@@ -188,8 +196,9 @@ class ContactDetailsActivity : AppCompatActivity() {
             this, contactId,
             EditContactDetailsActivity.REQUEST_CODE_EDIT_CONTACT,
             decryptedCardType0,
+            vCardFilePath1,
             decryptedCardType2,
-            vCardFilePath
+            vCardFilePath3
         )
     }
 
@@ -239,6 +248,7 @@ class ContactDetailsActivity : AppCompatActivity() {
         vCardToShare = state.vCardToShare
         contactId = state.contactId
         decryptedCardType0 = state.vDecryptedCardType0
+        decryptedCardType1 = state.vDecryptedCardType1
         decryptedCardType2 = state.vDecryptedCardType2
         decryptedCardType3 = state.vDecryptedCardType3
 

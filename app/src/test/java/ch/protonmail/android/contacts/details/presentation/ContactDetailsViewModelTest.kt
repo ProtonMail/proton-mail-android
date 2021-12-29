@@ -83,6 +83,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         isType2SignatureValid = true,
         isType3SignatureValid = null,
         vDecryptedCardType0 = decryptedCardType0,
+        vDecryptedCardType1 = null,
         vDecryptedCardType2 = null,
         vDecryptedCardType3 = null,
     )
@@ -150,6 +151,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
             true,
             null,
             decryptedCardType0,
+            null,
             null,
             null
         )

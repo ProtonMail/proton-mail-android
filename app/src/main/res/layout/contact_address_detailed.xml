@@ -62,6 +62,36 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <TextView
             android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="@dimen/padding_m"
+            android:layout_marginVertical="@dimen/padding_s"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="@string/address_extended_street"
+            android:textColor="@color/contact_heading"
+            android:textSize="13sp" />
+
+        <me.proton.core.presentation.ui.view.ProtonInput
+            android:id="@+id/address_street_extended"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/padding_m"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginHorizontal="@dimen/padding_m"
@@ -157,29 +187,66 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="@dimen/padding_m"
-            android:layout_marginVertical="@dimen/padding_s"
-            android:clickable="false"
-            android:focusable="false"
-            android:gravity="center_vertical"
-            android:singleLine="true"
-            android:text="@string/address_country"
-            android:textColor="@color/contact_heading"
-            android:textSize="13sp" />
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <me.proton.core.presentation.ui.view.ProtonInput
-            android:id="@+id/address_country"
-            android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="@dimen/padding_m"
+                android:layout_marginVertical="@dimen/padding_s"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/address_po_box"
+                android:textColor="@color/contact_heading"
+                android:textSize="13sp" />
+
+            <me.proton.core.presentation.ui.view.ProtonInput
+                android:id="@+id/address_po_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/padding_m"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/padding_m"
-            android:singleLine="true"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="@dimen/padding_m"
+                android:layout_marginVertical="@dimen/padding_s"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/address_country"
+                android:textColor="@color/contact_heading"
+                android:textSize="13sp" />
+
+            <me.proton.core.presentation.ui.view.ProtonInput
+                android:id="@+id/address_country"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/padding_m"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
