@@ -23,6 +23,7 @@ import android.content.Context
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.Constants.MAX_MESSAGE_ID_WORKER_ARGUMENTS
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.NetworkConnectivityManager
@@ -237,8 +238,12 @@ class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.TRASH
-        moveMessageToLocationWorker.enqueue(messageIds, newLocation = newLocation)
-        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
+        messageIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
+                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId)
+            }
     }
 
     suspend fun moveToArchive(
@@ -247,8 +252,12 @@ class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.ARCHIVE
-        moveMessageToLocationWorker.enqueue(messageIds, newLocation = newLocation)
-        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
+        messageIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
+                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId)
+            }
     }
 
     suspend fun moveToInbox(
@@ -257,8 +266,12 @@ class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.INBOX
-        moveMessageToLocationWorker.enqueue(messageIds, newLocation = newLocation)
-        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
+        messageIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
+                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId)
+            }
     }
 
     suspend fun moveToSpam(
@@ -267,8 +280,12 @@ class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.SPAM
-        moveMessageToLocationWorker.enqueue(messageIds, newLocation = newLocation)
-        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId)
+        messageIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
+                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId)
+            }
     }
 
     suspend fun moveToCustomFolderLocation(
@@ -278,8 +295,12 @@ class MessageRepository @Inject constructor(
         userId: UserId
     ) {
         val newLocation = MessageLocationType.LABEL
-        moveMessageToLocationWorker.enqueue(messageIds, newCustomLocation = newCustomLocationId)
-        moveMessageInDb(messageIds, newLocation, currentFolderLabelId, userId, newCustomLocationId)
+        messageIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                moveMessageToLocationWorker.enqueue(ids, newCustomLocation = newCustomLocationId)
+                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId, newCustomLocationId)
+            }
     }
 
     fun starMessages(messageIds: List<String>) {

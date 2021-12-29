@@ -19,9 +19,6 @@
 
 package ch.protonmail.android.usecase.model
 
-import androidx.work.Operation
-
 data class DeleteMessageResult(
-    val isSuccessfullyDeleted: Boolean,
-    val workerResultOperation: Operation
+    val isSuccessfullyDeleted: Boolean
 )

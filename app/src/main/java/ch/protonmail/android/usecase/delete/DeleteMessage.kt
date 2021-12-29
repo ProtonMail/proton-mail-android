@@ -20,6 +20,7 @@
 package ch.protonmail.android.usecase.delete
 
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.Constants.MAX_MESSAGE_ID_WORKER_ARGUMENTS
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
@@ -50,13 +51,16 @@ class DeleteMessage @Inject constructor(
     ): DeleteMessageResult = externalScope.async {
         val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(userId, messageIds)
 
-        conversationsRepository.updateConversationsWhenDeletingMessages(userId, validMessageIdList)
-        messageRepository.deleteMessagesInDb(userId, validMessageIdList)
+        validMessageIdList
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                conversationsRepository.updateConversationsWhenDeletingMessages(userId, ids)
+                messageRepository.deleteMessagesInDb(userId, ids)
 
-        val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList, currentLabelId)
+                workerScheduler.enqueue(ids, currentLabelId)
+            }
         return@async DeleteMessageResult(
-            invalidMessageIdList.isEmpty(),
-            scheduleWorkerResult
+            invalidMessageIdList.isEmpty()
         )
     }.await()
 

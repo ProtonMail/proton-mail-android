@@ -106,7 +106,7 @@ class DeleteMessageTest {
     }
 
     @Test
-    fun verifyThatMessageIsSuccessfullyDeletedWithPendingUploadMessageInTheDb() {
+    fun verifyThatMessageIsNotDeletedWithPendingUploadMessageInTheDb() {
         runBlockingTest {
             // given
             val pendingUpload = mockk<PendingUpload>(relaxed = true)
@@ -117,17 +117,17 @@ class DeleteMessageTest {
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
 
             // then
-            coVerify {
-                messageRepository.deleteMessagesInDb(userId, emptyList())
-                conversationsRepository.updateConversationsWhenDeletingMessages(userId, emptyList())
+            coVerify(exactly = 0) {
+                messageRepository.deleteMessagesInDb(userId, listOf(messId))
+                conversationsRepository.updateConversationsWhenDeletingMessages(userId, listOf(messId))
             }
-            verify { workScheduler.enqueue(emptyList(), currentLabelId) }
+            verify(exactly = 0) { workScheduler.enqueue(listOf(messId), currentLabelId) }
             assertFalse(response.isSuccessfullyDeleted)
         }
     }
 
     @Test
-    fun verifyThatMessageIsSuccessfullyDeletedWithPendingSendMessageInTheDb() {
+    fun verifyThatMessageIsNotDeletedWithPendingSendMessageInTheDb() {
         runBlockingTest {
             // given
             val pendingSend = mockk<PendingSend>(relaxed = true) {
@@ -140,11 +140,11 @@ class DeleteMessageTest {
             val response = deleteMessage(listOf(messId), currentLabelId, userId)
 
             // then
-            coVerify {
-                messageRepository.deleteMessagesInDb(userId, emptyList())
-                conversationsRepository.updateConversationsWhenDeletingMessages(userId, emptyList())
+            coVerify(exactly = 0) {
+                messageRepository.deleteMessagesInDb(userId, listOf(messId))
+                conversationsRepository.updateConversationsWhenDeletingMessages(userId, listOf(messId))
             }
-            verify { workScheduler.enqueue(emptyList(), currentLabelId) }
+            verify(exactly = 0) { workScheduler.enqueue(listOf(messId), currentLabelId) }
             assertFalse(response.isSuccessfullyDeleted)
         }
     }

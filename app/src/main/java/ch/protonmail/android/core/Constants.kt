@@ -53,6 +53,7 @@ object Constants {
     const val FCM_MIGRATION_VERSION = 739
 
     const val MAX_SQL_ARGUMENTS = 100 // max number of arguments allowed in an sql query
+    const val MAX_MESSAGE_ID_WORKER_ARGUMENTS = 100 // max number of arguments allowed in a worker
 
     const val MAX_ATTACHMENTS = 100
     const val MAX_ATTACHMENT_FILE_SIZE_IN_BYTES = (25 * 1000 * 1000).toLong() // 25 MB
