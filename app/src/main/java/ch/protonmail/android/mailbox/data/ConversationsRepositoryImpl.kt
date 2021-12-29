@@ -22,6 +22,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MAX_MESSAGE_ID_WORKER_ARGUMENTS
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ProtonStore
@@ -215,7 +216,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         conversationIds: List<String>,
         userId: UserId
     ): ConversationsActionResult {
-        markConversationsReadWorker.enqueue(conversationIds, userId)
+        conversationIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                markConversationsReadWorker.enqueue(ids, userId)
+            }
 
         conversationIds.forEach { conversationId ->
             conversationDao.updateNumUnreadMessages(conversationId, 0)
@@ -234,7 +239,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         locationId: String
     ): ConversationsActionResult {
-        markConversationsUnreadWorker.enqueue(conversationIds, locationId, userId)
+        conversationIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                markConversationsUnreadWorker.enqueue(ids, locationId, userId)
+            }
 
         conversationIds.forEach forEachConversation@{ conversationId ->
             val conversation = conversationDao.findConversation(userId.id, conversationId)
@@ -280,7 +289,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     ): ConversationsActionResult {
         val starredLabelId = Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()
 
-        labelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
+        conversationIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                labelConversationsRemoteWorker.enqueue(ids, starredLabelId, userId)
+            }
 
         conversationIds.forEach { conversationId ->
             Timber.v("Star conversation $conversationId")
@@ -309,7 +322,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     ): ConversationsActionResult {
         val starredLabelId = Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()
 
-        unlabelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
+        conversationIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                unlabelConversationsRemoteWorker.enqueue(ids, starredLabelId, userId)
+            }
 
         conversationIds.forEach { conversationId ->
             Timber.v("UnStar conversation $conversationId")
@@ -361,7 +378,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         folderId: String
     ): ConversationsActionResult {
-        labelConversationsRemoteWorker.enqueue(conversationIds, folderId, userId)
+        conversationIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                labelConversationsRemoteWorker.enqueue(ids, folderId, userId)
+            }
 
         conversationIds.forEach { conversationId ->
             Timber.v("Move conversation $conversationId to folder: $folderId")
@@ -445,7 +466,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         currentFolderId: String
     ) {
         externalScope.launch {
-            deleteConversationsRemoteWorker.enqueue(conversationIds, currentFolderId, userId)
+            conversationIds
+                .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+                .forEach { ids ->
+                    deleteConversationsRemoteWorker.enqueue(ids, currentFolderId, userId)
+                }
 
             conversationIds.forEach { conversationId ->
                 val messagesFromConversation = getAllConversationMessagesSortedByNewest(conversationId)
@@ -521,7 +546,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         labelId: String
     ): ConversationsActionResult {
-        labelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
+        conversationIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                labelConversationsRemoteWorker.enqueue(ids, labelId, userId)
+            }
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
@@ -547,7 +576,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         labelId: String
     ): ConversationsActionResult {
-        unlabelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
+        conversationIds
+            .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
+            .forEach { ids ->
+                unlabelConversationsRemoteWorker.enqueue(ids, labelId, userId)
+            }
 
         conversationIds.forEach { conversationId ->
             val unlabeledMessages = messageDao.findAllConversationMessagesSortedByNewest(conversationId).map { message ->
