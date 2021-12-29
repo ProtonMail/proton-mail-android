@@ -72,6 +72,8 @@ val testUser3 = properties["TEST_USER3"] ?: privateProperties["TEST_USER3"]
 val testUser4 = properties["TEST_USER4"] ?: privateProperties["TEST_USER4"]
 val testUser5 = properties["TEST_USER5"] ?: privateProperties["TEST_USER5"]
 
+val alphaDebugImplementation by configurations.creating
+
 android(
     appIdSuffix = "android",
     minSdk = 23,
@@ -233,6 +235,7 @@ tasks.withType<Test> {
     // add more coroutines debug information
     systemProperty("kotlinx.coroutines.debug", "on")
 }
+
 dependencies {
 
     // Hilt
@@ -362,7 +365,7 @@ dependencies {
         `coil-base`
     )
 
-    debugImplementation(
+    alphaDebugImplementation(
         `leakcanary`
     )
 

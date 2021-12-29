@@ -104,14 +104,10 @@ import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 import dagger.hilt.android.HiltAndroidApp;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
-import leakcanary.DefaultOnHeapAnalyzedListener;
-import leakcanary.LeakCanary;
 import me.proton.core.accountmanager.data.AccountStateHandler;
 import me.proton.core.accountmanager.domain.AccountManager;
 import me.proton.core.domain.entity.UserId;
 import me.proton.core.util.kotlin.CoreLogger;
-import shark.AndroidObjectInspectors;
-import shark.AndroidReferenceMatchers;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
@@ -212,13 +208,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
                             BuildConfig.SENTRY_DNS_2
                     ), new AndroidSentryClientFactory(this));
             Timber.plant(new SentryTree());
-        }
-
-        if (BuildConfig.FLAVOR.equals("beta")) {
-            LeakCanary.setConfig(LeakCanary.getConfig().copy(false, false, 5,
-                    AndroidReferenceMatchers.getAppDefaults(), AndroidObjectInspectors.Companion.getAppDefaults(),
-                    DefaultOnHeapAnalyzedListener.Companion.create(), LeakCanary.getConfig().getMetadataExtractor(), true,
-                    7, false, LeakCanary.getConfig().getLeakingObjectFinder(), false));
         }
 
         TrustKit.initializeWithNetworkSecurityConfiguration(this);
