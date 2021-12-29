@@ -91,7 +91,7 @@ class ContactDetailsAdapter(
                 is ContactDetailsUiItem.Organization -> {
                     setBasicItemData(
                         R.string.vcard_other_option_org,
-                        item.values.toString(),
+                        item.values.joinToString(" - "),
                         false
                     )
                 }
