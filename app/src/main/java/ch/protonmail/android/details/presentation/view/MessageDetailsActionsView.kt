@@ -54,7 +54,7 @@ class MessageDetailsActionsView @JvmOverloads constructor(
     fun bind(uiModel: UiModel) {
         showHistoryButton.isVisible = !uiModel.hideShowHistory
         moreActionsButton.isVisible = !uiModel.hideMoreActions
-        this.isVisible = !uiModel.hideMoreActions || !uiModel.hideShowHistory
+        this.isVisible = showHistoryButton.isVisible || moreActionsButton.isVisible
     }
 
     fun onShowHistoryClicked(callback: (View) -> Unit) {
