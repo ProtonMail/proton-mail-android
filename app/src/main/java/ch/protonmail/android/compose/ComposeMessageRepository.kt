@@ -158,7 +158,6 @@ class ComposeMessageRepository @Inject constructor(
     ): MessageBuilderData {
         return MessageBuilderData.Builder()
             .fromOld(currentObject)
-            .message(Message())
             .messageTitle("")
             .senderEmailAddress("")
             .messageSenderName("")
@@ -168,12 +167,13 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun prepareMessageData(
+        currentObject: MessageBuilderData,
         isPgpMime: Boolean,
         addressId: String,
         addressEmailAlias: String? = null
     ): MessageBuilderData {
         return MessageBuilderData.Builder()
-            .message(Message())
+            .fromOld(currentObject)
             .messageTitle("")
             .senderEmailAddress("")
             .messageSenderName("")

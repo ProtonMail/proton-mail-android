@@ -147,7 +147,12 @@ class ComposeMessageViewModel @Inject constructor(
     private var _androidContactsLoaded: Boolean = false
     private var _protonMailContactsLoaded: Boolean = false
 
-    private lateinit var _messageDataResult: MessageBuilderData
+    private var _messageDataResult = MessageBuilderData
+        .Builder()
+        .message(Message())
+        .senderEmailAddress("")
+        .messageSenderName("")
+        .build()
 
     private lateinit var _composerGroupCountOf: String
 
@@ -305,7 +310,12 @@ class ComposeMessageViewModel @Inject constructor(
         addressEmailAlias: String? = null
     ) {
         _messageDataResult =
-            composeMessageRepository.prepareMessageData(isPGPMime, addressId, addressEmailAlias)
+            composeMessageRepository.prepareMessageData(
+                _messageDataResult,
+                isPGPMime,
+                addressId,
+                addressEmailAlias
+            )
         getSenderEmailAddresses(addressEmailAlias)
     }
 
@@ -427,18 +437,16 @@ class ComposeMessageViewModel @Inject constructor(
                 message.dbId = _dbId
                 saveMessage(message)
             }
+
             val saveDraftTrigger = if (uploadAttachments) {
                 SaveDraft.SaveDraftTrigger.UserRequested
             } else {
                 SaveDraft.SaveDraftTrigger.AutoSave
             }
-            if (draftId.isNotEmpty()) {
-                if (MessageUtils.isLocalMessageId(_draftId.get()) && hasConnectivity) {
-                    return@launch
-                }
+            if (!MessageUtils.isLocalMessageId(_draftId.get())) {
                 //region update existing draft here
                 message.messageId = draftId
-                val newAttachments = calculateNewAttachments(uploadAttachments)
+                val newAttachments = calculateNewAttachments(message, uploadAttachments)
 
                 invokeSaveDraftUseCase(
                     message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger
@@ -448,28 +456,11 @@ class ComposeMessageViewModel @Inject constructor(
                 _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId
                 //endregion
             } else {
-                //region new draft here
-                if (message.messageId.isNullOrEmpty()) {
-                    initMessage(message)
-                }
-
-                _draftId.set(message.messageId)
                 watchForMessageSent()
+                val newAttachments = calculateNewAttachments(message, uploadAttachments)
 
-                var newAttachmentIds: List<String> = ArrayList()
-                val listOfAttachments = ArrayList(message.attachments)
-                if (uploadAttachments && listOfAttachments.isNotEmpty()) {
-                    message.numAttachments = listOfAttachments.size
-                    saveMessage(message)
-                    newAttachmentIds = filterUploadedAttachments(
-                        composeMessageRepository.createAttachmentList(
-                            _messageDataResult.attachmentList, dispatchers.Io
-                        ),
-                        uploadAttachments
-                    )
-                }
                 invokeSaveDraftUseCase(
-                    message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger
+                    message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger
                 )
 
                 _oldSenderAddressId = ""
@@ -478,12 +469,6 @@ class ComposeMessageViewModel @Inject constructor(
 
             _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).build()
         }
-    }
-
-    private suspend fun initMessage(message: Message) {
-        val newDraftId = UUID.randomUUID().toString()
-        message.messageId = newDraftId
-        saveMessage(message)
     }
 
     private suspend fun invokeSaveDraftUseCase(
@@ -530,24 +515,30 @@ class ComposeMessageViewModel @Inject constructor(
         _savingDraftComplete.postValue(draft)
     }
 
-    private suspend fun calculateNewAttachments(uploadAttachments: Boolean): List<String> {
-        var newAttachments: List<String> = ArrayList()
-        val localAttachmentsList =
-            _messageDataResult.attachmentList.filter { !it.isUploaded } // these are composer attachments
-
-        // we need to compare them and find out which are new attachments
-        if (uploadAttachments && localAttachmentsList.isNotEmpty()) {
-            newAttachments = filterUploadedAttachments(
-                composeMessageRepository.createAttachmentList(localAttachmentsList, dispatchers.Io), uploadAttachments
+    private suspend fun calculateNewAttachments(message: Message, uploadAttachments: Boolean): List<String> {
+        var newAttachmentIds: List<String> = ArrayList()
+        val listOfAttachments = ArrayList(message.attachments)
+        if (uploadAttachments && listOfAttachments.isNotEmpty()) {
+            newAttachmentIds = filterUploadedAttachments(
+                listOfAttachments,
+                uploadAttachments
             )
         }
-        val currentAttachmentsList = messageDataResult.attachmentList
-        setAttachmentList(currentAttachmentsList)
-        return newAttachments
+
+        return newAttachmentIds
     }
 
-    private suspend fun saveMessage(message: Message): Long =
-        messageDetailsRepository.saveMessage(message)
+    private suspend fun saveMessage(message: Message): Long {
+        val attachments = composeMessageRepository.createAttachmentList(
+            _messageDataResult.attachmentList,
+            dispatchers.Io
+        )
+
+        message.setAttachmentList(attachments)
+        message.numAttachments = attachments.size
+
+        return messageDetailsRepository.saveMessage(message)
+    }
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {
         val senderAddresses = user.senderEmailAddresses
@@ -611,49 +602,25 @@ class ComposeMessageViewModel @Inject constructor(
 
     private fun buildMessage() {
         viewModelScope.launch {
-            var message: Message? = null
+            var message: Message = _messageDataResult.message
             if (draftId.isNotEmpty()) {
-                message = composeMessageRepository.findMessage(draftId)
+                val oldMessage = composeMessageRepository.findMessage(draftId)
+                message = oldMessage ?: message
+                _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).message(message).build()
             }
-            if (message != null) {
-                _draftId.set(message.messageId)
-                watchForMessageSent()
-                // region here in this block we are updating local view model attachments with the latest data for the attachments filled from the API
-                val savedAttachments = message.attachments // already saved attachments in DB
-
-                Logger.doLog("ZORICA V .. " + savedAttachments.size)
-                val iterator = _messageDataResult.attachmentList.iterator() // current attachments in view model
-                val listLocalAttachmentsAlreadySavedInDb = ArrayList<LocalAttachment>()
-                while (iterator.hasNext()) {
-                    val localAtt = iterator.next()
-                    var found = false
-                    var att: Attachment? = null
-                    for (savedAtt in savedAttachments) {
-                        if (savedAtt.fileName == localAtt.displayName) {
-                            att = savedAtt
-                            found = true
-                            break
-                        }
-                    }
-                    if (found) {
-                        iterator.remove()
-                        val localAttach = LocalAttachment.fromAttachment(att!!)
-                        localAttach.uri = localAtt.uri
-                        listLocalAttachmentsAlreadySavedInDb.add(localAttach)
-                    }
-                }
-                _messageDataResult.attachmentList.addAll(listLocalAttachmentsAlreadySavedInDb)
-                val newAttachments = composeMessageRepository.createAttachmentList(
-                    _messageDataResult.attachmentList,
-                    dispatchers.Io
-                )
-
-                message.setAttachmentList(newAttachments)
-                // endregion
-                _buildingMessageCompleted.postValue(Event(message))
-            } else {
-                _buildingMessageCompleted.postValue(Event(Message()))
+            if (message.messageId.isNullOrEmpty()) {
+                val newDraftId = UUID.randomUUID().toString()
+                Timber.e("set local messageId to UUID $newDraftId")
+                message.messageId = newDraftId
             }
+
+            _draftId.set(message.messageId)
+            saveMessage(message)
+
+            watchForMessageSent()
+
+            // endregion
+            _buildingMessageCompleted.postValue(Event(message))
         }
     }
 
@@ -748,28 +715,9 @@ class ComposeMessageViewModel @Inject constructor(
                 .fromOld(_messageDataResult)
                 .message(messageWithExpirationTime)
                 .build()
-            if (_dbId == null) {
-                // if db ID is null this means we do not have local DB row of the message we are about to send
-                // and we are saving it. also draftId should be null
-                messageWithExpirationTime.messageId = UUID.randomUUID().toString()
-                _dbId = saveMessage(messageWithExpirationTime)
-            } else {
-                // this will ensure the message get latest message id if it was already saved in a create/update draft job
-                // and also that the message has all the latest edits in between draft saving (creation) and sending the message
-                val savedMessage = messageDetailsRepository.findMessageByDatabaseId(_dbId!!).first()
-                messageWithExpirationTime.dbId = _dbId
-                savedMessage?.let {
-                    if (!TextUtils.isEmpty(it.localId)) {
-                        messageWithExpirationTime.messageId = it.messageId
-                    } else {
-                        messageWithExpirationTime.messageId = _draftId.get()
-                    }
-                    saveMessage(messageWithExpirationTime)
-                }
-            }
 
             if (_dbId != null) {
-                val newAttachments = calculateNewAttachments(true)
+                val newAttachments = calculateNewAttachments(messageWithExpirationTime, true)
 
                 sendMessage(
                     SendMessage.SendMessageParameters(
@@ -811,10 +759,7 @@ class ComposeMessageViewModel @Inject constructor(
     fun saveImportedAttachmentsToDB() {
         viewModelScope.launch {
             buildMessage()
-            val message = _messageDataResult.message
-            initMessage(message)
-            _draftId.set(message.messageId)
-            message.messageId?.let { composeMessageRepository.saveAttachments(it, messageDataResult.attachmentList) }
+            _messageDataResult.message.messageId?.let { composeMessageRepository.saveAttachments(it, messageDataResult.attachmentList) }
         }
     }
 
@@ -1287,7 +1232,6 @@ class ComposeMessageViewModel @Inject constructor(
                 draftId = messageId!!
                 message.isDownloaded = true
                 val attachments = message.attachments
-                message.setAttachmentList(attachments)
                 setAttachmentList(ArrayList(LocalAttachment.createLocalAttachmentList(attachments)))
                 _dbId = message.dbId
             }
