@@ -24,7 +24,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.humanverification.presentation.CaptchaApiHost
+import me.proton.core.humanverification.presentation.HumanVerificationApiHost
 import me.proton.core.network.data.di.Constants as CoreConstants
 
 @Module
@@ -36,8 +36,8 @@ object ConfigurableParametersModule {
     fun provideBaseUrl(): String = Constants.BASE_URL
 
     @Provides
-    @CaptchaApiHost
-    fun provideCaptchaApiHost(): String = Constants.API_HOST
+    @HumanVerificationApiHost
+    fun provideHumanVerificationApiHost(): String = Constants.HUMAN_VERIFICATION_URL
 
     @Provides
     @AlternativeApiPins

@@ -63,7 +63,7 @@ fun initVersions() {
 
 // Proton Core
 // Common
-const val `Proton-core version` =               "3.0.0"         // Released: Dec 07, 2021
+const val `Proton-core version` = "4.1.0"
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 
