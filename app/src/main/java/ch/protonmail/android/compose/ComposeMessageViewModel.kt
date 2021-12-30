@@ -87,6 +87,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -529,15 +530,14 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private suspend fun saveMessage(message: Message): Long {
-        val attachments = composeMessageRepository.createAttachmentList(
-            _messageDataResult.attachmentList,
-            dispatchers.Io
-        )
+        return withContext(dispatchers.Io) {
+            val attachments = composeMessageRepository.createAttachmentList(messageDataResult.attachmentList)
 
-        message.setAttachmentList(attachments)
-        message.numAttachments = attachments.size
+            message.setAttachmentList(attachments)
+            message.numAttachments = attachments.size
 
-        return messageDetailsRepository.saveMessage(message)
+            messageDetailsRepository.saveMessage(message)
+        }
     }
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {
@@ -759,7 +759,6 @@ class ComposeMessageViewModel @Inject constructor(
     fun saveImportedAttachmentsToDB() {
         viewModelScope.launch {
             buildMessage()
-            _messageDataResult.message.messageId?.let { composeMessageRepository.saveAttachments(it, messageDataResult.attachmentList) }
         }
     }
 

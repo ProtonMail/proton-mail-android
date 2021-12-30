@@ -111,15 +111,6 @@ class ComposeMessageRepository @Inject constructor(
 
     fun getAttachmentsBlocking(message: Message): List<Attachment> = message.attachmentsBlocking(messageDao)
 
-    suspend fun saveAttachments(
-        messageId: String,
-        localAttachments: List<LocalAttachment>
-    ) {
-        val attachments = createAttachmentList(localAttachments, dispatcherProvider.Io)
-        attachments.map { it.messageId = messageId }
-        messageDao.saveAllAttachments(attachments)
-    }
-
     fun findMessageByIdSingle(id: String): Single<Message> =
         messageDetailsRepository.findMessageByIdSingle(id)
 
@@ -145,11 +136,7 @@ class ComposeMessageRepository @Inject constructor(
 
     suspend fun createAttachmentList(
         attachmentList: List<LocalAttachment>,
-        dispatcher: CoroutineDispatcher
-    ) =
-        withContext(dispatcher) {
-            Attachment.createAttachmentList(messageDao, attachmentList, false)
-        }
+    ) = Attachment.createAttachmentList(messageDao, attachmentList, false)
 
     fun prepareMessageData(
         currentObject: MessageBuilderData,
