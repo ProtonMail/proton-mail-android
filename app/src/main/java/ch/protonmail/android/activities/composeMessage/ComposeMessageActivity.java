@@ -466,6 +466,7 @@ public class ComposeMessageActivity
             if (TextUtils.isEmpty(messageId)) {
                 messageId = extras.getString(STATE_DRAFT_ID);
             }
+
             if (!TextUtils.isEmpty(messageId) && !replyFromGcm) {
                 // already saved draft trying to edit here
                 composeMessageViewModel.setDraftId(messageId);

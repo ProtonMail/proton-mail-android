@@ -31,6 +31,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.di.CurrentUserId
+import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
