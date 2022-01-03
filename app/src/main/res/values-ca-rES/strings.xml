@@ -97,7 +97,7 @@
     <string name="app_theme_system">System default</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Parent folder selected.</b> Tap to change</string>
     <!-- endregion -->
@@ -601,9 +601,11 @@
     <string name="signature_error_desc">Verificació de la signatura d\'aquest contingut fallida</string>
     <string name="address">Adreça: </string>
     <string name="address_street">Carrer</string>
+    <string name="address_extended_street">Extended street</string>
     <string name="address_city">Ciutat</string>
     <string name="address_region">Regió (estat o província)</string>
     <string name="address_postcode">Codi postal</string>
+    <string name="address_po_box">PO Box</string>
     <string name="address_country">País</string>
     <string name="recheck_delinquency">Comprovar-ho un altre cop</string>
     <string name="close_app">Tanca l\'aplicació</string>

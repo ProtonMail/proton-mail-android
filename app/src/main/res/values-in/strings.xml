@@ -52,7 +52,7 @@
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>
-    <string name="composer_compose_email">Tulis surel</string>
+    <string name="composer_compose_email">Tulis email</string>
     <string name="composer_from">Dari:</string>
     <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
@@ -97,7 +97,7 @@
     <string name="app_theme_system">Bawaan sistem</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Pilih folder induk</string>
+    <string name="labels_manager_select_parent_folder">Pilih folder induk (opsional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Folder induk telah terpilih.</b> Ketuk untuk mengubahnya</string>
     <!-- endregion -->
@@ -594,9 +594,11 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="signature_error_desc">Verifikasi tanda tangan konten ini gagal</string>
     <string name="address">Alamat: </string>
     <string name="address_street">Jalan</string>
+    <string name="address_extended_street">Ekstensi</string>
     <string name="address_city">Kota</string>
     <string name="address_region">Wilayah (negara bagian/provinsi)</string>
     <string name="address_postcode">Kode pos</string>
+    <string name="address_po_box">PO Box</string>
     <string name="address_country">Negara</string>
     <string name="recheck_delinquency">Periksa Lagi</string>
     <string name="close_app">Tutup Aplikasi</string>

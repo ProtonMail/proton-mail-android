@@ -97,7 +97,7 @@
     <string name="app_theme_system">系統預設</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">選取主資料夾</string>
+    <string name="labels_manager_select_parent_folder">選取上層資料夾（選擇性）</string>
     <string name="labels_manager_parent_folder_selected">
         <b>已選取主資料夾</b> 點擊可變更</string>
     <!-- endregion -->
@@ -591,9 +591,11 @@
     <string name="signature_error_desc">內容簽章驗證失敗</string>
     <string name="address">地址： </string>
     <string name="address_street">街道</string>
+    <string name="address_extended_street">延伸街道名稱</string>
     <string name="address_city">城市</string>
     <string name="address_region">地區（州或省）</string>
     <string name="address_postcode">郵遞區號</string>
+    <string name="address_po_box">郵政信箱</string>
     <string name="address_country">國家</string>
     <string name="recheck_delinquency">再次檢查</string>
     <string name="close_app">關閉應用程式</string>

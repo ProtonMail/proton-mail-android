@@ -97,7 +97,7 @@
     <string name="app_theme_system">Systeemstandaard</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Kies bovenliggende map</string>
+    <string name="labels_manager_select_parent_folder">Bovenliggende map kiezen (optioneel)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Bovenliggende map gekozen.</b>Tik om te wijzigen</string>
     <!-- endregion -->
@@ -601,9 +601,11 @@
     <string name="signature_error_desc">Verificatie van de handtekening van deze inhoud is mislukt</string>
     <string name="address">Adres:</string>
     <string name="address_street">Straat</string>
+    <string name="address_extended_street">Straat (uitgebreid)</string>
     <string name="address_city">Plaats</string>
     <string name="address_region">Regio (staat of provincie)</string>
     <string name="address_postcode">Postcode</string>
+    <string name="address_po_box">Postbus</string>
     <string name="address_country">Land</string>
     <string name="recheck_delinquency">Controleer opnieuw</string>
     <string name="close_app">App sluiten</string>

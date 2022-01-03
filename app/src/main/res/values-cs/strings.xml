@@ -97,7 +97,7 @@
     <string name="app_theme_system">Podle systému</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder</string>
+    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Parent folder selected.</b> Tap to change</string>
     <!-- endregion -->
@@ -619,9 +619,11 @@
     <string name="signature_error_desc">Ověření podpisu obsahu selhalo</string>
     <string name="address">Adresa: </string>
     <string name="address_street">Ulice</string>
+    <string name="address_extended_street">Extended street</string>
     <string name="address_city">Město</string>
     <string name="address_region">Region (stát nebo provincie)</string>
     <string name="address_postcode">PSČ</string>
+    <string name="address_po_box">PO Box</string>
     <string name="address_country">Země</string>
     <string name="recheck_delinquency">Zkontrolovat znovu</string>
     <string name="close_app">Zavřít aplikaci</string>
