@@ -97,7 +97,7 @@
     <string name="app_theme_system">Implicit din sistem</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Selectați folderul părinte</string>
+    <string name="labels_manager_select_parent_folder">Selectați dosarul părinte (opțional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Folderul părinte a fost selectat.</b> Atingeți pentru a schimba.</string>
     <!-- endregion -->
@@ -609,9 +609,11 @@
     <string name="signature_error_desc">Verificarea semnăturii acestui conținut a eșuat</string>
     <string name="address">Adresa: </string>
     <string name="address_street">Strada</string>
+    <string name="address_extended_street">Stradă extinsă</string>
     <string name="address_city">Oraş</string>
     <string name="address_region">Regiune (stat sau județ)</string>
     <string name="address_postcode">Cod poștal</string>
+    <string name="address_po_box">Căsuța poștală</string>
     <string name="address_country">Țara</string>
     <string name="recheck_delinquency">Reverificați</string>
     <string name="close_app">Închide aplicația</string>

@@ -97,7 +97,7 @@
     <string name="app_theme_system">システム標準</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">親フォルダーを選択</string>
+    <string name="labels_manager_select_parent_folder">親フォルダを選択 (任意)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>親フォルダーが選択されました。</b> タップして変更</string>
     <!-- endregion -->
@@ -590,9 +590,11 @@
     <string name="signature_error_desc">このコンテンツの署名の検証に失敗しました。</string>
     <string name="address">アドレス: </string>
     <string name="address_street">番地</string>
+    <string name="address_extended_street">通り (広範囲)</string>
     <string name="address_city">市区町村</string>
     <string name="address_region">都道府県</string>
     <string name="address_postcode">郵便番号</string>
+    <string name="address_po_box">私書箱</string>
     <string name="address_country">国名</string>
     <string name="recheck_delinquency">もう一度確認</string>
     <string name="close_app">アプリを終了</string>
@@ -983,5 +985,5 @@
     <string name="details_show_history">履歴を表示</string>
     <string name="could_not_complete_action">アクションを完了できませんでした</string>
     <string name="decryption_of_message_failed">メッセージの復号化に失敗しました。</string>
-    <string name="labels_selected_limit_reached">アカウントのご利用限度に達しました</string>
+    <string name="labels_selected_limit_reached">アカウントの利用上限に到達しました</string>
 </resources>

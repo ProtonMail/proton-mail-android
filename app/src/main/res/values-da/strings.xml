@@ -97,7 +97,7 @@
     <string name="app_theme_system">Systemstandard</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Vælg overordnet mappe</string>
+    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Overordnet mappe valgt.</b> Tryk for at ændre</string>
     <!-- endregion -->
@@ -601,9 +601,11 @@
     <string name="signature_error_desc">Kunne ikke bekræfte dette indholds signatur</string>
     <string name="address">Adresse: </string>
     <string name="address_street">Gade</string>
+    <string name="address_extended_street">Extended street</string>
     <string name="address_city">By</string>
     <string name="address_region">Region (stat eller provins)</string>
     <string name="address_postcode">Postnummer</string>
+    <string name="address_po_box">Postboks</string>
     <string name="address_country">Land</string>
     <string name="recheck_delinquency">Tjek igen</string>
     <string name="close_app">Luk app</string>

@@ -97,7 +97,7 @@
     <string name="app_theme_system">Системная по умолчанию</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Выберите родительскую папку</string>
+    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Выбрана родительская папка.</b> Коснитесь, чтобы изменить</string>
     <!-- endregion -->
@@ -619,9 +619,11 @@
     <string name="signature_error_desc">Проверка подписи этого контакта не удалась</string>
     <string name="address">Адрес: </string>
     <string name="address_street">Улица</string>
+    <string name="address_extended_street">Extended street</string>
     <string name="address_city">Город</string>
     <string name="address_region">Регион (штат или провинция)</string>
     <string name="address_postcode">Почтовый индекс</string>
+    <string name="address_po_box">PO Box</string>
     <string name="address_country">Страна</string>
     <string name="recheck_delinquency">Проверить снова</string>
     <string name="close_app">Закрыть приложение</string>

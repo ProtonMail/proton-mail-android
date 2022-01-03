@@ -97,7 +97,7 @@
     <string name="app_theme_system">Von System übernehmen</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Übergeordneten Ordner auswählen</string>
+    <string name="labels_manager_select_parent_folder">Übergeordneten Ordner auswählen (optional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Übergeordneter Ordner ausgewählt.</b> Zum Ändern antippen</string>
     <!-- endregion -->
@@ -600,9 +600,11 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="signature_error_desc">Überprüfung der Signatur dieses Inhalts ist fehlgeschlagen</string>
     <string name="address">Adresse: </string>
     <string name="address_street">Straße</string>
+    <string name="address_extended_street">Adresszusatz</string>
     <string name="address_city">Stadt</string>
     <string name="address_region">Bundesland</string>
     <string name="address_postcode">PLZ</string>
+    <string name="address_po_box">Postfach</string>
     <string name="address_country">Land</string>
     <string name="recheck_delinquency">Erneut überprüfen</string>
     <string name="close_app">App schließen</string>
