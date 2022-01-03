@@ -121,6 +121,10 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
                     finish()
                 }
             }
+            AuthStatus.KEY_VERIFICATION_FAILED -> {
+                moveToMailbox()
+                finish()
+            }
             else -> {
                 resetState()
                 showToast(R.string.mailbox_login_failure, Gravity.CENTER)

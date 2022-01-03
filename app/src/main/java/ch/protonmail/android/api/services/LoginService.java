@@ -554,11 +554,14 @@ public class LoginService extends ProtonJobIntentService {
                         userManager.setLoggedIn(true);
                         userManager.saveMailboxPassword(generatedMailboxPassword, username);
                         userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
+                        boolean loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable
+                                .invoke(username, R.string.logged_out_contact_support);
+                        if (loggingOut) {
+                            AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.KEY_VERIFICATION_FAILED));
+                            return;
+                        }
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
-                        boolean loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable
-                                .invoke(R.string.logged_out_contact_support);
-                        if (loggingOut) return;
                         if (!signUp) {
                             if (networkUtils.isConnected() && userManager.isLoggedIn() && userManager.accessTokenExists()) {
                                 AlarmReceiver alarmReceiver = new AlarmReceiver();
@@ -656,12 +659,23 @@ public class LoginService extends ProtonJobIntentService {
                     UserSettingsResponse userSettings = api.fetchUserSettings();
                     MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
                     AddressesResponse addresses = api.fetchAddressesBlocking();
+
+                    setAccountMigrationStatus(addresses, userInfo);
+
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
                         AccountManager.Companion.getInstance(this).onSuccessfulLogin(username);
                         userManager.saveMailboxPassword(generatedMailboxPassword, username);
                         userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
+
+                        boolean loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable
+                                .invoke(username, R.string.logged_out_contact_support);
+                        if (loggingOut) {
+                            AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.KEY_VERIFICATION_FAILED));
+                            return;
+                        }
+
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.SUCCESS));
                         jobManager.start();

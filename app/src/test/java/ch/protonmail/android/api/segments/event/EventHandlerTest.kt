@@ -61,7 +61,7 @@ class EventHandlerTest {
 
     private val logOutMigratedUserIfNotAllActiveKeysAreDecryptable =
         mockk<LogOutMigratedUserIfNotAllActiveKeysAreDecryptable> {
-            every { this@mockk() } returns true
+            every { this@mockk(any()) } returns true
         }
 
     private val eventHandler = EventHandler(
@@ -161,7 +161,7 @@ class EventHandlerTest {
         eventHandler.handleNewKeysIfNeeded(ignoredEventResponse)
 
         // then
-        verify { logOutMigratedUserIfNotAllActiveKeysAreDecryptable() }
+        verify { logOutMigratedUserIfNotAllActiveKeysAreDecryptable(USERNAME) }
     }
 
     @Test
@@ -175,9 +175,8 @@ class EventHandlerTest {
         eventHandler.handleNewKeysIfNeeded(ignoredEventResponse)
 
         // then
-        verify { logOutMigratedUserIfNotAllActiveKeysAreDecryptable() }
+        verify { logOutMigratedUserIfNotAllActiveKeysAreDecryptable(USERNAME) }
     }
-
 
     private fun mockEventResponse(listOf: List<EventResponse.AddressEventBody>) =
         mockk<EventResponse> {

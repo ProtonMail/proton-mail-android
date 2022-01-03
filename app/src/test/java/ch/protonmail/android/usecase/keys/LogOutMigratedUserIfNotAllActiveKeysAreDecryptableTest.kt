@@ -40,6 +40,7 @@ class LogOutMigratedUserIfNotAllActiveKeysAreDecryptableTest {
     private val userSpy = spyk<User>()
     private val userManagerMock = mockk<UserManager> {
         every { user } returns userSpy
+        every { logoutAccount(USERNAME) } just runs
     }
     private val areActiveKeysDecryptableMock = mockk<CheckIfActiveKeysAreDecryptable>()
     private val userNotifierMock = mockk<UserNotifier>()
@@ -58,11 +59,11 @@ class LogOutMigratedUserIfNotAllActiveKeysAreDecryptableTest {
         every { userSpy.legacyAccount } returns false
 
         // when
-        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable(USERNAME)
 
         // then
         assertFalse(loggingOut)
-        verify(exactly = 0) { userManagerMock.logoutLastActiveAccount() }
+        verify(exactly = 0) { userManagerMock.logoutAccount(any()) }
         verify { userNotifierMock wasNot called }
     }
 
@@ -73,11 +74,11 @@ class LogOutMigratedUserIfNotAllActiveKeysAreDecryptableTest {
         every { userSpy.legacyAccount } returns true
 
         // when
-        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable(USERNAME)
 
         // then
         assertFalse(loggingOut)
-        verify(exactly = 0) { userManagerMock.logoutLastActiveAccount() }
+        verify(exactly = 0) { userManagerMock.logoutAccount(any()) }
         verify { userNotifierMock wasNot called }
     }
 
@@ -88,11 +89,11 @@ class LogOutMigratedUserIfNotAllActiveKeysAreDecryptableTest {
         every { userSpy.legacyAccount } returns true
 
         // when
-        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable(USERNAME)
 
         // then
         assertFalse(loggingOut)
-        verify(exactly = 0) { userManagerMock.logoutLastActiveAccount() }
+        verify(exactly = 0) { userManagerMock.logoutAccount(any()) }
         verify { userNotifierMock wasNot called }
     }
 
@@ -100,18 +101,17 @@ class LogOutMigratedUserIfNotAllActiveKeysAreDecryptableTest {
     fun `should return true, log out and notify user when keys are not decryptable and user is migrated`() {
         // given
         every { areActiveKeysDecryptableMock() } returns false
-        every { userManagerMock.logoutLastActiveAccount() } just runs
         every { userNotifierMock.showError(any()) } just runs
-        every { getStringResourceMock(R.string.logged_out_description) } returns TestData.EXPECTED_ERROR_MESSAGE
+        every { getStringResourceMock(R.string.logged_out_description) } returns EXPECTED_ERROR_MESSAGE
         every { userSpy.legacyAccount } returns false
 
         // when
-        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable(USERNAME)
 
         // then
         assertTrue(loggingOut)
-        verify { userManagerMock.logoutLastActiveAccount() }
-        verify { userNotifierMock.showError(TestData.EXPECTED_ERROR_MESSAGE) }
+        verify { userManagerMock.logoutAccount(USERNAME) }
+        verify { userNotifierMock.showError(EXPECTED_ERROR_MESSAGE) }
     }
 
     @Test
@@ -119,21 +119,21 @@ class LogOutMigratedUserIfNotAllActiveKeysAreDecryptableTest {
         // given
         val providedErrorMessage = R.string.logged_out_contact_support
         every { areActiveKeysDecryptableMock() } returns false
-        every { userManagerMock.logoutLastActiveAccount() } just runs
         every { userNotifierMock.showError(any()) } just runs
-        every { getStringResourceMock(providedErrorMessage) } returns TestData.EXPECTED_ERROR_MESSAGE
+        every { getStringResourceMock(providedErrorMessage) } returns EXPECTED_ERROR_MESSAGE
         every { userSpy.legacyAccount } returns false
 
         // when
-        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable(providedErrorMessage)
+        val loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable(USERNAME, providedErrorMessage)
 
         // then
         assertTrue(loggingOut)
-        verify { userManagerMock.logoutLastActiveAccount() }
-        verify { userNotifierMock.showError(TestData.EXPECTED_ERROR_MESSAGE) }
+        verify { userManagerMock.logoutAccount(USERNAME) }
+        verify { userNotifierMock.showError(EXPECTED_ERROR_MESSAGE) }
     }
 
-    private object TestData {
+    private companion object TestData {
         const val EXPECTED_ERROR_MESSAGE = "We logged you out, whatchu' gonna do about it?"
+        const val USERNAME = "username"
     }
 }
