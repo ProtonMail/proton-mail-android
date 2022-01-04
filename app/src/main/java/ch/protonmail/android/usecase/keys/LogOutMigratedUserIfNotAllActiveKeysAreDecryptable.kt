@@ -33,11 +33,14 @@ class LogOutMigratedUserIfNotAllActiveKeysAreDecryptable @Inject constructor(
     private val getStringResource: StringResourceResolver
 ) {
 
-    operator fun invoke(@StringRes errorMessage: Int = R.string.logged_out_description): Boolean {
+    operator fun invoke(
+        username: String,
+        @StringRes errorMessage: Int = R.string.logged_out_description
+    ): Boolean {
         return if (userManager.user.legacyAccount || areActiveKeysDecryptable()) {
             false
         } else {
-            userManager.logoutLastActiveAccount()
+            userManager.logoutAccount(username)
             userNotifier.showError(getStringResource(errorMessage))
             true
         }

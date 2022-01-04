@@ -197,7 +197,7 @@ class EventHandler @AssistedInject constructor(
 
     fun handleNewKeysIfNeeded(response: EventResponse) {
         if (response.userUpdates != null || response.addresses != null) {
-            logOutMigratedUserIfNotAllActiveKeysAreDecryptable()
+            logOutMigratedUserIfNotAllActiveKeysAreDecryptable(username)
         }
     }
 

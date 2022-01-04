@@ -282,6 +282,12 @@ public class LoginActivity extends BaseLoginActivity {
         mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
     }
 
+    @Override
+    protected void onKeyVerificationFailed() {
+        hideProgress();
+        enableInput();
+    }
+
     @Subscribe
     public void onLoginEvent(MailboxLoginEvent event) {
         super.onLoginEvent(event);
