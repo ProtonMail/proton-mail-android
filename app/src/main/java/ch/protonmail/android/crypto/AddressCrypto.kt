@@ -93,26 +93,29 @@ class AddressCrypto @AssistedInject constructor(
         }
 
         val pgpMessage = GoOpenPgpCrypto.newPGPMessageFromArmored(token.string)
-        userManager.user.keys.forEach { userKey ->
-            try {
-                val userKeyRing = GoOpenPgpCrypto.newKeyRing(
-                    GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey).unlock(mailboxPassword)
-                )
-                decryptToken(
-                    pgpMessage,
-                    userKeyRing
-                )?.let { decryptedToken ->
-                    if (
-                        verifyTokenFormat(decryptedToken) &&
-                        verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)
-                    ) {
-                        return decryptedToken
+        userManager.user.keys
+            // We shouldn't use inactive user keys for decryption of tokens
+            .filter { it.active == 1 }
+            .forEach { userKey ->
+                try {
+                    val userKeyRing = GoOpenPgpCrypto.newKeyRing(
+                        GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey).unlock(mailboxPassword)
+                    )
+                    decryptToken(
+                        pgpMessage,
+                        userKeyRing
+                    )?.let { decryptedToken ->
+                        if (
+                            verifyTokenFormat(decryptedToken) &&
+                            verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)
+                        ) {
+                            return decryptedToken
+                        }
                     }
+                } catch (exception: Exception) {
+                    throw UserKeyVerificationException(userKey.id, exception)
                 }
-            } catch (exception: Exception) {
-                throw UserKeyVerificationException(userKey.id, exception)
             }
-        }
         Timber.e("Failed getting passphrase for key (id = ${key.id.s}) using user keys")
         return null
     }
@@ -154,8 +157,11 @@ class AddressCrypto @AssistedInject constructor(
     }.fold(
         onSuccess = { true },
         onFailure = {
-            Timber.e(it, "Verification of token for address key (id = $addressKeyId) " +
-                "with user key (id = $userKeyId) failed")
+            Timber.e(
+                it,
+                "Verification of token for address key (id = $addressKeyId) " +
+                    "with user key (id = $userKeyId) failed"
+            )
             false
         }
     )
@@ -221,7 +227,7 @@ class AddressCrypto @AssistedInject constructor(
         onBody: (String, String) -> Unit,
         onError: (Exception) -> Unit,
         onVerified: (Boolean, Boolean) -> Unit,
-        onAttachment: (InternetHeaders, ByteArray) ->Unit,
+        onAttachment: (InternetHeaders, ByteArray) -> Unit,
         keys: List<ByteArray>?,
         time: Long
     ) {
