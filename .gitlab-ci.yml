@@ -51,6 +51,18 @@ build debug:
     paths:
       - app/build/outputs/apk
 
+build uiAutomation:
+  stage: build
+  tags:
+    - large
+  script:
+    - ./gradlew assembleUiAutomationDebug
+    - ./gradlew assembleUiAutomationDebugAndroidTest
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - app/build/outputs/apk
+
 build alpha:
   stage: build
   when: 'manual'
@@ -93,6 +105,8 @@ unit tests:
 
 firebase ui tests:
   stage: test
+  dependencies:
+    - build uiAutomation
   except:
     - schedules
   tags:
@@ -111,8 +125,8 @@ firebase ui tests:
     - gcloud auth activate-service-account --key-file /tmp/service-account.json
     - gcloud beta firebase test android run
       --quiet
-      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
-      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
+      --app app/build/outputs/apk/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug.apk
+      --test app/build/outputs/apk/androidTest/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug-androidTest.apk
       --device model=Pixel2,version=29
       --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
       --use-orchestrator
@@ -122,7 +136,7 @@ firebase ui tests:
 firebase feature tests:
   stage: test
   dependencies:
-    - build debug
+    - build uiAutomation
   rules:
     - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
   tags:
@@ -145,8 +159,8 @@ firebase feature tests:
     - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
     - gcloud beta firebase test android run
       --quiet
-      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
-      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
+      --app app/build/outputs/apk/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug.apk
+      --test app/build/outputs/apk/androidTest/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug-androidTest.apk
       --device model=$MODEL,version=$API_LEVEL
       --test-targets "class ch.protonmail.android.uitests.tests.$TEST_CLASS"
       --use-orchestrator

@@ -127,7 +127,7 @@ android(
             "clearPackageData" to "true"
         )
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "ch.protonmail.android.HiltCustomTestRunner"
     }
 
     testOptions {
@@ -154,6 +154,10 @@ android(
         }
         register("alpha") {
             applicationId = "ch.protonmail.android"
+        }
+        register("uiAutomation") {
+            applicationId = "ch.protonmail.android"
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
     }
 
