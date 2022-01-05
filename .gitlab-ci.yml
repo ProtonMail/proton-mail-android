@@ -130,6 +130,7 @@ firebase ui tests:
       --device model=Pixel2,version=29
       --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
       --use-orchestrator
+      --environment-variables clearPackageData=true
       --num-flaky-test-attempts=1
       --timeout 45m
 
@@ -164,6 +165,7 @@ firebase feature tests:
       --device model=$MODEL,version=$API_LEVEL
       --test-targets "class ch.protonmail.android.uitests.tests.$TEST_CLASS"
       --use-orchestrator
+      --environment-variables clearPackageData=true
       --num-flaky-test-attempts=1
       --timeout 45m
       --client-details testType=$TEST_TYPE,testSuite=$TEST_CLASS,commitBranch=$CI_COMMIT_BRANCH,gitlabJobUrl=$CI_JOB_URL

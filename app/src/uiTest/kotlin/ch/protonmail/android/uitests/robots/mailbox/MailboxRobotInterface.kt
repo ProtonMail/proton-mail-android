@@ -36,6 +36,7 @@ import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_30S
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_60S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
 import me.proton.core.test.android.instrumented.Robot
 
@@ -74,13 +75,13 @@ interface MailboxRobotInterface : Robot {
     }
 
     fun compose(): ComposerRobot {
-        view.withId(R.id.composeImageButton).waitForCondition({ view.isDisabled().viewMatcher() }, TIMEOUT_30S)
+        view.withId(R.id.composeImageButton).waitForCondition({ view.isCompletelyDisplayed().viewMatcher() }, watchTimeout = TIMEOUT_60S)
         view.withId(R.id.composeImageButton).click()
         return ComposerRobot()
     }
 
     fun menuDrawer(): MenuRobot {
-        view.waitForCondition({ view.withId(drawerLayoutId).isDisabled().viewMatcher() }, TIMEOUT_30S)
+        view.waitForCondition({ view.withId(drawerLayoutId).isCompletelyDisplayed().viewMatcher() }, TIMEOUT_60S)
         view.withId(drawerLayoutId).openDrawer()
         return MenuRobot()
     }

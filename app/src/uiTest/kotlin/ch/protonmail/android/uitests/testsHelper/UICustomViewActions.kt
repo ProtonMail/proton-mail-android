@@ -38,6 +38,7 @@ import kotlin.test.assertFalse
 
 object UICustomViewActions {
 
+    const val TIMEOUT_60S = 60_000L
     const val TIMEOUT_30S = 30_000L
     const val TIMEOUT_15S = 15_000L
     const val TIMEOUT_10S = 10_000L

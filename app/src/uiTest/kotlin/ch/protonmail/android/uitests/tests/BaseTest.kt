@@ -103,7 +103,6 @@ open class BaseTest {
             val isFirstRun = sharedPrefs.getBoolean(oneTimeRunFlag, true)
             if (isFirstRun) {
                 setupDeviceLocally(false)
-                Shell.setupDevice(true)
                 prepareArtifactsDir(artifactsPath)
                 prepareArtifactsDir(downloadArtifactsPath)
                 deleteDownloadArtifactsFolder()
