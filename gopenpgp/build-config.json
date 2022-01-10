@@ -1,0 +1,31 @@
+{
+    "go_version":"1.17.6",
+    "build_dir":"build",
+    "out_dir":"out",
+    "go_mobile_dir":"mobile",
+    "go_mobile_flags": [
+        "-x",
+        "-ldflags=\"-s -w \""
+    ],
+    "build_name":"gopenpgp",
+    "commit_message": "Build for gopenpgp v2.4.1 and go-srp v0.0.3",
+    "upload_branch": "update-2.4.1+0.0.3",
+    "java_pkg":"com.proton.gopenpgp",
+    "targets":["android"],
+    "requirements": [
+        {
+            "module":
+            {
+                "path":"github.com/ProtonMail/gopenpgp/v2",
+                "version":"v2.4.1"
+            },
+            "packages": ["crypto", "armor", "constants", "models", "subtle", "helper"]
+        },
+        {
+            "module":{
+                "path":"github.com/ProtonMail/go-srp",
+                "version": "v0.0.3"
+            }
+        }
+    ]
+}
