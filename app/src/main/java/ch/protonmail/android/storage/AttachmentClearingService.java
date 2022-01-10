@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.storage;
 
+import static ch.protonmail.android.core.Constants.UNLIMITED_ATTACHMENT_STORAGE;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -44,8 +46,8 @@ import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.data.local.model.AttachmentMetadata;
 import ch.protonmail.android.data.local.model.Message;
-import me.proton.core.domain.entity.UserId;
 import dagger.hilt.android.AndroidEntryPoint;
+import me.proton.core.domain.entity.UserId;
 import timber.log.Timber;
 
 @AndroidEntryPoint
@@ -114,8 +116,8 @@ public class AttachmentClearingService extends ProtonJobIntentService {
         if (ACTION_REGULAR_CHECK.equals(action)) {
             User user = userManager.getLegacyUserBlocking(userId);
             long currentEmbeddedImagesSize = attachmentMetadataDao.getAllAttachmentsSizeUsedNonNullBlocking();
-            long maxSize = user.getMaxAllowedAttachmentSpace();
-            if (maxSize == -1) {
+            long maxSize = user.getMaxAttachmentStorage();
+            if (maxSize == UNLIMITED_ATTACHMENT_STORAGE) {
                 return;
             }
             maxSize = maxSize * 1000 * 1000; // in bytes

@@ -803,10 +803,6 @@ public class User {
         return username;
     }
 
-    public long getMaxAllowedAttachmentSpace() {
-        return MaxAttachmentStorage; // return the value in bytes
-    }
-
     /**
      * Convert this User to new User entity
      *
