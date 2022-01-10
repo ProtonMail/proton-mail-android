@@ -61,6 +61,15 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         actionBar?.elevation = elevation
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
+
+        accountSettingsActivityViewModel.recoveryEmailResult
+            .onEach { recoveryEmail ->
+                setValue(
+                    SettingsEnum.RECOVERY_EMAIL,
+                    recoveryEmail
+                )
+            }
+            .launchIn(lifecycleScope)
     }
 
     override fun onResume() {
@@ -115,6 +124,8 @@ class AccountSettingsActivity : BaseSettingsActivity() {
                 String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed)
             )
         }
+
+        accountSettingsActivityViewModel.getRecoveryEmail()
 
         setupViewMode()
     }
