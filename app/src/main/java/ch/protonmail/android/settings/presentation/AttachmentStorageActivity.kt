@@ -55,6 +55,7 @@ class AttachmentStorageActivity : BaseActivity() {
         }
         mAttachmentStorageCurrentValue =
             intent.getIntExtra(EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE, Constants.DEFAULT_ATTACHMENT_STORAGE_IN_MB)
+
         if (mAttachmentStorageCurrentValue == UNLIMITED_ATTACHMENT_STORAGE) {
             slider.value = slider.valueTo
             storageTextValue.text = getString(R.string.attachment_storage_value_current_unlimited)
@@ -62,7 +63,10 @@ class AttachmentStorageActivity : BaseActivity() {
             storageTextValue.text =
                 String.format(getString(R.string.attachment_storage_value_current), mAttachmentStorageCurrentValue)
             slider.value = mAttachmentStorageCurrentValue.toFloat()
+                .coerceAtLeast(slider.valueFrom)
+                .coerceAtMost(slider.valueTo)
         }
+
         slider.addOnChangeListener(
             Slider.OnChangeListener { slider, value, _ ->
                 slider.value = value
