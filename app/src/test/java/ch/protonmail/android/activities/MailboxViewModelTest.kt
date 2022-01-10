@@ -26,6 +26,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.api.segments.event.FetchEventsAndReschedule
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
@@ -77,6 +78,7 @@ import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import dagger.hilt.EntryPoints
+import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -158,6 +160,10 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val messageRecipientToCorrespondentMapper = MessageRecipientToCorrespondentMapper()
 
+    private val fetchEventsAndReschedule: FetchEventsAndReschedule = mockk {
+        coEvery { this@mockk.invoke() } just runs
+    }
+
     private lateinit var viewModel: MailboxViewModel
 
     private val loadingState = MailboxState.Loading
@@ -237,7 +243,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             observeLabelsAndFoldersWithChildren = mockk(),
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings,
-            messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper
+            messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper,
+            fetchEventsAndReschedule = fetchEventsAndReschedule
         )
     }
 
@@ -1270,6 +1277,71 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             )
         }
     }
+
+    @Test
+    fun `when refreshed and the data has arrived, should fetch events and reschedule the event loop`() =
+        runBlockingTest {
+            // when
+            viewModel.refreshMessages()
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+
+            // then
+            coVerify { fetchEventsAndReschedule() }
+        }
+
+    @Test
+    fun `when refreshed and error emitted, should not fetch events nor reschedule the event loop`() =
+        runBlockingTest {
+            // when
+            viewModel.refreshMessages()
+            messagesResponseChannel.send(GetMessagesResult.Error())
+
+            // then
+            coVerify { fetchEventsAndReschedule wasNot called }
+        }
+
+    @Test
+    fun `when refreshed and s success state emitted, should not fetch events nor reschedule the event loop`() =
+        runBlockingTest {
+            // when
+            viewModel.refreshMessages()
+            messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
+
+            // then
+            coVerify { fetchEventsAndReschedule wasNot called }
+        }
+
+    @Test
+    fun `when refreshed and loading, should not fetch events nor reschedule the event loop`() =
+        runBlockingTest {
+            // when
+            viewModel.refreshMessages()
+            messagesResponseChannel.send(GetMessagesResult.Loading)
+
+            // then
+            coVerify { fetchEventsAndReschedule wasNot called }
+        }
+
+    @Test
+    fun `should fetch events and reschedule the event loop only once after the data has arrived following a refresh`() =
+        runBlockingTest {
+            // when
+            viewModel.refreshMessages()
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+
+            viewModel.refreshMessages()
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+            messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
+
+            // then
+            // called once per each refresh
+            coVerify(exactly = 2) { fetchEventsAndReschedule() }
+        }
 
     private fun MailboxUiItem.toMailboxState() = listOf(this).toMailboxState()
 

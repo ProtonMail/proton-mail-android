@@ -27,6 +27,7 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.api.segments.event.FetchEventsAndReschedule
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
@@ -82,6 +83,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -90,6 +92,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.DataResult
@@ -132,7 +135,8 @@ internal class MailboxViewModel @Inject constructor(
     private val observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren,
     private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
     private val getMailSettings: GetMailSettings,
-    private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper
+    private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper,
+    private val fetchEventsAndReschedule: FetchEventsAndReschedule
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     private val _manageLimitReachedWarning = MutableLiveData<Event<Boolean>>()
@@ -260,6 +264,17 @@ internal class MailboxViewModel @Inject constructor(
             .onEach {
                 mutableMailboxState.value = it
             }
+            .launchIn(viewModelScope)
+
+        val observePullToRefreshEvents = mutableRefreshFlow.filter { it }
+
+        fun Flow<Boolean>.waitForRefreshedDataToArrive() = flatMapLatest {
+            mutableMailboxState.filter { it is MailboxState.DataRefresh }.take(1)
+        }
+
+        observePullToRefreshEvents
+            .waitForRefreshedDataToArrive()
+            .onEach { fetchEventsAndReschedule() }
             .launchIn(viewModelScope)
     }
 

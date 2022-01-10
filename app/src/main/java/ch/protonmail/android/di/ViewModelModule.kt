@@ -25,6 +25,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.api.segments.event.FetchEventsAndReschedule
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
@@ -119,7 +120,8 @@ internal class ViewModelModule {
         observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren,
         drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings: GetMailSettings,
-        messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper
+        messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper,
+        fetchEventsAndReschedule: FetchEventsAndReschedule
     ) = MailboxViewModel(
         messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
         userManager = userManager,
@@ -145,6 +147,7 @@ internal class ViewModelModule {
         observeLabelsAndFoldersWithChildren = observeLabelsAndFoldersWithChildren,
         drawerFoldersAndLabelsSectionUiModelMapper = drawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings = getMailSettings,
-        messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper
+        messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper,
+        fetchEventsAndReschedule = fetchEventsAndReschedule
     )
 }
