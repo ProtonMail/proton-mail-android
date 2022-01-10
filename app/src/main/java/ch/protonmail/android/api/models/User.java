@@ -18,39 +18,6 @@
  */
 package ch.protonmail.android.api.models;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.SystemClock;
-import android.text.TextUtils;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
-
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import arrow.core.Either;
-import arrow.core.Either.Right;
-import ch.protonmail.android.R;
-import ch.protonmail.android.api.models.address.Address;
-import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.core.ProtonMailApplication;
-import me.proton.core.domain.entity.UserId;
-import ch.protonmail.android.feature.user.UserManagerKt;
-import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
-import ch.protonmail.android.prefs.SecureSharedPreferences;
-import ch.protonmail.android.usecase.LoadUser;
-import me.proton.core.crypto.common.keystore.KeyStoreCrypto;
-import me.proton.core.network.domain.ApiException;
-import me.proton.core.user.domain.UserManager;
-import timber.log.Timber;
-
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS_ID;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ALIASES;
@@ -85,6 +52,39 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.SystemClock;
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
+
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import arrow.core.Either;
+import arrow.core.Either.Right;
+import ch.protonmail.android.R;
+import ch.protonmail.android.api.models.address.Address;
+import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.feature.user.UserManagerKt;
+import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
+import ch.protonmail.android.prefs.SecureSharedPreferences;
+import ch.protonmail.android.usecase.LoadUser;
+import me.proton.core.crypto.common.keystore.KeyStoreCrypto;
+import me.proton.core.domain.entity.UserId;
+import me.proton.core.network.domain.ApiException;
+import me.proton.core.user.domain.UserManager;
+import timber.log.Timber;
 
 public class User {
     private String id;
@@ -302,7 +302,7 @@ public class User {
     }
 
     private void savePreventTakingScreenshotsSetting() {
-        getPreferences().edit().putInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0).apply();
+        getPreferences().edit().putInt(PREF_PREVENT_TAKING_SCREENSHOTS, PreventTakingScreenshots).apply();
     }
 
     public void saveMaxAttachmentStorageSetting() {
