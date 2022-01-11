@@ -91,7 +91,7 @@
     <string name="settings_swipe_right_to_left">Höger till vänster</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">Apptema</string>
+    <string name="app_theme_title">App-tema</string>
     <string name="app_theme_light">Ljust</string>
     <string name="app_theme_dark">Mörkt</string>
     <string name="app_theme_system">Systemstandard</string>
@@ -99,7 +99,7 @@
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Välj överordnad mapp (valfritt)</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Parent folder selected.</b> Tap to change</string>
+        <b>Överordnad mapp vald.</b> Tryck för att ändra</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Överordnad mapp</string>
@@ -145,7 +145,7 @@
     <string name="invalid_email">E-postadress är inte giltig</string>
     <string name="duplicate_email">E-postadress är en dubblett</string>
     <string name="invalid_code">Kod är inte giltig</string>
-    <string name="message_drafted">Det gick inte att skicka. Dina meddelanden finns sparade i Utkast.</string>
+    <string name="message_drafted">Meddelandet kunde inte skickas. Ditt meddelande sparades i mappen utkast</string>
     <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Öppna</string>
     <string name="close_drawer">Stäng</string>
@@ -180,7 +180,7 @@
     <string name="delete_message">Ta bort meddelande</string>
     <string name="delete_messages">Radera meddelanden</string>
     <string name="add_label">Lägg till etikett</string>
-    <string name="add_star">Stjärnmärk</string>
+    <string name="add_star">Lägg till stjärna</string>
     <string name="remove_star">Ta bort stjärnmärkning</string>
     <string name="mark_read">Markera som läst</string>
     <string name="mark_unread">Markera som oläst</string>
@@ -304,7 +304,7 @@
     <string name="eo_password_subtitle">Ange ett lösenord för att kryptera detta meddelande för icke-ProtonMail-användare</string>
     <string name="eo_password_more_info">Få mer information</string>
     <string name="no_attachments">0 bilagor</string>
-    <string name="pin_lock_option_settings">Låsalternativ</string>
+    <string name="pin_lock_option_settings">Alternativ för App-låsning</string>
     <string name="pin_lock_after">Lås app efter</string>
     <string name="lock_the_app">Lås appen</string>
     <string name="display_name_banned_chars">Ogiltigt visningsnamn. \'&gt;\' och \'&lt;\' är inte tillåtna</string>
@@ -829,7 +829,7 @@
     <string name="notifications_snooze_scheduled_settings">Inställningar för schemalagda Snooze</string>
     <string name="notifications_snooze_current_status">Status</string>
     <string name="snooze_start_time">Starttid:</string>
-    <string name="snooze_end_time">Slut tid:</string>
+    <string name="snooze_end_time">Sluttid:</string>
     <string name="snooze_repeat">Upprepa:</string>
     <plurals name="quick_snooze_resume_min">
         <item quantity="one">Aviseringar återupptas inom 1 minut</item>

@@ -20,8 +20,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_add_folder">フォルダーの追加</string>
-    <string name="x_add_label">ラベルの追加</string>
+    <string name="x_add_folder">フォルダーを追加</string>
+    <string name="x_add_label">ラベルを追加</string>
     <string name="x_days">日</string>
     <string name="x_done">完了</string>
     <string name="x_edit">編集</string>
@@ -107,7 +107,7 @@
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">変更を破棄してよろしいですか？</string>
-    <string name="dialog_discard_changes_message">未保存の変更箇所は全て破棄されます。</string>
+    <string name="dialog_discard_changes_message">未保存の変更箇所はすべて破棄されます。</string>
     <string name="discard">破棄</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
@@ -150,7 +150,7 @@
     <string name="open_drawer">開く</string>
     <string name="close_drawer">閉じる</string>
     <string name="inbox_option">受信箱</string>
-    <string name="starred_option">スター付</string>
+    <string name="starred_option">星印付き</string>
     <string name="drafts_option">下書き</string>
     <string name="sent_option">送信済</string>
     <string name="archive_option">アーカイブ</string>
@@ -164,7 +164,7 @@
     <string name="archive">アーカイブ</string>
     <string name="trash">ごみ箱</string>
     <string name="spam">迷惑メール</string>
-    <string name="all_mail">全てのメール</string>
+    <string name="all_mail">すべてのメール</string>
     <string name="contacts">連絡先</string>
     <string name="search_contacts">連絡先の検索</string>
     <string name="fetching_contacts">Protonmailの連絡先を取得しています...</string>
@@ -660,7 +660,7 @@
     <string name="recipient_not_found_and_removed">宛先が見つかりません: %s は削除されています</string>
     <string name="recipient_error_and_removed">宛先の情報の受信中に問題が発生しました。宛先が削除されています: %s</string>
     <string name="send_anyway">このまま送信</string>
-    <string name="expiration_error_title">メッセージの有効期限を有効にしましたが、全ての宛先でこの機能が利用できるわけではありません。</string>
+    <string name="expiration_error_title">メッセージの有効期限を有効にしましたが、すべての宛先でこの機能が利用できるわけではありません。</string>
     <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください:</string>
     <string name="expiration_error_disable_pgp_sending">次の宛先に対して期限付きメッセージを送信するには、PGPを無効にしてください：</string>
     <string name="expiration_error_proceed">タップしてこれらの宛先には有効期限なしでそのまま送信する</string>
@@ -733,7 +733,7 @@
     </plurals>
     <string name="members">メンバー</string>
     <string name="max_emails_in_group_title">グループに設定できる、宛先の上限に達しました。</string>
-    <string name="select_deselect_all">全て選択</string>
+    <string name="select_deselect_all">すべて選択</string>
     <string name="contact_group_name_hint">グループ名を入力してください</string>
     <string name="contact_group_change_color">色の変更</string>
     <string name="fab_add_contact">新しい連絡先を追加</string>
@@ -860,7 +860,7 @@
     <string name="swipe_action_trash">メッセージをごみ箱に移動する</string>
     <string name="swipe_action_trash_short">ごみ箱に移動</string>
     <string name="swipe_action_star">メッセージへの星印の付け外し</string>
-    <string name="swipe_action_star_short">スターを更新</string>
+    <string name="swipe_action_star_short">星印を更新</string>
     <string name="swipe_action_spam">メッセージを迷惑メールとする</string>
     <string name="swipe_action_spam_short">迷惑メール</string>
     <string name="swipe_action_archive">メッセージをアーカイブする</string>
@@ -958,7 +958,7 @@
     <string name="error_loading_conversations">会話の読み込み中にエラーが発生しました。もう一度やり直してください。</string>
     <string name="star">星印</string>
     <string name="unstar">星印をはずす</string>
-    <string name="star_unstar">スター/スターを外す</string>
+    <string name="star_unstar">星印を 付ける/外す</string>
     <string name="send_to_archive">アーカイブに送る</string>
     <string name="label_as">…としてラベル付け</string>
     <string name="mark_as_unread">未読にする</string>

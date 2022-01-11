@@ -929,7 +929,7 @@
     <string name="turn_combined_contacts_on">Activez cette fonctionnalité pour compléter automatiquement les adresses électroniques en utilisant les contacts de tous vos comptes connectés.</string>
     <string name="local_cache_management">Cache local</string>
     <string name="cache_cleared">Le cache local est actualisé</string>
-    <string name="empty_data">Effacer les données</string>
+    <string name="empty_data">Effacer</string>
     <!-- endregion -->
     <string name="enabled">Activé</string>
     <string name="disabled">Désactivé</string>

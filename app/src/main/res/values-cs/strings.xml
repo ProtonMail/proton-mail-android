@@ -35,9 +35,9 @@
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
-    <string name="x_label_icon_description">Label icon</string>
-    <string name="x_folder_icon_description">Folder icon</string>
-    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <string name="x_label_icon_description">Ikona štítku</string>
+    <string name="x_folder_icon_description">Ikona složky</string>
+    <string name="x_parent_folder_icon_description">Složka s ikonou podsložky</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakty</string>
@@ -97,9 +97,9 @@
     <string name="app_theme_system">Podle systému</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
+    <string name="labels_manager_select_parent_folder">Vybrat hlavní složku (volitelné)</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Parent folder selected.</b> Tap to change</string>
+        <b>Vybraná nadřazená složka.</b> Klepnutím změňte</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Nadřazená složka</string>
@@ -146,7 +146,7 @@
     <string name="duplicate_email">E-mailová adresa je duplicitní</string>
     <string name="invalid_code">Neplatný kód</string>
     <string name="message_drafted">Odeslání zprávy se nezdařilo. Zprávy jsou uloženy ve skožce Koncepty.</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">Odstraňte a znovu připojte \"%s\" a pokuste se zprávu odeslat znovu. Vaši zprávu naleznete ve složce \"Koncepty\".</string>
     <string name="open_drawer">Otevřít</string>
     <string name="close_drawer">Zavřít</string>
     <string name="inbox_option">Doručená pošta</string>
@@ -619,11 +619,11 @@
     <string name="signature_error_desc">Ověření podpisu obsahu selhalo</string>
     <string name="address">Adresa: </string>
     <string name="address_street">Ulice</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Další ulice</string>
     <string name="address_city">Město</string>
     <string name="address_region">Region (stát nebo provincie)</string>
     <string name="address_postcode">PSČ</string>
-    <string name="address_po_box">PO Box</string>
+    <string name="address_po_box">P.O. box</string>
     <string name="address_country">Země</string>
     <string name="recheck_delinquency">Zkontrolovat znovu</string>
     <string name="close_app">Zavřít aplikaci</string>
@@ -985,13 +985,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problémy a řešení běžného připojení</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Žádné připojení k internetu&lt;/i&gt; - Ujistěte se, že vaše internetové připojení funguje.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problém poskytovatele připojení (ISP)&lt;/i&gt; - Zkuste připojení k Protonu z jiné sítě (nebo použijte &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blokování vládou&lt;/i&gt; - Vaše země může blokovat přístup k Protonu. Zkuste &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (nebo jiné VPN) nebo &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pro přístup k Protonu.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aktivita antiviru&lt;/i&gt; - Dočasně vypněte nebo odstraňte antivirový software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall rušení&lt;/i&gt; - Vypněte všechny proxy servery nebo brány firewall nebo se obraťte na správce sítě.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je vypnutý&lt;/i&gt; - Zkontrolujte &lt;a href=\"http://protonstatus.com/\"&gt;stav Protonu&lt;/a&gt; pro stav našeho systému.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pořád nelze najít řešení&lt;/i&gt; - Kontaktujte nás přímo pomocí našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), nebo &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -1009,7 +1009,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Klíč Firebase API není platný. Oznámení nebudou fungovat.</string>
     <string name="failed_saving_draft_online">Nepodařilo se uložit koncept zprávy: \"%s\"</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Chyba přílohy pro zprávu: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Tuto zprávu nelze během odesílání otevřít</string>
     <string name="enable_conversation_mode">Povolit mód konverzace</string>
     <!-- endregion -->
