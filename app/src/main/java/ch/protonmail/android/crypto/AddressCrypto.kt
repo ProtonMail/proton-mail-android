@@ -94,8 +94,6 @@ class AddressCrypto @AssistedInject constructor(
 
         val pgpMessage = GoOpenPgpCrypto.newPGPMessageFromArmored(token.string)
         userManager.user.keys
-            // We shouldn't use inactive user keys for decryption of tokens
-            .filter { it.active == 1 }
             .forEach { userKey ->
                 try {
                     val userKeyRing = GoOpenPgpCrypto.newKeyRing(
@@ -105,15 +103,21 @@ class AddressCrypto @AssistedInject constructor(
                         pgpMessage,
                         userKeyRing
                     )?.let { decryptedToken ->
-                        if (
-                            verifyTokenFormat(decryptedToken) &&
-                            verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)
-                        ) {
+                        if (userKey.active == 0) {
+                            Timber.w("Key used to decrypt token is inactive")
+                        }
+                        if (!verifyTokenFormat(decryptedToken)) {
+                            Timber.e("Decrypted token had wrong format")
+                        } else if (!verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)) {
+                            Timber.e("Couldn't verify token's signature")
+                        } else {
                             return decryptedToken
                         }
                     }
                 } catch (exception: Exception) {
-                    throw UserKeyVerificationException(userKey.id, exception)
+                    if (userKey.active == 1) {
+                        throw UserKeyVerificationException(userKey.id, exception)
+                    }
                 }
             }
         Timber.e("Failed getting passphrase for key (id = ${key.id.s}) using user keys")
