@@ -104,7 +104,7 @@ class AddressCrypto @AssistedInject constructor(
                         userKeyRing
                     )?.let { decryptedToken ->
                         if (userKey.active == 0) {
-                            Timber.e("Key used to decrypt token is inactive")
+                            Timber.w("Key used to decrypt token is inactive")
                         }
                         if (!verifyTokenFormat(decryptedToken)) {
                             Timber.e("Decrypted token had wrong format")
