@@ -601,7 +601,7 @@
     <string name="signature_error_desc">Falha na verificação da assinatura do conteúdo</string>
     <string name="address">Endereço: </string>
     <string name="address_street">Rua</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Endereço estendido</string>
     <string name="address_city">Cidade</string>
     <string name="address_region">Região (estado ou província)</string>
     <string name="address_postcode">CEP</string>

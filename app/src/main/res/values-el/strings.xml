@@ -126,7 +126,7 @@
     <string name="error_chrome_disabled">Αδύνατη η φόρτωση περιεχομένου. Παρακαλώ ενεργοποιήστε το Chrome</string>
     <string name="error_chrome_not_found">Αδύνατη η φόρτωση περιεχομένου. Παρακαλώ εγκαταστήστε το Chrome</string>
     <string name="messages_load_failure">Δεν είναι δυνατή η ανάκτηση μηνυμάτων</string>
-    <string name="message_details_load_failure">Δεν είναι δυνατή η ανάκτηση λεπτομερειών μηνύματος</string>
+    <string name="message_details_load_failure">Αδυναμία ανάκτησης λεπτομερειών μηνύματος</string>
     <string name="no_more_messages">Όχι άλλα μηνύματα</string>
     <string name="mailbox_login_failure">Αποτυχία σύνδεσης στο ταχυδρομείο</string>
     <string name="login_failure">Η σύνδεση απέτυχε</string>
@@ -488,7 +488,7 @@
         <item>12</item>
     </string-array>
     <string name="contact_details_display_name">Όνομα</string>
-    <string name="contact_details">Λεπτομέρειες Επαφής</string>
+    <string name="contact_details">Στοιχεία Επαφής</string>
     <string name="email_type_home">Οικία</string>
     <string name="type_title">Επιλογή Τύπου</string>
     <string name="message_drafted_error_server">Η Αποστολή μηνύματος απέτυχε. %s</string>
@@ -617,7 +617,7 @@
     <string name="info">Πληροφορίες</string>
     <string name="error_can_not_send_from_this_address">Αναβαθμίστε σε ένα λογαριασμό επι πληρωμής για αποστολή από τη διεύθυνση %s.</string>
     <string name="email_empty">Η διεύθυνση E-mail λείπει</string>
-    <string name="add_contact_details">Add Contact Details</string>
+    <string name="add_contact_details">Προσθήκη Στοιχείων Επαφής</string>
     <string name="encrypted_contact_details">Κρυπτογραφημένα στοιχεία επαφής</string>
     <string name="convert_question">Μεταφόρτωση τοπικών επαφών</string>
     <string name="convert_question_subtitle">Αυτό θα μεταφορτώσει τις τοπικές επαφές της συσκευή σας στον κατάλογο επαφών ProtonMail. Στη συνέχεια, θα έχετε πρόσβαση σε αυτές τις επαφές από τις υπόλοιπες συσκευές σας μέσω του ProtonMail.</string>
@@ -643,7 +643,7 @@
     <string name="local_storage_cleared">Έγινε εκκαθάριση στην τοπική αποθήκευση</string>
     <string name="recipient_popup_compose_to">Σύνθεση σε</string>
     <string name="recipient_popup_copy_address">Αντιγραφή διεύθυνσης</string>
-    <string name="recipient_popup_see_details">Προβολή λεπτομερειών επαφής</string>
+    <string name="recipient_popup_see_details">Προβολή στοιχείων επαφής</string>
     <string name="send_with_untrusted_key_title">Θέλετε να κάνετε αποστολή με ένα μη αξιόπιστο κλειδί;</string>
     <string name="send_with_untrusted_key_message">Έχετε ενεργοποιήσει την Επαλήθευση διεύθυνσης με Αξιόπιστα κλειδιά για %s, αλλά δεν βρέθηκαν αξιόπιστα κλειδιά κρυπτογράφησης.</string>
     <string name="resign_contact_title">Θέλετε να επανεγγράψετε την επαφή;</string>

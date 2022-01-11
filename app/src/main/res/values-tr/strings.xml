@@ -20,24 +20,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_add_folder">Add folder</string>
-    <string name="x_add_label">Add label</string>
+    <string name="x_add_folder">Klasör ekle</string>
+    <string name="x_add_label">Etiket ekle</string>
     <string name="x_days">Gün</string>
-    <string name="x_done">Done</string>
-    <string name="x_edit">Edit</string>
+    <string name="x_done">Bitti</string>
+    <string name="x_edit">Düzenle</string>
     <string name="x_folders">Klasör</string>
     <string name="x_hours">Saat</string>
     <string name="x_labels">Etiket</string>
     <string name="x_more">Dahası</string>
-    <string name="x_none">None</string>
+    <string name="x_none">Hiçbiri</string>
     <string name="x_search">Ara</string>
     <string name="x_set">Ayarla</string>
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
-    <string name="x_label_icon_description">Label icon</string>
-    <string name="x_folder_icon_description">Folder icon</string>
-    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <string name="x_label_icon_description">Etiket simgesi</string>
+    <string name="x_folder_icon_description">Klasör simgesi</string>
+    <string name="x_parent_folder_icon_description">Alt klasör simgeli dosya</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kişiler</string>
@@ -46,8 +46,8 @@
     <string name="drawer_settings">Ayarlar</string>
     <string name="drawer_subscription">Abonelik</string>
     <string name="drawer_sign_out">Oturumu kapat</string>
-    <string name="drawer_create_folder_description">Create new folder</string>
-    <string name="drawer_create_label_description">Create new label</string>
+    <string name="drawer_create_folder_description">Yeni klasör oluştur</string>
+    <string name="drawer_create_label_description">Yeni etiket oluştur</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -57,7 +57,7 @@
     <string name="composer_subject">Konu:</string>
     <string name="composer_to">Alıcı:</string>
     <string name="set_msg_password_title">Parola belirle</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
+    <string name="set_msg_password_info">Protonmail kullanıcısı olmayanlar için bu mesajı şifrelemek için yeni parola oluştur.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Konu hakkında daha fazla bilgi için</a>
     </string>
     <string name="set_msg_password_info_icon_description">Bilgi</string>
     <string name="set_msg_password_msg_password_title">İleti parolası</string>
@@ -81,7 +81,7 @@
     <string name="set_msg_expiration_check_description">Bu öğe kontrol edildi</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_create_pin_code_title">PIN kodu ayarla</string>
     <string name="settings_confirm_pin_code_title">PIN kodunu tekrarla</string>
     <string name="settings_pins_dont_match">Girilen PIN kodları aynı olmalıdır!</string>
@@ -91,19 +91,19 @@
     <string name="settings_swipe_right_to_left">Sağdan sola</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App theme</string>
-    <string name="app_theme_light">Light</string>
-    <string name="app_theme_dark">Dark</string>
-    <string name="app_theme_system">System default</string>
+    <string name="app_theme_title">Uygulama teması</string>
+    <string name="app_theme_light">Açık Renk</string>
+    <string name="app_theme_dark">Koyu Renk</string>
+    <string name="app_theme_system">Sistem Varsayılan Rengi</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
+    <string name="labels_manager_select_parent_folder">Ana Klasör Seç (isteğe bağlı)</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Parent folder selected.</b> Tap to change</string>
+        <b>Ana klasör seçildi.</b> Değiştirmek için tıkla</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
-    <string name="parent_picker_title">Parent folder</string>
-    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_title">Ana klasör</string>
+    <string name="parent_picker_header">Ana klasör seçmezseniz, bu yeni klasör ana klasör olarak oluşturulacaktır.</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="dialog_discard_changes_title">Değişiklikler yoksayılsın mı?</string>
@@ -146,7 +146,7 @@
     <string name="duplicate_email">E-posta adresi bir kopyadır</string>
     <string name="invalid_code">Geçersiz kod</string>
     <string name="message_drafted">İleti gönderilemedi. İletileriniz Taslaklar klasörüne kaydedilir.</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">Lütfen \"%s\" \'yi kaldırıp yeniden ekleyin ve mesajı yeniden gönderin. Mesajınız \"Taslaklar\" klasöründe bulunabilir.</string>
     <string name="open_drawer">Aç</string>
     <string name="close_drawer">Kapat</string>
     <string name="inbox_option">Gelen Kutusu</string>
@@ -599,11 +599,11 @@
     <string name="signature_error_desc">Bu içeriğin imzasının doğrulanması başarısız oldu</string>
     <string name="address">Adres: </string>
     <string name="address_street">Cadde</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Ayrıntılı adres</string>
     <string name="address_city">Şehir</string>
     <string name="address_region">Bölge (eyalet veya il)</string>
     <string name="address_postcode">Posta kodu</string>
-    <string name="address_po_box">PO Box</string>
+    <string name="address_po_box">Posta kutusu</string>
     <string name="address_country">Ülke</string>
     <string name="recheck_delinquency">Tekrar kontrol et</string>
     <string name="close_app">Uygulamayı kapat</string>
@@ -791,9 +791,9 @@
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Ödeme Yöntemi</string>
     <string name="password_manager">Şifre yönetimi</string>
-    <string name="password_changed">Password changed.</string>
+    <string name="password_changed">Parola değiştirildi.</string>
     <string name="recovery_email">Kurtarma e-postası</string>
-    <string name="recovery_email_changed">Recovery email changed.</string>
+    <string name="recovery_email_changed">Kurtarma e-postası değiştirildi.</string>
     <string name="info_for_missing_functionality">Lütfen bu bilgileri düzenlemek için <a href="https://www.protonmail.com/">protonmail.com</a> üzerinden giriş yapın ve ayarlarınıza erişin.</string>
     <string name="storage">Posta kutusu boyutu</string>
     <string name="storage_used">%1$s / %2$s</string>
@@ -969,7 +969,7 @@
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Geçersiz Firebase API anahtarı. Anlık bildirimler çalışmayacaktır.</string>
     <string name="failed_saving_draft_online">İleti taslağı çevrimiçi olarak kaydedilemedi: \"%s\"</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Mesaj için eklenti hatas: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Bu ileti gönderilirken açılamaz</string>
     <string name="enable_conversation_mode">Konuşma modunu etkinleştir</string>
     <!-- endregion -->

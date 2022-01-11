@@ -453,7 +453,7 @@
     <string name="empty_recovery_email_question">Ostrzeżenie: Nie dodano adresu pomocniczego. Jeśli zapomnisz hasła, to nie odzyskasz już swojego konta. Czy chcesz przejść dalej bez wpisywania tego adresu?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Data ważności %s</string>
-    <string name="no_payment_methods">Nie posiadasz zapisanych metod płatności.</string>
+    <string name="no_payment_methods">Nie masz zapisanych metod płatności.</string>
     <string name="edit_payment_methods">Zaloguj się przez protonmail.com, aby edytować informacje dotyczące płatności.</string>
     <string name="message_not_loaded">Wiadomość nie została załadowana</string>
     <string name="signature_text">Treść podpisu</string>
@@ -600,13 +600,13 @@
     <string name="empty_email_list">Brak adresu e-mail</string>
     <string name="no_contacts">Brak kontaktów</string>
     <string name="sender_name_address">%1$s &lt;%2$s &gt; napisał(a):</string>
-    <string name="update_label">Aktualizacja etykiety</string>
+    <string name="update_label">Zaktualizuj etykietę</string>
     <string name="max_labels_in_message">Wiadomość %1$s nie może posiadać więcej niż %2$d etykiet.</string>
     <string name="delete">Usuń</string>
     <string name="subject_copied">Temat został skopiowany do schowka</string>
     <string name="details_copied">Szczegóły zostały skopiowane do schowka</string>
     <string name="saving">Zapisywanie...</string>
-    <string name="update_folder">Aktualizacja folderu</string>
+    <string name="update_folder">Zaktualizuj folder</string>
     <string name="spam_score_100">Ta wiadomość wydaje się pochodzić z adresu ProtonMail, ale pochodzi spoza naszego systemu i nie spełnia kryteriów uwierzytelniania. Może być sfałszowana lub nieprawidłowo przesłana!</string>
     <string name="spam_score_101">Ta wiadomość nie spełnia wymogów weryfikacyjnych domeny nadawcy. Może być sfałszowana lub nieprawidłowo przesłana!</string>
     <string name="spam_score_102">Ta wiadomość może być próbą wyłudzenia informacji. Upewnij się, czy nadawca wiadomości i jej treść są wiarygodne. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">DOWIEDZ SIĘ WIĘCEJ</a>
@@ -655,7 +655,7 @@
     <string name="remove_password_question">Usunąć hasło?</string>
     <string name="attachment_storage_value_current">Obecnie wybrano: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Obecnie wybrano: Bez limitu</string>
-    <string name="attachment_offline_max_storage">Ustawia maksymalną ilość miejsca, jaką aplikacja ProtonMail może używać na tym urządzeniu.</string>
+    <string name="attachment_offline_max_storage">Ustaw maksymalną ilość miejsca, jaką aplikacja ProtonMail może używać na tym urządzeniu.</string>
     <string name="load_embedded_images_failed_no_network">Ładowanie osadzonych obrazów nie powiodło się. Sprawdź połączenie sieciowe.</string>
     <string name="load_embedded_images_failed">Ładowanie osadzonych obrazów nie powiodło się.</string>
     <string name="unlimited">Bez limitu</string>

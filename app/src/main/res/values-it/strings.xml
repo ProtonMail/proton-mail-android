@@ -97,7 +97,7 @@
     <string name="app_theme_system">Predefinito di sistema</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
+    <string name="labels_manager_select_parent_folder">Seleziona cartella principale (facoltativo)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Cartella principale selezionata.</b> Tocca per modificare</string>
     <!-- endregion -->
@@ -601,11 +601,11 @@
     <string name="signature_error_desc">Verifica della firma di questo contenuto fallita</string>
     <string name="address">Indirizzo: </string>
     <string name="address_street">Via</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Strada estesa</string>
     <string name="address_city">Città</string>
     <string name="address_region">Regione (stato o provincia)</string>
     <string name="address_postcode">Codice postale</string>
-    <string name="address_po_box">PO Box</string>
+    <string name="address_po_box">Cassetta PO</string>
     <string name="address_country">Paese</string>
     <string name="recheck_delinquency">Controlla di nuovo</string>
     <string name="close_app">Chiudi l\'applicazione</string>

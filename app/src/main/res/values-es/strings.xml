@@ -91,13 +91,13 @@
     <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
     <!-- endregion -->
     <!-- region App Theme -->
-    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_title">Tema de la aplicación</string>
     <string name="app_theme_light">Claro</string>
     <string name="app_theme_dark">Oscuro</string>
-    <string name="app_theme_system">System default</string>
+    <string name="app_theme_system">Sistema por defecto</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
+    <string name="labels_manager_select_parent_folder">Seleccionar carpeta principal (opcional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Carpeta principal seleccionada.</b> Toca para cambiar</string>
     <!-- endregion -->
@@ -975,7 +975,7 @@ compre más
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clave de la API de Firebase no es válida. Las notificaciones Push no funcionarán.</string>
     <string name="failed_saving_draft_online">Error al guardar el borrador en línea para el mensaje: \"%s\"</string>
-    <string name="failed_uploading_attachment_online">Attachment error for message: \"%s\"</string>
+    <string name="failed_uploading_attachment_online">Error de archivo adjunto para el mensaje: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">No se puede abrir este mensaje mientras está siendo enviado</string>
     <string name="enable_conversation_mode">Habilitar modo de conversación</string>
     <!-- endregion -->
