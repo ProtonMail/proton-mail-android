@@ -37,7 +37,7 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Test
 import kotlin.test.BeforeTest
 
-class SwipeActionsViewModelTest : ArchTest, CoroutinesTest {
+class SwipeChooserViewModelTest : ArchTest, CoroutinesTest {
 
     private var accountManager: AccountManager = mockk(relaxed = true)
 
@@ -45,7 +45,7 @@ class SwipeActionsViewModelTest : ArchTest, CoroutinesTest {
 
     private var getMailSettings: GetMailSettings = mockk(relaxed = true)
 
-    private var viewModel: SwipeActionsViewModel = mockk(relaxed = true)
+    private var viewModel: SwipeChooserViewModel = mockk(relaxed = true)
 
     private val savedState = mockk<SavedStateHandle> {
         every { get<SwipeAction>(EXTRA_CURRENT_ACTION) } returns SwipeAction.MarkRead
@@ -58,11 +58,10 @@ class SwipeActionsViewModelTest : ArchTest, CoroutinesTest {
     fun setUp() {
         MockKAnnotations.init(this)
         viewModel =
-            SwipeActionsViewModel(
+            SwipeChooserViewModel(
                 savedStateHandle = savedState,
                 accountManager = accountManager,
-                updateSwipeActions = updateSwipeActions,
-                getMailSettings = getMailSettings
+                updateSwipeActions = updateSwipeActions
             )
     }
 

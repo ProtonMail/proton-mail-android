@@ -22,7 +22,6 @@ package ch.protonmail.android.settings.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.domain.UpdateSwipeActions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -32,18 +31,15 @@ import me.proton.core.mailsettings.domain.entity.SwipeAction
 import javax.inject.Inject
 
 @HiltViewModel
-class SwipeActionsViewModel @Inject constructor(
+class SwipeChooserViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val accountManager: AccountManager,
-    private var updateSwipeActions: UpdateSwipeActions,
-    private val getMailSettings: GetMailSettings
+    private var updateSwipeActions: UpdateSwipeActions
 ) : ViewModel() {
 
     var currentAction: SwipeAction =
         savedStateHandle.get<SwipeAction>(EXTRA_CURRENT_ACTION) ?: SwipeAction.Trash
     val swipeId: SwipeType = savedStateHandle.get<SwipeType>(EXTRA_SWIPE_ID) ?: SwipeType.RIGHT
-
-    suspend fun getMailSettings() = getMailSettings.invoke()
 
     fun onSaveClicked() {
         viewModelScope.launch {

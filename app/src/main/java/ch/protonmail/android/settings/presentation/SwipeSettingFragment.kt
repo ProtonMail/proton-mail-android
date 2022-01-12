@@ -27,13 +27,11 @@ import android.view.ViewGroup
 import android.view.ViewStub
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.SettingsSwipeFragmentBinding
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.libs.core.utils.onClick
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.launchIn
@@ -41,6 +39,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.mailsettings.domain.entity.SwipeAction
+import me.proton.core.presentation.utils.onClick
+import javax.inject.Inject
 import ch.protonmail.android.adapters.swipe.SwipeAction as SwipeActionLocal
 
 @AndroidEntryPoint
@@ -48,10 +48,9 @@ class SwipeSettingFragment : Fragment() {
 
     lateinit var mailSettings: MailSettings
     private var _binding: SettingsSwipeFragmentBinding? = null
-
-    private val swipeActionsViewModel: SwipeActionsViewModel by viewModels()
-
     private val binding get() = requireNotNull(_binding)
+
+    @Inject lateinit var getMailSettings: GetMailSettings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +71,7 @@ class SwipeSettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            swipeActionsViewModel.getMailSettings()
+            getMailSettings()
                 .dropWhile { it !is GetMailSettings.MailSettingsState.Success }
                 .onEach { result ->
                     when (result) {
