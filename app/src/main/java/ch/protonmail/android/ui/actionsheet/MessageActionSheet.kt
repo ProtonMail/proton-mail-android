@@ -29,6 +29,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
@@ -40,6 +41,7 @@ import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtons
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
@@ -60,6 +62,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private var actionSheetHeader: ActionSheetHeader? = null
     private val viewModel: MessageActionSheetViewModel by viewModels()
+    private val mailboxViewModel: MailboxViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -399,12 +402,15 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ChangeStarredStatus -> {
                 if (sheetAction.isSuccessful) {
                     dismiss()
+                    mailboxViewModel.exitSelectionMode(sheetAction.areMailboxItemsMovedFromLocation)
                 } else {
                     showCouldNotCompleteActionError()
                 }
             }
-            is MessageActionSheetAction.DismissActionSheet ->
+            is MessageActionSheetAction.DismissActionSheet -> {
                 handleDismissBehavior(sheetAction.shallDismissBackingActivity)
+                mailboxViewModel.exitSelectionMode(sheetAction.areMailboxItemsMovedFromLocation)
+            }
             is MessageActionSheetAction.CouldNotCompleteActionError ->
                 showCouldNotCompleteActionError()
             else -> Timber.v("unhandled action $sheetAction")

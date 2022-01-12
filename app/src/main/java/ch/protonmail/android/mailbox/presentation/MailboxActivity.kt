@@ -352,6 +352,10 @@ internal class MailboxActivity :
             unreadCounters
                 .onEach { sideDrawer.setUnreadCounters(it) }
                 .launchIn(lifecycleScope)
+
+            exitSelectionModeSharedFlow
+                .onEach { if (it) actionMode?.finish() }
+                .launchIn(lifecycleScope)
         }
 
         setUpMailboxActionsView()
@@ -1041,7 +1045,6 @@ internal class MailboxActivity :
                     mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
                 )
             }
-            actionMode?.finish()
         }
         mailboxActionsView.setOnSecondActionClickListener {
             val messageIds = getSelectedMessageIds()
@@ -1062,6 +1065,7 @@ internal class MailboxActivity :
                         UserId(userManager.requireCurrentUserId().id),
                         currentMailboxLocation
                     )
+                    actionMode?.finish()
                 }
             } else {
                 undoSnack = showUndoSnackbar(
@@ -1078,21 +1082,19 @@ internal class MailboxActivity :
                     currentMailboxLocation,
                     MessageLocationType.TRASH.messageLocationTypeValue.toString()
                 )
+
+                if (currentMailboxLocation != MessageLocationType.ALL_MAIL) actionMode?.finish()
             }
-            actionMode?.finish()
         }
         mailboxActionsView.setOnThirdActionClickListener {
             showFoldersManager(getSelectedMessageIds())
-            actionMode?.finish()
         }
         mailboxActionsView.setOnFourthActionClickListener {
             showLabelsManager(getSelectedMessageIds())
-            actionMode?.finish()
         }
         mailboxActionsView.setOnMoreActionClickListener {
             lifecycleScope.launch {
                 showActionSheet(getSelectedMessageIds(), isConversationModeEnabled(currentMailboxLocation))
-                actionMode?.finish()
             }
         }
     }

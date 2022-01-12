@@ -218,7 +218,10 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyMoveToInboxEmitsShouldDismissActionThatDoesNotDismissBackingActivityWhenBottomActionSheetTargetIsConversationDetails() {
         // given
         val messageId = "messageId1"
-        val expected = MessageActionSheetAction.DismissActionSheet(false)
+        val expected = MessageActionSheetAction.DismissActionSheet(
+            shallDismissBackingActivity = false,
+            areMailboxItemsMovedFromLocation = true
+        )
         every { conversationModeEnabled(any()) } returns true
         coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
         every {
@@ -240,7 +243,10 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyMoveToInboxEmitsShouldDismissActionThatDismissesBackingActivityWhenBottomActionSheetTargetIsMessageDetails() {
         // given
         val messageId = "messageId2"
-        val expected = MessageActionSheetAction.DismissActionSheet(true)
+        val expected = MessageActionSheetAction.DismissActionSheet(
+            shallDismissBackingActivity = true,
+            areMailboxItemsMovedFromLocation = true
+        )
         every { conversationModeEnabled(any()) } returns false
         coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
         every {
@@ -277,7 +283,11 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyUnStarMessageCallsChangeConversationStarredStatusWhenConversationModeIsEnabledAndAConversationIsBeingUnStarred() {
         // given
         val conversationId = "conversationId01"
-        val expected = MessageActionSheetAction.ChangeStarredStatus(starredStatus = false, isSuccessful = true)
+        val expected = MessageActionSheetAction.ChangeStarredStatus(
+            starredStatus = false,
+            isSuccessful = true,
+            areMailboxItemsMovedFromLocation = false
+        )
         val userId = UserId("userId")
         val unstarAction = ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
         every { conversationModeEnabled(any()) } returns true
@@ -307,7 +317,11 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyUnstarMessageEmitsResultWithIsSuccessfulFlagFalseIfChangeConversationStarredStatusReturnsErrorResultInConversationMode() {
         // given
         val conversationId = "conversationId"
-        val expectedResult = MessageActionSheetAction.ChangeStarredStatus(starredStatus = false, isSuccessful = false)
+        val expectedResult = MessageActionSheetAction.ChangeStarredStatus(
+            starredStatus = false,
+            isSuccessful = false,
+            areMailboxItemsMovedFromLocation = false
+        )
         val userId = UserId("userId")
         val unstarAction = ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
         every { conversationModeEnabled(any()) } returns true
@@ -329,7 +343,10 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyMarkReadCallsChangeConversationReadStatusWhenConversationModeIsEnabledAndAConversationIsBeingMarkedAsRead() {
         // given
         val conversationId = "conversationId02"
-        val expected = MessageActionSheetAction.DismissActionSheet(true)
+        val expected = MessageActionSheetAction.DismissActionSheet(
+            shallDismissBackingActivity = true,
+            areMailboxItemsMovedFromLocation = false
+        )
         val userId = UserId("userId02")
         val markReadAction = ChangeConversationsReadStatus.Action.ACTION_MARK_READ
         val location = Constants.MessageLocationType.ALL_MAIL
@@ -400,7 +417,11 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyStarMessageCallsMessageRepositoryToStarMessageWhenConversationIsEnabledAndActionIsBeingAppliedToASpecificMessageInAConversation() {
         // given
         val messageId = "messageId3"
-        val expected = MessageActionSheetAction.ChangeStarredStatus(true, isSuccessful = true)
+        val expected = MessageActionSheetAction.ChangeStarredStatus(
+            starredStatus = true,
+            isSuccessful = true,
+            areMailboxItemsMovedFromLocation = false
+        )
         val userId = UserId("userId")
         every { conversationModeEnabled(any()) } returns true
         coEvery {
@@ -437,7 +458,11 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyStarMessageEmitsResultWithIsSuccessfulFlagFalseIfChangeConversationStarredStatusReturnsErrorResultInConversationMode() {
         // given
         val conversationId = "conversationId"
-        val expectedResult = MessageActionSheetAction.ChangeStarredStatus(true, isSuccessful = false)
+        val expectedResult = MessageActionSheetAction.ChangeStarredStatus(
+            starredStatus = true,
+            isSuccessful = false,
+            areMailboxItemsMovedFromLocation = false
+        )
         every { conversationModeEnabled(any()) } returns true
         coEvery { changeConversationsStarredStatus(any(), any(), any()) } returns ConversationsActionResult.Error
 
@@ -455,7 +480,10 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyMarkUnreadCallsMessageRepositoryToMarkUnreadWhenConversationIsEnabledAndActionIsBeingAppliedToASpecificMessageInAConversation() {
         // given
         val messageId = "messageId4"
-        val expected = MessageActionSheetAction.DismissActionSheet(false)
+        val expected = MessageActionSheetAction.DismissActionSheet(
+            shallDismissBackingActivity = false,
+            areMailboxItemsMovedFromLocation = false
+        )
         every { conversationModeEnabled(any()) } returns true
         coEvery {
             changeMessagesReadStatus.invoke(
@@ -573,7 +601,10 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         )
 
         // then
-        assertEquals(MessageActionSheetAction.DismissActionSheet(true), viewModel.actionsFlow.value)
+        assertEquals(
+            MessageActionSheetAction.DismissActionSheet(shallDismissBackingActivity = true, areMailboxItemsMovedFromLocation = true),
+            viewModel.actionsFlow.value
+        )
     }
 
     @Test

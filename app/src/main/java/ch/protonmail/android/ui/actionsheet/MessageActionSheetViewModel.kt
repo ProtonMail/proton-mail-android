@@ -128,7 +128,10 @@ internal class MessageActionSheetViewModel @Inject constructor(
             }
         }.invokeOnCompletion {
             val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                dismissBackingActivity,
+                areMailboxItemsMovedFromLocation = true
+            )
         }
     }
 
@@ -190,11 +193,11 @@ internal class MessageActionSheetViewModel @Inject constructor(
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
                 actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
-                    starredStatus = true, isSuccessful = false
+                    starredStatus = true, isSuccessful = false, areMailboxItemsMovedFromLocation = false
                 )
             } else {
                 actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
-                    starredStatus = true, isSuccessful = true
+                    starredStatus = true, isSuccessful = true, areMailboxItemsMovedFromLocation = false
                 )
             }
         }
@@ -230,13 +233,14 @@ internal class MessageActionSheetViewModel @Inject constructor(
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
                 actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
-                    starredStatus = false, isSuccessful = false
+                    starredStatus = false, isSuccessful = false, areMailboxItemsMovedFromLocation = false
                 )
             } else {
                 actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
-                    starredStatus = false, isSuccessful = true
+                    starredStatus = false,
+                    isSuccessful = true,
+                    areMailboxItemsMovedFromLocation = location == Constants.MessageLocationType.STARRED
                 )
-
             }
         }
     }
@@ -275,7 +279,10 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
             } else {
                 val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                    shallDismissBackingActivity = dismissBackingActivity,
+                    areMailboxItemsMovedFromLocation = false
+                )
             }
         }
     }
@@ -314,7 +321,10 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
             } else {
                 val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                    shallDismissBackingActivity = dismissBackingActivity,
+                    areMailboxItemsMovedFromLocation = false
+                )
             }
         }
     }
@@ -361,7 +371,16 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
             } else {
                 val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                    dismissBackingActivity,
+                    areMailboxItemsMovedFromLocation = when (currentFolder) {
+                        Constants.MessageLocationType.LABEL,
+                        Constants.MessageLocationType.STARRED
+                        -> newFolderLocationId == Constants.MessageLocationType.TRASH
+                        Constants.MessageLocationType.ALL_MAIL -> false
+                        else -> newFolderLocationId != currentFolder
+                    }
+                )
             }
         }
     }

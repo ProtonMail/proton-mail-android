@@ -39,10 +39,14 @@ sealed class MessageActionSheetAction {
 
     data class ChangeStarredStatus(
         val starredStatus: Boolean,
-        val isSuccessful: Boolean
+        val isSuccessful: Boolean,
+        val areMailboxItemsMovedFromLocation: Boolean
     ) : MessageActionSheetAction()
 
-    data class DismissActionSheet(val shallDismissBackingActivity: Boolean) : MessageActionSheetAction()
+    data class DismissActionSheet(
+        val shallDismissBackingActivity: Boolean,
+        val areMailboxItemsMovedFromLocation: Boolean
+    ) : MessageActionSheetAction()
 
     object CouldNotCompleteActionError : MessageActionSheetAction()
 }
