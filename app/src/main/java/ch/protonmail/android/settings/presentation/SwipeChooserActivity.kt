@@ -28,7 +28,6 @@ import androidx.activity.viewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.settings.data.toMailSwipeAction
-import ch.protonmail.android.utils.extensions.app
 import dagger.hilt.android.AndroidEntryPoint
 import ch.protonmail.android.adapters.swipe.SwipeAction as MailSwipeAction
 import me.proton.core.mailsettings.domain.entity.SwipeAction as CoreSwipeAction
@@ -60,22 +59,14 @@ class SwipeChooserActivity : BaseActivity() {
         val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
-        if (swipeChooserViewModel.swipeId == SwipeType.LEFT) {
-            actionBar?.title = getString(R.string.settings_swipe_right_to_left)
-        } else if (swipeChooserViewModel.swipeId == SwipeType.RIGHT) {
-            actionBar?.title = getString(R.string.settings_swipe_left_to_right)
+        val titleRes = when (intent.getSerializableExtra(EXTRA_SWIPE_ID) as SwipeType) {
+            SwipeType.LEFT -> R.string.settings_swipe_right_to_left
+            SwipeType.RIGHT -> R.string.settings_swipe_left_to_right
         }
-        createActions()
-    }
+        actionBar?.title = getString(titleRes)
 
-    override fun onStart() {
-        super.onStart()
-        app.bus.register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        app.bus.unregister(this)
+        val currentAction = intent.getSerializableExtra(EXTRA_CURRENT_ACTION) as CoreSwipeAction
+        createActions(currentAction.toMailSwipeAction())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -100,7 +91,7 @@ class SwipeChooserActivity : BaseActivity() {
         saveAndFinish()
     }
 
-    private fun createActions() {
+    private fun createActions(currentAction: MailSwipeAction) {
 
         val availableActions = arrayOf(
             MailSwipeAction.MARK_READ,
@@ -112,12 +103,12 @@ class SwipeChooserActivity : BaseActivity() {
 
         for (index in availableActions.indices) {
             val swipeAction = availableActions[index]
-            if (swipeChooserViewModel.currentAction.toMailSwipeAction() == swipeAction) {
+            if (currentAction == swipeAction) {
                 (swipeRadioGroup.getChildAt(index) as RadioButton).isChecked = true
             }
         }
         swipeRadioGroup?.setOnCheckedChangeListener { _, _ ->
-            swipeChooserViewModel.currentAction = when (swipeRadioGroup.checkedRadioButtonId) {
+            val action = when (swipeRadioGroup.checkedRadioButtonId) {
                 R.id.read_unread -> CoreSwipeAction.MarkRead
                 R.id.star_unstar -> CoreSwipeAction.Star
                 R.id.trash -> CoreSwipeAction.Trash
@@ -125,6 +116,7 @@ class SwipeChooserActivity : BaseActivity() {
                 R.id.move_to_spam -> CoreSwipeAction.Spam
                 else -> throw IllegalArgumentException("Unknown button id")
             }
+            swipeChooserViewModel.setAction(action)
         }
     }
 

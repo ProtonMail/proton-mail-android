@@ -37,24 +37,27 @@ class SwipeChooserViewModel @Inject constructor(
     private var updateSwipeActions: UpdateSwipeActions
 ) : ViewModel() {
 
-    var currentAction: SwipeAction =
-        savedStateHandle.get<SwipeAction>(EXTRA_CURRENT_ACTION) ?: SwipeAction.Trash
-    val swipeId: SwipeType = savedStateHandle.get<SwipeType>(EXTRA_SWIPE_ID) ?: SwipeType.RIGHT
+    private var actionToSave: SwipeAction? = null
+
+    private val swipeType: SwipeType =
+        requireNotNull(savedStateHandle.get<SwipeType>(EXTRA_SWIPE_ID)) {
+            "Extra 'EXTRA_SWIPE_ID' is required"
+        }
+
+    fun setAction(swipeAction: SwipeAction) {
+        actionToSave = swipeAction
+    }
 
     fun onSaveClicked() {
+        actionToSave ?: return
+
         viewModelScope.launch {
             accountManager.getPrimaryUserId().first()?.let { userId ->
-                if (swipeId == SwipeType.LEFT) {
-                    updateSwipeActions.invoke(
-                        userId,
-                        swipeLeft = currentAction
-                    )
-                } else {
-                    updateSwipeActions.invoke(
-                        userId,
-                        swipeRight = currentAction
-                    )
+                val result = when (swipeType) {
+                    SwipeType.LEFT -> updateSwipeActions(userId, swipeLeft = actionToSave)
+                    SwipeType.RIGHT -> updateSwipeActions(userId, swipeRight = actionToSave)
                 }
+                // TODO handle result
             }
         }
     }
