@@ -24,6 +24,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.settings.domain.UpdateSwipeActions
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
@@ -37,6 +40,9 @@ class SwipeChooserViewModel @Inject constructor(
     private var updateSwipeActions: UpdateSwipeActions
 ) : ViewModel() {
 
+    private val mutableState = MutableStateFlow<State>(State.Idle)
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     private var actionToSave: SwipeAction? = null
 
     private val swipeType: SwipeType =
@@ -49,16 +55,51 @@ class SwipeChooserViewModel @Inject constructor(
     }
 
     fun onSaveClicked() {
-        actionToSave ?: return
+        if (state.value != State.Idle) return
+        if (actionToSave == null) {
+            mutableState.tryEmit(State.Success)
+            return
+        }
 
         viewModelScope.launch {
+            mutableState.emit(State.Saving)
             accountManager.getPrimaryUserId().first()?.let { userId ->
                 val result = when (swipeType) {
                     SwipeType.LEFT -> updateSwipeActions(userId, swipeLeft = actionToSave)
                     SwipeType.RIGHT -> updateSwipeActions(userId, swipeRight = actionToSave)
                 }
-                // TODO handle result
+                val newState = when (result) {
+                    UpdateSwipeActions.Result.Success -> State.Success
+                    UpdateSwipeActions.Result.Offline -> State.OfflineError
+                    UpdateSwipeActions.Result.Error -> State.GenericError
+                }
+                mutableState.emit(newState)
             }
         }
+    }
+
+    sealed class State {
+
+        object Idle : State()
+
+        /**
+         * Setting is being saved online
+         */
+        object Saving : State()
+
+        /**
+         * New value has been saved, we close the Activity
+         */
+        object Success : State()
+
+        /**
+         * New value cannot be saved because offline, we show an offline message and close the Activity
+         */
+        object OfflineError : State()
+
+        /**
+         * New value cannot be saved because generic error, we show a message and close the Activity
+         */
+        object GenericError : State()
     }
 }

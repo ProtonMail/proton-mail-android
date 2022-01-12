@@ -23,9 +23,9 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
+import me.proton.core.network.domain.ApiException
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.DispatcherProvider
-import timber.log.Timber
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 /**
@@ -51,16 +51,18 @@ class UpdateSwipeActions @Inject constructor(
         }
     }.fold(
         onSuccess = { Result.Success },
-        onFailure = { error ->
-            if (error is UnknownHostException)
-                Result.Offline
-            else {
-                Timber.e(error)
-                Result.Error
-            }
-        }
+        onFailure = ::parseError
     )
 
+    private fun parseError(throwable: Throwable): Result =
+        if (throwable is ApiException) parseApiException(throwable)
+        else Result.Error
+
+    private fun parseApiException(exception: ApiException): Result =
+        when (exception.error) {
+            is ApiResult.Error.Connection, is ApiResult.Error.NoInternet -> Result.Offline
+            else -> Result.Error
+        }
 
     sealed class Result {
 

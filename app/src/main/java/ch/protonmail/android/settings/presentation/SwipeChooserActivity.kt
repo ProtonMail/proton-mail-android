@@ -25,10 +25,15 @@ import android.view.MenuItem
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.activity.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.settings.data.toMailSwipeAction
+import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ch.protonmail.android.adapters.swipe.SwipeAction as MailSwipeAction
 import me.proton.core.mailsettings.domain.entity.SwipeAction as CoreSwipeAction
 
@@ -67,6 +72,12 @@ class SwipeChooserActivity : BaseActivity() {
 
         val currentAction = intent.getSerializableExtra(EXTRA_CURRENT_ACTION) as CoreSwipeAction
         createActions(currentAction.toMailSwipeAction())
+
+        lifecycleScope.launch {
+            swipeChooserViewModel.state
+                .flowWithLifecycle(lifecycle)
+                .collect(::handleState)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -79,7 +90,6 @@ class SwipeChooserActivity : BaseActivity() {
         return when (menuItem.itemId) {
             android.R.id.home -> {
                 swipeChooserViewModel.onSaveClicked()
-                saveAndFinish()
                 true
             }
             else -> super.onOptionsItemSelected(menuItem)
@@ -88,7 +98,6 @@ class SwipeChooserActivity : BaseActivity() {
 
     override fun onBackPressed() {
         swipeChooserViewModel.onSaveClicked()
-        saveAndFinish()
     }
 
     private fun createActions(currentAction: MailSwipeAction) {
@@ -117,6 +126,22 @@ class SwipeChooserActivity : BaseActivity() {
                 else -> throw IllegalArgumentException("Unknown button id")
             }
             swipeChooserViewModel.setAction(action)
+        }
+    }
+
+    private fun handleState(state: SwipeChooserViewModel.State) {
+        when (state) {
+            SwipeChooserViewModel.State.Idle -> { /* noop */ }
+            SwipeChooserViewModel.State.Saving -> showToast(R.string.settings_swipe_saving)
+            SwipeChooserViewModel.State.Success -> saveAndFinish()
+            SwipeChooserViewModel.State.OfflineError -> {
+                showToast(R.string.settings_swipe_offline_error)
+                saveAndFinish()
+            }
+            SwipeChooserViewModel.State.GenericError -> {
+                showToast(R.string.settings_swipe_generic_error)
+                saveAndFinish()
+            }
         }
     }
 
