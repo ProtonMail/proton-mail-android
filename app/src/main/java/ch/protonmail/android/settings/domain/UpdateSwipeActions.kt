@@ -24,8 +24,13 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
+import java.net.UnknownHostException
 import javax.inject.Inject
 
+/**
+ * Returns a [UpdateSwipeActions.Result]
+ */
 class UpdateSwipeActions @Inject constructor(
     private val mailSettingsRepository: MailSettingsRepository,
     private val dispatchers: DispatcherProvider
@@ -39,12 +44,36 @@ class UpdateSwipeActions @Inject constructor(
         userId: UserId,
         swipeRight: SwipeAction? = null,
         swipeLeft: SwipeAction? = null
-    ) = withContext(dispatchers.Io) {
-        swipeRight?.let {
-            mailSettingsRepository.updateSwipeRight(userId, swipeRight)
+    ): Result = runCatching {
+        withContext(dispatchers.Io) {
+            swipeRight?.let { mailSettingsRepository.updateSwipeRight(userId, it) }
+            swipeLeft?.let { mailSettingsRepository.updateSwipeLeft(userId, it) }
         }
-        swipeLeft?.let {
-            mailSettingsRepository.updateSwipeLeft(userId, swipeLeft)
+    }.fold(
+        onSuccess = { Result.Success },
+        onFailure = { error ->
+            if (error is UnknownHostException)
+                Result.Offline
+            else {
+                Timber.e(error)
+                Result.Error
+            }
         }
+    )
+
+
+    sealed class Result {
+
+        object Success : Result()
+
+        /**
+         * Currently Core doesn't allow to change MailSettings while offline
+         */
+        object Offline : Result()
+
+        /**
+         * Unknown error occurred
+         */
+        object Error : Result()
     }
 }
