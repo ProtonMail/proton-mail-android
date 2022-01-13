@@ -23,8 +23,13 @@ package ch.protonmail.android.uitests.robots.mailbox
 import android.widget.ImageView
 import androidx.annotation.IdRes
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndFlag
@@ -38,6 +43,7 @@ import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_30S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_60S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
+import ch.protonmail.android.uitests.testsHelper.waitForCondition
 import me.proton.core.test.android.instrumented.Robot
 
 interface MailboxRobotInterface : Robot {
@@ -75,13 +81,19 @@ interface MailboxRobotInterface : Robot {
     }
 
     fun compose(): ComposerRobot {
-        view.withId(R.id.composeImageButton).waitForCondition({ view.isCompletelyDisplayed().viewMatcher() }, watchTimeout = TIMEOUT_60S)
+        waitForCondition(
+            { onView(withId(R.id.composeImageButton)).check(matches(isDisplayed())) },
+            watchTimeout = TIMEOUT_60S
+        )
         view.withId(R.id.composeImageButton).click()
         return ComposerRobot()
     }
 
     fun menuDrawer(): MenuRobot {
-        view.waitForCondition({ view.withId(drawerLayoutId).isCompletelyDisplayed().viewMatcher() }, TIMEOUT_60S)
+        waitForCondition(
+            { onView(withId(drawerLayoutId)).check(matches(isDisplayed())) },
+            watchTimeout = TIMEOUT_60S
+        )
         view.withId(drawerLayoutId).openDrawer()
         return MenuRobot()
     }
