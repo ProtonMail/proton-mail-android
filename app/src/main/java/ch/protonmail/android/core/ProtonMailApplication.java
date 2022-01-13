@@ -199,7 +199,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-            enableStrictMode();
+            if (BuildConfig.FLAVOR != "uiAutomation") enableStrictMode();
         } else {
             Sentry.init(
                     String.format(
