@@ -20,10 +20,7 @@
 package ch.protonmail.android.settings.presentation
 
 import androidx.lifecycle.SavedStateHandle
-import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.domain.UpdateSwipeActions
-import io.mockk.MockKAnnotations
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -35,61 +32,58 @@ import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Test
-import kotlin.test.BeforeTest
+
+private val TEST_USER_ID = UserId("userId")
 
 class SwipeChooserViewModelTest : ArchTest, CoroutinesTest {
 
-    private var accountManager: AccountManager = mockk(relaxed = true)
+    private val savedStateHandle: SavedStateHandle = mockk()
 
-    private var updateSwipeActions: UpdateSwipeActions = mockk(relaxed = true)
-
-    private var getMailSettings: GetMailSettings = mockk(relaxed = true)
-
-    private var viewModel: SwipeChooserViewModel = mockk(relaxed = true)
-
-    private val savedState = mockk<SavedStateHandle> {
-        every { get<SwipeAction>(EXTRA_CURRENT_ACTION) } returns SwipeAction.MarkRead
-        every { get<SwipeType>(EXTRA_SWIPE_ID) } returns SwipeType.LEFT
+    private var accountManager: AccountManager = mockk {
+        every { getPrimaryUserId() } returns flowOf(TEST_USER_ID)
     }
 
-    private val userId = UserId("userId")
+    private var updateSwipeActions: UpdateSwipeActions = mockk(relaxUnitFun = true)
 
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        viewModel =
-            SwipeChooserViewModel(
-                savedStateHandle = savedState,
-                accountManager = accountManager,
-                updateSwipeActions = updateSwipeActions
-            )
+    private val viewModel by lazy {
+        SwipeChooserViewModel(
+            savedStateHandle = savedStateHandle,
+            accountManager = accountManager,
+            updateSwipeActions = updateSwipeActions
+        )
     }
 
     @Test
-    fun verifyThatWhenWeChangeLeftSwipeActionUpdateSwipeActionsUseCaseIsCalled() = runBlockingTest {
+    fun `invokes use case with correct parameters when updating Swipe Left`() = runBlockingTest {
 
         // given
-        coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        val action = SwipeAction.Archive
+        every { savedStateHandle.get<SwipeType>(EXTRA_SWIPE_ID) } returns SwipeType.LEFT
+        viewModel.setAction(action)
 
         // when
         viewModel.onSaveClicked()
 
         // then
-        coVerify { updateSwipeActions(userId, swipeLeft = SwipeAction.MarkRead) }
+        coVerify { updateSwipeActions(TEST_USER_ID, swipeLeft = action) }
+        coVerify(exactly = 0) { updateSwipeActions(TEST_USER_ID, swipeRight = action) }
     }
 
     @Test
-    fun verifyThatWhenWeChangeLeftSwipeActionUpdateSwipeActionsUseCaseIsNotCalledWithRightSwipeActionParameter() =
+    fun `invokes use case with correct parameters when updating Swipe Right`() =
         runBlockingTest {
 
             // given
-            coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
+            val action = SwipeAction.Spam
+            every { savedStateHandle.get<SwipeType>(EXTRA_SWIPE_ID) } returns SwipeType.RIGHT
+            viewModel.setAction(action)
 
             // when
             viewModel.onSaveClicked()
 
             // then
-            coVerify(exactly = 0) { updateSwipeActions(userId, swipeRight = SwipeAction.MarkRead) }
+            coVerify { updateSwipeActions(TEST_USER_ID, swipeRight = action) }
+            coVerify(exactly = 0) { updateSwipeActions(TEST_USER_ID, swipeLeft = action) }
         }
 
 }
