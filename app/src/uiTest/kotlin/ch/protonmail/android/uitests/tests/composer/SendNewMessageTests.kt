@@ -169,7 +169,6 @@ class SendNewMessageTests : BaseTest() {
     }
 
     @TestId("1484")
-    @Category(SmokeTest::class)
     @Test
     fun sendMessageFromPmMe() {
         val onePassUserPmMeAddress = onePassUser.pmMe
