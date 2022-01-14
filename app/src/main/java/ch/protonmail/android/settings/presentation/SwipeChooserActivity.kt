@@ -25,13 +25,17 @@ import android.view.MenuItem
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.activity.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.settings.data.toLocalSwipeActionUiModel
-import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.settings.data.toMailSwipeAction
+import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import me.proton.core.mailsettings.domain.entity.SwipeAction
-import ch.protonmail.android.adapters.swipe.SwipeAction as SwipeActionLocal
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import ch.protonmail.android.adapters.swipe.SwipeAction as MailSwipeAction
+import me.proton.core.mailsettings.domain.entity.SwipeAction as CoreSwipeAction
 
 // region constants
 const val EXTRA_CURRENT_ACTION = "extra.current.action"
@@ -46,7 +50,7 @@ enum class SwipeType {
 @AndroidEntryPoint
 class SwipeChooserActivity : BaseActivity() {
 
-    private val swipeActionsViewModel: SwipeActionsViewModel by viewModels()
+    private val swipeChooserViewModel: SwipeChooserViewModel by viewModels()
 
     private val swipeRadioGroup by lazy { findViewById<RadioGroup>(R.id.swipeRadioGroup) }
 
@@ -60,22 +64,20 @@ class SwipeChooserActivity : BaseActivity() {
         val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
-        if (swipeActionsViewModel.swipeId == SwipeType.LEFT) {
-            actionBar?.title = getString(R.string.settings_swipe_right_to_left)
-        } else if (swipeActionsViewModel.swipeId == SwipeType.RIGHT) {
-            actionBar?.title = getString(R.string.settings_swipe_left_to_right)
+        val titleRes = when (intent.getSerializableExtra(EXTRA_SWIPE_ID) as SwipeType) {
+            SwipeType.LEFT -> R.string.settings_swipe_right_to_left
+            SwipeType.RIGHT -> R.string.settings_swipe_left_to_right
         }
-        createActions()
-    }
+        actionBar?.title = getString(titleRes)
 
-    override fun onStart() {
-        super.onStart()
-        app.bus.register(this)
-    }
+        val currentAction = intent.getSerializableExtra(EXTRA_CURRENT_ACTION) as CoreSwipeAction
+        createActions(currentAction.toMailSwipeAction())
 
-    override fun onStop() {
-        super.onStop()
-        app.bus.unregister(this)
+        lifecycleScope.launch {
+            swipeChooserViewModel.state
+                .flowWithLifecycle(lifecycle)
+                .collect(::handleState)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -87,8 +89,7 @@ class SwipeChooserActivity : BaseActivity() {
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
             android.R.id.home -> {
-                swipeActionsViewModel.onSaveClicked()
-                saveAndFinish()
+                swipeChooserViewModel.onSaveClicked()
                 true
             }
             else -> super.onOptionsItemSelected(menuItem)
@@ -96,34 +97,50 @@ class SwipeChooserActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        swipeActionsViewModel.onSaveClicked()
-        saveAndFinish()
+        swipeChooserViewModel.onSaveClicked()
     }
 
-    private fun createActions() {
+    private fun createActions(currentAction: MailSwipeAction) {
 
         val availableActions = arrayOf(
-            getString(SwipeActionLocal.MARK_READ.actionDescription), getString(SwipeActionLocal.UPDATE_STAR.actionDescription),
-            getString(SwipeActionLocal.TRASH.actionDescription), getString(SwipeActionLocal.ARCHIVE.actionDescription),
-            getString(SwipeActionLocal.SPAM.actionDescription)
+            MailSwipeAction.MARK_READ,
+            MailSwipeAction.UPDATE_STAR,
+            MailSwipeAction.TRASH,
+            MailSwipeAction.ARCHIVE,
+            MailSwipeAction.SPAM
         )
 
         for (index in availableActions.indices) {
             val swipeAction = availableActions[index]
-            if (getString(swipeActionsViewModel.currentAction.toLocalSwipeActionUiModel().actionDescription)
-                == swipeAction
-            ) {
+            if (currentAction == swipeAction) {
                 (swipeRadioGroup.getChildAt(index) as RadioButton).isChecked = true
             }
         }
         swipeRadioGroup?.setOnCheckedChangeListener { _, _ ->
-            swipeActionsViewModel.currentAction = when (swipeRadioGroup.checkedRadioButtonId) {
-                R.id.read_unread -> SwipeAction.MarkRead
-                R.id.star_unstar -> SwipeAction.Star
-                R.id.trash -> SwipeAction.Trash
-                R.id.move_to_archive -> SwipeAction.Archive
-                R.id.move_to_spam -> SwipeAction.Spam
+            val action = when (swipeRadioGroup.checkedRadioButtonId) {
+                R.id.read_unread -> CoreSwipeAction.MarkRead
+                R.id.star_unstar -> CoreSwipeAction.Star
+                R.id.trash -> CoreSwipeAction.Trash
+                R.id.move_to_archive -> CoreSwipeAction.Archive
+                R.id.move_to_spam -> CoreSwipeAction.Spam
                 else -> throw IllegalArgumentException("Unknown button id")
+            }
+            swipeChooserViewModel.setAction(action)
+        }
+    }
+
+    private fun handleState(state: SwipeChooserViewModel.State) {
+        when (state) {
+            SwipeChooserViewModel.State.Idle -> { /* noop */ }
+            SwipeChooserViewModel.State.Saving -> showToast(R.string.settings_swipe_saving)
+            SwipeChooserViewModel.State.Success -> saveAndFinish()
+            SwipeChooserViewModel.State.OfflineError -> {
+                showToast(R.string.settings_swipe_offline_error)
+                saveAndFinish()
+            }
+            SwipeChooserViewModel.State.GenericError -> {
+                showToast(R.string.settings_swipe_generic_error)
+                saveAndFinish()
             }
         }
     }

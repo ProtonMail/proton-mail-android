@@ -23,9 +23,14 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
+import me.proton.core.network.domain.ApiException
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
+/**
+ * Returns a [UpdateSwipeActions.Result]
+ */
 class UpdateSwipeActions @Inject constructor(
     private val mailSettingsRepository: MailSettingsRepository,
     private val dispatchers: DispatcherProvider
@@ -39,12 +44,38 @@ class UpdateSwipeActions @Inject constructor(
         userId: UserId,
         swipeRight: SwipeAction? = null,
         swipeLeft: SwipeAction? = null
-    ) = withContext(dispatchers.Io) {
-        swipeRight?.let {
-            mailSettingsRepository.updateSwipeRight(userId, swipeRight)
+    ): Result = runCatching {
+        withContext(dispatchers.Io) {
+            swipeRight?.let { mailSettingsRepository.updateSwipeRight(userId, it) }
+            swipeLeft?.let { mailSettingsRepository.updateSwipeLeft(userId, it) }
         }
-        swipeLeft?.let {
-            mailSettingsRepository.updateSwipeLeft(userId, swipeLeft)
+    }.fold(
+        onSuccess = { Result.Success },
+        onFailure = ::parseError
+    )
+
+    private fun parseError(throwable: Throwable): Result =
+        if (throwable is ApiException) parseApiException(throwable)
+        else Result.Error
+
+    private fun parseApiException(exception: ApiException): Result =
+        when (exception.error) {
+            is ApiResult.Error.Connection, is ApiResult.Error.NoInternet -> Result.Offline
+            else -> Result.Error
         }
+
+    sealed class Result {
+
+        object Success : Result()
+
+        /**
+         * Currently Core doesn't allow to change MailSettings while offline
+         */
+        object Offline : Result()
+
+        /**
+         * Unknown error occurred
+         */
+        object Error : Result()
     }
 }
