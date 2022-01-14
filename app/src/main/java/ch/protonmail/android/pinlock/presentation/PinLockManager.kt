@@ -57,7 +57,7 @@ class PinLockManager(
                 @Suppress("BlockingMethodInNonBlockingContext") // This needs to be run blocking, in order to
                 //  prevent the last activity to be displayed
                 runBlocking {
-                    if (appState == AppLifecycleProvider.State.Background && shouldLock()) {
+                    if (shouldLock(activity)) {
                         launchPinLockActivity(activity)
                     }
                 }
@@ -83,8 +83,10 @@ class PinLockManager(
         lastForegroundTime = currentTimeMillis()
     }
 
-    private suspend fun shouldLock(): Boolean {
-        return if (isPinLockEnabled()) {
+    private suspend fun shouldLock(callingActivity: Activity): Boolean {
+        val wasInBackground = appState == AppLifecycleProvider.State.Background
+        val isInPinLockActivity = callingActivity is ValidatePinActivity
+        return if (wasInBackground && isInPinLockActivity.not() && isPinLockEnabled()) {
             val diff = (currentTimeMillis() - lastForegroundTime).toDuration(MILLISECONDS)
             return diff > getPinLockTimer()
         } else {
