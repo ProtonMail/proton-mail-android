@@ -36,4 +36,6 @@
     <item name="friday" type="id" />
     <item name="saturday" type="id" />
     <item name="sunday" type="id" />
+
+    <item name="menu_recycler_view" type="id" />
 </resources>

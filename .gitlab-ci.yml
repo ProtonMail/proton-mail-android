@@ -51,6 +51,18 @@ build debug:
     paths:
       - app/build/outputs/apk
 
+build uiAutomation:
+  stage: build
+  tags:
+    - large
+  script:
+    - ./gradlew assembleUiAutomationDebug
+    - ./gradlew assembleUiAutomationDebugAndroidTest
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - app/build/outputs/apk
+
 build alpha:
   stage: build
   when: 'manual'
@@ -93,7 +105,8 @@ unit tests:
 
 firebase ui tests:
   stage: test
-  when: "manual"
+  dependencies:
+    - build uiAutomation
   except:
     - schedules
   tags:
@@ -104,24 +117,27 @@ firebase ui tests:
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
     - /opt/google-cloud-sdk/install.sh --quiet
     - source /opt/google-cloud-sdk/path.bash.inc
-    - gcloud components update
+    - gcloud components install beta --quiet
+    - gcloud components update --quiet
     - echo $CLOUD_PROJECT_ID_MAIL
     - gcloud config set project $CLOUD_PROJECT_ID_MAIL
     - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
     - gcloud auth activate-service-account --key-file /tmp/service-account.json
-    - gcloud --quiet firebase test android run
-      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
-      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
-      --device model=Pixel2,version=28
+    - gcloud beta firebase test android run
+      --quiet
+      --app app/build/outputs/apk/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug.apk
+      --test app/build/outputs/apk/androidTest/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug-androidTest.apk
+      --device model=Pixel2,version=29
       --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
       --use-orchestrator
+      --environment-variables clearPackageData=true
       --num-flaky-test-attempts=1
       --timeout 45m
 
 firebase feature tests:
   stage: test
   dependencies:
-    - build debug
+    - build uiAutomation
   rules:
     - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
   tags:
@@ -135,6 +151,7 @@ firebase feature tests:
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
     - /opt/google-cloud-sdk/install.sh --quiet
     - source /opt/google-cloud-sdk/path.bash.inc
+    - gcloud components install beta --quiet
     - gcloud components update --quiet
     - echo $CLOUD_PROJECT_ID_MAIL
     - gcloud config set project $CLOUD_PROJECT_ID_MAIL --quiet
@@ -143,11 +160,12 @@ firebase feature tests:
     - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
     - gcloud beta firebase test android run
       --quiet
-      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
-      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
+      --app app/build/outputs/apk/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug.apk
+      --test app/build/outputs/apk/androidTest/uiAutomation/debug/ProtonMail-Android-${VERSION_NAME}-uiAutomation-debug-androidTest.apk
       --device model=$MODEL,version=$API_LEVEL
       --test-targets "class ch.protonmail.android.uitests.tests.$TEST_CLASS"
       --use-orchestrator
+      --environment-variables clearPackageData=true
       --num-flaky-test-attempts=1
       --timeout 45m
       --client-details testType=$TEST_TYPE,testSuite=$TEST_CLASS,commitBranch=$CI_COMMIT_BRANCH,gitlabJobUrl=$CI_JOB_URL

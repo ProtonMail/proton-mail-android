@@ -123,7 +123,15 @@ android(
             }
         }
 
+        testInstrumentationRunnerArguments += mapOf(
+            "clearPackageData" to "true"
+        )
+
         testInstrumentationRunner = "ch.protonmail.android.HiltCustomTestRunner"
+    }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     signingConfigs {
@@ -146,6 +154,10 @@ android(
         }
         register("alpha") {
             applicationId = "ch.protonmail.android"
+        }
+        register("uiAutomation") {
+            applicationId = "ch.protonmail.android"
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
     }
 

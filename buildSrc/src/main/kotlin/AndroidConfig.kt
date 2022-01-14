@@ -78,6 +78,7 @@ fun org.gradle.api.Project.android(
         getByName("main").java.srcDirs("src/main/kotlin")
         getByName("test").java.srcDirs("src/test/kotlin")
         getByName("androidTest").java.srcDirs("src/androidTest/kotlin", "src/uiTest/kotlin")
+        getByName("androidTest").assets.srcDirs("src/androidTest/assets", "src/uiTest/assets")
     }
 
     compileOptions {
