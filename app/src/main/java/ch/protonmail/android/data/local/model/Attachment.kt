@@ -208,10 +208,14 @@ data class Attachment constructor(
 
             val uri = localAttachment.uri
             val uriString = uri.toString()
-            val filePath = if (URLUtil.isNetworkUrl(uriString) || URLUtil.isDataUrl(uriString)) {
-                uriString
-            } else {
-                uri.path
+            val filePath = when {
+                URLUtil.isDataUrl(uriString) -> {
+                    uriString
+                }
+                uriString.isEmpty() -> {
+                    null
+                }
+                else -> uri.path
             }
 
             return Attachment(

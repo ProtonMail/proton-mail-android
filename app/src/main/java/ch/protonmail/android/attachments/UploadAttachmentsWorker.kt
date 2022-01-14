@@ -141,7 +141,11 @@ class UploadAttachmentsWorker @AssistedInject constructor(
         attachmentIds.forEach { attachmentId ->
             val attachment = messageDetailsRepository.findAttachmentById(attachmentId) ?: return@forEach
 
-            if (!attachment.isUploaded && (attachment.filePath == null || attachment.doesFileExist.not())) {
+            if (!attachment.isUploaded &&
+                (attachment.filePath == null || (!attachment.filePath!!.startsWith(
+                    "data"
+                ) && attachment.doesFileExist.not()))
+            ) {
                 return Result.Failure.InvalidAttachment(
                     String.format(
                         context.getString(R.string.attachment_failed_message_drafted),

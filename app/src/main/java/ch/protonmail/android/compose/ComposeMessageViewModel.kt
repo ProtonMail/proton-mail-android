@@ -65,7 +65,6 @@ import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.utils.Event
-import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.MailToData
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
@@ -424,7 +423,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     @SuppressLint("GlobalCoroutineUsage")
-    fun saveDraft(message: Message, hasConnectivity: Boolean) {
+    fun saveDraft(message: Message) {
         val uploadAttachments = _messageDataResult.uploadAttachments
 
         // This coroutine **needs** to be launched in `GlobalScope` to allow the process of saving a
@@ -514,9 +513,10 @@ class ComposeMessageViewModel @Inject constructor(
             watchForMessageSent()
         }
         _savingDraftComplete.postValue(draft)
+        _messageDataResult.attachmentList.map { it.doSaveInDB = false }
     }
 
-    private suspend fun calculateNewAttachments(message: Message, uploadAttachments: Boolean): List<String> {
+    private fun calculateNewAttachments(message: Message, uploadAttachments: Boolean): List<String> {
         var newAttachmentIds: List<String> = ArrayList()
         val listOfAttachments = ArrayList(message.attachments)
         if (uploadAttachments && listOfAttachments.isNotEmpty()) {

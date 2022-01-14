@@ -128,14 +128,14 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // Given
             val message = Message()
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised("draftId")
             // This indicates that saving draft was requested by the user
             viewModel.setUploadAttachments(true)
             coEvery { saveDraft(any()) } returns SaveDraftResult.Success("draftId")
             coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
-            viewModel.saveDraft(message, hasConnectivity = false)
+            viewModel.saveDraft(message)
 
             // Then
             val parameters = SaveDraft.SaveDraftParameters(
@@ -155,14 +155,14 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // Given
             val message = Message()
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised("draftId")
             // This indicates that saving draft was not requested by the user
             viewModel.setUploadAttachments(false)
             coEvery { saveDraft(any()) } returns SaveDraftResult.Success("draftId")
             coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
-            viewModel.saveDraft(message, hasConnectivity = false)
+            viewModel.saveDraft(message)
 
             // Then
             val parameters = SaveDraft.SaveDraftParameters(
@@ -185,12 +185,12 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val createdDraftId = "newDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = "local28348")
             val savedDraftObserver = viewModel.savingDraftComplete.testObserver()
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised(createdDraftId)
             coEvery { saveDraft(any()) } returns SaveDraftResult.Success(createdDraftId)
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns flowOf(createdDraft)
 
             // When
-            viewModel.saveDraft(message, hasConnectivity = false)
+            viewModel.saveDraft(message)
 
             coVerify { messageDetailsRepository.findMessageById(createdDraftId) }
             assertEquals(createdDraft, savedDraftObserver.observedValues[0])
@@ -204,12 +204,12 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val createdDraftId = "newDraftId"
             val localDraftId = "localDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised(createdDraftId)
             coEvery { saveDraft(any()) } returns SaveDraftResult.Success(createdDraftId)
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns flowOf(createdDraft)
 
             // When
-            viewModel.saveDraft(Message(), hasConnectivity = false)
+            viewModel.saveDraft(Message())
 
             // Then
             assertEquals(createdDraftId, viewModel.draftId)
@@ -222,14 +222,14 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // Given
             val message = Message()
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised("draftId")
             viewModel.draftId = "non-empty-draftId"
             viewModel.setUploadAttachments(true)
             coEvery { saveDraft(any()) } returns SaveDraftResult.Success("draftId")
             coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
-            viewModel.saveDraft(message, hasConnectivity = false)
+            viewModel.saveDraft(message)
 
             // Then
             val parameters = SaveDraft.SaveDraftParameters(
@@ -257,7 +257,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             every { stringResourceResolver.invoke(errorResId) } returns "Error creating draft for message %s"
 
             // When
-            viewModel.saveDraft(message, hasConnectivity = true)
+            viewModel.saveDraft(message)
 
             val expectedError = "Error creating draft for message $messageSubject"
             coVerify { stringResourceResolver.invoke(errorResId) }
@@ -278,7 +278,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             every { stringResourceResolver.invoke(errorResId) } returns "Error uploading attachments for subject "
 
             // When
-            viewModel.saveDraft(message, hasConnectivity = true)
+            viewModel.saveDraft(message)
 
             val expectedError = "Error uploading attachments for subject $messageSubject"
             coVerify { stringResourceResolver.invoke(errorResId) }
@@ -294,13 +294,13 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val updatedDraftId = "updatedDraftId"
             val updatedDraft = Message(messageId = updatedDraftId, localId = "local82347")
             val savedDraftObserver = viewModel.savingDraftComplete.testObserver()
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised(updatedDraftId)
             viewModel.draftId = "non-empty draftId triggers update draft"
             coEvery { saveDraft(any()) } returns SaveDraftResult.Success(updatedDraftId)
             coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns flowOf(updatedDraft)
 
             // When
-            viewModel.saveDraft(message, hasConnectivity = false)
+            viewModel.saveDraft(message)
 
             coVerify { messageDetailsRepository.findMessageById(updatedDraftId) }
             assertEquals(updatedDraft, savedDraftObserver.observedValues[0])
@@ -317,12 +317,11 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val messageId = "draft8237472"
             val message = Message(messageId, subject = "A subject")
             val buildMessageObserver = viewModel.buildingMessageCompleted.testObserver()
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised(messageId)
             // message was already saved once (we're updating)
-            viewModel.draftId = messageId
             every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
             coEvery { composeMessageRepository.findMessage(messageId) } returns message
-            coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
+            coEvery { composeMessageRepository.createAttachmentList(any()) } returns emptyList()
 
             // When
             viewModel.autoSaveDraft(messageBody)
@@ -344,12 +343,11 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val messageId = "draft923823"
             val message = Message(messageId, subject = "Another subject")
             viewModel.buildingMessageCompleted.testObserver()
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised(messageId)
             // message was already saved once (we're updating)
-            viewModel.draftId = messageId
             every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
             coEvery { composeMessageRepository.findMessage(messageId) } returns message
-            coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
+            coEvery { composeMessageRepository.createAttachmentList(any()) } returns emptyList()
 
             // When
             viewModel.autoSaveDraft(messageBody)
@@ -372,15 +370,14 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val message = Message(addressID = "changedSenderAddress")
             val updatedDraftId = "updatedDraftId"
             val updatedDraft = Message(messageId = updatedDraftId, localId = "local82347")
-            givenViewModelPropertiesAreInitialised()
+            givenViewModelPropertiesAreInitialised("non-empty draftId triggers update draft")
             // This value was set to empty during initial draft creation
             viewModel.oldSenderAddressId = ""
-            viewModel.draftId = "non-empty draftId triggers update draft"
             coEvery { saveDraft(any()) } returns SaveDraftResult.Success(updatedDraftId)
             coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns flowOf(updatedDraft)
 
             // When
-            viewModel.saveDraft(message, hasConnectivity = false)
+            viewModel.saveDraft(message)
 
             // Then
             coVerify { messageDetailsRepository.findMessageById(updatedDraftId) }
@@ -388,8 +385,9 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         }
     }
 
-    private fun givenViewModelPropertiesAreInitialised() {
+    private fun givenViewModelPropertiesAreInitialised(draftId: String = "") {
         // Needed to set class fields to the right value and allow code under test to get executed
+        viewModel.draftId = draftId
         viewModel.prepareMessageData(false, "addressId", "mail-alias")
         viewModel.setupComposingNewMessage(Constants.MessageActionType.FORWARD, "parentId823", "")
         viewModel.oldSenderAddressId = "previousSenderAddressId"

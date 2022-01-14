@@ -30,7 +30,6 @@ import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
-import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_DELETED
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_IS_STARRED

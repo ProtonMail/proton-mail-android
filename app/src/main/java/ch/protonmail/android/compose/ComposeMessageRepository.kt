@@ -134,9 +134,9 @@ class ComposeMessageRepository @Inject constructor(
         jobManager.addJobInBackground(FetchMessageDetailJob(messageId, labelRepository))
     }
 
-    suspend fun createAttachmentList(
+    fun createAttachmentList(
         attachmentList: List<LocalAttachment>,
-    ) = Attachment.createAttachmentList(messageDao, attachmentList, false)
+    ) = Attachment.createAttachmentList(messageDao, attachmentList.filter { it.doSaveInDB }, false)
 
     fun prepareMessageData(
         currentObject: MessageBuilderData,

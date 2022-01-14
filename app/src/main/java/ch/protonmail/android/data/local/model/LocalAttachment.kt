@@ -22,8 +22,6 @@ import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.Base64
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.ProtonMailApplication
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 class LocalAttachment @JvmOverloads constructor(
@@ -37,7 +35,8 @@ class LocalAttachment @JvmOverloads constructor(
     var isUploading: Boolean = false,
     val keyPackets: String? = null,
     val headers: AttachmentHeaders? = null,
-    val isUploaded: Boolean = false
+    val isUploaded: Boolean = false,
+    var doSaveInDB: Boolean = true
 ) : Parcelable {
 
     override fun describeContents() = 0
@@ -54,11 +53,12 @@ class LocalAttachment @JvmOverloads constructor(
         dest.writeString(keyPackets)
         dest.writeString(headers?.toString() ?: "")
         dest.writeInt(if (isUploaded) 1 else 0)
+        dest.writeInt(if (doSaveInDB) 1 else 0)
     }
 
     companion object {
 
-        fun fromAttachment(api: ProtonMailApiManager, attachment: Attachment): LocalAttachment {
+        private fun fromAttachment(attachment: Attachment): LocalAttachment {
             val uriToParse = if (attachment.isPGPAttachment) {
                 val encodedMimeData = Base64.encodeToString(
                     attachment.mimeData,
@@ -66,7 +66,7 @@ class LocalAttachment @JvmOverloads constructor(
                 )
                 "data:application/octet-stream;base64,$encodedMimeData"
             } else {
-                api.getAttachmentUrl(attachment.attachmentId!!)
+                ""
             }
 
             return LocalAttachment(
@@ -83,10 +83,6 @@ class LocalAttachment @JvmOverloads constructor(
                 isUploaded = attachment.isUploaded
             )
         }
-
-        @Deprecated("Use with ApiManager", ReplaceWith("fromAttachment(api, attachment)"))
-        fun fromAttachment(attachment: Attachment): LocalAttachment =
-            fromAttachment(ProtonMailApplication.getApplication().api, attachment)
 
         fun createLocalAttachmentList(attachmentList: List<Attachment>): List<LocalAttachment> =
             attachmentList.map(Companion::fromAttachment)
@@ -108,6 +104,7 @@ class LocalAttachment @JvmOverloads constructor(
                     if (serializedHeaders.isEmpty()) null
                     else AttachmentHeaders.fromString(serializedHeaders)
                 val isUploaded = parcel.readInt() == 1
+                val doSaveInDB = parcel.readInt() == 1
 
                 return LocalAttachment(
                     uri,
@@ -120,7 +117,8 @@ class LocalAttachment @JvmOverloads constructor(
                     isUploading,
                     keyPackets,
                     headers,
-                    isUploaded
+                    isUploaded,
+                    doSaveInDB
                 )
             }
 

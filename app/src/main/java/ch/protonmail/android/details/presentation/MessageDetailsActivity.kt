@@ -864,6 +864,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 }
                 val attachments = editIntentExtras.attachments
                 if (attachments.size > 0) {
+                    if (!editIntentExtras.isPGPMime) {
+                        attachments.map { it.doSaveInDB = false }
+                    }
                     intent.putParcelableArrayListExtra(
                         ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
                         attachments
