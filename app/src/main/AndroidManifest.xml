@@ -86,6 +86,10 @@
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
+
+            <meta-data
+                android:name="ch.protonmail.android.pinlock.presentation.PinLockManagerInitializer"
+                android:value="androidx.startup" />
         </provider>
 
         <provider

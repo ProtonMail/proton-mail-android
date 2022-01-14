@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities;
 
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
 import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
 import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
@@ -262,7 +261,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
         if (shouldLock && (secureContent() || user != null && user.isPreventTakingScreenshots())) {
-            enableScreenshotProtector();
+            // enableScreenshotProtector();
         }
         app.setAppInBackground(false);
         networkConfigurator.setNetworkConfiguratorCallback(this);
@@ -326,9 +325,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         }
         if (shouldLock) {
             Intent validatePinIntent = new Intent(this, ValidatePinActivity.class);
-            validatePinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title);
             Intent pinIntent = AppUtil.decorInAppIntent(validatePinIntent);
-            startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN);
+            // startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN);
 
         } else {
             this.shouldLock = false;
