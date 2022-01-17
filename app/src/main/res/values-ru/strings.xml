@@ -938,7 +938,7 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Предел объёма локального хранилища</string>
-    <string name="storage_value">%1$d МБ (%2$.2f МБ используется)</string>
+    <string name="settings_storage_limit_mb_value">%1$d МБ (%2$.2f МБ используется)</string>
     <!-- endregion -->
     <string name="app_settings">Настройки приложения</string>
     <!-- region App Settings -->

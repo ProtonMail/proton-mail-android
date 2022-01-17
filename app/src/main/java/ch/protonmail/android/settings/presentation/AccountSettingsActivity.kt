@@ -25,6 +25,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.UNLIMITED_ATTACHMENT_STORAGE
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.utils.UiUtil
@@ -119,10 +120,19 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         lifecycleScope.launch {
             val attachmentSizeUsedBytes = attachmentMetadataDao.getAllAttachmentsSizeUsed().first() ?: 0
             val attachmentSizeUsed = attachmentSizeUsedBytes.toFloat() / Constants.BYTE_TO_MEGABYTE_RATIO
-            setValue(
-                SettingsEnum.LOCAL_STORAGE_LIMIT,
-                String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed)
-            )
+            val storageValueString = if (mAttachmentStorageValue == UNLIMITED_ATTACHMENT_STORAGE) {
+                String.format(
+                    getString(R.string.settings_storage_limit_unlimited_value),
+                    attachmentSizeUsed
+                )
+            } else {
+                String.format(
+                    getString(R.string.settings_storage_limit_mb_value),
+                    mAttachmentStorageValue,
+                    attachmentSizeUsed
+                )
+            }
+            setValue(SettingsEnum.LOCAL_STORAGE_LIMIT, storageValueString)
         }
 
         accountSettingsActivityViewModel.getRecoveryEmail()

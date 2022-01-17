@@ -936,7 +936,7 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Limit rozmiaru magazynu lokalnego</string>
-    <string name="storage_value">%1$d MB (używasz %2$.2f MB)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (używasz %2$.2f MB)</string>
     <!-- endregion -->
     <string name="app_settings">Ustawienia aplikacji</string>
     <!-- region App Settings -->

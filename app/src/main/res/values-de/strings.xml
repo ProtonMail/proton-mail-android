@@ -894,7 +894,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Lokale Speicherbegrenzung</string>
-    <string name="storage_value">%1$d MB (%2$.2f MB verwendet)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB verwendet)</string>
     <!-- endregion -->
     <string name="app_settings">App-Einstellungen</string>
     <!-- region App Settings -->

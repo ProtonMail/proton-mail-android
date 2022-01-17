@@ -904,7 +904,7 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Limite de stockage local</string>
-    <string name="storage_value">%1$d Mo (%2$.2f Mo utilisés)</string>
+    <string name="settings_storage_limit_mb_value">%1$d Mo (%2$.2f Mo utilisés)</string>
     <!-- endregion -->
     <string name="app_settings">Paramètres de l\'application</string>
     <!-- region App Settings -->
