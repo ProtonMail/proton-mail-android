@@ -155,7 +155,7 @@
     <string name="sent_option">送信済</string>
     <string name="archive_option">アーカイブ</string>
     <string name="trash_option">ごみ箱</string>
-    <string name="spam_option">スパム</string>
+    <string name="spam_option">迷惑メール</string>
     <string name="allmail_option">全メール</string>
     <string name="inbox">受信箱</string>
     <string name="starred">星付き</string>
@@ -960,14 +960,14 @@
     <string name="unstar">星印をはずす</string>
     <string name="star_unstar">星印を 付ける/外す</string>
     <string name="send_to_archive">アーカイブに送る</string>
-    <string name="label_as">…としてラベル付け</string>
+    <string name="label_as">ラベルを付ける</string>
     <string name="mark_as_unread">未読にする</string>
     <string name="mark_as_read">既読にする</string>
     <string name="mark_as_read_unread">既読/未読にする</string>
     <string name="move_message">メールを移動</string>
     <string name="manage">管理</string>
     <string name="message_from">\"%s\"からのメッセージ</string>
-    <string name="not_spam_move_to_inbox">迷惑メールではありません (受信箱に移動)</string>
+    <string name="not_spam_move_to_inbox">迷惑メールではない (受信箱に移動)</string>
     <plurals name="x_messages_count">
         <item quantity="other">%d 件のメッセージ</item>
     </plurals>

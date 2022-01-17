@@ -863,7 +863,7 @@
     <string name="swipe_action_spam">已标为垃圾邮件</string>
     <string name="swipe_action_spam_short">垃圾邮件</string>
     <string name="swipe_action_archive">邮件已存档</string>
-    <string name="swipe_action_archive_short">归档</string>
+    <string name="swipe_action_archive_short">存档</string>
     <string name="swipe_action_mark_read">邮件已标为已读</string>
     <string name="swipe_action_mark_read_short">已读</string>
     <plurals name="action_move_to_trash">

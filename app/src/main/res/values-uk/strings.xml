@@ -386,7 +386,7 @@
     <string name="delinquency_subtitle">Доступ до цього облікового запису призупинено через несплату. Будь ласка, увійдіть в систему, використовуючи protonmail.com, щоб оплатити рахунок.</string>
     <string name="direct_disabled_subtitle">Мобільні реєстрації тимчасово вимкнені. Будь ласка, повторіть спробу пізніше або спробуйте зареєструватися на <a href="https://protonmail.com">protonmail.com</a> за допомогою настільного комп\'ютера або ноутбука.</string>
     <string name="downloading">Завантаження...</string>
-    <string name="cant_download_attachment">Не вдається звантажити вкладення</string>
+    <string name="cant_download_attachment">Неможливо завантажити вкладення</string>
     <string-array name="auto_logout_options_array">
         <item>Негайно</item>
         <item>5 хв бездіяльності</item>
@@ -577,7 +577,7 @@
     <string name="error_message_exp_date_past">Помилка: Недійсний термін дії</string>
     <string name="error_message_card_number_invalid">Помилка: Недійсний номер картки</string>
     <string name="print_error">Помилка друку</string>
-    <string name="download_complete">Звантаження завершено</string>
+    <string name="download_complete">Завантаження завершено</string>
     <string name="download_in_progress">Триває завантаження</string>
     <string name="message_expires_in">Термін дії цього повідомлення завершується через %s</string>
     <string name="unsaved_changes_title">Незбережені зміни</string>
@@ -590,7 +590,7 @@
     <string name="folder_add_new">Додати нову теку</string>
     <string name="folder_name">Назва теки</string>
     <string name="available_folders">Доступні теки</string>
-    <string name="choose_folder_color">Виберіть колір теки</string>
+    <string name="choose_folder_color">Оберіть колір для теки</string>
     <string name="folder_created">Теку створено</string>
     <string name="folder_invalid">Теку не додано через некоректну назву.</string>
     <string name="folder_deleted">Теку видалено</string>
@@ -718,7 +718,7 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Додати фото</string>
-    <string name="contact_display_name">Ім\'я</string>
+    <string name="contact_display_name">Ім\'я, яке відображається</string>
     <string name="add_new_email">Додати адресу е-пошти</string>
     <string name="no_groups">Немає груп</string>
     <string name="contact_vcard_note">Нотатка</string>
@@ -726,7 +726,7 @@
     <string name="create_contact_group">Створити групу контактів</string>
     <string name="edit_contact_group">Редагувати групу контактів</string>
     <string name="contact_groups_manage_members">Керувати учасниками</string>
-    <string name="contact_group_display_name">Ім\'я</string>
+    <string name="contact_group_display_name">Ім\'я, яке відображається</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Додати адресу до груп</string>
     <string name="title_activity_address_chooser">Керувати учасниками</string>
@@ -834,8 +834,8 @@
     <string name="default_mail_address">Типова електронна адреса</string>
     <string name="default_address">Типова адреса</string>
     <string name="display_name_n_signature">Ім\'я та підпис</string>
-    <string name="display_name">Показуване ім\'я</string>
-    <string name="edit_display_name">Редагувати ім\'я</string>
+    <string name="display_name">Ім\'я</string>
+    <string name="edit_display_name">Редагувати ім\'я, яке відображається</string>
     <string name="signature">Підпис</string>
     <string name="mobile_footer">Підпис мобільного клієнта</string>
     <string name="edit_mobile_footer">Увімкнути підпис мобільного клієнта</string>
@@ -934,8 +934,8 @@
     <plurals name="action_move_to_archive">
         <item quantity="one">Повідомлення заархівовано</item>
         <item quantity="few">Повідомлення заархівовані</item>
-        <item quantity="many">Повідомлення заархівовані</item>
-        <item quantity="other">Повідомлення заархівовані</item>
+        <item quantity="many">Повідомлень заархівовані</item>
+        <item quantity="other">Повідомлень заархівовані</item>
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Обмеження локального сховища</string>
@@ -1017,7 +1017,7 @@
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="error_loading_conversations">Помилка завантаження розмов. Спробуйте знову</string>
-    <string name="star">Зірочка</string>
+    <string name="star">Позначити зірочкою</string>
     <string name="unstar">Прибрати зірочку</string>
     <string name="star_unstar">Позначити/Прибрати зірочку</string>
     <string name="send_to_archive">Надіслати до архіву?</string>
