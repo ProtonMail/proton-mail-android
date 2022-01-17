@@ -133,6 +133,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
+            currentLocation.messageLocationTypeValue.toString(),
             labelsSheetType,
             ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
         )
@@ -151,7 +152,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         } returns ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
 
         // when
-        viewModel.showLabelsManager(messageIds, currentLocation)
+        viewModel.showLabelsManager(messageIds, currentLocation, currentLocation.messageLocationTypeValue.toString())
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
@@ -170,6 +171,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
+            currentLocation.messageLocationTypeValue.toString(),
             labelsSheetType,
             ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
@@ -188,7 +190,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
         // when
-        viewModel.showLabelsManager(messageIds, currentLocation, LabelType.FOLDER)
+        viewModel.showLabelsManager(
+            messageIds, currentLocation, currentLocation.messageLocationTypeValue.toString(), LabelType.FOLDER
+        )
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
@@ -613,11 +617,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.TRASH
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = true,
             showMoveToTrashAction = false,
@@ -634,11 +641,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.SENT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = false,
             showMoveToTrashAction = true,
@@ -655,11 +665,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.INBOX
         val actionsTarget = ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = true,
             showMoveToTrashAction = true,
@@ -676,11 +689,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.ARCHIVE
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = true,
             showMoveToTrashAction = true,
@@ -697,11 +713,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.TRASH
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = true,
             showMoveToTrashAction = false,
@@ -718,11 +737,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.LABEL
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = false,
             showMoveToTrashAction = true,
@@ -739,11 +761,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.SPAM
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = true,
             showMoveToTrashAction = true,
@@ -760,11 +785,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.INBOX
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = false,
             showMoveToTrashAction = true,
@@ -781,11 +809,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.DRAFT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = false,
             showMoveToTrashAction = true,
@@ -802,11 +833,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.DRAFT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = false,
             showMoveToTrashAction = true,
@@ -823,11 +857,14 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.ARCHIVE
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-        viewModel.setupViewState(messageIds, currentFolder, actionsTarget)
+        viewModel.setupViewState(
+            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+        )
 
         val expected = MessageActionSheetState.MoveSectionState(
             messageIds,
             currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
             actionsTarget = actionsTarget,
             showMoveToInboxAction = true,
             showMoveToTrashAction = true,

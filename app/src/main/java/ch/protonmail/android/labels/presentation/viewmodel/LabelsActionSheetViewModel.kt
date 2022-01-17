@@ -34,6 +34,7 @@ import ch.protonmail.android.labels.presentation.mapper.LabelDomainActionItemUiM
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet.Companion.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
@@ -83,8 +84,11 @@ internal class LabelsActionSheetViewModel @Inject constructor(
 
     private val currentMessageFolder =
         Constants.MessageLocationType.fromInt(
-            savedStateHandle.get<Int>(LabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
+            savedStateHandle.get<Int>(LabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION) ?: 0
         )
+
+    private val currentLocationId = savedStateHandle.get<String>(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
+        ?: currentMessageFolder.messageLocationTypeValue.toString()
 
     private val messageIds = savedStateHandle.get<List<String>>(LabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
         ?: emptyList()
@@ -242,11 +246,19 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                         )
                     }
                 }
+
+                actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved(
+                    areMailboxItemsMovedFromLocation = when (currentMessageFolder) {
+                        Constants.MessageLocationType.LABEL -> LabelId(currentLocationId) !in selectedLabels
+                        Constants.MessageLocationType.ARCHIVE,
+                        Constants.MessageLocationType.STARRED,
+                        Constants.MessageLocationType.ALL_MAIL -> false
+                        else -> shallMoveToArchive
+                    }
+                )
             }.invokeOnCompletion { cancellationException ->
                 if (cancellationException != null) {
                     actionsResultMutableFlow.value = ManageLabelActionResult.ErrorUpdatingLabels
-                } else {
-                    actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
                 }
             }
         } else {
@@ -278,7 +290,14 @@ internal class LabelsActionSheetViewModel @Inject constructor(
             } else {
                 val dismissBackingActivity = !isApplyingActionToMsgWithinConversation()
                 actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved(
-                    dismissBackingActivity
+                    dismissBackingActivity,
+                    areMailboxItemsMovedFromLocation = when (currentMessageFolder) {
+                        Constants.MessageLocationType.LABEL,
+                        Constants.MessageLocationType.STARRED
+                        -> selectedFolderId == Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+                        Constants.MessageLocationType.ALL_MAIL -> false
+                        else -> selectedFolderId != currentLocationId
+                    }
                 )
             }
         }

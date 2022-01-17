@@ -32,6 +32,7 @@ sealed class MessageActionSheetState {
     data class MoveSectionState(
         val mailboxItemIds: List<String>,
         val messageLocation: Constants.MessageLocationType,
+        val currentLocationId: String,
         val actionsTarget: ActionSheetTarget,
         val showMoveToInboxAction: Boolean,
         val showMoveToTrashAction: Boolean,

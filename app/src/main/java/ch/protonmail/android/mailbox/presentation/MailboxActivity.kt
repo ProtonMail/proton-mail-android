@@ -1128,7 +1128,8 @@ internal class MailboxActivity :
     private fun showFoldersManager(messageIds: List<String>) {
         LabelsActionSheet.newInstance(
             messageIds = messageIds,
-            currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            currentFolderLocation = currentMailboxLocation.messageLocationTypeValue,
+            currentLocationId = mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString(),
             labelType = LabelType.FOLDER,
             actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
@@ -1138,7 +1139,8 @@ internal class MailboxActivity :
     private fun showLabelsManager(messageIds: List<String>) {
         LabelsActionSheet.newInstance(
             messageIds = messageIds,
-            currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            currentFolderLocation = currentMailboxLocation.messageLocationTypeValue,
+            currentLocationId = mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString(),
             actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)

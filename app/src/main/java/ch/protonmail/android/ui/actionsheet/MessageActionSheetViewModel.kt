@@ -75,21 +75,24 @@ internal class MessageActionSheetViewModel @Inject constructor(
     fun setupViewState(
         messageIds: List<String>,
         messageLocation: Constants.MessageLocationType,
+        mailboxLocationId: String,
         actionsTarget: ActionSheetTarget
     ) {
-        val moveSectionState = computeMoveSectionState(actionsTarget, messageLocation, messageIds)
+        val moveSectionState = computeMoveSectionState(actionsTarget, messageLocation, mailboxLocationId, messageIds)
         mutableStateFlow.value = MessageActionSheetState.Data(moveSectionState)
     }
 
     fun showLabelsManager(
         messageIds: List<String>,
         currentLocation: Constants.MessageLocationType,
+        currentLocationId: String,
         labelsSheetType: LabelType = LabelType.MESSAGE_LABEL
     ) {
         viewModelScope.launch {
             val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(
                 messageIds,
                 currentLocation.messageLocationTypeValue,
+                currentLocationId,
                 labelsSheetType,
                 getActionsTargetInputArg()
             )
@@ -416,6 +419,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private fun computeMoveSectionState(
         actionsTarget: ActionSheetTarget,
         messageLocation: Constants.MessageLocationType,
+        mailboxLocationId: String,
         messageIds: List<String>
     ): MessageActionSheetState.MoveSectionState {
         val isMoveToInboxVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
@@ -460,6 +464,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
         val moveSectionState = MessageActionSheetState.MoveSectionState(
             messageIds,
             messageLocation,
+            mailboxLocationId,
             actionsTarget,
             isMoveToInboxVisible,
             isMoveToTrashVisible,

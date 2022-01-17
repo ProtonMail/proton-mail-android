@@ -89,7 +89,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             .onEach { updateViewState(it, binding) }
             .launchIn(lifecycleScope)
 
-        viewModel.setupViewState(messageIds, messageLocation, actionsTarget)
+        viewModel.setupViewState(messageIds, messageLocation, mailboxLabelId, actionsTarget)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupReplyActionsBindings(
@@ -276,7 +276,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 )
             }
             textViewDetailsActionsLabelAs.setOnClickListener {
-                viewModel.showLabelsManager(messageIds, messageLocation)
+                viewModel.showLabelsManager(messageIds, messageLocation, mailboxLabelId)
                 dismiss()
             }
         }
@@ -288,6 +288,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     ) {
         val messageIds = state.mailboxItemIds
         val currentLocation = state.messageLocation
+        val currentLocationId = state.currentLocationId
 
         binding.textViewDetailsActionsMoveToInbox.apply {
             isVisible = state.showMoveToInboxAction
@@ -338,7 +339,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         }
 
         binding.textViewDetailsActionsMoveTo.setOnClickListener {
-            viewModel.showLabelsManager(messageIds, currentLocation, LabelType.FOLDER)
+            viewModel.showLabelsManager(messageIds, currentLocation, currentLocationId, LabelType.FOLDER)
             dismiss()
         }
     }
@@ -395,7 +396,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ShowLabelsManager -> showManageLabelsActionSheet(
                 sheetAction.messageIds,
                 sheetAction.labelActionSheetType,
-                sheetAction.currentFolderLocationId,
+                sheetAction.currentFolderLocation,
+                sheetAction.currentLocationId,
                 sheetAction.actionSheetTarget
             )
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
@@ -427,12 +429,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private fun showManageLabelsActionSheet(
         messageIds: List<String>,
         labelType: LabelType,
-        currentFolderLocationId: Int,
+        currentFolderLocation: Int,
+        currentLocationId: String,
         actionSheetTarget: ActionSheetTarget
     ) {
         LabelsActionSheet.newInstance(
             messageIds,
-            currentFolderLocationId,
+            currentFolderLocation,
+            currentLocationId,
             labelType,
             actionSheetTarget
         )
