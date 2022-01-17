@@ -22,9 +22,8 @@ package ch.protonmail.android.pinlock.presentation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import ch.protonmail.android.pinlock.domain.usecase.ShouldShowPinLockScreen
 import ch.protonmail.android.settings.pin.ValidatePinActivity
@@ -39,7 +38,7 @@ class PinLockManager(
     private val context: Context,
     private val getElapsedRealTimeMillis: GetElapsedRealTimeMillis,
     private val shouldShowPinLockScreen: ShouldShowPinLockScreen
-) : LifecycleObserver {
+) : DefaultLifecycleObserver {
 
     private var appState: AppLifecycleProvider.State = AppLifecycleProvider.State.Background
     private var lastForegroundTime: Long = 0
@@ -68,17 +67,15 @@ class PinLockManager(
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    @Suppress("unused") // Called by LifecycleObserver
-    fun onEnterForeground() {
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
         Timber.v("App Foreground")
 
         appState = AppLifecycleProvider.State.Foreground
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    @Suppress("unused") // Called by LifecycleObserver
-    fun onEnterBackground() {
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
         Timber.v("App Background")
 
         appState = AppLifecycleProvider.State.Background
