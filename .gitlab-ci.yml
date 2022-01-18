@@ -56,8 +56,8 @@ build uiAutomation:
   tags:
     - large
   script:
-    - ./gradlew assembleUiAutomationDebug
-    - ./gradlew assembleUiAutomationDebugAndroidTest
+    - ./gradlew assembleUiAutomationDebug -PtestEnv=live
+    - ./gradlew assembleUiAutomationDebugAndroidTest -PtestEnv=live
   artifacts:
     expire_in: 1 week
     paths:
