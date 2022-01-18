@@ -75,21 +75,24 @@ internal class MessageActionSheetViewModel @Inject constructor(
     fun setupViewState(
         messageIds: List<String>,
         messageLocation: Constants.MessageLocationType,
+        mailboxLocationId: String,
         actionsTarget: ActionSheetTarget
     ) {
-        val moveSectionState = computeMoveSectionState(actionsTarget, messageLocation, messageIds)
+        val moveSectionState = computeMoveSectionState(actionsTarget, messageLocation, mailboxLocationId, messageIds)
         mutableStateFlow.value = MessageActionSheetState.Data(moveSectionState)
     }
 
     fun showLabelsManager(
         messageIds: List<String>,
         currentLocation: Constants.MessageLocationType,
+        currentLocationId: String,
         labelsSheetType: LabelType = LabelType.MESSAGE_LABEL
     ) {
         viewModelScope.launch {
             val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(
                 messageIds,
                 currentLocation.messageLocationTypeValue,
+                currentLocationId,
                 labelsSheetType,
                 getActionsTargetInputArg()
             )
@@ -128,7 +131,10 @@ internal class MessageActionSheetViewModel @Inject constructor(
             }
         }.invokeOnCompletion {
             val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                dismissBackingActivity,
+                areMailboxItemsMovedFromLocation = true
+            )
         }
     }
 
@@ -190,11 +196,11 @@ internal class MessageActionSheetViewModel @Inject constructor(
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
                 actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
-                    starredStatus = true, isSuccessful = false
+                    starredStatus = true, isSuccessful = false, areMailboxItemsMovedFromLocation = false
                 )
             } else {
                 actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
-                    starredStatus = true, isSuccessful = true
+                    starredStatus = true, isSuccessful = true, areMailboxItemsMovedFromLocation = false
                 )
             }
         }
@@ -230,13 +236,14 @@ internal class MessageActionSheetViewModel @Inject constructor(
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
                 actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
-                    starredStatus = false, isSuccessful = false
+                    starredStatus = false, isSuccessful = false, areMailboxItemsMovedFromLocation = false
                 )
             } else {
                 actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
-                    starredStatus = false, isSuccessful = true
+                    starredStatus = false,
+                    isSuccessful = true,
+                    areMailboxItemsMovedFromLocation = location == Constants.MessageLocationType.STARRED
                 )
-
             }
         }
     }
@@ -275,7 +282,10 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
             } else {
                 val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                    shallDismissBackingActivity = dismissBackingActivity,
+                    areMailboxItemsMovedFromLocation = false
+                )
             }
         }
     }
@@ -314,7 +324,10 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
             } else {
                 val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                    shallDismissBackingActivity = dismissBackingActivity,
+                    areMailboxItemsMovedFromLocation = false
+                )
             }
         }
     }
@@ -361,7 +374,16 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
             } else {
                 val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                    dismissBackingActivity,
+                    areMailboxItemsMovedFromLocation = when (currentFolder) {
+                        Constants.MessageLocationType.LABEL,
+                        Constants.MessageLocationType.STARRED
+                        -> newFolderLocationId == Constants.MessageLocationType.TRASH
+                        Constants.MessageLocationType.ALL_MAIL -> false
+                        else -> newFolderLocationId != currentFolder
+                    }
+                )
             }
         }
     }
@@ -397,6 +419,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private fun computeMoveSectionState(
         actionsTarget: ActionSheetTarget,
         messageLocation: Constants.MessageLocationType,
+        mailboxLocationId: String,
         messageIds: List<String>
     ): MessageActionSheetState.MoveSectionState {
         val isMoveToInboxVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
@@ -441,6 +464,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
         val moveSectionState = MessageActionSheetState.MoveSectionState(
             messageIds,
             messageLocation,
+            mailboxLocationId,
             actionsTarget,
             isMoveToInboxVisible,
             isMoveToTrashVisible,

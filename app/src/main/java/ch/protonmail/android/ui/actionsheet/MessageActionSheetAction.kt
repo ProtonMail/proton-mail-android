@@ -30,7 +30,8 @@ sealed class MessageActionSheetAction {
     object Default : MessageActionSheetAction()
     data class ShowLabelsManager(
         val messageIds: List<String>,
-        val currentFolderLocationId: Int,
+        val currentFolderLocation: Int,
+        val currentLocationId: String,
         val labelActionSheetType: LabelType = LabelType.MESSAGE_LABEL,
         val actionSheetTarget: ActionSheetTarget
     ) : MessageActionSheetAction()
@@ -39,10 +40,14 @@ sealed class MessageActionSheetAction {
 
     data class ChangeStarredStatus(
         val starredStatus: Boolean,
-        val isSuccessful: Boolean
+        val isSuccessful: Boolean,
+        val areMailboxItemsMovedFromLocation: Boolean
     ) : MessageActionSheetAction()
 
-    data class DismissActionSheet(val shallDismissBackingActivity: Boolean) : MessageActionSheetAction()
+    data class DismissActionSheet(
+        val shallDismissBackingActivity: Boolean,
+        val areMailboxItemsMovedFromLocation: Boolean
+    ) : MessageActionSheetAction()
 
     object CouldNotCompleteActionError : MessageActionSheetAction()
 }

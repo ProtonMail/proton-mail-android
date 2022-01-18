@@ -21,8 +21,11 @@ package ch.protonmail.android.labels.domain.model
 
 sealed class ManageLabelActionResult {
     object Default : ManageLabelActionResult()
-    object LabelsSuccessfullySaved : ManageLabelActionResult()
-    data class MessageSuccessfullyMoved(val shouldDismissBackingActivity: Boolean) : ManageLabelActionResult()
+    data class LabelsSuccessfullySaved(val areMailboxItemsMovedFromLocation: Boolean) : ManageLabelActionResult()
+    data class MessageSuccessfullyMoved(
+        val shouldDismissBackingActivity: Boolean,
+        val areMailboxItemsMovedFromLocation: Boolean
+    ) : ManageLabelActionResult()
     object ErrorUpdatingLabels : ManageLabelActionResult()
     object ErrorMovingToFolder : ManageLabelActionResult()
     data class ErrorLabelsThresholdReached(val maxAllowedCount: Int) : ManageLabelActionResult()

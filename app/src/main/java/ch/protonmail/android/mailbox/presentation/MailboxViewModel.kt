@@ -77,6 +77,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -148,6 +149,7 @@ internal class MailboxViewModel @Inject constructor(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+    private val _exitSelectionModeSharedFlow = MutableSharedFlow<Boolean>()
 
     private val messageDetailsRepository: MessageDetailsRepository
         get() = messageDetailsRepositoryFactory.create(userManager.requireCurrentUserId())
@@ -174,6 +176,9 @@ internal class MailboxViewModel @Inject constructor(
 
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = _hasSuccessfullyDeletedMessages
+
+    val exitSelectionModeSharedFlow: SharedFlow<Boolean>
+        get() = _exitSelectionModeSharedFlow
 
     val mailboxState = mutableMailboxState.asStateFlow()
     val mailboxLocation = mutableMailboxLocation.asStateFlow()
@@ -701,6 +706,12 @@ internal class MailboxViewModel @Inject constructor(
 
     fun refreshMessages() {
         mutableRefreshFlow.tryEmit(true)
+    }
+
+    fun exitSelectionMode(areMailboxItemsMovedFromLocation: Boolean) {
+        viewModelScope.launch {
+            _exitSelectionModeSharedFlow.emit(areMailboxItemsMovedFromLocation)
+        }
     }
 
     fun handleConversationSwipe(

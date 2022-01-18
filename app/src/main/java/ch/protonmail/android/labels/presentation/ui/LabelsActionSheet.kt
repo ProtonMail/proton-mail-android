@@ -27,6 +27,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +38,7 @@ import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
+import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
@@ -53,6 +55,7 @@ import timber.log.Timber
 class LabelsActionSheet : BottomSheetDialogFragment() {
 
     private val viewModel: LabelsActionSheetViewModel by viewModels()
+    private val mailboxViewModel: MailboxViewModel by activityViewModels()
 
     private var _binding: FragmentLabelsActionSheetBinding? = null
     private val binding get() = requireNotNull(_binding)
@@ -136,9 +139,14 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     private fun processActionResult(result: ManageLabelActionResult) {
         Timber.v("Result received $result")
         when (result) {
-            is ManageLabelActionResult.LabelsSuccessfullySaved -> dismiss()
-            is ManageLabelActionResult.MessageSuccessfullyMoved ->
+            is ManageLabelActionResult.LabelsSuccessfullySaved -> {
+                mailboxViewModel.exitSelectionMode(result.areMailboxItemsMovedFromLocation)
+                dismiss()
+            }
+            is ManageLabelActionResult.MessageSuccessfullyMoved -> {
+                mailboxViewModel.exitSelectionMode(result.areMailboxItemsMovedFromLocation)
                 handleDismissBehavior(result.shouldDismissBackingActivity)
+            }
             is ManageLabelActionResult.ErrorLabelsThresholdReached ->
                 showApplicableLabelsThresholdError(result.maxAllowedCount)
             is ManageLabelActionResult.ErrorUpdatingLabels ->
@@ -185,12 +193,14 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
 
         const val EXTRA_ARG_MESSAGES_IDS = "extra_arg_messages_ids"
         const val EXTRA_ARG_ACTION_SHEET_TYPE = "extra_arg_action_sheet_type"
+        const val EXTRA_ARG_CURRENT_FOLDER_LOCATION = "extra_arg_current_folder_location"
         const val EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID = "extra_arg_current_folder_location_id"
         const val EXTRA_ARG_ACTION_TARGET = "extra_arg_labels_action_sheet_actions_target"
 
         fun newInstance(
             messageIds: List<String>,
-            currentFolderLocationId: Int,
+            currentFolderLocation: Int,
+            currentLocationId: String,
             labelType: LabelType = LabelType.MESSAGE_LABEL,
             actionSheetTarget: ActionSheetTarget
         ): LabelsActionSheet {
@@ -199,11 +209,11 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
                 arguments = bundleOf(
                     EXTRA_ARG_MESSAGES_IDS to messageIds,
                     EXTRA_ARG_ACTION_SHEET_TYPE to labelType,
-                    EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId,
+                    EXTRA_ARG_CURRENT_FOLDER_LOCATION to currentFolderLocation,
+                    EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentLocationId,
                     EXTRA_ARG_ACTION_TARGET to actionSheetTarget
                 )
             }
         }
     }
-
 }

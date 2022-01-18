@@ -352,6 +352,10 @@ internal class MailboxActivity :
             unreadCounters
                 .onEach { sideDrawer.setUnreadCounters(it) }
                 .launchIn(lifecycleScope)
+
+            exitSelectionModeSharedFlow
+                .onEach { if (it) actionMode?.finish() }
+                .launchIn(lifecycleScope)
         }
 
         setUpMailboxActionsView()
@@ -1041,7 +1045,6 @@ internal class MailboxActivity :
                     mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
                 )
             }
-            actionMode?.finish()
         }
         mailboxActionsView.setOnSecondActionClickListener {
             val messageIds = getSelectedMessageIds()
@@ -1062,6 +1065,7 @@ internal class MailboxActivity :
                         UserId(userManager.requireCurrentUserId().id),
                         currentMailboxLocation
                     )
+                    actionMode?.finish()
                 }
             } else {
                 undoSnack = showUndoSnackbar(
@@ -1078,21 +1082,19 @@ internal class MailboxActivity :
                     currentMailboxLocation,
                     MessageLocationType.TRASH.messageLocationTypeValue.toString()
                 )
+
+                if (currentMailboxLocation != MessageLocationType.ALL_MAIL) actionMode?.finish()
             }
-            actionMode?.finish()
         }
         mailboxActionsView.setOnThirdActionClickListener {
             showFoldersManager(getSelectedMessageIds())
-            actionMode?.finish()
         }
         mailboxActionsView.setOnFourthActionClickListener {
             showLabelsManager(getSelectedMessageIds())
-            actionMode?.finish()
         }
         mailboxActionsView.setOnMoreActionClickListener {
             lifecycleScope.launch {
                 showActionSheet(getSelectedMessageIds(), isConversationModeEnabled(currentMailboxLocation))
-                actionMode?.finish()
             }
         }
     }
@@ -1126,7 +1128,8 @@ internal class MailboxActivity :
     private fun showFoldersManager(messageIds: List<String>) {
         LabelsActionSheet.newInstance(
             messageIds = messageIds,
-            currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            currentFolderLocation = currentMailboxLocation.messageLocationTypeValue,
+            currentLocationId = mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString(),
             labelType = LabelType.FOLDER,
             actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
@@ -1136,7 +1139,8 @@ internal class MailboxActivity :
     private fun showLabelsManager(messageIds: List<String>) {
         LabelsActionSheet.newInstance(
             messageIds = messageIds,
-            currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            currentFolderLocation = currentMailboxLocation.messageLocationTypeValue,
+            currentLocationId = mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString(),
             actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)

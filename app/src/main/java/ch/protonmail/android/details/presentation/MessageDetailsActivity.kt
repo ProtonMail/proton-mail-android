@@ -686,7 +686,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun showLabelsActionSheet(labelActionSheetType: LabelType = LabelType.MESSAGE_LABEL) {
         LabelsActionSheet.newInstance(
             messageIds = listOf(messageOrConversationId),
-            currentFolderLocationId = openedFolderLocationId,
+            currentFolderLocation = openedFolderLocationId,
+            currentLocationId = openedFolderLabelId ?: openedFolderLocationId.toString(),
             labelType = labelActionSheetType,
             actionSheetTarget =
             if (viewModel.isConversationEnabled()) ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
