@@ -30,12 +30,39 @@ import io.mockk.mockk
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 private const val USER_ID_VALUE = "userId"
 private const val ADDRESS_ID_VALUE = "addressId"
 private const val MAILBOX_PASSWORD = "mailboxPassword"
-private const val TOKEN =
+
+private const val TOKEN = """
+    -----BEGIN PGP MESSAGE-----
+    Version: GopenPGP 2.4.2
+    Comment: https://gopenpgp.org
+    
+    wV4DNBPNx6Mfm4QSAQdAkWuehTwowG3j+2wWt0hWaJ/fGZBiTSquYkmQt+4LAyMw
+    MrKPid5w5tPq5+Hcx0jR7fGM1k073l0E1VnqpHszupWIX1A4LnzEMlKWb71h5NEi
+    0nEBf5PU6nnvxav1jU+rQ6WSu1Pxo/g+Uyuty0vxzOllkKOlsQCiXndG17iNrKC3
+    oYejqVSL+6neXodbQBSlRoB/c6rFeHnVvYcBcaDxV+V9U3vnnB/1/bcxDEHRQjwN
+    kje5FMnbO5xl34t+IEEsGCSPIg==
+    =1gZM
+    -----END PGP MESSAGE-----
+"""
+
+private const val TOKEN_SIGNATURE = """
+    -----BEGIN PGP SIGNATURE-----
+    Version: GopenPGP 2.4.2
+    Comment: https://gopenpgp.org
+    
+    wnUEABYKACcFAmHm9ZsJkD8UQEqW+HQOFiEEWT32tVwJth9elkubPxRASpb4dA4A
+    AIAoAQDUokbo4tfe7W9LN6gXRcK0QWcIVGRMF+YREj771c/BvgEA/fdNmNaYG+1Y
+    E9xYF57tYJVc+oK4mJGPh2g778/EygU=
+    =UyYQ
+    -----END PGP SIGNATURE-----
+"""
+private const val MALFORMED_TOKEN =
     """
         -----BEGIN PGP MESSAGE-----
         Version: GopenPGP 2.3.1
@@ -48,7 +75,7 @@ private const val TOKEN =
         =LjHO
         -----END PGP MESSAGE-----
     """
-private const val SIGNATURE =
+private const val MALFORMED_TOKEN_SIGNATURE =
     """
         -----BEGIN PGP SIGNATURE-----
         Version: GopenPGP 2.3.1
@@ -60,7 +87,7 @@ private const val SIGNATURE =
         =fdg7
         -----END PGP SIGNATURE-----
     """
-private const val PRIVATE_KEY =
+private const val ACTIVER_USER_KEY =
     """
         -----BEGIN PGP PRIVATE KEY BLOCK-----
         Version: GopenPGP 2.3.1
@@ -82,6 +109,28 @@ private const val PRIVATE_KEY =
         -----END PGP PRIVATE KEY BLOCK-----
     """
 
+private const val INACTIVE_USER_KEY = """
+    -----BEGIN PGP PRIVATE KEY BLOCK-----
+    Version: GopenPGP 2.4.2
+    Comment: https://gopenpgp.org
+    
+    xYYEYeb2nRYJKwYBBAHaRw8BAQdAHJZyhQDkJ2p26tfaTgcOHslvgYIEQDplgFg7
+    z2W9r+X+CQMIwpOOkDi1VcBgi6THLuyTj6Z5cb00cx0GS/Q5UveuG8Y7/p8l4GPH
+    w9lzBt/mY3bKCvm1Wg1/UtVfTb5zmk0F5pCP/0zBeXy3Y4OV5sZt1M0pdGVzdEBw
+    cm90b25tYWlsLmNvbSA8dGVzdEBwcm90b25tYWlsLmNvbT7CjAQTFggAPgUCYeb2
+    nQmQ9BukUtAw7lUWIQS99VizpbwB9rYZGUD0G6RS0DDuVQIbAwIeAQIZAQMLCQcC
+    FQgDFgACAiIBAADc5QD+Ij70z8c9REffgEOwGcbgqLV7VKWcVGpEIvzdTBdWUKYB
+    AOVRKmUc9t0lj1/YxsvVCS3Zpi4UhCw9IrDhmBh2z2wFx4sEYeb2nRIKKwYBBAGX
+    VQEFAQEHQOvSVeTWJgZO0A0huM1VyioH7byX+KZw7HurpATdO64dAwEKCf4JAwhH
+    nVgrABxe0WCZBrBpAn+C4VI6xWhGglJT87mhkjpLAIxpnVjUNof7Rh6yF0FwE7WK
+    5hKupSji5XjX5eRPtuTC96SKrbvxcdRoOGzVEu8ywngEGBYIACoFAmHm9p0JkPQb
+    pFLQMO5VFiEEvfVYs6W8Afa2GRlA9BukUtAw7lUCGwwAAMGgAP9J1v9FF/2HKssB
+    LUdnOC3w1aVQ3Ym3RqMlVCWClwqAfAEAzbSxOzLyBLcBywr8BgAyZqJFSmB7mM6Y
+    yTn2ZnTTsA4=
+    =JH3w
+    -----END PGP PRIVATE KEY BLOCK-----
+"""
+
 class AddressCryptoAndroidTest {
 
     private val userManager = mockk<UserManager> {
@@ -90,7 +139,7 @@ class AddressCryptoAndroidTest {
             UserKey(
                 UserId(USER_ID_VALUE),
                 0u,
-                PgpField.PrivateKey(NotBlankString(PRIVATE_KEY.trimIndent())),
+                PgpField.PrivateKey(NotBlankString(ACTIVER_USER_KEY.trimIndent())),
                 null
             )
         )
@@ -115,13 +164,49 @@ class AddressCryptoAndroidTest {
             canVerifySignature = true,
             PgpField.PublicKey(NotBlankString("pubKey")),
             PgpField.PrivateKey(NotBlankString("privateKey")),
-            PgpField.Message(NotBlankString(TOKEN.trimIndent())),
-            PgpField.Signature(NotBlankString(SIGNATURE.trimIndent())),
+            PgpField.Message(NotBlankString(MALFORMED_TOKEN.trimIndent())),
+            PgpField.Signature(NotBlankString(MALFORMED_TOKEN_SIGNATURE.trimIndent())),
             null,
             active = true
         )
+        // when
         val actual = addressCrypto.passphraseFor(key)
-
+        // then
         assertNull(actual)
+    }
+
+    @Test
+    fun whenUserHasInactiveKeyTokenDecryptionSucceeds() {
+        // given
+        every { userManager.currentUser?.keys?.keys } returns listOf(
+            UserKey(
+                UserId(USER_ID_VALUE),
+                0u,
+                PgpField.PrivateKey(NotBlankString(INACTIVE_USER_KEY.trimIndent())),
+                null
+            ),
+            UserKey(
+                UserId(USER_ID_VALUE),
+                0u,
+                PgpField.PrivateKey(NotBlankString(ACTIVER_USER_KEY.trimIndent())),
+                null
+            ),
+        )
+        val key = AddressKey(
+            UserId(""),
+            UInt.MIN_VALUE,
+            canEncrypt = true,
+            canVerifySignature = true,
+            PgpField.PublicKey(NotBlankString("pubKey")),
+            PgpField.PrivateKey(NotBlankString("privateKey")),
+            PgpField.Message(NotBlankString(TOKEN.trimIndent())),
+            PgpField.Signature(NotBlankString(TOKEN_SIGNATURE.trimIndent())),
+            null,
+            active = true
+        )
+        // when
+        val actual = addressCrypto.passphraseFor(key)
+        // then
+        assertEquals("abababababababababababababababababababababababababababababababab", actual?.let { String(it) })
     }
 }
