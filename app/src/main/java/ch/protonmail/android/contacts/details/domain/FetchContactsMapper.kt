@@ -288,24 +288,14 @@ class FetchContactsMapper @Inject constructor(
 
         val isType2SignatureValid: Boolean? =
             if (vCardType2Signature.isNotEmpty() && decryptedVCardType2.isNotEmpty()) {
-                try {
-                    crypto.verify(decryptedVCardType2, vCardType2Signature).isSignatureValid
-                } catch (exception: GeneralSecurityException) {
-                    Timber.d(exception, "VCard type2 verification error")
-                    false
-                }
+                crypto.verify(decryptedVCardType2, vCardType2Signature).isSignatureValid
             } else {
                 null
             }
 
         val isType3SignatureValid: Boolean? =
             if (vCardType3Signature.isNotEmpty() && decryptedVCardType3.isNotEmpty()) {
-                try {
-                    crypto.verify(decryptedVCardType3, vCardType3Signature).isSignatureValid
-                } catch (exception: GeneralSecurityException) {
-                    Timber.d(exception, "VCard type3 verification error")
-                    false
-                }
+                crypto.verify(decryptedVCardType3, vCardType3Signature).isSignatureValid
             } else {
                 null
             }

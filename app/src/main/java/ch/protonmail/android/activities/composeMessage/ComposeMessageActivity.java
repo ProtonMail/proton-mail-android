@@ -1326,7 +1326,9 @@ public class ComposeMessageActivity
                     recipientsView.removeObjectForKey(entry.getKey());
                     return;
                 }
-                if (!sendPreference.isPrimaryPinned() && sendPreference.hasPinnedKeys()) {
+                boolean arePinnedKeysTrusted = sendPreference.isVerified();
+
+                if (arePinnedKeysTrusted && sendPreference.hasPinnedKeys() && !sendPreference.isPublicKeyPinned()) {
                     // send with untrusted key popup
                     DialogUtils.Companion.showInfoDialog(
                             ComposeMessageActivity.this,
@@ -1334,8 +1336,7 @@ public class ComposeMessageActivity
                             String.format(getString(R.string.send_with_untrusted_key_message), entry.getKey()),
                             unit -> unit);
                 }
-                boolean isVerified = sendPreference.isVerified();
-                if (!isVerified) {
+                if (sendPreference.hasPinnedKeys() && !arePinnedKeysTrusted) {
                     // send
                     DialogUtils.Companion.showInfoDialogWithTwoButtons(
                             ComposeMessageActivity.this,
@@ -1360,9 +1361,7 @@ public class ComposeMessageActivity
                             },
                             false);
                 }
-                if (isVerified) {
-                    setRecipientIconAndDescription(sendPreference, recipientsView);
-                }
+                setRecipientIconAndDescription(sendPreference, recipientsView);
             }
             recipientsView.setSendPreferenceMap(composeMessageViewModel.getMessageDataResult().getSendPreferences(), bottomAppBar.hasPassword());
         }

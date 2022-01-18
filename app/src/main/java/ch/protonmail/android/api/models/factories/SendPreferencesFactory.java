@@ -196,22 +196,21 @@ public class SendPreferencesFactory {
         RawProperty mimeProp = VCardUtil.findProperty(signed, "x-pm-mimetype", group);
 
         List<String> contactKeys = getKeys(signed, group);
-        // primaryKey is null when sending cleartext or key pinning is enabled but no pinned key is allowed for sending
-        String primaryKey = findPrimaryKey(contactKeys, pubKeyResp);
-        boolean primaryPinned = primaryKey != null;
-        primaryKey = primaryKey == null && pubKeyResp.getKeys().length > 0 ? pubKeyResp.getKeys()[0].getPublicKey() : primaryKey;
+        boolean hasPinnedKeys = contactKeys.size() > 0;
+        // pinnedEncryptionKey is null when sending cleartext or key pinning is enabled but no pinned key is allowed for sending
+        String pinnedEncryptionKey = hasPinnedKeys ? findPinnedEncryptionKey(contactKeys, pubKeyResp) : null;
+        boolean isEncryptionKeyPinned = pinnedEncryptionKey != null;
+        String encryptionKey = pinnedEncryptionKey == null && pubKeyResp.getKeys().length > 0 ? pubKeyResp.getKeys()[0].getPublicKey() : pinnedEncryptionKey;
         boolean encrypt = encryptFlag != null ? !encryptFlag.getValue().equalsIgnoreCase("false") : false;
         boolean sign = signFlag != null ? !signFlag.getValue().equalsIgnoreCase("false") : mailSettings.getDefaultSign();
         if (isInternal) {
             encrypt = true;
             sign = true;
-        } else if (primaryKey == null) {
+        } else if (encryptionKey == null) {
             encrypt = false;
         }
         // always sign when encrypting
         sign = sign || encrypt;
-
-        boolean hasPinned = contactKeys.size() > 0 && primaryKey != null;
 
         RawProperty schemeProp = VCardUtil.findProperty(signed, "x-pm-scheme", group);
         String schemeString = schemeProp == null ? null : schemeProp.getValue();
@@ -222,8 +221,8 @@ public class SendPreferencesFactory {
         MIMEType mimeType = getMimeType(mimeProp != null ? mimeProp.getValue() : null, scheme, sign);
         boolean isOwnAddress = getAddress(email) != null;
 
-        return new SendPreference(email, encrypt, sign, mimeType, primaryKey, scheme,
-                primaryPinned, hasPinned, isVerified, isOwnAddress);
+        return new SendPreference(email, encrypt, sign, mimeType, encryptionKey, scheme,
+                isEncryptionKeyPinned, hasPinnedKeys, isVerified, isOwnAddress);
     }
 
     private Address getAddress(String email) {
@@ -266,23 +265,22 @@ public class SendPreferencesFactory {
         return PackageType.CLEAR;
     }
 
+    /**
+     * Return cleartext and signed parts of the contact data.
+     * For signed part, also return whether the corresponding contact signature could be verified.
+     */
     private Triple<VCard, VCard, Boolean> parseVCard(FullContactDetails fullContactDetails) {
         // Signed data must be there as we only call this function if default = 0
         String signedData = "";
         String clearData = null;
-        boolean verified = true;
-
+        boolean isContactSignatureVerified = false;
         List<ContactEncryptedData> cards = fullContactDetails.getEncryptedData();
         for (ContactEncryptedData card : cards) {
             switch (card.getEncryptionType()) {
                 case SIGNED:
-                    try {
-                        TextDecryptionResult tdr = crypto.verify(card.getData(), card.getSignature());
-                        signedData = tdr.getDecryptedData();
-                        verified = tdr.isSignatureValid();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    TextDecryptionResult tdr = crypto.verify(card.getData(), card.getSignature());
+                    signedData = tdr.getDecryptedData();
+                    isContactSignatureVerified = tdr.isSignatureValid();
                     break;
                 case CLEARTEXT:
                     clearData = card.getData();
@@ -293,7 +291,7 @@ public class SendPreferencesFactory {
 
         VCard signed = Ezvcard.parse(signedData).first();
         VCard clear = clearData == null ? new VCard() : Ezvcard.parse(clearData).first();
-        return new ImmutableTriple<>(clear, signed, verified);
+        return new ImmutableTriple<>(clear, signed, isContactSignatureVerified);
     }
 
     private List<String> getKeys(VCard vCard, String group) throws Exception {
@@ -324,18 +322,19 @@ public class SendPreferencesFactory {
         return null;
     }
 
-    private String findPrimaryKey(List<String> keys, PublicKeyResponse pubKeyResp) {
-        if (keys.size() == 0) {
-            return findPrimaryKey(pubKeyResp);
-        }
-        List<String> fingerprints = getSendFingerprints(pubKeyResp.getKeys());
-        for (String key : keys) {
+    /**
+     * @return a pinned key that can be used for sending.
+     * For internal recipients, we only consider pinned keys that match (by fingerprint) those fetched from the API.
+     */
+    private String findPinnedEncryptionKey(List<String> pinnedKeys, PublicKeyResponse pubKeyResp) {
+        List<String> apiFingerprints = getSendFingerprints(pubKeyResp.getKeys());
+        for (String key : pinnedKeys) {
             KeyInformation ki = crypto.deriveKeyInfo(key);
             if (ki.isValid() && ki.isExpired()) {
                 continue;
             }
             if (pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL &&
-                !fingerprints.contains(ki.getFingerprint())) {
+                !apiFingerprints.contains(ki.getFingerprint())) {
                 continue;
             }
             return key;
@@ -362,7 +361,7 @@ public class SendPreferencesFactory {
         if (isInternal && pubKey != null) {
             return new SendPreference(email, true, true,
                     MIMEType.HTML, pubKey, PackageType.PM,
-                    true, false, true, isOwnAddress);
+                    false, false, false, isOwnAddress);
         }
         PackageType defaultPGPScheme = mailSettings.getPGPScheme();
         defaultPGPScheme = defaultPGPScheme == PackageType.PGP_MIME ? PackageType.MIME : PackageType.CLEAR;
@@ -372,6 +371,6 @@ public class SendPreferencesFactory {
         return new SendPreference(email, false, globalSign,
                 globalSign ? defaultPGPMime : MIMEType.HTML, null,
                 globalSign ? defaultPGPScheme : PackageType.CLEAR,
-                true, false, true, false);
+                false, false, false, false);
     }
 }

@@ -54,8 +54,12 @@ class UserCrypto @AssistedInject constructor(
     override fun passphraseFor(key: UserKey): EncryptedByteArray? = primaryPassphrase
 
     fun verify(data: String, signature: String): TextDecryptionResult {
-        val valid = openPgp.verifyTextSignDetachedBinKey(signature, data, getVerificationKeys(), openPgp.time)
-        return TextDecryptionResult(data, true, valid)
+        return try {
+            val valid = openPgp.verifyTextSignDetachedBinKey(signature, data, getVerificationKeys(), openPgp.time)
+            TextDecryptionResult(data, true, valid)
+        } catch(signatureVerificationError: Exception) {
+            TextDecryptionResult(data, true, false)
+        }
     }
 
     /**
