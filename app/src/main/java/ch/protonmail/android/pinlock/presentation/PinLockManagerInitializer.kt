@@ -32,11 +32,7 @@ class PinLockManagerInitializer : Initializer<PinLockManager> {
 
     override fun create(context: Context): PinLockManager {
         val entryPoint = EntryPointAccessors.fromApplication(context, PinLockManagerEntryPoint::class.java)
-        return PinLockManager(
-            context = context,
-            getElapsedRealTimeMillis = entryPoint.getElapsedRealTimeMillis(),
-            shouldShowPinLockScreen = entryPoint.shouldShowPinLockScreen()
-        )
+        return entryPoint.pinLockManager()
     }
 
     override fun dependencies() = emptyList<Class<out Initializer<*>>>()
@@ -45,7 +41,6 @@ class PinLockManagerInitializer : Initializer<PinLockManager> {
     @InstallIn(SingletonComponent::class)
     interface PinLockManagerEntryPoint {
 
-        fun getElapsedRealTimeMillis(): GetElapsedRealTimeMillis
-        fun shouldShowPinLockScreen(): ShouldShowPinLockScreen
+        fun pinLockManager(): PinLockManager
     }
 }

@@ -33,8 +33,11 @@ import ch.protonmail.android.utils.extensions.app
 import kotlinx.coroutines.runBlocking
 import me.proton.core.presentation.app.AppLifecycleProvider
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PinLockManager(
+@Singleton
+class PinLockManager @Inject constructor(
     private val context: Context,
     private val getElapsedRealTimeMillis: GetElapsedRealTimeMillis,
     private val shouldShowPinLockScreen: ShouldShowPinLockScreen
