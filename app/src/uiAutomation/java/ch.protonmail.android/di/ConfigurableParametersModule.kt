@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.di
 
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.core.Constants
 import dagger.Module
 import dagger.Provides
@@ -33,8 +34,7 @@ object ConfigurableParametersModule {
 
     @BaseUrl
     @Provides
-    // TODO: Replace with the test env URL
-    fun provideBaseUrl(): String = Constants.BASE_URL
+    fun provideBaseUrl(): String = BuildConfig.TEST_ENDPOINT_URL
 
     @Provides
     @HumanVerificationApiHost
@@ -42,11 +42,17 @@ object ConfigurableParametersModule {
 
     @Provides
     @AlternativeApiPins
-    // TODO: Replace with an empty list for the test env
-    fun alternativeApiPins() = CoreConstants.ALTERNATIVE_API_SPKI_PINS
+    fun alternativeApiPins() = if (BuildConfig.TEST_ON_LIVE) {
+        CoreConstants.ALTERNATIVE_API_SPKI_PINS
+    } else {
+        emptyList()
+    }
 
     @Provides
     @DefaultApiPins
-    // TODO: Replace with an empty array for the test env
-    fun defaultApiPins() = CoreConstants.DEFAULT_SPKI_PINS
+    fun defaultApiPins() = if (BuildConfig.TEST_ON_LIVE) {
+        CoreConstants.DEFAULT_SPKI_PINS
+    } else {
+        emptyArray()
+    }
 }

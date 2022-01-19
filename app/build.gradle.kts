@@ -158,6 +158,19 @@ android(
         register("uiAutomation") {
             applicationId = "ch.protonmail.android"
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+            var testOnLive = false
+            val testEnvUrl = when (project.properties["testEnv"] ?: "live") {
+                "local" -> "${privateProperties["local_endpointUrl"]}"
+                "test" -> "${privateProperties["test_endpointUrl"]}"
+                else -> {
+                    testOnLive = true
+                    "${privateProperties["live_endpointUrl"]}"
+                }
+            }
+
+            buildConfigField("String", "TEST_ENDPOINT_URL", "\"$testEnvUrl\"")
+            buildConfigField("boolean", "TEST_ON_LIVE", "$testOnLive")
         }
     }
 
