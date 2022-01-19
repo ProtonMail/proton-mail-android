@@ -36,7 +36,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.databinding.SettingsFragmentDisplayNameAndSignatureBinding
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
 import me.proton.core.user.domain.entity.AddressId
@@ -58,7 +57,6 @@ class DisplayNameAndSignatureFragment : Fragment() {
 
     private val binding get() = requireNotNull(_binding)
 
-    private var hasChanges = false
     var newDisplayName = ""
     var newSignature: String? = null
     var newAddressId: AddressId? = null
@@ -84,18 +82,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
             android.R.id.home -> {
-                if (hasChanges) {
-                    context?.showTwoButtonInfoDialog(
-                        titleStringId = R.string.dialog_discard_changes_title,
-                        messageStringId = R.string.dialog_discard_changes_message,
-                        rightStringId = R.string.discard,
-                        onPositiveButtonClicked = {
-                            activity?.onBackPressed()
-                        }
-                    )
-                } else {
-                    activity?.onBackPressed()
-                }
+                activity?.onBackPressed()
                 true
             }
             R.id.save -> {
@@ -108,7 +95,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
                     )
                     jobManager.addJobInBackground(job)
                 }
-                if (newMobileFooter != legacyUser.mobileFooter) {
+                if (newMobileFooter != null && newMobileFooter != legacyUser.mobileFooter) {
                     legacyUser.mobileFooter = newMobileFooter
                 }
                 activity?.onBackPressed()
