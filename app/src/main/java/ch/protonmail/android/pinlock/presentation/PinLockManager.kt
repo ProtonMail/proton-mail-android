@@ -25,6 +25,7 @@ import android.content.Intent
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import ch.protonmail.android.activities.AddAttachmentsActivity
 import ch.protonmail.android.pinlock.domain.usecase.ShouldShowPinLockScreen
 import ch.protonmail.android.settings.pin.ChangePinActivity
 import ch.protonmail.android.settings.pin.CreatePinActivity
@@ -61,6 +62,7 @@ class PinLockManager @Inject constructor(
                     val shouldLock = shouldShowPinLockScreen(
                         wasAppInBackground = appState == AppLifecycleProvider.State.Background,
                         isPinLockScreenShown = isPinScreenActivity(activity),
+                        isAddingAttachments = activity is AddAttachmentsActivity,
                         lastForegroundTime = lastForegroundTime
                     )
                     if (shouldLock) {

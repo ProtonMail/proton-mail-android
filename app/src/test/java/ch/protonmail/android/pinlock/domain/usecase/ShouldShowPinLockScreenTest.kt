@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit.MINUTES
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration
 import kotlin.time.toDuration
 
 class ShouldShowPinLockScreenTest {
@@ -53,6 +54,7 @@ class ShouldShowPinLockScreenTest {
         val result = shouldShowPinLockScreen(
             wasAppInBackground = false,
             isPinLockScreenShown = false,
+            isAddingAttachments = false,
             lastForegroundTime = SIX_MIN_AGO_TIME
         )
 
@@ -61,16 +63,49 @@ class ShouldShowPinLockScreenTest {
     }
 
     @Test
-    fun `returns false if Pin Lock screen is already shown`() = runBlockingTest {
+    fun `returns false if a Pin screen is shown`() = runBlockingTest {
         // given - when
         val result = shouldShowPinLockScreen(
             wasAppInBackground = true,
             isPinLockScreenShown = true,
+            isAddingAttachments = false,
             lastForegroundTime = SIX_MIN_AGO_TIME
         )
 
         // then
         assertFalse(result)
+    }
+
+    @Test
+    fun `returns false if is adding attachments and timer is Immediate`() = runBlockingTest {
+        // given - when
+        coEvery { getPinLockTimer() } returns GetPinLockTimer.Result(Duration.ZERO)
+
+        val result = shouldShowPinLockScreen(
+            wasAppInBackground = true,
+            isPinLockScreenShown = false,
+            isAddingAttachments = true,
+            lastForegroundTime = SIX_MIN_AGO_TIME
+        )
+
+        // then
+        assertFalse(result)
+    }
+
+    @Test
+    fun `returns true if is adding attachments and timer is not Immediate`() = runBlockingTest {
+        // given - when
+        coEvery { getPinLockTimer() } returns GetPinLockTimer.Result(5.toDuration(MINUTES))
+
+        val result = shouldShowPinLockScreen(
+            wasAppInBackground = true,
+            isPinLockScreenShown = false,
+            isAddingAttachments = true,
+            lastForegroundTime = SIX_MIN_AGO_TIME
+        )
+
+        // then
+        assertTrue(result)
     }
 
     @Test
@@ -81,6 +116,7 @@ class ShouldShowPinLockScreenTest {
         val result = shouldShowPinLockScreen(
             wasAppInBackground = true,
             isPinLockScreenShown = false,
+            isAddingAttachments = false,
             lastForegroundTime = SIX_MIN_AGO_TIME
         )
 
@@ -94,6 +130,7 @@ class ShouldShowPinLockScreenTest {
         val result = shouldShowPinLockScreen(
             wasAppInBackground = true,
             isPinLockScreenShown = false,
+            isAddingAttachments = false,
             lastForegroundTime = NOW_TIME
         )
 
@@ -108,6 +145,7 @@ class ShouldShowPinLockScreenTest {
             val result = shouldShowPinLockScreen(
                 wasAppInBackground = true,
                 isPinLockScreenShown = false,
+                isAddingAttachments = false,
                 lastForegroundTime = SIX_MIN_AGO_TIME
             )
 

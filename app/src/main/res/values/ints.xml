@@ -19,7 +19,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <resources>
     <integer-array name="auto_logout_values">
-        <item>600</item>
+        <item>0</item>
         <item>300000</item>
         <item>900000</item>
         <item>3600000</item>

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.pinlock.domain.usecase
 
+import ch.protonmail.android.activities.AddAttachmentsActivity
 import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
@@ -33,16 +34,33 @@ class ShouldShowPinLockScreen @Inject constructor(
 
     /**
      * @param wasAppInBackground lambda that returns whether the app was in background before calling this function
-     * @param isPinLockScreenShown lambda that returns whether the Pin Lock screen is shown
+     * @param isPinLockScreenShown lambda that returns whether a Pin screen is shown
+     * @param isAddingAttachments whether [AddAttachmentsActivity] is shown. In that case, we may not show the Pin Lock
+     *  screen, because it can be triggered after closing the File Picker
      * @param lastForegroundTime time in milliseconds when the app has last been in foreground
      */
     suspend operator fun invoke(
         wasAppInBackground: Boolean,
         isPinLockScreenShown: Boolean,
+        isAddingAttachments: Boolean,
         lastForegroundTime: Long
-    ): Boolean =
-        wasAppInBackground && isPinLockScreenShown.not() && isPinLockEnabled() &&
-            getTimeDiff(lastForegroundTime) > getPinLockTimer().duration
+    ): Boolean {
+        if (wasAppInBackground.not() || isPinLockScreenShown) {
+            return false
+        }
+
+        val isPinLockEnabled = isPinLockEnabled()
+        if (isPinLockEnabled.not()) {
+            return false
+        }
+
+        val pinLockTimer = getPinLockTimer().duration
+        return shouldShowIfAddingAttachments(isAddingAttachments, pinLockTimer) &&
+            getTimeDiff(lastForegroundTime) > pinLockTimer
+    }
+
+    private fun shouldShowIfAddingAttachments(isAddingAttachments: Boolean, pinLockTimer: Duration) =
+        isAddingAttachments.not() || pinLockTimer != Duration.ZERO
 
     private fun getTimeDiff(lastForegroundTime: Long): Duration =
         (getElapsedRealTimeMillis() - lastForegroundTime).toDuration(MILLISECONDS)
