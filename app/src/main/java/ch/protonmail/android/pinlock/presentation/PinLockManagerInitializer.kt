@@ -21,8 +21,8 @@ package ch.protonmail.android.pinlock.presentation
 
 import android.content.Context
 import androidx.startup.Initializer
-import ch.protonmail.android.pinlock.domain.usecase.GetPinLockTimer
-import ch.protonmail.android.pinlock.domain.usecase.IsPinLockEnabled
+import ch.protonmail.android.pinlock.domain.usecase.ShouldShowPinLockScreen
+import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -33,9 +33,9 @@ class PinLockManagerInitializer : Initializer<PinLockManager> {
     override fun create(context: Context): PinLockManager {
         val entryPoint = EntryPointAccessors.fromApplication(context, PinLockManagerEntryPoint::class.java)
         return PinLockManager(
-            context,
-            isPinLockEnabled = entryPoint.isPinLockEnabled(),
-            getPinLockTimer = entryPoint.getPinLockTimer()
+            context = context,
+            getElapsedRealTimeMillis = entryPoint.getElapsedRealTimeMillis(),
+            shouldShowPinLockScreen = entryPoint.shouldShowPinLockScreen()
         )
     }
 
@@ -45,7 +45,7 @@ class PinLockManagerInitializer : Initializer<PinLockManager> {
     @InstallIn(SingletonComponent::class)
     interface PinLockManagerEntryPoint {
 
-        fun isPinLockEnabled(): IsPinLockEnabled
-        fun getPinLockTimer(): GetPinLockTimer
+        fun getElapsedRealTimeMillis(): GetElapsedRealTimeMillis
+        fun shouldShowPinLockScreen(): ShouldShowPinLockScreen
     }
 }

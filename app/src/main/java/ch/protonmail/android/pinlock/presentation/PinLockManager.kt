@@ -26,22 +26,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
-import ch.protonmail.android.pinlock.domain.usecase.GetPinLockTimer
-import ch.protonmail.android.pinlock.domain.usecase.IsPinLockEnabled
+import ch.protonmail.android.pinlock.domain.usecase.ShouldShowPinLockScreen
 import ch.protonmail.android.settings.pin.ValidatePinActivity
+import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
 import ch.protonmail.android.utils.EmptyActivityLifecycleCallbacks
 import ch.protonmail.android.utils.extensions.app
 import kotlinx.coroutines.runBlocking
 import me.proton.core.presentation.app.AppLifecycleProvider
 import timber.log.Timber
-import java.lang.System.currentTimeMillis
-import java.util.concurrent.TimeUnit.MILLISECONDS
-import kotlin.time.toDuration
 
 class PinLockManager(
     private val context: Context,
-    private val isPinLockEnabled: IsPinLockEnabled,
-    private val getPinLockTimer: GetPinLockTimer
+    private val getElapsedRealTimeMillis: GetElapsedRealTimeMillis,
+    private val shouldShowPinLockScreen: ShouldShowPinLockScreen
 ) : LifecycleObserver {
 
     private var appState: AppLifecycleProvider.State = AppLifecycleProvider.State.Background
@@ -57,7 +54,12 @@ class PinLockManager(
                 @Suppress("BlockingMethodInNonBlockingContext") // This needs to be run blocking, in order to
                 //  prevent the last activity to be displayed
                 runBlocking {
-                    if (shouldLock(activity)) {
+                    val shouldLock = shouldShowPinLockScreen(
+                        wasAppInBackground = appState == AppLifecycleProvider.State.Background,
+                        isPinLockScreenShown = activity is ValidatePinActivity,
+                        lastForegroundTime = lastForegroundTime
+                    )
+                    if (shouldLock) {
                         launchPinLockActivity(activity)
                     }
                 }
@@ -80,18 +82,7 @@ class PinLockManager(
         Timber.v("App Background")
 
         appState = AppLifecycleProvider.State.Background
-        lastForegroundTime = currentTimeMillis()
-    }
-
-    private suspend fun shouldLock(callingActivity: Activity): Boolean {
-        val wasInBackground = appState == AppLifecycleProvider.State.Background
-        val isInPinLockActivity = callingActivity is ValidatePinActivity
-        return if (wasInBackground && isInPinLockActivity.not() && isPinLockEnabled()) {
-            val diff = (currentTimeMillis() - lastForegroundTime).toDuration(MILLISECONDS)
-            return diff > getPinLockTimer()
-        } else {
-            false
-        }
+        lastForegroundTime = getElapsedRealTimeMillis()
     }
 
     private fun launchPinLockActivity(callingActivity: Activity) {

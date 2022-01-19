@@ -43,10 +43,13 @@ class GetPinLockTimer @Inject constructor(
         context.resources.getIntArray(R.array.auto_logout_values)
     }
 
-    suspend operator fun invoke(): Duration = withContext(dispatchers.Io) {
+    suspend operator fun invoke(): Result = withContext(dispatchers.Io) {
         preferences.get(PREF_AUTO_LOCK_PIN_PERIOD, -1)
             .takeIf { it >= 0 }
-            ?.let { option -> rawValues[option].toDuration(MILLISECONDS) }
-            ?: Duration.INFINITE
+            ?.let { option -> rawValues[option].toDuration(MILLISECONDS).let(::Result) }
+            ?: Duration.INFINITE.let(::Result)
     }
+
+    // Wrap Duration for mocking
+    data class Result(val duration: Duration)
 }

@@ -60,7 +60,7 @@ class GetPinLockTimerTest {
         val expected = Duration.INFINITE
 
         // when
-        val result = getPinLockTimer()
+        val result = getPinLockTimer().duration
 
         // then
         assertEquals(expected, result)
@@ -73,7 +73,7 @@ class GetPinLockTimerTest {
         val expected = Duration.ZERO
 
         // when
-        val result = getPinLockTimer()
+        val result = getPinLockTimer().duration
 
         // then
         assertEquals(expected, result)
@@ -86,7 +86,7 @@ class GetPinLockTimerTest {
         val expected = 5.toDuration(MINUTES)
 
         // when
-        val result = getPinLockTimer()
+        val result = getPinLockTimer().duration
 
         // then
         assertEquals(expected, result)
@@ -99,7 +99,7 @@ class GetPinLockTimerTest {
         val expected = 15.toDuration(MINUTES)
 
         // when
-        val result = getPinLockTimer()
+        val result = getPinLockTimer().duration
 
         // then
         assertEquals(expected, result)
@@ -112,7 +112,7 @@ class GetPinLockTimerTest {
         val expected = 1.toDuration(HOURS)
 
         // when
-        val result = getPinLockTimer()
+        val result = getPinLockTimer().duration
 
         // then
         assertEquals(expected, result)
@@ -125,7 +125,7 @@ class GetPinLockTimerTest {
         val expected = 1.toDuration(DAYS)
 
         // when
-        val result = getPinLockTimer()
+        val result = getPinLockTimer().duration
 
         // then
         assertEquals(expected, result)
