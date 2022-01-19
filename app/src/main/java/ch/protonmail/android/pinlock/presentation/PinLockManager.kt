@@ -26,6 +26,8 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import ch.protonmail.android.pinlock.domain.usecase.ShouldShowPinLockScreen
+import ch.protonmail.android.settings.pin.ChangePinActivity
+import ch.protonmail.android.settings.pin.CreatePinActivity
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
 import ch.protonmail.android.utils.EmptyActivityLifecycleCallbacks
@@ -58,7 +60,7 @@ class PinLockManager @Inject constructor(
                 runBlocking {
                     val shouldLock = shouldShowPinLockScreen(
                         wasAppInBackground = appState == AppLifecycleProvider.State.Background,
-                        isPinLockScreenShown = activity is ValidatePinActivity,
+                        isPinLockScreenShown = isPinScreenActivity(activity),
                         lastForegroundTime = lastForegroundTime
                     )
                     if (shouldLock) {
@@ -89,4 +91,9 @@ class PinLockManager @Inject constructor(
         val intent = Intent(context, ValidatePinActivity::class.java)
         callingActivity.startActivity(intent)
     }
+
+    private fun isPinScreenActivity(activity: Activity) =
+        activity is ValidatePinActivity ||
+            activity is CreatePinActivity ||
+            activity is ChangePinActivity
 }
