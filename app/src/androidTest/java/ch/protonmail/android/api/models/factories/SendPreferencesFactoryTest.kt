@@ -257,6 +257,49 @@ public class SendPreferencesFactoryTest {
     }
 
     @Test
+    fun testBuildFromContactWithPinnedKeyButNoApiResponseInternal() {
+        val sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId);
+        val buildFromContactMethod = sendPreferencesFactory.javaClass.getDeclaredMethod("buildFromContact", String::class.java, PublicKeyResponse::class.java, FullContactDetails::class.java);
+        buildFromContactMethod.isAccessible = true;
+
+        val contactDataWithPinnedKey = INTERNAL_CONTACT_DATA_WITH_PINNED_KEY.trimIndent()
+        val contactSignature = INTERNAL_CONTACT_SIGNATURE.trimIndent()
+        val signedContactDetails = mockk<FullContactDetails> {
+            every { encryptedData } returns listOf(ContactEncryptedData(
+                contactDataWithPinnedKey,
+                contactSignature,
+                Constants.VCardType.SIGNED
+            ))
+        }
+        val untrustedPublicKey = """-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+            xjMEYeaS+hYJKwYBBAHaRw8BAQdAHOi00L8NL+FWB7w0c1UhR+QKXJJF+Eb9
+            aKTbauiKjobNO25vdF9mb3JfZW1haWxfdXNlQGRvbWFpbi50bGQgPG5vdF9m
+            b3JfZW1haWxfdXNlQGRvbWFpbi50bGQ+wo8EEBYKACAFAmHmkvoGCwkHCAMC
+            BBUICgIEFgIBAAIZAQIbAwIeAQAhCRDFiIyI5wQcBxYhBDcW7OXc90oxfTXN
+            ecWIjIjnBBwHoCABAJAQMdpMzgEKJ3j2a0DHnpECLvG0TGksUX7LMCuqKV8U
+            APwNbZ6USbJpEqLopw8AOXpbnm7y6mdF/xYMlMG6xdMyCc44BGHmkvoSCisG
+            AQQBl1UBBQEBB0B5wAbjlGvDq8ipErq1rFt9isI2KvvnXkoZ1YbQaU7pCwMB
+            CAfCeAQYFggACQUCYeaS+gIbDAAhCRDFiIyI5wQcBxYhBDcW7OXc90oxfTXN
+            ecWIjIjnBBwHnqIA/3nkSEebOzbEN2kuiTImngmJZYh7MOLdE4t2zJDwIaVn
+            AQCkz0rgrTqudvXCggtrKlEM4di7JpCRqr537tGYJUBdCg==
+            =v4yu
+            -----END PGP PUBLIC KEY BLOCK-----""".trimIndent()
+        val publicKeyResponse = PublicKeyResponse(PublicKeyResponse.RecipientType.INTERNAL.value, "", arrayOf( mockk<PublicKeyBody> {
+            every { isAllowedForSending } returns true
+            every { isAllowedForVerification } returns true
+            every { publicKey } returns untrustedPublicKey
+        } ))
+        val expected = SendPreference(
+            "free@proton.black", true, true, MIMEType.HTML, untrustedPublicKey, PackageType.PM,
+            false, true, true, false
+        )
+
+        val actual = buildFromContactMethod.invoke(sendPreferencesFactory, "free@proton.black", publicKeyResponse, signedContactDetails) as SendPreference
+        assertEqualSecurityPreferences(expected, actual)
+    }
+
+    @Test
     fun testBuildFromContactWithInvalidSignature() {
         val sendPreferencesFactory = SendPreferencesFactory(context, apiManager, userManager, userId);
         val buildFromContactMethod = sendPreferencesFactory.javaClass.getDeclaredMethod("buildFromContact", String::class.java, PublicKeyResponse::class.java, FullContactDetails::class.java);
