@@ -242,8 +242,12 @@ public class User {
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
         user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
         user.GcmDownloadMessageDetails = securePrefs.getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
-        user.MaxAttachmentStorage = securePrefs.getInt(PREF_MAX_ATTACHMENT_STORAGE,
-                Constants.DEFAULT_ATTACHMENT_STORAGE_IN_MB);
+        int maxAttachmentStorage = securePrefs.getInt(PREF_MAX_ATTACHMENT_STORAGE, Constants.DEFAULT_ATTACHMENT_STORAGE_IN_MB);
+        if (maxAttachmentStorage == 0) {
+            maxAttachmentStorage = Constants.DEFAULT_ATTACHMENT_STORAGE_IN_MB;
+            securePrefs.edit().putInt(PREF_MAX_ATTACHMENT_STORAGE, Constants.DEFAULT_ATTACHMENT_STORAGE_IN_MB).apply();
+        }
+        user.MaxAttachmentStorage = maxAttachmentStorage;
         user.ManuallyLocked = securePrefs.getBoolean(PREF_MANUALLY_LOCKED, false);
 
         user.NotificationVisibilityLockScreen = user.loadNotificationVisibilityLockScreenSettingsFromBackup();
@@ -801,10 +805,6 @@ public class User {
 
     public String getUsername() {
         return username;
-    }
-
-    public long getMaxAllowedAttachmentSpace() {
-        return MaxAttachmentStorage; // return the value in bytes
     }
 
     /**

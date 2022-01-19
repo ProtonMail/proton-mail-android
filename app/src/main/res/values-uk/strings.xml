@@ -939,7 +939,7 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Обмеження локального сховища</string>
-    <string name="storage_value">%1$d МБ (%2$.2f МБ використано)</string>
+    <string name="settings_storage_limit_mb_value">%1$d МБ (%2$.2f МБ використано)</string>
     <!-- endregion -->
     <string name="app_settings">Налаштування програми</string>
     <!-- region App Settings -->

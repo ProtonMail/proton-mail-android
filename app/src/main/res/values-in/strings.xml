@@ -889,7 +889,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Batas kuota penyimpanan lokal</string>
-    <string name="storage_value">%1$d MB (%2$.2f MB telah digunakan)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB telah digunakan)</string>
     <!-- endregion -->
     <string name="app_settings">Pengaturan aplikasi</string>
     <!-- region App Settings -->

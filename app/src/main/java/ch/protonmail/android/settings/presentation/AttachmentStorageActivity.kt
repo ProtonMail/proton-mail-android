@@ -26,12 +26,13 @@ import butterknife.OnClick
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MAX_ATTACHMENT_STORAGE_IN_MB
+import ch.protonmail.android.core.Constants.UNLIMITED_ATTACHMENT_STORAGE
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.utils.extensions.showToast
 import com.google.android.material.slider.Slider
 
 const val EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE = "EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE"
-const val MAX_STORAGE_VALUE = 1200
 
 class AttachmentStorageActivity : BaseActivity() {
 
@@ -39,9 +40,7 @@ class AttachmentStorageActivity : BaseActivity() {
     private val storageTextValue by lazy { findViewById<TextView>(R.id.storage_text_value) }
 
     private var mAttachmentStorageCurrentValue = 0
-    override fun getLayoutId(): Int {
-        return R.layout.activity_attachment_storage
-    }
+    override fun getLayoutId() = R.layout.activity_attachment_storage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,29 +51,36 @@ class AttachmentStorageActivity : BaseActivity() {
         actionBar?.elevation = elevation
 
         slider.setLabelFormatter { value ->
-            if (value != MAX_STORAGE_VALUE.toFloat()) value.toInt().toString() else getString(R.string.unlimited)
+            if (value == slider.valueTo) getString(R.string.unlimited)
+            else value.toInt().toString()
         }
         mAttachmentStorageCurrentValue =
-            intent.getIntExtra(EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE, Constants.MAX_ATTACHMENT_STORAGE_IN_MB)
-        if (mAttachmentStorageCurrentValue == -1) {
-            slider.value = MAX_STORAGE_VALUE.toFloat()
+            intent.getIntExtra(EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE, Constants.DEFAULT_ATTACHMENT_STORAGE_IN_MB)
+
+        if (mAttachmentStorageCurrentValue == UNLIMITED_ATTACHMENT_STORAGE) {
+            slider.value = slider.valueTo
             storageTextValue.text = getString(R.string.attachment_storage_value_current_unlimited)
         } else {
             storageTextValue.text =
                 String.format(getString(R.string.attachment_storage_value_current), mAttachmentStorageCurrentValue)
             slider.value = mAttachmentStorageCurrentValue.toFloat()
+                .coerceAtLeast(slider.valueFrom)
+                .coerceAtMost(slider.valueTo)
         }
+
         slider.addOnChangeListener(
             Slider.OnChangeListener { slider, value, _ ->
                 slider.value = value
-                if (value == MAX_STORAGE_VALUE.toFloat()) {
-                    mAttachmentStorageCurrentValue = -1
+                if (value == slider.valueTo) {
+                    mAttachmentStorageCurrentValue = UNLIMITED_ATTACHMENT_STORAGE
                     storageTextValue.text = getString(R.string.attachment_storage_value_current_unlimited)
-                    return@OnChangeListener
+                } else {
+                    mAttachmentStorageCurrentValue = value.toInt()
+                    storageTextValue.text = String.format(
+                        getString(R.string.attachment_storage_value_current),
+                        mAttachmentStorageCurrentValue
+                    )
                 }
-                mAttachmentStorageCurrentValue = value.toInt()
-                storageTextValue.text =
-                    String.format(getString(R.string.attachment_storage_value_current), mAttachmentStorageCurrentValue)
                 val user = mUserManager.currentLegacyUser
                 val attachmentStorageChanged = mAttachmentStorageCurrentValue != user?.maxAttachmentStorage
                 if (attachmentStorageChanged) {

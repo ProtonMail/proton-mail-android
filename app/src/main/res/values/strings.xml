@@ -92,6 +92,8 @@
     <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
     <string name="settings_pins_dont_match">The PIN codes must match!</string>
     <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
 
     <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
     <string name="settings_swipe_left_to_right">Left to right</string>
@@ -982,7 +984,6 @@
     <!-- endregion -->
 
     <string name="local_storage">Local storage limit</string>
-    <string name="storage_value" >%1$d MB (%2$.2f MB used)</string>
     <!-- endregion -->
 
     <string name="app_settings">App settings</string>

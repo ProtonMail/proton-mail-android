@@ -904,7 +904,7 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Talast n tkatut tadigant</string>
-    <string name="storage_value">%1$d MṬ (%2$.2f MṬ yettwaseqdec)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MṬ (%2$.2f MṬ yettwaseqdec)</string>
     <!-- endregion -->
     <string name="app_settings">Iɣewwaṛen n usnas</string>
     <!-- region App Settings -->
