@@ -700,6 +700,7 @@ public class User {
         saveAutoLockPINPeriodBackup();
     }
 
+    @Deprecated // Use IsPinLockEnabled use case
     public boolean isUsePin() {
         UsePin = loadUsePinFromBackup();
         return UsePin;
