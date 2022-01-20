@@ -128,3 +128,6 @@ fabric.properties
 # Git Toolbox plugin
 .idea/git_toolbox_prj.xml
 
+# Detekt config
+config/detekt/config.yml
+
