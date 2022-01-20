@@ -71,7 +71,7 @@ class SendPreferencesToMessageEncryptionUiModelMapper @Inject constructor() :
 
     private fun getTooltip(sendPreference: SendPreference, isMessagePasswordEncrypted: Boolean): Int {
         if (sendPreference.encryptionScheme == PackageType.PM) {
-            return if (sendPreference.isVerified && sendPreference.isPublicKeyPinned()) {
+            return if (sendPreference.isVerified && sendPreference.isPublicKeyPinned) {
                 R.string.composer_lock_internal_pinned
             } else {
                 R.string.composer_lock_internal
