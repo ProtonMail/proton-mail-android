@@ -124,7 +124,6 @@ class AccountTypeActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == android.R.id.home) {
-            saveLastInteraction()
             finish()
             return true
         }

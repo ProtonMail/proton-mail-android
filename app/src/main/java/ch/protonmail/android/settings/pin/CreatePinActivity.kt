@@ -48,8 +48,6 @@ class CreatePinActivity :
 
     private val fragmentContainer by lazy { findViewById<ViewGroup>(R.id.fragmentContainer) }
 
-    override fun shouldCheckForAutoLogout(): Boolean = false
-
     override fun getLayoutId(): Int = R.layout.activity_fragment_container
 
     override fun isPreventingScreenshots(): Boolean = true
@@ -85,7 +83,6 @@ class CreatePinActivity :
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
         } else {
-            saveLastInteraction()
             setResult(Activity.RESULT_OK)
             finish()
         }
@@ -114,7 +111,6 @@ class CreatePinActivity :
         intent.putExtra(EXTRA_PIN_SET, true)
         intent.putExtra(EXTRA_NEW_PIN, confirmPin)
         setResult(RESULT_OK, intent)
-        saveLastInteraction()
         finish()
     }
 

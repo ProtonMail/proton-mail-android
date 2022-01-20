@@ -93,7 +93,6 @@ class AddressChooserActivity : BaseActivity() {
             val intent = Intent()
             intent.putExtra(EXTRA_CONTACT_EMAILS, selected)
             setResult(Activity.RESULT_OK, intent)
-            saveLastInteraction()
             finish()
             true
         }

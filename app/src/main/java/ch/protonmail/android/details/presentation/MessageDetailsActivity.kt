@@ -444,11 +444,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return decryptedBody
     }
 
-    override fun onBackPressed() {
-        saveLastInteraction()
-        finish()
-    }
-
     @Subscribe
     @Suppress("unused")
     fun onDownloadEmbeddedImagesEvent(event: DownloadEmbeddedImagesEvent) {

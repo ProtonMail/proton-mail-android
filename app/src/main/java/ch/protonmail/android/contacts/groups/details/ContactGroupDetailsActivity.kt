@@ -177,7 +177,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
                 Timber.v("deleteGroupStatus received $status")
                 when (status) {
                     ContactGroupDetailsViewModel.Status.SUCCESS -> {
-                        saveLastInteraction()
                         finish()
                         showToast(resources.getQuantityString(R.plurals.group_deleted, 1))
                     }
@@ -227,7 +226,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
 
     override fun onBackPressed() {
         setResult(Activity.RESULT_OK)
-        saveLastInteraction()
         finish()
     }
 }

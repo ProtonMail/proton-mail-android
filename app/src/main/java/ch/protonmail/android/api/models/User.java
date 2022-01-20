@@ -115,7 +115,6 @@ public class User {
 
     // region these are local only - do not touch them
     private int AutoLockPINPeriod = -1; // this can remain here, local only setting
-    private long LastInteraction; // this can remain here, local only setting
 
     /**
      * TODO use enum. Return value is not clear at all!
@@ -255,7 +254,6 @@ public class User {
         user.UsePin = user.loadUsePinFromBackup();
         user.UseFingerprint = user.loadUseFingerprintFromBackup();
         user.CombinedContacts = user.loadCombinedContactsFromBackup();
-        user.LastInteraction = user.loadLastInteractionFromBackup();
         String notificationRingtone = user.loadRingtoneBackup();
         if (!TextUtils.isEmpty(notificationRingtone)) {
             user.ringtone = Uri.parse(notificationRingtone);
@@ -379,16 +377,6 @@ public class User {
     public void saveUseFingerprintBackup() {
         final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
         pref.edit().putBoolean(PREF_USE_FINGERPRINT, UseFingerprint).apply();
-    }
-
-    private void saveLastInteractionBackup() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        pref.edit().putLong(PREF_LAST_INTERACTION, LastInteraction).apply();
-    }
-
-    private long loadLastInteractionFromBackup() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        return pref.getLong(PREF_LAST_INTERACTION, SystemClock.elapsedRealtime());
     }
 
     private int loadAutoLockPINPeriodFromBackup() {
@@ -690,6 +678,7 @@ public class User {
         saveBackgroundSyncSetting();
     }
 
+    @Deprecated // Use getPinLockTimer use case
     public int getAutoLockPINPeriod() {
         AutoLockPINPeriod = loadAutoLockPINPeriodFromBackup();
         return AutoLockPINPeriod;
@@ -727,24 +716,6 @@ public class User {
     public void setMaxAttachmentStorage(int maxAttachmentStorage) {
         MaxAttachmentStorage = maxAttachmentStorage;
         saveMaxAttachmentStorageSetting();
-    }
-
-    public boolean shouldPINLockTheApp(long diff) {
-        int option = AutoLockPINPeriod;
-        int autoLockTimePeriod = AutoLockPINPeriod == -1 ? Integer.MAX_VALUE : ProtonMailApplication.getApplication().getResources().getIntArray(R.array.auto_logout_values)[option];
-        return isUsePin() && (ManuallyLocked || (diff > autoLockTimePeriod)) && ProtonMailApplication.getApplication().getUserManager().getMailboxPin() != null;
-    }
-
-    public long getLastInteractionDiff() {
-        if (LastInteraction == 0) {
-            LastInteraction = loadLastInteractionFromBackup();
-        }
-        return SystemClock.elapsedRealtime() - LastInteraction;
-    }
-
-    public void setLastInteraction(long lastInteraction) {
-        LastInteraction = lastInteraction;
-        saveLastInteractionBackup();
     }
 
     public boolean isNotificationVisibilityLockScreen() {

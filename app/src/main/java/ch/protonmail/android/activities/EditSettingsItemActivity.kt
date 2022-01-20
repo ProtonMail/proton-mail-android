@@ -276,7 +276,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == android.R.id.home) {
-            saveLastInteraction()
             saveAndFinish()
             return true
         }
@@ -284,7 +283,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     }
 
     override fun onBackPressed() {
-        saveLastInteraction()
         saveAndFinish()
     }
 
@@ -306,7 +304,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
         intent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, settingsItemType)
         setResult(Activity.RESULT_OK, intent)
-        saveLastInteraction()
         finish()
     }
 
@@ -326,7 +323,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 val intent = Intent()
                     .putExtra(EXTRA_SETTINGS_ITEM_TYPE, settingsItemType)
                 setResult(RESULT_OK, intent)
-                saveLastInteraction()
                 finish()
             }
         } else {

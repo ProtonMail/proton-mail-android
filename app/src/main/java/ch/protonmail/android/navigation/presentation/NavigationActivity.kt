@@ -449,8 +449,8 @@ internal abstract class NavigationActivity : BaseActivity() {
                 val user = userManager.currentLegacyUser
                 if (user != null && user.isUsePin && userManager.getMailboxPin() != null) {
                     user.setManuallyLocked(true)
-                    val pinIntent = AppUtil.decorInAppIntent(Intent(this, ValidatePinActivity::class.java))
-                    startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN)
+                    val intent = Intent(this, ValidatePinActivity::class.java)
+                    startActivity(intent)
                 }
             }
             Type.LABEL -> { /* We don't need it, perhaps we could remove the value from enum */

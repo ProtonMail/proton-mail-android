@@ -102,7 +102,6 @@ class AttachmentStorageActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == android.R.id.home) {
-            saveLastInteraction()
             finish()
             return true
         }
@@ -111,7 +110,6 @@ class AttachmentStorageActivity : BaseActivity() {
 
     override fun onBackPressed() {
         setResult(RESULT_OK)
-        saveLastInteraction()
         finish()
     }
 }

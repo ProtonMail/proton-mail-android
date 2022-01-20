@@ -126,7 +126,6 @@ public class ReportBugsActivity extends BaseActivity {
                 String email = user.getAddresses().getPrimary().getEmail().getS();
                 reportBugsWorker.enqueue(OSName, OSVersion, client, appVersionName, title, description, username, email);
                 TextExtensions.showToast(this, R.string.sending_report, Toast.LENGTH_SHORT);
-                saveLastInteraction();
                 finish();
             default:
                 return super.onOptionsItemSelected(item);

@@ -198,7 +198,6 @@ class DefaultAddressActivity : BaseActivity() {
 
     private fun saveAndFinish() {
         setResult(Activity.RESULT_OK)
-        saveLastInteraction()
         finish()
     }
 }

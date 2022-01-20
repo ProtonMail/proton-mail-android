@@ -240,7 +240,6 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         if (state != State.UNDEFINED && !createOnly) {
             state = State.UNDEFINED
         } else {
-            saveLastInteraction()
             super.onBackPressed()
         }
     }

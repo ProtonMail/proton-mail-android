@@ -57,8 +57,6 @@ class ValidatePinActivity :
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
-    override fun shouldCheckForAutoLogout(): Boolean = false
-
     override fun getLayoutId(): Int = R.layout.activity_fragment_container
 
     override fun isPreventingScreenshots(): Boolean = true
@@ -139,9 +137,7 @@ class ValidatePinActivity :
 
     override fun onPinSuccess() {
         mUserManager.requireCurrentLegacyUser().setManuallyLocked(false)
-        mPinValid = true
         setResult(Activity.RESULT_OK, buildIntent())
-        saveLastInteraction()
         finish()
     }
 
