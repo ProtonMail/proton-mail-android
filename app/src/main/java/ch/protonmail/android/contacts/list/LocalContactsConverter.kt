@@ -21,17 +21,15 @@ package ch.protonmail.android.contacts.list
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.list.viewModel.IContactsListViewModel
 import ch.protonmail.android.jobs.ConvertLocalContactsJob
-import ch.protonmail.android.labels.domain.LabelRepository
 import com.birbit.android.jobqueue.JobManager
 
 class LocalContactsConverter(
     private val jobManager: JobManager,
-    private val viewModel: IContactsListViewModel,
-    private val labelRepository: LabelRepository
+    private val viewModel: IContactsListViewModel
 ) {
     fun startConversion(contacts: List<ContactItem>) {
         viewModel.setProgress(0)
         viewModel.setProgressMax(contacts.size)
-        jobManager.addJobInBackground(ConvertLocalContactsJob(contacts, labelRepository))
+        jobManager.addJobInBackground(ConvertLocalContactsJob(contacts))
     }
 }

@@ -58,7 +58,6 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
@@ -90,9 +89,6 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     @Inject
     lateinit var jobManager: JobManager
-
-    @Inject
-    lateinit var labelRepository: LabelRepository
 
     override var actionMode: ActionMode? = null
         private set
@@ -172,7 +168,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 if (!allContactsLocal) {
                     requireContext().showToast(R.string.please_select_only_phone_contacts)
                 } else {
-                    LocalContactsConverter(jobManager, viewModel, labelRepository)
+                    LocalContactsConverter(jobManager, viewModel)
                         .startConversion(
                             selectedItems.toList()
                         )
@@ -252,7 +248,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     fun optionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_convert -> {
-                val localContactsConverter = LocalContactsConverter(jobManager, viewModel, labelRepository)
+                val localContactsConverter = LocalContactsConverter(jobManager, viewModel)
 
                 if (viewModel.hasPermission) {
                     val contacts = viewModel.androidContacts.value

@@ -47,7 +47,6 @@ import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.remote.model.LabelRequestBody
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LABEL_TYPE_ID_CONTACT_GROUP
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.views.models.LocalContact
@@ -64,12 +63,12 @@ import kotlinx.coroutines.runBlocking
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.toInt
 import timber.log.Timber
+import java.io.Serializable
 import java.util.ArrayList
 import java.util.UUID
 
 class ConvertLocalContactsJob(
-    localContacts: List<ContactItem>,
-    private val labelRepository: LabelRepository
+    localContacts: List<ContactItem>
 ) : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
 
     private val localContacts: List<LocalContactItem> = localContacts
@@ -261,7 +260,7 @@ class ConvertLocalContactsJob(
         groupsCursor?.use {
             it.moveToFirst()
             do {
-                groups[it.getLong(0)] = it.getString(1)
+                groups[it.getLong(0)] = it.getString(1) ?: continue
             } while (it.moveToNext())
         }
 
@@ -303,7 +302,7 @@ class ConvertLocalContactsJob(
                     val userId = userId ?: getUserManager().requireCurrentUserId()
                     val mapper = LabelEntityApiMapper()
                     val domainMapper = LabelEntityDomainMapper()
-                    labelRepository.saveLabel(
+                    getLabelRepository().saveLabel(
                         domainMapper.toLabel(
                             mapper.toEntity(serverLabel, userId)
                         ),
@@ -375,5 +374,5 @@ class ConvertLocalContactsJob(
         }
     }
 
-    private data class LocalContactItem(val id: String, val name: String)
+    private data class LocalContactItem(val id: String, val name: String) : Serializable
 }
