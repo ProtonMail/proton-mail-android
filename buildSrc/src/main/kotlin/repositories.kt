@@ -26,5 +26,4 @@ import org.gradle.kotlin.dsl.maven
 val repos: RepositoryHandler.() -> Unit get() = {
     google()
     jcenter()
-    maven("https://dl.bintray.com/kotlin/kotlinx/")
 }
