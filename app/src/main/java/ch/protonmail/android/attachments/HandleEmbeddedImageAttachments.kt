@@ -34,6 +34,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.storage.AttachmentClearingServiceHelper
 import ch.protonmail.android.utils.AppUtil
+import me.proton.core.util.kotlin.forEachAsync
 import okio.buffer
 import okio.sink
 import timber.log.Timber
@@ -93,7 +94,8 @@ class HandleEmbeddedImageAttachments @Inject constructor(
         var hasFailed = false
 
         val embeddedImagesWithLocalFile = mutableListOf<EmbeddedImage>()
-        embeddedImages.forEachIndexed { index, embeddedImage ->
+        embeddedImages.withIndex().forEachAsync {
+            val (index, embeddedImage) = it.index to it.value
 
             val filename = calculateFilename(embeddedImage.fileNameFormatted, index)
             val attachmentFile = File(attachmentsDirectoryFile, filename)
