@@ -23,6 +23,7 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.NotificationDao
@@ -57,6 +58,9 @@ class DatabaseProvider @Inject constructor(
     // Counter
     internal fun provideUnreadCounterDao(userId: UserId) =
         MessageDatabase.getInstance(context, userId).getUnreadCounterDao()
+
+    fun provideCounterDao(userId: UserId) =
+        CounterDatabase.getInstance(context, userId).getDao()
 
     // Message
     fun provideMessageDao(userId: UserId): MessageDao =

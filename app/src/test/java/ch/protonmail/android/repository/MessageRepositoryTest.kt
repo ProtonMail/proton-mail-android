@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.repository
 
-import android.content.Context
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
@@ -29,11 +28,14 @@ import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
@@ -78,16 +80,23 @@ import kotlin.test.assertNull
 
 class MessageRepositoryTest {
 
-    private val messageDao: MessageDao = mockk(relaxUnitFun = true)
+    private val messageDao: MessageDao = mockk(relaxUnitFun = true) {
+        coEvery { saveMessage(any()) } returns 123
+    }
 
     private val unreadCounterDao: UnreadCounterDao = mockk {
         every { observeMessagesUnreadCounters(any()) } returns flowOf(emptyList())
         coEvery { insertOrUpdate(any<Collection<UnreadCounterEntity>>()) } just Runs
     }
 
+    private val counterDao: CounterDao = mockk {
+        coEvery { insertUnreadLocation(any()) } just runs
+    }
+
     private val databaseProvider: DatabaseProvider = mockk {
         every { provideMessageDao(any()) } returns messageDao
         every { provideUnreadCounterDao(any()) } returns unreadCounterDao
+        every { provideCounterDao(any()) } returns counterDao
     }
 
     private val messageBodyFileManager: MessageBodyFileManager = mockk()
@@ -110,16 +119,17 @@ class MessageRepositoryTest {
 
     private val labelRepository = mockk<LabelRepository>()
 
-    private val postToLocationWorker = mockk<MoveMessageToLocationWorker.Enqueuer>()
+    private val postToLocationWorker = mockk<MoveMessageToLocationWorker.Enqueuer>() {
+        every { enqueue(any(), any(), any()) } returns mockk()
+    }
 
     private val emptyFolderRemoteWorker = mockk<EmptyFolderRemoteWorker.Enqueuer> {
         coEvery { enqueue(any(), any()) } returns mockk()
     }
 
-    private val contextMock = mockk<Context>()
-
     private val testUserName = "userName1"
     private val testUserId = UserId(testUserName)
+    private val messageId = "messageId"
     private val message1 = Message(messageId = "1")
     private val message2 = Message(messageId = "2")
     private val message3 = Message(messageId = "3")
@@ -130,6 +140,11 @@ class MessageRepositoryTest {
     private val serverMessage3 = ServerMessage(id = "3", ConversationID = EMPTY_STRING)
     private val serverMessage4 = ServerMessage(id = "4", ConversationID = EMPTY_STRING)
     private val allServerMessages = listOf(serverMessage1, serverMessage2, serverMessage3, serverMessage4)
+    private val inboxLabelId = "0"
+    private val trashLabelId = "3"
+    private val allMailLabelId = "5"
+    private val customLabelId = "customLabelId"
+    private val customFolderId = "customFolderId"
 
     private val messageRepository = MessageRepository(
         dispatcherProvider = TestDispatcherProvider,
@@ -144,8 +159,7 @@ class MessageRepositoryTest {
         connectivityManager = networkConnectivityManager,
         labelRepository = labelRepository,
         moveMessageToLocationWorker = postToLocationWorker,
-        emptyFolderRemoteWorker = emptyFolderRemoteWorker,
-        context = contextMock
+        emptyFolderRemoteWorker = emptyFolderRemoteWorker
     )
 
     @Test
@@ -770,6 +784,54 @@ class MessageRepositoryTest {
         }
     }
 
+    @Test
+    fun `verify correct labels are added and removed when message is moved to custom location`() = runBlockingTest {
+        // given
+        val messageIds = listOf(messageId)
+        val labelIds = listOf(inboxLabelId, allMailLabelId, customLabelId)
+        val expectedLabelIds = listOf(allMailLabelId, customFolderId, customLabelId)
+        val message = Message(
+            messageId = messageId,
+            allLabelIDs = labelIds
+        )
+        val customLabel = buildLabel(id = LabelId(customLabelId))
+        coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
+        coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
+        coEvery { labelRepository.findLabel(LabelId(customLabelId)) } returns customLabel
+
+        // when
+        messageRepository.moveToCustomFolderLocation(messageIds, customFolderId, testUserId)
+
+        // then
+        val savedMessageCaptor = slot<Message>()
+        coVerify { messageDao.saveMessage(capture(savedMessageCaptor)) }
+        assertEquals(expectedLabelIds, savedMessageCaptor.captured.allLabelIDs)
+    }
+
+    @Test
+    fun `verify correct labels are added and removed when message is moved to trash`() = runBlockingTest {
+        // given
+        val messageIds = listOf(messageId)
+        val labelIds = listOf(inboxLabelId, allMailLabelId, customLabelId)
+        val expectedLabelIds = listOf(trashLabelId, allMailLabelId)
+        val message = Message(
+            messageId = messageId,
+            allLabelIDs = labelIds
+        )
+        val customLabel = buildLabel(id = LabelId(customLabelId))
+        coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
+        coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
+        coEvery { labelRepository.findLabel(LabelId(customLabelId)) } returns customLabel
+
+        // when
+        messageRepository.moveToTrash(messageIds, testUserId)
+
+        // then
+        val savedMessageCaptor = slot<Message>()
+        coVerify { messageDao.saveMessage(capture(savedMessageCaptor)) }
+        assertEquals(expectedLabelIds, savedMessageCaptor.captured.allLabelIDs)
+    }
+
     private fun setupUnreadCounterDaoToSimulateReplace() {
 
         val counters = MutableStateFlow(emptyList<UnreadCounterEntity>())
@@ -792,4 +854,22 @@ class MessageRepositoryTest {
         every { this@mockk.serverMessages } returns serverMessages
         every { this@mockk.code } returns code
     }
+
+    private fun buildLabel(
+        id: LabelId,
+        name: String = "",
+        color: String = "",
+        order: Int = 0,
+        type: LabelType = LabelType.MESSAGE_LABEL,
+        path: String = "",
+        parentId: String = ""
+    ) = Label(
+        id = id,
+        name = name,
+        color = color,
+        order = order,
+        type = type,
+        path = path,
+        parentId = parentId
+    )
 }

@@ -41,18 +41,17 @@ internal class MoveMessagesToFolder @Inject constructor(
         Timber.v("Move to folder: $newFolderLocationId")
         when (newFolderLocationId) {
             Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() ->
-                messagesRepository.moveToTrash(messageIds, currentFolderLabelId, userId)
+                messagesRepository.moveToTrash(messageIds, userId)
             Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString() ->
-                messagesRepository.moveToArchive(messageIds, currentFolderLabelId, userId)
+                messagesRepository.moveToArchive(messageIds, userId)
             Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() ->
-                messagesRepository.moveToInbox(messageIds, currentFolderLabelId, userId)
+                messagesRepository.moveToInbox(messageIds, userId)
             Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString() ->
-                messagesRepository.moveToSpam(messageIds, currentFolderLabelId, userId)
+                messagesRepository.moveToSpam(messageIds, userId)
             else ->
                 messagesRepository.moveToCustomFolderLocation(
                     messageIds,
                     newFolderLocationId,
-                    currentFolderLabelId,
                     userId
                 )
         }

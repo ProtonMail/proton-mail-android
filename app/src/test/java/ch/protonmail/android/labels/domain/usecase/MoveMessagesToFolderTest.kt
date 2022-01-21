@@ -67,14 +67,14 @@ class MoveMessagesToFolderTest {
 
         // given
         val newFolderLocation = Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
-        coEvery { messageRepository.moveToTrash(messageIds, currentFolderLabelId, userId) } just Runs
+        coEvery { messageRepository.moveToTrash(messageIds, userId) } just Runs
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
         coVerify {
-            messageRepository.moveToTrash(messageIds, currentFolderLabelId, userId)
+            messageRepository.moveToTrash(messageIds, userId)
             conversationsRepository.updateConvosBasedOnMessagesLocation(
                 userId,
                 messageIds,
@@ -89,14 +89,14 @@ class MoveMessagesToFolderTest {
 
         // given
         val newFolderLocation = Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
-        coEvery { messageRepository.moveToArchive(messageIds, currentFolderLabelId, userId) } just Runs
+        coEvery { messageRepository.moveToArchive(messageIds, userId) } just Runs
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
         coVerify {
-            messageRepository.moveToArchive(messageIds, currentFolderLabelId, userId)
+            messageRepository.moveToArchive(messageIds, userId)
             conversationsRepository.updateConvosBasedOnMessagesLocation(
                 userId,
                 messageIds,
@@ -111,14 +111,14 @@ class MoveMessagesToFolderTest {
 
         // given
         val newFolderLocation = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
-        coEvery { messageRepository.moveToInbox(messageIds, currentFolderLabelId, userId) } just Runs
+        coEvery { messageRepository.moveToInbox(messageIds, userId) } just Runs
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
         coVerify {
-            messageRepository.moveToInbox(messageIds, currentFolderLabelId, userId)
+            messageRepository.moveToInbox(messageIds, userId)
             conversationsRepository.updateConvosBasedOnMessagesLocation(
                 userId,
                 messageIds,
@@ -133,14 +133,14 @@ class MoveMessagesToFolderTest {
 
         // given
         val newFolderLocation = Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()
-        coEvery { messageRepository.moveToSpam(messageIds, currentFolderLabelId, userId) } just Runs
+        coEvery { messageRepository.moveToSpam(messageIds, userId) } just Runs
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
 
         // then
         coVerify {
-            messageRepository.moveToSpam(messageIds, currentFolderLabelId, userId)
+            messageRepository.moveToSpam(messageIds, userId)
             conversationsRepository.updateConvosBasedOnMessagesLocation(
                 userId,
                 messageIds,
@@ -155,7 +155,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val newFolderLocation = "newFolderCustomId"
-        coEvery { messageRepository.moveToCustomFolderLocation(messageIds, newFolderLocation, currentFolderLabelId, userId) } just Runs
+        coEvery { messageRepository.moveToCustomFolderLocation(messageIds, newFolderLocation, userId) } just Runs
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId, userId)
@@ -165,7 +165,6 @@ class MoveMessagesToFolderTest {
             messageRepository.moveToCustomFolderLocation(
                 messageIds,
                 newFolderLocation,
-                currentFolderLabelId,
                 userId
             )
             conversationsRepository.updateConvosBasedOnMessagesLocation(
