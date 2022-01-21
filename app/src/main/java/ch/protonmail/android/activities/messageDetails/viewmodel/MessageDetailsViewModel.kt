@@ -57,7 +57,6 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
@@ -115,7 +114,6 @@ import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.mapSecond
 import me.proton.core.util.kotlin.takeIfNotBlank
 import okio.buffer
@@ -618,9 +616,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             context, context.applicationContext.packageName + ".provider", fileInDownloads
         )
     }
-
-    fun viewAttachment(filename: String?, uri: Uri?) =
-        downloadUtils.viewAttachment(filename, uri)
 
     fun viewAttachment(attachmentId: String, filename: String?, uri: Uri?) {
         uri ?: return

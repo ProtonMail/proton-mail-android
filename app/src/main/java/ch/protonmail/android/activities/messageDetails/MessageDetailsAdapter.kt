@@ -427,7 +427,7 @@ internal class MessageDetailsAdapter(
             openInProtonCalenderView: View,
             editDraftButton: Button
         ) {
-            val item = checkNotNull(visibleItems) { "visibleItems is null" }[position]
+            val item = visibleItems[position]
 
             loadEmbeddedImagesContainer.setOnClickListener { view ->
                 view.visibility = View.GONE

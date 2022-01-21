@@ -62,7 +62,7 @@ class ProtonCalendarUtil @Inject constructor(private val context: Context) {
             setDataAndType(uri, CALENDAR_MIME_TYPE)
             setPackage(PROTON_CALENDAR_PACKAGE_NAME)
             putExtra(EXTRA_SENDER_EMAIL, senderEmail.s)
-            putExtra(EXTRA_RECIPIENT_EMAIL, recipientEmail?.s)
+            putExtra(EXTRA_RECIPIENT_EMAIL, recipientEmail.s)
         }
 
         context.startActivity(intent)

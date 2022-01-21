@@ -230,11 +230,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported,
             onLoadEmbeddedImagesClicked = ::onLoadEmbeddedImagesClicked,
             onDisplayRemoteContentClicked = ::onDisplayRemoteContentClicked,
-            onOpenInProtonCalendarClicked = { viewModel.openInProtonCalendar(this, it) },
+            protonCalendarUtil = protonCalendarUtil,
             onLoadMessageBody = ::onLoadMessageBody,
             onAttachmentDownloadCallback = ::onDownloadAttachment,
-            onOpenInProtonCalendarClicked = ::onEditDraftClicked,
-            onEditDraftClicked = { viewModel.openInProtonCalendar(this, it) },
+            onOpenInProtonCalendarClicked = { viewModel.openInProtonCalendar(this, it) },
+            onEditDraftClicked = ::onEditDraftClicked,
             onReplyMessageClicked = ::onReplyMessageClicked,
             onMoreMessageActionsClicked = ::onShowMessageActionSheet
         )
