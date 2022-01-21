@@ -31,11 +31,13 @@ import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
-class DownloadUtils @Inject constructor() {
+class DownloadUtils @Inject constructor(
+    private val context: Context
+) {
 
-    fun viewAttachment(context: Context, filename: String?, uri: Uri?) {
+    fun viewAttachment(filename: String?, uri: Uri?) {
         if (uri != null) {
-            val mimeType = getMimeType(uri, context, filename)
+            val mimeType = getMimeType(uri, filename)
             Timber.d("viewAttachment mimeType: $mimeType uri: $uri uriScheme: ${uri.scheme}")
 
             val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -54,13 +56,12 @@ class DownloadUtils @Inject constructor() {
     }
 
     fun viewAttachmentNotification(
-        context: Context,
         fileName: String,
         uri: Uri?,
         showNotification: Boolean
     ) {
         if (uri != null) {
-            val mimeType = getMimeType(uri, context, fileName)
+            val mimeType = getMimeType(uri, fileName)
 
             Timber.d("viewAttachmentNotification mimeType: $mimeType uri: $uri")
             val notifyManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -69,14 +70,14 @@ class DownloadUtils @Inject constructor() {
         }
     }
 
-    private fun getMimeType(uri: Uri, context: Context, filename: String?) = when {
+    fun getMimeType(uri: Uri, filename: String?): String? = when {
         ContentResolver.SCHEME_CONTENT == uri.scheme -> {
             val resolver = context.contentResolver
             resolver.getType(uri)
         }
         ContentResolver.SCHEME_FILE == uri.scheme -> {
             val extension = MimeTypeMap.getFileExtensionFromUrl(filename)
-            MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase(Locale.ENGLISH))
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.lowercase(Locale.ENGLISH))
         }
         else -> {
             Constants.MIME_TYPE_UNKNOWN_FILE

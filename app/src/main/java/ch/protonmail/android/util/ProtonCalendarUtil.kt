@@ -24,8 +24,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
+import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.EmailAddress
+import java.util.Locale
 import javax.inject.Inject
 
 class ProtonCalendarUtil @Inject constructor(private val context: Context) {
@@ -52,7 +54,7 @@ class ProtonCalendarUtil @Inject constructor(private val context: Context) {
      * @throws ActivityNotFoundException if Proton Calendar is not installed; ensure to call
      *  [isProtonCalendarInstalled] first
      */
-    fun openIcsInProtonCalendar(uri: Uri, senderEmail: EmailAddress, recipientEmail: EmailAddress) {
+    fun openIcsInProtonCalendar(uri: Uri, senderEmail: EmailAddress, recipientEmail: EmailAddress?) {
         val intent = Intent(ACTION_OPEN_ICS).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
                 Intent.FLAG_ACTIVITY_NEW_TASK or
@@ -60,7 +62,7 @@ class ProtonCalendarUtil @Inject constructor(private val context: Context) {
             setDataAndType(uri, CALENDAR_MIME_TYPE)
             setPackage(PROTON_CALENDAR_PACKAGE_NAME)
             putExtra(EXTRA_SENDER_EMAIL, senderEmail.s)
-            putExtra(EXTRA_RECIPIENT_EMAIL, recipientEmail.s)
+            putExtra(EXTRA_RECIPIENT_EMAIL, recipientEmail?.s)
         }
 
         context.startActivity(intent)
@@ -82,10 +84,21 @@ class ProtonCalendarUtil @Inject constructor(private val context: Context) {
      * @return `true` is [message] has any attachments that can be opened with Proton Calendar
      */
     fun hasCalendarAttachment(message: Message): Boolean =
-        message.attachments.any {
-            val allMimeType = it.mimeType?.toLowerCase()?.split(";")
-                ?: return@any false
-            CALENDAR_MIME_TYPE in allMimeType
+        message.attachments.any(::isCalendarAttachment)
+
+    /**
+     * @return the first [Attachment] that can be opened with Proton Calendar or `null` if none is found
+     */
+    fun getCalendarAttachment(message: Message): Attachment? =
+        message.attachments.find(::isCalendarAttachment)
+
+    /**
+     * @return the first [Attachment] that can be opened with Proton Calendar
+     * @throws IllegalArgumentException throw if none is found
+     */
+    fun requireCalendarAttachment(message: Message): Attachment =
+        requireNotNull(getCalendarAttachment(message)) {
+            "No Proton Calendar attachment found. Total attachments: ${message.attachments.size}"
         }
 
     /**
@@ -96,6 +109,12 @@ class ProtonCalendarUtil @Inject constructor(private val context: Context) {
         .firstOrNull { it.startsWith("$RECIPIENT_EMAIL_HEADER:") }
         ?.substringAfter("$RECIPIENT_EMAIL_HEADER:")?.trim()
         ?.let(::EmailAddress)
+
+    private fun isCalendarAttachment(attachment: Attachment): Boolean {
+        val allMimeType = attachment.mimeType?.lowercase(Locale.getDefault())?.split(";")
+            ?: return false
+        return CALENDAR_MIME_TYPE in allMimeType
+    }
 
     companion object {
         private const val PROTON_CALENDAR_PACKAGE_NAME = "me.proton.android.calendar"

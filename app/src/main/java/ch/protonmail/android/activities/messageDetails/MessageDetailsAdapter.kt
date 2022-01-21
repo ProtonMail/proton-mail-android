@@ -93,6 +93,7 @@ internal class MessageDetailsAdapter(
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
+    private val onOpenInProtonCalendarClicked: (Message) -> Unit,
     private val onEditDraftClicked: (Message) -> Unit,
     private val onReplyMessageClicked: (Constants.MessageActionType, Message) -> Unit,
     private val onMoreMessageActionsClicked: (Message) -> Unit
@@ -353,7 +354,13 @@ internal class MessageDetailsAdapter(
             )
             // TODO: To be decided whether we will need these actions moving forward or they can be removed completely
             setupReplyActionsView(message, true)
-            setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
+            setupMessageContentActions(
+                position = position,
+                loadEmbeddedImagesContainer = loadEmbeddedImagesButton,
+                displayRemoteContentButton = displayRemoteContentButton,
+                openInProtonCalenderView = openInProtonCalendarView,
+                editDraftButton = editDraftButton
+            )
 
             setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
         }
@@ -417,8 +424,11 @@ internal class MessageDetailsAdapter(
             position: Int,
             loadEmbeddedImagesContainer: Button,
             displayRemoteContentButton: Button,
+            openInProtonCalenderView: View,
             editDraftButton: Button
         ) {
+            val item = checkNotNull(visibleItems) { "visibleItems is null" }[position]
+
             loadEmbeddedImagesContainer.setOnClickListener { view ->
                 view.visibility = View.GONE
                 // Once images were loaded for one message, we automatically load them for all the others, so:
@@ -445,6 +455,10 @@ internal class MessageDetailsAdapter(
                     webView.invalidate()
                     onDisplayRemoteContentClicked(item.message)
                 }
+            }
+
+            openInProtonCalenderView.setOnClickListener {
+                onOpenInProtonCalendarClicked(item.message)
             }
 
             editDraftButton.setOnClickListener {

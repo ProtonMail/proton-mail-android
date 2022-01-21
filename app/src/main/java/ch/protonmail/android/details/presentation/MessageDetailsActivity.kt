@@ -228,12 +228,13 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             userManager = mUserManager,
             messageEncryptionUiModelMapper = messageEncryptionUiModelMapper,
             setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported,
-            protonCalendarUtil = protonCalendarUtil,
             onLoadEmbeddedImagesClicked = ::onLoadEmbeddedImagesClicked,
             onDisplayRemoteContentClicked = ::onDisplayRemoteContentClicked,
+            onOpenInProtonCalendarClicked = { viewModel.openInProtonCalendar(this, it) },
             onLoadMessageBody = ::onLoadMessageBody,
             onAttachmentDownloadCallback = ::onDownloadAttachment,
-            onEditDraftClicked = ::onEditDraftClicked,
+            onOpenInProtonCalendarClicked = ::onEditDraftClicked,
+            onEditDraftClicked = { viewModel.openInProtonCalendar(this, it) },
             onReplyMessageClicked = ::onReplyMessageClicked,
             onMoreMessageActionsClicked = ::onShowMessageActionSheet
         )
@@ -481,7 +482,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             Status.STARTED, Status.SUCCESS -> {
                 val isDownloaded = Status.SUCCESS == status
                 if (isDownloaded) {
-                    viewModel.viewAttachment(this, event.filename, event.attachmentUri)
+                    viewModel.viewAttachment(event.attachmentId, event.filename, event.attachmentUri)
                 } else {
                     showToast(R.string.downloading)
                 }

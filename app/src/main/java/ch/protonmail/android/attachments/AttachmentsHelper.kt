@@ -42,7 +42,9 @@ private const val BASE_64 = "base64"
 /**
  * Common methods used by Download attachments components.
  */
-class AttachmentsHelper @Inject constructor() {
+class AttachmentsHelper @Inject constructor(
+    private val context: Context
+) {
 
     fun fromAttachmentToEmbeddedImage(
         attachment: Attachment,
@@ -137,10 +139,8 @@ class AttachmentsHelper @Inject constructor() {
         return newUri
     }
 
-    fun isFileAvailable(
-        context: Context,
-        uri: Uri?
-    ) = uri?.let {
+    fun isFileAvailable(uri: Uri?): Boolean {
+        uri ?: return false
         val doesFileExist = try {
             context.contentResolver.openInputStream(uri)?.use {
                 it.close()
@@ -152,5 +152,5 @@ class AttachmentsHelper @Inject constructor() {
         }
         Timber.d("doesFileExist: $doesFileExist")
         return doesFileExist
-    } ?: false
+    }
 }
