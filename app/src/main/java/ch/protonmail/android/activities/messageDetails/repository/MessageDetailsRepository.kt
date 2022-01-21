@@ -165,7 +165,7 @@ class MessageDetailsRepository @Inject constructor(
 
     suspend fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 
-    suspend fun deleteAttachment(attachment: Attachment) = messagesDao.deleteAttachment(attachment)
+    suspend fun deleteAllAttachments(attachments: List<Attachment>) = messagesDao.deleteAllAttachments(attachments)
 
     suspend fun saveMessage(message: Message): Long {
         saveFile(message)

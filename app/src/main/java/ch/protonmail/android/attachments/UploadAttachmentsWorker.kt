@@ -62,6 +62,8 @@ internal const val KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR = "keyUploadAttach
 private const val UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX = "uploadAttachmentUniqueWorkName"
 private const val UPLOAD_ATTACHMENTS_MAX_RETRIES = 1
 
+private const val DATA_URI_PREFIX = "data:"
+
 @HiltWorker
 class UploadAttachmentsWorker @AssistedInject constructor(
     @Assisted private val context: Context,
@@ -141,11 +143,11 @@ class UploadAttachmentsWorker @AssistedInject constructor(
         attachmentIds.forEach { attachmentId ->
             val attachment = messageDetailsRepository.findAttachmentById(attachmentId) ?: return@forEach
 
+            val filePath = attachment.filePath
             if (!attachment.isUploaded &&
-                (attachment.filePath == null || (!attachment.filePath!!.startsWith(
-                    "data"
-                ) && attachment.doesFileExist.not()))
+                (filePath == null || (!filePath.startsWith(DATA_URI_PREFIX) && attachment.doesFileExist.not()))
             ) {
+
                 return Result.Failure.InvalidAttachment(
                     String.format(
                         context.getString(R.string.attachment_failed_message_drafted),

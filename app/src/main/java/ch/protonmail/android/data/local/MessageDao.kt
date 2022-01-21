@@ -351,6 +351,9 @@ abstract class MessageDao : BaseDao<Message>() {
     @Delete
     abstract suspend fun deleteAllAttachments(attachments: List<Attachment>)
 
+    @Query("DELETE FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID IN (:messageIds)")
+    abstract suspend fun deleteAttachmentsByMessageIds(messageIds: List<String>)
+
     @Delete
     abstract fun deleteAttachment(vararg attachment: Attachment)
 

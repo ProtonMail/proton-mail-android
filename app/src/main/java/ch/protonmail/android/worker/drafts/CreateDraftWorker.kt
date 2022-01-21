@@ -186,7 +186,7 @@ class CreateDraftWorker @AssistedInject constructor(
             initialDraftBody
         }
 
-        val attachments = filterLocalAttachments(messageDetailsRepository.findAttachmentsByMessageId(messageId.id))
+        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId.id).filter { it.isUploaded }
         val messageAttachmentsKeyPackets = buildMessageAttachmentsKeyPacketsMap(attachments, senderAddress)
 
         val messageBody = message.messageBody
@@ -206,20 +206,6 @@ class CreateDraftWorker @AssistedInject constructor(
             ),
             attachmentKeyPackets = messageAttachmentsKeyPackets + withParentDraftBody.attachmentKeyPackets
         ).right()
-    }
-
-    private fun filterLocalAttachments(
-        localAttachments: List<Attachment>,
-    ): List<Attachment> {
-        val result = ArrayList<Attachment>()
-        for (i in localAttachments.indices) {
-            val attachment = localAttachments[i]
-            if (!attachment.isUploaded) {
-                continue
-            }
-            result.add(attachment)
-        }
-        return result
     }
 
     private fun fetchParentMessage(parentId: String) =

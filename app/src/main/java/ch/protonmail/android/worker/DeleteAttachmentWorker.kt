@@ -39,7 +39,6 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import javax.inject.Inject
 
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 
@@ -93,7 +92,7 @@ class DeleteAttachmentWorker @AssistedInject constructor(
         }
     }
 
-    class Enqueuer @Inject constructor(private val workManager: WorkManager) {
+    class Enqueuer constructor(private val workManager: WorkManager) {
 
         fun enqueue(attachmentId: String): Operation {
             val constraints = Constraints.Builder()

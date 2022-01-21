@@ -825,7 +825,7 @@ public class ComposeMessageActivity
         if (!alreadyAdded) {
             attachmentsList.add(new LocalAttachment(Uri.parse(event.uri), event.displayName, event.size, event.mimeType));
             renderViews();
-            composeMessageViewModel.saveImportedAttachmentsToDB();
+            composeMessageViewModel.buildMessage();
         }
     }
 

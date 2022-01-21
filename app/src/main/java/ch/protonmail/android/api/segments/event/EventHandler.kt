@@ -319,11 +319,7 @@ internal class EventHandler @AssistedInject constructor(
                 val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
                 if (message != null) {
                     externalScope.launch {
-                        message.attachments.onEach {
-                            it.let {
-                                messageDetailsRepository.deleteAttachment(it)
-                            }
-                        }
+                        messageDetailsRepository.deleteAllAttachments(message.attachments)
                     }
                     messageDao.deleteMessage(message)
 
@@ -440,11 +436,7 @@ internal class EventHandler @AssistedInject constructor(
             }
             if (expired) {
                 externalScope.launch {
-                    message.attachments.onEach {
-                        it.let {
-                            messageDetailsRepository.deleteAttachment(it)
-                        }
-                    }
+                    messageDetailsRepository.deleteAllAttachments(message.attachments)
                 }
                 messageDetailsRepository.deleteMessage(message)
             } else {

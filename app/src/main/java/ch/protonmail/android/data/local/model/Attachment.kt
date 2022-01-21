@@ -310,14 +310,13 @@ data class Attachment constructor(
         @Synchronized
         fun createAttachmentList(
             messageDao: MessageDao,
-            localAttachmentList: List<LocalAttachment>,
-            useRandomIds: Boolean = true
+            localAttachmentList: List<LocalAttachment>
         ): List<Attachment> = localAttachmentList.map { localAttachment ->
             fromLocalAttachment(
                 messageDao,
                 localAttachment,
                 localAttachmentList.indexOf(localAttachment).toLong(),
-                useRandomIds
+                useRandomIds = false
             )
         }
 

@@ -383,12 +383,12 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private fun filterUploadedAttachments(
-        localAttachments: List<Attachment>,
+        attachments: List<Attachment>,
         uploadAttachments: Boolean
     ): List<String> {
         val result = ArrayList<String>()
-        for (i in localAttachments.indices) {
-            val attachment = localAttachments[i]
+        for (i in attachments.indices) {
+            val attachment = attachments[i]
             if (attachment.isUploaded || attachment.isUploading || !attachment.isNew) {
                 continue
             }
@@ -518,7 +518,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     private fun calculateNewAttachments(message: Message, uploadAttachments: Boolean): List<String> {
         var newAttachmentIds: List<String> = ArrayList()
-        val listOfAttachments = ArrayList(message.attachments)
+        val listOfAttachments = message.attachments
         if (uploadAttachments && listOfAttachments.isNotEmpty()) {
             newAttachmentIds = filterUploadedAttachments(
                 listOfAttachments,
@@ -600,7 +600,7 @@ class ComposeMessageViewModel @Inject constructor(
         composeMessageRepository.resignContactJob(contactEmail, sendPreference, destination)
     }
 
-    private fun buildMessage() {
+    public fun buildMessage() {
         viewModelScope.launch {
             var message: Message = _messageDataResult.message
             if (draftId.isNotEmpty()) {
@@ -609,9 +609,7 @@ class ComposeMessageViewModel @Inject constructor(
                 _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).message(message).build()
             }
             if (message.messageId.isNullOrEmpty()) {
-                val newDraftId = UUID.randomUUID().toString()
-                Timber.e("set local messageId to UUID $newDraftId")
-                message.messageId = newDraftId
+                message.messageId = UUID.randomUUID().toString()
             }
 
             _draftId.set(message.messageId)
@@ -752,16 +750,6 @@ class ComposeMessageViewModel @Inject constructor(
                 .build()
         }
     }
-
-    /** This method should NOT be used. This is just a patch for the case when we are
-     * sharing attachments from outside the app
-     */
-    fun saveImportedAttachmentsToDB() {
-        viewModelScope.launch {
-            buildMessage()
-        }
-    }
-
 
     fun initSignatures(): StringBuilder {
         var signature = ""

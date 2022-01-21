@@ -136,7 +136,7 @@ class ComposeMessageRepository @Inject constructor(
 
     fun createAttachmentList(
         attachmentList: List<LocalAttachment>,
-    ) = Attachment.createAttachmentList(messageDao, attachmentList.filter { it.doSaveInDB }, false)
+    ) = Attachment.createAttachmentList(messageDao, attachmentList.filter { it.doSaveInDB })
 
     fun prepareMessageData(
         currentObject: MessageBuilderData,
