@@ -56,7 +56,7 @@ import ch.protonmail.android.domain.entity.user.Addresses;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.VCardUtil;
 import ch.protonmail.android.utils.crypto.KeyInformation;
-import ch.protonmail.android.utils.crypto.TextDecryptionResult;
+import ch.protonmail.android.utils.crypto.TextVerificationResult;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.Key;
@@ -278,9 +278,9 @@ public class SendPreferencesFactory {
         for (ContactEncryptedData card : cards) {
             switch (card.getEncryptionType()) {
                 case SIGNED:
-                    TextDecryptionResult tdr = crypto.verify(card.getData(), card.getSignature());
-                    signedData = tdr.getDecryptedData();
-                    isContactSignatureVerified = tdr.isSignatureValid();
+                    TextVerificationResult tvr = crypto.verify(card.getData(), card.getSignature());
+                    signedData = tvr.getData();
+                    isContactSignatureVerified = tvr.isSignatureValid();
                     break;
                 case CLEARTEXT:
                     clearData = card.getData();

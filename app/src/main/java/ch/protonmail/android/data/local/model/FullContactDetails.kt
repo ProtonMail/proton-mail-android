@@ -134,7 +134,7 @@ data class FullContactDetails @Ignore constructor(
             ?.let {
                 runCatching { crypto.verify(it.data, it.signature) }
                     .fold(
-                        onSuccess = { if (it.isSignatureValid) it.decryptedData else null },
+                        onSuccess = { if (it.isSignatureValid) it.data else null },
                         onFailure = { null }
                     )
             }

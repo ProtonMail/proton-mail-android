@@ -182,6 +182,12 @@ public class OpenPGP {
         }
     }
 
+    // Verify the signature and return signature creation time if verification is successful, throws otherwise
+    public Long getVerifiedSignatureTimestamp(String signature, String plainText, List<byte[]> publicKeys, long verifyTime) throws Exception {
+        KeyRing signingKeyRing = buildKeyRing(publicKeys);
+        return signingKeyRing.getVerifiedSignatureTimestamp(new PlainMessage(plainText), new PGPSignature(signature), verifyTime);
+    }
+
     public SessionKey getSessionFromKeyPacketBinkeys(byte[] keyPackage, byte[] privateKey, byte[] passphrase) throws Exception {
         KeyRing privateKeyRing = buildPrivateKeyRing(privateKey, passphrase);
         try {
