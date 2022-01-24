@@ -28,7 +28,6 @@ import ch.protonmail.android.utils.crypto.EOToken
 import ch.protonmail.android.utils.crypto.MimeDecryptor
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
-import ch.protonmail.libs.core.utils.encodeToBase64String
 import com.proton.gopenpgp.armor.Armor
 import com.proton.gopenpgp.constants.Constants
 import com.proton.gopenpgp.crypto.KeyRing
@@ -248,7 +247,7 @@ class AddressCrypto @AssistedInject constructor(
     fun generateEOToken(password: ByteArray): EOToken {
         // generate a 256 bit token.
         val randomToken = openPgp.randomToken()
-        val base64token = randomToken.encodeToBase64String(Base64.NO_WRAP)
+        val base64token = Base64.encodeToString(randomToken, Base64.NO_WRAP)
         val encToken = openPgp.encryptMessageWithPassword(base64token, password)
         return EOToken(base64token, encToken)
     }

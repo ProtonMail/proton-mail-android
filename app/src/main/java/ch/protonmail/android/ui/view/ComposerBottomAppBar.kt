@@ -27,7 +27,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import ch.protonmail.android.databinding.LayoutComposerBottomAppBarBinding
-import ch.protonmail.libs.core.utils.onClick
+import me.proton.core.presentation.utils.onClick
 
 class ComposerBottomAppBar @JvmOverloads constructor(
     context: Context,
