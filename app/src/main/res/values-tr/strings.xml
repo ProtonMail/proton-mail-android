@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">PIN kodunu tekrarla</string>
     <string name="settings_pins_dont_match">Girilen PIN kodları aynı olmalıdır!</string>
     <string name="settings_enter_pin_code_title">PIN kodunu girin</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB kullanıldı)</string>
+    <string name="settings_storage_limit_unlimited_value">Sınırsız (%1$.2f MB kullanıldı)</string>
     <string name="settings_swipe_settings_info">Sık kullanılan komutlara erişmek için kaydırma özelliğini ayarlayın.</string>
     <string name="settings_swipe_left_to_right">Soldan sağa</string>
     <string name="settings_swipe_right_to_left">Sağdan sola</string>
+    <string name="settings_swipe_saving">Kaydırma hareketi kaydediliyor…</string>
+    <string name="settings_swipe_generic_error">Kaydırma hareketi kaydedilemedi</string>
+    <string name="settings_swipe_offline_error">Kaydırma hareketi çevrimdışıyken kaydedilemez</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Uygulama teması</string>
@@ -898,7 +903,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Yerel depolama sınırı</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB kullanıldı)</string>
     <!-- endregion -->
     <string name="app_settings">Uygulama ayarları</string>
     <!-- region App Settings -->

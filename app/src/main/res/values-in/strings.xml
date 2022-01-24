@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Ulangi kode PIN</string>
     <string name="settings_pins_dont_match">Kode PIN harus cocok!</string>
     <string name="settings_enter_pin_code_title">Masukkan kode PIN</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB telah digunakan)</string>
+    <string name="settings_storage_limit_unlimited_value">Tak terbatas (%1$.2f MB telah digunakan)</string>
     <string name="settings_swipe_settings_info">Atur gestur usap untuk mengakses tindakan yang paling sering digunakan.</string>
     <string name="settings_swipe_left_to_right">Kiri ke kanan</string>
     <string name="settings_swipe_right_to_left">Kanan ke kiri</string>
+    <string name="settings_swipe_saving">Menyimpan hasil Swipe…</string>
+    <string name="settings_swipe_generic_error">Tidak dapat menyimpan hasil Swipe</string>
+    <string name="settings_swipe_offline_error">Tidak dapat menyimpan hasil Swipe pada saat offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema aplikasi</string>
@@ -889,7 +894,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Batas kuota penyimpanan lokal</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB telah digunakan)</string>
     <!-- endregion -->
     <string name="app_settings">Pengaturan aplikasi</string>
     <!-- region App Settings -->

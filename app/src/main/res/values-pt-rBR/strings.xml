@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Repetir código PIN</string>
     <string name="settings_pins_dont_match">Códigos PIN digitados não coincidem!</string>
     <string name="settings_enter_pin_code_title">Digite o código PIN</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB usados)</string>
+    <string name="settings_storage_limit_unlimited_value">Ilimitado (%1$.2f MB usados)</string>
     <string name="settings_swipe_settings_info">Configure gestos de deslize para acessar as ações mais usadas.</string>
     <string name="settings_swipe_left_to_right">Da esquerda para a direita</string>
     <string name="settings_swipe_right_to_left">Da direita para a esquerda</string>
+    <string name="settings_swipe_saving">Salvanda a ação de deslizar…</string>
+    <string name="settings_swipe_generic_error">Não foi possível salvar a ação de deslizar</string>
+    <string name="settings_swipe_offline_error">Não é possível salvar a ação de deslizar enquanto estiver offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema do aplicativo</string>
@@ -97,7 +102,7 @@
     <string name="app_theme_system">Padrão do sistema</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
+    <string name="labels_manager_select_parent_folder">Selecionar pasta principal (opcional)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Pasta principal selecionada.</b>Toque para mudar</string>
     <!-- endregion -->
@@ -904,7 +909,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Limite de armazenamento local</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB usados)</string>
     <!-- endregion -->
     <string name="app_settings">Configurações do aplicativo</string>
     <!-- region App Settings -->

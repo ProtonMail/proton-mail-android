@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Repetir código PIN</string>
     <string name="settings_pins_dont_match">¡Los códigos PIN deben coincidir!</string>
     <string name="settings_enter_pin_code_title">Introducir código PIN</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB utilizados)</string>
+    <string name="settings_storage_limit_unlimited_value">Ilimitado (%1$.2f MB utilizados)</string>
     <string name="settings_swipe_settings_info">Establecer gestos de deslizamiento para acceder a las acciones más utilizadas.</string>
     <string name="settings_swipe_left_to_right">Izquierda a derecha</string>
     <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
+    <string name="settings_swipe_saving">Saving Swipe action…</string>
+    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema de la aplicación</string>
@@ -904,7 +909,6 @@ compre más
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Límite de almacenamiento local</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB usado)</string>
     <!-- endregion -->
     <string name="app_settings">Configuración de la aplicación</string>
     <!-- region App Settings -->

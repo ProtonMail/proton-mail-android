@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Повторите PIN-код</string>
     <string name="settings_pins_dont_match">PIN-коды должны совпадать!</string>
     <string name="settings_enter_pin_code_title">Введите PIN-код</string>
+    <string name="settings_storage_limit_mb_value">%1$d МB (%2$.2f МB используется)</string>
+    <string name="settings_storage_limit_unlimited_value">Безлимитный (%1$.2f MB используется)</string>
     <string name="settings_swipe_settings_info">Настройте жесты для доступа к наиболее часто используемым действиям.</string>
     <string name="settings_swipe_left_to_right">Слева направо</string>
     <string name="settings_swipe_right_to_left">Справа налево</string>
+    <string name="settings_swipe_saving">Действие при пролистывании сохраняется…</string>
+    <string name="settings_swipe_generic_error">Не удалось сохранить действие при пролистывании</string>
+    <string name="settings_swipe_offline_error">Не удалось сохранить действие при пролистывании, будучи не в сети</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Тема приложения</string>
@@ -938,7 +943,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Предел объёма локального хранилища</string>
-    <string name="settings_storage_limit_mb_value">%1$d МБ (%2$.2f МБ используется)</string>
     <!-- endregion -->
     <string name="app_settings">Настройки приложения</string>
     <!-- region App Settings -->

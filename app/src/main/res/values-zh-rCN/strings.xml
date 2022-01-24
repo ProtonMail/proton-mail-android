@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">再次输入口令</string>
     <string name="settings_pins_dont_match">两次输入的口令必须一致！</string>
     <string name="settings_enter_pin_code_title">输入口令</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB（已使用 %2$.2f MB）</string>
+    <string name="settings_storage_limit_unlimited_value">无限制（已使用 %1$.2f MB）</string>
     <string name="settings_swipe_settings_info">设置访问常用操作的快捷手势</string>
     <string name="settings_swipe_left_to_right">从左向右</string>
     <string name="settings_swipe_right_to_left">从右向左</string>
+    <string name="settings_swipe_saving">正在保存滑动操作…</string>
+    <string name="settings_swipe_generic_error">无法保存滑动操作</string>
+    <string name="settings_swipe_offline_error">无法在离线时保存滑动操作</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">界面配色</string>
@@ -877,7 +882,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">本机存储限制</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB（已使用 %2$.2f MB）</string>
     <!-- endregion -->
     <string name="app_settings">程序设置</string>
     <!-- region App Settings -->

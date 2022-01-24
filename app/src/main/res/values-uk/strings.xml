@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Повторіть ПІН-код</string>
     <string name="settings_pins_dont_match">ПІН-коди повинні збігатися!</string>
     <string name="settings_enter_pin_code_title">Введіть ПІН-код</string>
+    <string name="settings_storage_limit_mb_value">%1$d МБ (%2$.2f МБ використано)</string>
+    <string name="settings_storage_limit_unlimited_value">Необмежено (%1$.2f МБ використано)</string>
     <string name="settings_swipe_settings_info">Налаштуйте жести посування для швидких дій.</string>
     <string name="settings_swipe_left_to_right">Зліва направо</string>
     <string name="settings_swipe_right_to_left">Справа наліво</string>
+    <string name="settings_swipe_saving">Збереження дії посування…</string>
+    <string name="settings_swipe_generic_error">Неможливо зберегти дію посування</string>
+    <string name="settings_swipe_offline_error">Неможливо зберегти дію посування по за мережею</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Тема застосунку</string>
@@ -939,7 +944,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Обмеження локального сховища</string>
-    <string name="settings_storage_limit_mb_value">%1$d МБ (%2$.2f МБ використано)</string>
     <!-- endregion -->
     <string name="app_settings">Налаштування програми</string>
     <!-- region App Settings -->
