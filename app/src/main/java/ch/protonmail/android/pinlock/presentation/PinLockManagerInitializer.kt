@@ -21,8 +21,6 @@ package ch.protonmail.android.pinlock.presentation
 
 import android.content.Context
 import androidx.startup.Initializer
-import ch.protonmail.android.pinlock.domain.usecase.ShouldShowPinLockScreen
-import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
