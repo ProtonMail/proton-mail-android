@@ -92,7 +92,7 @@ class DeleteAttachmentWorker @AssistedInject constructor(
         }
     }
 
-    class Enqueuer(private val workManager: WorkManager) {
+    class Enqueuer constructor(private val workManager: WorkManager) {
 
         fun enqueue(attachmentId: String): Operation {
             val constraints = Constraints.Builder()

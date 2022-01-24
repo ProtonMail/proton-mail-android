@@ -165,8 +165,7 @@ class MessageDetailsRepository @Inject constructor(
 
     suspend fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 
-    @Deprecated("Use suspend function", ReplaceWith("saveAttachment(attachment)"))
-    fun saveAttachmentBlocking(attachment: Attachment) = messagesDao.saveAttachmentBlocking(attachment)
+    suspend fun deleteAllAttachments(attachments: List<Attachment>) = messagesDao.deleteAllAttachments(attachments)
 
     suspend fun saveMessage(message: Message): Long {
         saveFile(message)

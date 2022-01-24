@@ -388,6 +388,8 @@ class MessageRepository @Inject constructor(
 
     suspend fun deleteMessagesInDb(userId: UserId, messageIds: List<String>) {
         val messageDao = databaseProvider.provideMessageDao(userId)
+
+        messageDao.deleteAttachmentsByMessageIds(messageIds)
         messageDao.deleteMessagesByIds(messageIds)
     }
 

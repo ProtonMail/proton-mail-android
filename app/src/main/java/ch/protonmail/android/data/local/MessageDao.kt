@@ -30,7 +30,6 @@ import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
-import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_DELETED
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_IS_STARRED
@@ -346,15 +345,14 @@ abstract class MessageDao : BaseDao<Message>() {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun saveAttachment(attachment: Attachment): Long
 
-    @Deprecated("Use suspend abstract function", ReplaceWith("saveAttachment(attachment)"))
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAttachmentBlocking(attachment: Attachment): Long
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun saveAllAttachments(attachments: List<Attachment>): List<Long>
 
     @Delete
     abstract suspend fun deleteAllAttachments(attachments: List<Attachment>)
+
+    @Query("DELETE FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID IN (:messageIds)")
+    abstract suspend fun deleteAttachmentsByMessageIds(messageIds: List<String>)
 
     @Delete
     abstract fun deleteAttachment(vararg attachment: Attachment)

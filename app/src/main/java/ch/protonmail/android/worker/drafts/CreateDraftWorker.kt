@@ -169,8 +169,9 @@ class CreateDraftWorker @AssistedInject constructor(
         parentId: String?
     ): Either<CreateDraftWorkerErrors, DraftBody> {
         val initialDraftBody = messageFactory.createDraftApiRequest(message)
+        val isNew = isDraftBeingCreated(message)
 
-        val withParentDraftBody = if (parentId != null && isDraftBeingCreated(message)) {
+        val withParentDraftBody = if (parentId != null && isNew) {
             val parentMessage = messageDetailsRepository.findMessageById(parentId).firstOrNull()
                 ?: fetchParentMessage(parentId)
             val parentAttachmentsKeyPackets =
@@ -179,13 +180,13 @@ class CreateDraftWorker @AssistedInject constructor(
             initialDraftBody.copy(
                 parentId = parentId,
                 action = getInputActionType().messageActionTypeValue,
-                attachmentKeyPackets = parentAttachmentsKeyPackets + initialDraftBody.attachmentKeyPackets
+                attachmentKeyPackets = parentAttachmentsKeyPackets
             )
         } else {
             initialDraftBody
         }
 
-        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId.id)
+        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId.id).filter { it.isUploaded }
         val messageAttachmentsKeyPackets = buildMessageAttachmentsKeyPacketsMap(attachments, senderAddress)
 
         val messageBody = message.messageBody

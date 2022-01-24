@@ -51,6 +51,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
@@ -62,7 +63,8 @@ class ComposeMessageRepository @Inject constructor(
     private val accountManager: AccountManager,
     private val userManager: UserManager,
     private val labelRepository: LabelRepository,
-    private val contactRepository: ContactsRepository
+    private val contactRepository: ContactsRepository,
+    private val dispatcherProvider: DispatcherProvider,
 ) {
 
     val lazyManager = resettableManager()
@@ -132,13 +134,9 @@ class ComposeMessageRepository @Inject constructor(
         jobManager.addJobInBackground(FetchMessageDetailJob(messageId, labelRepository))
     }
 
-    suspend fun createAttachmentList(
+    fun createAttachmentList(
         attachmentList: List<LocalAttachment>,
-        dispatcher: CoroutineDispatcher
-    ) =
-        withContext(dispatcher) {
-            Attachment.createAttachmentList(messageDao, attachmentList, false)
-        }
+    ) = Attachment.createAttachmentList(messageDao, attachmentList.filter { it.doSaveInDB })
 
     fun prepareMessageData(
         currentObject: MessageBuilderData,
@@ -147,7 +145,6 @@ class ComposeMessageRepository @Inject constructor(
     ): MessageBuilderData {
         return MessageBuilderData.Builder()
             .fromOld(currentObject)
-            .message(Message())
             .messageTitle("")
             .senderEmailAddress("")
             .messageSenderName("")
@@ -157,12 +154,13 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun prepareMessageData(
+        currentObject: MessageBuilderData,
         isPgpMime: Boolean,
         addressId: String,
         addressEmailAlias: String? = null
     ): MessageBuilderData {
         return MessageBuilderData.Builder()
-            .message(Message())
+            .fromOld(currentObject)
             .messageTitle("")
             .senderEmailAddress("")
             .messageSenderName("")

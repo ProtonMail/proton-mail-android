@@ -208,10 +208,14 @@ data class Attachment constructor(
 
             val uri = localAttachment.uri
             val uriString = uri.toString()
-            val filePath = if (URLUtil.isNetworkUrl(uriString) || URLUtil.isDataUrl(uriString)) {
-                uriString
-            } else {
-                uri.path
+            val filePath = when {
+                URLUtil.isDataUrl(uriString) -> {
+                    uriString
+                }
+                uriString.isEmpty() -> {
+                    null
+                }
+                else -> uri.path
             }
 
             return Attachment(
@@ -306,14 +310,13 @@ data class Attachment constructor(
         @Synchronized
         fun createAttachmentList(
             messageDao: MessageDao,
-            localAttachmentList: List<LocalAttachment>,
-            useRandomIds: Boolean = true
+            localAttachmentList: List<LocalAttachment>
         ): List<Attachment> = localAttachmentList.map { localAttachment ->
             fromLocalAttachment(
                 messageDao,
                 localAttachment,
                 localAttachmentList.indexOf(localAttachment).toLong(),
-                useRandomIds
+                useRandomIds = false
             )
         }
 

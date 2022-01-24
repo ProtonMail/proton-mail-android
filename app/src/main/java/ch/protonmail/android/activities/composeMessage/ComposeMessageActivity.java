@@ -77,7 +77,6 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -211,7 +210,6 @@ public class ComposeMessageActivity
     private static final int REQUEST_CODE_ADD_ATTACHMENTS = 1;
     private static final String STATE_ATTACHMENT_LIST = "attachment_list";
     private static final String STATE_ADDITIONAL_ROWS_VISIBLE = "additional_rows_visible";
-    private static final String STATE_DIRTY = "dirty";
     private static final String STATE_DRAFT_ID = "draft_id";
     private static final String STATE_ADDED_CONTENT = "added_content";
     private static final char[] RECIPIENT_SEPARATORS = {',', ';', ' '};
@@ -468,6 +466,7 @@ public class ComposeMessageActivity
             if (TextUtils.isEmpty(messageId)) {
                 messageId = extras.getString(STATE_DRAFT_ID);
             }
+
             if (!TextUtils.isEmpty(messageId) && !replyFromGcm) {
                 // already saved draft trying to edit here
                 composeMessageViewModel.setDraftId(messageId);
@@ -500,7 +499,6 @@ public class ComposeMessageActivity
                     mAreAdditionalRowsVisible = true;
                     focusRespondInline();
                 }
-                composeMessageViewModel.setIsDirty(true);
                 List<LocalAttachment> attachmentsList = new ArrayList<>();
                 if (extras.containsKey(EXTRA_MESSAGE_ATTACHMENTS)) {
                     attachmentsList = extras.getParcelableArrayList(EXTRA_MESSAGE_ATTACHMENTS);
@@ -649,7 +647,6 @@ public class ComposeMessageActivity
                 return;
             }
             skipInitial++;
-            composeMessageViewModel.setIsDirty(true);
             composeMessageViewModel.autoSaveDraft(text.toString());
         }
 
@@ -774,34 +771,7 @@ public class ComposeMessageActivity
     private void handleSendFileUri(Uri uri) {
         if (uri != null) {
             composerInstanceId = UUID.randomUUID().toString();
-            Data data = new Data.Builder()
-                    .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, new String[]{uri.toString()})
-                    .putString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID, composerInstanceId)
-                    .build();
-            OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
-                    .setInputData(data)
-                    .build();
-            WorkManager workManager = WorkManager.getInstance();
-            workManager.enqueue(importAttachmentsWork);
-
-            // Observe the Worker with a LiveData, because result will be received when the
-            // Activity will back in foreground, since an EventBut event would be lost while in
-            // Background
-            workManager.getWorkInfoByIdLiveData(importAttachmentsWork.getId())
-                    .observe(this, workInfo -> {
-                        if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-
-                            // Get the Event from Worker
-                            String json = workInfo.getOutputData().getString(composerInstanceId);
-                            if (json != null) {
-                                PostImportAttachmentEvent event = SerializationUtils.deserialize(
-                                        json, PostImportAttachmentEvent.class
-                                );
-                                onPostImportAttachmentEvent(event);
-                            }
-                        }
-                    });
-            composeMessageViewModel.setIsDirty(true);
+            importAttachments(new String[]{uri.toString()});
         }
     }
 
@@ -813,20 +783,32 @@ public class ComposeMessageActivity
                 uriStrings[i] = fileUris.get(i).toString();
             }
             composerInstanceId = UUID.randomUUID().toString();
-            Data data = new Data.Builder()
-                    .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, uriStrings)
-                    .putString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID, composerInstanceId)
-                    .build();
-            OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
-                    .setInputData(data)
-                    .build();
-            WorkManager.getInstance().enqueue(importAttachmentsWork);
-            WorkManager.getInstance().getWorkInfoByIdLiveData(importAttachmentsWork.getId()).observe(this, workInfo -> {
-                if (workInfo != null) {
-                    Log.d("PMTAG", "ImportAttachmentsWorker workInfo = " + workInfo.getState());
-                }
-            });
+            importAttachments(uriStrings);
         }
+    }
+
+    void importAttachments(String[] uriStrings) {
+        Data data = new Data.Builder()
+                .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, uriStrings)
+                .putString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID, composerInstanceId)
+                .build();
+        OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
+                .setInputData(data)
+                .build();
+        WorkManager.getInstance().enqueue(importAttachmentsWork);
+        WorkManager.getInstance().getWorkInfoByIdLiveData(importAttachmentsWork.getId()).observe(this, workInfo -> {
+            if (workInfo != null) {
+                // Get the Event from Worker
+                String json = workInfo.getOutputData().getString(composerInstanceId);
+                if (json != null) {
+                    PostImportAttachmentEvent event = SerializationUtils.deserialize(
+                            json, PostImportAttachmentEvent.class
+                    );
+                    onPostImportAttachmentEvent(event);
+                }
+                Log.d("PMTAG", "ImportAttachmentsWorker workInfo = " + workInfo.getState());
+            }
+        });
     }
 
     @Subscribe
@@ -841,9 +823,9 @@ public class ComposeMessageActivity
         ) != null;
 
         if (!alreadyAdded) {
-            composeMessageViewModel.setIsDirty(true);
             attachmentsList.add(new LocalAttachment(Uri.parse(event.uri), event.displayName, event.size, event.mimeType));
             renderViews();
+            composeMessageViewModel.buildMessage();
         }
     }
 
@@ -917,7 +899,6 @@ public class ComposeMessageActivity
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_ATTACHMENT_LIST, new ArrayList<>(composeMessageViewModel.getMessageDataResult().getAttachmentList()));
         outState.putBoolean(STATE_ADDITIONAL_ROWS_VISIBLE, mAreAdditionalRowsVisible);
-        outState.putBoolean(STATE_DIRTY, composeMessageViewModel.getMessageDataResult().isDirty());
         outState.putString(STATE_DRAFT_ID, composeMessageViewModel.getDraftId());
         if (largeBody) {
             outState.putBoolean(EXTRA_MESSAGE_BODY_LARGE, true);
@@ -939,8 +920,6 @@ public class ComposeMessageActivity
         String draftId = savedInstanceState.getString(STATE_DRAFT_ID);
         composeMessageViewModel.setDraftId(!TextUtils.isEmpty(draftId) ? draftId : "");
         composeMessageViewModel.setInitialMessageContent(savedInstanceState.getString(EXTRA_MESSAGE_BODY));
-        // Dirty flag should be reset only once message queue has completed the setting of saved tokens
-        toRecipientView.post(() -> composeMessageViewModel.setIsDirty(savedInstanceState.getBoolean(STATE_DIRTY)));
     }
 
     @Override
@@ -1085,14 +1064,12 @@ public class ComposeMessageActivity
                 } else if (recipientsView.equals(bccRecipientView)) {
                     destination = GetSendPreferenceJob.Destination.BCC;
                 }
-                composeMessageViewModel.setIsDirty(true);
                 composeMessageViewModel.startSendPreferenceJob(emailList, destination);
             }
 
             @Override
             public void onTokenRemoved(MessageRecipient token) {
 
-                composeMessageViewModel.setIsDirty(true);
                 recipientsView.removeKey(token.getEmailAddress());
                 recipientsView.removeToken(token.getEmailAddress());
             }
@@ -1270,10 +1247,8 @@ public class ComposeMessageActivity
             ArrayList<LocalAttachment> resultAttachmentList = data.getParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST);
             ArrayList<LocalAttachment> listToSet = resultAttachmentList != null ? resultAttachmentList : new ArrayList<>();
             composeMessageViewModel.setAttachmentList(listToSet);
-            composeMessageViewModel.setIsDirty(true);
             String oldDraftId = composeMessageViewModel.getDraftId();
             afterAttachmentsAdded();
-            composeMessageViewModel.setIsDirty(true);
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_VALIDATE_PIN) {
             // region pin results
             if (data.hasExtra(EXTRA_ATTACHMENT_IMPORT_EVENT)) {
@@ -1304,7 +1279,6 @@ public class ComposeMessageActivity
 
     private void afterAttachmentsAdded() {
         composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
-        composeMessageViewModel.setIsDirty(true);
         renderViews();
     }
 
@@ -1790,10 +1764,6 @@ public class ComposeMessageActivity
     private class ComposeBodyChangeListener implements View.OnKeyListener {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-            if (keyCode != KeyEvent.KEYCODE_BACK) {
-                composeMessageViewModel.setIsDirty(true);
-            }
             return false;
         }
     }
@@ -1865,7 +1835,6 @@ public class ComposeMessageActivity
                     if (!allowSpinnerListener) {
                         return;
                     }
-                    composeMessageViewModel.setIsDirty(true);
                     String email = (String) fromAddressSpinner.getItemAtPosition(position);
                     boolean localAttachmentsListEmpty = composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty();
                     if (!composeMessageViewModel.isPaidUser() && MessageUtils.INSTANCE.isPmMeAddress(email)) {
@@ -2013,7 +1982,6 @@ public class ComposeMessageActivity
             }
             if (result != null && result.getStatus() == Status.SUCCESS) {
                 composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
-                composeMessageViewModel.setIsDirty(true);
                 renderViews();
             }
         }
@@ -2055,7 +2023,7 @@ public class ComposeMessageActivity
                 // draft
                 fillMessageFromUserInputs(localMessage, true);
                 localMessage.setExpirationTime(0);
-                composeMessageViewModel.saveDraft(localMessage, mNetworkUtil.isConnected());
+                composeMessageViewModel.saveDraft(localMessage);
                 new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false), 500);
                 if (userAction == UserAction.SAVE_DRAFT_EXIT) {
                     finishActivity();

@@ -177,7 +177,7 @@ class IntentExtrasData(
                 this.attachments = att
                 this.embeddedImagesAttachmentsExist = true
             } else {
-                this.attachments = ArrayList() // TODO temporary workaround for non-initialized lateinit crash
+                this.attachments = attachments
             }
         }
 
