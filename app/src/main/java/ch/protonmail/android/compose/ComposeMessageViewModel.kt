@@ -138,7 +138,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _messageResultError: MutableLiveData<Event<PostResult>> = MutableLiveData()
     private val _openAttachmentsScreenResult: MutableLiveData<List<LocalAttachment>> = MutableLiveData()
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
-    private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
+    private val _dbIdWatcher: MutableLiveData<Long?> = MutableLiveData()
     private val fetchKeyDetailsTrigger = MutableLiveData<List<FetchPublicKeysRequest>>()
 
     private val _androidContacts = java.util.ArrayList<MessageRecipient>()
@@ -207,7 +207,7 @@ class ComposeMessageViewModel @Inject constructor(
         get() = _openAttachmentsScreenResult
     val buildingMessageCompleted: LiveData<Event<Message>>
         get() = _buildingMessageCompleted
-    val dbIdWatcher: LiveData<Long>
+    val dbIdWatcher: LiveData<Long?>
         get() = _dbIdWatcher
     var androidContactsLoaded: Boolean
         get() = _androidContactsLoaded
