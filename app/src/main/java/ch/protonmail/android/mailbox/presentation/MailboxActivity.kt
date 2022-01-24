@@ -827,7 +827,6 @@ internal class MailboxActivity :
     }
 
     override fun onBackPressed() {
-        saveLastInteraction()
         val drawerClosed = closeDrawer()
         if (!drawerClosed && mailboxViewModel.mailboxLocation.value != MessageLocationType.INBOX) {
             switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)

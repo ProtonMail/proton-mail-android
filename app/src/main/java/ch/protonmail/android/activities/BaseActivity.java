@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities;
 
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
 import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
 import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
@@ -82,7 +81,6 @@ import timber.log.Timber;
 public abstract class BaseActivity extends AppCompatActivity implements INetworkConfiguratorCallback {
 
     public static final String EXTRA_IN_APP = "extra_in_app";
-    public static final int REQUEST_CODE_VALIDATE_PIN = 998;
     private static final int NO_LAYOUT_ID = -1;
 
     private ProtonMailApplication app;
@@ -133,14 +131,10 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected View mScreenProtectorLayout;
 
     private BroadcastReceiver mLangReceiver = null;
-    private boolean inApp = false;
-    private boolean checkForPin = true;
     private String mCurrentLocale;
     protected Snackbar mRequestTimeoutSnack;
 
     private AlertDialog alertDelinquency;
-    protected boolean mPinValid = false;
-    private boolean shouldLock = false;
 
     /**
      * Optional id for the layout
@@ -163,10 +157,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         return null;
     }
 
-    protected boolean shouldCheckForAutoLogout() {
-        return true;
-    }
-
     protected boolean isDohOngoing = false;
     protected boolean autoRetry = true;
 
@@ -179,11 +169,9 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         app = (ProtonMailApplication) getApplication();
         super.onCreate(savedInstanceState);
         app.setAppInBackground(false);
-        inApp = getIntent().getBooleanExtra(EXTRA_IN_APP, false);
         if (savedInstanceState != null) {
             mCurrentLocale = savedInstanceState.getString("curr_loc");
             if (mCurrentLocale != null && !mCurrentLocale.equals(getResources().getConfiguration().locale.toString())) {
-                inApp = false;
             }
         }
         mCurrentLocale = app.getCurrentLocale();
@@ -197,7 +185,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             setContentView(rootView);
         }
 
-        handlePin();
         ButterKnife.bind(this);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
@@ -217,22 +204,11 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        inApp = intent.getBooleanExtra(EXTRA_IN_APP, false);
-    }
-
-    @Override
-    public void onBackPressed() {
-        saveLastInteraction();
-        finish();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        validationCanceled = true;
-        if (checkForPin) {
-            handlePin();
-        }
     }
 
     protected boolean isPreventingScreenshots() {
@@ -261,8 +237,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
-        if (shouldLock && (secureContent() || user != null && user.isPreventTakingScreenshots())) {
-            enableScreenshotProtector();
+        if (user != null && user.isPreventTakingScreenshots()) {
+             enableScreenshotProtector();
         }
         app.setAppInBackground(false);
         networkConfigurator.setNetworkConfiguratorCallback(this);
@@ -291,81 +267,11 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             return false;
     }
 
-    private void shouldLock() {
-        User user = mUserManager.getCurrentLegacyUser();
-        if (user == null)
-            return;
-
-        long diff = user.getLastInteractionDiff();
-
-        if (user.isUsePin()) {
-            if (diff >= 0) {
-                shouldLock = user.shouldPINLockTheApp(diff);
-            } else {
-                shouldLock = true;
-            }
-        }
-    }
-
-    private void handlePin() {
-        app.setAppInBackground(false);
-        app.setCurrentActivity(this);
-        shouldLock();
-        if (!shouldCheckForAutoLogout()) {
-            return;
-        }
-
-        checkPinLock(shouldLock);
-    }
-
-    protected void checkPinLock(boolean shouldLock) {
-        if (inApp || mPinValid) {
-            this.shouldLock = false;
-            mPinValid = false;
-            return;
-        }
-        if (shouldLock) {
-            Intent validatePinIntent = new Intent(this, ValidatePinActivity.class);
-            validatePinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title);
-            Intent pinIntent = AppUtil.decorInAppIntent(validatePinIntent);
-            startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN);
-
-        } else {
-            this.shouldLock = false;
-        }
-    }
-
-    private boolean validationCanceled = true;
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((resultCode == RESULT_OK || resultCode == RESULT_CANCELED) && requestCode == REQUEST_CODE_VALIDATE_PIN) {
-            if (data == null) {
-                return;
-            }
-            if (resultCode == RESULT_CANCELED) {
-                checkForPin = false;
-            }
-            boolean isValid = data.getBooleanExtra(EXTRA_PIN_VALID, false);
-            if (!isValid) {
-                validationCanceled = true;
-                finish();
-            } else {
-                if (this instanceof ValidatePinActivity) {
-                    validationCanceled = false;
-                }
-            }
-            shouldLock = false;
-            disableScreenshotProtector();
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
         app.setAppInBackground(false);
+        app.setCurrentActivity(this);
         getWindow().getDecorView().postDelayed(this::deactivateScreenProtector, 500);
     }
 
@@ -379,11 +285,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
-        if (!validationCanceled && !(this instanceof ValidatePinActivity)) {
-            saveLastInteraction();
-        }
         if (!(this instanceof AddAttachmentsActivity)) {
-            inApp = false;
             activateScreenProtector();
         }
     }
@@ -401,11 +303,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
                 mScreenProtectorLayout.setVisibility(View.VISIBLE);
             }
         }
-    }
-
-    protected void saveLastInteraction() {
-        User user = mUserManager.getCurrentLegacyUser();
-        if (user != null) user.setLastInteraction(SystemClock.elapsedRealtime());
     }
 
     protected void checkDelinquency() {

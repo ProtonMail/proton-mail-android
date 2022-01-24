@@ -252,7 +252,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             setSupportActionBar(toolbar)
             UiUtil.hideKeyboard(this)
         } else {
-            saveLastInteraction()
             setResult(Activity.RESULT_OK)
             finish()
         }

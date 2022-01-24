@@ -200,10 +200,8 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
         ringtone_title.text = settings.name
     }
 
-    /** Save the current Action and the last interaction ( [saveLastInteraction] ), then [finish] */
     private fun saveAndFinish() {
         setResult(Activity.RESULT_OK)
-        saveLastInteraction()
         finish()
     }
 

@@ -924,7 +924,6 @@ public class ComposeMessageActivity
 
     @Override
     public void onBackPressed() {
-        saveLastInteraction();
         showDraftDialog();
     }
 
@@ -1247,30 +1246,7 @@ public class ComposeMessageActivity
             ArrayList<LocalAttachment> resultAttachmentList = data.getParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST);
             ArrayList<LocalAttachment> listToSet = resultAttachmentList != null ? resultAttachmentList : new ArrayList<>();
             composeMessageViewModel.setAttachmentList(listToSet);
-            String oldDraftId = composeMessageViewModel.getDraftId();
             afterAttachmentsAdded();
-        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_VALIDATE_PIN) {
-            // region pin results
-            if (data.hasExtra(EXTRA_ATTACHMENT_IMPORT_EVENT)) {
-                Object attachmentExtra = data.getSerializableExtra(EXTRA_ATTACHMENT_IMPORT_EVENT);
-                if (attachmentExtra instanceof PostImportAttachmentEvent) {
-                    onPostImportAttachmentEvent((PostImportAttachmentEvent) attachmentExtra);
-                }
-                composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
-            } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT)) {
-                FetchMessageDetailEvent messageDetailEvent = (FetchMessageDetailEvent) data.getSerializableExtra(EXTRA_MESSAGE_DETAIL_EVENT);
-                FetchDraftDetailEvent draftDetailEvent = (FetchDraftDetailEvent) data.getSerializableExtra(EXTRA_DRAFT_DETAILS_EVENT);
-                if (messageDetailEvent != null) {
-                    composeMessageViewModel.onFetchMessageDetailEvent(messageDetailEvent);
-                }
-                if (draftDetailEvent != null) {
-                    onFetchDraftDetailEvent(draftDetailEvent);
-                }
-            }
-            toRecipientView.requestFocus();
-            UiUtil.toggleKeyboard(this, toRecipientView);
-            super.onActivityResult(requestCode, resultCode, data);
-            // endregion
         } else {
             Timber.w("ComposeMessageAct.onActivityResult Received result not handled", requestCode, resultCode);
             super.onActivityResult(requestCode, resultCode, data);
@@ -1393,7 +1369,6 @@ public class ComposeMessageActivity
 
     private void finishActivity() {
         setResult(RESULT_OK);
-        saveLastInteraction();
         finish();
     }
 

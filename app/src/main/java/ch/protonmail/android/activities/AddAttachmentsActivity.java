@@ -251,13 +251,11 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
 
     @Override
     public void onBackPressed() {
-        saveLastInteraction();
         Intent intent = new Intent();
         intent.putExtra(EXTRA_DRAFT_ID, mDraftId);
         ArrayList<LocalAttachment> currentAttachments = mAdapter.getData();
         intent.putParcelableArrayListExtra(EXTRA_ATTACHMENT_LIST, currentAttachments);
         setResult(Activity.RESULT_OK, intent);
-        saveLastInteraction();
         finish();
     }
 

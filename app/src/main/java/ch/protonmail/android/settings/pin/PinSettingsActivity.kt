@@ -203,20 +203,6 @@ class PinSettingsActivity : BaseActivity() {
                     saveCurrentSettings(newPin)
                 }
                 autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
-            } else if (requestCode == REQUEST_CODE_VALIDATE_PIN) {
-                val pinValid = data!!.getBooleanExtra(EXTRA_PIN_VALID, false)
-                if (pinValid) {
-                    autoLockContainerToggle.isChecked =
-                        user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
-                    autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
-                    if (autoLockContainerToggle.isChecked) {
-                        changeItemsEnabledState(true)
-                    } else {
-                        changeItemsEnabledState(false)
-                    }
-                } else {
-                    super.onActivityResult(requestCode, resultCode, data)
-                }
             }
         } else if (resultCode == RESULT_CANCELED) {
             autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
@@ -261,7 +247,6 @@ class PinSettingsActivity : BaseActivity() {
 
     private fun saveAndFinish() {
         setResult(RESULT_OK)
-        saveLastInteraction()
         finish()
     }
 

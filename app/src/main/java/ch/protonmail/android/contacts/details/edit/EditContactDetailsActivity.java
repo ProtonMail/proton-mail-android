@@ -834,7 +834,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     private void saveAndFinish() {
-        saveLastInteraction();
         setResult(RESULT_OK);
         finish();
     }

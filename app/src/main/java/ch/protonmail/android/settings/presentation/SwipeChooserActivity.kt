@@ -147,7 +147,6 @@ class SwipeChooserActivity : BaseActivity() {
 
     private fun saveAndFinish() {
         setResult(Activity.RESULT_OK, intent)
-        saveLastInteraction()
         finish()
     }
 }

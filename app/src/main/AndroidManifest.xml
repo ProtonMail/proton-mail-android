@@ -86,6 +86,7 @@
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
+
         </provider>
 
         <provider

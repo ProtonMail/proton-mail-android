@@ -32,7 +32,6 @@ import ch.protonmail.android.events.FetchDraftDetailEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.PostImportAttachmentEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
-import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.ISecurePINListener
@@ -41,7 +40,6 @@ import java.util.concurrent.Executors
 
 // region constants
 const val EXTRA_PIN_VALID = "extra_pin_valid"
-const val EXTRA_FRAGMENT_TITLE = "extra_title"
 const val EXTRA_ATTACHMENT_IMPORT_EVENT = "extra_attachment_import_event"
 const val EXTRA_MESSAGE_DETAIL_EVENT = "extra_message_details_event"
 const val EXTRA_DRAFT_DETAILS_EVENT = "extra_draft_details_event"
@@ -59,8 +57,6 @@ class ValidatePinActivity :
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
-    override fun shouldCheckForAutoLogout(): Boolean = false
-
     override fun getLayoutId(): Int = R.layout.activity_fragment_container
 
     override fun isPreventingScreenshots(): Boolean = true
@@ -68,11 +64,12 @@ class ValidatePinActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         if (savedInstanceState != null) {
             return
         }
         val user = mUserManager.requireCurrentLegacyUser()
-        val titleRes = intent.getIntExtra(EXTRA_FRAGMENT_TITLE, 0)
+        val titleRes = R.string.settings_enter_pin_code_title
         val validatePinFragment =
             PinFragment.newInstance(titleRes, PinAction.VALIDATE, null, useFingerprint = user.isUseFingerprint)
         supportFragmentManager
@@ -140,9 +137,7 @@ class ValidatePinActivity :
 
     override fun onPinSuccess() {
         mUserManager.requireCurrentLegacyUser().setManuallyLocked(false)
-        mPinValid = true
         setResult(Activity.RESULT_OK, buildIntent())
-        saveLastInteraction()
         finish()
     }
 
@@ -199,12 +194,7 @@ class ValidatePinActivity :
         }
     }
 
-    override fun onBackPressed() {
-        if (!AppUtil.isLockTaskModeRunning(this)) {
-            setResult(Activity.RESULT_CANCELED, Intent().apply { putExtra(EXTRA_PIN_VALID, false) })
-            finish()
-        }
-    }
+    override fun onBackPressed() {}
 
     private fun buildIntent(): Intent {
         return Intent().apply {

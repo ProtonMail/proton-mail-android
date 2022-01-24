@@ -144,7 +144,6 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                                 Status.FAILED -> showToast(postResult.message ?: getString(R.string.error))
                                 Status.SUCCESS -> {
                                     showToast(R.string.contact_group_saved)
-                                    saveLastInteraction()
                                     finish()
                                 }
                                 Status.UNAUTHORIZED -> showToast(R.string.paid_plan_needed)
@@ -237,7 +236,6 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                     if (!isHandled) {
                         buildAndShowUnsavedEditDialog()
                     } else {
-                        saveLastInteraction()
                         finish()
                     }
                 }
@@ -288,7 +286,6 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         UnsavedChangesDialog(
             this, { },
             {
-                saveLastInteraction()
                 finish()
             }
         ).build()
