@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Gentag pinkode</string>
     <string name="settings_pins_dont_match">Pinkoderne skal matche!</string>
     <string name="settings_enter_pin_code_title">Indtast pinkode</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
     <string name="settings_swipe_settings_info">Indstil strygebevægelser som adgang til de mest brugte handlinger.</string>
     <string name="settings_swipe_left_to_right">Venstre mod højre</string>
     <string name="settings_swipe_right_to_left">Højre mod venstre</string>
+    <string name="settings_swipe_saving">Saving Swipe action…</string>
+    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App-tema</string>
@@ -904,7 +909,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Lokal lagerpladsgrænse</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB forbrugt)</string>
     <!-- endregion -->
     <string name="app_settings">App-indstillinger</string>
     <!-- region App Settings -->

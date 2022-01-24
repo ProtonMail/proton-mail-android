@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">PIN コードを確認</string>
     <string name="settings_pins_dont_match">PIN コードが一致しません！</string>
     <string name="settings_enter_pin_code_title">PIN コードを入力</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
     <string name="settings_swipe_settings_info">スワイプ操作を登録するとよく使う機能に簡単にアクセスできます。</string>
     <string name="settings_swipe_left_to_right">左から右</string>
     <string name="settings_swipe_right_to_left">右から左</string>
+    <string name="settings_swipe_saving">Saving Swipe action…</string>
+    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">アプリテーマ</string>
@@ -878,7 +883,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">ストレージ容量の上限</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB 使用中)</string>
     <!-- endregion -->
     <string name="app_settings">アプリの設定</string>
     <!-- region App Settings -->

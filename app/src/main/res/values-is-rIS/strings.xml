@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Endurtaka PIN-númer</string>
     <string name="settings_pins_dont_match">PIN-númerin verða að samsvara!</string>
     <string name="settings_enter_pin_code_title">Settu inn PIN-númer</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
     <string name="settings_swipe_settings_info">Setja upp strokubendingar til að nota við mest notuðu aðgerðir.</string>
     <string name="settings_swipe_left_to_right">Vinstri til hægri</string>
     <string name="settings_swipe_right_to_left">Hægri til vinstri</string>
+    <string name="settings_swipe_saving">Saving Swipe action…</string>
+    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Þema forrits</string>
@@ -902,7 +907,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Takmörk á staðværu geymslurými</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB notað)</string>
     <!-- endregion -->
     <string name="app_settings">Stillingar forrits</string>
     <!-- region App Settings -->

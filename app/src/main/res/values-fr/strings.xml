@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Répéter le code PIN</string>
     <string name="settings_pins_dont_match">Les codes PIN doivent être identiques !</string>
     <string name="settings_enter_pin_code_title">Saisir le code PIN</string>
+    <string name="settings_storage_limit_mb_value">%1$d Mo (%2$.2f Mo utilisés)</string>
+    <string name="settings_storage_limit_unlimited_value">Illimité (%1$.2f Mo utilisés)</string>
     <string name="settings_swipe_settings_info">Configurez des gestes de balayage pour accéder aux actions les plus utilisées.</string>
     <string name="settings_swipe_left_to_right">De gauche à droite</string>
     <string name="settings_swipe_right_to_left">De droite à gauche</string>
+    <string name="settings_swipe_saving">Enregistrement de l\'action de balayage…</string>
+    <string name="settings_swipe_generic_error">Impossible d\'enregistrer l\'action de balayage</string>
+    <string name="settings_swipe_offline_error">Impossible d\'enregistrer l\'action de balayage en étant hors-ligne</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Thème de l\'application</string>
@@ -904,7 +909,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Limite de stockage local</string>
-    <string name="settings_storage_limit_mb_value">%1$d Mo (%2$.2f Mo utilisés)</string>
     <!-- endregion -->
     <string name="app_settings">Paramètres de l\'application</string>
     <!-- region App Settings -->

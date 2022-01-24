@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
     <string name="settings_pins_dont_match">The PIN codes must match!</string>
     <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
     <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
     <string name="settings_swipe_left_to_right">Left to right</string>
     <string name="settings_swipe_right_to_left">Right to left</string>
+    <string name="settings_swipe_saving">Saving Swipe action…</string>
+    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App theme</string>
@@ -904,7 +909,6 @@ Svájci székhellyel</string>
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Helyi tárhely korlát</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB használt)</string>
     <!-- endregion -->
     <string name="app_settings">App settings</string>
     <!-- region App Settings -->

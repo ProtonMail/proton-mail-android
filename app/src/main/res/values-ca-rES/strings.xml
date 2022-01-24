@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Repetir codi PIN</string>
     <string name="settings_pins_dont_match">Els codis PIN han de coincidir!</string>
     <string name="settings_enter_pin_code_title">Introduir codi PIN</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
     <string name="settings_swipe_settings_info">Establir gestos de lliscament per accedir a les accions més utilitzades.</string>
     <string name="settings_swipe_left_to_right">Esquerra a dreta</string>
     <string name="settings_swipe_right_to_left">Dreta a esquerra</string>
+    <string name="settings_swipe_saving">Desant l\'acció de Desplaçament…</string>
+    <string name="settings_swipe_generic_error">No es pot desar l\'acció de Desplaçament</string>
+    <string name="settings_swipe_offline_error">No es pot desar l\'acció de Desplaçament mentre esteu fora de línia</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema de l\'aplicació</string>
@@ -904,7 +909,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Límit d\'emmagatzematge local</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB usat)</string>
     <!-- endregion -->
     <string name="app_settings">Configuració de l\'aplicació</string>
     <!-- region App Settings -->

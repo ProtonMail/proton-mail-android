@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Ponovite PIN kôd</string>
     <string name="settings_pins_dont_match">PIN kôdovi se moraju podudarati!</string>
     <string name="settings_enter_pin_code_title">Unesite PIN kôd</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
     <string name="settings_swipe_settings_info">Postavite radnje povlačenja prstom za pristup najčešće korištenim radnjama.</string>
     <string name="settings_swipe_left_to_right">S lijeva na desno</string>
     <string name="settings_swipe_right_to_left">S desna na lijevo</string>
+    <string name="settings_swipe_saving">Saving Swipe action…</string>
+    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App theme</string>
@@ -921,7 +926,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Ograničenje lokalne pohrane</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB iskorišteno)</string>
     <!-- endregion -->
     <string name="app_settings">App settings</string>
     <!-- region App Settings -->

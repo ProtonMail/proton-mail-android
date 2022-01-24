@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Επανάληψη κωδικού PIN</string>
     <string name="settings_pins_dont_match">Οι κωδικοί PIN πρέπει να ταιριάζουν!</string>
     <string name="settings_enter_pin_code_title">Εισαγωγή κωδικού ΡΙΝ</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
     <string name="settings_swipe_settings_info">Ρύθμιση χειρονομιών συρσίματος για πρόσβαση στις πιο χρησιμοποιούμενες ενέργειες.</string>
     <string name="settings_swipe_left_to_right">Αριστερά προς δεξιά</string>
     <string name="settings_swipe_right_to_left">Δεξιά προς αριστερά</string>
+    <string name="settings_swipe_saving">Saving Swipe action…</string>
+    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
+    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Θέμα εφαρμογής</string>
@@ -903,7 +908,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Όριο τοπικής αποθήκευσης</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB χρησιμοποιούνται)</string>
     <!-- endregion -->
     <string name="app_settings">Ρυθμίσεις εφαρμογής</string>
     <!-- region App Settings -->

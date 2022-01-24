@@ -86,9 +86,14 @@
     <string name="settings_confirm_pin_code_title">Powtórz kod PIN</string>
     <string name="settings_pins_dont_match">Kody PIN muszą pasować do siebie!</string>
     <string name="settings_enter_pin_code_title">Wpisz kod PIN</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (używasz %2$.2f MB)</string>
+    <string name="settings_storage_limit_unlimited_value">Bez limitu (używasz %1$.2f MB)</string>
     <string name="settings_swipe_settings_info">Ustaw gesty przesunięcia palcem, aby uzyskać dostęp do najczęściej używanych akcji.</string>
     <string name="settings_swipe_left_to_right">Od lewej do prawej</string>
     <string name="settings_swipe_right_to_left">Od prawej do lewej</string>
+    <string name="settings_swipe_saving">Zapisywanie gestu przesunięcia…</string>
+    <string name="settings_swipe_generic_error">Nie można zapisać gestu przesunięcia</string>
+    <string name="settings_swipe_offline_error">Nie można zapisać gestu przesunięcia w trybie offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Motyw aplikacji</string>
@@ -936,7 +941,6 @@
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Limit rozmiaru magazynu lokalnego</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (używasz %2$.2f MB)</string>
     <!-- endregion -->
     <string name="app_settings">Ustawienia aplikacji</string>
     <!-- region App Settings -->
