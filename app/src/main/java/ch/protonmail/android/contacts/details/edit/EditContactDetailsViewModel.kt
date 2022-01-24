@@ -182,7 +182,7 @@ class EditContactDetailsViewModel @Inject constructor(
             FLOW_EDIT_CONTACT -> _setupEditContactFlow.postValue(
                 EditContactCardsHolder(_vCardType0, _vCardType1, _vCardType2, _vCardType3)
             )
-            FLOW_CONVERT_CONTACT -> _setupConvertContactFlow.postValue(null)
+            FLOW_CONVERT_CONTACT -> _setupConvertContactFlow.postValue(Unit)
         }
     }
 
