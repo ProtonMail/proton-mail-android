@@ -28,7 +28,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -1617,7 +1616,7 @@ public class ComposeMessageActivity
         if (!respondInline) {
             String css = AppUtil.readTxt(this, R.raw.css_reset_with_custom_props);
             String darkCss = "";
-            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            if (composeMessageViewModel.isAppInDarkMode(this)) {
                 darkCss = AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only);
             }
             Transformer viewportTransformer = new ViewportTransformer(renderDimensionsProvider.getRenderWidth(this), css, darkCss);
@@ -1661,7 +1660,7 @@ public class ComposeMessageActivity
             String content = composeMessageViewModel.getMessageDataResult().getContent();
             String css = AppUtil.readTxt(this, R.raw.css_reset_with_custom_props);
             String darkCss = "";
-            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            if (composeMessageViewModel.isAppInDarkMode(this)) {
                 darkCss = AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only);
             }
             Transformer contentTransformer = new ViewportTransformer(renderDimensionsProvider.getRenderWidth(this), css, darkCss);

@@ -17,27 +17,17 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.utils.css
+package ch.protonmail.android.usecase
 
 import android.content.Context
-import ch.protonmail.android.R
-import ch.protonmail.android.usecase.IsAppInDarkMode
-import ch.protonmail.android.utils.AppUtil
-import me.proton.core.util.kotlin.EMPTY_STRING
+import android.content.res.Configuration
 import javax.inject.Inject
 
-class MessageBodyCssProvider @Inject constructor(
-    private val context: Context,
-    private val isAppInDarkMode: IsAppInDarkMode
-) {
+/**
+ * A use case that checks whether the app is in dark mode or not
+ */
+class IsAppInDarkMode @Inject constructor() {
 
-    fun getMessageBodyCss(): String = AppUtil.readTxt(context, R.raw.css_reset_with_custom_props)
-
-    fun getMessageBodyDarkModeCss(): String {
-        return if (isAppInDarkMode(context)) {
-            AppUtil.readTxt(context, R.raw.css_reset_dark_mode_only)
-        } else {
-            EMPTY_STRING
-        }
-    }
+    operator fun invoke(context: Context): Boolean =
+        context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 }

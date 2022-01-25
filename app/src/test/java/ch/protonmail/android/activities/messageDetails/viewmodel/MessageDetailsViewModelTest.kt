@@ -61,6 +61,7 @@ import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.ui.model.LabelChipUiModel
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
@@ -110,6 +111,8 @@ private const val SUBJECT = "subject"
 private const val MESSAGE_SENDER_EMAIL_ADDRESS = "sender@protonmail.com"
 
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
+
+    private val isAppInDarkMode: IsAppInDarkMode = mockk()
 
     private val changeMessagesReadStatus: ChangeMessagesReadStatus = mockk()
 
@@ -207,6 +210,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         mockkStatic(Color::class)
         every { Color.parseColor(any()) } returns testColorInt
         viewModel = MessageDetailsViewModel(
+            isAppInDarkMode = isAppInDarkMode,
             messageDetailsRepository = messageDetailsRepository,
             messageRepository = messageRepository,
             userManager = userManager,

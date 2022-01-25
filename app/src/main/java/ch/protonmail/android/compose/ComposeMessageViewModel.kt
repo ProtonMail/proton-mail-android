@@ -19,6 +19,7 @@
 package ch.protonmail.android.compose
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.text.Spanned
 import android.text.TextUtils
@@ -57,6 +58,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.ui.view.DaysHoursPair
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
@@ -107,6 +109,7 @@ const val GREATER_THAN = "&gt;"
 
 @HiltViewModel
 class ComposeMessageViewModel @Inject constructor(
+    private val isAppInDarkMode: IsAppInDarkMode,
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
     accountManager: AccountManager,
@@ -1312,4 +1315,6 @@ class ComposeMessageViewModel @Inject constructor(
         Timber.v("Parsed mailto: $dataString to $mailToData")
         return mailToData
     }
+
+    fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
 }

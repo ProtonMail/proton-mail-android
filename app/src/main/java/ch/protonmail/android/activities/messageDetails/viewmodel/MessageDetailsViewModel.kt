@@ -76,6 +76,7 @@ import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.model.LabelChipUiModel
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
@@ -128,6 +129,7 @@ import javax.inject.Inject
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
+    private val isAppInDarkMode: IsAppInDarkMode,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val messageRepository: MessageRepository,
     private val userManager: UserManager,
@@ -898,4 +900,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             )
         }
     }
+
+    fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
 }
