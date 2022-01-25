@@ -329,17 +329,18 @@ dependencies {
 
         // Android
         `android-annotation`,
-        `appcompat`,
         `android-biometric`,
-        `constraint-layout`,
         `android-fragment`,
         `android-flexbox`,
         `android-ktx`,
         `android-media`,
+        `android-startup-runtime`,
+        `android-webkit`,
+        `android-work-runtime`,
+        `appcompat`,
+        `constraint-layout`,
         `material`,
         `paging-runtime`,
-        `android-work-runtime`,
-        `android-webkit`,
 
         // Lifecycle
         `lifecycle-extensions`,
