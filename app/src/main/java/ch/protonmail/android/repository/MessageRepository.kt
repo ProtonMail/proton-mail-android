@@ -19,19 +19,16 @@
 
 package ch.protonmail.android.repository
 
-import android.content.Context
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants.MAX_MESSAGE_ID_WORKER_ARGUMENTS
 import ch.protonmail.android.core.Constants.MessageLocationType
-import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.NoProtonStoreMapper
 import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.CounterDao
-import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
@@ -41,6 +38,7 @@ import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMapper
@@ -72,6 +70,8 @@ import javax.inject.Inject
 
 const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
 private const val FILE_PREFIX = "file://"
+// For non-custom labels such as: Inbox, Sent, Archive etc.
+private const val MAX_LABEL_ID_LENGTH = 2
 
 /**
  * A repository for getting and saving messages.
@@ -89,8 +89,7 @@ class MessageRepository @Inject constructor(
     connectivityManager: NetworkConnectivityManager,
     private val labelRepository: LabelRepository,
     private var moveMessageToLocationWorker: MoveMessageToLocationWorker.Enqueuer,
-    private val emptyFolderRemoteWorker: EmptyFolderRemoteWorker.Enqueuer,
-    private val context: Context
+    private val emptyFolderRemoteWorker: EmptyFolderRemoteWorker.Enqueuer
 ) {
 
     private val allMessagesStore by lazy {
@@ -234,7 +233,6 @@ class MessageRepository @Inject constructor(
 
     suspend fun moveToTrash(
         messageIds: List<String>,
-        currentFolderLabelId: String,
         userId: UserId
     ) {
         val newLocation = MessageLocationType.TRASH
@@ -242,13 +240,12 @@ class MessageRepository @Inject constructor(
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
                 moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
-                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId)
+                moveMessageInDb(ids, newLocation, userId)
             }
     }
 
     suspend fun moveToArchive(
         messageIds: List<String>,
-        currentFolderLabelId: String,
         userId: UserId
     ) {
         val newLocation = MessageLocationType.ARCHIVE
@@ -256,13 +253,12 @@ class MessageRepository @Inject constructor(
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
                 moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
-                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId)
+                moveMessageInDb(ids, newLocation, userId)
             }
     }
 
     suspend fun moveToInbox(
         messageIds: List<String>,
-        currentFolderLabelId: String,
         userId: UserId
     ) {
         val newLocation = MessageLocationType.INBOX
@@ -270,13 +266,12 @@ class MessageRepository @Inject constructor(
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
                 moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
-                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId)
+                moveMessageInDb(ids, newLocation, userId)
             }
     }
 
     suspend fun moveToSpam(
         messageIds: List<String>,
-        currentFolderLabelId: String,
         userId: UserId
     ) {
         val newLocation = MessageLocationType.SPAM
@@ -284,14 +279,13 @@ class MessageRepository @Inject constructor(
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
                 moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
-                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId)
+                moveMessageInDb(ids, newLocation, userId)
             }
     }
 
     suspend fun moveToCustomFolderLocation(
         messageIds: List<String>,
         newCustomLocationId: String,
-        currentFolderLabelId: String,
         userId: UserId
     ) {
         val newLocation = MessageLocationType.LABEL
@@ -299,7 +293,7 @@ class MessageRepository @Inject constructor(
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
                 moveMessageToLocationWorker.enqueue(ids, newCustomLocation = newCustomLocationId)
-                moveMessageInDb(ids, newLocation, currentFolderLabelId, userId, newCustomLocationId)
+                moveMessageInDb(ids, newLocation, userId, newCustomLocationId)
             }
     }
 
@@ -416,11 +410,10 @@ class MessageRepository @Inject constructor(
     private suspend fun moveMessageInDb(
         messageIds: List<String>,
         newLocation: MessageLocationType,
-        currentFolderLabelId: String,
         userId: UserId,
         newCustomLocationId: String? = null // for custom folder locations
     ) {
-        val counterDao = CounterDatabase.getInstance(context, userId).getDao()
+        val counterDao = databaseProvider.provideCounterDao(userId)
         val messagesDao = databaseProvider.provideMessageDao(userId)
         var totalUnread = 0
         for (id in messageIds) {
@@ -432,7 +425,6 @@ class MessageRepository @Inject constructor(
                         counterDao,
                         messagesDao,
                         message,
-                        currentFolderLabelId,
                         newLocation,
                         newCustomLocationId
                     )
@@ -451,7 +443,6 @@ class MessageRepository @Inject constructor(
         counterDao: CounterDao,
         messagesDao: MessageDao,
         message: Message,
-        currentFolderLabelId: String,
         newLocation: MessageLocationType,
         newCustomLocationId: String? = null
     ): Boolean {
@@ -464,29 +455,53 @@ class MessageRepository @Inject constructor(
             }
             unreadIncrease = true
         }
-        if (fromInt(message.location) === MessageLocationType.SENT) {
-            message.removeLabels(listOf(MessageLocationType.SENT.messageLocationTypeValue.toString()))
-            message.addLabels(listOf(MessageLocationType.ALL_SENT.messageLocationTypeValue.toString()))
-        }
         val newLocationString = if (!newCustomLocationId.isNullOrEmpty()) {
             newCustomLocationId
         } else {
             newLocation.messageLocationTypeValue.toString()
         }
-        message.setLabelIDs(
-            listOf(
-                newLocationString,
-                MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString()
+        message.removeLabels(
+            getLabelIdsToRemoveOnMoveToFolderAction(
+                labelIds = message.allLabelIDs,
+                isTrashAction = newLocation == MessageLocationType.TRASH
             )
         )
-        if (currentFolderLabelId.isNotEmpty()) {
-            message.removeLabels(listOf(currentFolderLabelId))
-        }
+        message.addLabels(listOf(newLocationString))
         Timber.d(
             "Archive message id: %s, location: %s, labels: %s", message.messageId, message.location, message.allLabelIDs
         )
 
         messagesDao.saveMessage(message)
         return unreadIncrease
+    }
+
+    /**
+     * Filter out the non-exclusive labels and locations like: ALL_DRAFT, ALL_SENT, ALL_MAIL, that shouldn't be
+     * removed when moving a message to folder.
+     */
+    private suspend fun getLabelIdsToRemoveOnMoveToFolderAction(
+        labelIds: List<String>,
+        isTrashAction: Boolean
+    ): List<String> {
+        return labelIds.filter { labelId ->
+            val isLabelExclusive = if (labelId.length > MAX_LABEL_ID_LENGTH) {
+                labelRepository.findLabel(LabelId(labelId))?.type == LabelType.FOLDER
+            } else {
+                labelId != MessageLocationType.STARRED.asLabelId()
+            }
+
+            if (isTrashAction) return@filter labelId !in arrayOf(
+                MessageLocationType.ALL_DRAFT.asLabelId(),
+                MessageLocationType.ALL_SENT.asLabelId(),
+                MessageLocationType.ALL_MAIL.asLabelId()
+            )
+
+            return@filter isLabelExclusive &&
+                labelId !in arrayOf(
+                MessageLocationType.ALL_DRAFT.asLabelId(),
+                MessageLocationType.ALL_SENT.asLabelId(),
+                MessageLocationType.ALL_MAIL.asLabelId()
+            )
+        }
     }
 }
