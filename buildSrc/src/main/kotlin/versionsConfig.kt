@@ -86,12 +86,13 @@ const val `junit-ktx version` =                 "1.1.2"         // Released: Aug
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
 const val `android-fragment version` =          "1.3.6"         // Released: Jul 21, 2021
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
-const val `flexbox version` =                   "2.0.1"         // Released: Jan 17, 2020
 const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020
+const val `android-startup version` =           "1.1.0"         // Released: Aug 04, 2021
+const val `android-webkit version` =            "1.4.0"         // Released: Dec 16, 2020
+const val `flexbox version` =                   "2.0.1"         // Released: Jan 17, 2020
+const val `lifecycle-extensions version` =      "2.2.0"         // Released: Jan 22, 2020
 const val `googleServices version` =            "4.3.3"         // Released: Nov 11, 2019
 const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019
-const val `lifecycle-extensions version` =      "2.2.0"         // Released: Jan 22, 2020
-const val `android-webkit version` =            "1.4.0"         // Released: Dec 16, 2020
 
 // Other
 const val `apache-commons-lang version` =       "3.4"           // Released: Apr 03, 2015

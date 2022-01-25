@@ -63,15 +63,16 @@ fun DependencyHandler.proton(module: String, moduleSuffix: String? = null, versi
 
 // region Android
 val DependencyHandler.`android-biometric` get() =           androidx("biometric") version `android-biometric version`
+val DependencyHandler.`android-flexbox` get() =             google("android", "flexbox") version `flexbox version`
 val DependencyHandler.`android-fragment` get() =            androidx("fragment", moduleSuffix = "ktx") version `android-fragment version`
 val DependencyHandler.`android-media` get() =               androidx("media") version `android-media version`
-val DependencyHandler.`android-flexbox` get() =             google("android", "flexbox") version `flexbox version`
 val DependencyHandler.`android-preference` get() =          androidx("preference", moduleSuffix = "ktx") version `android-preference version`
+val DependencyHandler.`android-webkit` get() =              androidx("webkit", "webkit") version `android-webkit version`
 val DependencyHandler.`google-services` get() =             googleServices()
+val DependencyHandler.`android-startup-runtime` get() =     androidx("startup", moduleSuffix = "runtime") version `android-startup version`
+val DependencyHandler.`lifecycle-extensions` get() =        androidxLifecycle("extensions") version `lifecycle-extensions version`
 val DependencyHandler.`room-rxJava` get() =                 androidxRoom("rxjava2")
 val DependencyHandler.`safetyNet` get() =                   playServices("safetynet")
-val DependencyHandler.`lifecycle-extensions` get() =        androidxLifecycle("extensions") version `lifecycle-extensions version`
-val DependencyHandler.`android-webkit` get() =              androidx("webkit", "webkit") version `android-webkit version`
 
 fun DependencyHandler.googleServices(moduleSuffix: String? = null, version: String = `googleServices version`) =
     google("gms", "google-services", moduleSuffix, version)

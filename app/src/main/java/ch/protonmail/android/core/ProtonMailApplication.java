@@ -45,6 +45,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.hilt.work.HiltWorkerFactory;
+import androidx.startup.AppInitializer;
 import androidx.work.WorkManager;
 
 import com.birbit.android.jobqueue.JobManager;
@@ -226,7 +227,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         applyAppThemeFromSettings.blocking();
 
-        new PinLockManagerInitializer().create(this);
+        AppInitializer.getInstance(this)
+                .initializeComponent(PinLockManagerInitializer.class);
 
         accountManagerUserIdMigration.blocking();
         coreAccountManagerMigration.migrateBlocking();
