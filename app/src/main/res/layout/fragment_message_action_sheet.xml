@@ -104,6 +104,26 @@
                 android:text="@string/label_as"
                 app:drawableStartCompat="@drawable/ic_label" />
 
+            <TextView
+                android:id="@+id/details_actions_view_in_light_mode_text_view"
+                style="@style/ListStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_sheet_view_in_light_mode"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_sun"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/details_actions_view_in_dark_mode_text_view"
+                style="@style/ListStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_sheet_view_in_dark_mode"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_moon"
+                tools:visibility="visible" />
+
             <View style="@style/ViewSeparatorHorizontal" />
 
             <TextView

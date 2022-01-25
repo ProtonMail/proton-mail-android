@@ -279,6 +279,18 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 viewModel.showLabelsManager(messageIds, messageLocation, mailboxLabelId)
                 dismiss()
             }
+            detailsActionsViewInLightModeTextView.apply {
+                isVisible = false
+                setOnClickListener {
+                    TODO()
+                }
+            }
+            detailsActionsViewInDarkModeTextView.apply {
+                isVisible = false
+                setOnClickListener {
+                    TODO()
+                }
+            }
         }
     }
 
