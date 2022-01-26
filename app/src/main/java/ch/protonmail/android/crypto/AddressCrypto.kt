@@ -91,19 +91,24 @@ class AddressCrypto @AssistedInject constructor(
         }
 
         val pgpMessage = GoOpenPgpCrypto.newPGPMessageFromArmored(token.string)
+
         userManager.currentUser?.keys?.keys?.forEach { userKey ->
-            val userKeyRing = GoOpenPgpCrypto.newKeyRing(
-                GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey.string).unlock(mailboxPassword)
-            )
-            decryptToken(
-                pgpMessage,
-                userKeyRing
-            )?.let { decryptedToken ->
-                if (
-                    verifyTokenFormat(decryptedToken) &&
-                    verifySignature(userKeyRing, decryptedToken, signature, userKey.id.id, key.id.id)
-                ) {
-                    return decryptedToken
+            // We need to catch exceptions because the operation might throw if the user has inactive keys
+            runCatching {
+                GoOpenPgpCrypto.newKeyRing(
+                    GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey.string).unlock(mailboxPassword)
+                )
+            }.onSuccess { userKeyRing ->
+                decryptToken(
+                    pgpMessage,
+                    userKeyRing
+                )?.let { decryptedToken ->
+                    if (
+                        verifyTokenFormat(decryptedToken) &&
+                        verifySignature(userKeyRing, decryptedToken, signature, userKey.id.id, key.id.id)
+                    ) {
+                        return decryptedToken
+                    }
                 }
             }
         }
