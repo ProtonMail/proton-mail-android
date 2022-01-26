@@ -23,10 +23,6 @@ import com.google.gson.annotations.SerializedName
 
 // region constants
 private const val FIELD_DEVICE_TOKEN = "DeviceToken"
-private const val FIELD_DEVICE_NAME = "DeviceName"
-private const val FIELD_DEVICE_MODEL = "DeviceModel"
-private const val FIELD_DEVICE_VERSION = "DeviceVersion"
-private const val FIELD_APP_VERSION = "AppVersion"
 private const val FIELD_ENVIRONMENT = "Environment"
 
 const val DEVICE_ENVIRONMENT_ANDROID = 4
@@ -40,14 +36,6 @@ const val DEVICE_ENVIRONMENT_ANDROID = 4
 data class RegisterDeviceRequestBody(
     @SerializedName(FIELD_DEVICE_TOKEN)
     var deviceToken: String,
-    @SerializedName(FIELD_DEVICE_NAME)
-    var deviceName: String,
-    @SerializedName(FIELD_DEVICE_MODEL)
-    var deviceModel: String,
-    @SerializedName(FIELD_DEVICE_VERSION)
-    var deviceVersion: String,
-    @SerializedName(FIELD_APP_VERSION)
-    var appVersion: String,
     @SerializedName(FIELD_ENVIRONMENT)
     var environment: Int
 )
