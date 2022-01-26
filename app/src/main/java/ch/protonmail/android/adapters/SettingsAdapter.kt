@@ -24,10 +24,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.SettingsEnum
+import ch.protonmail.android.ui.adapter.BaseAdapter
+import ch.protonmail.android.ui.adapter.ClickableAdapter
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.views.SettingsDefaultItemView
-import ch.protonmail.libs.core.ui.adapter.BaseAdapter
-import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import me.proton.core.presentation.utils.inflate
 
 // region constants
