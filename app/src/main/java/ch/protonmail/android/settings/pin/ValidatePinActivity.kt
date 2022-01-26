@@ -28,14 +28,10 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.FetchDraftDetailEvent
-import ch.protonmail.android.events.FetchMessageDetailEvent
-import ch.protonmail.android.events.PostImportAttachmentEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.ISecurePINListener
-import com.squareup.otto.Subscribe
 import java.util.concurrent.Executors
 
 // region constants
@@ -51,9 +47,6 @@ class ValidatePinActivity :
     ISecurePINListener,
     PinFragmentViewModel.ReopenFingerprintDialogListener {
 
-    private var importAttachmentEvent: PostImportAttachmentEvent? = null
-    private var messageDetailEvent: FetchMessageDetailEvent? = null
-    private var draftDetailEvent: FetchDraftDetailEvent? = null
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
@@ -93,23 +86,6 @@ class ValidatePinActivity :
         ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
-    // region subscription events
-    @Subscribe
-    fun onPostImportAttachmentEvent(event: PostImportAttachmentEvent) {
-        importAttachmentEvent = event
-    }
-
-    @Subscribe
-    fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent) {
-        messageDetailEvent = event
-    }
-
-    @Subscribe
-    fun onFetchDraftDetailEvent(event: FetchDraftDetailEvent) {
-        draftDetailEvent = event
-    }
-    // endregion
-
     override fun onPinCreated(pin: String) {
         // NOOP
     }
@@ -137,7 +113,7 @@ class ValidatePinActivity :
 
     override fun onPinSuccess() {
         mUserManager.requireCurrentLegacyUser().setManuallyLocked(false)
-        setResult(Activity.RESULT_OK, buildIntent())
+        setResult(Activity.RESULT_OK)
         finish()
     }
 
@@ -196,15 +172,4 @@ class ValidatePinActivity :
 
     override fun onBackPressed() {}
 
-    private fun buildIntent(): Intent {
-        return Intent().apply {
-            putExtra(EXTRA_PIN_VALID, true)
-            if (importAttachmentEvent != null) {
-                putExtra(EXTRA_ATTACHMENT_IMPORT_EVENT, importAttachmentEvent)
-            }
-            if (messageDetailEvent != null) {
-                putExtra(EXTRA_MESSAGE_DETAIL_EVENT, messageDetailEvent)
-            }
-        }
-    }
 }
