@@ -19,9 +19,9 @@
 package ch.protonmail.android.drawer.presentation.ui
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.DrawerFooterBinding
@@ -34,46 +34,40 @@ import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.SectionName
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.SectionName.CreateButtonState
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
-import ch.protonmail.libs.core.ui.adapter.BaseAdapter
-import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
-import ch.protonmail.libs.core.utils.onClick
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
-
-private const val VIEW_TYPE_SECTION_NAME = 0
-private const val VIEW_TYPE_STATIC = 1
-private const val VIEW_TYPE_LABEL = 2
-private const val VIEW_TYPE_FOOTER = 3
+import me.proton.core.presentation.ui.adapter.ClickableAdapter
+import me.proton.core.presentation.ui.adapter.ProtonAdapter
+import me.proton.core.presentation.utils.onClick
 
 /**
  * Adapter for Drawer Items that support different View types
- *
- * Inherit from [BaseAdapter]
  */
 internal class DrawerAdapter(
     onItemClick: (DrawerItemUiModel) -> Unit,
     private val onCreateLabel: () -> Unit,
     private val onCreateFolder: () -> Unit
-) : BaseAdapter<DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>>(
-    itemsComparator = ModelsComparator,
+) : ProtonAdapter<DrawerItemUiModel, Any, DrawerAdapter.ViewHolder<DrawerItemUiModel, Any>>(
+    diffCallback = ModelsComparator,
     onItemClick = onItemClick
 ) {
 
     /** Select the given [item] and un-select all the others */
     fun setSelected(item: Primary) {
-        items = items.map {
+        val newItems = currentList.map {
             if (it is Primary)
             // Select if this item is same as given item
                 it.copyWithSelected(it == item)
             else it
         }
+        submitList(newItems)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<DrawerItemUiModel> =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<DrawerItemUiModel, Any> =
         parent.viewHolderForViewType(ViewType.fromInt(viewType))
 
-    override fun getItemViewType(position: Int) = ViewType.fromModel(items[position]).intValue
+    override fun getItemViewType(position: Int) = ViewType.fromModel(getItem(position)).intValue
 
-    private object ModelsComparator : BaseAdapter.ItemsComparator<DrawerItemUiModel>() {
+    private object ModelsComparator : DiffUtil.ItemCallback<DrawerItemUiModel>() {
 
         /** Check if old [DrawerItemUiModel] and new [DrawerItemUiModel] are the same element */
         override fun areItemsTheSame(oldItem: DrawerItemUiModel, newItem: DrawerItemUiModel): Boolean {
@@ -88,51 +82,61 @@ internal class DrawerAdapter(
                 is Footer -> true // We only have one footer
             }
         }
+
+        override fun areContentsTheSame(oldItem: DrawerItemUiModel, newItem: DrawerItemUiModel) =
+            oldItem == newItem
     }
 
-    private fun <Model : DrawerItemUiModel> ViewGroup.viewHolderForViewType(viewType: ViewType): ViewHolder<Model> {
+    private fun <Model : DrawerItemUiModel> ViewGroup.viewHolderForViewType(viewType: ViewType): ViewHolder<Model, Any> {
         val inflater = LayoutInflater.from(context)
         return when (viewType) {
             ViewType.SECTION_NAME -> {
                 val binding = DrawerSectionNameItemBinding.inflate(inflater, this, false)
                 SectionNameViewHolder(
                     binding = binding,
+                    onItemClick,
                     onCreateLabel = onCreateLabel,
                     onCreateFolder = onCreateFolder
                 )
             }
             ViewType.STATIC -> {
                 val binding = DrawerListItemBinding.inflate(inflater, this, false)
-                StaticViewHolder(binding)
+                StaticViewHolder(binding, onItemClick)
             }
             ViewType.LABEL -> {
                 val binding = DrawerListItemBinding.inflate(inflater, this, false)
-                LabelViewHolder(binding)
+                LabelViewHolder(binding, onItemClick)
             }
             ViewType.CREATE_ITEM -> {
                 val binding = DrawerListItemBinding.inflate(inflater, this, false)
-                CreateItemViewHolder(binding)
+                CreateItemViewHolder(binding, onItemClick)
             }
             ViewType.FOOTER -> {
                 val binding = DrawerFooterBinding.inflate(inflater, this, false)
-                FooterViewHolder(binding)
+                FooterViewHolder(binding, onItemClick)
             }
-        } as ViewHolder<Model>
+        } as ViewHolder<Model, Any>
     }
 
     /** Abstract ViewHolder for the Adapter */
-    abstract class ViewHolder<Model : DrawerItemUiModel>(itemView: View) :
-        ClickableAdapter.ViewHolder<Model>(itemView)
+    abstract class ViewHolder<Model : DrawerItemUiModel, ViewRef : Any>(
+        view: ViewRef,
+        onItemClick: (DrawerItemUiModel) -> Unit
+    ) : ClickableAdapter.ViewHolder<Model, ViewRef>(view, onItemClick)
 
-    /** [ViewHolder] for [Primary] Item */
-    private abstract class PrimaryViewHolder<P : Primary>(itemView: View) : ViewHolder<P>(itemView) {
+    private abstract class PrimaryViewHolder<P : Primary, ViewRef : Any>(
+        view: ViewRef,
+        onItemClick: (DrawerItemUiModel) -> Unit
+    ): ViewHolder<P, ViewRef>(view, onItemClick) {
 
-        override fun onBind(item: P) = with(itemView) {
-            super.onBind(item)
-            drawer_item_selection_view.isVisible = item.selected
-            drawer_item_notifications_text_view.isVisible = item.hasNotifications()
-            drawer_item_notifications_text_view.text = item.notificationCount.formatToMax4chars()
-            drawer_item_notifications_text_view.setNotificationIndicatorSize(item.notificationCount)
+        override fun onBind(item: P, position: Int) {
+            super.onBind(item, position)
+            with(itemView) {
+                drawer_item_selection_view.isVisible = item.selected
+                drawer_item_notifications_text_view.isVisible = item.hasNotifications()
+                drawer_item_notifications_text_view.text = item.notificationCount.formatToMax4chars()
+                drawer_item_notifications_text_view.setNotificationIndicatorSize(item.notificationCount)
+            }
         }
 
         private fun Int.formatToMax4chars(): String {
@@ -142,15 +146,15 @@ internal class DrawerAdapter(
         }
     }
 
-    /** [ViewHolder] for [SectionName] */
     private class SectionNameViewHolder(
         private val binding: DrawerSectionNameItemBinding,
+        onItemClick: (DrawerItemUiModel) -> Unit,
         private val onCreateLabel: () -> Unit,
         private val onCreateFolder: () -> Unit,
-    ) : ViewHolder<SectionName>(binding.root) {
+    ) : ViewHolder<SectionName, DrawerSectionNameItemBinding>(binding, onItemClick) {
 
-        override fun onBind(item: SectionName) {
-            super.onBind(item)
+        override fun onBind(item: SectionName, position: Int) {
+            super.onBind(item, position)
             binding.drawerSectionNameTextView.setText(item.text)
             binding.drawerSectionNameCreateButton.apply {
                 if (item.createButtonState is CreateButtonState.Shown) {
@@ -170,16 +174,13 @@ internal class DrawerAdapter(
         }
     }
 
-    /**
-     * [ViewHolder] for [Primary.Label] Item
-     * Inherit from [PrimaryViewHolder]
-     */
     private class LabelViewHolder(
-        private val binding: DrawerListItemBinding
-    ) : PrimaryViewHolder<Primary.Label>(binding.root) {
+        private val binding: DrawerListItemBinding,
+        onItemClick: (DrawerItemUiModel) -> Unit
+    ) : PrimaryViewHolder<Primary.Label, DrawerListItemBinding>(binding, onItemClick) {
 
-        override fun onBind(item: Primary.Label) {
-            super.onBind(item)
+        override fun onBind(item: Primary.Label, position: Int) {
+            super.onBind(item, position)
             val model = item.uiModel
 
             (itemView.layoutParams as RecyclerView.LayoutParams).marginStart =
@@ -195,16 +196,13 @@ internal class DrawerAdapter(
         }
     }
 
-    /**
-     * [ViewHolder] for [Primary.Static] Item
-     * Inherit from [PrimaryViewHolder]
-     */
     private class StaticViewHolder(
-        private val binding: DrawerListItemBinding
-    ) : PrimaryViewHolder<Primary.Static>(binding.root) {
+        private val binding: DrawerListItemBinding,
+        onItemClick: (DrawerItemUiModel) -> Unit
+    ) : PrimaryViewHolder<Primary.Static, DrawerListItemBinding>(binding, onItemClick) {
 
-        override fun onBind(item: Primary.Static) {
-            super.onBind(item)
+        override fun onBind(item: Primary.Static, position: Int) {
+            super.onBind(item, position)
             binding.apply {
                 drawerItemLabelTextView.setText(item.labelRes)
                 drawerItemIconView.setImageResource(item.iconRes)
@@ -219,11 +217,12 @@ internal class DrawerAdapter(
      * @see CreateItem.Label
      */
     private class CreateItemViewHolder(
-        private val binding: DrawerListItemBinding
-    ) : ViewHolder<CreateItem>(binding.root) {
+        private val binding: DrawerListItemBinding,
+        onItemClick: (DrawerItemUiModel) -> Unit
+    ) : ViewHolder<CreateItem, DrawerListItemBinding>(binding, onItemClick) {
 
-        override fun onBind(item: CreateItem) {
-            super.onBind(item)
+        override fun onBind(item: CreateItem, position: Int) {
+            super.onBind(item, position)
             binding.drawerItemIconView.setImageResource(R.drawable.ic_plus)
             binding.drawerItemLabelTextView.apply {
                 setText(item.textRes)
@@ -232,13 +231,13 @@ internal class DrawerAdapter(
         }
     }
 
-    /** [ViewHolder] for [Footer] */
     private class FooterViewHolder(
-        private val binding: DrawerFooterBinding
-    ) : ViewHolder<Footer>(binding.root) {
+        private val binding: DrawerFooterBinding,
+        onItemClick: (DrawerItemUiModel) -> Unit
+    ) : ViewHolder<Footer, DrawerFooterBinding>(binding, onItemClick) {
 
-        override fun onBind(item: Footer) {
-            super.onBind(item)
+        override fun onBind(item: Footer, position: Int) {
+            super.onBind(item, position)
             binding.root.text = item.text
         }
     }
