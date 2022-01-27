@@ -33,7 +33,6 @@ import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.uiModel.SettingsItemUiModel
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
@@ -146,9 +145,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 setToggleListener(SettingsEnum.PREVENT_SCREENSHOTS) { view: View, isChecked: Boolean ->
                     if (view.isPressed && isChecked != legacyUser.isPreventTakingScreenshots) {
                         legacyUser.isPreventTakingScreenshots = isChecked
-                        val infoSnack =
-                            UiUtil.showInfoSnack(mSnackLayout, this, R.string.changes_affected_after_closing)
-                        infoSnack.show()
                     }
                 }
 
