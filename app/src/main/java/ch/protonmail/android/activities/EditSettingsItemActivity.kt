@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.view.children
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
@@ -145,6 +146,11 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 setToggleListener(SettingsEnum.PREVENT_SCREENSHOTS) { view: View, isChecked: Boolean ->
                     if (view.isPressed && isChecked != legacyUser.isPreventTakingScreenshots) {
                         legacyUser.isPreventTakingScreenshots = isChecked
+                        if (isChecked) {
+                            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        } else {
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        }
                     }
                 }
 
