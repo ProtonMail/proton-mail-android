@@ -28,10 +28,10 @@ import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.extensions.obfuscateUsername
 import ch.protonmail.android.utils.getStringList
-import ch.protonmail.libs.core.preferences.clearOnly
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.android.sharedpreferences.clearOnly
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider

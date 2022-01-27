@@ -65,10 +65,6 @@ fun initVersions() {
 // Common
 const val `Proton-core version` = "4.1.0"
 
-@Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
-
-@Deprecated("To be removed in favour of package published on Bintray") const val `old protonCore version` =        "0.2.21"        // Released: Mar 13, 2020
-
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
 const val `android-test-ext version` =          "1.1.3-rc01"    // Released: Jun 22, 2021

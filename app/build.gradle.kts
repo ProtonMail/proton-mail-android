@@ -285,9 +285,6 @@ dependencies {
     implementation(
 
         // Core
-        rootProject.aar(Lib.protonCore, version = `old protonCore version`),
-        // rootProject.aar(Lib.composer, version = `composer version`),
-
         `Proton-data`,
         `Proton-data-room`,
         `Proton-domain`,

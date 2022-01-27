@@ -34,7 +34,6 @@ import ch.protonmail.android.fcm.UnregisterDeviceWorker
 import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.libs.core.preferences.clearAll
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,6 +75,7 @@ import me.proton.core.humanverification.presentation.HumanVerificationOrchestrat
 import me.proton.core.humanverification.presentation.observe
 import me.proton.core.humanverification.presentation.onHumanVerificationNeeded
 import me.proton.core.user.domain.UserManager
+import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 import javax.inject.Singleton

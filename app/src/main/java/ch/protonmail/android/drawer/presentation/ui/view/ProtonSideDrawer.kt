@@ -170,7 +170,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun update() {
-        bodyAdapter.items = buildList {
+        val newItems = buildList {
 
             addAll(locationItems.mapWithCounters())
 
@@ -185,6 +185,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
 
             footerItem?.let { add(it) }
         }
+        bodyAdapter.submitList(newItems)
     }
 
     @JvmName("mapLocationsWithCounters")

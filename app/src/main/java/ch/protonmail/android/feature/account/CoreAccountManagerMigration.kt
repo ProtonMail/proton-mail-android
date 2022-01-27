@@ -32,7 +32,6 @@ import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.domain.util.requireNotBlank
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.libs.core.preferences.getString
 import kotlinx.coroutines.runBlocking
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountDetails
@@ -56,6 +55,7 @@ import me.proton.core.user.domain.entity.Role
 import me.proton.core.user.domain.entity.UserAddress
 import me.proton.core.user.domain.entity.UserAddressKey
 import me.proton.core.user.domain.entity.UserKey
+import me.proton.core.util.android.sharedpreferences.getString
 import me.proton.core.util.kotlin.toBooleanOrFalse
 import timber.log.Timber
 import javax.inject.Inject
