@@ -325,14 +325,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     override fun secureContent(): Boolean = true
 
-    override fun enableScreenshotProtector() {
-        screenShotPreventerView.visibility = View.VISIBLE
-    }
-
-    override fun disableScreenshotProtector() {
-        screenShotPreventerView.visibility = View.GONE
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
