@@ -57,6 +57,7 @@ import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.ui.model.LabelChipUiModel
+import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER
@@ -67,7 +68,7 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import ch.protonmail.android.views.messageDetails.ReplyActionsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
-import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
+import kotlinx.android.synthetic.main.layout_message_details_body.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 
@@ -87,10 +88,12 @@ internal class MessageDetailsAdapter(
     private val userManager: UserManager,
     private val messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper,
     private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
+    private val protonCalendarUtil: ProtonCalendarUtil,
     private val onLoadEmbeddedImagesClicked: (Message, List<String>) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
+    private val onOpenInProtonCalendarClicked: (Message) -> Unit,
     private val onEditDraftClicked: (Message) -> Unit,
     private val onReplyMessageClicked: (Constants.MessageActionType, Message) -> Unit,
     private val onMoreMessageActionsClicked: (Message) -> Unit
@@ -133,7 +136,7 @@ internal class MessageDetailsAdapter(
             )
         } else {
             val itemView = LayoutInflater.from(context).inflate(
-                R.layout.layout_message_details_web_view,
+                R.layout.layout_message_details_body,
                 parent,
                 false
             )
@@ -312,6 +315,7 @@ internal class MessageDetailsAdapter(
             val decryptionErrorView = itemView.decryptionErrorView
             val displayRemoteContentButton = itemView.displayRemoteContentButton
             val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
+            val openInProtonCalendarView = itemView.include_open_in_proton_calendar
             val editDraftButton = itemView.editDraftButton
             val webView = itemView.messageWebViewContainer
                 .findViewById<WebView>(R.id.item_message_body_web_view_id) ?: return
@@ -321,6 +325,7 @@ internal class MessageDetailsAdapter(
             messageBodyProgress.isVisible = listItem.messageFormattedHtml.isNullOrEmpty()
             displayRemoteContentButton.isVisible = false
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
+            openInProtonCalendarView.isVisible = listItem.showOpenInProtonCalendar
             editDraftButton.isVisible = message.isDraft()
             decryptionErrorView.bind(listItem.showDecryptionError)
             expirationInfoView.bind(message.expirationTime)
@@ -349,7 +354,13 @@ internal class MessageDetailsAdapter(
             )
             // TODO: To be decided whether we will need these actions moving forward or they can be removed completely
             setupReplyActionsView(message, true)
-            setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
+            setupMessageContentActions(
+                position = position,
+                loadEmbeddedImagesContainer = loadEmbeddedImagesButton,
+                displayRemoteContentButton = displayRemoteContentButton,
+                openInProtonCalenderView = openInProtonCalendarView,
+                editDraftButton = editDraftButton
+            )
 
             setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
         }
@@ -413,8 +424,11 @@ internal class MessageDetailsAdapter(
             position: Int,
             loadEmbeddedImagesContainer: Button,
             displayRemoteContentButton: Button,
+            openInProtonCalenderView: View,
             editDraftButton: Button
         ) {
+            val item = visibleItems[position]
+
             loadEmbeddedImagesContainer.setOnClickListener { view ->
                 view.visibility = View.GONE
                 // Once images were loaded for one message, we automatically load them for all the others, so:
@@ -441,6 +455,10 @@ internal class MessageDetailsAdapter(
                     webView.invalidate()
                     onDisplayRemoteContentClicked(item.message)
                 }
+            }
+
+            openInProtonCalenderView.setOnClickListener {
+                onOpenInProtonCalendarClicked(item.message)
             }
 
             editDraftButton.setOnClickListener {
@@ -528,8 +546,15 @@ internal class MessageDetailsAdapter(
         nonExclusiveLabelsPerMessage = conversation.nonExclusiveLabels
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
-            items.add(MessageDetailsListItem(message))
-            items.add(MessageDetailsListItem(message, message.decryptedHTML, message.decryptedHTML))
+            val header = MessageDetailsListItem(message)
+            val body = MessageDetailsListItem(
+                message = message,
+                messageContent = message.decryptedHTML,
+                originalMessageContent = message.decryptedHTML,
+                showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message)
+            )
+            items.add(header)
+            items.add(body)
         }
 
         setItems(items)

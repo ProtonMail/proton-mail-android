@@ -91,7 +91,14 @@ class LoadTheLastNonDraftMessageBody @Inject constructor(
         index: Int,
         messageWithLoadedBody: MessageDetailsListItem
     ): List<MessageDetailsListItem> =
-        map { MessageDetailsListItem(it, null, null) }
+        map {
+            MessageDetailsListItem(
+                message = it,
+                messageContent = null,
+                originalMessageContent = null,
+                showOpenInProtonCalendar = false
+            )
+        }
             .toMutableList()
             .apply {
                 if (index != -1) this[index] = messageWithLoadedBody

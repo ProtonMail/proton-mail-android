@@ -19,6 +19,7 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.annotation.TargetApi
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.graphics.Color
 import android.net.Uri
@@ -33,6 +34,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
@@ -54,6 +56,7 @@ import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
+import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
@@ -78,6 +81,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
+import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
@@ -148,7 +152,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
-    networkConfigurator: NetworkConfigurator
+    networkConfigurator: NetworkConfigurator,
+    private val protonCalendarUtil: ProtonCalendarUtil
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator), LifecycleObserver {
 
     private val messageOrConversationId: String =
@@ -177,6 +182,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private var embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
     var refreshedKeys: Boolean = true
+    private var calendarAttachmentId: String? = null
 
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _decryptedConversationUiModel: MutableLiveData<ConversationUiModel> = MutableLiveData()
@@ -547,13 +553,15 @@ internal class MessageDetailsViewModel @Inject constructor(
             Timber.v("viewOrDownloadAttachment Id: $attachmentId metadataId: ${metadata?.id}")
             val uri = metadata?.uri
             // extra check if user has not deleted the file
-            if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
-                if (uri.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
-                    copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
+            if (uri != null && attachmentsHelper.isFileAvailable(uri)) {
+                val path = checkNotNull(uri.path)
+                if (DIR_EMB_ATTACHMENT_DOWNLOADS in path) {
+                    copyAttachmentToDownloadsAndDisplay(context, attachmentId, metadata.name, uri)
                 } else {
-                    viewAttachment(context, metadata.name, uri)
+                    viewAttachment(attachmentId, metadata.name, uri)
                 }
             } else {
+
                 Timber.d("Attachment id: $attachmentId file not available, uri: $uri ")
                 attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentId)
             }
@@ -567,6 +575,7 @@ internal class MessageDetailsViewModel @Inject constructor(
      */
     private fun copyAttachmentToDownloadsAndDisplay(
         context: Context,
+        attachmentId: String,
         filename: String,
         uri: Uri
     ) {
@@ -577,7 +586,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
         Timber.v("Copied attachment file from ${uri.path} to ${newUri?.path}")
-        viewAttachment(context, filename, newUri)
+        viewAttachment(attachmentId, filename, newUri)
     }
 
     @TargetApi(Build.VERSION_CODES.Q)
@@ -608,8 +617,66 @@ internal class MessageDetailsViewModel @Inject constructor(
         )
     }
 
-    fun viewAttachment(context: Context, filename: String?, uri: Uri?) =
-        downloadUtils.viewAttachment(context, filename, uri)
+    fun viewAttachment(attachmentId: String, filename: String?, uri: Uri?) {
+        uri ?: return
+
+        val shouldBeOpenedInProtonCalendar = protonCalendarUtil.isProtonCalendarInstalled() &&
+            isCalendarAttachment(attachmentId)
+        if (shouldBeOpenedInProtonCalendar) {
+            viewAttachmentInProtonCalendar(attachmentId, uri, filename)
+        } else {
+            downloadUtils.viewAttachment(filename, uri)
+        }
+    }
+
+    private fun isCalendarAttachment(attachmentId: String): Boolean =
+        (attachmentId == calendarAttachmentId).also {
+            calendarAttachmentId = null
+        }
+
+    private fun viewAttachmentInProtonCalendar(attachmentId: String, uri: Uri, filename: String?) {
+        viewModelScope.launch(dispatchers.Io) {
+            val conversation = conversationUiModel.first()
+            val message = conversation.messages
+                .find { message -> attachmentId in message.attachments.map { it.attachmentId } }
+                ?: return@launch
+            val senderEmail = EmailAddress(message.senderEmail)
+            val header = message.header
+            val recipientEmail = if (header != null) {
+                protonCalendarUtil.extractRecipientEmailOrNull(header)
+                    ?: EmailAddress(message.toList.first().emailAddress)
+            } else {
+                val messageToEmails = message.toList.map { EmailAddress(it.emailAddress) }
+                val currentUserAddresses = userManager.requireCurrentUser().addresses.addresses.values
+                currentUserAddresses.first { it.email in messageToEmails }.email
+            }
+
+            val mimeType = downloadUtils.getMimeType(uri, filename)
+            Timber.d("viewAttachment mimeType: $mimeType uri: $uri uriScheme: ${uri.scheme}")
+
+            try {
+                protonCalendarUtil.openIcsInProtonCalendar(uri, senderEmail, recipientEmail)
+            } catch (notFoundException: ActivityNotFoundException) {
+                Timber.i(notFoundException, "Unable to view attachment with ProtonCalendar")
+            }
+        }
+    }
+
+    fun openInProtonCalendar(context: Context, message: Message) {
+        if (protonCalendarUtil.isProtonCalendarInstalled()) {
+            val attachment = protonCalendarUtil.requireCalendarAttachment(message)
+            calendarAttachmentId = requireNotNull(attachment.attachmentId)
+            viewOrDownloadAttachment(context, attachment)
+        } else {
+            try {
+                protonCalendarUtil.openProtonCalendarOnPlayStore()
+            } catch (e: ActivityNotFoundException) {
+                Timber.e(e)
+                _messageDetailsError.value = Event(context.getString(R.string.details_play_store_error))
+            }
+        }
+    }
+
 
     fun remoteContentDisplayed() {
         remoteContentDisplayed = true

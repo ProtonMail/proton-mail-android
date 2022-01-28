@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/shape_rectangle_xsmall_corners_bg_secondary_ripple"
+    android:layout_margin="@dimen/padding_l"
+    android:paddingHorizontal="@dimen/padding_l"
+    android:paddingVertical="@dimen/padding_m">
+
+    <ImageView
+        android:id="@+id/open_in_proton_calendar_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_proton_calendar"
+        android:contentDescription="@string/details_open_in_proton_calendar_icon_desc"/>
+
+    <TextView
+        android:id="@+id/open_in_proton_calendar_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
+        android:layout_marginStart="@dimen/padding_l"
+        app:layout_constraintStart_toEndOf="@id/open_in_proton_calendar_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/open_in_proton_calendar_subtitle"
+        android:textAppearance="@style/Proton.Text.DefaultSmall.Interaction"
+        android:textColor="?proton_interaction_norm"
+        android:text="@string/details_open_in_proton_calendar_title"/>
+
+    <TextView
+        android:id="@+id/open_in_proton_calendar_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="@id/open_in_proton_calendar_title"
+        app:layout_constraintEnd_toEndOf="@id/open_in_proton_calendar_title"
+        app:layout_constraintTop_toBottomOf="@id/open_in_proton_calendar_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textAppearance="@style/Proton.Text.Caption.Hint"
+        android:textColor="@color/text_hint"
+        android:text="@string/details_open_in_proton_calendar_subtitle"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

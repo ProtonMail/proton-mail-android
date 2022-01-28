@@ -23,6 +23,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.domain.model.MessageBodyParts
 import ch.protonmail.android.testdata.MessageTestData
+import ch.protonmail.android.util.ProtonCalendarUtil
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
@@ -41,7 +42,13 @@ class MessageToMessageDetailsListItemMapperTest(
             splitBody(MessageTestData.MESSAGE_BODY)
         } returns TestData.MessageParts.WITH_BODY_AND_QUOTE
     }
-    private val messageToMessageDetailsListItemMapper = MessageToMessageDetailsListItemMapper(messageBodyParserMock)
+    private val protonCalendarUtil: ProtonCalendarUtil = mockk {
+        every { hasCalendarAttachment(any()) } returns false
+    }
+    private val messageToMessageDetailsListItemMapper = MessageToMessageDetailsListItemMapper(
+        messageBodyParser = messageBodyParserMock,
+        protonCalendarUtil = protonCalendarUtil
+    )
 
     @Test
     fun `should map message to message details list item`() {
