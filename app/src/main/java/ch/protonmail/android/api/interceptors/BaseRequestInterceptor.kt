@@ -73,7 +73,7 @@ abstract class BaseRequestInterceptor(
 ) : Interceptor {
 
     private val appVersionName by lazy {
-        val name = "Android_" + BuildConfig.VERSION_NAME
+        val name = "android-mail@" + BuildConfig.VERSION_NAME
         if (name[name.length - 1] == '.') {
             name.substring(0, name.length - 1)
         } else {

@@ -32,13 +32,13 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DEVICE_ENVIRONMENT_ANDROID
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
-import me.proton.core.accountmanager.domain.AccountManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
@@ -71,10 +71,6 @@ class RegisterDeviceWorker @AssistedInject constructor(
 
         val registerDeviceRequestBody = RegisterDeviceRequestBody(
             deviceToken = checkNotNull(fcmTokenManager.getToken()).value,
-            deviceName = "Android",
-            deviceModel = buildInfo.model,
-            deviceVersion = "${buildInfo.sdkVersion}",
-            appVersion = "Android_${buildInfo.versionName}",
             environment = DEVICE_ENVIRONMENT_ANDROID
         )
 
