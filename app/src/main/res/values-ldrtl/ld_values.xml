@@ -19,5 +19,4 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <resources>
     <integer name="fab_label_start">1</integer>
-    <integer name="fab_label_end">0</integer>
 </resources>

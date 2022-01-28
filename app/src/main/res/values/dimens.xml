@@ -22,7 +22,6 @@
     <!-- region V4 -->
 
     <!-- generic size -->
-    <dimen name="size_button_xs">24dp</dimen>
     <dimen name="size_button_m">48dp</dimen>
     <dimen name="size_divider">2px</dimen>
     <dimen name="size_icon_s">16dp</dimen>
@@ -32,15 +31,12 @@
     <dimen name="size_corner_xxs">4dp</dimen>
     <dimen name="size_badge">24dp</dimen>
     <dimen name="size_corner_s">16dp</dimen>
-    <dimen name="size_outline">1dp</dimen>
 
     <dimen name="unread_messages_chip_size">20dp</dimen>
     <dimen name="message_number_view_padding_horizontal">8dp</dimen>
     <dimen name="message_number_view_padding_vertical">2dp</dimen>
 
     <!-- generic height -->
-    <dimen name="height_list_item_s">32dp</dimen>
-    <dimen name="height_list_item_m">48dp</dimen>
     <dimen name="height_list_item_l">56dp</dimen>
 
     <!-- generic padding -->
@@ -56,16 +52,17 @@
     <dimen name="padding_5xl">56dp</dimen>
     <dimen name="padding_6xl">64dp</dimen>
 
-    <dimen name="elevation_s">2dp</dimen> // standard button low 2dp
-    <dimen name="elevation_m">4dp</dimen> // standard app bar 4dp
-    <dimen name="elevation_l">6dp</dimen> // standard FAB elevation 6dp
-    <dimen name="elevation_xl">8dp</dimen> // standard button high 8dp
-    <dimen name="elevation_xxl">16dp</dimen> // standard nav drawer 16dp
+    <dimen name="elevation_s">2dp</dimen>
+    // standard button low 2dp
+    <dimen name="elevation_m">4dp</dimen>
+    // standard app bar 4dp
+    // standard FAB elevation 6dp
+    // standard button high 8dp
+    // standard nav drawer 16dp
 
     <!-- generic margin -->
     <dimen name="margin_s">4dp</dimen>
     <dimen name="margin_m">8dp</dimen>
-    <dimen name="margin_l">16dp</dimen>
 
     <!-- Toolbars -->
     <dimen name="toolbar_padding_start">0dp</dimen>
@@ -80,12 +77,9 @@
     <dimen name="action_bar_no_elevation">0dp</dimen>
 
     <!-- Side Drawer -->
-    <dimen name="width_drawer_body">312dp</dimen>
-    <dimen name="height_drawer_header">48dp</dimen>
     <dimen name="height_drawer_section_name">56dp</dimen>
     <dimen name="height_drawer_primaryitem">48dp</dimen>
     <dimen name="height_drawer_footer">96dp</dimen>
-    <dimen name="margin_drawer_header_initials">10dp</dimen>
 
     <!-- Mailbox -->
     <dimen name="mailbox_status_view_height">48dp</dimen>
@@ -128,7 +122,6 @@
     <dimen name="padding_composer_body">20dp</dimen>
 
     <!-- Contact -->
-    <dimen name="height_contact_entry">68dp</dimen>
     <dimen name="size_contact_icon">40dp</dimen>
     <dimen name="padding_contact_group_icon">10dp</dimen>
 
@@ -147,7 +140,6 @@
     <dimen name="settings_swipe_placeholder_height">96dp</dimen>
     <dimen name="settings_swipe_placeholder_width">96dp</dimen>
     <dimen name="settings_min_height_input_field">96dp</dimen>
-    <dimen name="settings_color_indicator_size">16dp</dimen>
     <dimen name="settings_color_item_size">40dp</dimen>
     <!-- Settings Swipe Preview Mock -->
     <dimen name="settings_swipe_preview_avatar_mock_size">32dp</dimen>
@@ -159,11 +151,9 @@
     <!-- region V3 -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="activity_horizontal_margin_large">32dp</dimen>
     <dimen name="activity_vertical_margin_large">32dp</dimen>
     <dimen name="activity_horizontal_margin_small">8dp</dimen>
     <dimen name="activity_horizontal_margin_xsmall">4dp</dimen>
-    <dimen name="activity_vertical_margin_small">8dp</dimen>
     <dimen name="activity_vertical_margin_xsmall">4dp</dimen>
 
     <dimen name="fields_default_space">8dp</dimen>
@@ -171,23 +161,15 @@
     <dimen name="fields_default_space_large">24dp</dimen>
     <dimen name="fields_default_space_xlarge">32dp</dimen>
     <dimen name="fields_default_space_small">5dp</dimen>
-    <dimen name="fields_default_space_small_minus">3dp</dimen>
     <dimen name="fields_default_space_small_plus">7dp</dimen>
 
-    <dimen name="note_padding">4dp</dimen>
-
-    <dimen name="h0_plus">34sp</dimen>
     <dimen name="h0">28sp</dimen>
-    <dimen name="h1">24sp</dimen>
-    <dimen name="h2_plus">20sp</dimen>
     <dimen name="h2">18sp</dimen>
     <dimen name="h3">17sp</dimen>
     <dimen name="h4">16sp</dimen>
     <dimen name="h5">14sp</dimen>
     <dimen name="h6">12sp</dimen>
-    <dimen name="h7">9sp</dimen>
 
-    <dimen name="logo_margin_top">64dp</dimen>
     <dimen name="shadow_height">2dp</dimen>
     <dimen name="message_spacing_small">5dp</dimen>
     <dimen name="message_spacing">10dp</dimen>
@@ -195,67 +177,37 @@
     <dimen name="loading_more_progress_indicator_size">25dp</dimen>
     <dimen name="divider_height">1px</dimen>
     <dimen name="divider_width">1px</dimen>
-    <dimen name="compose_message_section_height">48dp</dimen>
     <dimen name="compose_message_button_width">52dp</dimen>
     <dimen name="attachment_list_spacing">60dp</dimen>
-    <dimen name="addresses_list_spacing">50dp</dimen>
 
     <!-- mailbox -->
-    <dimen name="message_vertical_padding">8dp</dimen>
-    <dimen name="label_inbox_size">20dp</dimen>
-    <dimen name="labels_container_size">150dp</dimen>
-    <dimen name="empty_label_size">15dp</dimen>
 
     <!-- nav drawer -->
-    <dimen name="labels_horizontal_padding">8dp</dimen>
-    <dimen name="labels_separator_padding">16dp</dimen>
 
     <!-- login -->
     <dimen name="spacing">40dp</dimen>
     <dimen name="spacing_large">60dp</dimen>
-    <dimen name="spacing_small">20dp</dimen>
 
     <!-- contacts -->
     <dimen name="contact_list_item_height">80dp</dimen>
-    <dimen name="contact_list_item_horizontal_padding">16dp</dimen>
-    <dimen name="contact_list_item_icon_size">45dp</dimen>
-    <dimen name="contact_padding">9dp</dimen>
-    <dimen name="contact_selection_checkbox_size">34dp</dimen>
-    <dimen name="contact_selection_write_size">55dp</dimen>
 
     <!-- labels -->
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- CollapsingToolbarLayout -->
-    <dimen name="appbar_header_height">256dp</dimen>
-    <dimen name="activity_margin_half">8dp</dimen>
-    <dimen name="activity_margin_content">24dp</dimen>
-    <dimen name="contact_details_encrypted_info_separator_side_padding">15dp</dimen>
-    <dimen name="contact_details_encrypted_info_separator_topbottom_padding">10dp</dimen>
 
     <!-- CustomFloatingButtonView -->
     <dimen name="default_margin">16dp</dimen>
-    <dimen name="default_margin_for_mini">23dp</dimen>
-    <dimen name="fab_progress_default_thickness">5dp</dimen>
     <dimen name="fab_default_elevation">8dp</dimen>
     <dimen name="fab_size_normal">56dp</dimen>
     <dimen name="fab_size_mini">40dp</dimen>
-    <dimen name="fab_circle_radius">500dp</dimen>
     <dimen name="fab_rounded_radius">10dp</dimen>
-    <dimen name="fab_background_padding">15dp</dimen>
-    <dimen name="fab_rounded_square_shadow_translation">7dp</dimen>
-    <dimen name="fab_icon_size">24dp</dimen>
     <dimen name="fab_text_horizontal_margin_normal">16dp</dimen>
     <dimen name="fab_text_horizontal_margin_mini">8dp</dimen>
-    <dimen name="fab_step_size">2dp</dimen>
-    <dimen name="fab_menu_item_margin">8dp</dimen>
 
     <!-- CollapsingToolbarLayout Avatar -->
-    <dimen name="image_width">120dp</dimen>
     <dimen name="avatar_size">120dp</dimen>
     <dimen name="small_avatar_size">80dp</dimen>
-    <dimen name="image_final_width">42dp</dimen>
-    <dimen name="spacing_normal">16dp</dimen>
 
     <dimen name="custom_check_box_size">24dp</dimen>
     <dimen name="constrained_message_content_view_size">200dp</dimen>

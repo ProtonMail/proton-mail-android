@@ -25,9 +25,7 @@
     <string name="x_days">Dagar</string>
     <string name="x_done">Färdig</string>
     <string name="x_edit">Redigera</string>
-    <string name="x_folders">Mappar</string>
     <string name="x_hours">Timmar</string>
-    <string name="x_labels">Etiketter</string>
     <string name="x_more">Mer</string>
     <string name="x_none">Ingen</string>
     <string name="x_search">Sök</string>
@@ -44,7 +42,6 @@
     <string name="drawer_lock_the_app">Lås appen</string>
     <string name="drawer_report_bug">Rapportera bugg</string>
     <string name="drawer_settings">Inställningar</string>
-    <string name="drawer_subscription">Prenumeration</string>
     <string name="drawer_sign_out">Logga ut</string>
     <string name="drawer_create_folder_description">Skapa ny mapp</string>
     <string name="drawer_create_label_description">Skapa ny etikett</string>
@@ -111,45 +108,29 @@
     <string name="parent_picker_header">Om du inte väljer en överordnad mapp kommer den nya mappen att skapas som en mapp i toppnivå.</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Ignorera ändringar?</string>
-    <string name="dialog_discard_changes_message">Alla osparade ändringar kommer gå förlorade.</string>
-    <string name="discard">Förkasta</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">KRYPTERAD E-POST</string>
-    <string name="secure_email_swiss">Säker e-post baserad\ni Schweiz</string>
-    <string name="decrypt">Avkryptera</string>
-    <string name="sign_in">Logga in</string>
     <string name="sign_out">Logga ut</string>
     <string name="sign_out_question">Är du säker på att du vill logga ut?</string>
     <string name="processing_request">Din förfrågan bearbetas</string>
     <!-- should check for html tag -->
-    <string name="need_to_be_logged_in">Du är inte inloggad!</string>
-    <string name="forgot_mailbox_password">För att återställa ditt lösenord för brevlådan, använd webbversionen av ProtonMail på protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Omöjligt att ladda innehåll. Aktivera Chrome</string>
     <string name="error_chrome_not_found">Omöjligt att ladda innehåll. Installera Chrome</string>
     <string name="messages_load_failure">Kan inte hämta meddelanden</string>
     <string name="message_details_load_failure">Kan inte hämta detaljer om meddelande</string>
     <string name="no_more_messages">Inga fler meddelanden</string>
-    <string name="mailbox_login_failure">Misslyckades att logga in på brevlådan</string>
-    <string name="login_failure">Misslyckades att logga in</string>
-    <string name="incorrect_key_parameters">Felaktiga nyckelparametrar</string>
-    <string name="not_signed_up">Du är inte registrerad för ProtonMail Android Beta</string>
-    <string name="no_network">Inget nätverk</string>
     <string name="no_network_queued">Inget nätverk, meddelandet köat</string>
     <string name="update_app_title">Uppdatering krävs</string>
     <string name="update_app">Din ProtonMail-app kan inte användas innan den är uppdaterad</string>
     <string name="you_are_offline">Du är offline</string>
-    <string name="api_offline_title">ProtonMail API är offline</string>
     <string name="api_offline">ProtonMail är för närvarande offline, kolla vår Twitter för aktuell status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt sparad</string>
     <string name="contact_saved_offline">Kontakt sparad, synkroniseras när anslutning är tillgänglig</string>
     <string name="contact_exist">E-postkontakt finns redan</string>
     <string name="invalid_email">E-postadress är inte giltig</string>
     <string name="duplicate_email">E-postadress är en dubblett</string>
-    <string name="invalid_code">Kod är inte giltig</string>
     <string name="message_drafted">Meddelandet kunde inte skickas. Ditt meddelande sparades i mappen utkast</string>
     <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
     <string name="open_drawer">Öppna</string>
@@ -175,20 +156,13 @@
     <string name="fetching_contacts">Hämtar ProtonMail-kontakter...</string>
     <string name="fetching_contacts_success">Kontakterna har uppdaterats</string>
     <string name="fetching_contacts_failure">Kan inte inte att uppdatera kontakter</string>
-    <string name="search_messages">Sök efter meddelanden</string>
     <string name="no_search_results">Inga sökresultat</string>
     <string name="compose">Skriv nytt</string>
     <string name="compose_message">Skriv meddelande</string>
     <string name="empty_folder">Töm mapp</string>
     <string name="view_headers">Visa rubriker</string>
     <string name="message_headers">Meddelanderubrik</string>
-    <string name="delete_message">Ta bort meddelande</string>
     <string name="delete_messages">Radera meddelanden</string>
-    <string name="add_label">Lägg till etikett</string>
-    <string name="add_star">Lägg till stjärna</string>
-    <string name="remove_star">Ta bort stjärnmärkning</string>
-    <string name="mark_read">Markera som läst</string>
-    <string name="mark_unread">Markera som oläst</string>
     <string name="move_to_archive">Flytta till Arkiv</string>
     <string name="move_to_trash">Flytta till Papperskorg</string>
     <string name="move_to_spam">Flytta till Skräppost</string>
@@ -203,21 +177,13 @@
     <string name="cc">Cc</string>
     <string name="bcc">Bcc</string>
     <string name="to_prefix">Till:</string>
-    <string name="cc_prefix">Cc:</string>
-    <string name="bcc_prefix">Bcc:</string>
-    <string name="from_prefix">Från:</string>
-    <string name="date_prefix">Datum:</string>
-    <string name="view_details">DETALJER</string>
-    <string name="hide_details">DÖLJ DETALJER</string>
     <string name="reply">Svara</string>
     <string name="reply_all">Svara alla</string>
     <string name="forward">Vidarebefordra</string>
-    <string name="subject">Ämne</string>
     <string name="email_subject">E-postämne</string>
     <string name="define_message_password">Meddelandelösenord</string>
     <string name="confirm_message_password">Bekräfta lösenord</string>
     <string name="define_password_hint">Definiera ledtråd (Valfritt)</string>
-    <string name="message_passwords_do_not_match">Inloggningslösenorden matchar inte</string>
     <string name="eo_passwords_do_not_match">Lösenorden matchar inte</string>
     <string name="define_expiration_period">Definiera utgångsperiod</string>
     <string name="set_message_expiration">Ange när Meddelandet ska Upphöra att gälla</string>
@@ -227,18 +193,6 @@
     <string name="max_labels_selected">%d är max tillåtna etiketter</string>
     <string name="max_attachments_reached">Maxantalet för bilagor har uppnåtts</string>
     <string name="max_attachments_size_reached">Maximal storlek på bilagor per meddelande har uppnåtts</string>
-    <plurals name="hours_string">
-        <item quantity="one">%d timme</item>
-        <item quantity="other">%d timmar</item>
-    </plurals>
-    <plurals name="days_string">
-        <item quantity="one">%d dag</item>
-        <item quantity="other">%d dagar</item>
-    </plurals>
-    <plurals name="minutes_string">
-        <item quantity="one">%d minut</item>
-        <item quantity="other">%d minuter</item>
-    </plurals>
     <string name="expiration_days">%dD</string>
     <string name="expiration_hours">%dT</string>
     <string name="expiration_minutes">%dM</string>
@@ -268,8 +222,6 @@
     <string name="email">E-post</string>
     <string name="phone">Telefonnummer</string>
     <string name="save">Spara</string>
-    <string name="syncing_messages">Synkroniserar...</string>
-    <string name="sync">Synkronisera kontakter</string>
     <string name="save_message_as_draft">Spara meddelande som utkast?</string>
     <string name="no_subject">Skicka meddelande utan ämne?</string>
     <string name="yes">Ja</string>
@@ -282,7 +234,6 @@
     <string name="sending_report">Skickar rapport...</string>
     <string name="received_report">Rapport mottagen</string>
     <string name="not_received_report">Rapport ej mottagen</string>
-    <string name="not_received_report_offline">Offline! Rapporten kommer att skickas när du är online</string>
     <string name="forward_prefix">Vb:</string>
     <string name="original_message_divider">-------- Originalmeddelande --------</string>
     <string name="invalid_email_address">Adressen \'%s\' är ogiltig</string>
@@ -292,67 +243,41 @@
     <string name="attachment_limit">Bilagor är begränsat till %1$s. Totalt antal bilagor skulle uppgå till %2$s.</string>
     <string name="sending_message">Skickar meddelande...</string>
     <string name="sending_message_offline">Offline, köas för att skickas senare...</string>
-    <string name="go_to_inbox">Gå till min inkorg</string>
     <string name="message_sent">Meddelande skickat</string>
     <string name="message_failed">Misslyckades att skicka meddelandet</string>
-    <string name="message_sending_failures">%d meddelande kunde inte skickas</string>
     <string name="storage_limit">Lagringsgräns</string>
     <string name="edit_settings">Redigera inställningar</string>
-    <string name="save_settings">Spara inställningar</string>
     <string name="share">Dela</string>
-    <string name="settings_not_saved_password">Inställningarna är inte sparade - felaktigt inloggningslösenord</string>
-    <string name="settings_not_saved_email">Inställningarna är inte sparade - ogiltig notifierings e-post</string>
-    <string name="enter">Ange</string>
     <string name="cancel">Avbryt</string>
     <string name="close">Stäng</string>
     <string name="eo_password_title">Ställ in lösenord</string>
     <string name="eo_password_subtitle">Ange ett lösenord för att kryptera detta meddelande för icke-ProtonMail-användare</string>
     <string name="eo_password_more_info">Få mer information</string>
     <string name="no_attachments">0 bilagor</string>
-    <string name="pin_lock_option_settings">Alternativ för App-låsning</string>
-    <string name="pin_lock_after">Lås app efter</string>
-    <string name="lock_the_app">Lås appen</string>
     <string name="display_name_banned_chars">Ogiltigt visningsnamn. \'&gt;\' och \'&lt;\' är inte tillåtna</string>
     <string name="cont">Fortsätt</string>
     <string name="reply_prefix_on">På</string>
-    <string name="terms_and_conditions">Genom att använda ProtonMail godkänner du våra\n
-        <a href="https://protonmail.com/terms-and-conditions">villkor</a> och vår <a href="https://protonmail.com/privacy-policy">integritetspolicy</a>
-    </string>
-    <string name="labels_title_apply">Tillämpa etiketter</string>
-    <string name="labels_title_add">Lägg till etikett</string>
-    <string name="labels_title">Etiketter</string>
     <string name="label_name">Etikettnamn</string>
-    <string name="label_name_empty">Etikett måste ha ett namn</string>
-    <string name="label_name_duplicate">Detta etikettnamn finns redan</string>
     <string name="label_created">Etikett skapad</string>
     <string name="label_invalid">Etikett lades inte till på grund av ogiltigt namn.</string>
     <string name="undo">Ångra</string>
-    <string name="customize_swipe_actions">Anpassa svep-åtgärder</string>
-    <string name="message_can_not_edit">Kan inte svara/vidarebefordra, detta meddelande har ännu inte skickats</string>
     <string name="label_apply">Tillämpa</string>
-    <string name="label_delete">Radera</string>
     <string name="label_add">Lägg till</string>
     <string name="no_browser_found">Installera en webbläsar-app för att avsluta denna åtgärd</string>
     <string name="no_application_found">Ingen app hittades för att hantera denna åtgärd</string>
     <string name="no_application_found_or_link_invalid">Ingen app hittades som kan hantera begäran eller så är länken ogiltig</string>
-    <string name="also_archive">Arkivera</string>
     <string name="label_deleted">Etikett borttagen</string>
     <string name="label_deleted_error">Fel vid borttagning av etikett</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Svara i tråd</string>
-    <string name="no_connectivity_detected">Ingen anslutning upptäcktes…</string>
     <string name="server_not_reachable_troubleshoot">Server kan inte nås… (<u>Felsök</u>)</string>
     <string name="connectivity_checking">Söker efter anslutning…</string>
-    <string name="sync_short">synkronisera</string>
-    <string name="draft_attachments_uploading">Utkast laddas fortfarande upp…</string>
     <string name="draft_label_attachments_uploading">laddar upp bilagor…</string>
     <string name="draft_label_message_uploading">skickar meddelande…</string>
     <string name="attachment_failed">Misslyckades ladda upp bilaga för meddelande </string>
     <string name="attaching_photo_failed">Misslyckades bifoga foto</string>
     <string name="empty_message">Tomt meddelande</string>
-    <string name="dismiss">Avfärda</string>
     <string name="new_message_arrived">Nytt meddelande!</string>
-    <string name="please_choose_color">Välj färg</string>
     <string name="display_images">Visa fjärrinnehåll</string>
     <string name="retry">Försök igen</string>
     <string name="saving_failed_no_conn">Misslyckades att spara, ingen anslutning</string>
@@ -371,12 +296,8 @@
     <string name="engagement_subtitle_expire">Meddelanden du skickar kan ställas in att automatiskt raderas efter en viss tid.</string>
     <string name="engagement_subtitle_help">Du kan får hjälp och support på protonmail.com/support. Fel kan också rapporteras via appen.</string>
     <string name="attachment_exists">Bilagan är redan bifogad</string>
-    <string name="sending_email_success">Verifieringskod skickad</string>
-    <string name="sending_email_failed">Misslyckades att skicka verifieringskod</string>
-    <string name="send_code_wait">Vänta %d sekunder och klicka igen</string>
     <string name="eo_password_not_completed">Lösenord för meddelandet är inte angivet.</string>
     <string name="delinquency_subtitle">Tillgång till detta konto avstängt på grund av utebliven betalning. Logga in via protonmail.com för att betala utestående fakturor.</string>
-    <string name="direct_disabled_subtitle">Mobilregistrering är för tillfället inaktiverat. Försök igen senare, eller prova att registrera dig på <a href="https://protonmail.com">protonmail.com</a> via en dator.</string>
     <string name="downloading">Laddar ner...</string>
     <string name="cant_download_attachment">Kunde inte ladda ner bilagor</string>
     <string-array name="auto_logout_options_array">
@@ -390,15 +311,7 @@
     <string name="delete_folder_confirmation_title">Ta bort valda mappar?</string>
     <string name="delete_label_confirmation_message">De e-postmeddelanden som finns här hittar du i <b>All E-post</b>
     </string>
-    <string name="enter_pin">Ange PIN-kod för att låsa upp inkorgen</string>
-    <string name="enter_pin_message_details">Ange din PIN-kod för att låsa upp ditt meddelande</string>
-    <string name="enter_current_pin">Ange din nuvarande PIN-kod</string>
-    <string name="pin_subtitle_create">Skapa din PIN-kod här</string>
-    <string name="pin_subtitle_create_new">Skapa din NYA PIN-kod här</string>
-    <string name="pin_subtitle_confirm">Bekräfta din PIN-kod här</string>
-    <string name="pin_subtitle_confirm_new">Bekräfta din NYA PIN-kod här</string>
     <string name="pin_invalid">PIN-koden är ogiltig. Ange korrekt 4-siffrig PIN-kod</string>
-    <string name="pin_confirmation_not_match">Bekräftelse-PIN-koden stämmer inte</string>
     <string name="pin_not_match">PIN-koder matchar inte</string>
     <string name="new_pin_saved">Ny PIN-kod sparad</string>
     <string name="new_emails">%d nya e-postmeddelanden</string>
@@ -415,7 +328,6 @@
     <string name="processing_attachment">Bearbetar bilaga</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du är på väg att starta webbläsaren och gå till:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vill du fortsätta?</string>
     <string name="dont_ask_again">Fråga inte igen</string>
-    <string name="changes_affected_after_closing">Ändringar kommer att träda i kraft efter att appen stängts</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Felaktig PIN-kod, %d försök återstår</item>
         <item quantity="other">Felaktig PIN-kod, %d försök återstår</item>
@@ -425,42 +337,26 @@
         <item quantity="other">%d försök tills datat raderas!</item>
     </plurals>
     <string name="logout">Logga ut</string>
-    <string name="log_out">Logga ut %s?</string>
-    <string name="logout_question">Är du säker på att du vill logga ut?</string>
     <string name="logout_question_next_account">Du kommer att växlas till %s.</string>
     <string name="upgrade">Uppgradera</string>
-    <string name="country">Land</string>
-    <string name="set_cont">Ställ in och fortsätt</string>
     <string name="error">Fel</string>
-    <string name="storage_gb">%d GB lagringsutrymme</string>
-    <string name="storage_mb">%d MB lagringsutrymme</string>
-    <string name="max_addresses">Upp till %d e-postadresser</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d inbäddade bilder</string>
-    <string name="select">Välj</string>
     <string name="warning">Varning</string>
-    <string name="empty_recovery_email_question">Varning: Återställning av kontot är inte möjligt, du har inte angett en e-postadress för återställning av ditt lösenord. Fortsätta utan e-postadress för återställning?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Löper ut %s</string>
     <string name="no_payment_methods">Du har inga sparade betalningsmetoder.</string>
     <string name="edit_payment_methods">Logga in på protonmail.com för att ändra faktureringsuppgifter.</string>
-    <string name="message_not_loaded">Meddelandet har inte laddats</string>
-    <string name="signature_text">Signaturtext</string>
     <string name="available_addresses">Tillgängliga adresser</string>
     <string name="inactive_addresses">Inaktiva adresser</string>
     <string name="not_set">Inte inställt</string>
-    <string name="edit_notification_email">Redigera e-post för återställning</string>
-    <string name="available_swipe_actions">Tillgängliga åtgärder</string>
     <string name="no_available_addresses">Du har inga tillgängliga adresser</string>
     <string name="no_inactive_addresses">Du har inga inaktiva adresser</string>
     <string name="label_add_new">Lägg till ny etikett</string>
     <string name="available_labels">Tillgängliga etiketter</string>
-    <string name="choose_label_color">Välj etikettfärg</string>
-    <string name="save_new_label">Spara ny etikett</string>
     <string name="delete_selected">Ta bort valda</string>
     <string name="pin_not_activated">PIN-kod inte aktiverad</string>
     <string name="available_options">Tillgängliga alternativ</string>
-    <string name="change_recovery_email">Ändra e-postadress för återställning/avisering</string>
     <string name="background_sync_subtitle">Om detta alternativ är aktiverat, kommer appen att synkronisera med servern i bakgrunden. Om den avaktivers så kommer push-notifieringar att avaktiveras.</string>
     <string-array name="notification_options">
         <item>Inga vibrationer eller ljud</item>
@@ -474,30 +370,9 @@
         <item>Visionary</item>
         <item>Professional</item>
     </string-array>
-    <plurals name="custom_domains">
-        <item quantity="one">Använd din egen domän (t.ex. john@smith.com)</item>
-        <item quantity="other">Stöd för upp till %d domäner</item>
-    </plurals>
-    <string-array name="months_array">
-        <item>MM</item>
-        <item>01</item>
-        <item>02</item>
-        <item>03</item>
-        <item>04</item>
-        <item>05</item>
-        <item>06</item>
-        <item>07</item>
-        <item>08</item>
-        <item>09</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-    </string-array>
-    <string name="contact_details_display_name">Namn</string>
     <string name="contact_details">Kontaktdetaljer</string>
     <string name="email_type_home">Hem</string>
     <string name="type_title">Välj typ</string>
-    <string name="message_drafted_error_server">Meddelandet kunde inte skickas. %s</string>
     <string name="sync_local_contacts">Ladda upp till ProtonMail</string>
     <string name="please_select_only_phone_contacts">Välj endast lokala telefonkontakter</string>
     <string name="contact_vcard_hint_email">Ange e-post</string>
@@ -517,13 +392,10 @@
     <string name="vcard_other_option_gender">Kön</string>
     <string name="vcard_other_option_role">Roll</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="convert_contact">Konvertera kontakt</string>
     <string name="contacts_import_contact">Importera kontakt</string>
     <string name="contacts_import">Importera</string>
     <string name="upload_contacts">Ladda upp kontakter</string>
-    <string name="upgrade_encrypted_contact">Uppgradera för att använda krypterad kontaktinformation.</string>
     <string name="uploading_contacts">Laddar upp kontakter…</string>
-    <string name="error_encrypted_data">Misslyckades hämta krypterad kontaktinformation.</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobil</item>
@@ -555,40 +427,25 @@
     </string-array>
     <string name="logged_out">Utloggad</string>
     <string name="logged_out_description">Du har blivit utloggad. Logga in igen.</string>
-    <string name="error_message_zip_code_invalid">Fel: postnummer ogiltigt</string>
-    <string name="error_message_cvc_invalid">Fel: CVC-nummer ogiltigt</string>
-    <string name="error_message_card_name_invalid">Fel: Kortnamn ogiltigt</string>
-    <string name="error_message_select_country">Välj land</string>
-    <string name="error_message_exp_date_invalid">Fel: utgångsdatum ogiltigt</string>
-    <string name="error_message_exp_date_past">Fel: Utgångsdatumet är ogiltigt</string>
-    <string name="error_message_card_number_invalid">Fel: kortnummer ogiltigt</string>
     <string name="print_error">Utskriftsfel</string>
     <string name="download_complete">Nedladdning slutförd</string>
-    <string name="download_in_progress">Nedladdning pågår</string>
     <string name="message_expires_in">Detta meddelande upphör om %s</string>
     <string name="unsaved_changes_title">Osparade ändringar</string>
     <string name="unsaved_changes_subtitle">Det finns osparade ändringar i formuläret. Är du säker på att du vill kasta bort dem?</string>
     <string name="request_timeout">Begäran gjorde timeout, vänligen försök igen</string>
-    <string name="add_folder">Lägg till mapp</string>
     <string name="no_folders">Inga mappar</string>
-    <string name="folders_title_move">Flytta meddelanden till</string>
-    <string name="folders_manager">Mapphantering</string>
     <string name="folder_add_new">Lägg till ny mapp</string>
     <string name="folder_name">Mappnamn</string>
     <string name="available_folders">Tillgängliga mappar</string>
-    <string name="choose_folder_color">Välj mappfärg</string>
     <string name="folder_created">Mapp skapad</string>
     <string name="folder_invalid">Mappen skapades inte på grund av ogiltigt namn.</string>
     <string name="folder_deleted">Mappen borttagen</string>
     <string name="folder_deleted_error">Fel vid borttagning av mapp</string>
-    <string name="save_new_folder">Spara ny mapp</string>
-    <string name="create_new_folder">Skapa mapp</string>
     <string name="empty_emails">Ingen e-post</string>
     <string name="empty_email_list">Ingen e-postadress</string>
     <string name="no_contacts">Inga kontakter</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; skrev:</string>
     <string name="update_label">Uppdatera etikett</string>
-    <string name="max_labels_in_message">Meddelandet %1$s kan inte ha mer än %2$d etiketter.</string>
     <string name="delete">Radera</string>
     <string name="subject_copied">Ämnet kopierad till urklipp</string>
     <string name="details_copied">Detaljer kopierades till urklipp</string>
@@ -602,8 +459,6 @@
     <string name="print_to_template">Till: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
-    <string name="signature_error">Verifieringsfel</string>
-    <string name="signature_error_desc">Verifiering av detta innehållets signatur misslyckades</string>
     <string name="address">Adress: </string>
     <string name="address_street">Gata</string>
     <string name="address_extended_street">Utökad gata</string>
@@ -623,12 +478,10 @@
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Uppgradera till en betald plan för att skicka från din %s-adress.</string>
     <string name="email_empty">E-postadressen saknas</string>
-    <string name="add_contact_details">Lägg till kontaktdetaljer</string>
     <string name="encrypted_contact_details">Krypterade kontaktdetaljer</string>
     <string name="convert_question">Ladda upp lokala kontakter</string>
     <string name="convert_question_subtitle">Detta kommer att ladda upp lokala kontakter på din enhet till ProtonMails kontaktlista. Du kommer sedan kunna komma åt dessa kontakter på dina andra enheter via ProtonMail.</string>
     <string name="refresh_contacts">Uppdatera</string>
-    <string name="upload">Ladda upp</string>
     <string name="invalid_email_some_contacts">E-postadressen är inte giltig för några av dina kontakter</string>
     <string name="protonmail_contacts">ProtonMail-kontakter</string>
     <string name="device_contacts">Enhetens kontakter</string>
@@ -655,7 +508,6 @@
     <string name="resign_contact_title">Vill du signera denna kontakt igen?</string>
     <string name="resign_contact_message">Verifieringen av %s har misslyckats: kontakten är inte signerad korrekt. Du måste signera kontakten igen för att skicka ett meddelande till den här adressen eller redigera kontakten. Detta kan också hända när du har återställt ditt lösenord och återställt dina nycklar.</string>
     <!-- Sender locks -->
-    <string name="sender_lock_unencrypted">Okrypterat meddelande</string>
     <string name="sender_lock_zero_access">Lagras med nollåtkomst-kryptering</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Skickat av dig med end-to-end-kryptering</string>
@@ -712,18 +564,7 @@
     <string name="contact_groups_manage_members">Hantera medlemmar</string>
     <string name="contact_group_display_name">Visningsnamn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
-    <string name="contact_add_addr_to_group">Lägg till adress till grupper</string>
     <string name="title_activity_address_chooser">Hantera medlemmar</string>
-    <string name="title_activity_account_manager">Hantera konton</string>
-    <string name="account_manager_add_account">Lägg till konto</string>
-    <string name="account_manager_remove_all_accounts">Tar bort alla konton</string>
-    <string name="account_manager_note">Du kan vara samtidigt inloggad på obegränsat antal betalda ProtonMail-konton och ett gratis konto.</string>
-    <string name="account_manager_remove_all">Ta bort alla konton</string>
-    <string name="account_manager_logout">Logga ut</string>
-    <string name="account_manager_login">Logga in</string>
-    <string name="manage_accounts_user_loggedout">%s (utloggad)</string>
-    <string name="manage_accounts_user_primary">%s (primär)</string>
-    <string name="account_manager_remove">Ta bort</string>
     <string name="default_error_message">Fel uppstod</string>
     <string name="no_contact_groups">Inga kontaktgrupper</string>
     <string name="search_contacts_inside_group">Sök efter kontakter</string>
@@ -753,7 +594,6 @@
         <item quantity="other">Är du säker på att du vill ta bort de valda kontakterna?</item>
     </plurals>
     <string name="members">Medlemmar</string>
-    <string name="max_emails_in_group_title">Maximalt antal e-post per grupp uppnått</string>
     <string name="select_deselect_all">Välj alla</string>
     <string name="contact_group_name_hint">Välj ett gruppnamn</string>
     <string name="contact_group_change_color">Ändra färg</string>
@@ -788,7 +628,6 @@
     <string name="biometric_error_hw_not_available">Biometrisk hårdvara inte tillgänglig.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Hemliga mottagare</string>
-    <string name="manage_accounts">Hantera konton</string>
     <!-- region Settings -->
     <string name="settings">Inställningar</string>
     <string name="account_settings">Kontoinställningar</string>
@@ -801,7 +640,6 @@
     <string name="password_changed">Lösenord ändrades.</string>
     <string name="recovery_email">E-postadress för återställning</string>
     <string name="recovery_email_changed">E-postadressen för återställning ändrades.</string>
-    <string name="info_for_missing_functionality">Vänligen logga in via <a href="https://www.protonmail.com/">protonmail.com</a> och kom åt dina inställningar för att redigera denna information.</string>
     <string name="storage">Brevlådestorlek</string>
     <string name="storage_used">%1$s/%2$s</string>
     <string name="addresses">Adresser</string>
@@ -844,7 +682,6 @@
     <string name="minutes">Minuter</string>
     <string name="set_custom_quick_snooze">Ange anpassat snabbsnoozevärde</string>
     <string name="turn_off">Stäng av</string>
-    <string name="snooze_will_repeat">Snooze upprepas</string>
     <string name="work_days">Arbetsdagar</string>
     <string name="weekends">Helg</string>
     <string name="every_day">Varje dag</string>
@@ -895,14 +732,6 @@
         <item quantity="one">Meddelandet flyttat till papperskorg</item>
         <item quantity="other">Meddelanden flyttade till papperskorg</item>
     </plurals>
-    <plurals name="action_move_to_spam">
-        <item quantity="one">Meddelandet markerat som skräppost</item>
-        <item quantity="other">Meddelanden markerade som skräppost</item>
-    </plurals>
-    <plurals name="action_move_to_archive">
-        <item quantity="one">Meddelandet arkiverat</item>
-        <item quantity="other">Meddelanden arkiverade</item>
-    </plurals>
     <!-- endregion -->
     <string name="local_storage">Lokal lagringsgräns</string>
     <!-- endregion -->
@@ -937,13 +766,7 @@
     <string name="app_version">App-version</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="remove_account_question">Ta bort %s?</string>
     <string name="signed_in_with">Inloggad med %s</string>
-    <string name="signed_in_with_logged_out_from">Loggade ut från %1$s och loggade in med %2$s</string>
-    <string name="connect_account_limit_title">Gräns uppnådd</string>
-    <string name="connect_account_limit_subtitle">Du kan inte lägga till ytterligare ett gratis ProtonMail-konto. Endast ett gratis ProtonMail-konto kan läggas till. Logga ut från ditt andra gratiskonto eller uppgradera ett av dina gratiskonton till ett betalt konto.</string>
-    <string name="switch_accounts_question">Byt konto?</string>
-    <string name="switch_to_account">Byt till %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Compose</string>
@@ -981,7 +804,6 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s&lt;%s&gt;</string>
-    <string name="error_loading_conversations">Fel vid inläsning av konversationer, försök igen</string>
     <string name="star">Stjärnmärk</string>
     <string name="unstar">Ta bort stjärnmärkning</string>
     <string name="star_unstar">Star/unstar</string>
@@ -989,7 +811,6 @@
     <string name="label_as">Märk som…</string>
     <string name="mark_as_unread">Markera som oläst</string>
     <string name="mark_as_read">Markera som läst</string>
-    <string name="mark_as_read_unread">Markera som läst/oläst</string>
     <string name="move_message">Flytta meddelande</string>
     <string name="manage">Hantera</string>
     <string name="message_from">Meddelande från %s</string>

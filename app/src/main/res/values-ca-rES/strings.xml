@@ -25,9 +25,7 @@
     <string name="x_days">Dies</string>
     <string name="x_done">Fet</string>
     <string name="x_edit">Editar</string>
-    <string name="x_folders">Carpetes</string>
     <string name="x_hours">Hores</string>
-    <string name="x_labels">Etiquetes</string>
     <string name="x_more">Més</string>
     <string name="x_none">Cap</string>
     <string name="x_search">Cercar</string>
@@ -44,7 +42,6 @@
     <string name="drawer_lock_the_app">Bloquejar l\'aplicació</string>
     <string name="drawer_report_bug">Informar d\'un error</string>
     <string name="drawer_settings">Preferències</string>
-    <string name="drawer_subscription">Subscripció</string>
     <string name="drawer_sign_out">Tancar la sessió</string>
     <string name="drawer_create_folder_description">Crear carpeta nova</string>
     <string name="drawer_create_label_description">Crear etiqueta nova</string>
@@ -111,45 +108,29 @@
     <string name="parent_picker_header">Si no seleccioneu una carpeta superior, aquesta carpeta nova es crearà a la carpeta arrel.</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Descartar els canvis?</string>
-    <string name="dialog_discard_changes_message">Qualsevol canvi no desat es descartarà.</string>
-    <string name="discard">Descartar</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">CORREU XIFRAT</string>
-    <string name="secure_email_swiss">Correu electrònic segur amb seu\nia Suïssa</string>
-    <string name="decrypt">Desxifrar</string>
-    <string name="sign_in">Iniciar sessió</string>
     <string name="sign_out">Tancar sessió</string>
     <string name="sign_out_question">Està segur que desitja tancar la sessió?</string>
     <string name="processing_request">La teva sol·licitud s\'està processant</string>
     <!-- should check for html tag -->
-    <string name="need_to_be_logged_in">No heu iniciat sessió!</string>
-    <string name="forgot_mailbox_password">Per restablir la contrasenya de la vostra bústia, si us plau feu servir la versió de ProtonMail a protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">No es pot carregar el contingut. Si us plau, activeu Chrome</string>
     <string name="error_chrome_not_found">No es pot carregar el contingut. Si us plau, instal·leu Chrome</string>
     <string name="messages_load_failure">No s\'han pogut recuperar els missatges</string>
     <string name="message_details_load_failure">No s\'han pogut recuperar els missatges</string>
     <string name="no_more_messages">No hi ha més missatges</string>
-    <string name="mailbox_login_failure">No s\'ha pogut connectar a la bústia de correu</string>
-    <string name="login_failure">Error en l\'inici de sessió</string>
-    <string name="incorrect_key_parameters">Clau de paràmetre incorrecte</string>
-    <string name="not_signed_up">No estàs inscrit a la Beta per Android de ProtonMail</string>
-    <string name="no_network">No hi ha connexió</string>
     <string name="no_network_queued">No hi ha connexió, el missatge queda a la cua</string>
     <string name="update_app_title">Actualització requerida</string>
     <string name="update_app">L\'aplicació de ProtonMail no pot ser utilitzada fins que no sigui actualitzada</string>
     <string name="you_are_offline">Esteu fora de línia</string>
-    <string name="api_offline_title">L\'API de ProtonMail està fora de línia</string>
     <string name="api_offline">Actualment ProtonMail es troba fora de línia, consulta\'n l\'estat actual al nostre twitter: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacte desat</string>
     <string name="contact_saved_offline">Contacte desat, es sincronitzarà quan hi hagi una connexió disponible</string>
     <string name="contact_exist">El correo electrònic de contacte ja existeix</string>
     <string name="invalid_email">Adreça de correu electrònic invàlida</string>
     <string name="duplicate_email">Adreça de correu electrònic és un duplicat</string>
-    <string name="invalid_code">Codi invàlid</string>
     <string name="message_drafted">Ha fallat l\'enviament del missatge. Els teus missatges es desaran a la carpeta d\'esborranys</string>
     <string name="attachment_failed_message_drafted">Traieu i torneu a afegir \"%s\" i envieu el missatge altra vegada. Podeu trobar-lo a la carpeta \"Esborranys\".</string>
     <string name="open_drawer">Obrir</string>
@@ -175,20 +156,13 @@
     <string name="fetching_contacts">Obtenint contactes de Protonmail...</string>
     <string name="fetching_contacts_success">Contactes actualitzats amb èxit</string>
     <string name="fetching_contacts_failure">No es pot actualitzar els contactes</string>
-    <string name="search_messages">Cerqueu missatges</string>
     <string name="no_search_results">Cap resultat de cerca</string>
     <string name="compose">Redactar</string>
     <string name="compose_message">Redactar missatge</string>
     <string name="empty_folder">Buidar carpeta</string>
     <string name="view_headers">Mostrar capçaleres</string>
     <string name="message_headers">Capçalera del missatge</string>
-    <string name="delete_message">Eliminar missatge</string>
     <string name="delete_messages">Eliminar missatges</string>
-    <string name="add_label">Afegir etiqueta</string>
-    <string name="add_star">Destacar</string>
-    <string name="remove_star">Suprimeix destacat</string>
-    <string name="mark_read">Marca com a llegit</string>
-    <string name="mark_unread">Marca com a no llegit</string>
     <string name="move_to_archive">Moure a l\'arxiu</string>
     <string name="move_to_trash">Moure a la paperera</string>
     <string name="move_to_spam">Moure a correu brossa</string>
@@ -203,21 +177,13 @@
     <string name="cc">Cc</string>
     <string name="bcc">Cco</string>
     <string name="to_prefix">Per a:</string>
-    <string name="cc_prefix">Cc:</string>
-    <string name="bcc_prefix">Cco:</string>
-    <string name="from_prefix">De:</string>
-    <string name="date_prefix">Data:</string>
-    <string name="view_details">DETALLS</string>
-    <string name="hide_details">AMAGAR DETALLS</string>
     <string name="reply">Respondre</string>
     <string name="reply_all">Respon a tothom</string>
     <string name="forward">Reenvia</string>
-    <string name="subject">Assumpte</string>
     <string name="email_subject">Assumpte del correu electrònic</string>
     <string name="define_message_password">Contrasenya del missatge</string>
     <string name="confirm_message_password">Confirmar contrasenya</string>
     <string name="define_password_hint">Defineix pista (opcional)</string>
-    <string name="message_passwords_do_not_match">Les contrasenyes d\'inici de sessió no coincideixen</string>
     <string name="eo_passwords_do_not_match">Les contrasenyes no coincideixen</string>
     <string name="define_expiration_period">Defineix data d\'expiració</string>
     <string name="set_message_expiration">Estableix l\'expiració del missatge</string>
@@ -227,18 +193,6 @@
     <string name="max_labels_selected">%d etiquetes es el màxim permès</string>
     <string name="max_attachments_reached">S\'ha assolit el nombre màxim d\'arxius adjunts per missatge</string>
     <string name="max_attachments_size_reached">S\'ha aconseguit el màxim de fitxers adjunts per missatge</string>
-    <plurals name="hours_string">
-        <item quantity="one">%d hora</item>
-        <item quantity="other">%d hores</item>
-    </plurals>
-    <plurals name="days_string">
-        <item quantity="one">%d dia</item>
-        <item quantity="other">%d dies</item>
-    </plurals>
-    <plurals name="minutes_string">
-        <item quantity="one">%d minut</item>
-        <item quantity="other">%d minuts</item>
-    </plurals>
     <string name="expiration_days">%dD</string>
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
@@ -268,8 +222,6 @@
     <string name="email">Correu electrònic</string>
     <string name="phone">Número de telèfon</string>
     <string name="save">Desa</string>
-    <string name="syncing_messages">Sincronitzant...</string>
-    <string name="sync">Sincronitzar contactes</string>
     <string name="save_message_as_draft">Desar missatge com a esborrany?</string>
     <string name="no_subject">Enviar missatge sense assumpte?</string>
     <string name="yes">Sí</string>
@@ -282,7 +234,6 @@
     <string name="sending_report">Enviant informe...</string>
     <string name="received_report">Informe rebut</string>
     <string name="not_received_report">Informe no rebut</string>
-    <string name="not_received_report_offline">Fora de línia! L’informe s’enviarà cuan torni a haber-hi línia</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Missatge Original --------</string>
     <string name="invalid_email_address">La direcció \'%s\' no és vàlida</string>
@@ -292,67 +243,41 @@
     <string name="attachment_limit">Els fitxers adjunts són limitats a %1$s. Total adjuntat seria %2$s.</string>
     <string name="sending_message">Enviant missatge...</string>
     <string name="sending_message_offline">Fora de línia, en espera per enviar més tard...</string>
-    <string name="go_to_inbox">Anar a la meva safata d\'entrada</string>
     <string name="message_sent">Missatge enviat</string>
     <string name="message_failed">Error al enviar el missatge</string>
-    <string name="message_sending_failures">%d errades d\'enviament de missatges</string>
     <string name="storage_limit">Límit d\'emmagatzematge</string>
     <string name="edit_settings">Edita la configuració</string>
-    <string name="save_settings">Guardar configuració</string>
     <string name="share">Compartir</string>
-    <string name="settings_not_saved_password"> Configuració no desada - contrasenya d\'inici de sessió incorrecte</string>
-    <string name="settings_not_saved_email"> Configuració no desada - correu electrònic de notificació invàlid</string>
-    <string name="enter">Entrar</string>
     <string name="cancel">Cancel·lar</string>
     <string name="close">Tancar</string>
     <string name="eo_password_title">Establir contrasenya</string>
     <string name="eo_password_subtitle">Estableix una contrasenya per xifrar aquest missatge per usuaris que no siguin de ProtonMail</string>
     <string name="eo_password_more_info">Rebre més informació</string>
     <string name="no_attachments">0 Fitxers adjunts</string>
-    <string name="pin_lock_option_settings">Opcions de bloqueig d’aplicació</string>
-    <string name="pin_lock_after">Bloqueja l\'aplicació després</string>
-    <string name="lock_the_app">Bloqueja l\'aplicació</string>
     <string name="display_name_banned_chars">Nom de visualització no vàlid. \'&gt;\' i \'&lt;\' no estan permesos</string>
     <string name="cont">Continua</string>
     <string name="reply_prefix_on">A</string>
-    <string name="terms_and_conditions">En utilitzar ProtonMail, accepteu la nostra\n
-      <a href="https://protonmail.com/terms-and-conditions">termes i condicions</a>i<a href="https://protonmail.com/privacy-policy">política de privacitat</a>
-    </string>
-    <string name="labels_title_apply">Aplicar etiquetes</string>
-    <string name="labels_title_add">Afegeix etiqueta</string>
-    <string name="labels_title">Etiquetes</string>
     <string name="label_name">Nom de etiqueta</string>
-    <string name="label_name_empty">L\'etiqueta ha de tenir un nom</string>
-    <string name="label_name_duplicate">Ja existeix aquest nom d\'etiqueta</string>
     <string name="label_created">Etiqueta creada</string>
     <string name="label_invalid">L\'etiqueta no s\'ha afegit a causa del nom no vàlid.</string>
     <string name="undo">Desfer</string>
-    <string name="customize_swipe_actions">Personalitza les accions de lliscament</string>
-    <string name="message_can_not_edit">No es pot respondre/reenviar. Aquest missatge encara no s’enviarà</string>
     <string name="label_apply">Aplicar</string>
-    <string name="label_delete">Esborra</string>
     <string name="label_add">Afegir</string>
     <string name="no_browser_found">Instal·leu una aplicació del navegador per finalitzar aquesta acció</string>
     <string name="no_application_found">No s\'ha trobat cap aplicació per a gestionar aquesta acció</string>
     <string name="no_application_found_or_link_invalid">No s’ha trobat cap aplicació que actuï aquesta acció ni URL vàlida</string>
-    <string name="also_archive">Archivar també</string>
     <string name="label_deleted">Etiqueta esborrada</string>
     <string name="label_deleted_error">S\'ha produït un error en eliminar l\'etiqueta</string>
     <string name="message_deleted_error">S\'ha produït un error en suprimir alguns missatges. Alguns dels missatges seleccionats estan en procés d’enviament?!</string>
     <string name="respond_inline">Respondre en línia</string>
-    <string name="no_connectivity_detected">No s\'ha detectat cap connectivitat...</string>
     <string name="server_not_reachable_troubleshoot">Servidor no accessible… (<u>Resolució de problemes</u>)</string>
     <string name="connectivity_checking">S\'està cercant la connexió...</string>
-    <string name="sync_short">sincronitzar</string>
-    <string name="draft_attachments_uploading">L\'esborrany està encara carregant...</string>
     <string name="draft_label_attachments_uploading">carregant fitxers adjunts…</string>
     <string name="draft_label_message_uploading">enviant missatge…</string>
     <string name="attachment_failed">Error al carregar l\'arxiu adjunt al missatge </string>
     <string name="attaching_photo_failed">No ha sigut possible adjuntar la foto</string>
     <string name="empty_message">Missatge buit</string>
-    <string name="dismiss">Descartar</string>
     <string name="new_message_arrived">Missatge nou!</string>
-    <string name="please_choose_color">Si us plau tria un color</string>
     <string name="display_images">Mostra el contingut remot</string>
     <string name="retry">Reintentar</string>
     <string name="saving_failed_no_conn">Error al desar, sense connexió</string>
@@ -371,12 +296,8 @@
     <string name="engagement_subtitle_expire">Els missatges que envieu poden configurar-se com a supressió automàtica després d\'un cert període de temps.</string>
     <string name="engagement_subtitle_help">Podeu obtenir ajuda i assistència a protonmail.com/support. Els errors també es poden informar amb l\'aplicació.</string>
     <string name="attachment_exists">Fitxer adjunt ja adjuntat</string>
-    <string name="sending_email_success">S\'ha enviat el codi de verificació</string>
-    <string name="sending_email_failed">Error en enviar el codi de verificació</string>
-    <string name="send_code_wait">Espereu %d segons per tornar a fer clic</string>
     <string name="eo_password_not_completed">La contrasenya del missatge no s\'ha completat.</string>
     <string name="delinquency_subtitle">L\'accés a aquest compte està desactivat per falta de pagament. Inicieu la sessió a través de protonmail.com per pagar la factura no pagada.</string>
-    <string name="direct_disabled_subtitle">Els registres mòbils estan desactivats temporalment. Torneu-ho a provar més tard o proveu de registrar-se a <a href="https://protonmail.com"> protonmail.com </a> mitjançant un ordinador d\'escriptori o ordinador portàtil.</string>
     <string name="downloading">Descarregant...</string>
     <string name="cant_download_attachment">No es pot descarregar el fitxer adjunt</string>
     <string-array name="auto_logout_options_array">
@@ -390,15 +311,7 @@
     <string name="delete_folder_confirmation_title">Voleu suprimir les carpetes seleccionades?</string>
     <string name="delete_label_confirmation_message">Els correus electrònics que apareixen aquí es troben a <b>Tots els correus</b>
     </string>
-    <string name="enter_pin">Introduïu el vostre PIN per desbloquejar la safata d\'entrada</string>
-    <string name="enter_pin_message_details">Introduïu el PIN per desbloquejar el missatge</string>
-    <string name="enter_current_pin">Introduïu el PIN actual</string>
-    <string name="pin_subtitle_create">Creeu el PIN aquí</string>
-    <string name="pin_subtitle_create_new">Creeu el NOU PIN aquí</string>
-    <string name="pin_subtitle_confirm">Confirma aquí el PIN</string>
-    <string name="pin_subtitle_confirm_new">Confirma aquí el NOU PIN</string>
     <string name="pin_invalid">El PIN no és vàlid, introduïu el PIN de 4 dígits correcte</string>
-    <string name="pin_confirmation_not_match">El PIN de confirmació no coincideix</string>
     <string name="pin_not_match">El PIN no coincideix</string>
     <string name="new_pin_saved">Nou PIN desat</string>
     <string name="new_emails">%d nous missatges de correu electrònic</string>
@@ -415,7 +328,6 @@
     <string name="processing_attachment">Processament adjunt</string>
     <string name="hyperlink_confirmation_dialog_text_html">Esteu a punt d\'obrir el navegador web i anar a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Voleu continuar?</string>
     <string name="dont_ask_again">No m\'ho demaneu més</string>
-    <string name="changes_affected_after_closing">Els canvis es veuran afectats després de tancar l\'aplicació</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Codi PIN incorrecte, %d intent restant</item>
         <item quantity="other">Codi PIN incorrecte, %d intents restants</item>
@@ -425,42 +337,26 @@
         <item quantity="other">%d intents fins un esborrat de dades de seguretat!</item>
     </plurals>
     <string name="logout">Tanca sessió</string>
-    <string name="log_out">Tancar sessió de %s?</string>
-    <string name="logout_question">Està segur que desitja tancar la sessió?</string>
     <string name="logout_question_next_account">Es canviarà a %s.</string>
     <string name="upgrade">Actualitzar</string>
-    <string name="country">País</string>
-    <string name="set_cont">Estableix &amp; Continua</string>
     <string name="error">Error</string>
-    <string name="storage_gb">%d GB d\'emmagatzematge</string>
-    <string name="storage_mb">%d MB d\'emmagatzematge</string>
-    <string name="max_addresses">Fins a %d àlies de correu electrònic</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Imatges incrustades</string>
-    <string name="select">Seleccionar</string>
     <string name="warning">Advertència</string>
-    <string name="empty_recovery_email_question">Advertència: no heu establert un correu electrònic de recuperació per tal que la recuperació del compte sigui impossible si oblideu la vostra contrasenya. Procediu sense correu electrònic de recuperació?</string>
     <string name="card_details_title">%1$s(***%2$s)</string>
     <string name="card_details_subtitle">Caducitat %s</string>
     <string name="no_payment_methods">No té mètodes de pagament guardats.</string>
     <string name="edit_payment_methods">Inicieu la sessió a través de protonmail.com per editar la informació de facturació.</string>
-    <string name="message_not_loaded">El missatge no s\'ha carregat</string>
-    <string name="signature_text">Text de signatura</string>
     <string name="available_addresses">Adreces disponibles</string>
     <string name="inactive_addresses">Adreces inactives</string>
     <string name="not_set">Sense definir</string>
-    <string name="edit_notification_email">Modificar el correu electrònic de recuperació</string>
-    <string name="available_swipe_actions">Accions disponibles</string>
     <string name="no_available_addresses">No teniu adreces disponibles</string>
     <string name="no_inactive_addresses">No teniu adreces inactives</string>
     <string name="label_add_new">Afegiu una etiqueta nova</string>
     <string name="available_labels">Etiquetes disponibles</string>
-    <string name="choose_label_color">Trieu el color de l\'etiqueta</string>
-    <string name="save_new_label">Desa la nova etiqueta</string>
     <string name="delete_selected">Eliminar seleccionat</string>
     <string name="pin_not_activated">PIN no activat</string>
     <string name="available_options">Opcions disponibles</string>
-    <string name="change_recovery_email">Canvia la direcció de correu electrònic de recuperació</string>
     <string name="background_sync_subtitle">Si aquesta opció està habilitada, l\'aplicació es sincronitzarà amb el servidor en segon pla. Si desactiveu aquesta característica, es desactivaran les notificacions push.</string>
     <string-array name="notification_options">
         <item>Sense vibració o so</item>
@@ -474,30 +370,9 @@
         <item>Visionari</item>
         <item>Profesional</item>
     </string-array>
-    <plurals name="custom_domains">
-        <item quantity="one">Utilitzi el teu propi domini (ex: john@smith.com)</item>
-        <item quantity="other">Suport per fins %d dominis</item>
-    </plurals>
-    <string-array name="months_array">
-        <item>MM</item>
-        <item>01</item>
-        <item>02</item>
-        <item>03</item>
-        <item>04</item>
-        <item>05</item>
-        <item>06</item>
-        <item>07</item>
-        <item>08</item>
-        <item>09</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-    </string-array>
-    <string name="contact_details_display_name">Nom</string>
     <string name="contact_details">Detalls de contacte</string>
     <string name="email_type_home">Inici</string>
     <string name="type_title">Trieu Tipus</string>
-    <string name="message_drafted_error_server">Error en enviar missatges. %s</string>
     <string name="sync_local_contacts">Pujar a ProtonMail</string>
     <string name="please_select_only_phone_contacts">Seleccioneu només Contactes telefònics locals</string>
     <string name="contact_vcard_hint_email">Introduïu correu electrònic</string>
@@ -517,13 +392,10 @@
     <string name="vcard_other_option_gender">Gènere</string>
     <string name="vcard_other_option_role">Rol</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="convert_contact">Converteix el contacte</string>
     <string name="contacts_import_contact">Importar contacte</string>
     <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Pujar contactes</string>
-    <string name="upgrade_encrypted_contact">Actualitzeu per utilitzar la informació de contacte xifrada.</string>
     <string name="uploading_contacts">Carregant contactes…</string>
-    <string name="error_encrypted_data">Error en recuperar la informació de contacte xifrada.</string>
     <string-array name="vcard_option_phone">
         <item>Telèfon</item>
         <item>Mòbil</item>
@@ -555,40 +427,25 @@
     </string-array>
     <string name="logged_out">Desconnectat</string>
     <string name="logged_out_description">Heu tancat la sessió. Torneu a iniciar sessió.</string>
-    <string name="error_message_zip_code_invalid">Error: codi postal no és vàlid</string>
-    <string name="error_message_cvc_invalid">Error: Nombre CVC no es invàlid</string>
-    <string name="error_message_card_name_invalid">Error: el nom de la targeta no és vàlid</string>
-    <string name="error_message_select_country">Si us plau seleccioneu País</string>
-    <string name="error_message_exp_date_invalid">Error: data de caducitat no és vàlida</string>
-    <string name="error_message_exp_date_past">Error: data de caducitat no és vàlida</string>
-    <string name="error_message_card_number_invalid">Error: el número de la targeta no és vàlid</string>
     <string name="print_error">Error d\'impressió</string>
     <string name="download_complete">Descàrrega completa</string>
-    <string name="download_in_progress">Descàrrega en curs</string>
     <string name="message_expires_in">Aquest missatge expirarà en %s</string>
     <string name="unsaved_changes_title">Canvis no desats</string>
     <string name="unsaved_changes_subtitle">Hi ha entrades sense desar al formulari. Esteu segur que voleu descartar-los?</string>
     <string name="request_timeout">El temps de la petició s\'ha esgotat, si us plau intenteu-ho de nou</string>
-    <string name="add_folder">Afegir carpeta</string>
     <string name="no_folders">No carpetes</string>
-    <string name="folders_title_move">Mou els missatges a</string>
-    <string name="folders_manager">Administrar carpetes</string>
     <string name="folder_add_new">Afegeix una nova carpeta</string>
     <string name="folder_name">Nom de la carpeta</string>
     <string name="available_folders">Carpetes disponibles</string>
-    <string name="choose_folder_color">Trieu el color de la carpeta</string>
     <string name="folder_created">Carpeta creada</string>
     <string name="folder_invalid">Carpeta no creada a causa del nom no vàlid.</string>
     <string name="folder_deleted">S\'ha eliminat la carpeta</string>
     <string name="folder_deleted_error">S\'ha produït un error en eliminar la carpeta</string>
-    <string name="save_new_folder">Desa la nova carpeta</string>
-    <string name="create_new_folder">Crea una carpeta</string>
     <string name="empty_emails">Sense correus electrònics</string>
     <string name="empty_email_list">Cap adreça de correu</string>
     <string name="no_contacts">Sense contactes</string>
     <string name="sender_name_address">%1$s&lt;%2$s&gt; va escriure:</string>
     <string name="update_label">Actualitza l\'etiqueta</string>
-    <string name="max_labels_in_message">El missatge %1$s no pot tenir més de %2$d etiquetes.</string>
     <string name="delete">Esborra</string>
     <string name="subject_copied">Assumpte copiat al porta-retalls</string>
     <string name="details_copied">Detalls copiats al porta-retalls</string>
@@ -602,8 +459,6 @@
     <string name="print_to_template">A: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
-    <string name="signature_error">Error de verificació</string>
-    <string name="signature_error_desc">Verificació de la signatura d\'aquest contingut fallida</string>
     <string name="address">Adreça: </string>
     <string name="address_street">Carrer</string>
     <string name="address_extended_street">Adreça estesa</string>
@@ -623,12 +478,10 @@
     <string name="info">Informació</string>
     <string name="error_can_not_send_from_this_address">Actualitza a un pla de pagament per enviar des de la teva adreça %s.</string>
     <string name="email_empty">Falta l\'adreça de correu electrònic</string>
-    <string name="add_contact_details">Afegiu detalls de contacte</string>
     <string name="encrypted_contact_details">Dades de contacte xifrades</string>
     <string name="convert_question">Pujar contactes locals</string>
     <string name="convert_question_subtitle">Això carregarà els contactes locals al vostre dispositiu al directori de contactes de ProtonMail. A continuació, podrà accedir a aquests contactes en els altres dispositius a través de ProtonMail.</string>
     <string name="refresh_contacts">Refrescar</string>
-    <string name="upload">Carregar</string>
     <string name="invalid_email_some_contacts">L\'adreça de correu electrònic no és vàlida per a alguns dels vostres contactes</string>
     <string name="protonmail_contacts">Contactes de ProtonMail</string>
     <string name="device_contacts">Contactes del dispositiu</string>
@@ -655,7 +508,6 @@
     <string name="resign_contact_title">Voleu tornar a signar el contacte?</string>
     <string name="resign_contact_message">La verificació de %s ha fallat: el contacte no està signat correctament. Heu de tornar a signar el contacte per enviar un missatge a aquesta adreça o editar el contacte. Això també pot passar quan heu recuperat la vostra contrasenya i restabliu les vostres claus.</string>
     <!-- Sender locks -->
-    <string name="sender_lock_unencrypted">Missatge no encriptat</string>
     <string name="sender_lock_zero_access">Emmagatzemat amb xifratge d\'accés zero</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Enviat per vostè amb xifrat d\'extrem a extrem</string>
@@ -714,18 +566,7 @@
     <string name="contact_groups_manage_members">Gestionar Membres</string>
     <string name="contact_group_display_name">Nom a mostrar</string>
     <string name="contact_group_groups_icon">\ue91a </string>
-    <string name="contact_add_addr_to_group">Afegiu adreces a grups</string>
     <string name="title_activity_address_chooser">Gestionar Membres</string>
-    <string name="title_activity_account_manager">Gestionar comptes</string>
-    <string name="account_manager_add_account">Afegir compte</string>
-    <string name="account_manager_remove_all_accounts">Esborrant totes les comptes</string>
-    <string name="account_manager_note">Podeu iniciar la sessió simultàniament en un nombre il·limitat de comptes ProtonMail pagats i un compte gratuït.</string>
-    <string name="account_manager_remove_all">Suprimir totes les comptes</string>
-    <string name="account_manager_logout">Tanca sessió</string>
-    <string name="account_manager_login">Iniciar Sessió</string>
-    <string name="manage_accounts_user_loggedout">%s (desconnectat)</string>
-    <string name="manage_accounts_user_primary">%s (primari)</string>
-    <string name="account_manager_remove">Suprimeix</string>
     <string name="default_error_message">S\'ha produït un error</string>
     <string name="no_contact_groups">No hi ha grups de contactes</string>
     <string name="search_contacts_inside_group">Cercar contactes</string>
@@ -755,7 +596,6 @@
         <item quantity="other">¿Estàs segur que vols esborrar aquest contacte?</item>
     </plurals>
     <string name="members">Membres</string>
-    <string name="max_emails_in_group_title">A arribar al max missatges de correu electrònic per grup</string>
     <string name="select_deselect_all">Selecciona-ho tot</string>
     <string name="contact_group_name_hint">Trieu un nom per al grup</string>
     <string name="contact_group_change_color">Canviar el color</string>
@@ -792,7 +632,6 @@
     <string name="biometric_error_hw_not_available">Hardware biomètric no disponible.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Destinataris ocults</string>
-    <string name="manage_accounts">Gestionar comptes</string>
     <!-- region Settings -->
     <string name="settings">Preferències</string>
     <string name="account_settings">Configuració del compte</string>
@@ -805,7 +644,6 @@
     <string name="password_changed">S\'ha canviat la contrasenya.</string>
     <string name="recovery_email">Correu electrònic de recuperació</string>
     <string name="recovery_email_changed">S\'ha canviat el correu electrònic de recuperació.</string>
-    <string name="info_for_missing_functionality">Inicieu la sessió a <a href="https://www.protonmail.com/">protonmail.com</a> i accediu a les vostres preferències per editar aquesta informació.</string>
     <string name="storage">Mida de la bústia</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Adreces</string>
@@ -848,7 +686,6 @@
     <string name="minutes">Minuts</string>
     <string name="set_custom_quick_snooze">Estableix el valor de repetició ràpid personalitzat</string>
     <string name="turn_off">Desactiva</string>
-    <string name="snooze_will_repeat">Posposició es repetirà</string>
     <string name="work_days">Dies laborables</string>
     <string name="weekends">Cap de setmana</string>
     <string name="every_day">Cada dia</string>
@@ -899,14 +736,6 @@
         <item quantity="one">Missatge mogut a la paperera</item>
         <item quantity="other">Missatges moguts a la paperera</item>
     </plurals>
-    <plurals name="action_move_to_spam">
-        <item quantity="one">Missatge marcat com a correu brossa</item>
-        <item quantity="other">Missatges marcats com a correu brossa</item>
-    </plurals>
-    <plurals name="action_move_to_archive">
-        <item quantity="one">Missatge arxivat</item>
-        <item quantity="other">Missatges arxivats</item>
-    </plurals>
     <!-- endregion -->
     <string name="local_storage">Límit d\'emmagatzematge local</string>
     <!-- endregion -->
@@ -941,13 +770,7 @@
     <string name="app_version">Versió de l\'aplicació</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="remove_account_question">Eliminar %s?</string>
     <string name="signed_in_with">Sessió iniciada amb %s</string>
-    <string name="signed_in_with_logged_out_from">Sessió tancada per a %1$s i identificada amb %2$s</string>
-    <string name="connect_account_limit_title">S\'ha assolit el límit</string>
-    <string name="connect_account_limit_subtitle">No podeu afegir un altre compte ProtonMail gratuït. Només es pot afegir un compte ProtonMail gratuït. Tanqueu la sessió del vostre compte gratuït o actualitzeu un dels comptes gratuïts al compte de pagament.</string>
-    <string name="switch_accounts_question">Canviar de compte?</string>
-    <string name="switch_to_account">Canviar a %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Redactar</string>
@@ -984,7 +807,6 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Error carregant converses, torneu-ho a provar</string>
     <string name="star">Destacar</string>
     <string name="unstar">Treure de destacats</string>
     <string name="star_unstar">Destacar / no destacar</string>
@@ -992,7 +814,6 @@
     <string name="label_as">Etiquetar com a…</string>
     <string name="mark_as_unread">Marcar com a no llegit</string>
     <string name="mark_as_read">Marcar com a llegit</string>
-    <string name="mark_as_read_unread">Marcar com a llegit/no llegit</string>
     <string name="move_message">Moure missatge</string>
     <string name="manage">Gestionar</string>
     <string name="message_from">Missatge de %s</string>

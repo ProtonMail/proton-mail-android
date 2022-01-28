@@ -25,9 +25,7 @@
     <string name="x_days">Dagar</string>
     <string name="x_done">Lokið</string>
     <string name="x_edit">Breyta</string>
-    <string name="x_folders">Möppur</string>
     <string name="x_hours">Klukkustundir</string>
-    <string name="x_labels">Merkingar</string>
     <string name="x_more">Meira</string>
     <string name="x_none">Ekkert</string>
     <string name="x_search">Leita</string>
@@ -44,7 +42,6 @@
     <string name="drawer_lock_the_app">Læsa forritinu</string>
     <string name="drawer_report_bug">Tilkynna galla</string>
     <string name="drawer_settings">Stillingar</string>
-    <string name="drawer_subscription">Áskrift</string>
     <string name="drawer_sign_out">Skrá út</string>
     <string name="drawer_create_folder_description">Búa til nýja möppu</string>
     <string name="drawer_create_label_description">Búa til nýja merkingu</string>
@@ -111,45 +108,29 @@
     <string name="parent_picker_header">Ef þú velur ekki yfirmöppu verður þessi nýja mappa búin til sem mappa á efsta stigi.</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Henda breytingum?</string>
-    <string name="dialog_discard_changes_message">Allar óvistaðar breytingar munu tapast.</string>
-    <string name="discard">Henda</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">DULRITAÐUR TÖLVUPÓSTUR</string>
-    <string name="secure_email_swiss">Öruggur tölvupóstur\nhýstur í Sviss</string>
-    <string name="decrypt">Afkóða</string>
-    <string name="sign_in">Skrá inn</string>
     <string name="sign_out">Skrá út</string>
     <string name="sign_out_question">Ertu viss um að þú viljir skrá þig út?</string>
     <string name="processing_request">Beiðnin þín er þegar í vinnslu</string>
     <!-- should check for html tag -->
-    <string name="need_to_be_logged_in">Þú ert ekki innskráð(ur)!</string>
-    <string name="forgot_mailbox_password">Til að endurstilla lykilorðið á pósthólfinu, skaltu nota vefútgáfu ProtonMail á protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Mistókst að hlaða inn efni. Virkjaðu Chrome</string>
     <string name="error_chrome_not_found">Mistókst að hlaða inn efni. Settu upp Chrome</string>
     <string name="messages_load_failure">Tókst ekki að sækja skilaboð</string>
     <string name="message_details_load_failure">Tókst ekki að sækja upplýsingar um skilaboð</string>
     <string name="no_more_messages">Engin fleiri skilaboð</string>
-    <string name="mailbox_login_failure">Mistókst að skrá inn á pósthólf</string>
-    <string name="login_failure">Mistókst að skrá inn</string>
-    <string name="incorrect_key_parameters">Röng viðföng lykils</string>
-    <string name="not_signed_up">Þú ert ekki skráð(ur) fyrir notkun á ProtonMail Android Beta-þróunarútgáfu</string>
-    <string name="no_network">Engin nettenging</string>
     <string name="no_network_queued">Engin nettenging, skilaboð í biðröð</string>
     <string name="update_app_title">Uppfærsla nauðsynleg</string>
     <string name="update_app">Ekki er hægt að nota ProtonMail-forritið fyrr en það hefur verið uppfært</string>
     <string name="you_are_offline">Þú ert án nettengingar</string>
-    <string name="api_offline_title">ProtonMail API-forritsviðmót er ótengt</string>
     <string name="api_offline">ProtonMail er í augnablikinu án nettengingar, skoðaðu síðustu stöðu mála á Twitter: https://twitter.com/protonmail</string>
     <string name="contact_saved">Tengiliður vistaður</string>
     <string name="contact_saved_offline">Tengiliður vistaður, verður samstilltur næst þegar nettenging er til staðar</string>
     <string name="contact_exist">Tölvupóstfang tengiliðar þegar til</string>
     <string name="invalid_email">Tölvupóstfang er ekki gilt</string>
     <string name="duplicate_email">Tölvupóstfang er tvítekið</string>
-    <string name="invalid_code">Kóði er ekki gildur</string>
     <string name="message_drafted">Sending skilaboða mistókst. Skilaboðin eru vistuð í Drög-möppunni</string>
     <string name="attachment_failed_message_drafted">Vinsamlegast fjarlægðu og bættu við \"%s\" og sendu skilaboðin aftur. Skilaboðin þín er að finna í möppunni „Drög“.</string>
     <string name="open_drawer">Opna</string>
@@ -175,20 +156,13 @@
     <string name="fetching_contacts">Sæki ProtonMail tengiliði...</string>
     <string name="fetching_contacts_success">Það tókst að endurlesa tengiliði</string>
     <string name="fetching_contacts_failure">Ekki tókst að endurlesa tengiliði</string>
-    <string name="search_messages">Leita í skilaboðum</string>
     <string name="no_search_results">Engar leitarniðurstöður</string>
     <string name="compose">Semja skilaboð</string>
     <string name="compose_message">Skrifa skilaboð</string>
     <string name="empty_folder">Tóm mappa</string>
     <string name="view_headers">Skoða hausa</string>
     <string name="message_headers">Haus skilaboða</string>
-    <string name="delete_message">Eyða skilaboðum</string>
     <string name="delete_messages">Eyða skilaboðum</string>
-    <string name="add_label">Bæta við merkingu</string>
-    <string name="add_star">Bæta við stjörnu</string>
-    <string name="remove_star">Fjarlægja stjörnu</string>
-    <string name="mark_read">Merkja sem lesið</string>
-    <string name="mark_unread">Merkja sem ólesið</string>
     <string name="move_to_archive">Flytja í safn</string>
     <string name="move_to_trash">Flytja í ruslið</string>
     <string name="move_to_spam">Flytja í ruslpóst</string>
@@ -203,21 +177,13 @@
     <string name="cc">Afrit (Cc)</string>
     <string name="bcc">Falið afrit (Bcc)</string>
     <string name="to_prefix">Til:</string>
-    <string name="cc_prefix">Cc:</string>
-    <string name="bcc_prefix">Bcc:</string>
-    <string name="from_prefix">Frá:</string>
-    <string name="date_prefix">Dagsetning:</string>
-    <string name="view_details">NÁNAR</string>
-    <string name="hide_details">FELA NÁNARI UPPLÝSINGAR</string>
     <string name="reply">Svara</string>
     <string name="reply_all">Svara öllum</string>
     <string name="forward">Áframsenda</string>
-    <string name="subject">Viðfangsefni</string>
     <string name="email_subject">Viðfangsefni pósts</string>
     <string name="define_message_password">Lykilorð skilaboða</string>
     <string name="confirm_message_password">Staðfesta lykilorð</string>
     <string name="define_password_hint">Skilgreina vísbendingu (valkvætt)</string>
-    <string name="message_passwords_do_not_match">Innskráningarlykilorðin stemma ekki</string>
     <string name="eo_passwords_do_not_match">Lykilorðin stemma ekki</string>
     <string name="define_expiration_period">Skilgreina gildistíma</string>
     <string name="set_message_expiration">Stilltu hvenær skilaboð renna út</string>
@@ -227,18 +193,6 @@
     <string name="max_labels_selected">%d merki eru leyfileg að hámarki</string>
     <string name="max_attachments_reached">Hámarksfjölda viðhengja á hver skilaboð hefur verið náð.</string>
     <string name="max_attachments_size_reached">Hámarksstærð viðhengja á hver skilaboð hefur verið náð</string>
-    <plurals name="hours_string">
-        <item quantity="one">%d klukkustund</item>
-        <item quantity="other">%d klukkustundir</item>
-    </plurals>
-    <plurals name="days_string">
-        <item quantity="one">%d dagur</item>
-        <item quantity="other">%d dagar</item>
-    </plurals>
-    <plurals name="minutes_string">
-        <item quantity="one">%d mínúta</item>
-        <item quantity="other">%d mínútur</item>
-    </plurals>
     <string name="expiration_days">%dD</string>
     <string name="expiration_hours">%dK</string>
     <string name="expiration_minutes">%dM</string>
@@ -268,8 +222,6 @@
     <string name="email">Tölvupóstur</string>
     <string name="phone">Símanúmer</string>
     <string name="save">Vista</string>
-    <string name="syncing_messages">Samstilli...</string>
-    <string name="sync">Samstilla tengiliði</string>
     <string name="save_message_as_draft">Vista skilaboðin sem drög?</string>
     <string name="no_subject">Senda skilaboðin án efnislínu?</string>
     <string name="yes">Já</string>
@@ -282,7 +234,6 @@
     <string name="sending_report">Sendi inn skýrslu...</string>
     <string name="received_report">Skýrsla móttekin</string>
     <string name="not_received_report">Skýrsla barst ekki</string>
-    <string name="not_received_report_offline">Án nettengingar! Skýrsla verður send þegar tenging næst</string>
     <string name="forward_prefix">Áfram:</string>
     <string name="original_message_divider">-------- Upprunaleg skilaboð --------</string>
     <string name="invalid_email_address">Tölvupóstfangið \'%s\' er ógilt</string>
@@ -292,67 +243,41 @@
     <string name="attachment_limit">Viðhengi eru takmörkuð við %1$s. Alls geta viðhengi verið %2$s.</string>
     <string name="sending_message">Sendi skilaboð...</string>
     <string name="sending_message_offline">Án nettengingar, sett í biðröð til að senda síðar...</string>
-    <string name="go_to_inbox">Fara í innhólfið mitt</string>
     <string name="message_sent">Skilaboð send</string>
     <string name="message_failed">Mistókst að senda skilaboð</string>
-    <string name="message_sending_failures">%d villur við sendingu skilaboða</string>
     <string name="storage_limit">Takmörk geymslurýmis</string>
     <string name="edit_settings">Breyta stillingum</string>
-    <string name="save_settings">Vista stillingar</string>
     <string name="share">Deila</string>
-    <string name="settings_not_saved_password"> Stillingar ekki vistaðar - rangt innskráningarlykilorð</string>
-    <string name="settings_not_saved_email"> Stillingar ekki vistaðar - ógildur tilkynningapóstur</string>
-    <string name="enter">Setja inn</string>
     <string name="cancel">Hætta við</string>
     <string name="close">Loka</string>
     <string name="eo_password_title">Setja lykilorð</string>
     <string name="eo_password_subtitle">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota ProtonMail</string>
     <string name="eo_password_more_info">Fá ítarlegri upplýsingar</string>
     <string name="no_attachments">0 viðhengi</string>
-    <string name="pin_lock_option_settings">Valkostir fyrir læsingu forrits</string>
-    <string name="pin_lock_after">Læsa forritinu eftir</string>
-    <string name="lock_the_app">Læsa forritinu</string>
     <string name="display_name_banned_chars">Ógilt birtingarnafn. \'&gt;\' og \'&lt;\' eru ekki leyfilegt</string>
     <string name="cont">Halda áfram</string>
     <string name="reply_prefix_on">Kveikt</string>
-    <string name="terms_and_conditions">Með því að nota ProtonMail, samþykkir þú\n
-        <a href="https://protonmail.com/terms-and-conditions">ákvæði okkar og skilyrði</a> auk <a href="https://protonmail.com/privacy-policy">stefnu okkar varðandi gagnaleynd</a>
-    </string>
-    <string name="labels_title_apply">Setja merkingar</string>
-    <string name="labels_title_add">Bæta við merkingu</string>
-    <string name="labels_title">Merkingar</string>
     <string name="label_name">Heiti merkis</string>
-    <string name="label_name_empty">Merki þarf að hafa nafn</string>
-    <string name="label_name_duplicate">Merking með þessu nafni er þegar til staðar</string>
     <string name="label_created">Bjó til merkingu</string>
     <string name="label_invalid">Merkingu var ekki bætt við því hún er með óleyfilegt heiti.</string>
     <string name="undo">Afturkalla</string>
-    <string name="customize_swipe_actions">Sérsníða aðgerðir við stroku</string>
-    <string name="message_can_not_edit">Get ekki svarað eða sent áfram, þessi skilaboð hafa ekki verið send</string>
     <string name="label_apply">Virkja</string>
-    <string name="label_delete">Eyða</string>
     <string name="label_add">Bæta við</string>
     <string name="no_browser_found">Settu upp vafraforrit til að ljúka þessari aðgerð</string>
     <string name="no_application_found">Ekkert forrit fannst sem getur meðhöndlað þessa aðgerð</string>
     <string name="no_application_found_or_link_invalid">Ekkert forrit fannst sem getur meðhöndlað þessa aðgerð eða að vefslóðin er ógild</string>
-    <string name="also_archive">Einnig safn</string>
     <string name="label_deleted">Merkingu eytt</string>
     <string name="label_deleted_error">Villa kom upp við að eyða merkingu</string>
     <string name="message_deleted_error">Villa kom upp við eyðingu á sumum skilaboðum. Gætu skilaboðin verið í sendingarferli?!</string>
     <string name="respond_inline">Svara innan-texta</string>
-    <string name="no_connectivity_detected">Engin tenging fannst...</string>
     <string name="server_not_reachable_troubleshoot">Netþjónn ekki aðgengilegur… (<u>Leysa vandamál</u>)</string>
     <string name="connectivity_checking">Athuga með tengingu...</string>
-    <string name="sync_short">samstilla</string>
-    <string name="draft_attachments_uploading">Enn er verið að senda inn drögin...</string>
     <string name="draft_label_attachments_uploading">sendi inn viðhengi…</string>
     <string name="draft_label_message_uploading">sendi skilaboð…</string>
     <string name="attachment_failed">Innsending viðhengis mistókst fyrir skilaboðin </string>
     <string name="attaching_photo_failed">Mistókst að hengja við mynd</string>
     <string name="empty_message">Auð skilaboð</string>
-    <string name="dismiss">Vísa frá</string>
     <string name="new_message_arrived">Ný skilaboð!</string>
-    <string name="please_choose_color">Veldu lit</string>
     <string name="display_images">Birta fjartengt efni</string>
     <string name="retry">Reyna aftur</string>
     <string name="saving_failed_no_conn">Villa við vistun, engin tenging</string>
@@ -371,12 +296,8 @@
     <string name="engagement_subtitle_expire">Skilaboð sem þú sendir er hægt að stilla þannig að þau eyðist sjálfvirkt eftir ákveðinn tíma.</string>
     <string name="engagement_subtitle_help">Þú getur fengið hjálp og ýmsa aðstoð á protonmail.com/support. Einnig er hægt að tilkynna um villur innan úr forritinu.</string>
     <string name="attachment_exists">Viðhengið er þegar hengt við</string>
-    <string name="sending_email_success">Sannvottunarkóði sendur</string>
-    <string name="sending_email_failed">Sending sannvottunarkóða mistókst</string>
-    <string name="send_code_wait">Bíddu í %d sekúndur áður en þú smellir aftur</string>
     <string name="eo_password_not_completed">Lykilorð skilaboða ekki klárað.</string>
     <string name="delinquency_subtitle">Þessi notandaaðgangur er óvirkur vegna ógreidds reiknings. Skráðu þig inn í protonmail.com til að greiða ófrágenginn reikning.</string>
-    <string name="direct_disabled_subtitle">Nýskráningar á snjalltækjum eru óvirkar í augnablikinu. Prófaðu aftur síðar, eða reyndu að skrá þig á <a href="https://protonmail.com">protonmail.com</a> með hjálp borð- eða fartölvu.</string>
     <string name="downloading">Sæki...</string>
     <string name="cant_download_attachment">Get ekki sótt viðhengið</string>
     <string-array name="auto_logout_options_array">
@@ -390,15 +311,7 @@
     <string name="delete_folder_confirmation_title">Eyða völdum möppum?</string>
     <string name="delete_label_confirmation_message">Þessa tölvupósta má finna í <b>Allur póstur</b>
     </string>
-    <string name="enter_pin">Settu inn PIN-númerið þitt til að aflæsa innhólfinu</string>
-    <string name="enter_pin_message_details">Settu inn PIN-númerið þitt til að aflæsa skilaboðunum</string>
-    <string name="enter_current_pin">Settu inn núverandi PIN-númer þitt</string>
-    <string name="pin_subtitle_create">Útbúðu PIN-númerið þitt hér</string>
-    <string name="pin_subtitle_create_new">Útbúðu NÝJA PIN-númerið þitt hér</string>
-    <string name="pin_subtitle_confirm">Staðfestu PIN-númerið þitt hér</string>
-    <string name="pin_subtitle_confirm_new">Staðfestu NÝJA PIN-númerið þitt hér</string>
     <string name="pin_invalid">PIN-númer er ógilt, settu inn rétt 4 stafa PIN-númer</string>
-    <string name="pin_confirmation_not_match">PIN-númer staðfestingar passa ekki saman</string>
     <string name="pin_not_match">PIN-númer passa ekki saman</string>
     <string name="new_pin_saved">Vistaði nýtt PIN-númer</string>
     <string name="new_emails">%d nýir tölvupóstar</string>
@@ -415,7 +328,6 @@
     <string name="processing_attachment">Vinn með viðhengi</string>
     <string name="hyperlink_confirmation_dialog_text_html">Þú ert í þann mund að fara að ræsa vafrann og fara á:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Viltu halda áfram?</string>
     <string name="dont_ask_again">Ekki spyrja aftur</string>
-    <string name="changes_affected_after_closing">Breytingar munu taka gildi eftir að forritinu hefur verið lokað</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Rangt PIN-númer, %d tilraun eftir</item>
         <item quantity="other">Rangt PIN-númer, %d tilraunir eftir</item>
@@ -425,42 +337,26 @@
         <item quantity="other">%d tilraunir eftir þar til tækið verður hreinsað í öryggisskyni!</item>
     </plurals>
     <string name="logout">Útskráning</string>
-    <string name="log_out">Skrá út %s?</string>
-    <string name="logout_question">Ertu viss að þú viljir skrá þig út?</string>
     <string name="logout_question_next_account">Þér mun verða skipt yfir á %s.</string>
     <string name="upgrade">Uppfæra</string>
-    <string name="country">Land</string>
-    <string name="set_cont">Stilla og halda áfram</string>
     <string name="error">Villa</string>
-    <string name="storage_gb">%d GB geymslurými</string>
-    <string name="storage_mb">%d MB geymslurými</string>
-    <string name="max_addresses">Allt að %d tölvupóstsamheiti</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d ívafnar myndir</string>
-    <string name="select">Velja</string>
     <string name="warning">Aðvörun</string>
-    <string name="empty_recovery_email_question">Aðvörun: Þú stilltir ekki póstfang fyrir endurheimtupóst, þannig að ekki er mögulegt að endurheimta notandaaðganginn þinn ef þú gleymir lykilorðinu. Á að halda áfram án endurheimtupóstfangs?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Rennur út %s</string>
     <string name="no_payment_methods">Þú ert ekki með neina vistaða greiðslumáta.</string>
     <string name="edit_payment_methods">Skráðu þig inn í gegnum protonmail.com til að breyta greiðsluupplýsingum.</string>
-    <string name="message_not_loaded">Skilaboðum ekki hlaðið inn</string>
-    <string name="signature_text">Texti undirskriftar</string>
     <string name="available_addresses">Tiltæk tölvupóstföng</string>
     <string name="inactive_addresses">Óvirk tölvupóstföng</string>
     <string name="not_set">Ekki skilgreint</string>
-    <string name="edit_notification_email">Breyta endurheimtupósti</string>
-    <string name="available_swipe_actions">Tiltækar aðgerðir</string>
     <string name="no_available_addresses">Þú ert ekki með nein tiltæk tölvupóstföng</string>
     <string name="no_inactive_addresses">Þú ert ekki með nein óvirk tölvupóstföng</string>
     <string name="label_add_new">Bæta við nýrri merkingu</string>
     <string name="available_labels">Tiltækar merkingar</string>
-    <string name="choose_label_color">Veldu lit á merkingu</string>
-    <string name="save_new_label">Vista nýja merkingu</string>
     <string name="delete_selected">Eyða völdu</string>
     <string name="pin_not_activated">PIN-númer ekki virkjað</string>
     <string name="available_options">Tiltækir valkostir</string>
-    <string name="change_recovery_email">Breyta endurstillinga/tilkynningapóstfangi</string>
     <string name="background_sync_subtitle">Ef þessi möguleiki er virkur, mun forritið samstillast við þjóninn í bakgrunni. Sé þessi eiginleiki óvirkur verða ýtitilkynningar líka óvirkar.</string>
     <string-array name="notification_options">
         <item>Hvorki hljóð né titringur</item>
@@ -474,30 +370,9 @@
         <item>Visionary</item>
         <item>Professional</item>
     </string-array>
-    <plurals name="custom_domains">
-        <item quantity="one">Notaðu þitt eigið lén (t.d: jon@jonsson.is)</item>
-        <item quantity="other">Stuðningur við allt að %d lén</item>
-    </plurals>
-    <string-array name="months_array">
-        <item>MM</item>
-        <item>01</item>
-        <item>02</item>
-        <item>03</item>
-        <item>04</item>
-        <item>05</item>
-        <item>06</item>
-        <item>07</item>
-        <item>08</item>
-        <item>09</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-    </string-array>
-    <string name="contact_details_display_name">Nafn</string>
     <string name="contact_details">Nánar um tengilið</string>
     <string name="email_type_home">Heima</string>
     <string name="type_title">Veldu tegund</string>
-    <string name="message_drafted_error_server">Sending skilaboða mistókst. %s</string>
     <string name="sync_local_contacts">Senda inn í ProtonMail</string>
     <string name="please_select_only_phone_contacts">Veldu einungis símatengiliði á tækinu</string>
     <string name="contact_vcard_hint_email">Settu inn tölvupóstfang</string>
@@ -517,13 +392,10 @@
     <string name="vcard_other_option_gender">Kyn</string>
     <string name="vcard_other_option_role">Hlutverk</string>
     <string name="vcard_other_option_url">Slóð (URL)</string>
-    <string name="convert_contact">Umbreyta tengilið</string>
     <string name="contacts_import_contact">Flytja inn tengilið</string>
     <string name="contacts_import">Flytja inn</string>
     <string name="upload_contacts">Senda inn tengiliði</string>
-    <string name="upgrade_encrypted_contact">Uppfærðu áskriftina þína til að nota dulritaðar upplýsingar um tengiliði.</string>
     <string name="uploading_contacts">Sendi inn tengiliði…</string>
-    <string name="error_encrypted_data">Villa við að sækja dulritaðar upplýsingar um tengilið.</string>
     <string-array name="vcard_option_phone">
         <item>Sími</item>
         <item>Farsími</item>
@@ -555,40 +427,25 @@
     </string-array>
     <string name="logged_out">Skráður út</string>
     <string name="logged_out_description">Þú hefur verið skráð(ur) út. Skráðu þig aftur inn.</string>
-    <string name="error_message_zip_code_invalid">Villa: Ógilt póstnúmer</string>
-    <string name="error_message_cvc_invalid">Villa: Ógilt CVC-númer</string>
-    <string name="error_message_card_name_invalid">Villa: Ógilt nafn á korti</string>
-    <string name="error_message_select_country">Veldu land</string>
-    <string name="error_message_exp_date_invalid">Villa: Dagsetning lokagildistíma er ógild</string>
-    <string name="error_message_exp_date_past">Villa: Dagsetning lokagildistíma er ógild</string>
-    <string name="error_message_card_number_invalid">Villa: Ógilt kortanúmer</string>
     <string name="print_error">Villa við prentun</string>
     <string name="download_complete">Niðurhali lokið</string>
-    <string name="download_in_progress">Niðurhal í gangi.</string>
     <string name="message_expires_in">Þessi skilaboð renna út eftir %s</string>
     <string name="unsaved_changes_title">Óvistaðar breytingar</string>
     <string name="unsaved_changes_subtitle">Það eru óvistaðar færslur á síðunni. Ertu viss um að þú viljir henda þeim?</string>
     <string name="request_timeout">Beiðni féll á tíma, reyndu aftur</string>
-    <string name="add_folder">Bæta við möppu</string>
     <string name="no_folders">Engar möppur</string>
-    <string name="folders_title_move">Færa skilaboð inn í</string>
-    <string name="folders_manager">Sýsla með möppur</string>
     <string name="folder_add_new">Bæta við nýrri möppu</string>
     <string name="folder_name">Heiti möppu</string>
     <string name="available_folders">Tiltækar möppur</string>
-    <string name="choose_folder_color">Veldu lit á möppu</string>
     <string name="folder_created">Bjó til möppu</string>
     <string name="folder_invalid">Möppu var ekki bætt við því hún er með óleyfilegt heiti.</string>
     <string name="folder_deleted">Möppu eytt</string>
     <string name="folder_deleted_error">Villa kom upp við að eyða möppu</string>
-    <string name="save_new_folder">Vista nýja möppu</string>
-    <string name="create_new_folder">Búa til möppu</string>
     <string name="empty_emails">Enginn tölvupóstur</string>
     <string name="empty_email_list">Ekkert tölvupóstfang</string>
     <string name="no_contacts">Engir tengiliðir</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; skrifaði:</string>
     <string name="update_label">Uppfæra merkingu</string>
-    <string name="max_labels_in_message">Skilaboðin %1$s geta ekki verið með fleiri en %2$d merkingar.</string>
     <string name="delete">Eyða</string>
     <string name="subject_copied">Viðfangsefni afritað á klippispjald</string>
     <string name="details_copied">Afritaði ítarupplýsingar á klippispjaldið</string>
@@ -602,8 +459,6 @@
     <string name="print_to_template">Til: %s;  </string>
     <string name="print_cc_template">Afrit: %s;  </string>
     <string name="print_bcc_template">Falið afrit: %s;  </string>
-    <string name="signature_error">Villa í staðfestingu</string>
-    <string name="signature_error_desc">Sannvottun á undirritun þessa efnis brást</string>
     <string name="address">Heimilisfang: </string>
     <string name="address_street">Gata</string>
     <string name="address_extended_street">Extended street</string>
@@ -623,12 +478,10 @@
     <string name="info">Upplýsingar</string>
     <string name="error_can_not_send_from_this_address">Uppfærðu í greidda áskrift til að senda úr %s tölvupóstfanginu þínu.</string>
     <string name="email_empty">Tölvupóstfang vantar</string>
-    <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">Dulritaðar nánari upplýsingar um tengilið</string>
     <string name="convert_question">Senda inn tengiliði af tæki</string>
     <string name="convert_question_subtitle">Þetta mun senda staðværa tengiliði á tækinu inn í tengiliðamöppuna á ProtonMail. Þú munt þá hafa aðgang að þessum tengiliðum á öðrum tækjum þínum í gegnum ProtonMail.</string>
     <string name="refresh_contacts">Endurlesa</string>
-    <string name="upload">Senda inn</string>
     <string name="invalid_email_some_contacts">Tölvupóstfang er ekki gilt hjá sumum tengiliðanna þinna</string>
     <string name="protonmail_contacts">Tengiliðir í ProtonMail</string>
     <string name="device_contacts">Tengiliðir tækis</string>
@@ -655,7 +508,6 @@
     <string name="resign_contact_title">Ertu viss um að þú viljir endurundirrita tengiliðinn?</string>
     <string name="resign_contact_message">Sannvottun á %s mistókst: tengiliðurinn er ekki rétt undirritaður. Þú verður að endur-undirrita tengiliðinn til að geta sent skilaboð á þetta tölvupóstfang eða til að breyta tengiliðaupplýsingunum. Þetta getur líka gerst þegar þú hefur endurheimt lykilorðið þitt og frumstillt dulritunarlyklana þína.</string>
     <!-- Sender locks -->
-    <string name="sender_lock_unencrypted">Ódulrituð skilaboð</string>
     <string name="sender_lock_zero_access">Geymt með órjúfanlegri dulritun</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Sent af þér með enda-í-enda dulritun</string>
@@ -712,18 +564,7 @@
     <string name="contact_groups_manage_members">Sýsla með meðlimi</string>
     <string name="contact_group_display_name">Birtingarnafn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
-    <string name="contact_add_addr_to_group">Bæta vistfangi við hópa</string>
     <string name="title_activity_address_chooser">Sýsla með meðlimi</string>
-    <string name="title_activity_account_manager">Sýsla með notandaaðganga</string>
-    <string name="account_manager_add_account">Bæta við notandaaðgangi</string>
-    <string name="account_manager_remove_all_accounts">Fjarlægi alla aðganga</string>
-    <string name="account_manager_note">Þú getur verið skráð/ur inn í ótakmarkaðan fjölda greiddra ProtonMail-aðganga ásamt einum ókeypis notandaaðgangi.</string>
-    <string name="account_manager_remove_all">Fjarlægja alla notandaaðganga</string>
-    <string name="account_manager_logout">Skrá út</string>
-    <string name="account_manager_login">Skrá inn</string>
-    <string name="manage_accounts_user_loggedout">%s (útskráður)</string>
-    <string name="manage_accounts_user_primary">%s (aðal)</string>
-    <string name="account_manager_remove">Fjarlægja</string>
     <string name="default_error_message">Villa kom upp</string>
     <string name="no_contact_groups">Engir tengiliðahópar</string>
     <string name="search_contacts_inside_group">Leita að tengiliðum</string>
@@ -753,7 +594,6 @@
         <item quantity="other">Ertu viss um að þú viljir eyða völdu tengiliðunum?</item>
     </plurals>
     <string name="members">Meðlimir</string>
-    <string name="max_emails_in_group_title">Náði hámarksfjölda tölvupósta á hóp</string>
     <string name="select_deselect_all">Velja allt</string>
     <string name="contact_group_name_hint">Veldu nafn á hópinn</string>
     <string name="contact_group_change_color">Breyta lit</string>
@@ -790,7 +630,6 @@
     <string name="biometric_error_hw_not_available">Vélbúnaður fyrir líffræðileg gögn ekki til staðar.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Viðtakendur ekki gefnir upp</string>
-    <string name="manage_accounts">Sýsla með notandaaðganga</string>
     <!-- region Settings -->
     <string name="settings">Stillingar</string>
     <string name="account_settings">Stillingar notandaaðgangs</string>
@@ -803,7 +642,6 @@
     <string name="password_changed">Lykilorði breytt.</string>
     <string name="recovery_email">Endurheimtupóstur</string>
     <string name="recovery_email_changed">Endurheimtum tölvupósti breytt.</string>
-    <string name="info_for_missing_functionality">Skráðu þig inn í gegnum <a href="https://www.protonmail.com/">protonmail.com</a> til að breyta þessum upplýsingum.</string>
     <string name="storage">Stærð pósthólfs</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Vistföng</string>
@@ -846,7 +684,6 @@
     <string name="minutes">Mínútur</string>
     <string name="set_custom_quick_snooze">Settu sérsniðið gildi flýtifrestunar</string>
     <string name="turn_off">Slökkva</string>
-    <string name="snooze_will_repeat">Frestun verður endurtekin</string>
     <string name="work_days">Vinnudagar</string>
     <string name="weekends">Helgar</string>
     <string name="every_day">Daglega</string>
@@ -897,14 +734,6 @@
         <item quantity="one">Skilaboð voru færð í ruslið</item>
         <item quantity="other">Skilaboð voru færð í ruslið</item>
     </plurals>
-    <plurals name="action_move_to_spam">
-        <item quantity="one">Skilaboð merkt sem ruslpóstur</item>
-        <item quantity="other">Skilaboð merkt sem ruslpóstur</item>
-    </plurals>
-    <plurals name="action_move_to_archive">
-        <item quantity="one">Skilaboð sett í safn</item>
-        <item quantity="other">Skilaboð sett í safn</item>
-    </plurals>
     <!-- endregion -->
     <string name="local_storage">Takmörk á staðværu geymslurými</string>
     <!-- endregion -->
@@ -939,13 +768,7 @@
     <string name="app_version">Útgáfa forrits</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="remove_account_question">Fjarlægja %s?</string>
     <string name="signed_in_with">Skráð inn með %s</string>
-    <string name="signed_in_with_logged_out_from">Skráð út úr %1$s og skráð inn með %2$s</string>
-    <string name="connect_account_limit_title">Takmörkum náð</string>
-    <string name="connect_account_limit_subtitle">Þú getur ekki bætt við öðrum ókeypis ProtonMail-aðgangi. Aðeins er hægt að bæta við einum keypis ProtonMail-aðgangi. Skrðu þig út úr öðrum ókeypis aðgöngum eða uppfærðu einn af ókeypis aðgöngunum þínum yfir í greidda áskrift.</string>
-    <string name="switch_accounts_question">Skipta um notandaaðgang?</string>
-    <string name="switch_to_account">Skipta yfir í %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Semja póst</string>
@@ -983,7 +806,6 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Villa við að hlaða inn samtölum, reyndu aftur</string>
     <string name="star">Stjörnumerkja</string>
     <string name="unstar">Fjarlægja stjörnugjöf</string>
     <string name="star_unstar">Stjörnumerkja/fjarlægja stjörnu</string>
@@ -991,7 +813,6 @@
     <string name="label_as">Merkja sem…</string>
     <string name="mark_as_unread">Merkja sem ólesið</string>
     <string name="mark_as_read">Merkja sem lesið</string>
-    <string name="mark_as_read_unread">Merkja sem lesið/ólesið</string>
     <string name="move_message">Færa skilaboð</string>
     <string name="manage">Stjórna</string>
     <string name="message_from">Skilaboð frá %s</string>

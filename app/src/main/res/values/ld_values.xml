@@ -19,5 +19,4 @@
   -->
 <resources>
     <integer name="fab_label_start">0</integer>
-    <integer name="fab_label_end">1</integer>
 </resources>
