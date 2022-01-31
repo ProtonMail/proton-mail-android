@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.pinlock.presentation
+package ch.protonmail.android.security.presentation
 
 import android.content.Context
 import androidx.startup.Initializer
@@ -26,19 +26,19 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 
-class PinLockManagerInitializer : Initializer<PinLockManager> {
+class SecurityManagerInitializer : Initializer<SecurityManager> {
 
-    override fun create(context: Context): PinLockManager {
-        val entryPoint = EntryPointAccessors.fromApplication(context, PinLockManagerEntryPoint::class.java)
-        return entryPoint.pinLockManager()
+    override fun create(context: Context): SecurityManager {
+        val entryPoint = EntryPointAccessors.fromApplication(context, SecurityManagerEntryPoint::class.java)
+        return entryPoint.securityManager()
     }
 
     override fun dependencies() = emptyList<Class<out Initializer<*>>>()
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
-    interface PinLockManagerEntryPoint {
+    interface SecurityManagerEntryPoint {
 
-        fun pinLockManager(): PinLockManager
+        fun securityManager(): SecurityManager
     }
 }

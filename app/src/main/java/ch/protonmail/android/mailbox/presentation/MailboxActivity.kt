@@ -36,7 +36,6 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -381,8 +380,6 @@ internal class MailboxActivity :
         }
     }
 
-    override fun secureContent(): Boolean = true
-
     private fun startObserving() {
         val owner = this
         mailboxViewModel.run {
@@ -520,13 +517,6 @@ internal class MailboxActivity :
         setUpDrawer()
         checkRegistration()
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
-
-        // manually update the flags for preventing screenshots
-        if (isPreventingScreenshots || userManager.currentLegacyUser?.isPreventTakingScreenshots == true) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        }
 
         // Set the elevation to 0 since after account switch the list is scrolled to the top
         setElevationOnToolbarAndStatusView(false)

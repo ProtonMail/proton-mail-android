@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -211,22 +210,12 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         return false;
     }
 
-    protected boolean secureContent() {
-        return false;
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
 
         User user = mUserManager.getCurrentLegacyUser();
 
-        // Enable secure mode if screenshots are disabled, else disable it
-        if (isPreventingScreenshots() || user != null && user.isPreventTakingScreenshots()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
-        }
         app.setAppInBackground(false);
         networkConfigurator.setNetworkConfiguratorCallback(this);
 
@@ -265,12 +254,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Override
     protected void onStop() {
         super.onStop();
-        // Enable secure mode for hide content from recent if pin is enabled, else disable it so
-        // content will be visible in recent
-        User currentUser = mUserManager.getCurrentLegacyUser();
-        if (currentUser != null && currentUser.isUsePin())
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
-        else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         if (!(this instanceof AddAttachmentsActivity)) {
             activateScreenProtector();

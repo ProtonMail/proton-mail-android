@@ -323,8 +323,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         mApp.bus.unregister(this)
     }
 
-    override fun secureContent(): Boolean = true
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {

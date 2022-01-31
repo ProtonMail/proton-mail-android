@@ -88,7 +88,7 @@
                 tools:node="remove" />
 
             <meta-data
-                android:name="ch.protonmail.android.pinlock.presentation.PinLockManagerInitializer"
+                android:name="ch.protonmail.android.security.presentation.SecurityManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove"/>
         </provider>
