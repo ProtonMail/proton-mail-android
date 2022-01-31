@@ -31,6 +31,7 @@ import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessagePreferenceEntity
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostStarJob
@@ -385,6 +386,19 @@ class MessageRepository @Inject constructor(
 
         messageDao.deleteAttachmentsByMessageIds(messageIds)
         messageDao.deleteMessagesByIds(messageIds)
+    }
+
+    suspend fun saveViewInDarkModeMessagePreference(userId: UserId, messageId: String, viewInDarkMode: Boolean) {
+        val messagePreferenceDao = databaseProvider.provideMessagePreferenceDao(userId)
+        val messagePreference = messagePreferenceDao.findMessagePreference(messageId)
+            ?.copy(viewInDarkMode = viewInDarkMode)
+            ?: MessagePreferenceEntity(messageId = messageId, viewInDarkMode = viewInDarkMode)
+        messagePreferenceDao.saveMessagePreference(messagePreference)
+    }
+
+    suspend fun getViewInDarkModeMessagePreference(userId: UserId, messageId: String): Boolean? {
+        val messagePreferenceDao = databaseProvider.provideMessagePreferenceDao(userId)
+        return messagePreferenceDao.findMessagePreference(messageId)?.viewInDarkMode
     }
 
     private suspend fun Message.saveBodyToFileIfNeeded() {
