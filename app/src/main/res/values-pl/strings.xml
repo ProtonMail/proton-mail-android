@@ -735,7 +735,7 @@
     <string name="title_activity_account_manager">Zarządzaj kontami</string>
     <string name="account_manager_add_account">Dodaj konto</string>
     <string name="account_manager_remove_all_accounts">Trwa usuwanie wszystkich kont</string>
-    <string name="account_manager_note">Możesz być jednocześnie zalogowany na nieograniczoną liczbę płatnych kont ProtonMail i jedno bezpłatne konto.</string>
+    <string name="account_manager_note">Możesz być jednocześnie zalogowany na nieograniczoną liczbę płatnych kont ProtonMail i jedno darmowe konto.</string>
     <string name="account_manager_remove_all">Usuń wszystkie konta</string>
     <string name="account_manager_logout">Wyloguj</string>
     <string name="account_manager_login">Zaloguj się</string>

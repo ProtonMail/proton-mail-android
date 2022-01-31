@@ -123,17 +123,17 @@
     <string name="sign_in">登入</string>
     <string name="sign_out">登出</string>
     <string name="sign_out_question">您確定要登出嗎？</string>
-    <string name="processing_request">您的請求正在處理中</string>
+    <string name="processing_request">正在處理您的請求</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">您尚未登入！</string>
     <string name="forgot_mailbox_password">如要重設您的郵箱密碼，請前往 protonmail.com 使用 ProtonMail 網頁版</string>
     <!-- Toast messages -->
-    <string name="error_chrome_disabled">無法載入內容。請啟用 Chrome</string>
+    <string name="error_chrome_disabled">無法載入內容。請使用 Chrome 瀏覽器</string>
     <string name="error_chrome_not_found">無法載入內容。請安裝 Chrome</string>
     <string name="messages_load_failure">無法擷取郵件</string>
     <string name="message_details_load_failure">無法擷取郵件的詳細資訊</string>
     <string name="no_more_messages">沒有其他郵件了</string>
-    <string name="mailbox_login_failure">無法登入到信箱</string>
+    <string name="mailbox_login_failure">無法登入信箱</string>
     <string name="login_failure">登入失敗</string>
     <string name="incorrect_key_parameters">不正確的關鍵參數</string>
     <string name="not_signed_up">您尚未註冊 ProtonMail Android 測試版</string>
@@ -142,14 +142,14 @@
     <string name="update_app_title">需要更新</string>
     <string name="update_app">Protonmail 應用程式必須更新才可使用</string>
     <string name="you_are_offline">您現正離線</string>
-    <string name="api_offline_title">Protonmail API 離線中</string>
-    <string name="api_offline">ProtonMail 目前處於離線狀態，請到 Twitter 檢查目前狀態：https://twitter.com/protonmail</string>
-    <string name="contact_saved">已儲存聯絡人</string>
-    <string name="contact_saved_offline">聯絡人已儲存，當可連線時將會同步</string>
+    <string name="api_offline_title">ProtonMail API 正處於離線狀態：</string>
+    <string name="api_offline">ProtonMail 目前處於離線狀態，請前往我們的 Twitter 查看最新狀況：https://twitter.com/ProtonMail</string>
+    <string name="contact_saved">聯絡人已儲存</string>
+    <string name="contact_saved_offline">聯絡人已儲存，將在連線到網際網路時同步</string>
     <string name="contact_exist">聯絡人電郵地址已經存在</string>
     <string name="invalid_email">電郵地址無效</string>
     <string name="duplicate_email">電子郵件地址是重複的</string>
-    <string name="invalid_code">代碼無效</string>
+    <string name="invalid_code">驗證碼無效</string>
     <string name="message_drafted">訊息發送失敗。你的郵件已保存在「草稿」資料夾中</string>
     <string name="attachment_failed_message_drafted">請移除並重新附加「%s」然後再次寄送郵件。您可以在「草稿」資料夾中找到您的郵件。</string>
     <string name="open_drawer">打開</string>
@@ -170,7 +170,7 @@
     <string name="trash">垃圾桶</string>
     <string name="spam">垃圾郵件</string>
     <string name="all_mail">所有郵件</string>
-    <string name="contacts">聯絡人</string>
+    <string name="contacts">通訊錄</string>
     <string name="search_contacts">搜尋聯絡人</string>
     <string name="fetching_contacts">正在擷取 Protonmail 聯絡人……</string>
     <string name="fetching_contacts_success">已成功更新聯絡人</string>
@@ -180,8 +180,8 @@
     <string name="compose">撰寫</string>
     <string name="compose_message">撰寫郵件</string>
     <string name="empty_folder">清空資料夾</string>
-    <string name="view_headers">檢視標頭</string>
-    <string name="message_headers">郵件標頭</string>
+    <string name="view_headers">查看標題</string>
+    <string name="message_headers">郵件標題</string>
     <string name="delete_message">刪除郵件</string>
     <string name="delete_messages">刪除郵件</string>
     <string name="add_label">加上標籤</string>
@@ -189,8 +189,8 @@
     <string name="remove_star">移除星號</string>
     <string name="mark_read">標記為已讀</string>
     <string name="mark_unread">標記為未讀</string>
-    <string name="move_to_archive">移動到封存</string>
-    <string name="move_to_trash">移動到垃圾桶</string>
+    <string name="move_to_archive">移至「封存」</string>
+    <string name="move_to_trash">移至垃圾桶</string>
     <string name="move_to_spam">移動到垃圾郵件</string>
     <string name="move_to_inbox">移動到收件匣</string>
     <string name="move_to">移動至…</string>

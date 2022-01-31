@@ -52,7 +52,7 @@
     <!-- region Composer -->
     <string name="composer_bcc">Κρυφή κοιν: </string>
     <string name="composer_cc">Κοιν:</string>
-    <string name="composer_compose_email">Σύνταξη email</string>
+    <string name="composer_compose_email">Σύνταξη μηνύματος</string>
     <string name="composer_from">Από:</string>
     <string name="composer_subject">Θέμα:</string>
     <string name="composer_to">Προς:</string>
@@ -86,14 +86,14 @@
     <string name="settings_confirm_pin_code_title">Επανάληψη κωδικού PIN</string>
     <string name="settings_pins_dont_match">Οι κωδικοί PIN πρέπει να ταιριάζουν!</string>
     <string name="settings_enter_pin_code_title">Εισαγωγή κωδικού ΡΙΝ</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB χρησιμοποιούνται)</string>
+    <string name="settings_storage_limit_unlimited_value">Απεριόριστα (%1$.2f MB χρησιμοποιούνται)</string>
     <string name="settings_swipe_settings_info">Ρύθμιση χειρονομιών συρσίματος για πρόσβαση στις πιο χρησιμοποιούμενες ενέργειες.</string>
     <string name="settings_swipe_left_to_right">Αριστερά προς δεξιά</string>
     <string name="settings_swipe_right_to_left">Δεξιά προς αριστερά</string>
-    <string name="settings_swipe_saving">Saving Swipe action…</string>
-    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
+    <string name="settings_swipe_saving">Γίνεται αποθήκευση ενέργειας Ολίσθησης…</string>
+    <string name="settings_swipe_generic_error">Αδυναμία αποθήκευσης ενέργειας Ολίσθησης</string>
+    <string name="settings_swipe_offline_error">Η ενέργεια Ολίσθησης δεν γίνεται να αποθηκευτεί εκτός σύνδεσης</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Θέμα εφαρμογής</string>
@@ -177,8 +177,8 @@
     <string name="fetching_contacts_failure">Αδύνατη η ενημέρωση των επαφών</string>
     <string name="search_messages">Αναζήτηση μηνυμάτων</string>
     <string name="no_search_results">Δεν βρέθηκαν αποτελέσματα</string>
-    <string name="compose">Σύνθεση</string>
-    <string name="compose_message">Σύνθεση μηνύματος</string>
+    <string name="compose">Σύνταξη</string>
+    <string name="compose_message">Σύνταξη μηνύματος</string>
     <string name="empty_folder">Άδειασμα Φακέλου</string>
     <string name="view_headers">Προβολή Headers</string>
     <string name="message_headers">Header μηνύματος</string>
@@ -646,7 +646,7 @@
     <string name="load_embedded_images_failed">Η φόρτωση των ενσωματωμένων εικόνων απέτυχε.</string>
     <string name="unlimited">Απεριόριστο</string>
     <string name="local_storage_cleared">Έγινε εκκαθάριση στην τοπική αποθήκευση</string>
-    <string name="recipient_popup_compose_to">Σύνθεση σε</string>
+    <string name="recipient_popup_compose_to">Σύνταξη προς</string>
     <string name="recipient_popup_copy_address">Αντιγραφή διεύθυνσης</string>
     <string name="recipient_popup_see_details">Προβολή στοιχείων επαφής</string>
     <string name="send_with_untrusted_key_title">Θέλετε να κάνετε αποστολή με ένα μη αξιόπιστο κλειδί;</string>
@@ -893,7 +893,7 @@
     <string name="swipe_action_archive">Το μήνυμα αρχειοθετήθηκε</string>
     <string name="swipe_action_archive_short">Αρχειοθέτηση</string>
     <string name="swipe_action_mark_read">Το μήνυμα επισημάνθηκε ως αναγνωσμένο</string>
-    <string name="swipe_action_mark_read_short">Ανάγνωση</string>
+    <string name="swipe_action_mark_read_short">Διαβασμένο</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Το μήνυμα μεταφέρθηκε στον κάδο απορριμμάτων</item>
         <item quantity="other">Τα μηνύματα μεταφέρθηκαν στον κάδο</item>
@@ -949,8 +949,8 @@
     <string name="switch_to_account">Αλλάξτε σε %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
-    <string name="shortcut_compose">Σύνθεση</string>
-    <string name="shortcut_compose_new_message">Σύνθεση νέου μηνύματος</string>
+    <string name="shortcut_compose">Σύνταξη</string>
+    <string name="shortcut_compose_new_message">Σύνταξη νέου μηνύματος</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Κοινά προβλήματα σύνδεσης και λύσεις</string>
@@ -992,7 +992,7 @@
     <string name="label_as">Ετικέτα ως…</string>
     <string name="mark_as_unread">Επισήμανση ως μη αναγνωσμένο</string>
     <string name="mark_as_read">Επισήμανση ως αναγνωσμένο</string>
-    <string name="mark_as_read_unread">Σήμανση ως αναγνωσμένου/μη αναγνωσμένου</string>
+    <string name="mark_as_read_unread">Σήμανση ως διαβασμένο ή μη</string>
     <string name="move_message">Μετακίνηση μηνύματος</string>
     <string name="manage">Διαχείριση</string>
     <string name="message_from">Μήνυμα από %s</string>
