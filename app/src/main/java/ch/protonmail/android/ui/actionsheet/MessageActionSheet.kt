@@ -280,13 +280,21 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 dismiss()
             }
             detailsActionsViewInLightModeTextView.apply {
-                isVisible = false
+                isVisible = actionsTarget in arrayOf(
+                    ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
+                    ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+                ) && viewModel.isAppInDarkMode(requireContext()) &&
+                    viewModel.isWebViewInDarkMode(requireContext(), messageIds[0])
                 setOnClickListener {
                     TODO()
                 }
             }
             detailsActionsViewInDarkModeTextView.apply {
-                isVisible = false
+                isVisible = actionsTarget in arrayOf(
+                    ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
+                    ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+                ) && viewModel.isAppInDarkMode(requireContext()) &&
+                    !viewModel.isWebViewInDarkMode(requireContext(), messageIds[0])
                 setOnClickListener {
                     TODO()
                 }

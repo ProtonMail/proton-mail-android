@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.ui.actionsheet
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,16 +34,20 @@ import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
+import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import javax.inject.Inject
@@ -60,7 +65,10 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private val changeMessagesStarredStatus: ChangeMessagesStarredStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val conversationModeEnabled: ConversationModeEnabled,
-    private val accountManager: AccountManager
+    private val isAppInDarkMode: IsAppInDarkMode,
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference,
+    private val accountManager: AccountManager,
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
 
@@ -415,6 +423,15 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(
         MessageActionSheet.EXTRA_ARG_ACTION_TARGET
     ) ?: ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+
+    fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
+
+    fun isWebViewInDarkMode(context: Context, messageId: String) = runBlocking(dispatcherProvider.Io) {
+        accountManager.getPrimaryUserId().first()?.let {
+            return@runBlocking getViewInDarkModeMessagePreference(context, it, messageId)
+        }
+        return@runBlocking false
+    }
 
     private fun computeMoveSectionState(
         actionsTarget: ActionSheetTarget,

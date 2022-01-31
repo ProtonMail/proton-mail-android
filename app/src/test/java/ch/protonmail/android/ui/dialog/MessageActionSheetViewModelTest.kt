@@ -35,9 +35,11 @@ import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetState
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
+import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -54,6 +56,7 @@ import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -90,6 +93,10 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @MockK
     private lateinit var deleteConversations: DeleteConversations
 
+    private val isAppInDarkMode: IsAppInDarkMode = mockk()
+
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference = mockk()
+
     @MockK
     private lateinit var accountManager: AccountManager
 
@@ -116,7 +123,10 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             changeMessagesStarredStatus,
             changeConversationsStarredStatus,
             conversationModeEnabled,
-            accountManager
+            isAppInDarkMode,
+            getViewInDarkModeMessagePreference,
+            accountManager,
+            TestDispatcherProvider
         )
     }
 
