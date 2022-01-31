@@ -87,7 +87,7 @@
     <string name="settings_pins_dont_match">I codici PIN devono corrispondere!</string>
     <string name="settings_enter_pin_code_title">Inserisci il codice PIN</string>
     <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB utilizzati)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_unlimited_value">Illimitato (%1$.2f MB utilizzati)</string>
     <string name="settings_swipe_settings_info">Configura i gesti di scorrimento per accedere alle azioni più usate.</string>
     <string name="settings_swipe_left_to_right">Da sinistra a destra</string>
     <string name="settings_swipe_right_to_left">Da destra a sinistra</string>
@@ -292,7 +292,7 @@
     <string name="attachment_limit">Gli allegati sono limitati a %1$s. Il totale degli allegati sarebbe %2$s.</string>
     <string name="sending_message">Invio del messaggio...</string>
     <string name="sending_message_offline">Non in linea, messo in coda per l\'invio più tardi...</string>
-    <string name="go_to_inbox">Va\' alla mia posta in arrivo</string>
+    <string name="go_to_inbox">Vai alla mia posta in arrivo</string>
     <string name="message_sent">Messaggio inviato</string>
     <string name="message_failed">Errore nell\'invio del messaggio</string>
     <string name="message_sending_failures">%d invio del messaggio fallito</string>
@@ -442,7 +442,7 @@
     <string name="empty_recovery_email_question">Attenzione: non ha impostato un\'email di recupero, il recupero dell\'account è impossibile se dimentica la password. Procedere senza email di recupero?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Scade il %s</string>
-    <string name="no_payment_methods">Non ha salvato alcun metodo di pagamento.</string>
+    <string name="no_payment_methods">Non hai salvato alcun metodo di pagamento.</string>
     <string name="edit_payment_methods">Per favore, effettui il login su protonmail.com per modificare le informazioni di fatturazione.</string>
     <string name="message_not_loaded">Messaggio non caricato</string>
     <string name="signature_text">Testo della firma</string>

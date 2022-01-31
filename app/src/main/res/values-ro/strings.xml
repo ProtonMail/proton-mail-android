@@ -86,8 +86,8 @@
     <string name="settings_confirm_pin_code_title">Repere cod PIN</string>
     <string name="settings_pins_dont_match">Codurile PIN trebuie să corespundă!</string>
     <string name="settings_enter_pin_code_title">Introduceţi codul PIN</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB folosit)</string>
+    <string name="settings_storage_limit_unlimited_value">Nelimitat (%1$.2f MB folosiți)</string>
     <string name="settings_swipe_settings_info">Configurare gesturi de glisare pentru a accesa cele mai utilizate acțiuni.</string>
     <string name="settings_swipe_left_to_right">De la stânga la dreapta</string>
     <string name="settings_swipe_right_to_left">De la dreapta la stânga</string>

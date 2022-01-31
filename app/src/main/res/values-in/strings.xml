@@ -430,7 +430,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="storage_mb">Penyimpanan %d MB</string>
     <string name="max_addresses">Hingga %d alias email</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d Gambar Tertanam</string>
+    <string name="inline_header">%d Gambar yang Tersemat</string>
     <string name="select">Pilih</string>
     <string name="warning">Peringatan</string>
     <string name="empty_recovery_email_question">Peringatan: Anda tidak mengatur email pemulihan. Jika Anda melupakan sandi, email tidak mungkin dapat dipulihkan. Lanjutkan tanpa alamat email pemulihan?</string>
@@ -442,24 +442,24 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="signature_text">Teks Tanda Tangan</string>
     <string name="available_addresses">Alamat yang tersedia</string>
     <string name="inactive_addresses">Alamat tidak aktif</string>
-    <string name="not_set">Tidak diatur</string>
+    <string name="not_set">Belum Ditentukan</string>
     <string name="edit_notification_email">Sunting Alamat Email Pemulihan</string>
     <string name="available_swipe_actions">Tindakan yang tersedia</string>
     <string name="no_available_addresses">Anda tidak memiliki alamat yang tersedia</string>
-    <string name="no_inactive_addresses">Anda tidak memiliki alamat tidak aktif</string>
+    <string name="no_inactive_addresses">Anda tidak memiliki alamat yang tidak aktif</string>
     <string name="label_add_new">Tambahkan Label Baru</string>
     <string name="available_labels">Label yang tersedia</string>
     <string name="choose_label_color">Pilih Warna Label</string>
     <string name="save_new_label">Simpan Label Baru</string>
-    <string name="delete_selected">Hapus yang Dipilih</string>
+    <string name="delete_selected">Hapus Pilihan</string>
     <string name="pin_not_activated">PIN tidak diaktifkan</string>
     <string name="available_options">Pilihan yang tersedia</string>
     <string name="change_recovery_email">Ubah Email Pengaturan Ulang/Notifikasi</string>
     <string name="background_sync_subtitle">Jika opsi ini diaktifkan, aplikasi akan disinkronkan dengan server di latar belakang. Menonaktifkan fitur ini akan menonaktifkan notifikasi push.</string>
     <string-array name="notification_options">
-        <item>Tidak ada getaran atau suara</item>
-        <item>Suara tanpa getaran</item>
-        <item>Getaran tanpa suara</item>
+        <item>Tanpa getaran ataupun suara</item>
+        <item>Hanya suara</item>
+        <item>Hanya getaran</item>
         <item>Getaran dan suara</item>
     </string-array>
     <string-array name="account_type_names">
@@ -568,7 +568,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="folders_manager">Pengelola Folder</string>
     <string name="folder_add_new">Tambahkan Folder Baru</string>
     <string name="folder_name">Nama Folder</string>
-    <string name="available_folders">Folder yang Tersedia</string>
+    <string name="available_folders">Folder-Folder yang Tersedia</string>
     <string name="choose_folder_color">Pilih Warna Folder</string>
     <string name="folder_created">Folder Dibuat</string>
     <string name="folder_invalid">Folder tidak dibuat karena nama tidak valid.</string>
@@ -588,7 +588,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="saving">Menyimpan...</string>
     <string name="update_folder">Perbarui Folder</string>
     <string name="spam_score_100">Email ini tampaknya berasal dari alamat ProtonMail tetapi berasal dari luar sistem kami dan gagal memenuhi persyaratan autentikasi kami. Ini mungkin palsu atau diteruskan dengan tidak benar!</string>
-    <string name="spam_score_101">Email ini gagal memenuhi persyaratan autentikasi domainnya. Ini mungkin palsu atau diteruskan dengan tidak benar!</string>
+    <string name="spam_score_101">Email ini tidak memenuhi syarat otentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_102">Pesan ini mungkin merupakan upaya phishing. Mohon periksa pengirim dan konten untuk memastikan mereka sah. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">PELAJARI LEBIH LANJUT</a>
     </string>
     <string name="print_from_template">Dari: %s</string>
@@ -605,9 +605,9 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="address_postcode">Kode pos</string>
     <string name="address_po_box">PO Box</string>
     <string name="address_country">Negara</string>
-    <string name="recheck_delinquency">Periksa Lagi</string>
+    <string name="recheck_delinquency">Periksa Kembali</string>
     <string name="close_app">Tutup Aplikasi</string>
-    <string name="empty_subject">(Tanpa judul)</string>
+    <string name="empty_subject">(Tanpa Judul)</string>
     <string name="empty_recipients">(Tidak ada penerima)</string>
     <string name="contacts_unknown">Tidak diketahui</string>
     <string name="learn_more">
@@ -630,14 +630,14 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="pm_me_changed">Mengirim pesan dari alamat @pm.me adalah fitur berbayar. Pesan Anda akan dikirim dari alamat bawaan Anda %s</string>
     <string name="pm_me_can_not_be_default">Tingkatkan ke paket berbayar untuk dapat mengatur alamat %s Anda sebagai yang utama</string>
     <string name="dont_remind_again">Jangan ingatkan saya lagi</string>
-    <string name="load_embedded_images">Muat gambar yang disematkan</string>
+    <string name="load_embedded_images">Muat gambar-gambar yang tersemat</string>
     <string name="remove_password">Hapus Kata Sandi</string>
     <string name="remove_password_question">Hapus Kata Sandi?</string>
     <string name="attachment_storage_value_current">Sedang dipilih: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Sedang dipilih: Tidak terbatas</string>
     <string name="attachment_offline_max_storage">Atur jumlah ruang penyimpanan maksimum yang dapat digunakan ProtonMail di perangkat seluler Anda.</string>
-    <string name="load_embedded_images_failed_no_network">Gagal memuat gambar yang disematkan. Mohon periksa koneksi jaringan Anda.</string>
-    <string name="load_embedded_images_failed">Gagal memuat gambar yang disematkan.</string>
+    <string name="load_embedded_images_failed_no_network">Gagal memuat gambar-gambar yang tersemat. Mohon periksa koneksi internet Anda.</string>
+    <string name="load_embedded_images_failed">Gagal memuat gambar-gambar yang tersemat.</string>
     <string name="unlimited">Tanpa Batas</string>
     <string name="local_storage_cleared">Ruang penyimpanan lokal dikosongkan</string>
     <string name="recipient_popup_compose_to">Tulis untuk</string>
@@ -758,9 +758,9 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="storage_limit_alert">Batas penyimpanan tercapai. Tidak dapat mengirim atau menerima email.
         Tekan untuk mempelajari lebih lanjut.</string>
     <string name="storage_limit_warning_title">Peringatan</string>
-    <string name="storage_limit_reached_text">Kapasitas penyimpanan Anda sudah mencapai 100%. Anda
-        tidak akan dapat menerima email kecuali Anda menghapus email lainnya atau membayar penyimpanan
-        lebih banyak.</string>
+    <string name="storage_limit_reached_text">Kuota penyimpanan Anda telah 100% terpakai. Anda
+        tidak akan lagi dapat menerima email-email baru kecuali Anda menghapus email-email lama atau membeli kuota penyimpanan
+        tambahan.</string>
     <string name="storage_limit_approaching_text">Kapasitas penyimpanan Anda sudah mencapai 90%.
         Silakan pertimbangkan untuk membebaskan ruang atau membayar penyimpanan lebih sebelum kapasitas penyimpanan Anda habis.</string>
     <!-- endregion -->
@@ -862,7 +862,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="auto_download_messages_subtitle">Ketika opsi ini diaktifkan, pesan akan diunduh secara otomatis setiap kali anda menerima pemberitahuan email baru (hal ini akan menggunakan lebih banyak data). Jika opsi ini tidak diaktifkan, pesan hanya akan diunduh saat anda membuka email. (Catatan: dengan opsi mana pun, jika anda menghapus cache atau keluar, anda tidak akan dapat membaca badan pesan saat offline.)</string>
     <string name="settings_background_sync">Sinkronkan di Latar Belakang</string>
     <string name="settings_auto_show_images">Tampilkan Otomatis Gambar Jarak Jauh</string>
-    <string name="settings_auto_show_embedded_images">Tampilkan Otomatis Gambar yang Disematkan</string>
+    <string name="settings_auto_show_embedded_images">Muat Gambar-Gambar yang Tersemat Secara Otomatis</string>
     <string name="settings_prevent_taking_screenshots">Cegah pengambilan Tangkapan layar</string>
     <string name="hyperlink_confirmation">Minta tautan konfirmasi</string>
     <string name="labels_and_folders">Label &amp; folder </string>
@@ -876,7 +876,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="swipe_action_trash">Pesan dipindahkan ke sampah</string>
     <string name="swipe_action_trash_short">Pindahkan ke Sampah</string>
     <string name="swipe_action_star">Pesan berbintang diperbarui</string>
-    <string name="swipe_action_star_short">Perbarui Bintang</string>
+    <string name="swipe_action_star_short">Perbarui bintang</string>
     <string name="swipe_action_spam">Pesan ditandai sebagai spam</string>
     <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Pesan diarsipkan</string>

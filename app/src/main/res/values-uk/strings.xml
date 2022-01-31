@@ -478,7 +478,7 @@
     <string name="pin_not_activated">ПІН не активовано</string>
     <string name="available_options">Доступні варіанти</string>
     <string name="change_recovery_email">Змінити адресу е-пошти для відновлення</string>
-    <string name="background_sync_subtitle">Якщо цю функцію увімкнено, програма синхронізуватиметься з сервером на задньому плані. Вимкнення цієї функції також вимкне push-сповіщення.</string>
+    <string name="background_sync_subtitle">Якщо цю функцію увімкнено, програма синхронізуватиметься з сервером у фоновому режимі. Вимкнення цієї функції також вимкне push-сповіщення.</string>
     <string-array name="notification_options">
         <item>Без вібрації чи звуку</item>
         <item>Звук без вібрації</item>
@@ -709,21 +709,21 @@
     <string name="channel_name_account">Обліковий запис</string>
     <string name="channel_description_account">Стан облікового запису</string>
     <string name="channel_name_ongoing_operations">Поточні операції</string>
-    <string name="channel_description_ongoing_operations">Показує всі поточні операції, такі як
-		завантаження повідомлення на задньому плані</string>
+    <string name="channel_description_ongoing_operations">Показує всі поточні операції, як-от
+		завантаження повідомлення у фоновому режимі</string>
     <string name="retrieving_notifications">Отримання сповіщень</string>
     <string name="report_phishing">Звіт про шахрайство</string>
     <string name="print">Друк</string>
     <string name="phishing_dialog_title">Підтвердити звіт про шахрайство</string>
     <string name="phishing_dialog_message">Звітуючи про спробу шахрайства, ви надішлете це повідомлення нам,
-		щоб ми змогли його проаналізувати і вдосконалити наші фільтри. Це означає, що ми матимемо змогу
-		дивитися повний вміст цього повідомлення.</string>
+		щоб ми змогли його проаналізувати та вдосконалити наші фільтри. Це означає, що ми зможемо
+		переглянути весь вміст цього повідомлення.</string>
     <string name="phishing_report_send_message_moved_to_spam">Звіт надіслано. Повідомлення переміщено до спаму.</string>
     <string name="cannot_send_report_send">Неможливо надіслати звіт</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Додати фото</string>
-    <string name="contact_display_name">Ім\'я, яке відображається</string>
+    <string name="contact_display_name">Ім\'я</string>
     <string name="add_new_email">Додати адресу е-пошти</string>
     <string name="no_groups">Немає груп</string>
     <string name="contact_vcard_note">Нотатка</string>
@@ -731,7 +731,7 @@
     <string name="create_contact_group">Створити групу контактів</string>
     <string name="edit_contact_group">Редагувати групу контактів</string>
     <string name="contact_groups_manage_members">Керувати учасниками</string>
-    <string name="contact_group_display_name">Ім\'я, яке відображається</string>
+    <string name="contact_group_display_name">Ім\'я</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Додати адресу до груп</string>
     <string name="title_activity_address_chooser">Керувати учасниками</string>
@@ -840,7 +840,7 @@
     <string name="default_address">Типова адреса</string>
     <string name="display_name_n_signature">Ім\'я та підпис</string>
     <string name="display_name">Ім\'я</string>
-    <string name="edit_display_name">Редагувати ім\'я, яке відображається</string>
+    <string name="edit_display_name">Редагувати ім\'я</string>
     <string name="signature">Підпис</string>
     <string name="mobile_footer">Підпис мобільного клієнта</string>
     <string name="edit_mobile_footer">Увімкнути підпис мобільного клієнта</string>
@@ -939,8 +939,8 @@
     <plurals name="action_move_to_archive">
         <item quantity="one">Повідомлення заархівовано</item>
         <item quantity="few">Повідомлення заархівовані</item>
-        <item quantity="many">Повідомлень заархівовані</item>
-        <item quantity="other">Повідомлень заархівовані</item>
+        <item quantity="many">Повідомлення заархівовані</item>
+        <item quantity="other">Повідомлення заархівовані</item>
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Обмеження локального сховища</string>

@@ -610,7 +610,7 @@
     <string name="address_city">Ciudad</string>
     <string name="address_region">Región (estado/provincia)</string>
     <string name="address_postcode">Código postal</string>
-    <string name="address_po_box">PO Box</string>
+    <string name="address_po_box">Apartado de correos</string>
     <string name="address_country">País</string>
     <string name="recheck_delinquency">Verifique nuevamente</string>
     <string name="close_app">Cerrar la aplicación</string>
@@ -818,7 +818,7 @@ compre más
     <string name="mobile_footer">Pie de página móvil</string>
     <string name="edit_mobile_footer">Activar el pie de página móvil</string>
     <string name="default_mobile_footer">Enviado desde el móvil ProtonMail</string>
-    <string name="mobile_footer_is_premium">Cambiar la Firma del Móvil solo está permitido para usuarios de pago</string>
+    <string name="mobile_footer_is_premium">Cambiar el Pie de Página Móvil solo está permitido para usuarios de pago</string>
     <string name="mobile_footer_info">Este pie de página se añade después de su firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>

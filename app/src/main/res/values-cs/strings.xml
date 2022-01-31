@@ -86,8 +86,8 @@
     <string name="settings_confirm_pin_code_title">Opakovat PIN kód</string>
     <string name="settings_pins_dont_match">PIN kódy se musí shodovat!</string>
     <string name="settings_enter_pin_code_title">Zadejte PIN kód</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (využíváte %2$.2f MB)</string>
+    <string name="settings_storage_limit_unlimited_value">Neomezené (využíváte %1$.2f MB)</string>
     <string name="settings_swipe_settings_info">Nastavte gesta pro přístup k nejpoužívanějším akcím.</string>
     <string name="settings_swipe_left_to_right">Zleva doprava</string>
     <string name="settings_swipe_right_to_left">Zprava doleva</string>
