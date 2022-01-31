@@ -55,8 +55,9 @@ class PinLockManager @Inject constructor(
         callingActivity.startActivity(intent)
     }
 
-    private fun isPinScreenActivity(activity: Activity) =
-        activity is ValidatePinActivity ||
-            activity is CreatePinActivity ||
-            activity is ChangePinActivity
+    private fun isPinScreenActivity(activity: Activity): Boolean =
+        when (activity) {
+            is CreatePinActivity, is ChangePinActivity, is ValidatePinActivity -> true
+            else -> false
+        }
 }

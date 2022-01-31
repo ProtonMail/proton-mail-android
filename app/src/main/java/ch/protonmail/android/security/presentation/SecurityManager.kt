@@ -47,6 +47,7 @@ import javax.inject.Singleton
 class SecurityManager @Inject constructor(
     context: Context,
     private val pinLockManager: PinLockManager,
+    private val screenshotManager: ScreenshotManager,
     observeIsPinLockEnabled: ObserveIsPinLockEnabled,
     observeIsPreventTakingScreenshots: ObserveIsPreventTakingScreenshots,
     private val getElapsedRealTimeMillis: GetElapsedRealTimeMillis,
@@ -62,7 +63,7 @@ class SecurityManager @Inject constructor(
         observeIsPinLockEnabled(),
         observeIsPreventTakingScreenshots()
     ) { (isPinLockEnabled, isPreventTakingScreenshots) -> isPinLockEnabled || isPreventTakingScreenshots }
-        .onEach { isPinLockEnabled -> currentActivity.get()?.toggleSecureScreen(isSecure = isPinLockEnabled) }
+        .onEach { isSecure -> currentActivity.get()?.toggleSecureScreen(isSecure) }
         .stateIn(processLifecycleOwner.lifecycleScope, SharingStarted.Eagerly, false)
 
     private val appLifecycleObserver = object : DefaultLifecycleObserver {
@@ -119,7 +120,10 @@ class SecurityManager @Inject constructor(
     }
 
     private fun Activity.toggleSecureScreen(isSecure: Boolean) {
-        if (isSecure) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        if (isSecure || screenshotManager.shouldPreventScreenshot(this)) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
     }
 }
