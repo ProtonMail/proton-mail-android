@@ -24,6 +24,8 @@ import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.mapNotNullAsync
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,35 +39,25 @@ class FetchPublicKeys @Inject constructor(
     suspend operator fun invoke(
         requests: List<FetchPublicKeysRequest>
     ): List<FetchPublicKeysResult> = withContext(dispatchers.Io) {
-        val result = mutableListOf<FetchPublicKeysResult>()
-        for (request in requests) {
+        requests.mapNotNullAsync { request ->
             val publicKeys = getPublicKeys(request.emails.toSet())
-            if (publicKeys.isNotEmpty()) {
-                result.add(FetchPublicKeysResult(publicKeys, request.recipientsType))
-            }
+            if (publicKeys.isEmpty()) null
+            else FetchPublicKeysResult(publicKeys, request.recipientsType)
         }
-        result
     }
 
     private suspend fun getPublicKeys(emailSet: Set<String>): Map<String, String> {
-        val result = mutableMapOf<String, String>()
-        for (email in emailSet) {
-            runCatching {
-                api.getPublicKeys(email)
-            }
+        return emailSet.filterNot { it == CODE_KEY }.mapNotNullAsync { email ->
+            runCatching { api.getPublicKeys(email) }
                 .fold(
-                    onSuccess = {
-                        result[email] = ""
-                        for (key in it.keys) {
-                            if (key.isAllowedForSending) {
-                                result[email] = key.publicKey
-                            }
-                        }
+                    onSuccess = { response ->
+                        email to (response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING)
                     },
-                    onFailure = { Timber.w(it, "Unable to fetch public keys") }
+                    onFailure = {
+                        Timber.w(it, "Unable to fetch public keys")
+                        null
+                    }
                 )
-        }
-        result.remove(CODE_KEY)
-        return result
+        }.toMap()
     }
 }
