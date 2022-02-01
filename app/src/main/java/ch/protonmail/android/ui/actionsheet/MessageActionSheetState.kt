@@ -26,8 +26,21 @@ sealed class MessageActionSheetState {
     object Initial : MessageActionSheetState()
 
     data class Data(
+        val manageSectionState: ManageSectionState,
         val moveSectionState: MoveSectionState
     ) : MessageActionSheetState()
+
+    data class ManageSectionState(
+        val mailboxItemIds: List<String>,
+        val messageLocation: Constants.MessageLocationType,
+        val currentLocationId: String,
+        val actionsTarget: ActionSheetTarget,
+        val showStarAction: Boolean,
+        val showUnstarAction: Boolean,
+        val showMarkReadAction: Boolean,
+        val showViewInLightModeAction: Boolean,
+        val showViewInDarkModeAction: Boolean
+    )
 
     data class MoveSectionState(
         val mailboxItemIds: List<String>,
