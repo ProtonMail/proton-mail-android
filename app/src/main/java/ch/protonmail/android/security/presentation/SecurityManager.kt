@@ -33,7 +33,6 @@ import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
 import ch.protonmail.android.utils.EmptyActivityLifecycleCallbacks
 import ch.protonmail.android.utils.extensions.app
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
@@ -59,10 +58,7 @@ class SecurityManager @Inject constructor(
     private var currentActivity = WeakReference<Activity>(null)
     private var lastForegroundTime: Long = 0
 
-    private val shouldUseSecureScreen = combine(
-        observeIsPinLockEnabled(),
-        observeIsPreventTakingScreenshots()
-    ) { (isPinLockEnabled, isPreventTakingScreenshots) -> isPinLockEnabled || isPreventTakingScreenshots }
+    private val shouldUseSecureScreen = observeIsPreventTakingScreenshots()
         .onEach { isSecure -> currentActivity.get()?.toggleSecureScreen(isSecure) }
         .stateIn(processLifecycleOwner.lifecycleScope, SharingStarted.Eagerly, false)
 
