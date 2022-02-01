@@ -91,8 +91,8 @@ import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
-import ch.protonmail.android.pinlock.presentation.PinLockManagerInitializer;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
+import ch.protonmail.android.security.presentation.SecurityManagerInitializer;
 import ch.protonmail.android.servers.notification.NotificationServer;
 import ch.protonmail.android.settings.domain.usecase.ApplyAppThemeFromSettings;
 import ch.protonmail.android.utils.CoreTimberLogger;
@@ -228,7 +228,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         applyAppThemeFromSettings.blocking();
 
         AppInitializer.getInstance(this)
-                .initializeComponent(PinLockManagerInitializer.class);
+                .initializeComponent(SecurityManagerInitializer.class);
 
         accountManagerUserIdMigration.blocking();
         coreAccountManagerMigration.migrateBlocking();

@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities;
 
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
 import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
 import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
 
@@ -28,11 +27,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -67,8 +64,6 @@ import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.feature.account.AccountStateManager;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
-import ch.protonmail.android.settings.pin.ValidatePinActivity;
-import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
 import ch.protonmail.android.worker.FetchMailSettingsWorker;
@@ -215,31 +210,12 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         return false;
     }
 
-    protected boolean secureContent() {
-        return false;
-    }
-
-    protected void enableScreenshotProtector() {
-    }
-
-    protected void disableScreenshotProtector() {
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
 
         User user = mUserManager.getCurrentLegacyUser();
 
-        // Enable secure mode if screenshots are disabled, else disable it
-        if (isPreventingScreenshots() || user != null && user.isPreventTakingScreenshots()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
-        }
-        if (user != null && user.isPreventTakingScreenshots()) {
-             enableScreenshotProtector();
-        }
         app.setAppInBackground(false);
         networkConfigurator.setNetworkConfiguratorCallback(this);
 
@@ -278,12 +254,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Override
     protected void onStop() {
         super.onStop();
-        // Enable secure mode for hide content from recent if pin is enabled, else disable it so
-        // content will be visible in recent
-        User currentUser = mUserManager.getCurrentLegacyUser();
-        if (currentUser != null && currentUser.isUsePin())
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
-        else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         if (!(this instanceof AddAttachmentsActivity)) {
             activateScreenProtector();

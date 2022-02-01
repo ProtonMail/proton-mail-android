@@ -132,19 +132,6 @@
             app:layout_constraintRight_toRightOf="@id/mailboxSwipeRefreshLayout"
             app:layout_constraintTop_toTopOf="@id/mailboxSwipeRefreshLayout" />
 
-        <View
-            android:id="@+id/screenShotPreventerView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/background_norm"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include layout="@layout/navigation_drawer" />

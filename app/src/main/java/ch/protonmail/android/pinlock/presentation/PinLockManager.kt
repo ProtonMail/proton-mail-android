@@ -22,71 +22,32 @@ package ch.protonmail.android.pinlock.presentation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
 import ch.protonmail.android.activities.AddAttachmentsActivity
 import ch.protonmail.android.pinlock.domain.usecase.ShouldShowPinLockScreen
 import ch.protonmail.android.settings.pin.ChangePinActivity
 import ch.protonmail.android.settings.pin.CreatePinActivity
 import ch.protonmail.android.settings.pin.ValidatePinActivity
-import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
-import ch.protonmail.android.utils.EmptyActivityLifecycleCallbacks
-import ch.protonmail.android.utils.extensions.app
-import kotlinx.coroutines.runBlocking
 import me.proton.core.presentation.app.AppLifecycleProvider
-import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class PinLockManager @Inject constructor(
     private val context: Context,
-    private val getElapsedRealTimeMillis: GetElapsedRealTimeMillis,
     private val shouldShowPinLockScreen: ShouldShowPinLockScreen
-) : DefaultLifecycleObserver {
+) {
 
-    private var appState: AppLifecycleProvider.State = AppLifecycleProvider.State.Background
-    private var lastForegroundTime: Long = 0
+    suspend fun shouldLock(
+        appState: AppLifecycleProvider.State,
+        currentActivity: Activity,
+        lastForegroundTime: Long
+    ): Boolean = shouldShowPinLockScreen(
+        wasAppInBackground = appState == AppLifecycleProvider.State.Background,
+        isPinLockScreenShown = isPinScreenActivity(currentActivity),
+        isAddingAttachments = currentActivity is AddAttachmentsActivity,
+        lastForegroundTime = lastForegroundTime
+    )
 
-    init {
-        context.app.registerActivityLifecycleCallbacks(object : EmptyActivityLifecycleCallbacks {
-
-            override fun onActivityStarted(activity: Activity) {
-                super.onActivityStarted(activity)
-                Timber.v("Activity started")
-
-                @Suppress("BlockingMethodInNonBlockingContext") // This needs to be run blocking, in order to
-                //  prevent the last activity to be displayed
-                runBlocking {
-                    val shouldLock = shouldShowPinLockScreen(
-                        wasAppInBackground = appState == AppLifecycleProvider.State.Background,
-                        isPinLockScreenShown = isPinScreenActivity(activity),
-                        isAddingAttachments = activity is AddAttachmentsActivity,
-                        lastForegroundTime = lastForegroundTime
-                    )
-                    if (shouldLock) {
-                        launchPinLockActivity(activity)
-                    }
-                }
-            }
-        })
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-        super.onStart(owner)
-        Timber.v("App Foreground")
-
-        appState = AppLifecycleProvider.State.Foreground
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        super.onStop(owner)
-        Timber.v("App Background")
-
-        appState = AppLifecycleProvider.State.Background
-        lastForegroundTime = getElapsedRealTimeMillis()
+    fun lock(activity: Activity) {
+        launchPinLockActivity(activity)
     }
 
     private fun launchPinLockActivity(callingActivity: Activity) {
@@ -94,8 +55,9 @@ class PinLockManager @Inject constructor(
         callingActivity.startActivity(intent)
     }
 
-    private fun isPinScreenActivity(activity: Activity) =
-        activity is ValidatePinActivity ||
-            activity is CreatePinActivity ||
-            activity is ChangePinActivity
+    private fun isPinScreenActivity(activity: Activity): Boolean =
+        when (activity) {
+            is CreatePinActivity, is ChangePinActivity, is ValidatePinActivity -> true
+            else -> false
+        }
 }

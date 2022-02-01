@@ -36,7 +36,6 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -57,11 +56,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import ch.protonmail.android.R
-import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
-import ch.protonmail.android.navigation.presentation.NavigationActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.activities.StartMessageDetails
@@ -104,6 +101,8 @@ import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
+import ch.protonmail.android.navigation.presentation.NavigationActivity
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -127,7 +126,6 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
-import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
 import kotlinx.android.synthetic.main.navigation_drawer.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flatMapLatest
@@ -382,16 +380,6 @@ internal class MailboxActivity :
         }
     }
 
-    override fun secureContent(): Boolean = true
-
-    override fun enableScreenshotProtector() {
-        screenShotPreventerView.visibility = View.VISIBLE
-    }
-
-    override fun disableScreenshotProtector() {
-        screenShotPreventerView.visibility = View.GONE
-    }
-
     private fun startObserving() {
         val owner = this
         mailboxViewModel.run {
@@ -529,13 +517,6 @@ internal class MailboxActivity :
         setUpDrawer()
         checkRegistration()
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
-
-        // manually update the flags for preventing screenshots
-        if (isPreventingScreenshots || userManager.currentLegacyUser?.isPreventTakingScreenshots == true) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        }
 
         // Set the elevation to 0 since after account switch the list is scrolled to the top
         setElevationOnToolbarAndStatusView(false)
