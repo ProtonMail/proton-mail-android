@@ -415,7 +415,9 @@ dependencies {
         `uiautomator`,
         `android-activation`,
         `Proton-android-instrumented-test`,
-        `junit-ext`
+        `junit-ext`,
+        `mock-web-server`,
+        `okhttp-tls`
     )
 }
 

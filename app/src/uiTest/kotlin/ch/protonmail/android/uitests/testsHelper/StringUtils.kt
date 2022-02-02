@@ -48,4 +48,9 @@ object StringUtils {
             .map(source::get)
             .joinToString("")
     }
+
+    fun fileContentAsString(
+        fileName: String
+    ): String = InstrumentationRegistry
+        .getInstrumentation().context.assets.open(fileName).bufferedReader().use { it.readText() }
 }
