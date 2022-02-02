@@ -23,124 +23,109 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.PublicKeyBody
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.enumerations.KeyFlag
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.RecipientLocationType
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import kotlin.test.BeforeTest
+import me.proton.core.util.kotlin.EMPTY_STRING
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class FetchPublicKeysTest {
 
-    @MockK
-    private lateinit var api: ProtonMailApiManager
+    private val api: ProtonMailApiManager = mockk()
 
-    private lateinit var fetchPublicKeys: FetchPublicKeys
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        fetchPublicKeys = FetchPublicKeys(api, TestDispatcherProvider)
-    }
+    private val fetchPublicKeys = FetchPublicKeys(api, TestDispatcherProvider)
 
     @Test
-    fun verifyThatEmailKeysAreFetchedCorrectlyWithAllKeysHavingEncryptionFlagSet() = runBlockingTest {
+    fun `email keys are fetched correctly with all keys having encryption flag set`() = runBlockingTest {
         // given
-        val location = Constants.RecipientLocationType.TO
-        val email = "email1@proto.com"
-        val email2 = "email2@proto.com"
-        val emailsList = listOf(email, email2)
-        val publicKey = "publicKey1"
-        val publicKey2 = "publicKey2"
-        val publicKeyBody = PublicKeyBody(KeyFlag.ENCRYPTION_ENABLED.value, publicKey)
-        val publicKeyBody2 = PublicKeyBody(KeyFlag.ENCRYPTION_ENABLED.value, publicKey2)
-        val publicKeyResponse = PublicKeyResponse(
-            0,
-            "mimeType",
-            arrayOf(publicKeyBody)
-        )
-        val publicKeyResponse2 = PublicKeyResponse(
-            1,
-            "mimeType",
-            arrayOf(publicKeyBody2)
-        )
-        coEvery { api.getPublicKeys(email) } returns publicKeyResponse
-        coEvery { api.getPublicKeys(email2) } returns publicKeyResponse2
+        val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
+        val publicKeyResponse2 = buildKeyResponse(PUBLIC_KEY_2, hasEncryptionFlag = true)
+
+        coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse1
+        coEvery { api.getPublicKeys(EMAIL_2) } returns publicKeyResponse2
+
         val expected = listOf(
-            FetchPublicKeysResult.Success(
-                mapOf(email to publicKey, email2 to publicKey2),
-                location
+            buildKeySuccessResult(
+                EMAIL_1 to PUBLIC_KEY_1,
+                EMAIL_2 to PUBLIC_KEY_2
             )
         )
 
         // when
-        val result = fetchPublicKeys.invoke(listOf(FetchPublicKeysRequest(emailsList, location)))
+        val result = fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1, EMAIL_2)))
 
         // then
-        assertNotNull(result)
         assertEquals(expected, result)
     }
 
     @Test
-    fun verifyThatEmailKeysAreFetchedCorrectlyWithJustOneKeyHavingEncryptionFlagSet() = runBlockingTest {
+    fun `email keys are fetched correctly with just one key having encryption flag set`() = runBlockingTest {
         // given
-        val location = Constants.RecipientLocationType.TO
-        val email = "email1@proto.com"
-        val email2 = "email2@proto.com"
-        val emailsList = listOf(email, email2)
-        val publicKey = "publicKey1"
-        val publicKey2 = "publicKey2"
-        val publicKeyBody = PublicKeyBody(KeyFlag.ENCRYPTION_ENABLED.value, publicKey)
-        val publicKeyBody2 = PublicKeyBody(0, publicKey2)
-        val publicKeyResponse = PublicKeyResponse(
-            0,
-            "mimeType",
-            arrayOf(publicKeyBody)
-        )
-        val publicKeyResponse2 = PublicKeyResponse(
-            1,
-            "mimeType",
-            arrayOf(publicKeyBody2)
-        )
-        coEvery { api.getPublicKeys(email) } returns publicKeyResponse
-        coEvery { api.getPublicKeys(email2) } returns publicKeyResponse2
+        val publicKeyResponse = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
+        val publicKeyResponse2 = buildKeyResponse(PUBLIC_KEY_2, hasEncryptionFlag = false)
+
+        coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse
+        coEvery { api.getPublicKeys(EMAIL_2) } returns publicKeyResponse2
+
         val expected = listOf(
-            FetchPublicKeysResult.Success(
-                mapOf(email to publicKey, email2 to ""),
-                location
+            buildKeySuccessResult(
+                EMAIL_1 to PUBLIC_KEY_1,
+                EMAIL_2 to EMPTY_STRING
             )
         )
 
         // when
-        val result = fetchPublicKeys.invoke(listOf(FetchPublicKeysRequest(emailsList, location)))
+        val result = fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1, EMAIL_2)))
 
         // then
-        assertNotNull(result)
         assertEquals(expected, result)
     }
 
     @Test
-    fun verifyThatNoEmailKeysAreEmittedWhenConnectionErrorOccurs() = runBlockingTest {
+    fun `no email keys are emitted when connection error occurs`() = runBlockingTest {
         // given
-        val location = Constants.RecipientLocationType.TO
-        val email = "email1@proto.com"
-        val email2 = "email2@proto.com"
-        val emailsList = listOf(email, email2)
-        val exception = Exception("An error occurred!")
-        coEvery { api.getPublicKeys(email) } throws exception
+        coEvery { api.getPublicKeys(EMAIL_1) } throws Exception("An error occurred!")
         val expected = emptyList<FetchPublicKeysResult>()
 
         // when
-        val result = fetchPublicKeys.invoke(listOf(FetchPublicKeysRequest(emailsList, location)))
+        val result = fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1, EMAIL_2)))
 
         // then
-        assertNotNull(result)
         assertEquals(expected, result)
+    }
+
+    private companion object TestData {
+
+        const val EMAIL_1 = "email1@pm.me"
+        const val EMAIL_2 = "email2@pm.me"
+
+        const val PUBLIC_KEY_1 = "publicKey1"
+        const val PUBLIC_KEY_2 = "publicKey2"
+
+        fun buildKeyRequests(
+            emails: List<String>,
+            location: RecipientLocationType = RecipientLocationType.TO
+        ) = listOf(FetchPublicKeysRequest(emails, location))
+
+        fun buildKeySuccessResult(
+            vararg emailKeyPair: Pair<String, String>,
+            location: RecipientLocationType = RecipientLocationType.TO
+        ) = FetchPublicKeysResult.Success(emailKeyPair.toMap(), location)
+
+        fun buildKeyBody(key: String, hasEncryptionFlag: Boolean) = PublicKeyBody(
+            if (hasEncryptionFlag) KeyFlag.ENCRYPTION_ENABLED.value else 0,
+            key
+        )
+
+        fun buildKeyResponse(key: String, hasEncryptionFlag: Boolean) = PublicKeyResponse(
+            PublicKeyResponse.RecipientType.INTERNAL.value,
+            "mimeType",
+            arrayOf(buildKeyBody(key, hasEncryptionFlag))
+        )
     }
 }
