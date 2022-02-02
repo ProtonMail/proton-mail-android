@@ -50,10 +50,8 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(EMAIL_2) } returns publicKeyResponse2
 
         val expected = listOf(
-            buildKeySuccessResult(
-                EMAIL_1 to PUBLIC_KEY_1,
-                EMAIL_2 to PUBLIC_KEY_2
-            )
+            buildKeySuccessResult(EMAIL_1 to PUBLIC_KEY_1,),
+            buildKeySuccessResult(EMAIL_2 to PUBLIC_KEY_2)
         )
 
         // when
@@ -66,17 +64,15 @@ class FetchPublicKeysTest {
     @Test
     fun `email keys are fetched correctly with just one key having encryption flag set`() = runBlockingTest {
         // given
-        val publicKeyResponse = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
+        val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
         val publicKeyResponse2 = buildKeyResponse(PUBLIC_KEY_2, hasEncryptionFlag = false)
 
-        coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse
+        coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse1
         coEvery { api.getPublicKeys(EMAIL_2) } returns publicKeyResponse2
 
         val expected = listOf(
-            buildKeySuccessResult(
-                EMAIL_1 to PUBLIC_KEY_1,
-                EMAIL_2 to EMPTY_STRING
-            )
+            buildKeySuccessResult(EMAIL_1 to PUBLIC_KEY_1,),
+            buildKeySuccessResult(EMAIL_2 to EMPTY_STRING)
         )
 
         // when
@@ -87,10 +83,17 @@ class FetchPublicKeysTest {
     }
 
     @Test
-    fun `no email keys are emitted when connection error occurs`() = runBlockingTest {
+    fun `return correct results with Success and Error when connection error occurs for some keys`() = runBlockingTest {
         // given
-        coEvery { api.getPublicKeys(EMAIL_1) } throws Exception("An error occurred!")
-        val expected = emptyList<FetchPublicKeysResult>()
+        val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
+
+        coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse1
+        coEvery { api.getPublicKeys(EMAIL_2) } throws Exception("An error occurred!")
+
+        val expected = listOf(
+            buildKeySuccessResult(EMAIL_1 to PUBLIC_KEY_1),
+            buildKeyErrorResult(EMAIL_2)
+        )
 
         // when
         val result = fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1, EMAIL_2)))
@@ -116,6 +119,12 @@ class FetchPublicKeysTest {
             vararg emailKeyPair: Pair<String, String>,
             location: RecipientLocationType = RecipientLocationType.TO
         ) = FetchPublicKeysResult.Success(emailKeyPair.toMap(), location)
+
+        fun buildKeyErrorResult(
+            email: String,
+            location: RecipientLocationType = RecipientLocationType.TO,
+            error: String = "error"
+        ) = FetchPublicKeysResult.Error(email, location, error)
 
         fun buildKeyBody(key: String, hasEncryptionFlag: Boolean) = PublicKeyBody(
             if (hasEncryptionFlag) KeyFlag.ENCRYPTION_ENABLED.value else 0,

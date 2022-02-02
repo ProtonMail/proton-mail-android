@@ -20,6 +20,7 @@
 package ch.protonmail.android.usecase.fetch
 
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.core.Constants.RecipientLocationType
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import kotlinx.coroutines.withContext
@@ -40,24 +41,27 @@ class FetchPublicKeys @Inject constructor(
         requests: List<FetchPublicKeysRequest>
     ): List<FetchPublicKeysResult> = withContext(dispatchers.Io) {
         requests.mapNotNullAsync { request ->
-            val publicKeys = getPublicKeys(request.emails.toSet())
-            if (publicKeys.isEmpty()) null
-            else FetchPublicKeysResult.Success(publicKeys, request.recipientsType)
-        }
+            getPublicKeys(request.emails.toSet(), request.recipientsType)
+        }.flatten()
     }
 
-    private suspend fun getPublicKeys(emailSet: Set<String>): Map<String, String> {
+    private suspend fun getPublicKeys(
+        emailSet: Set<String>,
+        location: RecipientLocationType
+    ): List<FetchPublicKeysResult> {
         return emailSet.filterNot { it == CODE_KEY }.mapNotNullAsync { email ->
             runCatching { api.getPublicKeys(email) }
                 .fold(
                     onSuccess = { response ->
-                        email to (response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING)
+                        val emailKeyPair =
+                            email to (response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING)
+                        FetchPublicKeysResult.Success(mapOf(emailKeyPair), location)
                     },
                     onFailure = {
                         Timber.w(it, "Unable to fetch public keys")
-                        null
+                        FetchPublicKeysResult.Error(email, location, "error")
                     }
                 )
-        }.toMap()
+        }
     }
 }
