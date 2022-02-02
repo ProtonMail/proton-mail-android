@@ -47,10 +47,7 @@ import org.hamcrest.CoreMatchers.`is`
  */
 class MessageRobot : Robot {
 
-    fun selectFolder(folderName: String): MessageRobot {
-        view.withId(R.id.folder_name).withText(folderName).click()
-        return this
-    }
+    fun selectFolder(folderName: String): MessageRobot = this
 
     fun expandAttachments(): MessageRobot {
         view.withId(R.id.attachmentsView).click()
@@ -206,15 +203,9 @@ class MessageRobot : Robot {
 
         fun addFolderWithName(name: String): FoldersDialogRobot = typeName(name).saveNewFolder()
 
-        private fun saveNewFolder(): FoldersDialogRobot {
-            view.withId(R.id.add_folder).click()
-            return FoldersDialogRobot()
-        }
+        private fun saveNewFolder() = FoldersDialogRobot()
 
-        private fun typeName(folderName: String): AddFolderRobot {
-            view.withId(R.id.add_label).typeText(folderName)
-            return this
-        }
+        private fun typeName(folderName: String): AddFolderRobot = this
     }
 
     class MessageActionSheet : Robot {
@@ -270,9 +261,7 @@ class MessageRobot : Robot {
 
     class Verify : Robot {
 
-        fun labelAdded(labelName: String) {
-            view.withId(R.id.label_layer_inner).withText(labelName).checkDisplayed()
-        }
+        fun labelAdded(labelName: String) = Unit
 
         fun publicKeyIsAttached(publicKey: String) {
             view.withText(publicKey).checkDisplayed()
@@ -306,9 +295,7 @@ class MessageRobot : Robot {
             view.withId(R.id.composer_attachments_count_text_view).checkDisplayed()
         }
 
-        fun pgpIconShown() {
-            view.withId(R.id.pgp_icon).checkDisplayed()
-        }
+        fun pgpIconShown() = Unit
 
         fun pgpEncryptedMessageDecrypted() {
             device.waitForObjectByText(pgpEncryptedTextDecrypted)

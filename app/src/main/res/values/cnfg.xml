@@ -19,12 +19,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <resources>
     <string name="app_name" translatable="false">ProtonMail</string>
-    <bool name="allow_mobile_signature_edit">false</bool>
     <string name="repeating_snooze_default_start_time">22:00</string>
     <string name="repeating_snooze_default_end_time">08:00</string>
     <integer name="repeating_snooze_start_hour">22</integer>
     <integer name="repeating_snooze_end_hour">8</integer>
-    <string name="repeating_snooze_days" translatable="false">mo:tu:we:th:fr</string>
     <array name="repeating_snooze_days">
         <item>mo</item>
         <item>tu</item>
@@ -91,8 +89,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>uk</item>
         <item>zh_TW</item>
         <item>zh_CN</item>
-    </array>
-    <array name="app_lock_values">
-        ​
     </array>
 </resources>

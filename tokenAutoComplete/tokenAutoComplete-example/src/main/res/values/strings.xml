@@ -20,7 +20,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 <resources>
 
     <string name="token_ac_app_name">TokenAutoComplete example</string>
-    <string name="token_ac_action_settings">Settings</string>
     <string name="token_ac_email_prompt">enter a name or email address</string>
 
 </resources>

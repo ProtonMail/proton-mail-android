@@ -25,9 +25,7 @@
     <string name="x_days">Ημέρες</string>
     <string name="x_done">Ολοκληρώθηκε</string>
     <string name="x_edit">Επεξεργασία</string>
-    <string name="x_folders">Φάκελοι</string>
     <string name="x_hours">Ώρες</string>
-    <string name="x_labels">Ετικέτες</string>
     <string name="x_more">Περισσότερα</string>
     <string name="x_none">Κανένα</string>
     <string name="x_search">Αναζήτηση</string>
@@ -44,7 +42,6 @@
     <string name="drawer_lock_the_app">Κλείδωμα εφαρμογής</string>
     <string name="drawer_report_bug">Αναφορά σφάλματος</string>
     <string name="drawer_settings">Ρυθμίσεις</string>
-    <string name="drawer_subscription">Συνδρομή</string>
     <string name="drawer_sign_out">Αποσύνδεση</string>
     <string name="drawer_create_folder_description">Δημιουργία νέου φακέλου</string>
     <string name="drawer_create_label_description">Δημιουργία νέας ετικέτας</string>
@@ -111,45 +108,29 @@
     <string name="parent_picker_header">Αν δεν επιλέξετε γονικό φάκελο, αυτός ο καινούριος φάκελος θα δημιουργηθεί ως ανώτατου επιπέδου.</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Απόρριψη αλλαγών;</string>
-    <string name="dialog_discard_changes_message">Τυχόν μη αποθηκευμένες αλλαγές θα απορριφθούν.</string>
-    <string name="discard">Απόρριψη</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">ΚΡΥΠΤΟΓΡΑΦΗΜΕΝΟ E-MAIL</string>
-    <string name="secure_email_swiss">Ασφαλές Email Με Έδρα\nτην Ελβετία</string>
-    <string name="decrypt">Αποκρυπτογράφηση</string>
-    <string name="sign_in">Είσοδος</string>
     <string name="sign_out">Αποσύνδεση</string>
     <string name="sign_out_question">Είστε βέβαιοι ότι θέλετε να αποσυνδεθείτε;</string>
     <string name="processing_request">Το αίτημα σας είναι σε επεξεργασία</string>
     <!-- should check for html tag -->
-    <string name="need_to_be_logged_in">Δεν είστε συνδεδεμένος/η!</string>
-    <string name="forgot_mailbox_password">Για να επαναφέρετε τον κωδικό θυρίδας σας, παρακαλώ χρησιμοποιήστε την έκδοση web του ProtonMail στο protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Αδύνατη η φόρτωση περιεχομένου. Παρακαλώ ενεργοποιήστε το Chrome</string>
     <string name="error_chrome_not_found">Αδύνατη η φόρτωση περιεχομένου. Παρακαλώ εγκαταστήστε το Chrome</string>
     <string name="messages_load_failure">Δεν είναι δυνατή η ανάκτηση μηνυμάτων</string>
     <string name="message_details_load_failure">Αδυναμία ανάκτησης λεπτομερειών μηνύματος</string>
     <string name="no_more_messages">Όχι άλλα μηνύματα</string>
-    <string name="mailbox_login_failure">Αποτυχία σύνδεσης στο ταχυδρομείο</string>
-    <string name="login_failure">Η σύνδεση απέτυχε</string>
-    <string name="incorrect_key_parameters">Εσφαλμένες παράμετροι κλειδιού</string>
-    <string name="not_signed_up">Δεν έχετε εγγραφεί για το ProtonMail Android Beta</string>
-    <string name="no_network">Δεν υπάρχει δίκτυο</string>
     <string name="no_network_queued">Δεν υπάρχει δίκτυο, το μήνυμα τέθηκε σε σειρά</string>
     <string name="update_app_title">Απαιτείται ενημέρωση</string>
     <string name="update_app">Η εφαρμογή ProtonMail δεν μπορεί να χρησιμοποιηθεί μέχρι να ενημερωθεί</string>
     <string name="you_are_offline">Είστε εκτός σύνδεσης</string>
-    <string name="api_offline_title">Το API του ProtonMail είναι εκτός σύνδεσης</string>
     <string name="api_offline">Το ProtonMail είναι εκτός σύνδεσης, ελέγξτε το twitter για την τρέχουσα κατάσταση: https://twitter.com/protonmail</string>
     <string name="contact_saved">Η επαφή αποθηκεύτηκε</string>
     <string name="contact_saved_offline">Η επαφή αποθηκεύτηκε, θα συγχρονιστεί όταν υπάρξει διαθέσιμη σύνδεση</string>
     <string name="contact_exist">Το email επικοινωνίας υπάρχει ήδη</string>
     <string name="invalid_email">Η διεύθυνση e-mail δεν είναι έγκυρη</string>
     <string name="duplicate_email">Η διεύθυνση email είναι διπλότυπη</string>
-    <string name="invalid_code">Μη έγκυρος κωδικός</string>
     <string name="message_drafted">Η αποστολή μηνύματος απέτυχε. Τα μηνύματά σας αποθηκεύτηκαν στο φάκελο πρόχειρα</string>
     <string name="attachment_failed_message_drafted">Το μήνυμα σας τοποθετήθηκε στον φάκελο \"Πρόχειρα\". Παρακαλούμε στείλτε το ξανά, αφού πρώτα αφαιρέσετε και ξαναεπισυνάψετε το \"%s\".</string>
     <string name="open_drawer">Άνοιγμα</string>
@@ -175,20 +156,13 @@
     <string name="fetching_contacts">Ανάκτηση επαφών Protonmail...</string>
     <string name="fetching_contacts_success">Οι επαφές ενημερώθηκαν με επιτυχία</string>
     <string name="fetching_contacts_failure">Αδύνατη η ενημέρωση των επαφών</string>
-    <string name="search_messages">Αναζήτηση μηνυμάτων</string>
     <string name="no_search_results">Δεν βρέθηκαν αποτελέσματα</string>
     <string name="compose">Σύνταξη</string>
     <string name="compose_message">Σύνταξη μηνύματος</string>
     <string name="empty_folder">Άδειασμα Φακέλου</string>
     <string name="view_headers">Προβολή Headers</string>
     <string name="message_headers">Header μηνύματος</string>
-    <string name="delete_message">Διαγραφή μηνύματος</string>
     <string name="delete_messages">Διαγραφή μηνυμάτων</string>
-    <string name="add_label">Προσθήκη Ετικέτας</string>
-    <string name="add_star">Προσθήκη αστεριού</string>
-    <string name="remove_star">Αφαίρεση αστεριού</string>
-    <string name="mark_read">Επισήμανση ως αναγνωσμένο</string>
-    <string name="mark_unread">Επισήμανση ως μη αναγνωσμένο</string>
     <string name="move_to_archive">Μετακίνηση στα αρχειοθετημένα</string>
     <string name="move_to_trash">Μετακίνηση στον κάδο απορριμμάτων</string>
     <string name="move_to_spam">Μετακίνηση στα ανεπιθύμητα</string>
@@ -203,21 +177,13 @@
     <string name="cc">Κοινοποίηση</string>
     <string name="bcc">Κρυφή κοινοποίηση</string>
     <string name="to_prefix">Προς:</string>
-    <string name="cc_prefix">Κοιν:</string>
-    <string name="bcc_prefix">Κρυφή κοιν:</string>
-    <string name="from_prefix">Από:</string>
-    <string name="date_prefix">Ημερομηνία:</string>
-    <string name="view_details">ΛΕΠΤΟΜΕΡΕΙΕΣ</string>
-    <string name="hide_details">ΑΠΟΚΡΥΨΗ ΛΕΠΤΟΜΕΡΙΩΝ</string>
     <string name="reply">Απάντηση</string>
     <string name="reply_all">Απάντηση σε όλους</string>
     <string name="forward">Προώθηση</string>
-    <string name="subject">Θέμα</string>
     <string name="email_subject">Θέμα Εmail</string>
     <string name="define_message_password">Κωδικός πρόσβασης μηνύματος</string>
     <string name="confirm_message_password">Επιβεβαίωση Κωδικού Πρόσβασης</string>
     <string name="define_password_hint">Υποδείξεις Κωδικού Πρόσβασης (Προαιρετικό)</string>
-    <string name="message_passwords_do_not_match">Οι κωδικοί πρόσβασης δεν ταιριάζουν</string>
     <string name="eo_passwords_do_not_match">Οι κωδικοί πρόσβασης δεν ταιριάζουν</string>
     <string name="define_expiration_period">Προσδιορίστε την περίοδο λήξης</string>
     <string name="set_message_expiration">Ορισμός Λήξης Μηνύματος</string>
@@ -227,18 +193,6 @@
     <string name="max_labels_selected">Επιτρέπονται έως %d ετικέτες</string>
     <string name="max_attachments_reached">Έχει συμπληρωθεί ο μέγιστος αριθμός συνημμένων ανά μήνυμα</string>
     <string name="max_attachments_size_reached">Εξάντληση μέγιστου μεγέθους συνημμένων ανά μήνυμα</string>
-    <plurals name="hours_string">
-        <item quantity="one">%d ώρα</item>
-        <item quantity="other">%d ώρες</item>
-    </plurals>
-    <plurals name="days_string">
-        <item quantity="one">%d ημέρα</item>
-        <item quantity="other">%d ημέρες</item>
-    </plurals>
-    <plurals name="minutes_string">
-        <item quantity="one">%d λεπτό</item>
-        <item quantity="other">%d λεπτά</item>
-    </plurals>
     <string name="expiration_days">%dD</string>
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
@@ -268,8 +222,6 @@
     <string name="email">Email</string>
     <string name="phone">Αριθμός τηλεφώνου</string>
     <string name="save">Αποθήκευση</string>
-    <string name="syncing_messages">Συγχρονισμός...</string>
-    <string name="sync">Συγχρονισμός επαφών</string>
     <string name="save_message_as_draft">Αποθήκευση μηνύματος ως πρόχειρο;</string>
     <string name="no_subject">Αποστολή μηνύματος χωρίς θέμα;</string>
     <string name="yes">Ναι</string>
@@ -282,7 +234,6 @@
     <string name="sending_report">Αποστολή αναφοράς...</string>
     <string name="received_report">Η αναφορά ελήφθη</string>
     <string name="not_received_report">Η αναφορά δεν ελήφθη</string>
-    <string name="not_received_report_offline">Εκτός σύνδεσης! Η αναφορά θα υποβληθεί όταν υπάρξει σύνδεση</string>
     <string name="forward_prefix">Προώθ:</string>
     <string name="original_message_divider">-------- Αρχικό Μήνυμα --------</string>
     <string name="invalid_email_address">Η διεύθυνση \'%s\' δεν είναι έγκυρη</string>
@@ -292,66 +243,41 @@
     <string name="attachment_limit">Τα συνημμένα είναι περιορισμένα σε %1$s. Συνολικά τα συνημμένα θα πρέπει να είναι %2$s.</string>
     <string name="sending_message">Αποστολή μηνύματος...</string>
     <string name="sending_message_offline">Εκτός σύνδεσης, τέθηκε σε σειρά προκειμένου να σταλεί αργότερα...</string>
-    <string name="go_to_inbox">Μετάβαση στα εισερχόμενα μου</string>
     <string name="message_sent">Το μήνυμα εστάλη</string>
     <string name="message_failed">Η αποστολή μηνύματος απέτυχε</string>
-    <string name="message_sending_failures">%d αποτυχίες αποστολής μηνυμάτων</string>
     <string name="storage_limit">Όρια αποθηκευτικού χώρου</string>
     <string name="edit_settings">Επεξεργασία Ρυθμίσεων</string>
-    <string name="save_settings">Αποθήκευση Ρυθμίσεων</string>
     <string name="share">Κοινοποίηση</string>
-    <string name="settings_not_saved_password"> Οι ρυθμίσεις δεν αποθηκεύτηκαν - λανθασμένος κωδικός εισόδου</string>
-    <string name="settings_not_saved_email"> Οι ρυθμίσεις δεν αποθηκεύτηκαν - Λανθασμένο E-mail ειδοποίησης</string>
-    <string name="enter">Εισαγωγή</string>
     <string name="cancel">Ακύρωση</string>
     <string name="close">Κλείσιμο</string>
     <string name="eo_password_title">Ορισμός Κωδικού</string>
     <string name="eo_password_subtitle">Ορίστε έναν κωδικό πρόσβασης για την κρυπτογράφηση αυτού του μηνύματος, για χρήστες που δεν χρησιμοποιούν το ProtonMail</string>
     <string name="eo_password_more_info">Λάβετε περισσότερες πληροφορίες</string>
     <string name="no_attachments">0 Συνημμένα</string>
-    <string name="pin_lock_option_settings">Επιλογές Κλειδώματος Εφαρμογής</string>
-    <string name="pin_lock_after">Κλείδωμα εφαρμογής μετά από</string>
-    <string name="lock_the_app">Κλείδωμα εφαρμογής</string>
     <string name="display_name_banned_chars">Μή Έγκυρο Εμφανιζόμενο Όνομα. &gt; και &lt; δεν επιτρέπονται</string>
     <string name="cont">Συνέχεια</string>
     <string name="reply_prefix_on">Ενεργό</string>
-    <string name="terms_and_conditions">Χρησιμοποιώντας το ProtonMail, συμφωνείτε με τους\n
-        &lt;a href="https://protonmail.com/terms-and-conditions"&gt;Όρους και προϋποθέσεις&lt;/a&gt; και &lt;a href="https://protonmail.com/privacy-policy"&gt;&lt;a href="https://protonmail.com/privacy-policy"&gt;Πολιτική Απορρήτου&lt;/a&gt;</string>
-    <string name="labels_title_apply">Εφαρμογή Eτικετών</string>
-    <string name="labels_title_add">Προσθήκη Ετικέτας</string>
-    <string name="labels_title">Ετικέτες</string>
     <string name="label_name">Όνομα Ετικέτας</string>
-    <string name="label_name_empty">Η ετικέτα πρέπει να έχει όνομα</string>
-    <string name="label_name_duplicate">Αυτό το όνομα ετικέτας υπάρχει ήδη</string>
     <string name="label_created">Η ετικέτα δημιουργήθηκε</string>
     <string name="label_invalid">Η ετικέτα δεν προστέθηκε λόγο μη έγκυρου ονόματος.</string>
     <string name="undo">Αναίρεση</string>
-    <string name="customize_swipe_actions">Προσαρμόστε τις επιλογές ολίσθησης</string>
-    <string name="message_can_not_edit">Δεν μπορεί να απαντηθεί/προωθηθεί, αυτό το μήνυμα δεν έχει σταλεί ακόμα</string>
     <string name="label_apply">Εφαρμογή</string>
-    <string name="label_delete">Διαγραφή</string>
     <string name="label_add">Προσθήκη</string>
     <string name="no_browser_found">Παρακαλούμε να εγκαταστήσετε μια εφαρμογή προγράμματος περιήγησης προκειμένου να ολοκληρώσετε αυτή την ενέργεια</string>
     <string name="no_application_found">Δεν βρέθηκε εφαρμογή να χειριστεί αυτή την ενέργεια</string>
     <string name="no_application_found_or_link_invalid">Δεν βρέθηκε εφαρμογή να χειριστεί αυτή την ενέργεια ή υπήρξε ένας μη έγκυρος σύνδεσμος URL</string>
-    <string name="also_archive">Επίσης Αρχειοθέτηση</string>
     <string name="label_deleted">Η Ετικέτα Διαγράφηκε</string>
     <string name="label_deleted_error">Σφάλμα κατά την διαγραφή της ετικέτας</string>
     <string name="message_deleted_error">Σφάλμα κατά τη διαγραφή ορισμένων μηνυμάτων. Μερικά από τα επιλεγμένα μηνύματα βρίσκονται σε διαδικασία αποστολής;!</string>
     <string name="respond_inline">Απάντηση μέσα στην γραμμή</string>
-    <string name="no_connectivity_detected">Δεν εντοπίστηκε σύνδεση...</string>
     <string name="server_not_reachable_troubleshoot">Ο διακομιστής δεν είναι προσβάσιμος… (<u>Αντιμετώπιση προβλημάτων</u>)</string>
     <string name="connectivity_checking">Έλεγχος σύνδεσης...</string>
-    <string name="sync_short">συγχρονισμός</string>
-    <string name="draft_attachments_uploading">Το πρόχειρο εξακολουθεί να μεταφορτώνεται...</string>
     <string name="draft_label_attachments_uploading">μεταφόρτωση συνημμένων…</string>
     <string name="draft_label_message_uploading">αποστολή μηνύματος…</string>
     <string name="attachment_failed">Η μεταφόρτωση συνημμένου για αυτό το μήνυμα απέτυχε </string>
     <string name="attaching_photo_failed">Η επισύναψη της φωτογραφίας απέτυχε</string>
     <string name="empty_message">Άδειο μήνυμα</string>
-    <string name="dismiss">Απόρριψη</string>
     <string name="new_message_arrived">Νέο μήνυμα!</string>
-    <string name="please_choose_color">Επιλέξτε χρώμα</string>
     <string name="display_images">Εμφάνιση απομακρυσμένου περιεχομένου</string>
     <string name="retry">Δοκιμάστε ξανά</string>
     <string name="saving_failed_no_conn">Η αποθήκευση απέτυχε, δεν υπάρχει σύνδεση</string>
@@ -370,12 +296,8 @@
     <string name="engagement_subtitle_expire">Τα μηνύματα που στέλνετε μπορούν να ρυθμιστούν για αυτόματη διαγραφή μετά από ένα συγκεκριμένο χρονικό διάστημα.</string>
     <string name="engagement_subtitle_help">Μπορείτε να λάβετε βοήθεια και υποστήριξη στο protonmail.com/support. Μπορούν επίσης να αναφερθούν και σφάλματα σχετικά με την εφαρμογή.</string>
     <string name="attachment_exists">Το συνημμένο έχει ήδη επισυναφθεί</string>
-    <string name="sending_email_success">Ο κωδικός επαλήθευσης στάλθηκε</string>
-    <string name="sending_email_failed">Η αποστολή του κωδικού επαλήθευσης απέτυχε</string>
-    <string name="send_code_wait">Παρακαλώ περιμένετε %d δευτερόλεπτα για να κάνετε κλικ ξανά</string>
     <string name="eo_password_not_completed">Το κείμενο κωδικού δεν ολοκληρώθηκε.</string>
     <string name="delinquency_subtitle">Η πρόσβαση σε αυτόν τον λογαριασμό είναι απενεργοποιημένη λόγω μη πληρωμής. Συνδεθείτε μέσω του protonmail.com για να εξοφλήσετε το υπόλοιπο σας.</string>
-    <string name="direct_disabled_subtitle">Οι εγγραφές λογαριασμού μέσω κινητού, είναι προσωρινά απενεργοποιημένες. Δοκιμάστε ξανά αργότερα ή δοκιμάστε να εγγραφείτε στο <a href="https://protonmail.com">protonmail.com</a> χρησιμοποιώντας έναν σταθερό ή φορητό υπολογιστή.</string>
     <string name="downloading">Γίνεται λήψη...</string>
     <string name="cant_download_attachment">Δεν ήταν δυνατή η λήψη του συννημένου</string>
     <string-array name="auto_logout_options_array">
@@ -389,15 +311,7 @@
     <string name="delete_folder_confirmation_title">Διαγραφή επιλεγμένων φακέλων;</string>
     <string name="delete_label_confirmation_message">Τα E-mail που περιέχονται εδώ, θα βρεθούν στο <b>Όλη η Αλληλογραφία\"</b>
     </string>
-    <string name="enter_pin">Εισάγετε το PIN για να ξεκλειδώσετε τα εισερχόμενα</string>
-    <string name="enter_pin_message_details">Εισάγετε το PIN για να ξεκλειδώσετε το μήνυμα σας</string>
-    <string name="enter_current_pin">Εισάγετε το τρέχον ΡΙΝ</string>
-    <string name="pin_subtitle_create">Δημιουργήστε το PIN σας εδώ</string>
-    <string name="pin_subtitle_create_new">Δημιουργήστε το ΝΕΟ PIN εδώ</string>
-    <string name="pin_subtitle_confirm">Επιβεβαιώστε το PIN εδώ</string>
-    <string name="pin_subtitle_confirm_new">Επιβεβαιώστε το ΝΕΟ PIN εδώ</string>
     <string name="pin_invalid">Το PIN δεν είναι έγκυρο, εισάγετε ένα σωστό 4 ψήφιο PIN</string>
-    <string name="pin_confirmation_not_match">Η επιβεβαίωση του PIN δε ταιριάζει</string>
     <string name="pin_not_match">Το PIN δεν ταιριάζει</string>
     <string name="new_pin_saved">Αποθηκεύτηκε Νέο PIN</string>
     <string name="new_emails">%d Νέα E-Mail</string>
@@ -414,7 +328,6 @@
     <string name="processing_attachment">Επεξεργασία συνημμένου</string>
     <string name="hyperlink_confirmation_dialog_text_html">Πρόκειται να ξεκινήσει το πρόγραμμα περιήγησης ιστού και να περιηγηθείτε στο &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;;br/Θα θέλατε να συνεχίσετε;</string>
     <string name="dont_ask_again">Να μην ερωτηθώ ξανά</string>
-    <string name="changes_affected_after_closing">Οι αλλαγές θα τεθούν σε ισχύ μετά το κλείσιμο της εφαρμογής</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Λανθασμένος κωδικός PIN, απομένει %d προσπάθεια</item>
         <item quantity="other">Λανθασμένος κωδικός PIN, απομένουν %d προσπάθειες</item>
@@ -424,42 +337,26 @@
         <item quantity="other">%d προσπάθειες μέχρι την ασφαλή διαγραφή δεδομένων!</item>
     </plurals>
     <string name="logout">Αποσύνδεση</string>
-    <string name="log_out">Αποσύνδεση %s;</string>
-    <string name="logout_question">Είστε βέβαιοι ότι θέλετε να αποσυνδεθείτε;</string>
     <string name="logout_question_next_account">Θα μεταβείτε στο %s.</string>
     <string name="upgrade">Αναβάθμιση</string>
-    <string name="country">Χώρα</string>
-    <string name="set_cont">Καθορισμός &amp; Συνέχεια</string>
     <string name="error">Σφάλμα</string>
-    <string name="storage_gb">%d GB αποθηκευτικός χώρος</string>
-    <string name="storage_mb">%d MB αποθηκευτικός χώρος</string>
-    <string name="max_addresses">Έως %d ψευδώνυμα email</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Ενσωματωμένες Εικόνες</string>
-    <string name="select">Επιλέξτε</string>
     <string name="warning">Προειδοποίηση</string>
-    <string name="empty_recovery_email_question">Προειδοποίηση: Δεν έχετε ορίσει ένα E-mail ανάκτησης, με αποτέλεσμα η ανάκτηση λογαριασμού να είναι αδύνατη αν ξεχάσετε τον κωδικό πρόσβασής σας. Θέλετε να συνεχίσετε χωρίς E-mail ανάκτησης;</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Λήξη %s</string>
     <string name="no_payment_methods">Δεν έχετε αποθηκευμένους τρόπους πληρωμής.</string>
     <string name="edit_payment_methods">Παρακαλώ συνδεθείτε μέσω του protonmail.com για να επεξεργαστείτε τα στοιχεία χρέωσης.</string>
-    <string name="message_not_loaded">Το μήνυμα δεν φορτώθηκε</string>
-    <string name="signature_text">Κείμενο Υπογραφής</string>
     <string name="available_addresses">Διαθέσιμες διευθύνσεις</string>
     <string name="inactive_addresses">Ανενεργές διευθύνσεις</string>
     <string name="not_set">Δεν έχει οριστεί</string>
-    <string name="edit_notification_email">Επεξεργασία E-mail Ανάκτησης</string>
-    <string name="available_swipe_actions">Διαθέσιμες ενέργειες</string>
     <string name="no_available_addresses">Δεν έχετε διαθέσιμες διευθύνσεις</string>
     <string name="no_inactive_addresses">Δεν έχετε ανενεργές διευθύνσεις</string>
     <string name="label_add_new">Προσθέστε νέα ετικέτα</string>
     <string name="available_labels">Διαθέσιμες ετικέτες</string>
-    <string name="choose_label_color">Επιλέξτε χρώμα ετικέτας</string>
-    <string name="save_new_label">Αποθήκευση νέας ετικέτας</string>
     <string name="delete_selected">Διαγραφή επιλεγμένων</string>
     <string name="pin_not_activated">Το PIN δεν ενεργοποιήθηκε</string>
     <string name="available_options">Διαθέσιμες επιλογές</string>
-    <string name="change_recovery_email">Αλλαγή διεύθυνσης E-mail επαναφοράς / ειδοποίησης</string>
     <string name="background_sync_subtitle">Εάν αυτή η επιλογή είναι ενεργοποιημένη, η εφαρμογή θα συγχρονιστεί με το διακομιστή στο παρασκήνιο. Η απενεργοποίηση αυτής της λειτουργίας θα απενεργοποιήσει τις ειδοποιήσεις push.</string>
     <string-array name="notification_options">
         <item>Χωρίς δόνηση ή ήχο</item>
@@ -473,30 +370,9 @@
         <item>Visionary</item>
         <item>Professional</item>
     </string-array>
-    <plurals name="custom_domains">
-        <item quantity="one">Χρήση του δικού σας domain (π.χ. john@smith.com)</item>
-        <item quantity="other">Υποστήριξη για έως %d domains</item>
-    </plurals>
-    <string-array name="months_array">
-        <item>ΜΜ</item>
-        <item>01</item>
-        <item>02</item>
-        <item>03</item>
-        <item>04</item>
-        <item>05</item>
-        <item>06</item>
-        <item>07</item>
-        <item>08</item>
-        <item>09</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-    </string-array>
-    <string name="contact_details_display_name">Όνομα</string>
     <string name="contact_details">Στοιχεία Επαφής</string>
     <string name="email_type_home">Οικία</string>
     <string name="type_title">Επιλογή Τύπου</string>
-    <string name="message_drafted_error_server">Η Αποστολή μηνύματος απέτυχε. %s</string>
     <string name="sync_local_contacts">Μεταφόρτωση στο ProtonMail</string>
     <string name="please_select_only_phone_contacts">Παρακαλώ επιλέξτε μόνο τοπικές επαφές τηλεφώνου</string>
     <string name="contact_vcard_hint_email">Εισαγωγή Email</string>
@@ -516,13 +392,10 @@
     <string name="vcard_other_option_gender">Φύλο</string>
     <string name="vcard_other_option_role">Ρόλος</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="convert_contact">Μετατροπή επαφής</string>
     <string name="contacts_import_contact">Εισαγωγή Επαφής</string>
     <string name="contacts_import">Εισαγωγή</string>
     <string name="upload_contacts">Μεταφόρτωση Επαφών</string>
-    <string name="upgrade_encrypted_contact">Παρακαλώ αναβαθμίστε για να χρησιμοποιήσετε κρυπτογραφημένα στοιχεία επαφής.</string>
     <string name="uploading_contacts">Μεταφόρτωση επαφών…</string>
-    <string name="error_encrypted_data">Σφάλμα κατά την ανάκτηση κρυπτογραφημένων πληροφοριών επαφών.</string>
     <string-array name="vcard_option_phone">
         <item>Τηλέφωνο</item>
         <item>Κινητό</item>
@@ -554,40 +427,25 @@
     </string-array>
     <string name="logged_out">Αποσυνδεδεμένος</string>
     <string name="logged_out_description">Έχετε αποσυνδεθεί. Παρακαλούμε συνδεθείτε ξανά.</string>
-    <string name="error_message_zip_code_invalid">Σφάλμα: Ο ταχυδρομικός κώδικας δεν είναι έγκυρος</string>
-    <string name="error_message_cvc_invalid">Σφάλμα: Ο αριθμός CVC δεν είναι έγκυρος</string>
-    <string name="error_message_card_name_invalid">Σφάλμα: Το όνομα κάρτας δεν είναι έγκυρο</string>
-    <string name="error_message_select_country">Παρακαλώ Επιλέξτε Χώρα</string>
-    <string name="error_message_exp_date_invalid">Σφάλμα: Η ημερομηνία λήξης δεν είναι έγκυρη</string>
-    <string name="error_message_exp_date_past">Σφάλμα: Η ημερομηνία λήξης δεν είναι έγκυρη</string>
-    <string name="error_message_card_number_invalid">Σφάλμα: Ο αριθμός κάρτας δεν είναι έγκυρος</string>
     <string name="print_error">Σφάλμα Εκτύπωσης</string>
     <string name="download_complete">Η λήψη ολοκληρώθηκε</string>
-    <string name="download_in_progress">Λήψη σε εξέλιξη</string>
     <string name="message_expires_in">Αυτό το μήνυμα θα λήξει σε %s</string>
     <string name="unsaved_changes_title">Μη αποθηκευμένες αλλαγές</string>
     <string name="unsaved_changes_subtitle">Υπάρχουν μη αποθηκευμένες καταχωρήσεις στη φόρμα. Είστε βέβαιοι ότι θέλετε να τις απορρίψετε;</string>
     <string name="request_timeout">Η αίτηση έληξε, παρακαλούμε δοκιμάστε ξανά</string>
-    <string name="add_folder">Προσθήκη φακέλου</string>
     <string name="no_folders">Δεν υπάρχουν φάκελοι</string>
-    <string name="folders_title_move">Μετακίνηση μηνυμάτων σε</string>
-    <string name="folders_manager">Διαχειριστής Φακέλων</string>
     <string name="folder_add_new">Προσθήκη νέου φακέλου</string>
     <string name="folder_name">Όνομα φακέλου</string>
     <string name="available_folders">Διαθέσιμοι φάκελοι</string>
-    <string name="choose_folder_color">Επιλέξτε χρώμα φακέλου</string>
     <string name="folder_created">Ο φάκελος δημιουργήθηκε</string>
     <string name="folder_invalid">Ο φάκελος δεν δημιουργήθηκε, λόγω μη έγκυρου ονόματος.</string>
     <string name="folder_deleted">Ο φάκελος διαγράφηκε</string>
     <string name="folder_deleted_error">Σφάλμα κατά τη διαγραφή φακέλου</string>
-    <string name="save_new_folder">Αποθήκευση νέου φακέλου</string>
-    <string name="create_new_folder">Δημιουργία Φακέλου</string>
     <string name="empty_emails">Δεν υπάρχουν E-mail</string>
     <string name="empty_email_list">Δεν υπάρχει διεύθυνση E-mail</string>
     <string name="no_contacts">Δεν υπάρχουν επαφές</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; έγραψε:</string>
     <string name="update_label">Ενημέρωση Ετικέτας</string>
-    <string name="max_labels_in_message">Το μήνυμα %1$s δεν μπορεί να έχει παραπάνω απο %2$d ετικέτες.</string>
     <string name="delete">Διαγραφή</string>
     <string name="subject_copied">Το θέμα αντιγράφηκε στο πρόχειρο</string>
     <string name="details_copied">Οι λεπτομέρειες αντιγράφηκαν στο πρόχειρο</string>
@@ -601,8 +459,6 @@
     <string name="print_to_template">Πρός: %s  </string>
     <string name="print_cc_template">Κοιν: %s  </string>
     <string name="print_bcc_template">Κρυφή Κοιν: %s  </string>
-    <string name="signature_error">Σφάλμα επαλήθευσης</string>
-    <string name="signature_error_desc">Η επαλήθευση της υπογραφής αυτού του περιεχομένου απέτυχε</string>
     <string name="address">Διεύθυνση: </string>
     <string name="address_street">Οδός</string>
     <string name="address_extended_street">Επέκταση οδού</string>
@@ -622,12 +478,10 @@
     <string name="info">Πληροφορίες</string>
     <string name="error_can_not_send_from_this_address">Αναβαθμίστε σε ένα λογαριασμό επι πληρωμής για αποστολή από τη διεύθυνση %s.</string>
     <string name="email_empty">Η διεύθυνση E-mail λείπει</string>
-    <string name="add_contact_details">Προσθήκη Στοιχείων Επαφής</string>
     <string name="encrypted_contact_details">Κρυπτογραφημένα στοιχεία επαφής</string>
     <string name="convert_question">Μεταφόρτωση τοπικών επαφών</string>
     <string name="convert_question_subtitle">Αυτό θα μεταφορτώσει τις τοπικές επαφές της συσκευή σας στον κατάλογο επαφών ProtonMail. Στη συνέχεια, θα έχετε πρόσβαση σε αυτές τις επαφές από τις υπόλοιπες συσκευές σας μέσω του ProtonMail.</string>
     <string name="refresh_contacts">Ανανέωση</string>
-    <string name="upload">Μεταφόρτωση</string>
     <string name="invalid_email_some_contacts">Η διεύθυνση E-mail δεν είναι έγκυρη για ορισμένες από τις επαφές σας</string>
     <string name="protonmail_contacts">Επαφές ProtonMail</string>
     <string name="device_contacts">Επαφές Συσκευής</string>
@@ -654,7 +508,6 @@
     <string name="resign_contact_title">Θέλετε να επανεγγράψετε την επαφή;</string>
     <string name="resign_contact_message">Η επαλήθευση του %s έχει αποτύχει: η επαφή δεν έχει υπογραφεί σωστά. Πρέπει να υπογράψετε ξανά την επαφή για να στείλετε ένα μήνυμα σε αυτή τη διεύθυνση ή επεξεργαστείτε την επαφή. Αυτό μπορεί επίσης να συμβεί όταν ανακτήσετε τον κωδικό πρόσβασης και επαναφέρετε τα κλειδιά σας.</string>
     <!-- Sender locks -->
-    <string name="sender_lock_unencrypted">Μη κρυπτογραφημένο μήνυμα</string>
     <string name="sender_lock_zero_access">Αποθηκευμένο με κρυπτογράφηση μηδενικής πρόσβασης</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Στάλθηκε από εσάς με κρυπτογράφηση από άκρο σε άκρο</string>
@@ -713,18 +566,7 @@
     <string name="contact_groups_manage_members">Διαχείριση Μελών</string>
     <string name="contact_group_display_name">Εμφανιζόμενο Όνομα</string>
     <string name="contact_group_groups_icon">\ue91a </string>
-    <string name="contact_add_addr_to_group">Προσθήκη διεύθυνσης σε ομάδες</string>
     <string name="title_activity_address_chooser">Διαχείριση Μελών</string>
-    <string name="title_activity_account_manager">Διαχείριση λογαριασμών</string>
-    <string name="account_manager_add_account">Προσθήκη λογαριασμού</string>
-    <string name="account_manager_remove_all_accounts">Κατάργηση όλων των λογαριασμών</string>
-    <string name="account_manager_note">Μπορείτε να συνδεθείτε ταυτόχρονα με έναν απεριόριστο αριθμό λογαριασμών επι πληρωμής ProtonMail και με έναν δωρεάν λογαριασμό.</string>
-    <string name="account_manager_remove_all">Κατάργηση όλων των λογαριασμών</string>
-    <string name="account_manager_logout">Αποσύνδεση</string>
-    <string name="account_manager_login">Είσοδος</string>
-    <string name="manage_accounts_user_loggedout">%s (αποσυνδεδεμένο)</string>
-    <string name="manage_accounts_user_primary">%s (κύριο)</string>
-    <string name="account_manager_remove">Αφαίρεση</string>
     <string name="default_error_message">Παρουσιάστηκε σφάλμα</string>
     <string name="no_contact_groups">Δεν υπάρχουν ομάδες επαφών</string>
     <string name="search_contacts_inside_group">Αναζήτηση για επαφές</string>
@@ -754,7 +596,6 @@
         <item quantity="other">Είστε βέβαιοι ότι θέλετε να διαγράψετε τις επιλεγμένες επαφές;</item>
     </plurals>
     <string name="members">Μέλη</string>
-    <string name="max_emails_in_group_title">Τα μέγιστα μηνύματα E-mail ανά ομάδα έφτασαν στο όριο</string>
     <string name="select_deselect_all">Επιλογή Όλων</string>
     <string name="contact_group_name_hint">Επιλέξτε ένα όνομα ομάδας</string>
     <string name="contact_group_change_color">Αλλαγή χρώματος</string>
@@ -791,7 +632,6 @@
     <string name="biometric_error_hw_not_available">Το βιομετρικό υλικό δεν είναι διαθέσιμο.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Μη κοινοποιημένοι παραλήπτες</string>
-    <string name="manage_accounts">Διαχείριση λογαριασμών</string>
     <!-- region Settings -->
     <string name="settings">Ρυθμίσεις</string>
     <string name="account_settings">Ρυθμίσεις λογαριασμού</string>
@@ -804,7 +644,6 @@
     <string name="password_changed">Ο κωδικός πρόσβασης άλλαξε.</string>
     <string name="recovery_email">Email ανάκτησης</string>
     <string name="recovery_email_changed">Η διεύθυνση ανάκτησης άλλαξε.</string>
-    <string name="info_for_missing_functionality">Παρακαλούμε συνδεθείτε μέσω του <a href="https://www.protonmail.com/">protonmail.com</a> και αποκτήστε πρόσβαση στις ρυθμίσεις σας για να επεξεργαστείτε αυτές τις πληροφορίες.</string>
     <string name="storage">Μέγεθος θυρίδας</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Διευθύνσεις</string>
@@ -847,7 +686,6 @@
     <string name="minutes">Λεπτά</string>
     <string name="set_custom_quick_snooze">Ορίστε προσαρμοσμένη τιμή γρήγορης αναβολής</string>
     <string name="turn_off">Απενεργοποίηση</string>
-    <string name="snooze_will_repeat">Η αναβολή θα επαναληφθεί</string>
     <string name="work_days">Εργάσιμες μέρες</string>
     <string name="weekends">Σαββατοκύριακο</string>
     <string name="every_day">Κάθε μέρα</string>
@@ -898,14 +736,6 @@
         <item quantity="one">Το μήνυμα μεταφέρθηκε στον κάδο απορριμμάτων</item>
         <item quantity="other">Τα μηνύματα μεταφέρθηκαν στον κάδο</item>
     </plurals>
-    <plurals name="action_move_to_spam">
-        <item quantity="one">Το μήνυμα επισημάνθηκε ως ανεπιθύμητο</item>
-        <item quantity="other">Τα μηνύματα επισημάνθηκαν ως ανεπιθύμητα</item>
-    </plurals>
-    <plurals name="action_move_to_archive">
-        <item quantity="one">Το μήνυμα αρχειοθετήθηκε</item>
-        <item quantity="other">Τα μηνύματα αρχειοθετήθηκαν</item>
-    </plurals>
     <!-- endregion -->
     <string name="local_storage">Όριο τοπικής αποθήκευσης</string>
     <!-- endregion -->
@@ -940,13 +770,7 @@
     <string name="app_version">Έκδοση εφαρμογής</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="remove_account_question">Αφαίρεση %s;</string>
     <string name="signed_in_with">Συνδέθηκε με %s</string>
-    <string name="signed_in_with_logged_out_from">Αποσυνδεδεμένο από %1$s και συνδεδεμένο με %2$s</string>
-    <string name="connect_account_limit_title">Εξάντληση ορίου</string>
-    <string name="connect_account_limit_subtitle">Δεν μπορείτε να προσθέσετε κι άλλο δωρεάν λογαριασμό ProtonMail. Μόνο ένας δωρεάν λογαριασμός ProtonMail μπορεί να προστεθεί. Αποσυνδεθείτε από τον άλλο δωρεάν λογαριασμό σας ή αναβαθμίστε έναν από τους δωρεάν λογαριασμούς σας σε κάποιον λογαριασμό επι πληρωμής.</string>
-    <string name="switch_accounts_question">Αλλαγή λογαριασμού;</string>
-    <string name="switch_to_account">Αλλάξτε σε %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Σύνταξη</string>
@@ -984,7 +808,6 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Σφάλμα κατά τη φόρτωση συνομιλιών, παρακαλώ προσπαθήστε ξανά</string>
     <string name="star">Αστέρι</string>
     <string name="unstar">Αφαίρεση αστεριού</string>
     <string name="star_unstar">Αστέρι/μη αστέρι</string>
@@ -992,7 +815,6 @@
     <string name="label_as">Ετικέτα ως…</string>
     <string name="mark_as_unread">Επισήμανση ως μη αναγνωσμένο</string>
     <string name="mark_as_read">Επισήμανση ως αναγνωσμένο</string>
-    <string name="mark_as_read_unread">Σήμανση ως διαβασμένο ή μη</string>
     <string name="move_message">Μετακίνηση μηνύματος</string>
     <string name="manage">Διαχείριση</string>
     <string name="message_from">Μήνυμα από %s</string>

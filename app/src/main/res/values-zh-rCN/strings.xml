@@ -25,9 +25,7 @@
     <string name="x_days">天</string>
     <string name="x_done">完成</string>
     <string name="x_edit">编辑</string>
-    <string name="x_folders">文件夹</string>
     <string name="x_hours">小时</string>
-    <string name="x_labels">标签</string>
     <string name="x_more">更多</string>
     <string name="x_none">无</string>
     <string name="x_search">搜索</string>
@@ -44,7 +42,6 @@
     <string name="drawer_lock_the_app">锁定程序</string>
     <string name="drawer_report_bug">反馈问题</string>
     <string name="drawer_settings">设置</string>
-    <string name="drawer_subscription">账户等级</string>
     <string name="drawer_sign_out">退出登录</string>
     <string name="drawer_create_folder_description">新建文件夹</string>
     <string name="drawer_create_label_description">新建标签</string>
@@ -111,45 +108,29 @@
     <string name="parent_picker_header">若不选取上层文件夹，则将创建顶层文件夹。</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">确定要放弃更改吗？</string>
-    <string name="dialog_discard_changes_message">所有未保存的更改都将丢失。</string>
-    <string name="discard">放弃更改</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">加密邮件</string>
-    <string name="secure_email_swiss">来自瑞士的\n加密邮箱</string>
-    <string name="decrypt">解密</string>
-    <string name="sign_in">登录</string>
     <string name="sign_out">退出账户</string>
     <string name="sign_out_question">确定要退出账户吗？</string>
     <string name="processing_request">正在处理您的请求</string>
     <!-- should check for html tag -->
-    <string name="need_to_be_logged_in">您还未登录！</string>
-    <string name="forgot_mailbox_password">请前往 protonmail.com 使用 ProtonMail 网页版重置邮箱密码</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">无法加载内容，请使用 Chrome浏览器</string>
     <string name="error_chrome_not_found">无法加载内容，请安装 Chrome</string>
     <string name="messages_load_failure">无法获取邮件</string>
     <string name="message_details_load_failure">无法获取邮件详细信息</string>
     <string name="no_more_messages">没有其他邮件了</string>
-    <string name="mailbox_login_failure">登录邮箱失败</string>
-    <string name="login_failure">登录失败</string>
-    <string name="incorrect_key_parameters">密钥参数错误</string>
-    <string name="not_signed_up">您尚未注册 ProtonMail Android 公测版</string>
-    <string name="no_network">网络未连接</string>
     <string name="no_network_queued">网络尚未连接，邮件将稍后发送</string>
     <string name="update_app_title">需要更新</string>
     <string name="update_app">您的 ProtonMail 应用需要更新才能使用</string>
     <string name="you_are_offline">您已离线</string>
-    <string name="api_offline_title">无法连接 ProtonMail API：</string>
     <string name="api_offline">ProtonMail 目前不可用，可前往我们的 Twitter 了解当前状况：https://twitter.com/protonmail</string>
     <string name="contact_saved">联系人已保存</string>
     <string name="contact_saved_offline">联系人已保存，将在联网后同步</string>
     <string name="contact_exist">此联系人已存在</string>
     <string name="invalid_email">邮箱地址无效</string>
     <string name="duplicate_email">邮箱地址重复</string>
-    <string name="invalid_code">验证码错误</string>
     <string name="message_drafted">邮件发送失败，已存为草稿</string>
     <string name="attachment_failed_message_drafted">请删除并重新添加附件“%s”后再发送。该邮件已保存至“草稿”文件夹。</string>
     <string name="open_drawer">打开</string>
@@ -175,20 +156,13 @@
     <string name="fetching_contacts">正在读取 ProtonMail 通讯录...</string>
     <string name="fetching_contacts_success">刷新联系人成功</string>
     <string name="fetching_contacts_failure">无法刷新联系人</string>
-    <string name="search_messages">搜索邮件</string>
     <string name="no_search_results">没有搜索结果</string>
     <string name="compose">撰写邮件</string>
     <string name="compose_message">撰写邮件</string>
     <string name="empty_folder">清空文件夹</string>
     <string name="view_headers">查看邮件头</string>
     <string name="message_headers">邮件头</string>
-    <string name="delete_message">删除邮件</string>
     <string name="delete_messages">删除邮件</string>
-    <string name="add_label">创建标签</string>
-    <string name="add_star">加星标</string>
-    <string name="remove_star">移除星标</string>
-    <string name="mark_read">标为已读</string>
-    <string name="mark_unread">标为未读</string>
     <string name="move_to_archive">存档</string>
     <string name="move_to_trash">移至废件箱</string>
     <string name="move_to_spam">标为垃圾邮件</string>
@@ -203,21 +177,13 @@
     <string name="cc">抄送</string>
     <string name="bcc">密送</string>
     <string name="to_prefix">收件人：</string>
-    <string name="cc_prefix">抄送：</string>
-    <string name="bcc_prefix">密送：</string>
-    <string name="from_prefix">发件人：</string>
-    <string name="date_prefix">日期：</string>
-    <string name="view_details">详细信息</string>
-    <string name="hide_details">隐藏详细信息</string>
     <string name="reply">回复</string>
     <string name="reply_all">回复所有人</string>
     <string name="forward">转发</string>
-    <string name="subject">主题</string>
     <string name="email_subject">邮件主题</string>
     <string name="define_message_password">邮件密码</string>
     <string name="confirm_message_password">确认密码</string>
     <string name="define_password_hint">密码提示（选填）</string>
-    <string name="message_passwords_do_not_match">两次输入的密码不一致</string>
     <string name="eo_passwords_do_not_match">密码不一致</string>
     <string name="define_expiration_period">设置有效期</string>
     <string name="set_message_expiration">设置邮件有效期</string>
@@ -227,15 +193,6 @@
     <string name="max_labels_selected">最多可使用 %d 个标签</string>
     <string name="max_attachments_reached">附件数量已达上限</string>
     <string name="max_attachments_size_reached">单封邮件的附件总大小已达上限</string>
-    <plurals name="hours_string">
-        <item quantity="other">%d 小时</item>
-    </plurals>
-    <plurals name="days_string">
-        <item quantity="other">%d 天</item>
-    </plurals>
-    <plurals name="minutes_string">
-        <item quantity="other">%d 分钟</item>
-    </plurals>
     <string name="expiration_days">%d天</string>
     <string name="expiration_hours">%d小时</string>
     <string name="expiration_minutes">%d分钟</string>
@@ -262,8 +219,6 @@
     <string name="email">邮箱</string>
     <string name="phone">电话号码</string>
     <string name="save">保存​​</string>
-    <string name="syncing_messages">同步中...</string>
-    <string name="sync">同步联系人</string>
     <string name="save_message_as_draft">是否将邮件存为草稿？</string>
     <string name="no_subject">确定要发送无主题的邮件吗？</string>
     <string name="yes">是</string>
@@ -276,7 +231,6 @@
     <string name="sending_report">正在提交反馈...</string>
     <string name="received_report">反馈已提交</string>
     <string name="not_received_report">反馈未能提交</string>
-    <string name="not_received_report_offline">网络已断开，反馈将在下次联网时提交</string>
     <string name="forward_prefix">转发：</string>
     <string name="original_message_divider">--------原始邮件--------</string>
     <string name="invalid_email_address">地址 %s 无效</string>
@@ -286,66 +240,41 @@
     <string name="attachment_limit">共需上传 %2$s 个附件，但最多只能上传 %1$s 个附件。</string>
     <string name="sending_message">邮件发送中...</string>
     <string name="sending_message_offline">网络尚未连接，邮件将稍后发送</string>
-    <string name="go_to_inbox">前往收件箱</string>
     <string name="message_sent">邮件已发送</string>
     <string name="message_failed">邮件发送失败</string>
-    <string name="message_sending_failures">%d 封邮件发送失败</string>
     <string name="storage_limit">存储空间限制</string>
     <string name="edit_settings">修改设置</string>
-    <string name="save_settings">保存设置</string>
     <string name="share">分享</string>
-    <string name="settings_not_saved_password">登录密码错误，故设置未能保存</string>
-    <string name="settings_not_saved_email">通知邮箱无效，故设置未能保存</string>
-    <string name="enter">确认</string>
     <string name="cancel">取消</string>
     <string name="close">关闭</string>
     <string name="eo_password_title">设置密码</string>
     <string name="eo_password_subtitle">向非 ProtonMail 用户设置邮件密码</string>
     <string name="eo_password_more_info">了解详情</string>
     <string name="no_attachments">0 个附件</string>
-    <string name="pin_lock_option_settings">程序锁定选项</string>
-    <string name="pin_lock_after">之后锁定应用</string>
-    <string name="lock_the_app">锁定应用</string>
     <string name="display_name_banned_chars">名称中不能包含 &gt; 和 &lt; 符号</string>
     <string name="cont">继续</string>
     <string name="reply_prefix_on">在</string>
-    <string name="terms_and_conditions">使用 ProtonMail 即表示您同意我们的\n<a href="https://protonmail.com/terms-and-conditions">服务条款</a>和<a href="https://protonmail.com/privacy-policy">隐私协议</a>
-    </string>
-    <string name="labels_title_apply">应用标签</string>
-    <string name="labels_title_add">添加标签</string>
-    <string name="labels_title">标签</string>
     <string name="label_name">标签名称</string>
-    <string name="label_name_empty">必须填写标签名称</string>
-    <string name="label_name_duplicate">此标签名称已存在</string>
     <string name="label_created">标签已创建</string>
     <string name="label_invalid">名称无效，标签未能添加。</string>
     <string name="undo">撤消</string>
-    <string name="customize_swipe_actions">更改滑动操作</string>
-    <string name="message_can_not_edit">此邮件尚未发送，因此不能回复或转发</string>
     <string name="label_apply">应用</string>
-    <string name="label_delete">删除</string>
     <string name="label_add">添加</string>
     <string name="no_browser_found">请安装浏览器以进行此操作</string>
     <string name="no_application_found">未找到能完成此操作的应用</string>
     <string name="no_application_found_or_link_invalid">未找到能打开此链接的应用，链接可能无效</string>
-    <string name="also_archive">同时存档</string>
     <string name="label_deleted">标签已删除</string>
     <string name="label_deleted_error">标签删除失败</string>
     <string name="message_deleted_error">部分邮件删除失败，可能正在发送当中</string>
     <string name="respond_inline">纯文本引用</string>
-    <string name="no_connectivity_detected">网络未连接。</string>
     <string name="server_not_reachable_troubleshoot">无法连接服务器…（<u>排查故障</u>）</string>
     <string name="connectivity_checking">正在连接...</string>
-    <string name="sync_short">同步</string>
-    <string name="draft_attachments_uploading">草稿仍在上传中...</string>
     <string name="draft_label_attachments_uploading">正在上传附件…</string>
     <string name="draft_label_message_uploading">正在发送邮件…</string>
     <string name="attachment_failed">附件上传失败 </string>
     <string name="attaching_photo_failed">图片添加失败</string>
     <string name="empty_message">邮件无内容</string>
-    <string name="dismiss">关闭</string>
     <string name="new_message_arrived">收到新邮件！</string>
-    <string name="please_choose_color">请选择颜色</string>
     <string name="display_images">显示外链内容</string>
     <string name="retry">重试</string>
     <string name="saving_failed_no_conn">保存失败，网络已断开</string>
@@ -364,12 +293,8 @@
     <string name="engagement_subtitle_expire">您可以指定发出的邮件过一段时间自动销毁。</string>
     <string name="engagement_subtitle_help">您可以在 protonmail.com/support 获得帮助，也可以在本程序内反馈问题。</string>
     <string name="attachment_exists">附件已存在</string>
-    <string name="sending_email_success">验证码已发送</string>
-    <string name="sending_email_failed">验证码发送失败</string>
-    <string name="send_code_wait">请等待 %d 秒后再试</string>
     <string name="eo_password_not_completed">尚未输入邮件密码</string>
     <string name="delinquency_subtitle">此账户因欠费已被停用。请登录 protonmail.com 续费。</string>
-    <string name="direct_disabled_subtitle">移动端注册暂不开放，请稍后再试，或使用电脑前往 <a href="https://protonmail.com">protonmail.com</a> 注册。</string>
     <string name="downloading">下载中...</string>
     <string name="cant_download_attachment">附件下载失败</string>
     <string-array name="auto_logout_options_array">
@@ -382,15 +307,7 @@
     <string name="delete_label_confirmation_title">删除所选标签？</string>
     <string name="delete_folder_confirmation_title">删除所选文件夹？</string>
     <string name="delete_label_confirmation_message">其中的邮件可在<b>所有邮件</b>中找到。</string>
-    <string name="enter_pin">输入口令打开邮箱</string>
-    <string name="enter_pin_message_details">输入口令查看邮件</string>
-    <string name="enter_current_pin">输入当前口令</string>
-    <string name="pin_subtitle_create">创建口令</string>
-    <string name="pin_subtitle_create_new">创建新口令</string>
-    <string name="pin_subtitle_confirm">确认口令</string>
-    <string name="pin_subtitle_confirm_new">确认新口令</string>
     <string name="pin_invalid">口令无效，请输入四位数字</string>
-    <string name="pin_confirmation_not_match">两次输入的口令不一致</string>
     <string name="pin_not_match">口令错误</string>
     <string name="new_pin_saved">新口令已生效</string>
     <string name="new_emails">%d 封新邮件</string>
@@ -407,7 +324,6 @@
     <string name="processing_attachment">正在处理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即将在浏览器中打开：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;确定要继续吗？</string>
     <string name="dont_ask_again">不再询问</string>
-    <string name="changes_affected_after_closing">所作更改将在程序退出后生效</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">口令错误，还可尝试 %d 次</item>
     </plurals>
@@ -415,42 +331,26 @@
         <item quantity="other">若再输错 %d 次数据将被清除！</item>
     </plurals>
     <string name="logout">退出账户</string>
-    <string name="log_out">退出账户 %s？</string>
-    <string name="logout_question">确定要退出账户吗？</string>
     <string name="logout_question_next_account">确定退出当前账户并转到 %s 吗？</string>
     <string name="upgrade">升级</string>
-    <string name="country">国家</string>
-    <string name="set_cont">保存并继续</string>
     <string name="error">错误</string>
-    <string name="storage_gb">%d GB 存储空间</string>
-    <string name="storage_mb">%d MB 存储空间</string>
-    <string name="max_addresses">最多 %d 个邮箱地址</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d 张嵌入图像</string>
-    <string name="select">选择</string>
     <string name="warning">警告</string>
-    <string name="empty_recovery_email_question">警告：您没有设置密保邮箱，一旦忘记密码就无法找回账户。是否继续？</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">有效期至 %s</string>
     <string name="no_payment_methods">您尚未添加支付方式。</string>
     <string name="edit_payment_methods">请登录 protonmail.com 更改支付方式。</string>
-    <string name="message_not_loaded">邮件未加载</string>
-    <string name="signature_text">落款内容</string>
     <string name="available_addresses">可用地址</string>
     <string name="inactive_addresses">闲置地址</string>
     <string name="not_set">未设置</string>
-    <string name="edit_notification_email">更改密保邮箱</string>
-    <string name="available_swipe_actions">可选操作</string>
     <string name="no_available_addresses">您没有可用的地址</string>
     <string name="no_inactive_addresses">您没有闲置的地址</string>
     <string name="label_add_new">创建标签</string>
     <string name="available_labels">可用标签</string>
-    <string name="choose_label_color">选择标签颜色</string>
-    <string name="save_new_label">保存标签</string>
     <string name="delete_selected">删除所选项</string>
     <string name="pin_not_activated">密码锁未开启</string>
     <string name="available_options">可选项</string>
-    <string name="change_recovery_email">更改密保/通知邮箱</string>
     <string name="background_sync_subtitle">开启此选项后程序将在后台与服务器同步。关闭此功能将停止通知推送。</string>
     <string-array name="notification_options">
         <item>免打扰</item>
@@ -464,29 +364,9 @@
         <item>尊享版</item>
         <item>专业版</item>
     </string-array>
-    <plurals name="custom_domains">
-        <item quantity="other">最多支持 %d 个域名</item>
-    </plurals>
-    <string-array name="months_array">
-        <item>月</item>
-        <item>01</item>
-        <item>02</item>
-        <item>03</item>
-        <item>04</item>
-        <item>05</item>
-        <item>06</item>
-        <item>07</item>
-        <item>08</item>
-        <item>09</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-    </string-array>
-    <string name="contact_details_display_name">名称</string>
     <string name="contact_details">联系人详情</string>
     <string name="email_type_home">家庭</string>
     <string name="type_title">选择类型</string>
-    <string name="message_drafted_error_server">邮件发送失败。%s</string>
     <string name="sync_local_contacts">上传到 ProtonMail</string>
     <string name="please_select_only_phone_contacts">请选择本地手机联系人</string>
     <string name="contact_vcard_hint_email">输入邮箱</string>
@@ -506,13 +386,10 @@
     <string name="vcard_other_option_gender">性别</string>
     <string name="vcard_other_option_role">身份</string>
     <string name="vcard_other_option_url">网址</string>
-    <string name="convert_contact">转换联系人</string>
     <string name="contacts_import_contact">导入联系人</string>
     <string name="contacts_import">导入</string>
     <string name="upload_contacts">上传联系人</string>
-    <string name="upgrade_encrypted_contact">升级后方可加密联系人详细信息。</string>
     <string name="uploading_contacts">正在上传联系人…</string>
-    <string name="error_encrypted_data">联系人加密信息读取失败。</string>
     <string-array name="vcard_option_phone">
         <item>电话</item>
         <item>手机</item>
@@ -544,40 +421,25 @@
     </string-array>
     <string name="logged_out">退出账户</string>
     <string name="logged_out_description">您已退出，请重新登录。</string>
-    <string name="error_message_zip_code_invalid">错误：邮编无效</string>
-    <string name="error_message_cvc_invalid">错误：信用卡安全码无效</string>
-    <string name="error_message_card_name_invalid">错误：持卡人姓名无效</string>
-    <string name="error_message_select_country">请选择国家</string>
-    <string name="error_message_exp_date_invalid">错误：有效期不正确</string>
-    <string name="error_message_exp_date_past">错误：有效期不正确</string>
-    <string name="error_message_card_number_invalid">错误：卡号无效</string>
     <string name="print_error">打印失败</string>
     <string name="download_complete">下载完成</string>
-    <string name="download_in_progress">正在下载</string>
     <string name="message_expires_in">此邮件将在%s后过期</string>
     <string name="unsaved_changes_title">更改未保存</string>
     <string name="unsaved_changes_subtitle">表单中有未保存的内容，确定要放弃更改吗？</string>
     <string name="request_timeout">请求超时，请重试</string>
-    <string name="add_folder">创建文件夹</string>
     <string name="no_folders">无文件夹</string>
-    <string name="folders_title_move">将邮件移动到</string>
-    <string name="folders_manager">管理文件夹</string>
     <string name="folder_add_new">创建文件夹</string>
     <string name="folder_name">文件夹名称</string>
     <string name="available_folders">可用文件夹</string>
-    <string name="choose_folder_color">选择文件夹颜色</string>
     <string name="folder_created">文件夹已创建</string>
     <string name="folder_invalid">名称无效，无法创建文件夹。</string>
     <string name="folder_deleted">文件夹已删除</string>
     <string name="folder_deleted_error">删除文件夹失败</string>
-    <string name="save_new_folder">保存文件夹</string>
-    <string name="create_new_folder">创建文件夹</string>
     <string name="empty_emails">无邮件</string>
     <string name="empty_email_list">没有邮箱地址</string>
     <string name="no_contacts">无联系人</string>
     <string name="sender_name_address">%1$s &lt;%2$s&gt; 来信：</string>
     <string name="update_label">更改标签</string>
-    <string name="max_labels_in_message">邮件 %1$s 最多只能有 %2$d 个标签。</string>
     <string name="delete">删除</string>
     <string name="subject_copied">主题已复制</string>
     <string name="details_copied">已复制</string>
@@ -591,8 +453,6 @@
     <string name="print_to_template">收件人：%s;  </string>
     <string name="print_cc_template">抄送：%s;  </string>
     <string name="print_bcc_template">密送：%s;  </string>
-    <string name="signature_error">签名校验失败</string>
-    <string name="signature_error_desc">此内容未能通过签名校验</string>
     <string name="address">地址：</string>
     <string name="address_street">街道</string>
     <string name="address_extended_street">延长段</string>
@@ -612,12 +472,10 @@
     <string name="info">提示</string>
     <string name="error_can_not_send_from_this_address">开通付费账户方可使用 %s 地址发送邮件。</string>
     <string name="email_empty">邮箱地址缺失</string>
-    <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">已加密的联系人详细信息</string>
     <string name="convert_question">上传本机通讯录</string>
     <string name="convert_question_subtitle">将本机通讯录上传至 ProtonMail 后即可在其他设备上登录 ProtonMail 查看。</string>
     <string name="refresh_contacts">刷新</string>
-    <string name="upload">上传</string>
     <string name="invalid_email_some_contacts">部分联系人的邮箱地址无效</string>
     <string name="protonmail_contacts">ProtonMail 联系人</string>
     <string name="device_contacts">本机联系人</string>
@@ -644,7 +502,6 @@
     <string name="resign_contact_title">要对联系人重新签名吗？</string>
     <string name="resign_contact_message">%s 验证失败，此联系人没有正确签名，需重新对其签名方可向其发送邮件或更改其信息。当您找回密码并重置密钥后就会发生这种情况。</string>
     <!-- Sender locks -->
-    <string name="sender_lock_unencrypted">未加密的邮件</string>
     <string name="sender_lock_zero_access">全封闭加密存储</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">由您经过端到端加密发送</string>
@@ -700,18 +557,7 @@
     <string name="contact_groups_manage_members">管理成员</string>
     <string name="contact_group_display_name">名称</string>
     <string name="contact_group_groups_icon">\ue91a </string>
-    <string name="contact_add_addr_to_group">加入群组</string>
     <string name="title_activity_address_chooser">管理成员</string>
-    <string name="title_activity_account_manager">管理账户</string>
-    <string name="account_manager_add_account">添加账户</string>
-    <string name="account_manager_remove_all_accounts">正在退出所有账户</string>
-    <string name="account_manager_note">您可以同时登录任意数量的 ProtonMail 付费账户和一个免费账户。</string>
-    <string name="account_manager_remove_all">退出所有账户</string>
-    <string name="account_manager_logout">退出账户</string>
-    <string name="account_manager_login">登录</string>
-    <string name="manage_accounts_user_loggedout">%s（已退出）</string>
-    <string name="manage_accounts_user_primary">%s（主账户）</string>
-    <string name="account_manager_remove">移除</string>
     <string name="default_error_message">出现错误</string>
     <string name="no_contact_groups">无联系人群组</string>
     <string name="search_contacts_inside_group">搜索联系人</string>
@@ -737,7 +583,6 @@
         <item quantity="other">确定要删除所选联系人吗？</item>
     </plurals>
     <string name="members">成员</string>
-    <string name="max_emails_in_group_title">群组邮箱数量已达上限</string>
     <string name="select_deselect_all">全选</string>
     <string name="contact_group_name_hint">填写群组名称</string>
     <string name="contact_group_change_color">更改颜色</string>
@@ -769,7 +614,6 @@
     <string name="biometric_error_hw_not_available">生物识别硬件不可用。</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">非公开收件人</string>
-    <string name="manage_accounts">管理账户</string>
     <!-- region Settings -->
     <string name="settings">设置</string>
     <string name="account_settings">账户设置</string>
@@ -782,7 +626,6 @@
     <string name="password_changed">密码已更改。</string>
     <string name="recovery_email">密保邮箱</string>
     <string name="recovery_email_changed">密保邮箱已更改。</string>
-    <string name="info_for_missing_functionality">请登录 <a href="https://www.protonmail.com/">protonmail.com</a> 并在设置中进行更改。</string>
     <string name="storage">邮箱容量</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">邮箱地址</string>
@@ -824,7 +667,6 @@
     <string name="minutes">分钟</string>
     <string name="set_custom_quick_snooze">设定免打扰时长</string>
     <string name="turn_off">关闭</string>
-    <string name="snooze_will_repeat">免打扰模式将重复生效</string>
     <string name="work_days">工作日</string>
     <string name="weekends">周末</string>
     <string name="every_day">每天</string>
@@ -874,12 +716,6 @@
     <plurals name="action_move_to_trash">
         <item quantity="other">邮件已移至废件箱</item>
     </plurals>
-    <plurals name="action_move_to_spam">
-        <item quantity="other">已标为垃圾邮件</item>
-    </plurals>
-    <plurals name="action_move_to_archive">
-        <item quantity="other">邮件已存档</item>
-    </plurals>
     <!-- endregion -->
     <string name="local_storage">本机存储限制</string>
     <!-- endregion -->
@@ -914,13 +750,7 @@
     <string name="app_version">程序版本</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="remove_account_question">移除 %s？</string>
     <string name="signed_in_with">已登录 %s</string>
-    <string name="signed_in_with_logged_out_from">已退出 %1$s 并登录 %2$s</string>
-    <string name="connect_account_limit_title">登录限制</string>
-    <string name="connect_account_limit_subtitle">ProtonMail 免费账户只能同时登录一个，因此您不能再登录其他免费账户。请先退出当前账户或开通付费账户。</string>
-    <string name="switch_accounts_question">切换账户？</string>
-    <string name="switch_to_account">切换至 %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">撰写邮件</string>
@@ -957,7 +787,6 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">加载会话时出错，请重试</string>
     <string name="star">星标</string>
     <string name="unstar">取消星标</string>
     <string name="star_unstar">星标/取消星标</string>
@@ -965,7 +794,6 @@
     <string name="label_as">标为…</string>
     <string name="mark_as_unread">标为未读</string>
     <string name="mark_as_read">标为已读</string>
-    <string name="mark_as_read_unread">标为已读/未读</string>
     <string name="move_message">移动邮件</string>
     <string name="manage">管理</string>
     <string name="message_from">来自 %s 的邮件</string>

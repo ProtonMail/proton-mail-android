@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.uitests.robots.mailbox.inbox
 
-import androidx.test.espresso.matcher.ViewMatchers
-import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MoveToFolderRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.SelectionStateRobotInterface
@@ -79,10 +77,7 @@ class InboxRobot : MailboxRobotInterface {
             return MoveToFolderRobot()
         }
 
-        override fun moveToTrash(): InboxRobot {
-            view.withId(R.id.move_to_trash).withVisibility(ViewMatchers.Visibility.VISIBLE).click()
-            return InboxRobot()
-        }
+        override fun moveToTrash() = InboxRobot()
     }
 
     class MoveToFolderRobot : MoveToFolderRobotInterface {

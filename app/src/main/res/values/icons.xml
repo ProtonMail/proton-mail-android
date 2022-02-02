@@ -19,55 +19,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <resources>
     <!-- icons -->
-    <string name="logo_icon" translatable="false">&#xE600;</string>
-    <string name="send_now_icon" translatable="false">&#xE601;</string>
-    <string name="search_icon" translatable="false">&#xE602;</string>
-    <string name="attachment_file_icon" translatable="false">&#xE603;</string>
-    <string name="trash_icon" translatable="false">&#xE604;</string>
-    <string name="star2_icon" translatable="false">&#xE605;</string>
-    <string name="star_icon" translatable="false">&#xE606;</string>
-    <string name="spam_icon" translatable="false">&#xE607;</string>
-    <string name="settings_icon" translatable="false">&#xE608;</string>
-    <string name="send_icon" translatable="false">&#xE609;</string>
-    <string name="selectbox_selected_icon" translatable="false">&#xE60A;</string>
-    <string name="selectbox_icon" translatable="false">&#xE60B;</string>
-    <string name="inbox_icon" translatable="false">&#xE60C;</string>
-    <string name="save_icon" translatable="false">&#xE60D;</string>
-    <string name="replyall_icon" translatable="false">&#xE60E;</string>
-    <string name="reply_icon" translatable="false">&#xE60F;</string>
-    <string name="forward_icon" translatable="false">&#xE610;</string>
-    <string name="remove_icon" translatable="false">&#xE611;</string>
-    <string name="plus_icon" translatable="false">&#xE612;</string>
-    <string name="more_icon" translatable="false">&#xE613;</string>
-    <string name="logout_icon" translatable="false">&#xE614;</string>
-    <string name="unlock_icon" translatable="false">&#xE615;</string>
-    <string name="lock_icon" translatable="false">&#xE616;</string>
-    <string name="label_icon" translatable="false">&#xE617;</string>
-    <string name="attachment_photo_icon" translatable="false">&#xE618;</string>
-    <string name="expiration_icon" translatable="false">&#xE619;</string>
-    <string name="draft_icon" translatable="false">&#xE61A;</string>
-    <string name="delete_icon" translatable="false">&#xE61B;</string>
-    <string name="contacts_icon" translatable="false">&#xE61C;</string>
-    <string name="compose_icon" translatable="false">&#xE61D;</string>
-    <string name="close_icon" translatable="false">&#xE61E;</string>
-    <string name="back_icon" translatable="false">&#xE61F;</string>
-    <string name="attachment_icon" translatable="false">&#xE620;</string>
-    <string name="archive_icon" translatable="false">&#xE621;</string>
-    <string name="apply_icon" translatable="false">&#xE622;</string>
-    <string name="add_icon" translatable="false">&#xE623;</string>
-    <string name="power_icon" translatable="false">&#xE624;</string>
-    <string name="menu_icon" translatable="false">&#xE625;</string>
-    <string name="eye_icon" translatable="false">&#xE626;</string>
-    <string name="attachment_zip_icon" translatable="false">&#xE627;</string>
-    <string name="attachment_txt_icon" translatable="false">&#xE628;</string>
-    <string name="attachment_png_icon" translatable="false">&#xE629;</string>
-    <string name="attachment_pdf_icon" translatable="false">&#xE62A;</string>
-    <string name="attachment_jpeg_icon" translatable="false">&#xE62B;</string>
-    <string name="attachment_doc_icon" translatable="false">&#xE62C;</string>
     <string name="pgp_lock_warning" translatable="false">&#xE900;</string>
     <string name="pgp_lock_check" translatable="false">&#xE901;</string>
     <string name="pgp_lock_pen" translatable="false">&#xE902;</string>
-    <string name="pgp_drop_down_right" translatable="false">&#xE903;</string>
     <string name="lock_default" translatable="false">&#xE904;</string>
     <string name="pgp_lock_open" translatable="false">&#xE905;</string>
     <string name="no_icon" translatable="false"></string>
