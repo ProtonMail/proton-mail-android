@@ -50,8 +50,8 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(EMAIL_2) } returns publicKeyResponse2
 
         val expected = listOf(
-            buildKeySuccessResult(EMAIL_1 to PUBLIC_KEY_1,),
-            buildKeySuccessResult(EMAIL_2 to PUBLIC_KEY_2)
+            buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1,),
+            buildKeySuccessResult(EMAIL_2, PUBLIC_KEY_2)
         )
 
         // when
@@ -71,8 +71,8 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(EMAIL_2) } returns publicKeyResponse2
 
         val expected = listOf(
-            buildKeySuccessResult(EMAIL_1 to PUBLIC_KEY_1,),
-            buildKeySuccessResult(EMAIL_2 to EMPTY_STRING)
+            buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1,),
+            buildKeySuccessResult(EMAIL_2, EMPTY_STRING)
         )
 
         // when
@@ -91,7 +91,7 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(EMAIL_2) } throws Exception("An error occurred!")
 
         val expected = listOf(
-            buildKeySuccessResult(EMAIL_1 to PUBLIC_KEY_1),
+            buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1),
             buildKeyErrorResult(EMAIL_2)
         )
 
@@ -116,9 +116,10 @@ class FetchPublicKeysTest {
         ) = listOf(FetchPublicKeysRequest(emails, location))
 
         fun buildKeySuccessResult(
-            vararg emailKeyPair: Pair<String, String>,
+            email: String,
+            key: String,
             location: RecipientLocationType = RecipientLocationType.TO
-        ) = FetchPublicKeysResult.Success(emailKeyPair.toMap(), location)
+        ) = FetchPublicKeysResult.Success(email, key, location)
 
         fun buildKeyErrorResult(
             email: String,

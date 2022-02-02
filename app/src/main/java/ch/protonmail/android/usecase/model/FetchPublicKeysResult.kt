@@ -24,7 +24,8 @@ import ch.protonmail.android.core.Constants
 sealed class FetchPublicKeysResult {
 
     data class Success(
-        val keysMap: Map<String, String>,
+        val email: String,
+        val key: String,
         val recipientsType: Constants.RecipientLocationType,
         val isSendRetryRequired: Boolean = false
     ) : FetchPublicKeysResult()

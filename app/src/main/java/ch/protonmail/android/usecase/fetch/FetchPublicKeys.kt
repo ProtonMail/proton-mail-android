@@ -53,9 +53,8 @@ class FetchPublicKeys @Inject constructor(
             runCatching { api.getPublicKeys(email) }
                 .fold(
                     onSuccess = { response ->
-                        val emailKeyPair =
-                            email to (response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING)
-                        FetchPublicKeysResult.Success(mapOf(emailKeyPair), location)
+                        val key = response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING
+                        FetchPublicKeysResult.Success(email, key, location)
                     },
                     onFailure = {
                         Timber.w(it, "Unable to fetch public keys")

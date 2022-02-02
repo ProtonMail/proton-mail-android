@@ -599,14 +599,15 @@ public class ComposeMessageActivity
             if (result instanceof FetchPublicKeysResult.Success) {
                 FetchPublicKeysResult.Success success = (FetchPublicKeysResult.Success) result;
                 isRetry = isRetry || success.isSendRetryRequired();
-                Map<String, String> keys = success.getKeysMap();
+                String email = success.getEmail();
+                String key = success.getKey();
                 Constants.RecipientLocationType location = success.getRecipientsType();
                 if (location == Constants.RecipientLocationType.TO) {
-                    toRecipientView.setEmailPublicKey(keys);
+                    toRecipientView.setEmailPublicKey(email, key);
                 } else if (location == Constants.RecipientLocationType.CC) {
-                    ccRecipientView.setEmailPublicKey(keys);
+                    ccRecipientView.setEmailPublicKey(email, key);
                 } else if (location == Constants.RecipientLocationType.BCC) {
-                    bccRecipientView.setEmailPublicKey(keys);
+                    bccRecipientView.setEmailPublicKey(email, key);
                 }
             } else {
                 FetchPublicKeysResult.Error error = (FetchPublicKeysResult.Error) result;

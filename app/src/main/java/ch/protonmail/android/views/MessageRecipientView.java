@@ -335,8 +335,8 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         return nonProtonMailRecipients;
     }
 
-    public void setEmailPublicKey(Map<String, String> key) {
-        mPublicKeysMap.putAll(key);
+    public void setEmailPublicKey(String email, String key) {
+        mPublicKeysMap.put(email, key);
     }
 
     public void removeKey(String email) {
