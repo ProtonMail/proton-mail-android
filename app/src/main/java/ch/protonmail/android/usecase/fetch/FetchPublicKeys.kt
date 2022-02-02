@@ -42,7 +42,7 @@ class FetchPublicKeys @Inject constructor(
         requests.mapNotNullAsync { request ->
             val publicKeys = getPublicKeys(request.emails.toSet())
             if (publicKeys.isEmpty()) null
-            else FetchPublicKeysResult(publicKeys, request.recipientsType)
+            else FetchPublicKeysResult.Success(publicKeys, request.recipientsType)
         }
     }
 

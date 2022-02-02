@@ -596,15 +596,31 @@ public class ComposeMessageActivity
         binding.composerProgressLayout.setVisibility(View.GONE);
         boolean isRetry = false;
         for (FetchPublicKeysResult result : results) {
-            isRetry = isRetry || result.isSendRetryRequired();
-            Map<String, String> keys = result.getKeysMap();
-            Constants.RecipientLocationType location = result.getRecipientsType();
-            if (location == Constants.RecipientLocationType.TO) {
-                toRecipientView.setEmailPublicKey(keys);
-            } else if (location == Constants.RecipientLocationType.CC) {
-                ccRecipientView.setEmailPublicKey(keys);
-            } else if (location == Constants.RecipientLocationType.BCC) {
-                bccRecipientView.setEmailPublicKey(keys);
+            if (result instanceof FetchPublicKeysResult.Success) {
+                FetchPublicKeysResult.Success success = (FetchPublicKeysResult.Success) result;
+                isRetry = isRetry || success.isSendRetryRequired();
+                Map<String, String> keys = success.getKeysMap();
+                Constants.RecipientLocationType location = success.getRecipientsType();
+                if (location == Constants.RecipientLocationType.TO) {
+                    toRecipientView.setEmailPublicKey(keys);
+                } else if (location == Constants.RecipientLocationType.CC) {
+                    ccRecipientView.setEmailPublicKey(keys);
+                } else if (location == Constants.RecipientLocationType.BCC) {
+                    bccRecipientView.setEmailPublicKey(keys);
+                }
+            } else {
+                FetchPublicKeysResult.Error error = (FetchPublicKeysResult.Error) result;
+                Constants.RecipientLocationType location = error.getRecipientsType();
+                if (location == Constants.RecipientLocationType.TO) {
+                    toRecipientView.setError(error.getError());
+                    toRecipientView.setHasError(true);
+                } else if (location == Constants.RecipientLocationType.CC) {
+                    ccRecipientView.setError(error.getError());
+                } else if (location == Constants.RecipientLocationType.BCC) {
+                    bccRecipientView.setError(error.getError());
+                }
+                Toast.makeText(this, error.getError(), Toast.LENGTH_SHORT).show();
+
             }
         }
 

@@ -73,7 +73,7 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(email) } returns publicKeyResponse
         coEvery { api.getPublicKeys(email2) } returns publicKeyResponse2
         val expected = listOf(
-            FetchPublicKeysResult(
+            FetchPublicKeysResult.Success(
                 mapOf(email to publicKey, email2 to publicKey2),
                 location
             )
@@ -111,7 +111,7 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(email) } returns publicKeyResponse
         coEvery { api.getPublicKeys(email2) } returns publicKeyResponse2
         val expected = listOf(
-            FetchPublicKeysResult(
+            FetchPublicKeysResult.Success(
                 mapOf(email to publicKey, email2 to ""),
                 location
             )
