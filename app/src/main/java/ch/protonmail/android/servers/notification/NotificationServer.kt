@@ -395,20 +395,26 @@ class NotificationServer @Inject constructor(
                 setContentIntent(contentPendingIntent)
                 setStyle(inboxStyle)
                 addAction(
-                    R.drawable.archive,
-                    context.getString(R.string.archive),
-                    archiveIntent
+                    NotificationCompat.Action(
+                        R.drawable.archive,
+                        context.getString(R.string.archive),
+                        archiveIntent
+                    )
                 )
                 addAction(
-                    R.drawable.action_notification_trash,
-                    context.getString(R.string.trash),
-                    trashIntent
+                    NotificationCompat.Action(
+                        R.drawable.action_notification_trash,
+                        context.getString(R.string.trash),
+                        trashIntent
+                    )
                 )
                 if (replyIntent != null) {
                     addAction(
-                        R.drawable.action_notification_reply,
-                        context.getString(R.string.reply),
-                        replyIntent
+                        NotificationCompat.Action(
+                            R.drawable.action_notification_reply,
+                            context.getString(R.string.reply),
+                            replyIntent
+                        )
                     )
                 }
             }
@@ -662,6 +668,15 @@ private fun Context.buildReplyIntent(
         .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP, message.timeMs)
         .putExtra(ComposeMessageActivity.EXTRA_PARENT_ID, message.messageId)
         .putExtra(ComposeMessageActivity.EXTRA_ACTION_ID, Constants.MessageActionType.REPLY)
+        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-    return PendingIntent.getActivity(this, System.currentTimeMillis().toInt(), intent, 0)
+    val backIntent = Intent(this, MailboxActivity::class.java)
+    backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+    return PendingIntent.getActivities(
+        this,
+        message.messageId.hashCode(),
+        arrayOf(backIntent, intent),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
 }
