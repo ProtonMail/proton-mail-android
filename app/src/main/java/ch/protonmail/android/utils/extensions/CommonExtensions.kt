@@ -20,36 +20,17 @@ package ch.protonmail.android.utils.extensions
 
 import android.content.Context
 import android.net.Uri
-import android.os.AsyncTask
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.EmailAddress
 import com.google.gson.Gson
 import retrofit2.HttpException
 
-fun HttpException.toPMResponseBody(): ResponseBody? {
-    return response()?.errorBody()?.toPMResponseBody()
-}
+fun Throwable.toPmResponseBodyOrNull(): ResponseBody? =
+    (this as? HttpException)?.response()?.errorBody()?.toPmResponseBody()
 
-fun okhttp3.ResponseBody.toPMResponseBody(): ResponseBody {
-    return Gson().fromJson(string(), ResponseBody::class.java)
-}
-
-/**
- * Performs mapping like [Transformations.map][androidx.lifecycle.Transformations.map] but executes
- * the mapping function in background thread.
- */
-fun <X, Y> LiveData<X>.asyncMap(func: (X?) -> Y?): LiveData<Y> {
-    val result = MediatorLiveData<Y>()
-    result.addSource(this) { x ->
-        AsyncTask.execute {
-            result.postValue(func.invoke(x))
-        }
-    }
-    return result
-}
+fun okhttp3.ResponseBody.toPmResponseBody(): ResponseBody =
+    Gson().fromJson(string(), ResponseBody::class.java)
 
 /** @return [Boolean] `true` if the receiver [Uri] is [Uri.EMPTY] */
 fun Uri.isEmpty() = this == Uri.EMPTY

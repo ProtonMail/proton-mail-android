@@ -20,13 +20,13 @@
 package ch.protonmail.android.usecase.fetch
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.Constants.RecipientLocationType
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Failure
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Failure.Error
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Success
+import ch.protonmail.android.utils.extensions.toPmResponseBodyOrNull
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -57,16 +57,14 @@ class FetchPublicKeys @Inject constructor(
             runCatching { api.getPublicKeys(email) }
                 .fold(
                     onSuccess = { response ->
-                        if (response.code == RESPONSE_CODE_OK) {
-                            val key = response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING
-                            Success(email, key, location)
-                        } else {
-                            Failure(email, location, Error.WithMessage(response.error))
-                        }
+                        val key = response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING
+                        Success(email, key, location)
                     },
-                    onFailure = {
-                        Timber.w(it, "Unable to fetch public keys")
-                        Failure(email, location, Error.Generic)
+                    onFailure = { throwable ->
+                        Timber.w(throwable, "Unable to fetch public keys")
+                        throwable.toPmResponseBodyOrNull()
+                            ?.let { Failure(email, location, Error.WithMessage(it.error)) }
+                            ?: Failure(email, location, Error.Generic)
                     }
                 )
         }

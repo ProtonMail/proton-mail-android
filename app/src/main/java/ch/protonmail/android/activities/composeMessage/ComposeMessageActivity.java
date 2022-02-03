@@ -612,22 +612,25 @@ public class ComposeMessageActivity
             } else {
                 FetchPublicKeysResult.Failure failure = (FetchPublicKeysResult.Failure) result;
                 String errorMessage;
-                if (failure.getError() instanceof FetchPublicKeysResult.Failure.Error.WithMessage) {
-                    errorMessage = ((FetchPublicKeysResult.Failure.Error.WithMessage) failure.getError()).getMessage();
-                } else {
-                    errorMessage = getString(R.string.error);
-                }
+                MessageRecipientView recipientView = toRecipientView;
                 Constants.RecipientLocationType location = failure.getRecipientsType();
                 if (location == Constants.RecipientLocationType.TO) {
-                    toRecipientView.setError(errorMessage);
-                    toRecipientView.setHasError(true);
+                    recipientView = toRecipientView;
                 } else if (location == Constants.RecipientLocationType.CC) {
-                    ccRecipientView.setError(errorMessage);
+                    recipientView = ccRecipientView;
                 } else if (location == Constants.RecipientLocationType.BCC) {
-                    bccRecipientView.setError(errorMessage);
+                    recipientView = bccRecipientView;
                 }
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
 
+                if (failure.getError() instanceof FetchPublicKeysResult.Failure.Error.WithMessage) {
+                    String baseErrorMessage = ((FetchPublicKeysResult.Failure.Error.WithMessage) failure.getError()).getMessage();
+                    errorMessage = getString(R.string.composer_removing_address_server_error, failure.getEmail(), baseErrorMessage);
+                    recipientView.removeObjectForKey(failure.getEmail());
+
+                } else {
+                    errorMessage = getString(R.string.composer_removing_address_generic_error, failure.getEmail());
+                }
+                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
             }
         }
 

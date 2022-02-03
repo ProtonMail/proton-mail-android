@@ -59,7 +59,6 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
     private Map<String, SendPreference> sendPreferenceMap;
     private boolean isMessagePasswordEncrypted;
     private Constants.RecipientLocationType location;
-    private boolean hasError = false;
 
     public void setSendPreferenceMap(Map<String, SendPreference> sendPreferenceMap, boolean isMessagePasswordEncrypted) {
         this.sendPreferenceMap = sendPreferenceMap;
@@ -73,10 +72,6 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         mTypefacePgp = Typeface.createFromAsset(context.getAssets(), "pgp-icons-android.ttf");
         mTypefaceGroups = Typeface.createFromAsset(context.getAssets(), "fonts/contacts_icons.ttf");
         mMapView = new HashMap<>();
-    }
-
-    public void setHasError(boolean hasError) {
-        this.hasError = hasError;
     }
 
     public void setLocation(Constants.RecipientLocationType location) {
@@ -176,14 +171,6 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
                             tokenPgpView.setTextColor(getContext().getResources().getColor(messageRecipient.getIconColor()));
                         }
                         tokenPgpView.setTypeface(mTypefacePgp);
-
-                        if (hasError) {
-                            TextView tokenView = view.findViewById(R.id.recipient_text_text_view);
-                            tokenView.setTextColor(getContext().getColor(R.color.red));
-                            tokenPgpView.setVisibility(VISIBLE);
-                            tokenPgpView.setText("X");
-                            tokenPgpView.setTextColor(getContext().getColor(R.color.red));
-                        }
                         view.invalidate();
                         invalidate();
                         postInvalidate();

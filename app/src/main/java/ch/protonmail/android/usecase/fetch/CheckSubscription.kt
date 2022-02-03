@@ -23,7 +23,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.CheckSubscriptionBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.model.CheckSubscriptionResult
-import ch.protonmail.android.utils.extensions.toPMResponseBody
+import ch.protonmail.android.utils.extensions.toPmResponseBodyOrNull
 import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
@@ -45,7 +45,7 @@ class CheckSubscription @Inject constructor(
                     planIds.add(it.id)
                 }
         }.onFailure {
-            Timber.i(it, "Ignoring fetchSubscription error ${(it as? HttpException)?.toPMResponseBody()}")
+            Timber.i(it, "Ignoring fetchSubscription error ${(it as? HttpException)?.toPmResponseBodyOrNull()}")
         }
 
         return runCatching {
@@ -61,7 +61,7 @@ class CheckSubscription @Inject constructor(
             .fold(
                 onSuccess = { it },
                 onFailure = { throwable ->
-                    val httpErrorBody = (throwable as? HttpException)?.toPMResponseBody()
+                    val httpErrorBody = (throwable as? HttpException)?.toPmResponseBodyOrNull()
                     CheckSubscriptionResult.Error(
                         response = httpErrorBody,
                         throwable = throwable

@@ -27,9 +27,11 @@ import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.Constants.RecipientLocationType
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
+import ch.protonmail.android.utils.extensions.toPmResponseBodyOrNull
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -86,26 +88,31 @@ class FetchPublicKeysTest {
 
     @Test
     fun `return correct results with Success and Error when connection error occurs for some keys`() = runBlockingTest {
-        // given
-        val errorMessage = "An error occurred"
-        val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
-        val publicKeyResponse3 = buildErrorResponse(message = errorMessage)
+        mockkStatic(Throwable::toPmResponseBodyOrNull) {
+            // given
+            val errorMessage = "An error occurred"
+            val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
+            val publicKeyResponse3 = buildErrorResponse(message = errorMessage)
+            val key3Exception: Throwable = mockk(relaxed = true) {
+                every { toPmResponseBodyOrNull() } returns publicKeyResponse3
+            }
 
-        coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse1
-        coEvery { api.getPublicKeys(EMAIL_2) } throws Exception()
-        coEvery { api.getPublicKeys(EMAIL_3) } returns publicKeyResponse3
+            coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse1
+            coEvery { api.getPublicKeys(EMAIL_2) } throws Exception()
+            coEvery { api.getPublicKeys(EMAIL_3) } throws key3Exception
 
-        val expected = listOf(
-            buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1),
-            buildKeyErrorResult(EMAIL_2, error = FetchPublicKeysResult.Failure.Error.Generic),
-            buildKeyErrorResult(EMAIL_3, error = FetchPublicKeysResult.Failure.Error.WithMessage(errorMessage))
-        )
+            val expected = listOf(
+                buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1),
+                buildKeyErrorResult(EMAIL_2, error = FetchPublicKeysResult.Failure.Error.Generic),
+                buildKeyErrorResult(EMAIL_3, error = FetchPublicKeysResult.Failure.Error.WithMessage(errorMessage))
+            )
 
-        // when
-        val result = fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1, EMAIL_2, EMAIL_3)))
+            // when
+            val result = fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1, EMAIL_2, EMAIL_3)))
 
-        // then
-        assertEquals(expected, result)
+            // then
+            assertEquals(expected, result)
+        }
     }
 
     private companion object TestData {
