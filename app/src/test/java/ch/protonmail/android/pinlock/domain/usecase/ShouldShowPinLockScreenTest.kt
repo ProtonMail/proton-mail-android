@@ -24,11 +24,11 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import java.util.concurrent.TimeUnit.MINUTES
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration
+import kotlin.time.DurationUnit.MINUTES
 import kotlin.time.toDuration
 
 class ShouldShowPinLockScreenTest {

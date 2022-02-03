@@ -47,8 +47,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 @HiltViewModel
@@ -115,7 +115,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
 
     private fun initFiltering() {
         filteringChannel
-            .debounce(300.toDuration(TimeUnit.MILLISECONDS))
+            .debounce(300.toDuration(DurationUnit.MILLISECONDS))
             .distinctUntilChanged()
             .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.contactId, it) }
             .catch {
