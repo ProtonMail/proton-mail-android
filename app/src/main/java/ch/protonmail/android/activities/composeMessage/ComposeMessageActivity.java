@@ -20,11 +20,10 @@ package ch.protonmail.android.activities.composeMessage;
 
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -135,7 +134,6 @@ import ch.protonmail.android.di.DefaultSharedPreferences;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
-import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.events.MessageSavedEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
 import ch.protonmail.android.events.ResignContactEvent;
@@ -221,9 +219,9 @@ public class ComposeMessageActivity
     private MessageRecipientView toRecipientView;
     private MessageRecipientView ccRecipientView;
     private MessageRecipientView bccRecipientView;
-    
+
     private EditText subjectEditText;
-    
+
     private EditText messageBodyEditText;
     private Button respondInlineButton;
 
@@ -256,7 +254,7 @@ public class ComposeMessageActivity
     @Inject
     @DefaultSharedPreferences
     SharedPreferences defaultSharedPreferences;
-    
+
     @Inject
     HtmlToSpanned htmlToSpanned;
 
@@ -1369,7 +1367,16 @@ public class ComposeMessageActivity
 
     private void finishActivity() {
         setResult(RESULT_OK);
-        finish();
+        if (isTaskRoot()) {
+            ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            if (activityManager != null) {
+                List<ActivityManager.AppTask> tasks = activityManager.getAppTasks();
+                if (tasks != null && tasks.size() > 0) {
+                    tasks.get(0).finishAndRemoveTask();
+                }
+            }
+        } else
+            finish();
     }
 
     @Subscribe
