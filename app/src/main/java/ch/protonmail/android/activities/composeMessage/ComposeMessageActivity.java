@@ -610,17 +610,23 @@ public class ComposeMessageActivity
                     bccRecipientView.setEmailPublicKey(email, key);
                 }
             } else {
-                FetchPublicKeysResult.Error error = (FetchPublicKeysResult.Error) result;
-                Constants.RecipientLocationType location = error.getRecipientsType();
+                FetchPublicKeysResult.Failure failure = (FetchPublicKeysResult.Failure) result;
+                String errorMessage;
+                if (failure.getError() instanceof FetchPublicKeysResult.Failure.Error.WithMessage) {
+                    errorMessage = ((FetchPublicKeysResult.Failure.Error.WithMessage) failure.getError()).getMessage();
+                } else {
+                    errorMessage = getString(R.string.error);
+                }
+                Constants.RecipientLocationType location = failure.getRecipientsType();
                 if (location == Constants.RecipientLocationType.TO) {
-                    toRecipientView.setError(error.getError());
+                    toRecipientView.setError(errorMessage);
                     toRecipientView.setHasError(true);
                 } else if (location == Constants.RecipientLocationType.CC) {
-                    ccRecipientView.setError(error.getError());
+                    ccRecipientView.setError(errorMessage);
                 } else if (location == Constants.RecipientLocationType.BCC) {
-                    bccRecipientView.setError(error.getError());
+                    bccRecipientView.setError(errorMessage);
                 }
-                Toast.makeText(this, error.getError(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
 
             }
         }

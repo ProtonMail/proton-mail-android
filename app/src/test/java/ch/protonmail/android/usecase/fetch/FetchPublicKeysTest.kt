@@ -23,10 +23,12 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.PublicKeyBody
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.enumerations.KeyFlag
+import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.Constants.RecipientLocationType
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
@@ -85,18 +87,22 @@ class FetchPublicKeysTest {
     @Test
     fun `return correct results with Success and Error when connection error occurs for some keys`() = runBlockingTest {
         // given
+        val errorMessage = "An error occurred"
         val publicKeyResponse1 = buildKeyResponse(PUBLIC_KEY_1, hasEncryptionFlag = true)
+        val publicKeyResponse3 = buildErrorResponse(message = errorMessage)
 
         coEvery { api.getPublicKeys(EMAIL_1) } returns publicKeyResponse1
-        coEvery { api.getPublicKeys(EMAIL_2) } throws Exception("An error occurred!")
+        coEvery { api.getPublicKeys(EMAIL_2) } throws Exception()
+        coEvery { api.getPublicKeys(EMAIL_3) } returns publicKeyResponse3
 
         val expected = listOf(
             buildKeySuccessResult(EMAIL_1, PUBLIC_KEY_1),
-            buildKeyErrorResult(EMAIL_2)
+            buildKeyErrorResult(EMAIL_2, error = FetchPublicKeysResult.Failure.Error.Generic),
+            buildKeyErrorResult(EMAIL_3, error = FetchPublicKeysResult.Failure.Error.WithMessage(errorMessage))
         )
 
         // when
-        val result = fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1, EMAIL_2)))
+        val result = fetchPublicKeys(buildKeyRequests(listOf(EMAIL_1, EMAIL_2, EMAIL_3)))
 
         // then
         assertEquals(expected, result)
@@ -106,6 +112,7 @@ class FetchPublicKeysTest {
 
         const val EMAIL_1 = "email1@pm.me"
         const val EMAIL_2 = "email2@pm.me"
+        const val EMAIL_3 = "email3@pm.me"
 
         const val PUBLIC_KEY_1 = "publicKey1"
         const val PUBLIC_KEY_2 = "publicKey2"
@@ -124,18 +131,24 @@ class FetchPublicKeysTest {
         fun buildKeyErrorResult(
             email: String,
             location: RecipientLocationType = RecipientLocationType.TO,
-            error: String = "error"
-        ) = FetchPublicKeysResult.Error(email, location, error)
+            error: FetchPublicKeysResult.Failure.Error = FetchPublicKeysResult.Failure.Error.Generic
+        ) = FetchPublicKeysResult.Failure(email, location, error)
 
         fun buildKeyBody(key: String, hasEncryptionFlag: Boolean) = PublicKeyBody(
             if (hasEncryptionFlag) KeyFlag.ENCRYPTION_ENABLED.value else 0,
             key
         )
 
-        fun buildKeyResponse(key: String, hasEncryptionFlag: Boolean) = PublicKeyResponse(
-            PublicKeyResponse.RecipientType.INTERNAL.value,
-            "mimeType",
-            arrayOf(buildKeyBody(key, hasEncryptionFlag))
-        )
+        fun buildKeyResponse(key: String, hasEncryptionFlag: Boolean): PublicKeyResponse = mockk {
+            every { code } returns RESPONSE_CODE_OK
+            every { recipientType } returns PublicKeyResponse.RecipientType.INTERNAL
+            every { mimeType } returns "mimeType"
+            every { keys } returns arrayOf(buildKeyBody(key, hasEncryptionFlag))
+        }
+
+        fun buildErrorResponse(message: String): PublicKeyResponse = mockk {
+            every { code } returns 0
+            every { error } returns message
+        }
     }
 }

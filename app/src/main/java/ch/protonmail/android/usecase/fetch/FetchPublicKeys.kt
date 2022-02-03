@@ -20,9 +20,13 @@
 package ch.protonmail.android.usecase.fetch
 
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.Constants.RecipientLocationType
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Failure
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Failure.Error
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Success
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -53,12 +57,16 @@ class FetchPublicKeys @Inject constructor(
             runCatching { api.getPublicKeys(email) }
                 .fold(
                     onSuccess = { response ->
-                        val key = response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING
-                        FetchPublicKeysResult.Success(email, key, location)
+                        if (response.code == RESPONSE_CODE_OK) {
+                            val key = response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING
+                            Success(email, key, location)
+                        } else {
+                            Failure(email, location, Error.WithMessage(response.error))
+                        }
                     },
                     onFailure = {
                         Timber.w(it, "Unable to fetch public keys")
-                        FetchPublicKeysResult.Error(email, location, "error")
+                        Failure(email, location, Error.Generic)
                     }
                 )
         }
