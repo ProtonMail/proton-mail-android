@@ -47,11 +47,13 @@ import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.account.domain.entity.Account
+import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.account.domain.entity.isDisabled
 import me.proton.core.account.domain.entity.isReady
 import me.proton.core.account.domain.entity.isStepNeeded
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.accountmanager.domain.getAccounts
 import me.proton.core.accountmanager.presentation.AccountManagerObserver
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressFailed
@@ -190,6 +192,12 @@ internal class AccountStateManager @Inject constructor(
 
     fun signOut(userId: UserId) = scope.launch {
         accountManager.disableAccount(userId)
+    }
+
+    fun signOutAll() = scope.launch {
+        accountManager.getAccounts(AccountState.Ready)
+            .first()
+            .forEach { accountManager.disableAccount(it.userId) }
     }
 
     fun signOutPrimary() = scope.launch {
