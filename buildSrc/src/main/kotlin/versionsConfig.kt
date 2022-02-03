@@ -23,9 +23,9 @@ import studio.forface.easygradle.dsl.android.*
 fun initVersions() {
 
     // region Kotlin
-    `kotlin version` =                          "1.5.31"        // Released: Sep 20, 2021
+    `kotlin version` =                          "1.6.10"        // Released: Dec 14, 2021
     `coroutines version` =                      "1.5.2"         // Released: Sep 02, 2021
-    `serialization version` =                   "1.2.2"         // Released: Jul 08, 2021
+    `serialization version` =                   "1.3.2"         // Released: Dec 23, 2021
     // endregion
 
     // region Android
@@ -62,7 +62,6 @@ fun initVersions() {
 }
 
 // Proton Core
-// Common
 const val `Proton-core version` = "4.1.0"
 
 // Test
@@ -114,5 +113,5 @@ const val `stetho version` =                    "1.5.1"         // Released: Mar
 const val `timber version` =                    "4.7.1"         // Released:
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
 const val `remark version` =                    "1.1.0"         // Released: Dec 08, 2016
-const val `store version` =                     "4.0.2-KT15"    // Released: May 17, 2021
+const val `store version` =                     "4.0.4-KT15"    // Released: Dec 09, 2021
 const val `coil version` =                      "1.2.1"         // Released: Apr 28, 2021
