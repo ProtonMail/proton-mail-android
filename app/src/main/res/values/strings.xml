@@ -663,8 +663,8 @@
     <string name="fab_add_contact">Add new contact</string>
     <string name="fab_add_contact_group">Add new contact group</string>
     <string name="contacts_add_photo_title">Add Photo</string>
-    <string name="contacts_add_photo_select_gallery">Select From Gallery</string>
-    <string name="contacts_add_photo_select_camera">Capture From Camera</string>
+    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
+    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
     <string name="save_group_validation_error">Please provide a group name</string>
 
     <!-- region Storage Limit Reached -->
