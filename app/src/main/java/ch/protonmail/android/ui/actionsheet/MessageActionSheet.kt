@@ -276,13 +276,13 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             detailsActionsViewInLightModeTextView.apply {
                 isVisible = state.showViewInLightModeAction
                 setOnClickListener {
-                    TODO()
+                    viewModel.viewInLightMode(state.mailboxItemIds.first())
                 }
             }
             detailsActionsViewInDarkModeTextView.apply {
                 isVisible = state.showViewInDarkModeAction
                 setOnClickListener {
-                    TODO()
+                    viewModel.viewInDarkMode(state.mailboxItemIds.first())
                 }
             }
         }

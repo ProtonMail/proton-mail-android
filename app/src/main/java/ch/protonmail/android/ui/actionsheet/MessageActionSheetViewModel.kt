@@ -39,6 +39,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.utils.webview.SetViewInDarkModeMessagePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,6 +66,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private val conversationModeEnabled: ConversationModeEnabled,
     private val isAppInDarkMode: IsAppInDarkMode,
     private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference,
+    private val setViewInDarkModeMessagePreference: SetViewInDarkModeMessagePreference,
     private val accountManager: AccountManager
 ) : ViewModel() {
 
@@ -356,6 +358,32 @@ internal class MessageActionSheetViewModel @Inject constructor(
         viewModelScope.launch {
             val message = messageRepository.findMessageById(messageId)
             actionsMutableFlow.value = MessageActionSheetAction.ShowMessageHeaders(message?.header ?: EMPTY_STRING)
+        }
+    }
+
+    fun viewInLightMode(messageId: String) {
+        viewModelScope.launch {
+            accountManager.getPrimaryUserId().first()?.let {
+                setViewInDarkModeMessagePreference(it, messageId, viewInDarkMode = false)
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                shallDismissBackingActivity = false,
+                areMailboxItemsMovedFromLocation = false
+            )
+        }
+    }
+
+    fun viewInDarkMode(messageId: String) {
+        viewModelScope.launch {
+            accountManager.getPrimaryUserId().first()?.let {
+                setViewInDarkModeMessagePreference(it, messageId, viewInDarkMode = true)
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
+                shallDismissBackingActivity = false,
+                areMailboxItemsMovedFromLocation = false
+            )
         }
     }
 

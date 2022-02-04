@@ -42,6 +42,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.utils.webview.SetViewInDarkModeMessagePreference
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -51,6 +52,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
@@ -99,6 +101,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference = mockk()
 
     @MockK
+    private lateinit var setViewInDarkModeMessagePreference: SetViewInDarkModeMessagePreference
+
+    @MockK
     private lateinit var accountManager: AccountManager
 
     @MockK
@@ -128,6 +133,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             conversationModeEnabled,
             isAppInDarkMode,
             getViewInDarkModeMessagePreference,
+            setViewInDarkModeMessagePreference,
             accountManager
         )
     }
@@ -621,6 +627,42 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             MessageActionSheetAction.DismissActionSheet(shallDismissBackingActivity = true, areMailboxItemsMovedFromLocation = true),
             viewModel.actionsFlow.value
         )
+    }
+
+    @Test
+    fun `verify the use case for saving message preference is called when view in light mode action is clicked`() = runBlockingTest {
+        // given
+        val messageId = "messageId"
+        val expectedActionsFlowValue = MessageActionSheetAction.DismissActionSheet(
+            shallDismissBackingActivity = false,
+            areMailboxItemsMovedFromLocation = false
+        )
+        coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) } just runs
+
+        // when
+        viewModel.viewInLightMode(messageId)
+
+        // then
+        coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) }
+        assertEquals(expectedActionsFlowValue, viewModel.actionsFlow.value)
+    }
+
+    @Test
+    fun `verify the use case for saving message preference is called when view in dark mode action is clicked`() = runBlockingTest {
+        // given
+        val messageId = "messageId"
+        val expectedActionsFlowValue = MessageActionSheetAction.DismissActionSheet(
+            shallDismissBackingActivity = false,
+            areMailboxItemsMovedFromLocation = false
+        )
+        coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) } just runs
+
+        // when
+        viewModel.viewInDarkMode(messageId)
+
+        // then
+        coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) }
+        assertEquals(expectedActionsFlowValue, viewModel.actionsFlow.value)
     }
 
     @Test
