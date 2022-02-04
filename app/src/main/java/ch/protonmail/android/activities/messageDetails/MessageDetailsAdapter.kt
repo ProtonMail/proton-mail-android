@@ -69,6 +69,7 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import ch.protonmail.android.views.messageDetails.ReplyActionsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_body.view.*
+import kotlinx.coroutines.runBlocking
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 
@@ -321,6 +322,10 @@ internal class MessageDetailsAdapter(
                 .findViewById<WebView>(R.id.item_message_body_web_view_id) ?: return
             val messageBodyProgress = itemView.messageWebViewContainer
                 .findViewById<ProgressBar>(R.id.item_message_body_progress_view_id) ?: return
+
+            message.messageId?.let {
+                setUpWebViewDarkModeBlocking(webView, it)
+            }
 
             messageBodyProgress.isVisible = listItem.messageFormattedHtml.isNullOrEmpty()
             displayRemoteContentButton.isVisible = false
@@ -613,8 +618,6 @@ internal class MessageDetailsAdapter(
     }
 
     private fun configureWebView(webView: WebView, pmWebViewClient: PMWebViewClient) {
-        setUpWebViewDarkModeHandlingIfSupported(context, webView)
-
         webView.isScrollbarFadingEnabled = false
         webView.isVerticalScrollBarEnabled = false
         webView.isHorizontalScrollBarEnabled = false
@@ -742,4 +745,7 @@ internal class MessageDetailsAdapter(
 
     private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
 
+    private fun setUpWebViewDarkModeBlocking(webView: WebView, messageId: String) = runBlocking {
+        setUpWebViewDarkModeHandlingIfSupported(context, userManager.requireCurrentUserId(), webView, messageId)
+    }
 }

@@ -38,6 +38,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
+import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -95,6 +96,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val addExpirationTimeToMessage: AddExpirationTimeToMessage = mockk()
 
+    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported = mockk()
+
     private val viewModel = ComposeMessageViewModel(
         isAppInDarkMode = isAppInDarkMode,
         composeMessageRepository = composeMessageRepository,
@@ -110,7 +113,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         verifyConnection = verifyConnection,
         networkConfigurator = networkConfigurator,
         htmlToSpanned = htmlToSpanned,
-        addExpirationTimeToMessage = addExpirationTimeToMessage
+        addExpirationTimeToMessage = addExpirationTimeToMessage,
+        setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported
     )
 
     @BeforeTest

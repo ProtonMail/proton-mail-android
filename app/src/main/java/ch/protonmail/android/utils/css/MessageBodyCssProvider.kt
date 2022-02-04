@@ -23,21 +23,23 @@ import android.content.Context
 import ch.protonmail.android.R
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
 class MessageBodyCssProvider @Inject constructor(
     private val context: Context,
-    private val isAppInDarkMode: IsAppInDarkMode
+    private val isAppInDarkMode: IsAppInDarkMode,
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference
 ) {
 
     fun getMessageBodyCss(): String = AppUtil.readTxt(context, R.raw.css_reset_with_custom_props)
 
-    fun getMessageBodyDarkModeCss(): String {
-        return if (isAppInDarkMode(context)) {
+    suspend fun getMessageBodyDarkModeCss(userId: UserId, messageId: String): String =
+        if (isAppInDarkMode(context) && getViewInDarkModeMessagePreference(context, userId, messageId)) {
             AppUtil.readTxt(context, R.raw.css_reset_dark_mode_only)
         } else {
             EMPTY_STRING
         }
-    }
 }

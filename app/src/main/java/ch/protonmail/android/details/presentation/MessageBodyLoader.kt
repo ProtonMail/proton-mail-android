@@ -66,7 +66,7 @@ class MessageBodyLoader @Inject constructor(
                 fetchedMessage,
                 renderDimensionsProvider.getRenderWidth(fragmentActivity),
                 messageBodyCssProvider.getMessageBodyCss(),
-                messageBodyCssProvider.getMessageBodyDarkModeCss(),
+                messageBodyCssProvider.getMessageBodyDarkModeCss(userManager.requireCurrentUserId(), fetchedMessage.messageId!!),
                 getStringResource(R.string.request_timeout)
             )
             fetchedMessage.decryptedHTML = messageBody

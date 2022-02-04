@@ -90,6 +90,7 @@ import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
+import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -130,6 +131,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
     private val isAppInDarkMode: IsAppInDarkMode,
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val messageRepository: MessageRepository,
     private val userManager: UserManager,
@@ -902,4 +904,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
+
+    fun isWebViewInDarkModeBlocking(context: Context, messageId: String) = runBlocking {
+        getViewInDarkModeMessagePreference(context, userManager.requireCurrentUserId(), messageId)
+    }
 }

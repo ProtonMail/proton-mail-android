@@ -69,6 +69,7 @@ import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.DownloadUtils
+import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -113,6 +114,8 @@ private const val MESSAGE_SENDER_EMAIL_ADDRESS = "sender@protonmail.com"
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val isAppInDarkMode: IsAppInDarkMode = mockk()
+
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference = mockk()
 
     private val changeMessagesReadStatus: ChangeMessagesReadStatus = mockk()
 
@@ -211,6 +214,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { Color.parseColor(any()) } returns testColorInt
         viewModel = MessageDetailsViewModel(
             isAppInDarkMode = isAppInDarkMode,
+            getViewInDarkModeMessagePreference = getViewInDarkModeMessagePreference,
             messageDetailsRepository = messageDetailsRepository,
             messageRepository = messageRepository,
             userManager = userManager,

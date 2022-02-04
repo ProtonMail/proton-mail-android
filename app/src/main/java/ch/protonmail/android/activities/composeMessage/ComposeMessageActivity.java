@@ -260,9 +260,6 @@ public class ComposeMessageActivity
     @Inject
     RenderDimensionsProvider renderDimensionsProvider;
 
-    @Inject
-    SetUpWebViewDarkModeHandlingIfSupported setUpWebViewDarkModeHandlingIfSupported;
-
     String composerInstanceId;
 
     Menu menu;
@@ -404,7 +401,12 @@ public class ComposeMessageActivity
         webSettings.setBuiltInZoomControls(true);
         webSettings.setPluginState(WebSettings.PluginState.OFF);
 
-        setUpWebViewDarkModeHandlingIfSupported.invoke(this, quotedMessageWebView);
+        composeMessageViewModel.setUpWebViewDarkMode(
+                this,
+                mUserManager.requireCurrentUserId(),
+                quotedMessageWebView,
+                composeMessageViewModel.getDraftId()
+        );
 
         binding.composerQuotedMessageContainer.addView(quotedMessageWebView);
     }

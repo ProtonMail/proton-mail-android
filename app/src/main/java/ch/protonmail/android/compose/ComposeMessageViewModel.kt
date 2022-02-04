@@ -23,6 +23,7 @@ import android.content.Context
 import android.graphics.Color
 import android.text.Spanned
 import android.text.TextUtils
+import android.webkit.WebView
 import androidx.core.net.MailTo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -71,6 +72,7 @@ import ch.protonmail.android.utils.MailToData
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
+import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -123,7 +125,8 @@ class ComposeMessageViewModel @Inject constructor(
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
     private val htmlToSpanned: HtmlToSpanned,
-    private val addExpirationTimeToMessage: AddExpirationTimeToMessage
+    private val addExpirationTimeToMessage: AddExpirationTimeToMessage,
+    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
@@ -1314,6 +1317,17 @@ class ComposeMessageViewModel @Inject constructor(
         val mailToData = MailToData(addresses, cc, subject, body, bcc)
         Timber.v("Parsed mailto: $dataString to $mailToData")
         return mailToData
+    }
+
+    fun setUpWebViewDarkMode(context: Context, userId: UserId, webView: WebView, draftId: String) {
+        viewModelScope.launch {
+            setUpWebViewDarkModeHandlingIfSupported(
+                context,
+                userId,
+                webView,
+                draftId
+            )
+        }
     }
 
     fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)

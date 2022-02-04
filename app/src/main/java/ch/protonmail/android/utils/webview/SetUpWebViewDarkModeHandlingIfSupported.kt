@@ -24,15 +24,24 @@ import android.content.res.Configuration
 import android.webkit.WebView
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
-class SetUpWebViewDarkModeHandlingIfSupported @Inject constructor() {
+class SetUpWebViewDarkModeHandlingIfSupported @Inject constructor(
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference
+) {
 
-    operator fun invoke(context: Context, webView: WebView) {
+    suspend operator fun invoke(context: Context, userId: UserId, webView: WebView, messageId: String) {
         if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            val viewInDarkModeMessagePreference = getViewInDarkModeMessagePreference(context, userId, messageId)
+
             when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                 Configuration.UI_MODE_NIGHT_YES -> {
-                    WebSettingsCompat.setForceDark(webView.settings, WebSettingsCompat.FORCE_DARK_ON)
+                    if (viewInDarkModeMessagePreference) {
+                        WebSettingsCompat.setForceDark(webView.settings, WebSettingsCompat.FORCE_DARK_ON)
+                    } else {
+                        WebSettingsCompat.setForceDark(webView.settings, WebSettingsCompat.FORCE_DARK_OFF)
+                    }
                 }
                 Configuration.UI_MODE_NIGHT_NO, Configuration.UI_MODE_NIGHT_UNDEFINED -> {
                     WebSettingsCompat.setForceDark(webView.settings, WebSettingsCompat.FORCE_DARK_OFF)

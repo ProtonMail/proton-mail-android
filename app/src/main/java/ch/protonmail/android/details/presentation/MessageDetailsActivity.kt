@@ -250,11 +250,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
                 val showDecryptionError = messageBodyState is MessageBodyState.Error.DecryptionError
                 val loadedMessage = messageBodyState.message
+                val messageId = loadedMessage.messageId ?: return@mapLatest
                 val parsedBody = viewModel.formatMessageHtmlBody(
                     loadedMessage,
                     renderDimensionsProvider.getRenderWidth(this),
                     AppUtil.readTxt(this, R.raw.css_reset_with_custom_props),
-                    if (viewModel.isAppInDarkMode(this)) {
+                    if (viewModel.isAppInDarkMode(this) &&
+                        viewModel.isWebViewInDarkModeBlocking(this, messageId)
+                    ) {
                         AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only)
                     } else {
                         EMPTY_STRING
@@ -262,7 +265,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     this.getString(R.string.request_timeout)
                 )
 
-                val messageId = loadedMessage.messageId ?: return@mapLatest
                 val showLoadEmbeddedImagesButton = handleEmbeddedImagesLoading(loadedMessage)
                 messageExpandableAdapter.showMessageDetails(
                     parsedBody,
