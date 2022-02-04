@@ -146,7 +146,7 @@
     <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact saved</string>
     <string name="contact_saved_offline">Contact saved, will be synced when connection is available</string>
-    <string name="contact_exist">Contact email already exist</string>
+    <string name="contact_exist">Contact email already exists</string>
     <string name="invalid_email">Email address is not valid</string>
     <string name="duplicate_email">Email address is a duplicate</string>
     <string name="message_drafted">Message sending failed. Your messages are saved in drafts folder</string>
@@ -553,7 +553,7 @@
 
     <string name="attachment_storage_value_current">Currently selected: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Currently selected: Unlimited</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Embedded images loading failed. Please check your network connection.</string>
     <string name="load_embedded_images_failed">Embedded images loading failed.</string>
     <string name="unlimited">Unlimited</string>
