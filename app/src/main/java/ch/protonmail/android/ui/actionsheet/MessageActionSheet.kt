@@ -403,15 +403,15 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
             is MessageActionSheetAction.ChangeStarredStatus -> {
                 if (sheetAction.isSuccessful) {
-                    dismiss()
                     mailboxViewModel.exitSelectionMode(sheetAction.areMailboxItemsMovedFromLocation)
+                    dismiss()
                 } else {
                     showCouldNotCompleteActionError()
                 }
             }
             is MessageActionSheetAction.DismissActionSheet -> {
-                handleDismissBehavior(sheetAction.shallDismissBackingActivity)
                 mailboxViewModel.exitSelectionMode(sheetAction.areMailboxItemsMovedFromLocation)
+                handleDismissBehavior(sheetAction.shallDismissBackingActivity)
             }
             is MessageActionSheetAction.CouldNotCompleteActionError ->
                 showCouldNotCompleteActionError()
