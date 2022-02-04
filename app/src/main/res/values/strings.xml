@@ -143,7 +143,7 @@
     <string name="update_app_title">Update required</string>
     <string name="update_app">Your ProtonMail app cannot be used until it is updated</string>
     <string name="you_are_offline">You are offline</string>
-    <string name="api_offline">ProtonMail is currently offline, check our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact saved</string>
     <string name="contact_saved_offline">Contact saved, will be synced when connection is available</string>
     <string name="contact_exist">Contact email already exist</string>
