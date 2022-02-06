@@ -28,10 +28,10 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.MessagePreferenceDao
 import ch.protonmail.android.data.local.NotificationDao
-import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.notifications.domain.NotificationDatabase
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 import javax.inject.Singleton

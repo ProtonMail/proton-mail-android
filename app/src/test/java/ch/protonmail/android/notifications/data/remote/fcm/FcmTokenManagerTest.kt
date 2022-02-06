@@ -17,14 +17,14 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.fcm
+package ch.protonmail.android.notifications.data.remote.fcm
 
 import assert4k.assert
 import assert4k.coFails
 import assert4k.equals
 import assert4k.that
 import ch.protonmail.android.domain.entity.ValidationException
-import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
 import me.proton.core.test.android.mocks.mockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test

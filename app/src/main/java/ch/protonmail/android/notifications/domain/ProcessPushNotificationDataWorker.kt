@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.fcm
+package ch.protonmail.android.notifications.domain
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
@@ -37,11 +37,11 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.Notification
-import ch.protonmail.android.fcm.model.PushNotification
-import ch.protonmail.android.fcm.model.PushNotificationData
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.notifications.data.remote.model.PushNotification
+import ch.protonmail.android.notifications.data.remote.model.PushNotificationData
+import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -101,7 +101,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
         queueNetworkUtil.setCurrentlyHasConnectivity()
 
         val notificationUserId = sessionManager.getUserId(SessionId(sessionId))
-            // we do not show notifications for unknown/inactive users
+        // we do not show notifications for unknown/inactive users
             ?: return Result.failure(
                 workDataOf(
                     KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR to "User is unknown or inactive"

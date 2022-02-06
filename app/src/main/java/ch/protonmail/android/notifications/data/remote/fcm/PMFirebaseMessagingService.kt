@@ -17,14 +17,15 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.fcm
+package ch.protonmail.android.notifications.data.remote.fcm
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
+import ch.protonmail.android.notifications.domain.ProcessPushNotificationDataWorker
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint

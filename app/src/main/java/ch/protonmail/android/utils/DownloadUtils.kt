@@ -26,7 +26,7 @@ import android.content.Intent
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.servers.notification.NotificationServer
+import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject

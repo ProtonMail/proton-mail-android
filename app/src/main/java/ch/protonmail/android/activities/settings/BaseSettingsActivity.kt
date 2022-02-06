@@ -55,7 +55,6 @@ import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.NotificationDao
-import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.domain.entity.user.Address
@@ -65,7 +64,8 @@ import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.ui.LabelsManagerActivity
 import ch.protonmail.android.mailbox.data.local.ConversationDao
-import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
+import ch.protonmail.android.notifications.domain.NotificationDatabase
+import ch.protonmail.android.notifications.presentation.utils.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AccountSettingsActivity
 import ch.protonmail.android.settings.presentation.AccountTypeActivity

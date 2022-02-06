@@ -23,11 +23,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.core.Constants.JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING
-import me.proton.core.domain.entity.UserId
-import ch.protonmail.android.servers.notification.EXTRA_USER_ID
+import ch.protonmail.android.notifications.presentation.utils.EXTRA_USER_ID
 import ch.protonmail.android.storage.AttachmentClearingService.ACTION_CLEAR_CACHE_IMMEDIATELY
 import ch.protonmail.android.storage.AttachmentClearingService.ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES
 import ch.protonmail.android.storage.AttachmentClearingService.ACTION_REGULAR_CHECK
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 class AttachmentClearingServiceHelper @Inject constructor(

@@ -17,11 +17,11 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.fcm
+package ch.protonmail.android.notifications.data.remote.fcm
 
-import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.allLoggedIn
 import ch.protonmail.android.feature.account.allSaved
+import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.domain.AccountManager

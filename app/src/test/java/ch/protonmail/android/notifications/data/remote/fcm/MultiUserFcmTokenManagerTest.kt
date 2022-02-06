@@ -17,10 +17,10 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.fcm
+package ch.protonmail.android.notifications.data.remote.fcm
 
 import android.content.SharedPreferences
-import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import io.mockk.coEvery
 import io.mockk.coVerify

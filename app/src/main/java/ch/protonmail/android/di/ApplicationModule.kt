@@ -44,7 +44,7 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.usecase.DownloadFile
-import ch.protonmail.android.servers.notification.NotificationServer
+import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.base64.AndroidBase64Encoder
 import ch.protonmail.android.utils.base64.Base64Encoder

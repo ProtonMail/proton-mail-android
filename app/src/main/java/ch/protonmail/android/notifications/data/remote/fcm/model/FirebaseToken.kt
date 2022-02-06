@@ -16,19 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.data.local
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import ch.protonmail.android.data.local.model.Notification
+package ch.protonmail.android.notifications.data.remote.fcm.model
 
-@Database(entities = [Notification::class], version = 1)
-abstract class NotificationDatabase : RoomDatabase() {
+import ch.protonmail.android.domain.entity.NotBlankStringValidator
+import ch.protonmail.android.domain.entity.Validable
 
-    abstract fun getDao(): NotificationDao
-
-    companion object : DatabaseFactory<NotificationDatabase>(
-        NotificationDatabase::class,
-        "NotificationsDatabase.db"
-    )
-}
+data class FirebaseToken(val value: String) : Validable by NotBlankStringValidator(value)

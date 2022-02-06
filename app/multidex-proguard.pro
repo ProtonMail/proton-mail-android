@@ -12,7 +12,7 @@
 -keep class ch.protonmail.android.permissions { *; }
 -keep class ch.protonmail.android.prefs { *; }
 -keep class ch.protonmail.android.receivers { *; }
--keep class ch.protonmail.android.servers.notification { *; }
+-keep class ch.protonmail.android.notifications { *; }
 -keep class ch.protonmail.android.storage { *; }
 -keep class ch.protonmail.android.tasks { *; }
 -keep class ch.protonmail.android.toasts { *; }

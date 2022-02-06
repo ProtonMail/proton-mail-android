@@ -16,14 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.fcm.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+package ch.protonmail.android.notifications.domain
 
-@Serializable
-data class PushNotification(
-    @SerialName("type") val type: String,
-    @SerialName("version") val version: Int,
-    @SerialName("data") val data: PushNotificationData?
-)
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import ch.protonmail.android.data.local.DatabaseFactory
+import ch.protonmail.android.data.local.NotificationDao
+import ch.protonmail.android.data.local.model.Notification
+
+@Database(entities = [Notification::class], version = 1)
+abstract class NotificationDatabase : RoomDatabase() {
+
+    abstract fun getDao(): NotificationDao
+
+    companion object : DatabaseFactory<NotificationDatabase>(
+        NotificationDatabase::class,
+        "NotificationsDatabase.db"
+    )
+}

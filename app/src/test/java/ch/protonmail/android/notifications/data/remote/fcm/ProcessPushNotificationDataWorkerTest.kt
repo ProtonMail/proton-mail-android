@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.fcm
+package ch.protonmail.android.notifications.data.remote.fcm
 
 import android.content.Context
 import androidx.work.ListenableWorker
@@ -33,12 +33,16 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.Notification
-import ch.protonmail.android.fcm.model.PushNotification
-import ch.protonmail.android.fcm.model.PushNotificationData
-import ch.protonmail.android.fcm.model.PushNotificationSender
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.notifications.data.remote.model.PushNotification
+import ch.protonmail.android.notifications.data.remote.model.PushNotificationData
+import ch.protonmail.android.notifications.data.remote.model.PushNotificationSender
+import ch.protonmail.android.notifications.domain.KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR
+import ch.protonmail.android.notifications.domain.KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE
+import ch.protonmail.android.notifications.domain.KEY_PUSH_NOTIFICATION_UID
+import ch.protonmail.android.notifications.domain.ProcessPushNotificationDataWorker
+import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.Runs
 import io.mockk.coEvery

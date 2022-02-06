@@ -53,7 +53,7 @@ import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.ui.LabelsManagerActivity
 import ch.protonmail.android.navigation.presentation.model.NavigationViewState
 import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
-import ch.protonmail.android.servers.notification.EXTRA_USER_ID
+import ch.protonmail.android.notifications.presentation.utils.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil

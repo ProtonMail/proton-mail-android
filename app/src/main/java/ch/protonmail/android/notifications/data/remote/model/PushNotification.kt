@@ -17,9 +17,14 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.fcm.model
+package ch.protonmail.android.notifications.data.remote.model
 
-import ch.protonmail.android.domain.entity.NotBlankStringValidator
-import ch.protonmail.android.domain.entity.Validable
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class FirebaseToken(val value: String) : Validable by NotBlankStringValidator(value)
+@Serializable
+data class PushNotification(
+    @SerialName("type") val type: String,
+    @SerialName("version") val version: Int,
+    @SerialName("data") val data: PushNotificationData?
+)

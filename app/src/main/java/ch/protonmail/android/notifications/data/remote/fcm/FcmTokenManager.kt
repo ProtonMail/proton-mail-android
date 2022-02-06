@@ -17,14 +17,14 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.fcm
+package ch.protonmail.android.notifications.data.remote.fcm
 
 import android.content.SharedPreferences
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.core.Constants.Prefs.PREF_APP_VERSION
 import ch.protonmail.android.core.Constants.Prefs.PREF_REGISTRATION_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER
-import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking

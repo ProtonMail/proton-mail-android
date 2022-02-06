@@ -134,7 +134,7 @@
         </receiver>
 
         <service
-            android:name=".fcm.PMFirebaseMessagingService"
+            android:name="ch.protonmail.android.notifications.data.remote.fcm.PMFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
