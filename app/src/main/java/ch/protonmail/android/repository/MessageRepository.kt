@@ -239,7 +239,7 @@ class MessageRepository @Inject constructor(
         messageIds
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
-                moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
+                moveMessageToLocationWorker.enqueue(userId, ids, newLocation = newLocation)
                 moveMessageInDb(ids, newLocation, userId)
             }
     }
@@ -252,7 +252,7 @@ class MessageRepository @Inject constructor(
         messageIds
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
-                moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
+                moveMessageToLocationWorker.enqueue(userId, ids, newLocation = newLocation)
                 moveMessageInDb(ids, newLocation, userId)
             }
     }
@@ -265,7 +265,7 @@ class MessageRepository @Inject constructor(
         messageIds
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
-                moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
+                moveMessageToLocationWorker.enqueue(userId, ids, newLocation = newLocation)
                 moveMessageInDb(ids, newLocation, userId)
             }
     }
@@ -278,7 +278,7 @@ class MessageRepository @Inject constructor(
         messageIds
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
-                moveMessageToLocationWorker.enqueue(ids, newLocation = newLocation)
+                moveMessageToLocationWorker.enqueue(userId, ids, newLocation = newLocation)
                 moveMessageInDb(ids, newLocation, userId)
             }
     }
@@ -292,7 +292,7 @@ class MessageRepository @Inject constructor(
         messageIds
             .chunked(MAX_MESSAGE_ID_WORKER_ARGUMENTS)
             .forEach { ids ->
-                moveMessageToLocationWorker.enqueue(ids, newCustomLocation = newCustomLocationId)
+                moveMessageToLocationWorker.enqueue(userId, ids, newCustomLocation = newCustomLocationId)
                 moveMessageInDb(ids, newLocation, userId, newCustomLocationId)
             }
     }

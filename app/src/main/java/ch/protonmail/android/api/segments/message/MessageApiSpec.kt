@@ -30,8 +30,8 @@ import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import io.reactivex.Observable
 import me.proton.core.domain.entity.UserId
 import java.io.IOException
@@ -87,4 +87,6 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun labelMessages(body: IDList): MoveToFolderResponse?
 
+    @Throws(IOException::class)
+    fun labelMessagesBlocking(body: IDList, userId: UserId): MoveToFolderResponse
 }

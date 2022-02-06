@@ -281,6 +281,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun labelMessages(body: IDList): MoveToFolderResponse? = api.labelMessages(body)
 
+    override fun labelMessagesBlocking(
+        body: IDList,
+        userId: UserId
+    ): MoveToFolderResponse = api.labelMessagesBlocking(body, userId)
+
     override suspend fun fetchOrganization(userId: UserId): ApiResult<OrganizationResponse> =
         api.fetchOrganization(userId)
 

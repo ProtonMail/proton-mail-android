@@ -33,6 +33,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import java.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -54,16 +55,19 @@ class MoveMessageToLocationWorkerTest {
         workManager
     )
 
+    private val testUserName = "userName1"
+
     @Test
     fun shouldEnqueueWorkerSuccessfullyWhenEnqueuerIsCalled() {
         // given
+        val testUserId = UserId(testUserName)
         val messageIds = listOf("id1", "id2")
         val newLocation = Constants.MessageLocationType.INBOX
         val operationMock = mockk<Operation>()
         every { workManager.enqueue(any<WorkRequest>()) } returns operationMock
 
         // when
-        val operationResult = postToLocationWorkerEnqueuer.enqueue(messageIds, newLocation)
+        val operationResult = postToLocationWorkerEnqueuer.enqueue(testUserId, messageIds, newLocation)
 
         // then
         assertEquals(operationMock, operationResult)
@@ -76,12 +80,19 @@ class MoveMessageToLocationWorkerTest {
             val messageIds = arrayOf("id1", "id2")
             val newLocation = Constants.MessageLocationType.INBOX.messageLocationTypeValue
             every {
+                workerParameters.inputData.getString(KEY_POST_WORKER_USER_ID)
+            } returns testUserName
+            every {
                 workerParameters.inputData.getStringArray(KEY_POST_WORKER_MESSAGE_ID)
             } returns messageIds
             every {
                 workerParameters.inputData.getInt(KEY_POST_WORKER_LOCATION_ID, -1)
             } returns newLocation
-            coEvery { protonMailApiManager.labelMessages(any()) } returns mockk()
+            coEvery {
+                protonMailApiManager.labelMessagesBlocking(
+                    any(), UserId(testUserName)
+                )
+            } returns mockk()
 
             val expectedResult = ListenableWorker.Result.success()
 
@@ -99,12 +110,19 @@ class MoveMessageToLocationWorkerTest {
             // given
             val newLocation = Constants.MessageLocationType.INBOX.messageLocationTypeValue
             every {
+                workerParameters.inputData.getString(KEY_POST_WORKER_USER_ID)
+            } returns testUserName
+            every {
                 workerParameters.inputData.getStringArray(KEY_POST_WORKER_MESSAGE_ID)
             } returns null
             every {
                 workerParameters.inputData.getInt(KEY_POST_WORKER_LOCATION_ID, -1)
             } returns newLocation
-            coEvery { protonMailApiManager.labelMessages(any()) } returns mockk()
+            coEvery {
+                protonMailApiManager.labelMessagesBlocking(
+                    any(), UserId(testUserName)
+                )
+            } returns mockk()
 
             val expectedResult = ListenableWorker.Result.failure(
                 workDataOf(KEY_LABEL_WORKER_ERROR_DESCRIPTION to "Input data is not complete")
@@ -125,12 +143,19 @@ class MoveMessageToLocationWorkerTest {
             val messageIds = arrayOf("id1", "id2")
             val newLocation = Constants.MessageLocationType.INBOX.messageLocationTypeValue
             every {
+                workerParameters.inputData.getString(KEY_POST_WORKER_USER_ID)
+            } returns testUserName
+            every {
                 workerParameters.inputData.getStringArray(KEY_POST_WORKER_MESSAGE_ID)
             } returns messageIds
             every {
                 workerParameters.inputData.getInt(KEY_POST_WORKER_LOCATION_ID, -1)
             } returns newLocation
-            coEvery { protonMailApiManager.labelMessages(any()) } throws IOException()
+            coEvery {
+                protonMailApiManager.labelMessagesBlocking(
+                    any(), UserId(testUserName)
+                )
+            } throws IOException()
 
             val expectedResult = ListenableWorker.Result.retry()
 
@@ -149,6 +174,9 @@ class MoveMessageToLocationWorkerTest {
             val messageIds = arrayOf("id1", "id2")
             val newLocation = Constants.MessageLocationType.INBOX.messageLocationTypeValue
             every {
+                workerParameters.inputData.getString(KEY_POST_WORKER_USER_ID)
+            } returns testUserName
+            every {
                 workerParameters.inputData.getStringArray(KEY_POST_WORKER_MESSAGE_ID)
             } returns messageIds
             every {
@@ -157,7 +185,11 @@ class MoveMessageToLocationWorkerTest {
             every {
                 workerParameters.runAttemptCount
             } returns 4
-            coEvery { protonMailApiManager.labelMessages(any()) } throws IOException()
+            coEvery {
+                protonMailApiManager.labelMessagesBlocking(
+                    any(), UserId(testUserName)
+                )
+            } throws IOException()
 
             val expectedResult = ListenableWorker.Result.failure(
                 workDataOf(KEY_LABEL_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")

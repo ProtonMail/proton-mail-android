@@ -120,7 +120,7 @@ class MessageRepositoryTest {
     private val labelRepository = mockk<LabelRepository>()
 
     private val postToLocationWorker = mockk<MoveMessageToLocationWorker.Enqueuer>() {
-        every { enqueue(any(), any(), any()) } returns mockk()
+        every { enqueue(any(), any(), any(), any()) } returns mockk()
     }
 
     private val emptyFolderRemoteWorker = mockk<EmptyFolderRemoteWorker.Enqueuer> {
