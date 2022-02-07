@@ -36,6 +36,8 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -81,11 +83,17 @@
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
+
             <!-- Disable default WorkManagerInitializer for use Hilt injection -->
             <meta-data
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
+
+            <meta-data
+                android:name="me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer"
+                android:value="androidx.startup"
+                tools:node="remove"/>
 
             <meta-data
                 android:name="ch.protonmail.android.security.presentation.SecurityManagerInitializer"
@@ -121,20 +129,23 @@
         </service>
         <receiver
             android:name=".receivers.OnBootReceiver"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver android:name=".api.segments.event.AlarmReceiver" />
-        <receiver android:name=".receivers.NotificationReceiver">
+        <receiver android:name=".receivers.NotificationReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="protonmail_notif_action_archive" />
                 <action android:name="protonmail_notif_action_delete" />
                 <action android:name="protonmail_notif_action_trash" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receivers.TimeChangedReceiver">
+        <receiver android:name=".receivers.TimeChangedReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
@@ -191,7 +202,8 @@
             android:name=".activities.composeMessage.ComposeMessageActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".mailbox.presentation.MailboxActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
+            android:exported="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".mailbox.presentation.MailboxActivity" />
@@ -405,6 +417,9 @@
         <activity
             android:name="me.proton.core.auth.presentation.ui.SecondFactorActivity"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.crypto.validator.presentation.ui.CryptoValidatorErrorDialogActivity"
+            android:theme="@style/ProtonTheme.Transparent" />
     </application>
 
 </manifest>

@@ -234,7 +234,7 @@ class NotificationServer @Inject constructor(
             context,
             System.currentTimeMillis().toInt(),
             intent,
-            0
+            PendingIntent.FLAG_IMMUTABLE
         )
         builder.setContentIntent(viewAttachmentIntent)
         if (intent.resolveActivity(context.packageManager) != null) {
@@ -272,7 +272,7 @@ class NotificationServer @Inject constructor(
         val deleteIntent = Intent(context.getString(R.string.notification_action_delete))
             .putExtra(EXTRA_NOTIFICATION_DELETE_MESSAGE, NOTIFICATION_GROUP_ID_EMAIL)
         val deletePendingIntent =
-            PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         // Set Notification's colors
         val mainColor = context.getColor(R.color.ocean_blue)
@@ -364,7 +364,7 @@ class NotificationServer @Inject constructor(
             context,
             messageId.hashCode(),
             arrayOf(backIntent, contentIntent),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         // Create Action Intent's
@@ -524,7 +524,7 @@ class NotificationServer @Inject constructor(
         // Create content Intent for open MailboxActivity
         val contentIntent = context.getMailboxActivityIntent(UserId(loggedInUserId.id))
         val requestCode = System.currentTimeMillis().toInt()
-        return PendingIntent.getActivity(context, requestCode, contentIntent, 0)
+        return PendingIntent.getActivity(context, requestCode, contentIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     /** @return [Spannable] a single line [Spannable] where [title] is [BOLD] */
@@ -550,7 +550,7 @@ class NotificationServer @Inject constructor(
 
         val contentPendingIntent = stackBuilder.getPendingIntent(
             userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         // Set Notification's colors

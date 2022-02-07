@@ -30,7 +30,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".TokenActivity">
+        <activity android:name=".TokenActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

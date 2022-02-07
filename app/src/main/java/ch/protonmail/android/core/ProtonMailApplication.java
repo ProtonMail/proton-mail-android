@@ -108,6 +108,7 @@ import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import me.proton.core.accountmanager.data.AccountStateHandler;
 import me.proton.core.accountmanager.domain.AccountManager;
+import me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer;
 import me.proton.core.domain.entity.UserId;
 import me.proton.core.util.kotlin.CoreLogger;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
@@ -227,8 +228,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         applyAppThemeFromSettings.blocking();
 
-        AppInitializer.getInstance(this)
-                .initializeComponent(SecurityManagerInitializer.class);
+        AppInitializer appInitializer = AppInitializer.getInstance(this);
+        appInitializer.initializeComponent(CryptoValidatorInitializer.class);
+        appInitializer.initializeComponent(SecurityManagerInitializer.class);
 
         accountManagerUserIdMigration.blocking();
         coreAccountManagerMigration.migrateBlocking();
@@ -237,6 +239,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
         accountStateHandler.start();
 
         checkForUpdateAndClearCache();
+
+        AppInitializer.getInstance(this).initializeComponent(CryptoValidatorInitializer.class);
     }
 
     private void upgradeTlsProviderIfNeeded() {

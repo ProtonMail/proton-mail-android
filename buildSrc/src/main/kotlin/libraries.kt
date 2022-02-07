@@ -36,6 +36,7 @@ val DependencyHandler.`Proton-auth` get() =                         proton("auth
 val DependencyHandler.`Proton-contact` get() =                      proton("contact") version `Proton-core version`
 val DependencyHandler.`Proton-country` get() =                      proton("country") version `Proton-core version`
 val DependencyHandler.`Proton-crypto` get() =                       proton("crypto") version `Proton-core version`
+val DependencyHandler.`Proton-crypto-validator` get() =             proton("crypto-validator") version `Proton-core version`
 val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-core version`
 val DependencyHandler.`Proton-data-room` get() =                    proton("data-room") version `Proton-core version`
 val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-core version`

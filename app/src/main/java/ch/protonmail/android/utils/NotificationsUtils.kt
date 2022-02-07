@@ -33,7 +33,7 @@ fun Context.buildArchiveIntent(messageId: String): PendingIntent {
     val intent = Intent(getString(R.string.notification_action_archive))
     intent.putExtra(EXTRA_NOTIFICATION_ARCHIVE_MESSAGE, messageId)
     intent.setClass(this, NotificationReceiver::class.java)
-    return PendingIntent.getBroadcast(this, System.currentTimeMillis().toInt(), intent, 0)
+    return PendingIntent.getBroadcast(this, System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_IMMUTABLE)
 }
 
 // TODO move to GCMService
@@ -41,5 +41,5 @@ fun Context.buildTrashIntent(messageId: String): PendingIntent {
     val intent = Intent(getString(R.string.notification_action_trash))
     intent.putExtra(EXTRA_NOTIFICATION_TRASH_MESSAGE, messageId)
     intent.setClass(this, NotificationReceiver::class.java)
-    return PendingIntent.getBroadcast(this, System.currentTimeMillis().toInt(), intent, 0)
+    return PendingIntent.getBroadcast(this, System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_IMMUTABLE)
 }

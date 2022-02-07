@@ -21,7 +21,7 @@ package ch.protonmail.android.uitests.testsHelper
 
 import android.util.Log
 import me.proton.core.test.android.instrumented.ProtonTest
-import me.proton.core.test.android.instrumented.utils.FileUtils
+import me.proton.core.test.android.instrumented.utils.Shell
 import java.util.concurrent.TimeoutException
 
 fun waitForCondition(
@@ -45,6 +45,6 @@ fun waitForCondition(
         Thread.sleep(watchInterval)
     }
     Log.d(ProtonTest.testTag, "Test \"${ProtonTest.testName.methodName}\" failed. Saving screenshot")
-    FileUtils.takeScreenshot()
+    Shell.takeScreenshot()
     throw throwable
 }
