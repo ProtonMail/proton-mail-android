@@ -29,6 +29,7 @@ import me.proton.core.network.domain.client.ClientIdProvider
 import me.proton.core.network.domain.client.ExtraHeaderProvider
 import me.proton.core.network.domain.humanverification.HumanVerificationListener
 import me.proton.core.network.domain.humanverification.HumanVerificationProvider
+import me.proton.core.network.domain.scopes.MissingScopeListener
 import me.proton.core.network.domain.server.ServerTimeListener
 import me.proton.core.network.domain.session.SessionListener
 import me.proton.core.network.domain.session.SessionProvider
@@ -66,6 +67,7 @@ object NetworkModule {
         sessionListener: SessionListener,
         humanVerificationProvider: HumanVerificationProvider,
         humanVerificationListener: HumanVerificationListener,
+        missingScopeListener: MissingScopeListener,
         @DefaultApiPins defaultApiPins: Array<String>,
         @AlternativeApiPins alternativeApiPins: List<String>,
         @BaseUrl baseUrl: String
@@ -80,6 +82,7 @@ object NetworkModule {
         sessionListener,
         humanVerificationProvider,
         humanVerificationListener,
+        missingScopeListener,
         protonCookieStore,
         CoroutineScope(Job() + Dispatchers.Default),
         defaultApiPins,
@@ -124,7 +127,8 @@ object NetworkModule {
     }
 
     @Provides
-    fun provideNetworkRequestOverrider(): NetworkRequestOverrider = NetworkRequestOverriderImpl(OkHttpClient())
+    fun provideNetworkRequestOverrider(@ApplicationContext context: Context): NetworkRequestOverrider =
+        NetworkRequestOverriderImpl(OkHttpClient(), context)
 }
 
 @Module

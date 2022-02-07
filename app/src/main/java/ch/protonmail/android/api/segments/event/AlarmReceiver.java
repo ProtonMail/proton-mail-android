@@ -51,7 +51,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     public void setAlarm(Context context, boolean immediate) {
         alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
-        alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         int secondsUntilNextCheck = 30; // default
         if (AppUtil.isAppInBackground()) {

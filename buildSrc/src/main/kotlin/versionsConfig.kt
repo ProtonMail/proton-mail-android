@@ -43,7 +43,7 @@ fun initVersions() {
     `material version` =                        "1.4.0"         // Released: Jul 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
     `android-room version` =                    "2.3.0"         // Released: Apr 21, 2021
-    `android-work version` =                    "2.6.0"         // Released: Sep 01, 2021
+    `android-work version` =                    "2.7.1"         // Released: Nov 17, 2021
 
     `android-test version` =                    "1.4.0-beta01"  // Released: May 15, 2021
     // endregion
@@ -62,7 +62,7 @@ fun initVersions() {
 }
 
 // Proton Core
-const val `Proton-core version` = "4.1.0"
+const val `Proton-core version` = "5.2.0"
 
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013

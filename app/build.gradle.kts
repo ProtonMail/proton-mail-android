@@ -294,6 +294,7 @@ dependencies {
         `Proton-shared-preferences`,
         `Proton-work-manager`,
         `Proton-crypto`,
+        `Proton-crypto-validator`,
         `Proton-auth`,
         `Proton-account`,
         `Proton-account-manager`,
