@@ -143,10 +143,10 @@
     <string name="update_app_title">Update required</string>
     <string name="update_app">Your ProtonMail app cannot be used until it is updated</string>
     <string name="you_are_offline">You are offline</string>
-    <string name="api_offline">ProtonMail is currently offline, check our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact saved</string>
     <string name="contact_saved_offline">Contact saved, will be synced when connection is available</string>
-    <string name="contact_exist">Contact email already exist</string>
+    <string name="contact_exist">Contact email already exists</string>
     <string name="invalid_email">Email address is not valid</string>
     <string name="duplicate_email">Email address is a duplicate</string>
     <string name="message_drafted">Message sending failed. Your messages are saved in drafts folder</string>
@@ -553,7 +553,7 @@
 
     <string name="attachment_storage_value_current">Currently selected: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Currently selected: Unlimited</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Embedded images loading failed. Please check your network connection.</string>
     <string name="load_embedded_images_failed">Embedded images loading failed.</string>
     <string name="unlimited">Unlimited</string>
@@ -663,8 +663,8 @@
     <string name="fab_add_contact">Add new contact</string>
     <string name="fab_add_contact_group">Add new contact group</string>
     <string name="contacts_add_photo_title">Add Photo</string>
-    <string name="contacts_add_photo_select_gallery">Select From Gallery</string>
-    <string name="contacts_add_photo_select_camera">Capture From Camera</string>
+    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
+    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
     <string name="save_group_validation_error">Please provide a group name</string>
 
     <!-- region Storage Limit Reached -->
@@ -881,7 +881,7 @@
 
     <!-- region errors -->
     <string name="error_image_not_found">Image not found</string>
-    <string name="error_image_bad_url">Malformed image url</string>
+    <string name="error_image_bad_url">Malformed image URL</string>
     <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
 
