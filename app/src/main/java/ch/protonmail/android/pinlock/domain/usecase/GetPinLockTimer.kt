@@ -27,9 +27,9 @@ import ch.protonmail.android.di.BackupSharedPreferences
 import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.kotlin.DispatcherProvider
-import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import kotlin.time.Duration
+import kotlin.time.DurationUnit.MILLISECONDS
 import kotlin.time.toDuration
 
 class GetPinLockTimer @Inject constructor(

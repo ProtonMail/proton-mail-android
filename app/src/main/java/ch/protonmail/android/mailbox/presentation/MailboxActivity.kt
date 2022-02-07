@@ -143,9 +143,9 @@ import me.proton.core.util.kotlin.exhaustive
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
@@ -625,7 +625,7 @@ internal class MailboxActivity :
         }
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
-            delay(3.toDuration(TimeUnit.SECONDS))
+            delay(3.toDuration(DurationUnit.SECONDS))
             mailboxViewModel.loadMore()
         }
         mailboxViewModel.checkConnectivityDelayed()

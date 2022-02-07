@@ -30,8 +30,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 /**
@@ -57,7 +57,7 @@ class NetworkConnectivityManager @Inject constructor(
 
             override fun onLost(network: Network) {
                 launch {
-                    delay(2.toDuration(TimeUnit.SECONDS))
+                    delay(2.toDuration(DurationUnit.SECONDS))
                     Timber.d("Network $network lost isInternetPossible: ${isInternetConnectionPossible()}")
                     if (!isInternetConnectionPossible()) {
                         trySend(Constants.ConnectionState.NO_INTERNET)

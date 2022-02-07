@@ -21,9 +21,9 @@ package ch.protonmail.android.pinlock.domain.usecase
 
 import ch.protonmail.android.activities.AddAttachmentsActivity
 import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
-import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import kotlin.time.Duration
+import kotlin.time.DurationUnit.MILLISECONDS
 import kotlin.time.toDuration
 
 class ShouldShowPinLockScreen @Inject constructor(

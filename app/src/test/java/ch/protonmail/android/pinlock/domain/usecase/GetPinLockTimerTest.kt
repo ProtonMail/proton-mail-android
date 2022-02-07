@@ -28,12 +28,12 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.mocks.mockSharedPreferences
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.sharedpreferences.set
-import java.util.concurrent.TimeUnit.DAYS
-import java.util.concurrent.TimeUnit.HOURS
-import java.util.concurrent.TimeUnit.MINUTES
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration
+import kotlin.time.DurationUnit.DAYS
+import kotlin.time.DurationUnit.HOURS
+import kotlin.time.DurationUnit.MINUTES
 import kotlin.time.toDuration
 
 class GetPinLockTimerTest {

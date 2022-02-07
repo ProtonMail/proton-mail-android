@@ -101,9 +101,9 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 private const val STARRED_LABEL_ID = "10"
@@ -680,7 +680,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
             // when
             conversationsRepository.getConversation(testUserId, conversationId)
-                .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
+                .test(timeout = 3.toDuration(DurationUnit.SECONDS)) {
                     dbFlow.emit(null)
 
                     // then
@@ -703,7 +703,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
             // when
             conversationsRepository.observeConversations(parameters)
-                .test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
+                .test(timeout = 3.toDuration(DurationUnit.SECONDS)) {
                     // then
                     val actual = expectItem() as DataResult.Success
                     assertEquals(ResponseSource.Local, actual.source)
