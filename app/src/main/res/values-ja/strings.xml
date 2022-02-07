@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">新しいフォルダを作成</string>
     <string name="drawer_create_label_description">新しいラベルを作成</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Proton Calendar で開く</string>
+    <string name="details_open_in_proton_calendar_subtitle">安全で暗号化されたカレンダー</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar アイコン</string>
+    <string name="details_play_store_error">Play Store を開くことができません</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>
@@ -83,14 +89,14 @@
     <string name="settings_confirm_pin_code_title">PIN コードを確認</string>
     <string name="settings_pins_dont_match">PIN コードが一致しません！</string>
     <string name="settings_enter_pin_code_title">PIN コードを入力</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB 使用中)</string>
+    <string name="settings_storage_limit_unlimited_value">無制限 (%1$.2f MB 使用中)</string>
     <string name="settings_swipe_settings_info">スワイプ操作を登録するとよく使う機能に簡単にアクセスできます。</string>
     <string name="settings_swipe_left_to_right">左から右</string>
     <string name="settings_swipe_right_to_left">右から左</string>
-    <string name="settings_swipe_saving">Saving Swipe action…</string>
-    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
+    <string name="settings_swipe_saving">スワイプアクションほ保存しています…</string>
+    <string name="settings_swipe_generic_error">スワイプアイコンを保存できませんでした</string>
+    <string name="settings_swipe_offline_error">オフラインでスワイプアイコンを保存できませんでした</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">アプリテーマ</string>

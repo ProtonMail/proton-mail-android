@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Yeni klasör oluştur</string>
     <string name="drawer_create_label_description">Yeni etiket oluştur</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Proton Calendar ile açın</string>
+    <string name="details_open_in_proton_calendar_subtitle">Güvenli şifrelenmiş takvim</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar simgesi</string>
+    <string name="details_play_store_error">Play Store açılamadı</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Gizli kopya:</string>
     <string name="composer_cc">Kopya:</string>
@@ -289,7 +295,7 @@
     <string name="engagement_title_expire">Süreli iletiler</string>
     <string name="engagement_title_help">Yardım ve destek</string>
     <string name="engagement_title_support_protonmail">ProtonMail uygulamasını destekleyin</string>
-    <string name="engagement_subtitle_welcome">Yeni şifreli e-posta hesabınız kuruldu ve şifreli iletileri gönderip almaya hazır.</string>
+    <string name="engagement_subtitle_welcome">Yeni şifrelenmiş e-posta hesabınız kuruldu ve şifrelemiş iletileri gönderip almaya hazır.</string>
     <string name="engagement_subtitle_swipe">Kaydırma hareketlerini ProtonMail uygulama ayarlarından özelleştirebilirsiniz.</string>
     <string name="engagement_subtitle_labels">Gelen kutunuzu düzenlemek için etiketler oluşturun ve ekleyin. Tüm seçenekleri görüntülemek için bir iletinin üzerine basılı tutun.</string>
     <string name="engagement_subtitle_encryption">Gelen kutunuz artık uçtan uca şifreleme ile korunuyor. Kişilerinize otomatik olarak güvenli e-postalar göndermek için onları ProtonMail kullanmaya davet edin! ProtonMail kullanmıyorlarsa e-postalarınızı el ile de şifreleyebilirsiniz.</string>
@@ -430,7 +436,7 @@
     <string name="download_complete">İndirme tamamlandı</string>
     <string name="message_expires_in">Bu ileti %s içinde silinecek</string>
     <string name="unsaved_changes_title">Kaydedilmemiş değişiklikler</string>
-    <string name="unsaved_changes_subtitle">Formda kaydedilmemiş bilgiler var. Bunları yok saymak istediğinize emin misiniz?</string>
+    <string name="unsaved_changes_subtitle">Formda kaydedilmemiş bilgiler var. Bunları silmek istediğinize emin misiniz?</string>
     <string name="request_timeout">İstek zaman aşımına uğradı. Lütfen yeniden deneyin</string>
     <string name="no_folders">Herhangi bir klasör yok</string>
     <string name="folder_add_new">Yeni klasör ekle</string>
@@ -452,7 +458,7 @@
     <string name="update_folder">Klasörü güncelle</string>
     <string name="spam_score_100">Bu e-posta, bir ProtonMail adresinden gelmiş gibi görünüyor. Ancak sistemimizin dışından geldi ve kimlik doğrulama gereksinimlerini karşılayamadı. Sahte ya da hatalı iletilmiş olabilir!</string>
     <string name="spam_score_101">Bu e-posta, etki alanının doğrulama gereksinimlerini karşılayamadı. E-posta, sahte ya da hatalı iletilmiş olabilir!</string>
-    <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen doğru olduğundan emin olmak için göndereni ve içeriği denetleyin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">AYRINTILI BİLGİ ALIN</a>
+    <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen göründüğü gibi olduklarından emin olmak için gönderen adresi ve içeriği kontrol edin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">AYRINTILI BİLGİ ALIN</a>
     </string>
     <string name="print_from_template">Kimden: %s</string>
     <string name="print_to_template">Kime: %s;  </string>
@@ -607,7 +613,7 @@
         Ayrıntılı bilgi almak için dokunun.</string>
     <string name="storage_limit_warning_title">Uyarı</string>
     <string name="storage_limit_reached_text">Depolama alanı kapasiteniz %100 oranında kullanılıyor.
-        Bazı e-postaları kalıcı olarak silmediğiniz veya daha fazla depolama alanı satın almadığınız sürece
+        Bazı e-postaları kalıcı olarak silmediğiniz veya daha fazla depolama alanı satın almadığınız sürece 
         e-posta gönderemez veya alamazsınız.</string>
     <string name="storage_limit_approaching_text">Depolama kapasiteniz %90 oranında kullanılıyor.
         Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depolama alanı satın almayı değerlendirin.</string>
@@ -756,7 +762,7 @@
     <string name="custom_language_dialog_title">Uygulama dilini seçin</string>
     <string name="auto_detect">Otomatik algılama</string>
     <string name="combined_contacts">Birleştirilmiş kişiler</string>
-    <string name="turn_combined_contacts_on">E-posta adreslerinin, oturum açtığınız tüm hesaplardaki kişiler kullanılarak tamamlanması için bu özelliği etkinleştirin.</string>
+    <string name="turn_combined_contacts_on">E-posta adreslerinin, oturum açtığınız tüm hesaplardaki kişilerle otomatik olarak tamamlanması için bu özelliği etkinleştirin.</string>
     <string name="local_cache_management">Yerel ön bellek</string>
     <string name="cache_cleared">Yerel ön bellek yenilendi</string>
     <string name="empty_data">Verileri temizle</string>

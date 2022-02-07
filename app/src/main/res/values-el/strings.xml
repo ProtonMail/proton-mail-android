@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Δημιουργία νέου φακέλου</string>
     <string name="drawer_create_label_description">Δημιουργία νέας ετικέτας</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Άνοιγμα στο Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Διασφαλισμένο κρυπτογραφημένο ημερολόγιο</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Εικονίδιο Proton Calendar</string>
+    <string name="details_play_store_error">Αδυναμία ανοίγματος Play Store</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Κρυφή κοιν: </string>
     <string name="composer_cc">Κοιν:</string>

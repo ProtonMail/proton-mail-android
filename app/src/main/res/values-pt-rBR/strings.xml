@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Criar nova pasta</string>
     <string name="drawer_create_label_description">Criar um novo marcador</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Abrir no Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Calendário criptografado seguro</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Ícone do Proton Calendar</string>
+    <string name="details_play_store_error">Não consigo abrir a Play Store</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
     <string name="composer_cc">Cc:</string>

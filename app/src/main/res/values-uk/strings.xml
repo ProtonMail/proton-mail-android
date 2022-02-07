@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Створити нову теку</string>
     <string name="drawer_create_label_description">Створити нову мітку</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Відкрити у Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Захищений шифруванням календар</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Піктограма Proton Calendar</string>
+    <string name="details_play_store_error">Не вдалося відкрити Play Маркет</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Прихована копія:</string>
     <string name="composer_cc">Копія:</string>

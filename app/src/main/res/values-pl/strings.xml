@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Utwórz nowy folder</string>
     <string name="drawer_create_label_description">Utwórz nową etykietę</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Otwórz w aplikacji Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Bezpieczny szyfrowany kalendarz</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Ikona Proton Calendar</string>
+    <string name="details_play_store_error">Nie można otworzyć sklepu Google Play</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Udw:</string>
     <string name="composer_cc">Dw:</string>

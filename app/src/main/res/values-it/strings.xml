@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Creazione nuova cartella</string>
     <string name="drawer_create_label_description">Creazione nuova etichetta</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Apri in Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Calendario criptato sicuro</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Icona Proton Calendar</string>
+    <string name="details_play_store_error">Impossibile aprire il Play Store</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Ccn:</string>
     <string name="composer_cc">Cc:</string>

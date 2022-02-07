@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Buat folder baru</string>
     <string name="drawer_create_label_description">Buat label baru</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Buka di Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Kalender terenkripsi yang aman</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Ikon Proton Calendar</string>
+    <string name="details_play_store_error">Tidak dapat membuka Play Store</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>
@@ -125,7 +131,7 @@
     <string name="update_app_title">Butuh pembaruan</string>
     <string name="update_app">Aplikasi ProtonMail Anda tidak dapat digunakan karena perlu diperbarui</string>
     <string name="you_are_offline">Anda sedang offline</string>
-    <string name="api_offline">ProtonMail saat ini sedang luring. Silakan kunjungi Twitter kami untuk status saat ini: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail saat ini sedang offline. Kunjungi Twitter kami untuk melihat status saat ini: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
     <string name="contact_saved_offline">Kontak tersimpan, akan disinkronkan saat koneksi tersedia</string>
     <string name="contact_exist">Kontak email sudah ada</string>
@@ -241,7 +247,7 @@
     <string name="no_password_specified">Waktu kedaluwarsa hanya dapat diatur pada pesan terenkripsi penuh. Harap tentukan kata sandi untuk penerima non-ProtonMail Anda.</string>
     <string name="attachment_limit">Lampiran dibatasi hingga %1$s. Total terlampir seharusnya menjadi %2$s.</string>
     <string name="sending_message">Mengirim pesan...</string>
-    <string name="sending_message_offline">Sedang luring, antre untuk pengiriman nanti...</string>
+    <string name="sending_message_offline">Anda sedang offline. Pesan Anda telah diantrikan...</string>
     <string name="message_sent">Pesan Terkirim</string>
     <string name="message_failed">Kegagalan Mengirim Pesan</string>
     <string name="storage_limit">Batas penyimpanan</string>
@@ -384,7 +390,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contact_vcard_new_row_other">tambahkan informasi</string>
     <string name="vcard_other_option_org">Organisasi</string>
     <string name="vcard_other_option_title">Gelar</string>
-    <string name="vcard_other_option_nickname">Nama panggil</string>
+    <string name="vcard_other_option_nickname">Nama Panggilan</string>
     <string name="vcard_other_option_birthday">Ulang tahun</string>
     <string name="vcard_other_option_anniversary">Hari Pernikahan</string>
     <string name="vcard_other_option_gender">Gender</string>
@@ -793,7 +799,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="go_to_settings">Ke pengaturan</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Kunci API Firebase tidak valid. Notifikasi dorong tidak akan bekerja.</string>
-    <string name="failed_saving_draft_online">Gagal menyimpan draf daring pesan: \"%s\"</string>
+    <string name="failed_saving_draft_online">Gagal menyimpan draf online untuk pesan: \"%s\"</string>
     <string name="failed_uploading_attachment_online">Terdapat kesalahan pada lampiran pesan berikut: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Tidak dapat membuka pesan ini saat sedang dikirim</string>
     <string name="enable_conversation_mode">Aktifkan mode percakapan</string>
@@ -817,7 +823,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <plurals name="x_conversations_count">
         <item quantity="other">%d percakapan</item>
     </plurals>
-    <string name="contacts_call">Panggilan</string>
+    <string name="contacts_call">Hubungi</string>
     <string name="contacts_send_group_message">Kirim pesan grup</string>
     <string name="inbox_this_folder_is_empty">Folder ini kosong</string>
     <string name="inbox_nothing_to_see_here">Tidak ada apa-apa di sini</string>

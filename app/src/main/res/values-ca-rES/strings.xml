@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Crear carpeta nova</string>
     <string name="drawer_create_label_description">Crear etiqueta nova</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Obrir a Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Calendari segur xifrat</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Icona de Proton Calendar</string>
+    <string name="details_play_store_error">No es pot obrir Play Store</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
     <string name="composer_cc">Cc:</string>
@@ -83,8 +89,8 @@
     <string name="settings_confirm_pin_code_title">Repetir codi PIN</string>
     <string name="settings_pins_dont_match">Els codis PIN han de coincidir!</string>
     <string name="settings_enter_pin_code_title">Introduir codi PIN</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB usat)</string>
+    <string name="settings_storage_limit_unlimited_value">Il·limitat (%1$.2f MB usat)</string>
     <string name="settings_swipe_settings_info">Establir gestos de lliscament per accedir a les accions més utilitzades.</string>
     <string name="settings_swipe_left_to_right">Esquerra a dreta</string>
     <string name="settings_swipe_right_to_left">Dreta a esquerra</string>
