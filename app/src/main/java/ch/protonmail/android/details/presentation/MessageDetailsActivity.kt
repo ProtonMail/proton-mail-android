@@ -84,6 +84,7 @@ import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -194,6 +195,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             }
             viewModel.handleStarUnStar(messageOrConversationId, isChecked)
         }
+
+        viewModel.reloadMessageFlow
+            .onEach { messageId ->
+                messageExpandableAdapter.reloadMessage(messageId)
+            }
+            .launchIn(lifecycleScope)
 
         lifecycle.addObserver(viewModel)
     }

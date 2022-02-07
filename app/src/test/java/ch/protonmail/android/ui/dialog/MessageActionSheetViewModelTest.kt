@@ -633,10 +633,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun `verify the use case for saving message preference is called when view in light mode action is clicked`() = runBlockingTest {
         // given
         val messageId = "messageId"
-        val expectedActionsFlowValue = MessageActionSheetAction.DismissActionSheet(
-            shallDismissBackingActivity = false,
-            areMailboxItemsMovedFromLocation = false
-        )
+        val expectedActionsFlowValue = MessageActionSheetAction.ViewMessageInLightDarkMode(messageId)
         coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) } just runs
 
         // when
@@ -651,10 +648,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun `verify the use case for saving message preference is called when view in dark mode action is clicked`() = runBlockingTest {
         // given
         val messageId = "messageId"
-        val expectedActionsFlowValue = MessageActionSheetAction.DismissActionSheet(
-            shallDismissBackingActivity = false,
-            areMailboxItemsMovedFromLocation = false
-        )
+        val expectedActionsFlowValue = MessageActionSheetAction.ViewMessageInLightDarkMode(messageId)
         coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) } just runs
 
         // when

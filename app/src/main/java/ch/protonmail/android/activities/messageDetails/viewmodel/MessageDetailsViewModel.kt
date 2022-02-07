@@ -195,6 +195,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
     private val _showPermissionMissingDialog: MutableLiveData<Unit> = MutableLiveData()
     private val _conversationUiFlow = MutableSharedFlow<ConversationUiModel>(replay = 1)
+    private val _reloadMessageFlow = MutableSharedFlow<String>(replay = 1)
 
     val conversationUiModel: SharedFlow<ConversationUiModel>
         get() = _conversationUiFlow
@@ -216,6 +217,9 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     val messageRenderedWithImages: LiveData<Message>
         get() = _messageRenderedWithImages
+
+    val reloadMessageFlow: SharedFlow<String>
+        get() = _reloadMessageFlow
 
     private var areImagesDisplayed: Boolean = false
 
@@ -907,5 +911,9 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun isWebViewInDarkModeBlocking(context: Context, messageId: String) = runBlocking {
         getViewInDarkModeMessagePreference(context, userManager.requireCurrentUserId(), messageId)
+    }
+
+    fun reloadMessage(messageId: String) {
+        _reloadMessageFlow.tryEmit(messageId)
     }
 }

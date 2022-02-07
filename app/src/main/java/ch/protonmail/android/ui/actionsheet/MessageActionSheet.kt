@@ -35,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.EXTRA_VIEW_HEADERS
 import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
+import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
@@ -63,6 +64,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private var actionSheetHeader: ActionSheetHeader? = null
     private val viewModel: MessageActionSheetViewModel by viewModels()
     private val mailboxViewModel: MailboxViewModel by activityViewModels()
+    private val messageDetailsViewModel: MessageDetailsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -421,6 +423,10 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             }
             is MessageActionSheetAction.CouldNotCompleteActionError ->
                 showCouldNotCompleteActionError()
+            is MessageActionSheetAction.ViewMessageInLightDarkMode -> {
+                messageDetailsViewModel.reloadMessage(sheetAction.messageId)
+                handleDismissBehavior(false)
+            }
             else -> Timber.v("unhandled action $sheetAction")
         }
     }

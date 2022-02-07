@@ -49,5 +49,9 @@ sealed class MessageActionSheetAction {
         val areMailboxItemsMovedFromLocation: Boolean
     ) : MessageActionSheetAction()
 
+    data class ViewMessageInLightDarkMode(
+        val messageId: String
+    ) : MessageActionSheetAction()
+
     object CouldNotCompleteActionError : MessageActionSheetAction()
 }

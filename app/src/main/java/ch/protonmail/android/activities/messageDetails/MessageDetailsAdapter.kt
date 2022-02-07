@@ -432,8 +432,6 @@ internal class MessageDetailsAdapter(
             openInProtonCalenderView: View,
             editDraftButton: Button
         ) {
-            val item = visibleItems[position]
-
             loadEmbeddedImagesContainer.setOnClickListener { view ->
                 view.visibility = View.GONE
                 // Once images were loaded for one message, we automatically load them for all the others, so:
@@ -463,6 +461,7 @@ internal class MessageDetailsAdapter(
             }
 
             openInProtonCalenderView.setOnClickListener {
+                val item = visibleItems[position]
                 onOpenInProtonCalendarClicked(item.message)
             }
 
@@ -564,6 +563,18 @@ internal class MessageDetailsAdapter(
 
         setItems(items)
         expandLastNonDraftItem()
+    }
+
+    fun reloadMessage(messageId: String) {
+        val item = visibleItems.find { it.message.messageId == messageId && it.itemType == TYPE_ITEM }
+        val itemIndex = visibleItems.indexOf(item)
+        // Set message formatted html to null, in order to trigger loading
+        // and switch to light/dark mode in the web view
+        val newItem = item?.apply { messageFormattedHtml = null }
+        newItem?.let {
+            visibleItems[itemIndex] = newItem
+            notifyItemChanged(itemIndex)
+        }
     }
 
     private fun expandLastNonDraftItem() {

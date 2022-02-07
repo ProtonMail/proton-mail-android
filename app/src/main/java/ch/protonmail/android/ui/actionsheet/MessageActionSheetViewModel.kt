@@ -367,9 +367,8 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 setViewInDarkModeMessagePreference(it, messageId, viewInDarkMode = false)
             }
         }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
-                shallDismissBackingActivity = false,
-                areMailboxItemsMovedFromLocation = false
+            actionsMutableFlow.value = MessageActionSheetAction.ViewMessageInLightDarkMode(
+                messageId = messageId
             )
         }
     }
@@ -380,9 +379,8 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 setViewInDarkModeMessagePreference(it, messageId, viewInDarkMode = true)
             }
         }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(
-                shallDismissBackingActivity = false,
-                areMailboxItemsMovedFromLocation = false
+            actionsMutableFlow.value = MessageActionSheetAction.ViewMessageInLightDarkMode(
+                messageId = messageId
             )
         }
     }
