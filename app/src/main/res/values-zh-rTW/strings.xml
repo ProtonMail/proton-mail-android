@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">建立新資料夾</string>
     <string name="drawer_create_label_description">建立新標籤</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">於Proton 行事曆中打開</string>
+    <string name="details_open_in_proton_calendar_subtitle">安全加密行事曆</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton 行事曆圖示</string>
+    <string name="details_play_store_error">無法打開 Play 商店</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密件副本：</string>
     <string name="composer_cc">副本：</string>

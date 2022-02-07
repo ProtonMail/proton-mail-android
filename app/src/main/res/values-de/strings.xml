@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Neuen Ordner erstellen</string>
     <string name="drawer_create_label_description">Neue Kategorie erstellen</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">In Proton Calendar öffnen</string>
+    <string name="details_open_in_proton_calendar_subtitle">Sicherer und verschlüsselter Kalender</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar Symbol</string>
+    <string name="details_play_store_error">Play Store kann nicht geöffnet werden</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>

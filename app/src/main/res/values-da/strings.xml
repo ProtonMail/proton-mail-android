@@ -23,11 +23,11 @@
     <string name="x_add_folder">Tilføj mappe</string>
     <string name="x_add_label">Tilføj etiket</string>
     <string name="x_days">Dage</string>
-    <string name="x_done">Done</string>
-    <string name="x_edit">Edit</string>
+    <string name="x_done">Færdig</string>
+    <string name="x_edit">Redigér</string>
     <string name="x_hours">Timer</string>
     <string name="x_more">Mere</string>
-    <string name="x_none">None</string>
+    <string name="x_none">Ingen</string>
     <string name="x_search">Søg</string>
     <string name="x_set">Indstil</string>
     <string name="x_0">0</string>
@@ -35,7 +35,7 @@
     <!-- region Content descriptions: accessibility description for icons -->
     <string name="x_label_icon_description">Etiketteikon</string>
     <string name="x_folder_icon_description">Mappeikon</string>
-    <string name="x_parent_folder_icon_description">Folder with children icon</string>
+    <string name="x_parent_folder_icon_description">Ikon for mappe med underordnede mapper</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakter</string>
@@ -45,6 +45,12 @@
     <string name="drawer_sign_out">Log ud</string>
     <string name="drawer_create_folder_description">Opret ny mappe</string>
     <string name="drawer_create_label_description">Opret ny etiket</string>
+    <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Åbn i Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Sikker krypteret kalender</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Ikon for Proton Calendar</string>
+    <string name="details_play_store_error">Kan ikke åbne Play Store</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -83,14 +89,14 @@
     <string name="settings_confirm_pin_code_title">Gentag pinkode</string>
     <string name="settings_pins_dont_match">Pinkoderne skal matche!</string>
     <string name="settings_enter_pin_code_title">Indtast pinkode</string>
-    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB used)</string>
-    <string name="settings_storage_limit_unlimited_value">Unlimited (%1$.2f MB used)</string>
+    <string name="settings_storage_limit_mb_value">%1$d MB (%2$.2f MB brugt)</string>
+    <string name="settings_storage_limit_unlimited_value">Ubegrænset (%1$.2f MB brugt)</string>
     <string name="settings_swipe_settings_info">Indstil strygebevægelser som adgang til de mest brugte handlinger.</string>
     <string name="settings_swipe_left_to_right">Venstre mod højre</string>
     <string name="settings_swipe_right_to_left">Højre mod venstre</string>
-    <string name="settings_swipe_saving">Saving Swipe action…</string>
-    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
+    <string name="settings_swipe_saving">Gemmer strygehandling…</string>
+    <string name="settings_swipe_generic_error">Kan ikke gemme strygehandling</string>
+    <string name="settings_swipe_offline_error">Kan ikke gemme når offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App-tema</string>
@@ -99,7 +105,7 @@
     <string name="app_theme_system">Systemstandard</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
+    <string name="labels_manager_select_parent_folder">Vælg overordnet folder (valgfrit)</string>
     <string name="labels_manager_parent_folder_selected">
         <b>Overordnet mappe valgt.</b> Tryk for at ændre</string>
     <!-- endregion -->
@@ -461,7 +467,7 @@
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adresse: </string>
     <string name="address_street">Gade</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Udvidet gade</string>
     <string name="address_city">By</string>
     <string name="address_region">Region (stat eller provins)</string>
     <string name="address_postcode">Postnummer</string>

@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Rnu akaram amaynut</string>
     <string name="drawer_create_label_description">Rnu tabzimt tamaynut</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
+    <string name="details_play_store_error">Can\'t open Play Store</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>

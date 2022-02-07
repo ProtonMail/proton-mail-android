@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Nieuwe map aanmaken</string>
     <string name="drawer_create_label_description">Nieuw label aanmaken</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Veilig versleutelde agenda</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton Calender pictogram</string>
+    <string name="details_play_store_error">Kan Play Store niet openen</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>
@@ -90,7 +96,7 @@
     <string name="settings_swipe_right_to_left">Van rechts naar links</string>
     <string name="settings_swipe_saving">Veegactie bewaren…</string>
     <string name="settings_swipe_generic_error">Veegactie kan niet worden bewaard</string>
-    <string name="settings_swipe_offline_error">Veegactie kan niet bewaard worden terwijl je offline bent</string>
+    <string name="settings_swipe_offline_error">Veegactie kan niet bewaard worden terwijl u offline bent</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App-thema</string>

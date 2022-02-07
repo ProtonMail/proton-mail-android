@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">新建文件夹</string>
     <string name="drawer_create_label_description">新建标签</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">在Proton日历中打开</string>
+    <string name="details_open_in_proton_calendar_subtitle">安全加密日历</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Proton日历图标</string>
+    <string name="details_play_store_error">无法打开应用商店</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密送：</string>
     <string name="composer_cc">抄送：</string>

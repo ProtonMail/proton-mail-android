@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Creare folder</string>
     <string name="drawer_create_label_description">Creare etichetă</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Deschideți în Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Calendar securizat și criptat</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Pictograma Calendar Proton</string>
+    <string name="details_play_store_error">Nu se poate deschide Play Store</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">CA:</string>
     <string name="composer_cc">Ci:</string>

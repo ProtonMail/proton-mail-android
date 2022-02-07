@@ -46,6 +46,12 @@
     <string name="drawer_create_folder_description">Создать новую папку</string>
     <string name="drawer_create_label_description">Создать новый ярлык</string>
     <!-- endregion -->
+    <!-- region Details -->
+    <string name="details_open_in_proton_calendar_title">Открыть в Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Защищенный зашифрованный календарь</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Значок Proton Calendar</string>
+    <string name="details_play_store_error">Невозможно открыть Play Store</string>
+    <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cкрытая копия:</string>
     <string name="composer_cc">Копия:</string>
