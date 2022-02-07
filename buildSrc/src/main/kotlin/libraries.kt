@@ -151,4 +151,6 @@ val DependencyHandler.`browserstack-gradle-plugin` get() =  dependency("gradle.p
 val DependencyHandler.`uiautomator` get() =  androidx("test.uiautomator", module = "uiautomator") version `uiautomator version`
 val DependencyHandler.`android-activation` get() =  dependency("com.sun.mail", module = "android-activation") version `sun-mail-android version`
 val DependencyHandler.`junit-ext` get() =  androidx("test.ext", module = "junit-ktx") version `junit-ktx version`
+val DependencyHandler.`mock-web-server` get() =  dependency("com.squareup.okhttp3", module = "mockwebserver") version `okHttp3 version`
+val DependencyHandler.`okhttp-tls` get() =  dependency("com.squareup.okhttp3", module = "okhttp-tls") version `okHttp3 version`
 // endregion
