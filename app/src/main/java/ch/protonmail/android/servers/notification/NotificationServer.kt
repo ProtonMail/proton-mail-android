@@ -368,8 +368,8 @@ class NotificationServer @Inject constructor(
         )
 
         // Create Action Intent's
-        val archiveIntent = context.buildArchiveIntent(messageId)
-        val trashIntent = context.buildTrashIntent(messageId)
+        val archiveIntent = context.buildArchiveIntent(messageId, user.id)
+        val trashIntent = context.buildTrashIntent(messageId, user.id)
         val replyIntent =
             if (primaryUser) message?.let { context.buildReplyIntent(message, user, userManager) } else null
 

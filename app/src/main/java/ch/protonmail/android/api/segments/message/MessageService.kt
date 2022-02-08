@@ -144,4 +144,11 @@ interface MessageService {
     @PUT("mail/v4/messages/label")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun labelMessages(@Body body: IDList): Call<MoveToFolderResponse>
+
+    @PUT("mail/v4/messages/label")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    fun labelMessagesBlocking(
+        @Body body: IDList,
+        @Tag userIdTag: UserIdTag
+    ): Call<MoveToFolderResponse>
 }

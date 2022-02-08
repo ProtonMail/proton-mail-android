@@ -122,4 +122,11 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     @Throws(IOException::class)
     override fun labelMessages(body: IDList): MoveToFolderResponse? =
         ParseUtils.parse(service.labelMessages(body).execute())
+
+    @Throws(IOException::class)
+    override fun labelMessagesBlocking(
+        body: IDList,
+        userId: UserId
+    ): MoveToFolderResponse =
+        ParseUtils.parse(service.labelMessagesBlocking(body, UserIdTag(userId)).execute())
 }

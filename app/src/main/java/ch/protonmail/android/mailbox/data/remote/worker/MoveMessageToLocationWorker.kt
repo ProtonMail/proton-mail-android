@@ -36,9 +36,12 @@ import ch.protonmail.android.labels.data.remote.worker.KEY_LABEL_WORKER_ERROR_DE
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
+import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
 
+const val KEY_POST_WORKER_USER_ID = "KeyPostWorkerUserId"
 const val KEY_POST_WORKER_MESSAGE_ID = "KeyPostWorkerMessageId"
 const val KEY_POST_WORKER_LOCATION_ID = "KeyPostWorkerLocationId"
 const val KEY_POST_WORKER_CUSTOM_LOCATION_ID = "KeyPostWorkerCustomLocationId"
@@ -52,6 +55,11 @@ class MoveMessageToLocationWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
+        val userId = UserId(
+            requireNotNull(
+                inputData.getString(KEY_POST_WORKER_USER_ID)?.takeIfNotBlank()
+            ) { "User id is required" }
+        )
         val ids = inputData.getStringArray(KEY_POST_WORKER_MESSAGE_ID)
         val locationId = inputData.getInt(KEY_POST_WORKER_LOCATION_ID, -1)
         val customLocationId = inputData.getString(KEY_POST_WORKER_CUSTOM_LOCATION_ID)
@@ -71,11 +79,12 @@ class MoveMessageToLocationWorker @AssistedInject constructor(
         Timber.v("PostToLocationWorker location: $locationIdString, ids: $ids")
 
         return runCatching {
-            protonMailApiManager.labelMessages(
+            protonMailApiManager.labelMessagesBlocking(
                 IDList(
                     locationIdString,
                     ids.asList()
-                )
+                ),
+                userId
             )
         }.fold(
             onSuccess = {
@@ -99,6 +108,7 @@ class MoveMessageToLocationWorker @AssistedInject constructor(
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
         fun enqueue(
+            userId: UserId,
             ids: List<String>,
             newLocation: Constants.MessageLocationType? = null,
             newCustomLocation: String? = null
@@ -108,6 +118,7 @@ class MoveMessageToLocationWorker @AssistedInject constructor(
                 .build()
 
             val data = workDataOf(
+                KEY_POST_WORKER_USER_ID to userId.id,
                 KEY_POST_WORKER_MESSAGE_ID to ids.toTypedArray(),
                 KEY_POST_WORKER_LOCATION_ID to newLocation?.messageLocationTypeValue,
                 KEY_POST_WORKER_CUSTOM_LOCATION_ID to newCustomLocation,
