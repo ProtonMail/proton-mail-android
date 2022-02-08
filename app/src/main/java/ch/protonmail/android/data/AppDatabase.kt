@@ -112,15 +112,15 @@ import timber.log.Timber
 internal abstract class AppDatabase :
     BaseDatabase(),
     AccountDatabase,
-    UserDatabase,
     AddressDatabase,
-    KeySaltDatabase,
+    ContactDatabase,
     HumanVerificationDatabase,
-    PublicAddressDatabase,
+    KeySaltDatabase,
     MailSettingsDatabase,
-    UserSettingsDatabase,
     OrganizationDatabase,
-    ContactDatabase {
+    PublicAddressDatabase,
+    UserDatabase,
+    UserSettingsDatabase {
 
     abstract fun labelDao(): LabelDao
 
