@@ -27,11 +27,9 @@ import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.MessagePreferenceDao
-import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.mailbox.data.local.ConversationDao
-import ch.protonmail.android.notifications.domain.NotificationDatabase
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -71,10 +69,6 @@ class DatabaseProvider @Inject constructor(
     // Conversation
     fun provideConversationDao(userId: UserId): ConversationDao =
         MessageDatabase.getInstance(context, userId).getConversationDao()
-
-    // Notification
-    fun provideNotificationDao(userId: UserId): NotificationDao =
-        NotificationDatabase.getInstance(context, userId).getDao()
 
     // Pending action
     fun providePendingActionDao(userId: UserId): PendingActionDao =

@@ -45,7 +45,6 @@ import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.data.local.model.AttachmentMetadata;
 import ch.protonmail.android.data.local.model.Message;
-import ch.protonmail.android.notifications.domain.NotificationDatabase;
 import dagger.hilt.android.AndroidEntryPoint;
 import me.proton.core.domain.entity.UserId;
 import timber.log.Timber;
@@ -142,7 +141,6 @@ public class AttachmentClearingService extends ProtonJobIntentService {
             Context context = this;
             ContactDatabase.Companion.deleteDatabase(context, userId);
             MessageDatabase.Factory.deleteDatabase(context, userId);
-            NotificationDatabase.Companion.deleteDatabase(context, userId);
             CounterDatabase.Companion.deleteDatabase(context, userId);
             AttachmentMetadataDatabase.Companion.deleteDatabase(context, userId);
             PendingActionDatabase.Companion.deleteDatabase(context, userId);

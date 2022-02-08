@@ -34,5 +34,6 @@ data class PushNotificationData(
     @SerialName("badge") val badge: Int,
     @SerialName("messageId") val messageId: String,
     @SerialName("customId") val customId: String,
-    @SerialName("sender") val sender: PushNotificationSender?
+    @SerialName("sender") val sender: PushNotificationSender?,
+    @SerialName("url") val url: String = ""
 )

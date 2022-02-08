@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.notifications.data.remote.fcm
+package ch.protonmail.android.notifications.domain
 
 import android.content.Context
 import androidx.work.ListenableWorker
@@ -25,22 +25,17 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.Notification
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.notifications.data.local.model.NotificationEntity
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationData
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationSender
-import ch.protonmail.android.notifications.domain.KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR
-import ch.protonmail.android.notifications.domain.KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE
-import ch.protonmail.android.notifications.domain.KEY_PUSH_NOTIFICATION_UID
-import ch.protonmail.android.notifications.domain.ProcessPushNotificationDataWorker
 import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.AppUtil
@@ -94,7 +89,7 @@ class ProcessPushNotificationDataWorkerTest {
 
     private val alarmReceiver: AlarmReceiver = mockk(relaxed = true)
 
-    private val databaseProvider: DatabaseProvider = mockk(relaxed = true)
+    private val notificationRepository: NotificationRepository = mockk(relaxed = true)
 
     private val messageRepository: MessageRepository = mockk(relaxed = true)
 
@@ -114,7 +109,7 @@ class ProcessPushNotificationDataWorkerTest {
             alarmReceiver,
             queueNetworkUtil,
             userManager,
-            databaseProvider,
+            notificationRepository,
             messageRepository,
             sessionManager,
             conversationModeEnabled
@@ -398,10 +393,8 @@ class ProcessPushNotificationDataWorkerTest {
             // given
             mockForCallingSendNotificationSuccessfully()
 
-            val mockNotification = mockk<Notification>()
-            every { databaseProvider.provideNotificationDao(testId) } returns mockk(relaxed = true) {
-                every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
-            }
+            val mockNotification = mockk<NotificationEntity>()
+            coEvery { notificationRepository.saveNotification(any(), any()) } returns listOf(mockNotification)
             val mockMessage = mockk<Message>()
             coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
             every {
@@ -460,12 +453,10 @@ class ProcessPushNotificationDataWorkerTest {
             // given
             mockForCallingSendNotificationSuccessfully()
 
-            val mockNotification1 = mockk<Notification>()
-            val mockNotification2 = mockk<Notification>()
+            val mockNotification1 = mockk<NotificationEntity>()
+            val mockNotification2 = mockk<NotificationEntity>()
             val unreadNotifications = listOf(mockNotification1, mockNotification2)
-            every { databaseProvider.provideNotificationDao(testId) } returns mockk(relaxed = true) {
-                every { insertNewNotificationAndReturnAll(any()) } returns unreadNotifications
-            }
+            coEvery { notificationRepository.saveNotification(any(), any()) } returns unreadNotifications
             val mockMessage = mockk<Message>()
             coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
             every { notificationServer.notifyMultipleUnreadEmail(any(), any(), any(), any(), any()) } just runs
@@ -475,7 +466,7 @@ class ProcessPushNotificationDataWorkerTest {
 
             // then
             val userSlot = slot<ch.protonmail.android.domain.entity.user.User>()
-            val unreadNotificationsSlot = slot<List<Notification>>()
+            val unreadNotificationsSlot = slot<List<NotificationEntity>>()
             verify {
                 notificationServer.notifyMultipleUnreadEmail(
                     capture(userSlot),
@@ -496,10 +487,8 @@ class ProcessPushNotificationDataWorkerTest {
             // given
             mockForCallingSendNotificationSuccessfully()
 
-            val mockNotification = mockk<Notification>()
-            every { databaseProvider.provideNotificationDao(testId) } returns mockk(relaxed = true) {
-                every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
-            }
+            val mockNotification = mockk<NotificationEntity>()
+            coEvery { notificationRepository.saveNotification(any(), any()) } returns listOf(mockNotification)
             val mockMessage = mockk<Message>()
             coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
             every { notificationServer.notifySingleNewEmail(any(), any(), any(), any(), any(), any(), any()) } just runs

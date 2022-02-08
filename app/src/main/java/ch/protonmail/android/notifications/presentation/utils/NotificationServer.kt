@@ -47,6 +47,7 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mailbox.presentation.MailboxActivity
+import ch.protonmail.android.notifications.data.local.model.NotificationEntity
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DELETE_MESSAGE
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.buildArchiveIntent
@@ -57,7 +58,6 @@ import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 import ch.protonmail.android.api.models.User as LegacyUser
-import ch.protonmail.android.data.local.model.Notification as RoomNotification
 
 const val CHANNEL_ID_EMAIL = "emails"
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"
@@ -487,7 +487,7 @@ class NotificationServer @Inject constructor(
         notificationSettings: Int,
         ringtoneUri: Uri?,
         isNotificationVisibleInLockScreen: Boolean,
-        unreadNotifications: List<RoomNotification>
+        unreadNotifications: List<NotificationEntity>
     ) {
         val contentPendingIntent = getMailboxActivityIntent(loggedInUser.id)
 

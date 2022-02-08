@@ -63,13 +63,11 @@ import ch.protonmail.android.data.local.ContactDao;
 import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.data.local.NotificationDao;
 import ch.protonmail.android.data.local.PendingActionDao;
 import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.mailbox.data.local.ConversationDao;
-import ch.protonmail.android.notifications.domain.NotificationDatabase;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
 import me.proton.core.domain.entity.UserId;
@@ -175,7 +173,6 @@ public class AppUtil {
                     ContactDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Factory.getInstance(context, userId).getDao(),
                     MessageDatabase.Factory.getInstance(context, userId).getConversationDao(),
-                    NotificationDatabase.Companion.getInstance(context, userId).getDao(),
                     AttachmentMetadataDatabase.Companion.getInstance(context, userId).getDao(),
                     PendingActionDatabase.Companion.getInstance(context, userId).getDao(),
                     clearDoneListener, clearContacts
@@ -226,19 +223,11 @@ public class AppUtil {
         notificationManager.cancelAll();
         final UserManager userManager = ((ProtonMailApplication) context.getApplicationContext()).getUserManager();
         final UserId userId = userManager.requireCurrentUserId();
-        final NotificationDao notificationDao = NotificationDatabase.Companion
-                .getInstance(context, userId)
-                .getDao();
-        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
     public static void clearNotifications(Context context, UserId userId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(userId.hashCode());
-        final NotificationDao notificationDao = NotificationDatabase.Companion
-                .getInstance(context, userId)
-                .getDao();
-        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
     public static void clearNotifications(Context context, int notificationId) {
@@ -303,7 +292,6 @@ public class AppUtil {
             final MessageDao messageDao,
             final MessageDao searchDatabase,
             final ConversationDao conversationDao,
-            final NotificationDao notificationDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionDao pendingActionDao,
             final boolean clearContacts
@@ -314,7 +302,6 @@ public class AppUtil {
                 contactDao,
                 messageDao,
                 conversationDao,
-                notificationDao,
                 attachmentMetadataDao,
                 pendingActionDao,
                 null,
@@ -329,7 +316,6 @@ public class AppUtil {
             final ContactDao contactDao,
             final MessageDao messageDao,
             final ConversationDao conversationDao,
-            final NotificationDao notificationDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionDao pendingActionDao,
             final IDBClearDone clearDone,
@@ -351,7 +337,6 @@ public class AppUtil {
                 messageDao.clearMessagesCache();
                 messageDao.clearAttachmentsCache();
                 conversationDao.clear();
-                notificationDao.clearNotificationCache();
                 attachmentMetadataDao.clearAttachmentMetadataCache();
                 return null;
             }
@@ -390,38 +375,6 @@ public class AppUtil {
         SharedPreferences globalSecureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences();
         globalSecureSharedPreferences.edit().remove(PREF_PIN).apply();
         backupSharedPrefs.edit().clear().apply();
-    }
-
-    /**
-     * Deletes user's Secure Shared Preferences and preserves some important values.
-     */
-    public static void deleteSecurePrefs(
-            @NonNull SharedPreferences userPreferences,
-            boolean deletePin
-    ) {
-        String mailboxPinBackup = userPreferences.getString(PREF_PIN, null);
-        SharedPreferences.Editor editor = userPreferences.edit()
-                .clear();
-        if (!deletePin) {
-            editor.putString(PREF_PIN, mailboxPinBackup);
-        }
-        editor.apply();
-    }
-
-    // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
-    private static class ClearNotificationsFromDatabaseTask extends AsyncTask<Void, Void, Void> {
-        private final NotificationDao notificationDao;
-
-        ClearNotificationsFromDatabaseTask(
-                NotificationDao notificationDao) {
-            this.notificationDao = notificationDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            notificationDao.clearNotificationCache();
-            return null;
-        }
     }
 
     public interface IDBClearDone {

@@ -17,22 +17,29 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.notifications.domain
+package ch.protonmail.android.notifications.data.mapper
 
 import ch.protonmail.android.notifications.data.local.model.NotificationEntity
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
-import ch.protonmail.android.notifications.domain.model.Notification
+import ch.protonmail.android.notifications.domain.model.NotificationType
+import me.proton.core.domain.arch.Mapper
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.EMPTY_STRING
+import javax.inject.Inject
 
-interface NotificationRepository {
+class NotificationApiEntityMapper @Inject constructor() : Mapper<PushNotification, NotificationEntity> {
 
-    suspend fun saveNotification(notification: PushNotification, userId: UserId): List<NotificationEntity>
-
-    suspend fun deleteNotification(userId: UserId, notificationId: String)
-
-    suspend fun clearNotificationsByUserId(userId: UserId)
-
-    fun clearNotifications()
-
-    fun findNotificationById(messageId: String): Notification?
+    fun toEntity(model: PushNotification, userId: UserId): NotificationEntity {
+        val data = checkNotNull(model.data)
+        return NotificationEntity(
+            userId = userId,
+            messageId = data.messageId,
+            notificationTitle = data.sender?.let {
+                it.senderName.ifEmpty { it.senderAddress }
+            } ?: EMPTY_STRING,
+            notificationBody = data.body,
+            url = data.url,
+            type = requireNotNull(NotificationType.fromStringOrNull(model.type)) { "Notification type is null" }
+        )
+    }
 }

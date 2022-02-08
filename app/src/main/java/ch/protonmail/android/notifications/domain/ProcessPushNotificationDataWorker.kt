@@ -30,13 +30,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.data.local.model.Notification
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationData
@@ -69,7 +67,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
     private val alarmReceiver: AlarmReceiver,
     private val queueNetworkUtil: QueueNetworkUtil,
     private val userManager: UserManager,
-    private val databaseProvider: DatabaseProvider,
+    private val notificationRepository: NotificationRepository,
     private val messageRepository: MessageRepository,
     private val sessionManager: SessionManager,
     private val conversationModeEnabled: ConversationModeEnabled
@@ -149,7 +147,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
         val isScheduledSnoozeEnabled = userManager.isSnoozeScheduledEnabled()
 
         if (!isQuickSnoozeEnabled && (!isScheduledSnoozeEnabled || !shouldSuppressNotification())) {
-            sendNotification(userId, user, messageId, notificationBody, sender, isPrimaryUser)
+            sendNotification(userId, user, messageId, notificationBody, sender, pushNotification, isPrimaryUser)
         }
 
         return Result.success()
@@ -161,13 +159,13 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
         messageId: String,
         notificationBody: String,
         sender: String,
+        pushNotification: PushNotification,
         isPrimaryUser: Boolean
     ) {
 
         // Insert current Notification in Database
-        val notificationsDatabase = databaseProvider.provideNotificationDao(userId)
-        val notification = Notification(messageId, sender, notificationBody)
-        val notifications = notificationsDatabase.insertNewNotificationAndReturnAll(notification)
+        val notifications = checkNotNull(notificationRepository.saveNotification(pushNotification, userId))
+
         val message = messageRepository.getMessage(userId, messageId)
 
         if (notifications.size > 1) {

@@ -28,6 +28,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.labels.data.local.model.LabelEntity
+import ch.protonmail.android.notifications.data.local.NotificationDao
+import ch.protonmail.android.notifications.data.local.model.NotificationEntity
 import me.proton.core.account.data.db.AccountConverters
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.account.data.entity.AccountEntity
@@ -96,6 +98,7 @@ import timber.log.Timber
         FeatureFlagEntity::class,
         // Mail
         LabelEntity::class,
+        NotificationEntity::class
     ],
     version = AppDatabase.version,
     exportSchema = true
@@ -127,6 +130,7 @@ internal abstract class AppDatabase :
     FeatureFlagDatabase {
 
     abstract fun labelDao(): LabelDao
+    abstract fun notificationDao(): NotificationDao
 
     companion object {
 

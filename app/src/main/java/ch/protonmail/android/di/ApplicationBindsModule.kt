@@ -29,6 +29,8 @@ import ch.protonmail.android.labels.data.LabelRepositoryImpl
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.mailbox.data.ConversationsRepositoryImpl
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.notifications.data.NotificationRepositoryImpl
+import ch.protonmail.android.notifications.domain.NotificationRepository
 import ch.protonmail.android.settings.data.SharedPreferencesDeviceSettingsRepository
 import ch.protonmail.android.settings.domain.DeviceSettingsRepository
 import dagger.Binds
@@ -57,5 +59,8 @@ internal interface ApplicationBindsModule {
 
     @Binds
     fun provideCounterRepository(repo: CounterRepositoryImpl): CounterRepository
+
+    @Binds
+    fun provideNotificationRepository(repo: NotificationRepositoryImpl): NotificationRepository
 
 }

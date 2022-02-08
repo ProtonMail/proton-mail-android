@@ -54,7 +54,6 @@ import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.domain.entity.user.Address
@@ -64,7 +63,6 @@ import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.ui.LabelsManagerActivity
 import ch.protonmail.android.mailbox.data.local.ConversationDao
-import ch.protonmail.android.notifications.domain.NotificationDatabase
 import ch.protonmail.android.notifications.presentation.utils.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AccountSettingsActivity
@@ -141,7 +139,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     var messageDao: MessageDao? = null
     var conversationDao: ConversationDao? = null
     private var searchDatabase: MessageDao? = null
-    private var notificationDao: NotificationDao? = null
     var counterDao: CounterDao? = null
     var pendingActionDao: PendingActionDao? = null
     var preferences: SharedPreferences? = null
@@ -185,7 +182,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         contactDao = ContactDatabase.getInstance(applicationContext, userId).getDao()
         messageDao = MessageDatabase.getInstance(applicationContext, userId).getDao()
         conversationDao = MessageDatabase.getInstance(applicationContext, userId).getConversationDao()
-        notificationDao = NotificationDatabase.getInstance(applicationContext, userId).getDao()
         counterDao = CounterDatabase.getInstance(applicationContext, userId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(applicationContext, userId).getDao()
         preferences = userManager.preferencesFor(userId)
@@ -444,7 +440,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                         messageDao,
                         searchDatabase,
                         conversationDao,
-                        notificationDao,
                         attachmentMetadataDao,
                         pendingActionDao,
                         true

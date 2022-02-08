@@ -17,15 +17,12 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.notifications.data.remote.model
+package ch.protonmail.android.notifications.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class PushNotification(
-    @SerialName("type") val type: String,
-    @SerialName("version") val version: Int,
-    @SerialName("data") val data: PushNotificationData?,
-    @SerialName("action") val action: String = "message_created"
+data class Notification(
+    val id: NotificationId,
+    val notificationTitle: String,
+    val notificationBody: String,
+    val url: String,
+    val type: NotificationType
 )
