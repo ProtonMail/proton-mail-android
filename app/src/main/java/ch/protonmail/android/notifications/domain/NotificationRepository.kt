@@ -19,20 +19,19 @@
 
 package ch.protonmail.android.notifications.domain
 
-import ch.protonmail.android.notifications.data.local.model.NotificationEntity
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
 import ch.protonmail.android.notifications.domain.model.Notification
 import me.proton.core.domain.entity.UserId
 
 interface NotificationRepository {
 
-    suspend fun saveNotification(notification: PushNotification, userId: UserId): List<NotificationEntity>
+    suspend fun saveNotification(notification: PushNotification, userId: UserId): Notification?
 
     suspend fun deleteNotification(userId: UserId, notificationId: String)
 
-    suspend fun clearNotificationsByUserId(userId: UserId)
+    suspend fun deleteAllNotificationsByUserId(userId: UserId)
 
-    fun clearNotifications()
+    fun deleteAllNotificationsBlocking()
 
-    fun findNotificationById(messageId: String): Notification?
+    fun getNotificationByIdBlocking(messageId: String): Notification?
 }

@@ -38,6 +38,7 @@ import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationData
+import ch.protonmail.android.notifications.domain.model.NotificationType
 import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.AppUtil
@@ -46,7 +47,6 @@ import dagger.assisted.AssistedInject
 import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.session.SessionId
-import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.deserialize
 import timber.log.Timber
 import java.util.Calendar
@@ -135,19 +135,12 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
             )
         }
 
-        val messageId = pushNotificationData.messageId
-        val notificationBody = pushNotificationData.body
-        val notificationSender = pushNotificationData.sender
-        val sender = notificationSender?.let {
-            it.senderName.ifEmpty { it.senderAddress }
-        } ?: EMPTY_STRING
-
         val isPrimaryUser = userManager.currentUserId == userId
         val isQuickSnoozeEnabled = userManager.isSnoozeQuickEnabled()
         val isScheduledSnoozeEnabled = userManager.isSnoozeScheduledEnabled()
 
         if (!isQuickSnoozeEnabled && (!isScheduledSnoozeEnabled || !shouldSuppressNotification())) {
-            sendNotification(userId, user, messageId, notificationBody, sender, pushNotification, isPrimaryUser)
+            sendNotification(userId, user, pushNotification, isPrimaryUser)
         }
 
         return Result.success()
@@ -156,41 +149,37 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
     private suspend fun sendNotification(
         userId: UserId,
         user: User,
-        messageId: String,
-        notificationBody: String,
-        sender: String,
         pushNotification: PushNotification,
         isPrimaryUser: Boolean
     ) {
 
+
         // Insert current Notification in Database
-        val notifications = checkNotNull(notificationRepository.saveNotification(pushNotification, userId))
+        val notification = checkNotNull(notificationRepository.saveNotification(pushNotification, userId))
 
-        val message = messageRepository.getMessage(userId, messageId)
+        when (notification.type) {
+            NotificationType.EMAIL -> {
+                val message = messageRepository.getMessage(userId, notification.id.s)
 
-        if (notifications.size > 1) {
-            notificationServer.notifyMultipleUnreadEmail(
-                user.toNewUser(),
-                user.notificationSetting,
-                user.ringtone,
-                user.isNotificationVisibilityLockScreen,
-                notifications
-            )
-        } else {
-            notificationServer.notifySingleNewEmail(
-                userManager,
-                user.toNewUser(),
-                user.notificationSetting,
-                user.ringtone,
-                user.isNotificationVisibilityLockScreen,
-                message,
-                if (conversationModeEnabled(null, userId)) message?.conversationId ?: ""
-                else messageId,
-                notificationBody,
-                sender,
-                isPrimaryUser
-            )
+                notificationServer.notifySingleNewEmail(
+                    userManager,
+                    user.toNewUser(),
+                    user.notificationSetting,
+                    user.ringtone,
+                    user.isNotificationVisibilityLockScreen,
+                    message,
+                    if (conversationModeEnabled(null, userId)) message?.conversationId ?: ""
+                    else notification.id.s,
+                    notification.notificationBody,
+                    userId = userId,
+                    notification.notificationTitle,
+                    isPrimaryUser
+                )
+            }
+            NotificationType.OPEN_URL -> {}
+
         }
+
     }
 
     private fun shouldSuppressNotification(): Boolean {

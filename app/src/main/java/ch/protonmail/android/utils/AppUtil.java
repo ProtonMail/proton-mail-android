@@ -230,11 +230,6 @@ public class AppUtil {
         notificationManager.cancel(userId.hashCode());
     }
 
-    public static void clearNotifications(Context context, int notificationId) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(notificationId);
-    }
-
     /// read string from raw
     public static String readTxt(Context content, int id) {
         InputStream inputStream = content.getResources().openRawResource(id);
@@ -331,7 +326,6 @@ public class AppUtil {
                 if (clearContacts) {
                     contactDao.clearContactEmailsCache();
                     contactDao.clearContactDataCache();
-                    //contactDao.clearContactGroupsLabelsTableBlocking();
                     contactDao.clearFullContactDetailsCache();
                 }
                 messageDao.clearMessagesCache();

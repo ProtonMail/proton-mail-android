@@ -20,7 +20,6 @@
 package ch.protonmail.android.notifications.data
 
 import ch.protonmail.android.notifications.data.local.NotificationDao
-import ch.protonmail.android.notifications.data.local.model.NotificationEntity
 import ch.protonmail.android.notifications.data.mapper.NotificationApiEntityMapper
 import ch.protonmail.android.notifications.data.mapper.NotificationEntityDomainMapper
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
@@ -35,25 +34,25 @@ internal class NotificationRepositoryImpl @Inject constructor(
     private val notificationEntityDomainMapper: NotificationEntityDomainMapper
 ) : NotificationRepository {
 
-    override suspend fun saveNotification(notification: PushNotification, userId: UserId): List<NotificationEntity> {
+    override suspend fun saveNotification(notification: PushNotification, userId: UserId): Notification? {
         notificationDao.insertOrUpdate(notificationApiEntityMapper.toEntity(notification, userId))
-        return notificationDao.findAllNotifications()
+        return getNotificationByIdBlocking(notificationApiEntityMapper.toEntity(notification, userId).messageId)
     }
 
     override suspend fun deleteNotification(userId: UserId, notificationId: String) {
         notificationDao.deleteByMessageId(notificationId)
     }
 
-    override suspend fun clearNotificationsByUserId(userId: UserId) {
-        notificationDao.clearNotificationsByUserId(userId = userId.id)
+    override suspend fun deleteAllNotificationsByUserId(userId: UserId) {
+        notificationDao.deleteAllNotificationsByUserId(userId = userId.id)
     }
 
-    override fun clearNotifications() {
-        notificationDao.clearNotifications()
+    override fun deleteAllNotificationsBlocking() {
+        notificationDao.deleteAllNotificationsBlocking()
     }
 
-    override fun findNotificationById(messageId: String): Notification? =
-        notificationDao.findByMessageId(messageId)?.let {
+    override fun getNotificationByIdBlocking(messageId: String): Notification? =
+        notificationDao.findByMessageIdBlocking(messageId)?.let {
             notificationEntityDomainMapper.toNotification(it)
         }
 }
