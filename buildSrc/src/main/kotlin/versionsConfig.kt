@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -36,7 +36,7 @@ fun initVersions() {
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.4"         // Released: Oct 31, 2020
     `espresso version` =                        "3.4.0"         // Released: Jul 04, 2021
-    `hilt-android version` =                    "2.37"          // Released: Jun 10, 2021
+    `hilt-android version` =                    "2.40.5"        // Released: Dec 07, 2021
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
     `ktx version` =                             "1.6.0"         // Released: Jun 30, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
@@ -51,7 +51,7 @@ fun initVersions() {
     // region Others
     `assert4k version` =                        "0.7.1"         // Released: May 04, 2021
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
-    `dagger version` =                          "2.35.1"        // Released: Apr 28, 2021
+    `dagger version` =                          "2.40.5"        // Released: Dec 07, 2021
 
     `mockK version` =                           "1.12.2"        // Released: Dec 31, 2021
     `retrofit version` =                         "2.6.1"         // Released: Jul 31, 2019
