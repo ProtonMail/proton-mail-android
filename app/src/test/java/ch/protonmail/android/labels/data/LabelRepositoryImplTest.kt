@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -115,9 +115,9 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
 
             // then
             coVerify { labelDao.insertOrUpdate(*anyVararg()) }
-            assertEquals(expectedDbData.map { labelDomainMapper.toLabel(it) }, expectItem())
+            assertEquals(expectedDbData.map { labelDomainMapper.toLabel(it) }, awaitItem())
             dbFlow.tryEmit(subsequentDbReply)
-            assertEquals(subsequentDbReply.map { labelDomainMapper.toLabel(it) }, expectItem())
+            assertEquals(subsequentDbReply.map { labelDomainMapper.toLabel(it) }, awaitItem())
         }
     }
 
@@ -133,7 +133,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
 
             // then
             dbFlow.emit(dbReply)
-            assertEquals(dbReply.map { labelDomainMapper.toLabel(it) }, expectItem())
+            assertEquals(dbReply.map { labelDomainMapper.toLabel(it) }, awaitItem())
             coVerify(exactly = 0) { labelDao.insertOrUpdate(*anyVararg()) }
         }
     }
@@ -151,7 +151,7 @@ class LabelRepositoryImplTest : ArchTest, CoroutinesTest {
 
             // then
             dbFlow.emit(dbReply)
-            assertEquals(dbReply.map { labelDomainMapper.toLabel(it) }, expectItem())
+            assertEquals(dbReply.map { labelDomainMapper.toLabel(it) }, awaitItem())
             coVerify(exactly = 0) { labelDao.insertOrUpdate(*anyVararg()) }
         }
     }

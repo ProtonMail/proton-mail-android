@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -78,8 +78,8 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         observeConversationsByLocation(userId, MessageLocationType.INBOX.asLabelId()).test {
 
             // then
-            assertEquals(expected, expectItem())
-            expectComplete()
+            assertEquals(expected, awaitItem())
+            awaitComplete()
         }
     }
 

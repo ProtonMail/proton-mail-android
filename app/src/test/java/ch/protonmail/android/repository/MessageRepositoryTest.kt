@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -442,7 +442,7 @@ class MessageRepositoryTest {
 
             // then
             // verify messages from database
-            assertEquals(initialDatabaseMessages.local(), expectItem())
+            assertEquals(initialDatabaseMessages.local(), awaitItem())
 
             // verify api fetch
             coVerify {
@@ -451,8 +451,8 @@ class MessageRepositoryTest {
             coVerify { messageDao.saveMessages(apiMessages) }
 
             // verify message from api
-            assertEquals(apiMessages.remote(), expectItem())
-            assertEquals(allMessages.local(), expectItem())
+            assertEquals(apiMessages.remote(), awaitItem())
+            assertEquals(allMessages.local(), awaitItem())
         }
     }
 
@@ -482,8 +482,8 @@ class MessageRepositoryTest {
             dbFlow.emit(dbMessages)
 
             // then
-            assertEquals(dbMessages.local(), expectItem())
-            assertEquals(DataResult.Error.Remote(exceptionMessage, testException), expectItem())
+            assertEquals(dbMessages.local(), awaitItem())
+            assertEquals(DataResult.Error.Remote(exceptionMessage, testException), awaitItem())
             expectNoEvents()
         }
     }
@@ -510,10 +510,10 @@ class MessageRepositoryTest {
             dbFlow.emit(dbMessages)
 
             // then
-            assertEquals(dbMessages.local(), expectItem())
+            assertEquals(dbMessages.local(), awaitItem())
             coVerify { messageDao.saveMessages(netMessages) }
-            assertEquals(netMessages.remote(), expectItem())
-            assertEquals(netMessages.local(), expectItem())
+            assertEquals(netMessages.remote(), awaitItem())
+            assertEquals(netMessages.local(), awaitItem())
         }
     }
 
@@ -536,8 +536,8 @@ class MessageRepositoryTest {
             dbFlow.emit(dbMessages)
 
             // then
-            assertEquals(DataResult.Success(ResponseSource.Local, dbMessages), expectItem())
-            assertEquals(DataResult.Error.Remote(testExceptionMessage, testException), expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, dbMessages), awaitItem())
+            assertEquals(DataResult.Error.Remote(testExceptionMessage, testException), awaitItem())
         }
     }
 
@@ -568,9 +568,9 @@ class MessageRepositoryTest {
         messageRepository.observeMessages(params).test {
 
             // then
-            assertEquals(databaseMessages.local(), expectItem())
-            assertEquals(netMessages.remote(), expectItem())
-            assertEquals(netMessages.local(), expectItem())
+            assertEquals(databaseMessages.local(), awaitItem())
+            assertEquals(netMessages.remote(), awaitItem())
+            assertEquals(netMessages.local(), awaitItem())
 
             coVerify(exactly = 1) { messageDao.saveMessages(netMessages) }
         }
@@ -627,15 +627,15 @@ class MessageRepositoryTest {
 
             // then
             // verify messages from database
-            assertEquals(initialDatabaseMessages.local(), expectItem())
+            assertEquals(initialDatabaseMessages.local(), awaitItem())
 
             // verify api fetch
             coVerify { protonMailApiManager.getMessages(params) }
             coVerify { messageDao.saveMessages(apiMessages) }
 
             // verify message from api
-            assertEquals(apiMessages.remote(), expectItem())
-            assertEquals(allMessages.local(), expectItem())
+            assertEquals(apiMessages.remote(), awaitItem())
+            assertEquals(allMessages.local(), awaitItem())
         }
     }
 
@@ -657,7 +657,7 @@ class MessageRepositoryTest {
         messageRepository.getUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -683,7 +683,7 @@ class MessageRepositoryTest {
         messageRepository.getUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(expectedList, expectItem())
+            assertEquals(expectedList, awaitItem())
         }
     }
 
@@ -727,13 +727,13 @@ class MessageRepositoryTest {
         messageRepository.getUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(firstExpected, expectItem())
+            assertEquals(firstExpected, awaitItem())
 
             messageRepository.refreshUnreadCounters()
-            assertEquals(secondExpected, expectItem())
+            assertEquals(secondExpected, awaitItem())
 
             messageRepository.refreshUnreadCounters()
-            assertEquals(thirdExpected, expectItem())
+            assertEquals(thirdExpected, awaitItem())
         }
     }
 
@@ -749,10 +749,10 @@ class MessageRepositoryTest {
         messageRepository.getUnreadCounters(testUserId).test {
 
             // then
-            val actual = expectItem() as DataResult.Error.Remote
+            val actual = awaitItem() as DataResult.Error.Remote
             assertEquals(expectedMessage, actual.message)
 
-            expectComplete()
+            awaitComplete()
         }
     }
 
@@ -765,7 +765,7 @@ class MessageRepositoryTest {
 
         // when
         messageRepository.getUnreadCounters(testUserId).test {
-            expectItem()
+            awaitItem()
         }
     }
 

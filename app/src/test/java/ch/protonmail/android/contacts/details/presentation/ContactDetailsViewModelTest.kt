@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -227,7 +227,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
             viewModel.saveVcard(vCardToShare, contactName, context)
 
             // then
-            assertEquals(testUri, expectItem())
+            assertEquals(testUri, awaitItem())
         }
     }
 }
