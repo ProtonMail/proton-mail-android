@@ -143,7 +143,7 @@ class UserManager @Inject constructor(
 
     fun requireCurrentUser(): NewUser = checkNotNull(currentUser)
 
-    suspend fun getPreviousCurrentUserId(): UserId? = coreAccountManager.getPreviousPrimaryUserId()?.let { UserId(it.id) }
+    suspend fun getPreviousCurrentUserId(): UserId? = coreAccountManager.getPreviousPrimaryUserId()
 
     // endregion
 
