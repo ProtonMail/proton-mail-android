@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -68,7 +68,7 @@ class ProtonStoreTest : CoroutinesTest {
         store.flow(0, refresh = false).test {
 
             // then
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -83,8 +83,8 @@ class ProtonStoreTest : CoroutinesTest {
         store.flow(0, refresh = true).test {
 
             // then
-            assertEquals(expectedFromApi, expectItem())
-            assertEquals(expectedFromDatabase, expectItem())
+            assertEquals(expectedFromApi, awaitItem())
+            assertEquals(expectedFromDatabase, awaitItem())
         }
     }
 
@@ -114,10 +114,10 @@ class ProtonStoreTest : CoroutinesTest {
         store.flow(0, refresh = true).test {
 
             // then
-            val error = expectItem() as DataResult.Error.Remote
+            val error = awaitItem() as DataResult.Error.Remote
             assertEquals(expectedException, error.cause)
             assertEquals(expectedMessage, error.message)
-            assertEquals(emptyList<Item>().local(), expectItem())
+            assertEquals(emptyList<Item>().local(), awaitItem())
         }
     }
 
@@ -147,10 +147,10 @@ class ProtonStoreTest : CoroutinesTest {
         store.flow(0, refresh = true).test {
 
             // then
-            val error = expectItem() as DataResult.Error.Remote
+            val error = awaitItem() as DataResult.Error.Remote
             assertEquals(expectedException, error.cause)
             assertEquals(expectedMessage, error.message)
-            assertEquals(emptyList<Item>().local(), expectItem())
+            assertEquals(emptyList<Item>().local(), awaitItem())
         }
     }
 
@@ -180,8 +180,8 @@ class ProtonStoreTest : CoroutinesTest {
         store.flow(0, refresh = true).test {
 
             // then
-            assertEquals(OfflineDataResult, expectItem())
-            assertEquals(emptyList<Item>().local(), expectItem())
+            assertEquals(OfflineDataResult, awaitItem())
+            assertEquals(emptyList<Item>().local(), awaitItem())
         }
     }
 
@@ -195,7 +195,7 @@ class ProtonStoreTest : CoroutinesTest {
         store.loadMoreFlow(0, refreshAtStart = false).test {
 
             // then
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -211,8 +211,8 @@ class ProtonStoreTest : CoroutinesTest {
         flow.test {
 
             // then
-            assertEquals(expectedFromDatabase, expectItem())
-            assertEquals(expectedFromApi, expectItem())
+            assertEquals(expectedFromDatabase, awaitItem())
+            assertEquals(expectedFromApi, awaitItem())
         }
     }
 
@@ -226,16 +226,16 @@ class ProtonStoreTest : CoroutinesTest {
         flow.test {
 
             // then
-            assertEquals(allItems.take(3).local(), expectItem())
-            assertEquals(allItems.slice(0..1).remote(), expectItem())
+            assertEquals(allItems.take(3).local(), awaitItem())
+            assertEquals(allItems.slice(0..1).remote(), awaitItem())
 
             flow.loadMore()
-            assertEquals(allItems.slice(2..3).remote(), expectItem())
-            assertEquals(allItems.take(4).local(), expectItem())
+            assertEquals(allItems.slice(2..3).remote(), awaitItem())
+            assertEquals(allItems.take(4).local(), awaitItem())
 
             flow.loadMore()
-            assertEquals(allItems.slice(4..5).remote(), expectItem())
-            assertEquals(allItems.take(6).local(), expectItem())
+            assertEquals(allItems.slice(4..5).remote(), awaitItem())
+            assertEquals(allItems.take(6).local(), awaitItem())
         }
     }
 
@@ -265,9 +265,9 @@ class ProtonStoreTest : CoroutinesTest {
         store.loadMoreFlow(0, refreshAtStart = true).test {
 
             // then
-            assertEquals(emptyList<Item>().local(), expectItem())
+            assertEquals(emptyList<Item>().local(), awaitItem())
 
-            val error = expectItem() as DataResult.Error.Remote
+            val error = awaitItem() as DataResult.Error.Remote
             assertEquals(expectedException, error.cause)
             assertEquals(expectedMessage, error.message)
         }
@@ -297,8 +297,8 @@ class ProtonStoreTest : CoroutinesTest {
         store.loadMoreFlow(0, refreshAtStart = true).test {
 
             // then
-            assertEquals(items.local(), expectItem())
-            assertIs<DataResult.Error.Remote>(expectItem())
+            assertEquals(items.local(), awaitItem())
+            assertIs<DataResult.Error.Remote>(awaitItem())
         }
     }
 

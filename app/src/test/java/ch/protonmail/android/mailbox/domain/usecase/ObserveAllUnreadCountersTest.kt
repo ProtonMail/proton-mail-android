@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -70,7 +70,7 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
         observeAllUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -87,8 +87,8 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
 
             // then
             // An Item is emitted from conversationRepository which is mocked to return a success
-            expectItem()
-            assertEquals(expectedError, expectItem())
+            awaitItem()
+            assertEquals(expectedError, awaitItem())
         }
     }
 
@@ -112,7 +112,7 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
         observeAllUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -129,8 +129,8 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
 
             // then
             // An Item is emitted from messageRepository which is mocked to return a success
-            expectItem()
-            assertEquals(expectedError, expectItem())
+            awaitItem()
+            assertEquals(expectedError, awaitItem())
         }
     }
 
@@ -160,7 +160,7 @@ class ObserveAllUnreadCountersTest : CoroutinesTest {
         observeAllUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 }

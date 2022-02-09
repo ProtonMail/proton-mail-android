@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -65,8 +65,8 @@ class ObserveMessagesByLocationTest {
         useCase(userId, mailboxLocation, labelId).test {
 
             // then
-            assertEquals(expected, expectItem())
-            expectComplete()
+            assertEquals(expected, awaitItem())
+            awaitComplete()
         }
     }
 
@@ -81,8 +81,8 @@ class ObserveMessagesByLocationTest {
         useCase(userId, mailboxLocation, labelId).test {
 
             // then
-            assertEquals(expected, expectItem())
-            expectComplete()
+            assertEquals(expected, awaitItem())
+            awaitComplete()
         }
     }
 
@@ -97,8 +97,8 @@ class ObserveMessagesByLocationTest {
         useCase(userId, mailboxLocation, labelId).test {
 
             // then
-            assertEquals(expected, expectItem())
-            expectComplete()
+            assertEquals(expected, awaitItem())
+            awaitComplete()
         }
     }
 
@@ -113,8 +113,8 @@ class ObserveMessagesByLocationTest {
         useCase(userId, mailboxLocation, labelId).test {
 
             // then
-            assertEquals(expected, expectItem())
-            expectComplete()
+            assertEquals(expected, awaitItem())
+            awaitComplete()
         }
     }
 
@@ -140,11 +140,11 @@ class ObserveMessagesByLocationTest {
 
             // then
             messagesResponseChannel.close(testException)
-            val actualError = expectItem() as GetMessagesResult.Error
+            val actualError = awaitItem() as GetMessagesResult.Error
             val actualException = checkNotNull(actualError.throwable)
             assertEquals(testExceptionMessage, actualException.message)
             assertEquals(expectedExceptionType, actualException::class)
-            expectComplete()
+            awaitComplete()
         }
     }
 

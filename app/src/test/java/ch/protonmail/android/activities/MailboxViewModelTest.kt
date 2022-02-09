@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -263,9 +263,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         // When
         viewModel.mailboxState.test {
             // Then
-            assertEquals(loadingState, expectItem())
+            assertEquals(loadingState, awaitItem())
             messagesResponseChannel.send(GetMessagesResult.Success(messages))
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -279,9 +279,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         // When
         viewModel.mailboxState.test {
             // Then
-            assertEquals(loadingState, expectItem())
+            assertEquals(loadingState, awaitItem())
             messagesResponseChannel.close(exception)
-            assertEquals(expected.throwable?.message, (expectItem() as MailboxState.Error).throwable?.message)
+            assertEquals(expected.throwable?.message, (awaitItem() as MailboxState.Error).throwable?.message)
         }
     }
 
@@ -325,9 +325,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 messagesResponseChannel.send(GetMessagesResult.Success(messages))
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -376,9 +376,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         // When
         viewModel.mailboxState.test {
             // Then
-            assertEquals(loadingState, expectItem())
+            assertEquals(loadingState, awaitItem())
             messagesResponseChannel.send(GetMessagesResult.Success(messages))
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
             coVerify { contactsRepository.findContactsByEmail(listOf(senderEmailAddress)) }
         }
     }
@@ -422,9 +422,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 messagesResponseChannel.send(GetMessagesResult.Success(messages))
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -466,9 +466,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 messagesResponseChannel.send(GetMessagesResult.Success(messages))
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -517,9 +517,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         // When
         viewModel.mailboxState.test {
             // Then
-            assertEquals(loadingState, expectItem())
+            assertEquals(loadingState, awaitItem())
             messagesResponseChannel.send(GetMessagesResult.Success(messages))
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -584,9 +584,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         // When
         viewModel.mailboxState.test {
             // Then
-            assertEquals(loadingState, expectItem())
+            assertEquals(loadingState, awaitItem())
             messagesResponseChannel.send(GetMessagesResult.Success(messages))
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -621,9 +621,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 messagesResponseChannel.send(GetMessagesResult.Success(messages))
-                assertEquals(expectedState, expectItem())
+                assertEquals(expectedState, awaitItem())
             }
         }
 
@@ -669,9 +669,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -729,9 +729,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -784,9 +784,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -835,9 +835,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -894,9 +894,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -951,9 +951,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -1007,9 +1007,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -1064,9 +1064,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -1125,9 +1125,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 messagesResponseChannel.send(GetMessagesResult.Success(messages))
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -1144,9 +1144,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // When
             viewModel.mailboxState.test {
                 // Then
-                assertEquals(loadingState, expectItem())
+                assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(GetConversationsResult.Error())
-                assertEquals(expected, expectItem())
+                assertEquals(expected, awaitItem())
             }
         }
 
@@ -1160,19 +1160,19 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         viewModel.mailboxState.test {
 
             // then
-            assertEquals(loadingState, expectItem())
+            assertEquals(loadingState, awaitItem())
 
             // first emission from database
             messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
-            assertEquals(firstExpected, expectItem())
+            assertEquals(firstExpected, awaitItem())
 
             // emission api refresh
             messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
-            expectItem()
+            awaitItem()
 
             // emission from database after api refresh
             messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
-            assertEquals(secondExpected, expectItem())
+            assertEquals(secondExpected, awaitItem())
         }
     }
 

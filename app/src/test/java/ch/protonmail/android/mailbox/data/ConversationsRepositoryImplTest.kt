@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -342,13 +342,13 @@ class ConversationsRepositoryImplTest : ArchTest {
             conversationsRepository.observeConversations(parameters,).test {
 
                 // then
-                val actualLocalItems = expectItem() as DataResult.Success
+                val actualLocalItems = awaitItem() as DataResult.Success
                 assertEquals(ResponseSource.Local, actualLocalItems.source)
 
                 coVerify { api.fetchConversations(parameters) }
                 coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
 
-                val actualRemoteItems = expectItem() as DataResult.Success
+                val actualRemoteItems = awaitItem() as DataResult.Success
                 assertEquals(ResponseSource.Remote, actualRemoteItems.source)
             }
         }
@@ -367,10 +367,10 @@ class ConversationsRepositoryImplTest : ArchTest {
         conversationsRepository.observeConversations(parameters).test {
 
             // then
-            val actualLocalItems = expectItem() as DataResult.Success
+            val actualLocalItems = awaitItem() as DataResult.Success
             assertEquals(ResponseSource.Local, actualLocalItems.source)
 
-            val actualError = expectItem() as DataResult.Error
+            val actualError = awaitItem() as DataResult.Error
             assertEquals(ResponseSource.Remote, actualError.source)
             assertEquals("Test - Bad Request", actualError.message)
         }
@@ -405,9 +405,9 @@ class ConversationsRepositoryImplTest : ArchTest {
         conversationsRepository.observeConversations(parameters).test {
 
             // then
-            assertEquals(expectedLocalConversations.local(), expectItem())
+            assertEquals(expectedLocalConversations.local(), awaitItem())
 
-            val actualError = expectItem() as DataResult.Error
+            val actualError = awaitItem() as DataResult.Error
             assertEquals(ResponseSource.Remote, actualError.source)
             assertEquals("Api call failed", actualError.message)
         }
@@ -480,8 +480,8 @@ class ConversationsRepositoryImplTest : ArchTest {
             conversationsRepository.getConversation(testUserId, conversationId).test {
 
                 // then
-                assertEquals(expectedConversation.local(), expectItem())
-                expectItem()
+                assertEquals(expectedConversation.local(), awaitItem())
+                awaitItem()
             }
         }
     }
@@ -629,8 +629,8 @@ class ConversationsRepositoryImplTest : ArchTest {
             conversationsRepository.getConversation(testUserId, conversationId).test {
 
                 // then
-                assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), expectItem())
-                assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
+                assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), awaitItem())
+                assertEquals(DataResult.Processing(ResponseSource.Remote), awaitItem())
             }
         }
     }
@@ -684,8 +684,8 @@ class ConversationsRepositoryImplTest : ArchTest {
                     dbFlow.emit(null)
 
                     // then
-                    assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
-                    assertEquals(ResponseSource.Local, (expectItem() as DataResult.Success).source)
+                    assertEquals(DataResult.Processing(ResponseSource.Remote), awaitItem())
+                    assertEquals(ResponseSource.Local, (awaitItem() as DataResult.Success).source)
                     coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
                     coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
                 }
@@ -705,10 +705,10 @@ class ConversationsRepositoryImplTest : ArchTest {
             conversationsRepository.observeConversations(parameters)
                 .test(timeout = 3.toDuration(DurationUnit.SECONDS)) {
                     // then
-                    val actual = expectItem() as DataResult.Success
+                    val actual = awaitItem() as DataResult.Success
                     assertEquals(ResponseSource.Local, actual.source)
 
-                    expectItem()
+                    awaitItem()
                 }
         }
     }
@@ -1466,8 +1466,8 @@ class ConversationsRepositoryImplTest : ArchTest {
         conversationsRepository.observeConversations(params).test {
 
             // then
-            assertEquals(expected, expectItem())
-            expectItem() // Ignored Remote data
+            assertEquals(expected, awaitItem())
+            awaitItem() // Ignored Remote data
         }
     }
 
@@ -1495,8 +1495,8 @@ class ConversationsRepositoryImplTest : ArchTest {
         conversationsRepository.observeConversations(params).test {
 
             // then
-            assertEquals(expected, expectItem())
-            expectItem() // Ignored Remote data
+            assertEquals(expected, awaitItem())
+            awaitItem() // Ignored Remote data
         }
     }
 
@@ -1518,7 +1518,7 @@ class ConversationsRepositoryImplTest : ArchTest {
         conversationsRepository.getUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(expected, expectItem())
+            assertEquals(expected, awaitItem())
         }
     }
 
@@ -1544,7 +1544,7 @@ class ConversationsRepositoryImplTest : ArchTest {
         conversationsRepository.getUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(expectedList, expectItem())
+            assertEquals(expectedList, awaitItem())
         }
     }
 
@@ -1588,13 +1588,13 @@ class ConversationsRepositoryImplTest : ArchTest {
         conversationsRepository.getUnreadCounters(testUserId).test {
 
             // then
-            assertEquals(firstExpected, expectItem())
+            assertEquals(firstExpected, awaitItem())
 
             conversationsRepository.refreshUnreadCounters()
-            assertEquals(secondExpected, expectItem())
+            assertEquals(secondExpected, awaitItem())
 
             conversationsRepository.refreshUnreadCounters()
-            assertEquals(thirdExpected, expectItem())
+            assertEquals(thirdExpected, awaitItem())
         }
     }
 
@@ -1610,10 +1610,10 @@ class ConversationsRepositoryImplTest : ArchTest {
         conversationsRepository.getUnreadCounters(testUserId).test {
 
             // then
-            val actual = expectItem() as DataResult.Error.Remote
+            val actual = awaitItem() as DataResult.Error.Remote
             assertEquals(expectedMessage, actual.message)
 
-            expectComplete()
+            awaitComplete()
         }
     }
 
@@ -1626,7 +1626,7 @@ class ConversationsRepositoryImplTest : ArchTest {
 
         // when
         conversationsRepository.getUnreadCounters(testUserId).test {
-            expectItem()
+            awaitItem()
         }
     }
 

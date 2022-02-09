@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -340,7 +340,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             coVerify { messageRepository.observeMessage(testUserId1, INPUT_ITEM_DETAIL_ID) }
             observeMessageFlow.emit(message)
             coVerify { contactsRepository.findContactEmailByEmail(any()) }
-            val actualItem = expectItem()
+            val actualItem = awaitItem()
             assertEquals(expected, actualItem)
             assertEquals(testSenderContactEmail.name, actualItem.messages[0].senderDisplayName)
         }
@@ -395,7 +395,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         viewModel.conversationUiModel.test {
             observeMessageFlow.emit(message)
-            val actualItem = expectItem()
+            val actualItem = awaitItem()
             assertEquals(exclusiveLabels, actualItem.exclusiveLabels)
             assertEquals(nonExclusiveLabels, actualItem.nonExclusiveLabels)
         }
@@ -409,7 +409,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         viewModel.conversationUiModel.test {
             observeMessageFlow.emit(message)
-            val actualItem = expectItem()
+            val actualItem = awaitItem()
             assertTrue(actualItem.exclusiveLabels.isEmpty())
             assertTrue(actualItem.nonExclusiveLabels.isEmpty())
         }
@@ -453,7 +453,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             coVerify { conversationRepository.getConversation(testId2, INPUT_ITEM_DETAIL_ID) }
             observeConversationFlow.emit(testConversationResult)
             coVerify { contactsRepository.findContactEmailByEmail(any()) }
-            val actualItem = expectItem()
+            val actualItem = awaitItem()
             assertNotNull(actualItem)
             assertEquals(testConversation.toConversationUiModel(), actualItem)
         }
@@ -503,8 +503,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
             // Then
             verify(exactly = 0) { messageRepository.markRead(any()) }
-            assertEquals(MessageBodyState.Success(messageSpy), expectItem())
-            expectComplete()
+            assertEquals(MessageBodyState.Success(messageSpy), awaitItem())
+            awaitComplete()
         }
     }
 
@@ -520,8 +520,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
             // Then
             verify(exactly = 1) { messageRepository.markRead(listOf(MESSAGE_ID_ONE)) }
-            assertEquals(MessageBodyState.Success(messageSpy), expectItem())
-            expectComplete()
+            assertEquals(MessageBodyState.Success(messageSpy), awaitItem())
+            awaitComplete()
         }
     }
 
@@ -1089,8 +1089,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // Then
         loadMessageBodyFlow.test {
             coVerify(exactly = 0) { messageRepository.markRead(any()) }
-            expectItem()
-            expectComplete()
+            awaitItem()
+            awaitComplete()
         }
     }
 
@@ -1109,8 +1109,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // Then
         loadMessageBodyFlow.test {
             coVerify(exactly = 1) { messageRepository.markRead(listOf(INPUT_ITEM_DETAIL_ID)) }
-            expectItem()
-            expectComplete()
+            awaitItem()
+            awaitComplete()
         }
     }
 

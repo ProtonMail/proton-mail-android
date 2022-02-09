@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -44,7 +44,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.take(2), expectItem())
+            assertEquals(allItems.take(2), awaitItem())
         }
     }
 
@@ -55,13 +55,13 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.subList(0, 2), expectItem())
+            assertEquals(allItems.subList(0, 2), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.subList(2, 4), expectItem())
+            assertEquals(allItems.subList(2, 4), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.subList(4, 6), expectItem())
+            assertEquals(allItems.subList(4, 6), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.subList(6, 7), expectItem())
+            assertEquals(allItems.subList(6, 7), awaitItem())
         }
     }
 
@@ -72,8 +72,8 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(emptyList(), expectItem())
-            assertEquals(allItems.take(2), expectItem())
+            assertEquals(emptyList(), awaitItem())
+            assertEquals(allItems.take(2), awaitItem())
         }
     }
 
@@ -84,14 +84,14 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(emptyList(), expectItem())
-            assertEquals(allItems.take(2), expectItem())
+            assertEquals(emptyList(), awaitItem())
+            assertEquals(allItems.take(2), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.take(4), expectItem())
+            assertEquals(allItems.take(4), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.take(6), expectItem())
+            assertEquals(allItems.take(6), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.take(7), expectItem())
+            assertEquals(allItems.take(7), awaitItem())
         }
     }
 
@@ -102,7 +102,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(emptyList(), expectItem())
+            assertEquals(emptyList(), awaitItem())
         }
     }
 
@@ -113,7 +113,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(emptyList(), expectItem())
+            assertEquals(emptyList(), awaitItem())
             flow.loadMore()
             expectNoEvents()
         }
@@ -127,7 +127,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.take(3), expectItem())
+            assertEquals(allItems.take(3), awaitItem())
         }
     }
 
@@ -139,7 +139,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.take(3), expectItem())
+            assertEquals(allItems.take(3), awaitItem())
             flow.loadMore()
             expectNoEvents()
         }
@@ -153,7 +153,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.take(3), expectItem())
+            assertEquals(allItems.take(3), awaitItem())
         }
     }
 
@@ -165,9 +165,9 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.take(3), expectItem())
+            assertEquals(allItems.take(3), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.take(4), expectItem())
+            assertEquals(allItems.take(4), awaitItem())
         }
     }
 
@@ -179,7 +179,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.take(3), expectItem())
+            assertEquals(allItems.take(3), awaitItem())
             // Try to load few times before restoring connection
             flow.loadMore()
             expectNoEvents()
@@ -190,9 +190,9 @@ class LoadMoreFlowTest : CoroutinesTest {
             fakeOfflineEnabledRepository.withNet()
             flow.loadMore()
             flow.loadMore()
-            assertEquals(allItems.take(4), expectItem())
+            assertEquals(allItems.take(4), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.take(6), expectItem())
+            assertEquals(allItems.take(6), awaitItem())
         }
     }
 
@@ -212,11 +212,11 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.take(1), expectItem())
+            assertEquals(allItems.take(1), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.take(2), expectItem())
+            assertEquals(allItems.take(2), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.take(4), expectItem())
+            assertEquals(allItems.take(4), awaitItem())
         }
     }
 
@@ -235,10 +235,10 @@ class LoadMoreFlowTest : CoroutinesTest {
 
         // when - then
         flow.test {
-            assertEquals(allItems.take(1), expectItem())
-            assertEquals(allItems.take(2), expectItem())
+            assertEquals(allItems.take(1), awaitItem())
+            assertEquals(allItems.take(2), awaitItem())
             flow.loadMore()
-            assertEquals(allItems.take(4), expectItem())
+            assertEquals(allItems.take(4), awaitItem())
         }
     }
 

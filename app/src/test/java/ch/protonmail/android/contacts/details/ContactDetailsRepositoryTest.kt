@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -157,8 +157,8 @@ class ContactDetailsRepositoryTest {
         // when
         repository.observeFullContactDetails(testContactId).test {
             // then
-            assertEquals(mockContact, expectItem())
-            expectComplete()
+            assertEquals(mockContact, awaitItem())
+            awaitComplete()
         }
     }
 
@@ -182,7 +182,7 @@ class ContactDetailsRepositoryTest {
             // then
             coVerify { contactDao.insertFullContactDetails(mockContact) }
             dbResponseFlow.send(mockContact)
-            assertEquals(mockContact, expectItem())
+            assertEquals(mockContact, awaitItem())
         }
     }
 
