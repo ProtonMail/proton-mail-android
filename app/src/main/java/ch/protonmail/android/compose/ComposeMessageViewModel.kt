@@ -252,11 +252,12 @@ class ComposeMessageViewModel @Inject constructor(
     internal var autoSaveJob: Job? = null
     // endregion
 
-    private val user by lazy { userManager.requireCurrentLegacyUser() }
+    private val legacyUser by lazy { userManager.requireCurrentLegacyUser() }
+    private val user by lazy { userManager.requireCurrentUser() }
 
     private val userId by lazy { userManager.requireCurrentUserId() }
 
-    private val loggedInUserIds = if (user.combinedContacts) {
+    private val loggedInUserIds = if (legacyUser.combinedContacts) {
         accountManager.allLoggedInBlocking()
     } else {
         listOf(userManager.currentUserId)
@@ -267,7 +268,7 @@ class ComposeMessageViewModel @Inject constructor(
         composeMessageRepository.lazyManager.reset()
         getSenderEmailAddresses()
         // if the user is free user, then we do not fetch contact groups and announce the setup is complete
-        if (!user.isPaidUser) {
+        if (!legacyUser.isPaidUser) {
             _setupCompleteValue = true
             sendingInProcess = false
             _setupComplete.postValue(Event(true))
@@ -336,7 +337,7 @@ class ComposeMessageViewModel @Inject constructor(
             handleContactGroupsResult()
             return
         }
-        composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
+        composeMessageRepository.getContactGroupsFromDB(userId, legacyUser.combinedContacts)
             .onEach { models ->
                 for (group in models) {
                     val emails = composeMessageRepository.getContactGroupEmailsSync(group.id.id)
@@ -541,10 +542,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {
-        val senderAddresses = user.senderEmailAddresses
-        if (senderAddresses.isEmpty()) {
-            senderAddresses.add(user.defaultAddressEmail)
-        }
+        val senderAddresses = user.addresses.addresses.values.map { it.email.s }.toMutableList()
         userEmailAlias?.let {
             if (userEmailAlias.isNotEmpty()) {
                 senderAddresses.add(0, userEmailAlias)
@@ -553,26 +551,26 @@ class ComposeMessageViewModel @Inject constructor(
         _senderAddresses = senderAddresses
     }
 
-    fun getPositionByAddressId(): Int = user.getPositionByAddressId(_messageDataResult.addressId)
+    fun getPositionByAddressId(): Int = legacyUser.getPositionByAddressId(_messageDataResult.addressId)
 
-    fun isPaidUser(): Boolean = user.isPaidUser
+    fun isPaidUser(): Boolean = legacyUser.isPaidUser
 
-    fun getUserAddressByIdFromOnlySendAddresses(): Int = user.addressByIdFromOnlySendAddresses
+    fun getUserAddressByIdFromOnlySendAddresses(): Int = legacyUser.addressByIdFromOnlySendAddresses
 
     fun setSenderAddressIdByEmail(email: String) {
         // sanitize alias address so it points to original address
         val nonAliasAddress = "${email.substringBefore("+", email.substringBefore("@"))}@${email.substringAfter("@")}"
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
-            .addressId(user.getSenderAddressIdByEmail(nonAliasAddress))
+            .addressId(legacyUser.getSenderAddressIdByEmail(nonAliasAddress))
             .build()
     }
 
-    fun getAddressById(): Address = user.getAddressById(_messageDataResult.addressId)
+    fun getAddressById(): Address = legacyUser.getAddressById(_messageDataResult.addressId)
 
     fun getNewSignature(): String {
-        return if (user.isShowSignature) {
-            user.getSignatureForAddress(_messageDataResult.addressId)
+        return if (legacyUser.isShowSignature) {
+            legacyUser.getSignatureForAddress(_messageDataResult.addressId)
         } else ""
     }
 
@@ -759,18 +757,18 @@ class ComposeMessageViewModel @Inject constructor(
         signatureBuilder.append(NEW_LINE)
         signatureBuilder.append(NEW_LINE)
         signature = if (_messageDataResult.addressId.isNotEmpty()) {
-            user.getSignatureForAddress(_messageDataResult.addressId)
+            legacyUser.getSignatureForAddress(_messageDataResult.addressId)
         } else {
-            val senderAddresses = user.senderEmailAddresses
+            val senderAddresses = legacyUser.senderEmailAddresses
             if (senderAddresses.isNotEmpty()) {
                 val selectedEmail = senderAddresses[0]
-                user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
+                legacyUser.getSignatureForAddress(legacyUser.getSenderAddressIdByEmail(selectedEmail))
             } else {
-                val selectedEmail = user.defaultAddressEmail
-                user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
+                val selectedEmail = legacyUser.defaultAddressEmail
+                legacyUser.getSignatureForAddress(legacyUser.getSenderAddressIdByEmail(selectedEmail))
             }
         }
-        mobileFooter = user.mobileFooter
+        mobileFooter = legacyUser.mobileFooter
 
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
@@ -968,13 +966,13 @@ class ComposeMessageViewModel @Inject constructor(
                 signatureBuilder = initSignatures()
                 if (!TextUtils.isEmpty(messageDataResult.signature) && MessageUtils.containsRealContent(
                         messageDataResult.signature
-                    ) && user.isShowSignature
+                    ) && legacyUser.isShowSignature
                 ) {
                     signatureBuilder.append(messageDataResult.signature)
                     signatureBuilder.append(NEW_LINE)
                     signatureBuilder.append(NEW_LINE)
                 }
-                if (user.isShowMobileFooter) {
+                if (legacyUser.isShowMobileFooter) {
                     signatureBuilder.append(messageDataResult.mobileFooter.replace("\n", NEW_LINE))
                 }
                 signatureBuilder.append(NEW_LINE)
@@ -1184,7 +1182,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun getSignatureByEmailAddress(email: String): String {
         val nonAliasAddress = "${email.substringBefore("+", email.substringBefore("@"))}@${email.substringAfter("@")}"
-        return user.addresses.find { it.email == nonAliasAddress }?.signature ?: ""
+        return legacyUser.addresses.find { it.email == nonAliasAddress }?.signature ?: ""
     }
 
     @SuppressLint("CheckResult")
