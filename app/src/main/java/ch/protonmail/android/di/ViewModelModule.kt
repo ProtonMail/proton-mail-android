@@ -45,6 +45,7 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocati
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
+import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
@@ -119,7 +120,8 @@ internal class ViewModelModule {
         drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings: GetMailSettings,
         mailboxItemUiModelMapper: MailboxItemUiModelMapper,
-        fetchEventsAndReschedule: FetchEventsAndReschedule
+        fetchEventsAndReschedule: FetchEventsAndReschedule,
+        clearNotificationsForUser: ClearNotificationsForUser
     ) = MailboxViewModel(
         messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
         userManager = userManager,
@@ -145,6 +147,7 @@ internal class ViewModelModule {
         drawerFoldersAndLabelsSectionUiModelMapper = drawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings = getMailSettings,
         mailboxItemUiModelMapper = mailboxItemUiModelMapper,
-        fetchEventsAndReschedule = fetchEventsAndReschedule
+        fetchEventsAndReschedule = fetchEventsAndReschedule,
+        clearNotificationsForUser = clearNotificationsForUser
     )
 }

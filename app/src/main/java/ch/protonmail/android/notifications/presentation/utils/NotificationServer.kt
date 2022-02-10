@@ -44,9 +44,10 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mailbox.presentation.MailboxActivity
-import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DELETE_MESSAGE
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.buildArchiveIntent
+import ch.protonmail.android.utils.buildDismissGroupIntent
+import ch.protonmail.android.utils.buildDismissIntent
 import ch.protonmail.android.utils.buildTrashIntent
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.getMailboxActivityIntent
@@ -64,8 +65,6 @@ private const val CHANNEL_ID_ACCOUNT = "account"
 private const val CHANNEL_ID_ATTACHMENTS = "attachments"
 private const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
 private const val NOTIFICATION_ID_ATTACHMENT_ERROR = 6813
-private const val NOTIFICATION_GROUP_ID_EMAIL = 99
-private const val NOTIFICATION_ID_LOGGED_OUT = 3
 // endregion
 
 /**
@@ -167,41 +166,6 @@ class NotificationServer @Inject constructor(
             .build()
     }
 
-    fun notifyUserLoggedOut(user: User?) {
-
-        val summaryText = user?.addresses?.primary?.email?.s
-            ?: user?.name?.s
-            ?: context.getString(R.string.app_name)
-
-        val inboxStyle = NotificationCompat.BigTextStyle()
-            .setBigContentTitle(context.getString(R.string.logged_out))
-            .bigText(context.getString(R.string.logged_out_description))
-            .setSummaryText(summaryText)
-
-        val channelId = createAccountChannel()
-
-        val clickIntent = PendingIntent.getActivity(
-            context,
-            NOTIFICATION_ID_LOGGED_OUT,
-            Intent(), // empty action for now, just to dismiss notification
-            0
-        )
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.notification_icon)
-            .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
-            .setStyle(inboxStyle)
-            .setLights(
-                ContextCompat.getColor(context, R.color.light_indicator),
-                1500,
-                2000
-            )
-            .setAutoCancel(true)
-            .setContentIntent(clickIntent)
-
-        notificationManager.notify(NOTIFICATION_ID_LOGGED_OUT, builder.build())
-    }
-
     fun notifyAboutAttachment(
         filename: String,
         uri: Uri,
@@ -256,12 +220,6 @@ class NotificationServer @Inject constructor(
         val alarmReceiver = AlarmReceiver()
         alarmReceiver.setAlarm(context, true)
 
-        // Create Delete Intent
-        val deleteIntent = Intent(context.getString(R.string.notification_action_delete))
-            .putExtra(EXTRA_NOTIFICATION_DELETE_MESSAGE, NOTIFICATION_GROUP_ID_EMAIL)
-        val deletePendingIntent =
-            PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
         // Set Notification's colors
         val mainColor = context.getColor(R.color.ocean_blue)
         val lightColor = context.getColor(R.color.light_indicator)
@@ -273,7 +231,6 @@ class NotificationServer @Inject constructor(
             .setColor(mainColor)
             .setLights(lightColor, 1500, 2000)
             .setAutoCancel(true)
-            .setDeleteIntent(deletePendingIntent)
             .setPriority(PRIORITY_HIGH)
 
         // Set Notification visibility
@@ -357,6 +314,8 @@ class NotificationServer @Inject constructor(
         )
 
         // Create Action Intent's
+        val dismissIntent = context.buildDismissIntent(messageId, user.id)
+        val dismissGroupIntent = context.buildDismissGroupIntent(user.id)
         val archiveIntent = context.buildArchiveIntent(messageId, user.id)
         val trashIntent = context.buildTrashIntent(messageId, user.id)
         val replyIntent =
@@ -381,6 +340,7 @@ class NotificationServer @Inject constructor(
                 setContentTitle(sender)
                 notificationBody?.let { setContentText(it) }
                 setContentIntent(contentPendingIntent)
+                setDeleteIntent(dismissIntent)
                 setGroup(userId.id)
                 setStyle(inboxStyle)
                 setShowWhen(false)
@@ -419,6 +379,7 @@ class NotificationServer @Inject constructor(
             setGroup(userId.id)
             setGroupSummary(true)
             setAutoCancel(true)
+            setDeleteIntent(dismissGroupIntent)
         }.build()
 
 
@@ -533,6 +494,7 @@ private fun Context.buildReplyIntent(
     user: User,
     userManager: UserManager
 ): PendingIntent? {
+
     val intent = Intent(this, ComposeMessageActivity::class.java)
     MessageUtils.addRecipientsToIntent(
         intent,
@@ -552,7 +514,7 @@ private fun Context.buildReplyIntent(
     }
 
     intent
-        .putExtra(ComposeMessageActivity.EXTRA_REPLY_FROM_GCM, true)
+        .putExtra(ComposeMessageActivity.EXTRA_REPLY_FROM_NOTIFICATION, true)
         .putExtra(ComposeMessageActivity.EXTRA_SENDER_NAME, message.senderName)
         .putExtra(ComposeMessageActivity.EXTRA_SENDER_ADDRESS, message.sender?.emailAddress)
         .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TITLE, newMessageTitle)

@@ -727,7 +727,7 @@ internal class MailboxActivity :
         mailboxViewModel.checkConnectivity()
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         if (mailboxLocation == MessageLocationType.INBOX) {
-            userManager.currentUserId?.let { AppUtil.clearNotifications(this, it) }
+            userManager.currentUserId?.let { mailboxViewModel.clearNotifications(it) }
         }
 
         if (shouldShowSwipeGesturesChangedDialog()) {
@@ -833,7 +833,7 @@ internal class MailboxActivity :
         isLoadingMore.getAndSet(loadingMore)
 
     override fun onInbox(type: DrawerOptionType) {
-        AppUtil.clearNotifications(applicationContext, userManager.requireCurrentUserId())
+        mailboxViewModel.clearNotifications(userManager.requireCurrentUserId())
         switchToMailboxLocation(type.drawerOptionTypeValue)
     }
 

@@ -27,7 +27,6 @@ import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
 import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
 
 import android.app.ActivityManager;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,7 +55,6 @@ import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import ch.protonmail.android.data.local.ContactDao;
@@ -215,19 +213,6 @@ public class AppUtil {
         }
         // Deprecated in API level 23.
         return activityManager.isInLockTaskMode();
-    }
-
-    @Deprecated // Use with User Id
-    public static void clearNotifications(Context context) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-        final UserManager userManager = ((ProtonMailApplication) context.getApplicationContext()).getUserManager();
-        final UserId userId = userManager.requireCurrentUserId();
-    }
-
-    public static void clearNotifications(Context context, UserId userId) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(userId.hashCode());
     }
 
     /// read string from raw

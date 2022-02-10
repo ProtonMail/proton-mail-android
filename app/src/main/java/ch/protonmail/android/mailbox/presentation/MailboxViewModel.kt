@@ -57,6 +57,7 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocati
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
+import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -124,7 +125,8 @@ internal class MailboxViewModel @Inject constructor(
     private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
     private val getMailSettings: GetMailSettings,
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper,
-    private val fetchEventsAndReschedule: FetchEventsAndReschedule
+    private val fetchEventsAndReschedule: FetchEventsAndReschedule,
+    private val clearNotificationsForUser: ClearNotificationsForUser
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     private val _manageLimitReachedWarning = MutableLiveData<Event<Boolean>>()
@@ -644,6 +646,12 @@ internal class MailboxViewModel @Inject constructor(
                     mailboxLocation,
                     mailboxLocationId
                 )
+        }
+    }
+
+    fun clearNotifications(userId: UserId) {
+        viewModelScope.launch {
+            clearNotificationsForUser.invoke(userId)
         }
     }
 

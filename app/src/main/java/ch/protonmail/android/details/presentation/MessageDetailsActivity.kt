@@ -163,7 +163,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         openedFolderLabelId = intent.getStringExtra(EXTRA_MAILBOX_LABEL_ID)
         expandedToolbarTitleTextView.text = intent.getStringExtra(EXTRA_MESSAGE_SUBJECT) ?: ""
         val currentUser = mUserManager.requireCurrentUser()
-        AppUtil.clearNotifications(this, currentUser.id)
         supportActionBar?.title = null
         initAdapters()
         initRecyclerView()

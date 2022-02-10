@@ -25,6 +25,8 @@ import android.content.Context
 import android.content.Intent
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DISMISS
+import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_GROUP_DISMISS
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_MESSAGE_ID
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_NEW_LOCATION_MESSAGE
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_USER_ID
@@ -50,6 +52,23 @@ fun Context.buildTrashIntent(messageId: String, userId: UserId): PendingIntent {
     intent.putExtra(
         EXTRA_NOTIFICATION_NEW_LOCATION_MESSAGE, Constants.MessageLocationType.TRASH.asLabelIdString()
     )
+    intent.setClass(this, NotificationReceiver::class.java)
+    return PendingIntent.getBroadcast(this, System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_IMMUTABLE)
+}
+
+fun Context.buildDismissIntent(messageId: String, userId: UserId): PendingIntent {
+    val intent = Intent(getString(R.string.notification_action_dismiss))
+    intent.putExtra(EXTRA_NOTIFICATION_USER_ID, userId.id)
+    intent.putExtra(EXTRA_NOTIFICATION_MESSAGE_ID, messageId)
+    intent.putExtra(EXTRA_NOTIFICATION_DISMISS, true)
+    intent.setClass(this, NotificationReceiver::class.java)
+    return PendingIntent.getBroadcast(this, System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_IMMUTABLE)
+}
+
+fun Context.buildDismissGroupIntent(userId: UserId): PendingIntent {
+    val intent = Intent(getString(R.string.notification_action_dismiss))
+    intent.putExtra(EXTRA_NOTIFICATION_USER_ID, userId.id)
+    intent.putExtra(EXTRA_NOTIFICATION_GROUP_DISMISS, true)
     intent.setClass(this, NotificationReceiver::class.java)
     return PendingIntent.getBroadcast(this, System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_IMMUTABLE)
 }
