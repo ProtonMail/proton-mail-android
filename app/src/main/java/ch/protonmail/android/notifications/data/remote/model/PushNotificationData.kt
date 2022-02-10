@@ -35,5 +35,6 @@ data class PushNotificationData(
     @SerialName("messageId") val messageId: String,
     @SerialName("customId") val customId: String,
     @SerialName("sender") val sender: PushNotificationSender?,
-    @SerialName("url") val url: String = ""
+    @SerialName("url") val url: String = "",
+    @SerialName("action") val action: NotificationAction = NotificationAction.CREATED
 )

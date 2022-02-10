@@ -22,9 +22,24 @@ package ch.protonmail.android.notifications.data.remote.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+const val NOTIFICATION_ACTION_MESSAGE_CREATED = "message_created"
+const val NOTIFICATION_ACTION_MESSAGE_TOUCHED = "message_touched"
+
 @Serializable
-data class PushNotification(
-    @SerialName("type") val type: String,
-    @SerialName("version") val version: Int,
-    @SerialName("data") val data: PushNotificationData?
-)
+enum class NotificationAction(val action: String) {
+
+    @SerialName(NOTIFICATION_ACTION_MESSAGE_CREATED)
+    CREATED("message_created"),
+
+    @SerialName(NOTIFICATION_ACTION_MESSAGE_TOUCHED)
+    TOUCHED("message_touched");
+
+    companion object {
+
+        fun fromStringOrNull(action: String): NotificationAction? {
+            return values().find {
+                it.action == action
+            }
+        }
+    }
+}

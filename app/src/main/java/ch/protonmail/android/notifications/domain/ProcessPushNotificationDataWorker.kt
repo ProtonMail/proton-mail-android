@@ -36,9 +36,11 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.notifications.data.remote.model.NotificationAction
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationData
 import ch.protonmail.android.notifications.domain.model.NotificationType
+import ch.protonmail.android.notifications.presentation.usecase.ClearNotification
 import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.AppUtil
@@ -70,7 +72,8 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
     private val notificationRepository: NotificationRepository,
     private val messageRepository: MessageRepository,
     private val sessionManager: SessionManager,
-    private val conversationModeEnabled: ConversationModeEnabled
+    private val conversationModeEnabled: ConversationModeEnabled,
+    private val clearNotification: ClearNotification
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
@@ -139,8 +142,18 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
         val isQuickSnoozeEnabled = userManager.isSnoozeQuickEnabled()
         val isScheduledSnoozeEnabled = userManager.isSnoozeScheduledEnabled()
 
-        if (!isQuickSnoozeEnabled && (!isScheduledSnoozeEnabled || !shouldSuppressNotification())) {
-            sendNotification(userId, user, pushNotification, isPrimaryUser)
+        when (pushNotificationData.action) {
+            NotificationAction.CREATED -> {
+                if (!isQuickSnoozeEnabled && (!isScheduledSnoozeEnabled || !shouldSuppressNotification())) {
+                    sendNotification(userId, user, pushNotification, isPrimaryUser)
+                }
+            }
+            NotificationAction.TOUCHED -> {
+                val notification =
+                    checkNotNull(notificationRepository.getNotificationByIdBlocking(pushNotificationData.messageId))
+                clearNotification.invoke(userId, notification.id.value)
+            }
+
         }
 
         return Result.success()
@@ -155,11 +168,13 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
 
 
         // Insert current Notification in Database
-        val notification = checkNotNull(notificationRepository.saveNotification(pushNotification, userId))
+        val notification = checkNotNull(notificationRepository.saveNotification(pushNotification, userId)) {
+            "Notification not found"
+        }
 
         when (notification.type) {
             NotificationType.EMAIL -> {
-                val message = messageRepository.getMessage(userId, notification.id.s)
+                val message = messageRepository.getMessage(userId, notification.id.value)
 
                 notificationServer.notifySingleNewEmail(
                     userManager,
@@ -169,14 +184,15 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
                     user.isNotificationVisibilityLockScreen,
                     message,
                     if (conversationModeEnabled(null, userId)) message?.conversationId ?: ""
-                    else notification.id.s,
+                    else notification.id.value,
                     notification.notificationBody,
                     userId = userId,
                     notification.notificationTitle,
                     isPrimaryUser
                 )
             }
-            NotificationType.OPEN_URL -> {}
+            NotificationType.OPEN_URL -> {
+            }
 
         }
 
