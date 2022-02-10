@@ -77,7 +77,6 @@ val alphaDebugImplementation by configurations.creating
 android(
     appIdSuffix = "android",
     minSdk = 23,
-    useDataBinding = true
 ) {
 
     useLibrary("org.apache.http.legacy")
