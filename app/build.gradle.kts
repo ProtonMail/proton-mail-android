@@ -30,7 +30,6 @@ plugins {
     `kotlin-kapt`
     `hilt`
     `kotlin-serialization`
-    `sentry-android`
     `browserstack`
 }
 
@@ -42,8 +41,7 @@ val privateProperties = Properties().apply {
     try {
         load(FileInputStream("privateConfig/private.properties"))
     } catch (e: FileNotFoundException) {
-        put("sentryDNS_1", "")
-        put("sentryDNS_2", "")
+        put("sentryDSN", "")
         put("safetyNet_apiKey", "")
         put("b_endpointUrl", "")
         put("d_endpointUrl", "")
@@ -57,6 +55,7 @@ val experimentalProperties = Properties().apply {
 }
 
 val adb = "${System.getenv("ANDROID_HOME")}/platform-tools/adb"
+val sentryDSN = properties["SENTRY_DSN"] ?: privateProperties["sentryDSN"]
 val browserstackUser = properties["BROWSERSTACK_USER"] ?: privateProperties["BROWSERSTACK_USER"]
 val browserstackKey = properties["BROWSERSTACK_KEY"] ?: privateProperties["BROWSERSTACK_KEY"]
 val testRecipient1 = properties["TEST_RECIPIENT1"] ?: privateProperties["TEST_RECIPIENT1"]
@@ -85,13 +84,12 @@ android(
     defaultConfig {
 
         // Private
-        buildConfigField("String", "SENTRY_DNS_1", "\"${privateProperties["sentryDNS_1"]}\"")
-        buildConfigField("String", "SENTRY_DNS_2", "\"${privateProperties["sentryDNS_2"]}\"")
         buildConfigField("String", "SAFETY_NET_API_KEY", "\"${privateProperties["safetyNet_apiKey"]}\"")
         buildConfigField("String", "B_ENDPOINT_URL", "\"${privateProperties["b_endpointUrl"]}\"")
         buildConfigField("String", "D_ENDPOINT_URL", "\"${privateProperties["d_endpointUrl"]}\"")
         buildConfigField("String", "H_ENDPOINT_URL", "\"${privateProperties["h_endpointUrl"]}\"")
         buildConfigField("String", "PM_CLIENT_SECRET", "\"${privateProperties["pm_clientSecret"]}\"")
+        buildConfigField("String", "SENTRY_DSN", "\"$sentryDSN\"")
         buildConfigField("String", "BROWSERSTACK_USER", browserstackUser.toString())
         buildConfigField("String", "BROWSERSTACK_KEY", browserstackKey.toString())
         buildConfigField("String", "TEST_RECIPIENT1", testRecipient1.toString())
@@ -135,8 +133,9 @@ android(
 
     signingConfigs {
         register("release") {
-            if (privateProperties.getProperty("sentryDNS_1").isNotEmpty()) {
-                storeFile = file("$rootDir/privateConfig/keystore/ProtonMail.keystore")
+            val keystore = file("$rootDir/privateConfig/keystore/ProtonMail.keystore")
+            if (keystore.exists()) {
+                storeFile = keystore
                 storePassword = "${privateProperties["keyStorePassword"]}"
                 keyAlias = "ProtonMail"
                 keyPassword = "${privateProperties["keyStoreKeyPassword"]}"

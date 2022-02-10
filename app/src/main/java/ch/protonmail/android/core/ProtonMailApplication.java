@@ -89,6 +89,7 @@ import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.feature.account.AccountManagerKt;
+import ch.protonmail.android.feature.account.AccountStateHandlerInitializer;
 import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
@@ -104,8 +105,6 @@ import ch.protonmail.android.utils.crypto.OpenPGP;
 import ch.protonmail.android.worker.FetchContactsDataWorker;
 import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 import dagger.hilt.android.HiltAndroidApp;
-import io.sentry.Sentry;
-import io.sentry.android.AndroidSentryClientFactory;
 import me.proton.core.accountmanager.data.AccountStateHandler;
 import me.proton.core.accountmanager.domain.AccountManager;
 import me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer;
@@ -123,8 +122,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     UserManager userManager;
     @Inject
     AccountManager accountManager;
-    @Inject
-    AccountStateHandler accountStateHandler;
     @Inject
     EventManager eventManager;
     @Inject
@@ -200,16 +197,13 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         CoreLogger.INSTANCE.set(new CoreTimberLogger());
 
+        AppInitializer appInitializer = AppInitializer.getInstance(this);
+
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
             if (BuildConfig.FLAVOR != "uiAutomation") enableStrictMode();
         } else {
-            Sentry.init(
-                    String.format(
-                            getString(R.string.sentry_url),
-                            BuildConfig.SENTRY_DNS_1,
-                            BuildConfig.SENTRY_DNS_2
-                    ), new AndroidSentryClientFactory(this));
+            appInitializer.initializeComponent(SentryInitializer.class);
             Timber.plant(new SentryTree());
         }
 
@@ -228,19 +222,15 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         applyAppThemeFromSettings.blocking();
 
-        AppInitializer appInitializer = AppInitializer.getInstance(this);
-        appInitializer.initializeComponent(CryptoValidatorInitializer.class);
-        appInitializer.initializeComponent(SecurityManagerInitializer.class);
-
         accountManagerUserIdMigration.blocking();
         coreAccountManagerMigration.migrateBlocking();
 
-        // Start internal mandatory Account state handling.
-        accountStateHandler.start();
+        // Start internal mandatory Account state handling (after coreAccountManagerMigration).
+        appInitializer.initializeComponent(AccountStateHandlerInitializer.class);
+        appInitializer.initializeComponent(CryptoValidatorInitializer.class);
+        appInitializer.initializeComponent(SecurityManagerInitializer.class);
 
         checkForUpdateAndClearCache();
-
-        AppInitializer.getInstance(this).initializeComponent(CryptoValidatorInitializer.class);
     }
 
     private void upgradeTlsProviderIfNeeded() {

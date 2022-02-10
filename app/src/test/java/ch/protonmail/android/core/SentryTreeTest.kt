@@ -23,7 +23,8 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
 import io.sentry.Sentry
-import io.sentry.event.Event
+import io.sentry.SentryEvent
+import io.sentry.protocol.SentryId
 import me.proton.core.domain.entity.UserId
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,14 +41,12 @@ internal class SentryTreeTest {
             val exceptionMessage = "Something went wrong!"
             val logMessage = "ouch!"
 
-            val expectedExtras = emptyMap<String, Any?>()
-
             val expectedLogMessage = "$logMessage\n" +
                 "DetailedException(message=$exceptionMessage, " +
                 "cause=java.lang.IllegalArgumentException: $exceptionMessage, " +
                 "extras={})"
 
-            every { Sentry.capture(any<Event>()) } returns Unit
+            every { Sentry.captureEvent(any()) } returns SentryId.EMPTY_ID
             val exception = IllegalArgumentException(exceptionMessage)
 
             // when
@@ -57,12 +56,11 @@ internal class SentryTreeTest {
             )
 
             // then
-            val event = slot<Event>()
+            val event = slot<SentryEvent>()
             verify {
-                Sentry.capture(capture(event))
+                Sentry.captureEvent(capture(event))
             }
-            assertEquals(expectedExtras, event.captured.extra)
-            assertEquals(expectedLogMessage, event.captured.message.take2Lines())
+            assertEquals(expectedLogMessage, event.captured.message?.message?.take2Lines())
         }
     }
 
@@ -79,9 +77,9 @@ internal class SentryTreeTest {
             val errorMessage = "Not found!"
 
             val expectedExtras = mapOf(
-                "User id" to userIdString,
-                "API error code" to errorCode,
-                "API error message" to errorMessage,
+                KEY_USER_ID to userIdString,
+                KEY_CODE to errorCode,
+                KEY_MESSAGE to errorMessage,
             )
 
             val expectedLogMessage = "$logMessage\n" +
@@ -89,7 +87,7 @@ internal class SentryTreeTest {
                 "cause=java.lang.IllegalArgumentException: $exceptionMessage, " +
                 "extras={User id=$userIdString, API error code=$errorCode, API error message=$errorMessage})"
 
-            every { Sentry.capture(any<Event>()) } returns Unit
+            every { Sentry.captureEvent(any()) } returns SentryId.EMPTY_ID
             val exception = IllegalArgumentException(exceptionMessage)
 
             // when
@@ -99,12 +97,14 @@ internal class SentryTreeTest {
             )
 
             // then
-            val event = slot<Event>()
+            val event = slot<SentryEvent>()
             verify {
-                Sentry.capture(capture(event))
+                Sentry.captureEvent(capture(event))
             }
-            assertEquals(expectedExtras, event.captured.extra)
-            assertEquals(expectedLogMessage, event.captured.message.take2Lines())
+            assertEquals(expectedExtras[KEY_USER_ID], event.captured.getExtra(KEY_USER_ID))
+            assertEquals(expectedExtras[KEY_CODE], event.captured.getExtra(KEY_CODE))
+            assertEquals(expectedExtras[KEY_MESSAGE], event.captured.getExtra(KEY_MESSAGE))
+            assertEquals(expectedLogMessage, event.captured.message?.message?.take2Lines())
         }
     }
 
@@ -120,11 +120,11 @@ internal class SentryTreeTest {
             tree.w(input)
 
             // then
-            val event = slot<Event>()
+            val event = slot<SentryEvent>()
             verify {
-                Sentry.capture(capture(event))
+                Sentry.captureEvent(capture(event))
             }
-            assertEquals(expectedLogMessage, event.captured.message)
+            assertEquals(expectedLogMessage, event.captured.message?.message)
         }
     }
 
@@ -149,14 +149,20 @@ internal class SentryTreeTest {
             tree.w(input)
 
             // then
-            val event = slot<Event>()
+            val event = slot<SentryEvent>()
             verify {
-                Sentry.capture(capture(event))
+                Sentry.captureEvent(capture(event))
             }
-            assertEquals(expectedLogMessage, event.captured.message)
+            assertEquals(expectedLogMessage, event.captured.message?.message)
         }
     }
 
     private fun String.take2Lines(): String =
         split("\n").take(2).joinToString(separator = "\n")
+
+    companion object {
+        private const val KEY_USER_ID = "User id"
+        private const val KEY_CODE = "API error code"
+        private const val KEY_MESSAGE = "API error message"
+    }
 }

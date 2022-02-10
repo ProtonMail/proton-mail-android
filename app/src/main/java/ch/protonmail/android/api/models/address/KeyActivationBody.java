@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.models.address;
 
-import io.sentry.util.Nullable;
+import javax.annotation.Nullable;
 
 public class KeyActivationBody {
 
