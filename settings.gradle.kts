@@ -28,9 +28,15 @@ println("Modules: ${modules.sorted().joinToString()}")
 for (p in projects) includeBuild(p)
 for (m in modules) include(m)
 
-// Uncomment this line to use core libs from git submodule instead of using artifacts published on maven.
-// See https://docs.gradle.org/current/userguide/composite_builds.html
-// includeBuild("proton-libs")
+// Use core libs from maven artifacts or submodules (see gradle.properties).
+val useCoreGitSubmoduleAsBoolean: Boolean = extensions.extraProperties
+    .properties["useCoreGitSubmodule"].toString().toBoolean()
+if (useCoreGitSubmoduleAsBoolean) {
+    println("Use core libs from git submodule \'./proton-libs\'")
+    includeBuild("proton-libs")
+} else {
+    println("Use core libs from Maven artifacts")
+}
 
 pluginManagement {
     repositories {
