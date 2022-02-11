@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.utils.webview
+package ch.protonmail.android.details.domain.usecase
 
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.coEvery

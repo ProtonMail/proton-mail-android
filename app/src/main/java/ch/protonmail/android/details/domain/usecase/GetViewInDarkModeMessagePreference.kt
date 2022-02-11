@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -17,24 +17,31 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.utils.webview
+package ch.protonmail.android.details.domain.usecase
 
+import android.content.Context
+import androidx.webkit.WebViewFeature
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 /**
- * A use case that saves the view in dark mode message preference
+ * A use case that checks whether a given message should be viewed in dark mode or not
  */
-class SetViewInDarkModeMessagePreference @Inject constructor(
+class GetViewInDarkModeMessagePreference @Inject constructor(
     private val messageRepository: MessageRepository,
+    private val isAppInDarkMode: IsAppInDarkMode
 ) {
 
     suspend operator fun invoke(
+        context: Context,
         userId: UserId,
-        messageId: String,
-        viewInDarkMode: Boolean
-    ) {
-        messageRepository.saveViewInDarkModeMessagePreference(userId, messageId, viewInDarkMode)
+        messageId: String
+    ): Boolean {
+        return if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            messageRepository.getViewInDarkModeMessagePreference(userId, messageId)
+                ?: isAppInDarkMode(context)
+        } else false
     }
 }

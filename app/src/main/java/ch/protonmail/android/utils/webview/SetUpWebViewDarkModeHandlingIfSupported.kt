@@ -24,6 +24,7 @@ import android.content.res.Configuration
 import android.webkit.WebView
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 

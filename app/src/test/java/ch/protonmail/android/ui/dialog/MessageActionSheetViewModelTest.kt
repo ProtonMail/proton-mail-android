@@ -41,8 +41,8 @@ import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
-import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
-import ch.protonmail.android.utils.webview.SetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs

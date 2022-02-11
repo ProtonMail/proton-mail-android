@@ -23,7 +23,7 @@ import android.content.Context
 import ch.protonmail.android.R
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject

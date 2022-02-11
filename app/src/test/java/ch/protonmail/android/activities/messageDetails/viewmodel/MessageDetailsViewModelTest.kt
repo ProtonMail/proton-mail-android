@@ -69,7 +69,7 @@ import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.DownloadUtils
-import ch.protonmail.android.utils.webview.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
