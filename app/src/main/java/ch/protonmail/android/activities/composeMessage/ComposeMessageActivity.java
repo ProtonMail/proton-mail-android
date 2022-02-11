@@ -596,15 +596,41 @@ public class ComposeMessageActivity
         binding.composerProgressLayout.setVisibility(View.GONE);
         boolean isRetry = false;
         for (FetchPublicKeysResult result : results) {
-            isRetry = isRetry || result.isSendRetryRequired();
-            Map<String, String> keys = result.getKeysMap();
-            Constants.RecipientLocationType location = result.getRecipientsType();
-            if (location == Constants.RecipientLocationType.TO) {
-                toRecipientView.setEmailPublicKey(keys);
-            } else if (location == Constants.RecipientLocationType.CC) {
-                ccRecipientView.setEmailPublicKey(keys);
-            } else if (location == Constants.RecipientLocationType.BCC) {
-                bccRecipientView.setEmailPublicKey(keys);
+            if (result instanceof FetchPublicKeysResult.Success) {
+                FetchPublicKeysResult.Success success = (FetchPublicKeysResult.Success) result;
+                isRetry = isRetry || success.isSendRetryRequired();
+                String email = success.getEmail();
+                String key = success.getKey();
+                Constants.RecipientLocationType location = success.getRecipientsType();
+                if (location == Constants.RecipientLocationType.TO) {
+                    toRecipientView.setEmailPublicKey(email, key);
+                } else if (location == Constants.RecipientLocationType.CC) {
+                    ccRecipientView.setEmailPublicKey(email, key);
+                } else if (location == Constants.RecipientLocationType.BCC) {
+                    bccRecipientView.setEmailPublicKey(email, key);
+                }
+            } else {
+                FetchPublicKeysResult.Failure failure = (FetchPublicKeysResult.Failure) result;
+                String errorMessage;
+                MessageRecipientView recipientView = toRecipientView;
+                Constants.RecipientLocationType location = failure.getRecipientsType();
+                if (location == Constants.RecipientLocationType.TO) {
+                    recipientView = toRecipientView;
+                } else if (location == Constants.RecipientLocationType.CC) {
+                    recipientView = ccRecipientView;
+                } else if (location == Constants.RecipientLocationType.BCC) {
+                    recipientView = bccRecipientView;
+                }
+
+                if (failure.getError() instanceof FetchPublicKeysResult.Failure.Error.WithMessage) {
+                    String baseErrorMessage = ((FetchPublicKeysResult.Failure.Error.WithMessage) failure.getError()).getMessage();
+                    errorMessage = getString(R.string.composer_removing_address_server_error, failure.getEmail(), baseErrorMessage);
+                    recipientView.removeObjectForKey(failure.getEmail());
+
+                } else {
+                    errorMessage = getString(R.string.composer_removing_address_generic_error, failure.getEmail());
+                }
+                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
             }
         }
 

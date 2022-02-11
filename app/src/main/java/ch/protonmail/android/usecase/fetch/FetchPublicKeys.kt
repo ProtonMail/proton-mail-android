@@ -20,10 +20,17 @@
 package ch.protonmail.android.usecase.fetch
 
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.core.Constants.RecipientLocationType
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Failure
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Failure.Error
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult.Success
+import ch.protonmail.android.utils.extensions.toPmResponseBodyOrNull
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.mapNotNullAsync
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,35 +44,29 @@ class FetchPublicKeys @Inject constructor(
     suspend operator fun invoke(
         requests: List<FetchPublicKeysRequest>
     ): List<FetchPublicKeysResult> = withContext(dispatchers.Io) {
-        val result = mutableListOf<FetchPublicKeysResult>()
-        for (request in requests) {
-            val publicKeys = getPublicKeys(request.emails.toSet())
-            if (publicKeys.isNotEmpty()) {
-                result.add(FetchPublicKeysResult(publicKeys, request.recipientsType))
-            }
-        }
-        result
+        requests.mapNotNullAsync { request ->
+            getPublicKeys(request.emails.toSet(), request.recipientsType)
+        }.flatten()
     }
 
-    private suspend fun getPublicKeys(emailSet: Set<String>): Map<String, String> {
-        val result = mutableMapOf<String, String>()
-        for (email in emailSet) {
-            runCatching {
-                api.getPublicKeys(email)
-            }
+    private suspend fun getPublicKeys(
+        emailSet: Set<String>,
+        location: RecipientLocationType
+    ): List<FetchPublicKeysResult> {
+        return emailSet.filterNot { it == CODE_KEY }.mapNotNullAsync { email ->
+            runCatching { api.getPublicKeys(email) }
                 .fold(
-                    onSuccess = {
-                        result[email] = ""
-                        for (key in it.keys) {
-                            if (key.isAllowedForSending) {
-                                result[email] = key.publicKey
-                            }
-                        }
+                    onSuccess = { response ->
+                        val key = response.keys.find { it.isAllowedForSending }?.publicKey ?: EMPTY_STRING
+                        Success(email, key, location)
                     },
-                    onFailure = { Timber.w(it, "Unable to fetch public keys") }
+                    onFailure = { throwable ->
+                        Timber.w(throwable, "Unable to fetch public keys")
+                        throwable.toPmResponseBodyOrNull()
+                            ?.let { Failure(email, location, Error.WithMessage(it.error)) }
+                            ?: Failure(email, location, Error.Generic)
+                    }
                 )
         }
-        result.remove(CODE_KEY)
-        return result
     }
 }
