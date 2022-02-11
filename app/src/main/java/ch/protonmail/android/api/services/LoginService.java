@@ -44,6 +44,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import ch.protonmail.android.R;
 import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.ProtonMailApi;
 import ch.protonmail.android.api.ProtonMailApiManager;
@@ -90,6 +91,7 @@ import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
+import ch.protonmail.android.usecase.keys.LogOutMigratedUserIfNotAllActiveKeysAreDecryptable;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.ConstantTime;
 import ch.protonmail.android.utils.Logger;
@@ -162,6 +164,8 @@ public class LoginService extends ProtonJobIntentService {
     QueueNetworkUtil networkUtils;
     @Inject
     LaunchInitialDataFetch launchInitialDataFetch;
+    @Inject
+    LogOutMigratedUserIfNotAllActiveKeysAreDecryptable logOutMigratedUserIfNotAllActiveKeysAreDecryptable;
 
     private TokenManager tokenManager;
 
@@ -550,6 +554,12 @@ public class LoginService extends ProtonJobIntentService {
                         userManager.setLoggedIn(true);
                         userManager.saveMailboxPassword(generatedMailboxPassword, username);
                         userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
+                        boolean loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable
+                                .invoke(username, R.string.logged_out_contact_support);
+                        if (loggingOut) {
+                            AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.KEY_VERIFICATION_FAILED));
+                            return;
+                        }
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
                         if (!signUp) {
@@ -649,12 +659,23 @@ public class LoginService extends ProtonJobIntentService {
                     UserSettingsResponse userSettings = api.fetchUserSettings();
                     MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
                     AddressesResponse addresses = api.fetchAddressesBlocking();
+
+                    setAccountMigrationStatus(addresses, userInfo);
+
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
                         AccountManager.Companion.getInstance(this).onSuccessfulLogin(username);
                         userManager.saveMailboxPassword(generatedMailboxPassword, username);
                         userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
+
+                        boolean loggingOut = logOutMigratedUserIfNotAllActiveKeysAreDecryptable
+                                .invoke(username, R.string.logged_out_contact_support);
+                        if (loggingOut) {
+                            AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.KEY_VERIFICATION_FAILED));
+                            return;
+                        }
+
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.SUCCESS));
                         jobManager.start();
@@ -889,8 +910,8 @@ public class LoginService extends ProtonJobIntentService {
     private SignedKeyList generateSignedKeyList(String key) throws Exception {
         String keyFingerprint = openPGP.getFingerprint(key);
         String keyList = "[{\"Fingerprint\": \"" + keyFingerprint + "\", " +
-                            "\"SHA256Fingerprints\": " + new String(Helper.getJsonSHA256Fingerprints(key)) + ", " +
-                            "\"Primary\": 1, \"Flags\": 3}]"; // one-element JSON list
+                "\"SHA256Fingerprints\": " + new String(Helper.getJsonSHA256Fingerprints(key)) + ", " +
+                "\"Primary\": 1, \"Flags\": 3}]"; // one-element JSON list
         String signedKeyList = openPGP.signTextDetached(keyList, key, userManager.getMailboxPassword());
         return new SignedKeyList(keyList, signedKeyList);
     }
@@ -1050,7 +1071,7 @@ public class LoginService extends ProtonJobIntentService {
     private void setAccountMigrationStatus(AddressesResponse addresses, UserInfo userInfo) {
         // check for user account type if it's legacy or migrated and persist the info
         List<Address> addressList = addresses.getAddresses();
-        if(!addressList.isEmpty()) {
+        if (!addressList.isEmpty()) {
             List<Keys> keys = addressList.get(0).getKeys();
             if (!keys.isEmpty()) {
                 Keys key = keys.get(0);

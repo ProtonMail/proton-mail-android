@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.details.edit
 
-import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -30,11 +29,8 @@ import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.create.CreateContact
@@ -48,7 +44,6 @@ import ezvcard.VCard
 import ezvcard.VCardVersion
 import ezvcard.property.Anniversary
 import ezvcard.property.Birthday
-import ezvcard.property.Email
 import ezvcard.property.Gender
 import ezvcard.property.Key
 import ezvcard.property.Nickname
@@ -61,10 +56,6 @@ import ezvcard.property.Role
 import ezvcard.property.Title
 import ezvcard.property.Uid
 import ezvcard.property.Url
-import io.reactivex.Observable
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -82,6 +73,7 @@ const val EXTRA_EMAIL = "extra_email"
 const val EXTRA_CONTACT_VCARD_TYPE0 = "extra_vcard_type0"
 const val EXTRA_CONTACT_VCARD_TYPE2 = "extra_vcard_type2"
 const val EXTRA_CONTACT_VCARD_TYPE3_PATH = "extra_vcard_type3"
+const val EXTRA_CONTACT_VCARD_TYPE1_PATH = "extra_vcard_type1"
 const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
@@ -131,6 +123,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
     private lateinit var _vCardOtherOptions: List<String>
 
     private lateinit var _vCardType0: VCard
+    private lateinit var _vCardType1: VCard
     private lateinit var _vCardType2: VCard
     private lateinit var _vCardType3: VCard
     private lateinit var _uid: String
@@ -189,7 +182,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         when (flowType) {
             FLOW_NEW_CONTACT -> _setupNewContactFlow.postValue(_email)
             FLOW_EDIT_CONTACT -> _setupEditContactFlow.postValue(
-                EditContactCardsHolder(_vCardType0, _vCardType2, _vCardType3)
+                EditContactCardsHolder(_vCardType0, _vCardType1, _vCardType2, _vCardType3)
             )
             FLOW_CONVERT_CONTACT -> _setupConvertContactFlow.postValue(null)
         }
@@ -210,6 +203,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         vCardAddressOptions: List<String>,
         vCardOtherOptions: List<String>,
         vCardStringType0: String?,
+        vCardStringType1Path: String?,
         vCardStringType2: String?,
         vCardStringType3Path: String?
     ) {
@@ -224,19 +218,30 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         _vCardAddressUIOptions = vCardAddressUIOptions
         _vCardAddressOptions = vCardAddressOptions
         _vCardOtherOptions = vCardOtherOptions
-        setupVCards(vCardStringType0, vCardStringType2, vCardStringType3Path)
+        setupVCards(vCardStringType0, vCardStringType1Path, vCardStringType2, vCardStringType3Path)
         postSetupFlowEvent()
         if (flowType == FLOW_EDIT_CONTACT) {
             fetchContactGroupsAndContactEmails(_contactId)
         }
     }
 
-    private fun setupVCards(vCardStringType0: String?, vCardStringType2: String?, vCardStringType3Path: String?) {
+    private fun setupVCards(
+        vCardStringType0: String?,
+        vCardStringType1Path: String?,
+        vCardStringType2: String?,
+        vCardStringType3Path: String?
+    ) {
         var vCard0: VCard? = null
         if (!TextUtils.isEmpty(vCardStringType0)) {
             vCard0 = Ezvcard.parse(vCardStringType0).first()
         }
         _vCardType0 = vCard0 ?: VCard()
+        var vCard1: VCard? = null
+        if (!vCardStringType1Path.isNullOrEmpty()) {
+            val vCardStringType1 = fileHelper.readStringFromFilePath(vCardStringType1Path)
+            vCard1 = Ezvcard.parse(vCardStringType1).first()
+        }
+        _vCardType1 = vCard1 ?: VCard()
         var vCard2: VCard? = null
         if (!TextUtils.isEmpty(vCardStringType2)) {
             vCard2 = Ezvcard.parse(vCardStringType2).first()
@@ -267,24 +272,25 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
             prodId
         }
         // getting custom properties
-        _vCardCustomProperties = _vCardType3.extendedProperties
+        _vCardCustomProperties = _vCardType1.extendedProperties + _vCardType3.extendedProperties
     }
 
     fun isConvertContactFlow(): Boolean = flowType == FLOW_CONVERT_CONTACT
 
     // endregion
     // region card properties
-    fun getPhotos(): List<Photo>? = _vCardType3.photos
-    fun getOrganizations(): List<Organization>? = _vCardType3.organizations
-    fun getTitles(): List<Title>? = _vCardType3.titles
-    fun getNicknames(): List<Nickname>? = _vCardType3.nicknames
-    fun getBirthdays(): List<Birthday>? = _vCardType3.birthdays
-    fun getAnniversaries(): List<Anniversary>? = _vCardType3.anniversaries
-    fun getRoles(): List<Role>? = _vCardType3.roles
-    fun getUrls(): List<Url>? = _vCardType3.urls
-    fun getGender(): Gender? = _vCardType3.gender
-    fun getExtendedPropertiesType3(): List<RawProperty>? = _vCardType3.extendedProperties
-    fun getNotes(): List<Note>? = _vCardType3.notes
+    fun getPhotos(): List<Photo> = _vCardType1.photos + _vCardType3.photos
+    fun getOrganizations(): List<Organization> = _vCardType1.organizations + _vCardType3.organizations
+    fun getTitles(): List<Title> = _vCardType1.titles + _vCardType3.titles
+    fun getNicknames(): List<Nickname> = _vCardType1.nicknames + _vCardType3.nicknames
+    fun getBirthdays(): List<Birthday> = _vCardType1.birthdays + _vCardType3.birthdays
+    fun getAnniversaries(): List<Anniversary> = _vCardType1.anniversaries + _vCardType3.anniversaries
+    fun getRoles(): List<Role> = _vCardType1.roles + _vCardType3.roles
+    fun getUrls(): List<Url> = _vCardType1.urls + _vCardType3.urls
+    fun getGender(): Gender? = _vCardType1.gender ?: _vCardType3.gender
+    fun getExtendedPropertiesEncrypted(): List<RawProperty> =
+        _vCardType1.extendedProperties + _vCardType3.extendedProperties
+    fun getNotes(): List<Note> = _vCardType1.notes + _vCardType3.notes
     fun getExtendedPropertiesType2(): List<RawProperty> = _vCardType2.extendedProperties
     fun getKeysType2(): List<Key> = _vCardType2.keys
     // endregion
@@ -396,5 +402,10 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    data class EditContactCardsHolder(val vCardType0: VCard, val vCardType2: VCard, val vCardType3: VCard)
+    data class EditContactCardsHolder(
+        val vCardType0: VCard,
+        val vCardType1: VCard,
+        val vCardType2: VCard,
+        val vCardType3: VCard
+    )
 }

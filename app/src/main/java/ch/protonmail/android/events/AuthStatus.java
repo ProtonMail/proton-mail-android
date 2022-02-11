@@ -26,5 +26,6 @@ public enum AuthStatus {
     UPDATE,
     NOT_SIGNED_UP,
     INVALID_SERVER_PROOF,
-    CANT_CONNECT // indicates that we can not connect any more free users
+    CANT_CONNECT, // indicates that we can not connect any more free users
+    KEY_VERIFICATION_FAILED
 }

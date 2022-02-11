@@ -181,6 +181,7 @@ public abstract class BaseLoginActivity extends BaseConnectivityActivity {
     protected void onMailboxInvalidCredential() { }
     protected void onMailboxNotSignedUp() { }
     protected void onMailboxFailed() { }
+    protected void onKeyVerificationFailed() { }
 
     protected void onLoginEvent(MailboxLoginEvent event) {
         if (event == null) {
@@ -220,6 +221,9 @@ public abstract class BaseLoginActivity extends BaseConnectivityActivity {
                 onMailboxNotSignedUp();
             }
             break;
+            case KEY_VERIFICATION_FAILED:
+                onKeyVerificationFailed();
+                break;
             case FAILED:
             default: {
                 TextExtensions.showToast(this, R.string.mailbox_login_failure, Toast.LENGTH_LONG, Gravity.CENTER);

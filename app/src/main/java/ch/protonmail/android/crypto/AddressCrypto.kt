@@ -42,7 +42,11 @@ import com.proton.gopenpgp.crypto.SessionKey
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import timber.log.Timber
+import javax.mail.internet.InternetHeaders
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
+
+const val HEX_DIGITS = "0123456789abcdefABCDEF"
+const val EXPECTED_TOKEN_LENGTH = 64
 
 class AddressCrypto @AssistedInject constructor(
     val userManager: UserManager,
@@ -79,7 +83,7 @@ class AddressCrypto @AssistedInject constructor(
     protected override val AddressKey.privateKey: PgpField.PrivateKey
         get() = privateKey
 
-    protected override fun passphraseFor(key: AddressKey): ByteArray? {
+    override fun passphraseFor(key: AddressKey): ByteArray? {
         // This is for smart-cast support
         val token = key.token
         val signature = key.signature
@@ -89,21 +93,50 @@ class AddressCrypto @AssistedInject constructor(
         }
 
         val pgpMessage = GoOpenPgpCrypto.newPGPMessageFromArmored(token.string)
-        userManager.user.keys.forEach { userKey ->
-            val userKeyRing = GoOpenPgpCrypto.newKeyRing(
-                GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey).unlock(mailboxPassword)
-            )
-            decryptToken(
-                pgpMessage,
-                userKeyRing
-            )?.let { decryptedToken ->
-                if (verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)) {
-                    return decryptedToken
+        userManager.user.keys
+            .forEach { userKey ->
+                try {
+                    val userKeyRing = GoOpenPgpCrypto.newKeyRing(
+                        GoOpenPgpCrypto.newKeyFromArmored(userKey.privateKey).unlock(mailboxPassword)
+                    )
+                    decryptToken(
+                        pgpMessage,
+                        userKeyRing
+                    )?.let { decryptedToken ->
+                        if (userKey.active == 0) {
+                            Timber.w("Key used to decrypt token is inactive")
+                        }
+                        if (!verifyTokenFormat(decryptedToken)) {
+                            Timber.e("Decrypted token had wrong format")
+                        } else if (!verifySignature(userKeyRing, decryptedToken, signature, userKey.id, key.id.s)) {
+                            Timber.e("Couldn't verify token's signature")
+                        } else {
+                            return decryptedToken
+                        }
+                    }
+                } catch (exception: Exception) {
+                    if (userKey.active == 1) {
+                        throw UserKeyVerificationException(userKey.id, exception)
+                    }
                 }
             }
-        }
         Timber.e("Failed getting passphrase for key (id = ${key.id.s}) using user keys")
         return null
+    }
+
+    /**
+     * Check that the key token is a 32 byte value encoded in hexadecimal form.
+     */
+    private fun verifyTokenFormat(decryptedToken: ByteArray): Boolean {
+        if (decryptedToken.size != EXPECTED_TOKEN_LENGTH) {
+            return false
+        }
+        for (char in decryptedToken) {
+            if (!HEX_DIGITS.contains(char.toInt().toChar())) {
+                return false
+            }
+        }
+        return true
     }
 
     private fun decryptToken(
@@ -128,7 +161,11 @@ class AddressCrypto @AssistedInject constructor(
     }.fold(
         onSuccess = { true },
         onFailure = {
-            Timber.e(it, "Verification of token for address key (id = $addressKeyId) with user key (id = $userKeyId) failed")
+            Timber.e(
+                it,
+                "Verification of token for address key (id = $addressKeyId) " +
+                    "with user key (id = $userKeyId) failed"
+            )
             false
         }
     )
@@ -189,8 +226,32 @@ class AddressCrypto @AssistedInject constructor(
         }
     }
 
-    fun decryptMime(message: CipherText): MimeDecryptor =
-        MimeDecryptor(message.armored, openPgp, getUnarmoredKeys(), String(passphrase!!))
+    fun decryptMime(
+        message: CipherText,
+        onBody: (String, String) -> Unit,
+        onError: (Exception) -> Unit,
+        onVerified: (Boolean, Boolean) -> Unit,
+        onAttachment: (InternetHeaders, ByteArray) -> Unit,
+        keys: List<ByteArray>?,
+        time: Long
+    ) {
+        val keyRing = createAndUnlockKeyRing()
+        with(MimeDecryptor(message.armored, openPgp, keyRing)) {
+            this.onBody = onBody
+            this.onError = onError
+            this.onAttachment = onAttachment
+            if (keys != null && keys.isNotEmpty()) {
+                for (key in keys) {
+                    withVerificationKey(key)
+                }
+                this.onVerified = onVerified
+            }
+            withMessageTime(time)
+
+            start()
+            await()
+        }
+    }
 
     fun generateEOToken(password: ByteArray): EOToken {
         // generate a 256 bit token.
@@ -203,12 +264,39 @@ class AddressCrypto @AssistedInject constructor(
     fun getFingerprint(key: String): String =
         openPgp.getFingerprint(key)
 
-
     fun getSessionKey(keyPacket: ByteArray): SessionKey {
         return withCurrentKeys("Error getting Session") { key ->
             val unarmored = Armor.unarmor(key.privateKey.string)
             openPgp.getSessionFromKeyPacketBinkeys(keyPacket, unarmored, passphraseFor(key))
         }
+    }
+
+    fun areActiveKeysDecryptable(): Boolean {
+        checkNotNull(mailboxPassword) { "Error creating KeyRing, invalid passphrase" }
+
+        currentKeys.filter { it.active }.forEach { key ->
+            try {
+                val addressKeyPassphrase = passphraseFor(key)
+                val lockedAddressKey = GoOpenPgpCrypto.newKeyFromArmored(key.privateKey.string)
+                lockedAddressKey.unlock(addressKeyPassphrase)
+            } catch (decryptionError: Exception) {
+                val errorType = if (decryptionError is UserKeyVerificationException) {
+                    "User key issue. User key ID = ${decryptionError.userKeyId}"
+                } else {
+                    "Address key issue. Address key ID = ${key.id}"
+                }
+                Timber.e(
+                    decryptionError,
+                    """
+                    $errorType
+                    User ID = ${userManager.user.id}
+                    Address ID = ${address.id}
+                    """.trimIndent()
+                )
+                return false
+            }
+        }
+        return true
     }
 
     private fun createAndUnlockKeyRing(): KeyRing {

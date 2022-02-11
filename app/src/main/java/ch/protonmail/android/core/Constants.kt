@@ -386,8 +386,9 @@ object Constants {
 
     enum class VCardType(val vCardTypeValue: Int) {
         UNSIGNED(0),
+        ENCRYPTED(1),
         SIGNED(2),
-        SIGNED_ENCRYPTED(3);
+        SIGNED_ENCRYPTED(3)
     }
 
     enum class ConnectionState {

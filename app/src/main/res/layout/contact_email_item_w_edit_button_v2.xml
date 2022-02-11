@@ -130,7 +130,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:focusableInTouchMode="true"
                     android:longClickable="true"
                     android:marqueeRepeatLimit="marquee_forever"
-                    android:maxLines="4"
+                    android:maxLines="7"
                     android:scrollHorizontally="true"
 
                     android:textColor="@color/contact_data"

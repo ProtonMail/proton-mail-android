@@ -46,8 +46,7 @@ class UserCrypto(
     override val passphrase: ByteArray?
         get() = mailboxPassword
 
-    protected override fun passphraseFor(key: UserKey): ByteArray? = passphrase
-
+    override fun passphraseFor(key: UserKey): ByteArray? = passphrase
 
     fun verify(data: String, signature: String): TextDecryptionResult {
         val valid = openPgp.verifyTextSignDetachedBinKey(signature, data, getVerificationKeys(), openPgp.time)
@@ -86,7 +85,6 @@ class UserCrypto(
 
     fun isAllowedForSending(key: AddressKey): Boolean =
         openPgp.checkPassphrase(key.privateKey.string, mailboxPassword!!)
-
 
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
     override val UserKey.privateKey: PgpField.PrivateKey

@@ -77,7 +77,7 @@ abstract class Crypto<K>(
     protected fun requirePrimaryKey(): K =
         checkNotNull(primaryKey) { "No primary key found" }
 
-    protected abstract fun passphraseFor(key: K): ByteArray?
+    abstract fun passphraseFor(key: K): ByteArray?
 
     protected abstract val K.privateKey: PgpField.PrivateKey
 
@@ -92,7 +92,6 @@ abstract class Crypto<K>(
         requirePrimaryKey().privateKey.string,
         passphrase
     )
-
 
     /**
      * Encrypt for Message or Contact
@@ -145,7 +144,6 @@ abstract class Crypto<K>(
         return newKey.armoredPublicKey
             .also { newKey.clearPrivateParams() }
     }
-
 
     fun getUnarmoredKeys(): List<ByteArray> =
         currentKeys.map { Armor.unarmor(it.privateKey.string) }
