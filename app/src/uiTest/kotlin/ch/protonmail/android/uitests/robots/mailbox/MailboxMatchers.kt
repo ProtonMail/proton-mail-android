@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
- * 
+ * Copyright (c) 2022 Proton Technologies AG
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -30,10 +30,8 @@ import ch.protonmail.android.adapters.messages.MailboxItemViewHolder
 import kotlinx.android.synthetic.main.item_manage_labels_action.view.*
 import kotlinx.android.synthetic.main.labels_list_item.view.*
 import kotlinx.android.synthetic.main.list_item_contacts.view.*
-import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Description
 import org.hamcrest.Matcher
-import org.hamcrest.TypeSafeMatcher
 
 /**
  * Matchers that are used by Mailbox features like Inbox, Sent, Drafts, Trash, etc.
@@ -168,7 +166,7 @@ object MailboxMatchers {
 
             override fun matchesSafely(item: MailboxItemViewHolder.MessageViewHolder): Boolean {
                 val messageSubjectView = item.itemView.findViewById<TextView>(R.id.subject_text_view)
-                val messageToTextView = item.itemView.findViewById<TextView>(R.id.sender_text_view)
+                val messageToTextView = item.itemView.findViewById<TextView>(R.id.correspondents_text_view)
                 val actualSubject = messageSubjectView.text.toString()
                 val actualTo = messageToTextView.text.toString()
                 return if (messageSubjectView != null && messageToTextView != null) {

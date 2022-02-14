@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -79,11 +79,11 @@ class MailboxItemView @JvmOverloads constructor(
 
     private fun setTextViewStyles(isRead: Boolean) {
         if (isRead) {
-            sender_text_view.setTextAppearance(R.style.Proton_Text_Default_Weak)
+            correspondents_text_view.setTextAppearance(R.style.Proton_Text_Default_Weak)
             subject_text_view.setTextAppearance(R.style.Proton_Text_DefaultSmall_Weak)
             time_date_text_view.setTextAppearance(R.style.Proton_Text_Caption_Weak)
         } else {
-            sender_text_view.setTextAppearance(R.style.Proton_Text_Default_Bold)
+            correspondents_text_view.setTextAppearance(R.style.Proton_Text_Default_Bold)
             subject_text_view.setTextAppearance(R.style.Proton_Text_DefaultSmall_Medium)
             time_date_text_view.setTextAppearance(R.style.Proton_Text_Caption_Strong)
         }
@@ -137,10 +137,10 @@ class MailboxItemView @JvmOverloads constructor(
         val senderText = getSenderText(mailboxUiItem)
         // Sender text can only be empty in drafts where we show recipients instead of senders
         if (senderText.isEmpty()) {
-            sender_text_view.text = context.getString(R.string.empty_recipients)
+            correspondents_text_view.text = context.getString(R.string.empty_recipients)
             sender_initial_view.bind(HYPHEN, showBigDraftIcon, isMultiSelectionMode)
         } else {
-            sender_text_view.text = senderText
+            correspondents_text_view.text = senderText
             sender_initial_view.bind(senderText.substring(0, 1), showBigDraftIcon, isMultiSelectionMode)
         }
 

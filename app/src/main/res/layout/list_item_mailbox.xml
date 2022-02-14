@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -92,13 +92,13 @@
         android:layout_height="@dimen/mailbox_list_item_icon_size"
         android:layout_marginEnd="@dimen/mailbox_list_item_views_margin"
         app:layout_constraintStart_toEndOf="@id/forward_image_view"
-        app:layout_constraintEnd_toStartOf="@id/sender_text_view"
-        app:layout_constraintTop_toTopOf="@id/sender_text_view"
-        app:layout_constraintBottom_toBottomOf="@id/sender_text_view"
+        app:layout_constraintEnd_toStartOf="@id/correspondents_text_view"
+        app:layout_constraintTop_toTopOf="@id/correspondents_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/correspondents_text_view"
         android:src="@drawable/ic_pencil" />
 
     <TextView
-        android:id="@+id/sender_text_view"
+        android:id="@+id/correspondents_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/mailbox_list_item_views_margin"
@@ -114,10 +114,10 @@
         android:id="@+id/time_date_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/sender_text_view"
+        app:layout_constraintStart_toEndOf="@id/correspondents_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/sender_text_view"
-        app:layout_constraintBottom_toBottomOf="@id/sender_text_view"
+        app:layout_constraintTop_toTopOf="@id/correspondents_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/correspondents_text_view"
         android:textAppearance="@style/Proton.Text.Caption.Weak"
         tools:text="@tools:sample/date/ddmmyy" />
 
@@ -128,7 +128,7 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toEndOf="@id/sender_initial_barrier"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sender_text_view" />
+        app:layout_constraintTop_toBottomOf="@id/correspondents_text_view" />
     
     <ImageView
         android:id="@+id/first_location_image_view"
@@ -180,7 +180,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/third_location_image_view"
         app:layout_constraintEnd_toStartOf="@id/messages_number_text_view"
-        app:layout_constraintTop_toBottomOf="@id/sender_text_view"
+        app:layout_constraintTop_toBottomOf="@id/correspondents_text_view"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constrainedWidth="true"
         android:maxLines="1"
