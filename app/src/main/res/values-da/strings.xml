@@ -59,6 +59,8 @@
     <string name="composer_from">Fra:</string>
     <string name="composer_subject">Emne:</string>
     <string name="composer_to">Til:</string>
+    <string name="composer_removing_address_generic_error">Kan ikke bekræfte adresse: %s1. Afsendelse mislykkes måske.</string>
+    <string name="composer_removing_address_server_error">Fjerner adresse: %s1. %s2</string>
     <string name="set_msg_password_title">Indstil adgangskode</string>
     <string name="set_msg_password_info">Indstil en adgangskode til at kryptere denne besked for ikke-protonmail-brugere. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lær mere</a>
     </string>
@@ -131,7 +133,7 @@
     <string name="update_app_title">Opdatering nødvendig</string>
     <string name="update_app">Din ProtonMail-app kan ikke benyttes, før den opdateres</string>
     <string name="you_are_offline">Du er offline</string>
-    <string name="api_offline">ProtonMail er pt. offline. For konkret status, se venligst https://protonstatus.com eller https://twitter.com/protonmail.</string>
+    <string name="api_offline">ProtonMail er i øjeblikket offline. Tjek https://protonstatus.com eller vores twitter for den aktuelle status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt er gemt</string>
     <string name="contact_saved_offline">Kontakt gemt. Den synkes, når en forbindelse bliver tilgængelig.</string>
     <string name="contact_exist">Kontaktmail findes allerede</string>
@@ -501,7 +503,7 @@
     <string name="remove_password_question">Fjern adgangskode?</string>
     <string name="attachment_storage_value_current">Aktuelt valg: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Aktuelt valg: Ubegrænset</string>
-    <string name="attachment_offline_max_storage">Angiver den maksimale lagerpladsmængde, ProtonMail kan benytte på din mobilenhed.</string>
+    <string name="attachment_offline_max_storage">Angiver den maksimale lagerpladsmængde, ProtonMail kan bruge på din mobilenhed.</string>
     <string name="load_embedded_images_failed_no_network">Indlæsning af indlejrede billeder mislykkedes. Tjek din netværksforbindelse.</string>
     <string name="load_embedded_images_failed">Indlæsning af indlejrede billeder mislykkedes.</string>
     <string name="unlimited">Ubegrænset</string>
@@ -609,7 +611,7 @@
     <string name="fab_add_contact_group">Føj til kontaktgruppe</string>
     <string name="contacts_add_photo_title">Tilføj foto</string>
     <string name="contacts_add_photo_select_gallery">Vælg fra Galleri</string>
-    <string name="contacts_add_photo_select_camera">Knips med kameraet</string>
+    <string name="contacts_add_photo_select_camera">Optag fra kamera</string>
     <string name="save_group_validation_error">Angiv et gruppenavn</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Lagerpladsbegrænsning nået. Kan ikke sende/modtage e-mails.

@@ -59,6 +59,8 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assumpte:</string>
     <string name="composer_to">A:</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Establir contrasenya</string>
     <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saber-ne més</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Actualització requerida</string>
     <string name="update_app">L\'aplicació de ProtonMail no pot ser utilitzada fins que no sigui actualitzada</string>
     <string name="you_are_offline">Esteu fora de línia</string>
-    <string name="api_offline">Actualment ProtonMail es troba fora de línia, consulta\'n l\'estat actual al nostre twitter: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacte desat</string>
     <string name="contact_saved_offline">Contacte desat, es sincronitzarà quan hi hagi una connexió disponible</string>
-    <string name="contact_exist">El correo electrònic de contacte ja existeix</string>
+    <string name="contact_exist">Contact email already exists</string>
     <string name="invalid_email">Adreça de correu electrònic invàlida</string>
     <string name="duplicate_email">Adreça de correu electrònic és un duplicat</string>
     <string name="message_drafted">Ha fallat l\'enviament del missatge. Els teus missatges es desaran a la carpeta d\'esborranys</string>
@@ -501,7 +503,7 @@
     <string name="remove_password_question">Suprimeix la contrasenya?</string>
     <string name="attachment_storage_value_current">Actualment seleccionat: %d Mb</string>
     <string name="attachment_storage_value_current_unlimited">Actualment seleccionat: il·limitat</string>
-    <string name="attachment_offline_max_storage">Estableix la quantitat màxima d\'espai d\'emmagatzematge que ProtonMail pot utilitzar al vostre dispositiu mòbil.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Ha fallat la càrrega d\'imatges incrustades. Comproveu la vostra connexió de xarxa.</string>
     <string name="load_embedded_images_failed">Ha fallat la càrrega d\'imatges incrustades.</string>
     <string name="unlimited">Il·limitat</string>
@@ -608,8 +610,8 @@
     <string name="fab_add_contact">Afegir un contacte nou</string>
     <string name="fab_add_contact_group">Afegir un grup de contactes nou</string>
     <string name="contacts_add_photo_title">Afegir una foto</string>
-    <string name="contacts_add_photo_select_gallery">Seleccionar de la galeria</string>
-    <string name="contacts_add_photo_select_camera">Captura des de la càmara</string>
+    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
+    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
     <string name="save_group_validation_error">Si us plau, indica un nom per al grup</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Límit d\'emmagatzematge assolit. No es poden enviar o rebre missatges de correu electrònic.
@@ -794,7 +796,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imatge no trobada</string>
-    <string name="error_image_bad_url">Url de la imatge mal formada</string>
+    <string name="error_image_bad_url">Malformed image URL</string>
     <string name="error_saving_try_again">Error en desar el missatge. Torna a intentar-ho.</string>
     <!-- endregion -->
     <string name="allowed">Permès</string>

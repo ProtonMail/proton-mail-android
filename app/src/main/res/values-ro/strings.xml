@@ -47,9 +47,9 @@
     <string name="drawer_create_label_description">Creare etichetă</string>
     <!-- endregion -->
     <!-- region Details -->
-    <string name="details_open_in_proton_calendar_title">Deschideți în Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_title">Deschidere în Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Calendar securizat și criptat</string>
-    <string name="details_open_in_proton_calendar_icon_desc">Pictograma Calendar Proton</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Pictograma Proton Calendar</string>
     <string name="details_play_store_error">Nu se poate deschide Play Store</string>
     <!-- endregion -->
     <!-- region Composer -->
@@ -59,6 +59,8 @@
     <string name="composer_from">De la:</string>
     <string name="composer_subject">Subiect:</string>
     <string name="composer_to">Către:</string>
+    <string name="composer_removing_address_generic_error">Nu se poate verifica adresa: %s1. Trimiterea ar putea eșua.</string>
+    <string name="composer_removing_address_server_error">Eliminare adresa: %s1. %s2</string>
     <string name="set_msg_password_title">Setare parolă</string>
     <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai Protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Detalii</a>
     </string>
@@ -94,9 +96,9 @@
     <string name="settings_swipe_settings_info">Configurare gesturi de glisare pentru a accesa cele mai utilizate acțiuni.</string>
     <string name="settings_swipe_left_to_right">De la stânga la dreapta</string>
     <string name="settings_swipe_right_to_left">De la dreapta la stânga</string>
-    <string name="settings_swipe_saving">Salvare Acțiune de glisare…</string>
-    <string name="settings_swipe_generic_error">Nu se poate salva acțiunea Swipe</string>
-    <string name="settings_swipe_offline_error">Nu se poate salva acțiunea Swipe în timp ce sunteți offline</string>
+    <string name="settings_swipe_saving">Se salvează acțiunea de glisare…</string>
+    <string name="settings_swipe_generic_error">Nu se poate salva acțiunea de glisare</string>
+    <string name="settings_swipe_offline_error">Nu se poate salva acțiunea de glisare fără conexiune</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Temă aplicație</string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Actualizare necesară</string>
     <string name="update_app">Nu puteți folosi aplicația ProtonMail înainte de a o actualiza</string>
     <string name="you_are_offline">Sunteți deconectat</string>
-    <string name="api_offline">ProtonMail este momentan deconectat, pentru starea curentă verificați: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail este momentan indisponibil. Verificați la https://protonstatus.com sau pe pagina nostră de Twitter pentru starea actuală: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact salvat</string>
     <string name="contact_saved_offline">Contact salvat, va fi sincronizat când conexiunea va fi disponibilă</string>
-    <string name="contact_exist">Adresa de e-mail a contactului există deja</string>
+    <string name="contact_exist">E-mailul de contact există deja</string>
     <string name="invalid_email">Adresă de e-mail nevalidă</string>
     <string name="duplicate_email">Adresa de e-mail este o dublură</string>
     <string name="message_drafted">Trimitere mesaj eșuată. Mesajele sunt salvate în folderul «Ciorne»</string>
@@ -506,7 +508,7 @@
     <string name="remove_password_question">Eliminați parola?</string>
     <string name="attachment_storage_value_current">Selectare actuală: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Selectare actuală: nelimitat</string>
-    <string name="attachment_offline_max_storage">Stabilire spațiu maxim total pe dispozitivul mobil pe care îl poate folosi ProtonMail.</string>
+    <string name="attachment_offline_max_storage">Stabilește cantitatea maximă de spațiu de stocare pe care ProtonMail o poate utiliza pe dispozitivul mobil.</string>
     <string name="load_embedded_images_failed_no_network">Încărcare eșuată imagini incluse. Verificați conexiunea la internet.</string>
     <string name="load_embedded_images_failed">Încărcare eșuată imagini incluse.</string>
     <string name="unlimited">Nelimitat</string>
@@ -618,7 +620,7 @@
     <string name="fab_add_contact_group">Adăugare grup contacte nou</string>
     <string name="contacts_add_photo_title">Adăugare fotografie</string>
     <string name="contacts_add_photo_select_gallery">Selectare din galeria foto</string>
-    <string name="contacts_add_photo_select_camera">Capturare cu camera</string>
+    <string name="contacts_add_photo_select_camera">Captură de la cameră</string>
     <string name="save_group_validation_error">Furnizați numele grupului</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Limita de stocare a fost atinsă. Nu se pot trimite sau primi mesaje.
@@ -806,7 +808,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagine negăsită</string>
-    <string name="error_image_bad_url">Adresă eronată imagine</string>
+    <string name="error_image_bad_url">URL de imagine nevalid</string>
     <string name="error_saving_try_again">Eroare la salvare. Mai încercați.</string>
     <!-- endregion -->
     <string name="allowed">Permis</string>

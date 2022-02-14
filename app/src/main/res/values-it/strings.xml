@@ -59,6 +59,8 @@
     <string name="composer_from">Da:</string>
     <string name="composer_subject">Oggetto:</string>
     <string name="composer_to">A:</string>
+    <string name="composer_removing_address_generic_error">Impossibile verificare l\'indirizzo: %s1. L\'invio potrebbe fallire.</string>
+    <string name="composer_removing_address_server_error">Indirizzi in rimozione: %s1. %s2</string>
     <string name="set_msg_password_title">Imposta password</string>
     <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per utenti non protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Per saperne di più</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Aggiornamento richiesto</string>
     <string name="update_app">La sua app di ProtonMail non potrà essere utilizzata fino a quando non verrà aggiornata</string>
     <string name="you_are_offline">Sei offline</string>
-    <string name="api_offline">ProtonMail è attualmente offline. Si prega di controllare https://protonstatus.com o https://twitter.com/protonmail per lo stato attuale.</string>
+    <string name="api_offline">ProtonMail attualmente non è in linea, controlla https://protonstatus.com o il nostro account Twitter per conoscere lo stato attuale: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contatto salvato</string>
     <string name="contact_saved_offline">Contatto salvato. Verrà sincronizzato quando sarà disponibile una connessione.</string>
-    <string name="contact_exist">L\'email del contatto esiste già</string>
+    <string name="contact_exist">L\'email del contatto è già esistente</string>
     <string name="invalid_email">Indirizzo email non valido</string>
     <string name="duplicate_email">L\'indirizzo email è un duplicato</string>
     <string name="message_drafted">Invio del messaggio fallito. I messaggi sono salvati nella cartella Bozze.</string>
@@ -795,7 +797,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Immagine non trovata</string>
-    <string name="error_image_bad_url">Url dell\'immagine malformato</string>
+    <string name="error_image_bad_url">URL dell\'immagine non valido</string>
     <string name="error_saving_try_again">Errore durante il salvataggio del messaggio. Riprova.</string>
     <!-- endregion -->
     <string name="allowed">Consentito</string>

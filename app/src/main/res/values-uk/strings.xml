@@ -59,6 +59,8 @@
     <string name="composer_from">Від:</string>
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
+    <string name="composer_removing_address_generic_error">Не вдалося перевірити адресу: %s1. Надсилання може бути невдалим.</string>
+    <string name="composer_removing_address_server_error">Вилучення адреси: %s1. %s2</string>
     <string name="set_msg_password_title">Встановити пароль</string>
     <string name="set_msg_password_info">Встановіть пароль для шифрування цього повідомлення для користувачів інших постачальників пошти. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Докладніше</a>
     </string>
@@ -131,7 +133,7 @@
     <string name="update_app_title">Необхідне оновлення</string>
     <string name="update_app">Програму ProtonMail не можна використовувати, доки її не оновити</string>
     <string name="you_are_offline">Ви не в мережі</string>
-    <string name="api_offline">Перепрошуємо, але ProtonMail зараз не в мережі. Перевірте наш Twitter, щоб дізнатися про поточний стан: https://twitter.com/protonmail</string>
+    <string name="api_offline">Перепрошуємо, але ProtonMail зараз не в мережі. Перейдіть на https://protonstatus.com або у наш Twitter, щоб дізнатися про поточний стан: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт збережено</string>
     <string name="contact_saved_offline">Контакт збережений і синхронізується при відновленні з\'єднання з мережею</string>
     <string name="contact_exist">Адреса е-пошти контакту вже існує</string>
@@ -511,7 +513,7 @@
     <string name="remove_password_question">Вилучити пароль?</string>
     <string name="attachment_storage_value_current">Зараз вибрано: %dМБ</string>
     <string name="attachment_storage_value_current_unlimited">Зараз вибрано: необмежено</string>
-    <string name="attachment_offline_max_storage">Встановлює максимальний обсяг простору для зберігання, яку ProtonMail може використовувати на вашому мобільному пристрої.</string>
+    <string name="attachment_offline_max_storage">Встановлює максимальний обсяг простору для зберігання, який ProtonMail може використовувати на вашому мобільному пристрої.</string>
     <string name="load_embedded_images_failed_no_network">Не вдалося завантажити вбудовані зображення. Будь ласка, перевірте з\'єднання з мережею.</string>
     <string name="load_embedded_images_failed">Не вдалося завантажити вбудовані зображення.</string>
     <string name="unlimited">Необмежено</string>

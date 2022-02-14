@@ -59,6 +59,8 @@
     <string name="composer_from">Från:</string>
     <string name="composer_subject">Ämne:</string>
     <string name="composer_to">Till:</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Tar bort adresser: %s1. %s2</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
     <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Läs mer</a>
     </string>
@@ -131,7 +133,7 @@
     <string name="update_app_title">Uppdatering krävs</string>
     <string name="update_app">Din ProtonMail-app kan inte användas innan den är uppdaterad</string>
     <string name="you_are_offline">Du är offline</string>
-    <string name="api_offline">ProtonMail är för närvarande offline, kolla vår Twitter för aktuell status: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt sparad</string>
     <string name="contact_saved_offline">Kontakt sparad, synkroniseras när anslutning är tillgänglig</string>
     <string name="contact_exist">E-postkontakt finns redan</string>
@@ -501,7 +503,7 @@
     <string name="remove_password_question">Ta bort lösenordet?</string>
     <string name="attachment_storage_value_current">Nuvarande val: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Nuvarande val: obegränsat</string>
-    <string name="attachment_offline_max_storage">Anger det maximala lagringsutrymme som ProtonMail kan använda på din mobila enhet.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Kunde inte ladda inbäddade bilder. Kontrollera din nätverksanslutning.</string>
     <string name="load_embedded_images_failed">Misslyckades att ladda inbäddade bilder.</string>
     <string name="unlimited">Obegränsat</string>
@@ -606,8 +608,8 @@
     <string name="fab_add_contact">Lägg till ny kontakt</string>
     <string name="fab_add_contact_group">Lägg till kontaktgrupp</string>
     <string name="contacts_add_photo_title">Lägg till foto</string>
-    <string name="contacts_add_photo_select_gallery">Välj från galleriet</string>
-    <string name="contacts_add_photo_select_camera">Ta bild med kameran</string>
+    <string name="contacts_add_photo_select_gallery">Välj från galleri</string>
+    <string name="contacts_add_photo_select_camera">Ta bild från kamera</string>
     <string name="save_group_validation_error">Vänligen ange ett gruppnamn</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Gränsen uppnåtts. Det gick inte att skicka eller ta emot e-postmeddelanden.
@@ -791,7 +793,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Bild hittades inte</string>
-    <string name="error_image_bad_url">Felinmatad bild URL</string>
+    <string name="error_image_bad_url">Malformed image URL</string>
     <string name="error_saving_try_again">Fel vid sparande av meddelande. Försök igen.</string>
     <!-- endregion -->
     <string name="allowed">Tillåtet</string>

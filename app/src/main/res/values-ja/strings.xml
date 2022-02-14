@@ -59,6 +59,8 @@
     <string name="composer_from">差出人:</string>
     <string name="composer_subject">件名:</string>
     <string name="composer_to">宛先:</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">パスワードを設定</string>
     <string name="set_msg_password_info">ProtonMailユーザー以外への暗号化パスワードを設定してください <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">アップデートが必要です。</string>
     <string name="update_app">アップデートされるまで、Protonmailアプリはご利用いただけません。</string>
     <string name="you_are_offline">オフラインです</string>
-    <string name="api_offline">ProtonMailは現在ご利用できません。https://protonstatus.com または https://twitter.com/protonmail で現在の状態を確認してください。</string>
+    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">連絡先が保存されました。</string>
     <string name="contact_saved_offline">連絡先が保存されました。ネットワーク接続が使用可能なときに同期します。</string>
-    <string name="contact_exist">連絡先メールアドレスは既に存在しています。</string>
+    <string name="contact_exist">Contact email already exists</string>
     <string name="invalid_email">メールアドレスが無効です。</string>
     <string name="duplicate_email">メール アドレスが重複しています。</string>
     <string name="message_drafted">メッセージの送信に失敗しました。メッセージは下書きフォルダーに保存されます。</string>
@@ -495,7 +497,7 @@
     <string name="remove_password_question">パスワードを削除しますか？</string>
     <string name="attachment_storage_value_current">現在の選択: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">現在の選択: 無制限</string>
-    <string name="attachment_offline_max_storage">モバイル端末でProtonMailが使用できるストレージの最大容量を設定してください。</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">埋め込み画像の読み込みに失敗しました。ネットワーク接続を確認してください。</string>
     <string name="load_embedded_images_failed">埋め込み画像の読み込みに失敗しました。</string>
     <string name="unlimited">無制限</string>
@@ -595,8 +597,8 @@
     <string name="fab_add_contact">新しい連絡先を追加</string>
     <string name="fab_add_contact_group">新しい連絡先グループを追加</string>
     <string name="contacts_add_photo_title">写真を追加</string>
-    <string name="contacts_add_photo_select_gallery">ギャラリーから選択</string>
-    <string name="contacts_add_photo_select_camera">カメラで撮影</string>
+    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
+    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
     <string name="save_group_validation_error">グループ名を入力してください</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">ストレージの上限に達したため、メールの送受信ができなくなります。
@@ -775,7 +777,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">画像が見つかりませんでした。</string>
-    <string name="error_image_bad_url">不正な画像のURLです。</string>
+    <string name="error_image_bad_url">Malformed image URL</string>
     <string name="error_saving_try_again">メッセージの保存中にエラーが発生しました。もう一度やり直してください。</string>
     <!-- endregion -->
     <string name="allowed">許可</string>

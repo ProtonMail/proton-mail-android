@@ -59,6 +59,8 @@
     <string name="composer_from">Από:</string>
     <string name="composer_subject">Θέμα:</string>
     <string name="composer_to">Προς:</string>
+    <string name="composer_removing_address_generic_error">Αδυναμία επικύρωσης διεύθυνσης: %s1. Η αποστολή ίσως αποτύχει.</string>
+    <string name="composer_removing_address_server_error">Αφαίρεση διεύθυνσης: %s1. %s2</string>
     <string name="set_msg_password_title">Ορισμός κωδικού</string>
     <string name="set_msg_password_info">Ορίστε έναν κωδικό για να κρυπτογραφήσετε αυτό το μήνυμα, για τους χρήστες που δεν ανήκουν στη Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Μάθετε περισσότερα</a>
     </string>
@@ -131,7 +133,7 @@
     <string name="update_app_title">Απαιτείται ενημέρωση</string>
     <string name="update_app">Η εφαρμογή ProtonMail δεν μπορεί να χρησιμοποιηθεί μέχρι να ενημερωθεί</string>
     <string name="you_are_offline">Είστε εκτός σύνδεσης</string>
-    <string name="api_offline">Το ProtonMail είναι εκτός σύνδεσης, ελέγξτε το twitter για την τρέχουσα κατάσταση: https://twitter.com/protonmail</string>
+    <string name="api_offline">Το ProtonMail είναι εκτός σύνδεσης, ελέγξτε το https://protonstatus.com ή το twitter για την τρέχουσα κατάσταση: https://twitter.com/protonmail</string>
     <string name="contact_saved">Η επαφή αποθηκεύτηκε</string>
     <string name="contact_saved_offline">Η επαφή αποθηκεύτηκε, θα συγχρονιστεί όταν υπάρξει διαθέσιμη σύνδεση</string>
     <string name="contact_exist">Το email επικοινωνίας υπάρχει ήδη</string>
@@ -608,7 +610,7 @@
     <string name="fab_add_contact">Προσθήκη νεάς επαφής</string>
     <string name="fab_add_contact_group">Προσθήκη νέας ομάδας επαφών</string>
     <string name="contacts_add_photo_title">Προσθήκη Φωτογραφίας</string>
-    <string name="contacts_add_photo_select_gallery">Επιλογή από το άλμπουμ</string>
+    <string name="contacts_add_photo_select_gallery">Επιλογή από Συλλογή</string>
     <string name="contacts_add_photo_select_camera">Λήψη από Κάμερα</string>
     <string name="save_group_validation_error">Παρακαλώ καταχωρίστε ένα όνομα ομάδας</string>
     <!-- region Storage Limit Reached -->
@@ -795,7 +797,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Η εικόνα δεν βρέθηκε</string>
-    <string name="error_image_bad_url">Λανθασμένη μορφή url εικόνας</string>
+    <string name="error_image_bad_url">Δύσμορφο URL εικόνας</string>
     <string name="error_saving_try_again">Σφάλμα κατά την αποθήκευση του μηνύματος. Δοκιμάστε ξανά.</string>
     <!-- endregion -->
     <string name="allowed">Επιτρέπεται</string>

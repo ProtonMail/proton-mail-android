@@ -59,6 +59,8 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assunto:</string>
     <string name="composer_to">Para:</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Definir senha</string>
     <string name="set_msg_password_info">Defina uma senha para criptografar esta mensagem para usuários não-protonmail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saber mais</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Atualização necessária</string>
     <string name="update_app">Seu aplicativo ProtonMail não pode ser usado até que seja atualizado</string>
     <string name="you_are_offline">Você está desconectado</string>
-    <string name="api_offline">O ProtonMail está atualmente offiline. Por favor, visite https://protonstatus.com ou ttps://twitter.com/protonmail para saber o status atual.</string>
+    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contato salvo</string>
     <string name="contact_saved_offline">Contato salvo. Ele será sincronizado quando uma conexão estiver disponível.</string>
-    <string name="contact_exist">E-mail de contato já existente</string>
+    <string name="contact_exist">Contact email already exists</string>
     <string name="invalid_email">Endereço de e-mail inválido</string>
     <string name="duplicate_email">Endereço de e-mail duplicado</string>
     <string name="message_drafted">Falha ao enviar a mensagem. Suas mensagens foram salvas na pasta de rascunhos.</string>
@@ -501,7 +503,7 @@
     <string name="remove_password_question">Remover senha?</string>
     <string name="attachment_storage_value_current">Selecionado atualmente: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Selecionado atualmente: ilimitado</string>
-    <string name="attachment_offline_max_storage">Define a quantidade máxima de espaço de armazenamento que o ProtonMail pode usar no seu dispositivo móvel.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">O carregamento de imagens incorporadas falhou. Por favor, verifique sua conexão com a internet.</string>
     <string name="load_embedded_images_failed">Carregamento de imagens incorporadas falhou.</string>
     <string name="unlimited">Ilimitado</string>
@@ -795,7 +797,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagem não encontrada</string>
-    <string name="error_image_bad_url">Url da imagem inválida</string>
+    <string name="error_image_bad_url">URL da imagem inválida</string>
     <string name="error_saving_try_again">Erro ao salvar mensagem. Tente novamente.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>

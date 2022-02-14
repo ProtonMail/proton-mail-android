@@ -59,6 +59,8 @@
     <string name="composer_from">Von:</string>
     <string name="composer_subject">Betreff:</string>
     <string name="composer_to">An:</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Passwort festlegen</string>
     <string name="set_msg_password_info">Legen Sie ein Passwort fest, um diese Nachricht für Nicht-Protonmail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Mehr erfahren</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Aktualisierung erforderlich</string>
     <string name="update_app">Die App ProtonMail kann erst genutzt werden, nachdem diese aktualisiert wurde</string>
     <string name="you_are_offline">Du bist offline</string>
-    <string name="api_offline">ProtonMail ist derzeit nicht erreichbar. Den aktuellen Status finden Sie unter https://protonstatus.com oder https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail ist derzeit offline. Den aktuellen Status findest du unter https://protonstatus.com oder Twitter: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt gespeichert</string>
     <string name="contact_saved_offline">Kontakt gespeichert. Wird synchronisiert, sobald eine Verbindung verfügbar ist</string>
-    <string name="contact_exist">E-Mail-Adresse des Kontaktes bereits vorhanden</string>
+    <string name="contact_exist">E-Mail-Adresse des Kontakts existiert bereits</string>
     <string name="invalid_email">E-Mail-Adresse ist ungültig</string>
     <string name="duplicate_email">Die E-Mail-Adresse ist ein Duplikat</string>
     <string name="message_drafted">Das Senden der Nachricht ist fehlgeschlagen. Ihre Nachrichten werden im Ordner „Entwürfe” gespeichert.</string>
@@ -502,7 +504,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="remove_password_question">Passwort entfernen?</string>
     <string name="attachment_storage_value_current">Aktuell ausgewählt: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Aktuell ausgewählt: Unbeschränkt</string>
-    <string name="attachment_offline_max_storage">Legt den maximalen Speicherplatz fest, den ProtonMail auf Ihrem mobilen Gerät nutzen darf.</string>
+    <string name="attachment_offline_max_storage">Legt die maximale Menge an Speicherplatz fest, den ProtonMail auf deinem mobilen Gerät nutzen darf.</string>
     <string name="load_embedded_images_failed_no_network">Das Laden von eingebetteten Grafiken ist fehlgeschlagen. Bitte überprüfen Sie Ihre Netzwerkverbindung.</string>
     <string name="load_embedded_images_failed">Das Laden von eingebetteten Grafiken ist fehlgeschlagen.</string>
     <string name="unlimited">Unbegrenzt</string>
@@ -786,7 +788,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Grafik nicht gefunden</string>
-    <string name="error_image_bad_url">Fehlerhaftes Grafik-Adresse</string>
+    <string name="error_image_bad_url">Fehlerhafte Grafik-URL</string>
     <string name="error_saving_try_again">Fehler beim Speichern der Nachricht. Bitte versuchen Sie es erneut.</string>
     <!-- endregion -->
     <string name="allowed">Zugelassen</string>

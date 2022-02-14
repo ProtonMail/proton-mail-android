@@ -47,10 +47,10 @@
     <string name="drawer_create_label_description">Crear una nueva etiqueta</string>
     <!-- endregion -->
     <!-- region Details -->
-    <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
-    <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
-    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
-    <string name="details_play_store_error">Can\'t open Play Store</string>
+    <string name="details_open_in_proton_calendar_title">Abrir en Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Calendario seguro y cifrado</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Icono de Proton Calendar</string>
+    <string name="details_play_store_error">No se puede abrir la Play Store</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -59,6 +59,8 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Asunto:</string>
     <string name="composer_to">Para:</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Establecer contraseña</string>
     <string name="set_msg_password_info">Establece una contraseña para cifrar este mensaje para los usuarios que no son de ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Más información</a>
     </string>
@@ -94,9 +96,9 @@
     <string name="settings_swipe_settings_info">Establecer gestos de deslizamiento para acceder a las acciones más utilizadas.</string>
     <string name="settings_swipe_left_to_right">Izquierda a derecha</string>
     <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
-    <string name="settings_swipe_saving">Saving Swipe action…</string>
-    <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
+    <string name="settings_swipe_saving">Guardando gesto de deslizamiento…</string>
+    <string name="settings_swipe_generic_error">No se puede guardar el gesto de deslizamiento</string>
+    <string name="settings_swipe_offline_error">No se puede guardar el gesto de deslizamiento sin conexión</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema de la aplicación</string>
@@ -111,7 +113,7 @@
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Carpeta principal</string>
-    <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
+    <string name="parent_picker_header">Si no seleccionas una carpeta principal, esta nueva carpeta se creará como una carpeta de nivel superior.</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <!-- endregion -->
@@ -131,14 +133,14 @@
     <string name="update_app_title">Actualización requerida</string>
     <string name="update_app">Su aplicación de ProtonMail no se puede usar hasta que se actualice</string>
     <string name="you_are_offline">No estás conectado</string>
-    <string name="api_offline">ProtonMail está desconectado. Compruebe en https://protonstatus.com o https://twitter.com/protonmail para el estado actual.</string>
+    <string name="api_offline">ProtonMail está fuera de línea, verifica en https://protonstatus.com o en nuestro Twitter el estado actual: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacto guardado</string>
     <string name="contact_saved_offline">Contacto guardado. Se sincronizará cuando la conexión esté disponible.</string>
-    <string name="contact_exist">El email del contacto ya existe</string>
+    <string name="contact_exist">El correo del contacto ya existe</string>
     <string name="invalid_email">La dirección de email es inválida</string>
     <string name="duplicate_email">El correo electrónico es un duplicado</string>
     <string name="message_drafted">Falló el envío del mensaje. Su mensaje se guardará en la carpeta de borradores.</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">Elimina y vuelve a adjuntar \"%s\" y envía el mensaje de nuevo. Puedes encontrar tu mensaje en la carpeta \"Borradores\".</string>
     <string name="open_drawer">Abrir</string>
     <string name="close_drawer">Cerrar</string>
     <string name="inbox_option">Bandeja de entrada</string>
@@ -467,7 +469,7 @@
     <string name="print_bcc_template">CCO: %s;  </string>
     <string name="address">Dirección: </string>
     <string name="address_street">Calle</string>
-    <string name="address_extended_street">Extended street</string>
+    <string name="address_extended_street">Nombre de calle extendido</string>
     <string name="address_city">Ciudad</string>
     <string name="address_region">Región (estado/provincia)</string>
     <string name="address_postcode">Código postal</string>
@@ -501,7 +503,7 @@
     <string name="remove_password_question">¿Quitar contraseña?</string>
     <string name="attachment_storage_value_current">Seleccionado actualmente: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Seleccionado actualmente: ilimitado</string>
-    <string name="attachment_offline_max_storage">Establece el almacenamiento máximo que ProtonMail puede utilizar en su teléfono.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Falló la carga de imágenes incrustadas. Compruebe su conexión de red.</string>
     <string name="load_embedded_images_failed">Falló la carga de imágenes incrustadas.</string>
     <string name="unlimited">Ilimitado</string>
@@ -608,8 +610,8 @@
     <string name="fab_add_contact">Añadir contacto nuevo</string>
     <string name="fab_add_contact_group">Añadir grupo de contactos nuevo</string>
     <string name="contacts_add_photo_title">Añadir imagen</string>
-    <string name="contacts_add_photo_select_gallery">Desde la galería</string>
-    <string name="contacts_add_photo_select_camera">Capturar desde la cámara</string>
+    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
+    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
     <string name="save_group_validation_error">Proporciona un nombre de grupo</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Se alcanzó el límite de almacenamiento. No se pueden enviar y recibir mensajes.
@@ -795,7 +797,7 @@ compre más
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>
-    <string name="error_image_bad_url">URL de la imagen mal formada</string>
+    <string name="error_image_bad_url">Malformed image URL</string>
     <string name="error_saving_try_again">Se ha producido un error al guardar el mensaje. Inténtalo de nuevo.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
