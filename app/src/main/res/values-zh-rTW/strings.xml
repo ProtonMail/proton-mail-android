@@ -59,6 +59,8 @@
     <string name="composer_from">寄件人：</string>
     <string name="composer_subject">主旨：</string>
     <string name="composer_to">收件人：</string>
+    <string name="composer_removing_address_generic_error">無法驗證地址：%s1。傳送可能失敗。</string>
+    <string name="composer_removing_address_server_error">正在移除位置：%s1。%s2</string>
     <string name="set_msg_password_title">設定密碼</string>
     <string name="set_msg_password_info">設定密碼以加密此郵件給非 Protonmail 使用者。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">瞭解更多</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">需要更新</string>
     <string name="update_app">Protonmail 應用程式必須更新才可使用</string>
     <string name="you_are_offline">您現正離線</string>
-    <string name="api_offline">ProtonMail 目前處於離線狀態，請前往我們的 Twitter 查看最新狀況：https://twitter.com/ProtonMail</string>
+    <string name="api_offline">ProtonMail 目前處於離線狀態，請看看 https://protonstatus.com 或我們的 Twitter 來檢視目前的狀態：https://twitter.com/protonmail</string>
     <string name="contact_saved">聯絡人已儲存</string>
     <string name="contact_saved_offline">聯絡人已儲存，將在連線到網際網路時同步</string>
-    <string name="contact_exist">聯絡人電郵地址已經存在</string>
+    <string name="contact_exist">聯絡人電子郵件地址已存在</string>
     <string name="invalid_email">電郵地址無效</string>
     <string name="duplicate_email">電子郵件地址是重複的</string>
     <string name="message_drafted">訊息發送失敗。你的郵件已保存在「草稿」資料夾中</string>

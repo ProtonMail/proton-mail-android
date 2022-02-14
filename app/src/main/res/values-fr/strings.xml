@@ -59,6 +59,8 @@
     <string name="composer_from">De :</string>
     <string name="composer_subject">Objet :</string>
     <string name="composer_to">À :</string>
+    <string name="composer_removing_address_generic_error">Impossible de vérifier l\'adresse : %s1. L\'envoi pourrait échouer.</string>
+    <string name="composer_removing_address_server_error">Suppression de l\'adresse : %s1. %s2</string>
     <string name="set_msg_password_title">Définir le mot de passe</string>
     <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Mise à jour requise</string>
     <string name="update_app">Votre application ProtonMail ne peut pas être utilisée tant qu\'elle n\'est pas mise à jour</string>
     <string name="you_are_offline">Vous êtes hors ligne</string>
-    <string name="api_offline">ProtonMail est actuellement hors-ligne, visitez notre Twitter pour consulter l\'état actuel du service : https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail est actuellement hors-ligne, visitez https://protonstatus.com ou notre Twitter pour consulter l\'état actuel du service : https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact enregistré</string>
     <string name="contact_saved_offline">Contact enregistré, il sera synchronisé quand une connexion sera disponible</string>
-    <string name="contact_exist">L\'adresse électronique du contact existe déjà</string>
+    <string name="contact_exist">L\'adresse e-mail du contact existe déjà</string>
     <string name="invalid_email">L\'adresse électronique n\'est pas valide</string>
     <string name="duplicate_email">L’adresse électronique est un doublon</string>
     <string name="message_drafted">L\'envoi du message a échoué. Vos messages sont sauvegardés dans le dossier brouillons</string>

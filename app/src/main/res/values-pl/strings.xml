@@ -59,6 +59,8 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Temat:</string>
     <string name="composer_to">Do:</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Ustaw hasło</string>
     <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Dowiedz się więcej</a>
     </string>
@@ -131,7 +133,7 @@
     <string name="update_app_title">Aktualizacja jest wymagana</string>
     <string name="update_app">Nie możesz używać aplikacji ProtonMail, dopóki jej nie zaktualizujesz.</string>
     <string name="you_are_offline">Jesteś w trybie offline</string>
-    <string name="api_offline">ProtonMail jest obecnie niedostępny. Sprawdź naszego Twittera, aby poznać stan usługi: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail jest obecnie niedostępny. Sprawdź https://protonstatus.com lub naszego Twittera, aby poznać stan usługi: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt został zapisany</string>
     <string name="contact_saved_offline">Kontakt został zapisany. Zostanie zsynchronizowany przy następnym połączeniu z Internetem.</string>
     <string name="contact_exist">Adres e-mail kontaktu już istnieje</string>
@@ -625,7 +627,7 @@
     <string name="fab_add_contact_group">Dodaj nową grupę kontaktów</string>
     <string name="contacts_add_photo_title">Dodaj zdjęcie</string>
     <string name="contacts_add_photo_select_gallery">Wybierz z galerii</string>
-    <string name="contacts_add_photo_select_camera">Przechwyć z aparatu</string>
+    <string name="contacts_add_photo_select_camera">Zrób zdjęcie</string>
     <string name="save_group_validation_error">Wpisz nazwę grupy</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Wykorzystano limit przestrzeni dyskowej. Nie można wysyłać ani odbierać wiadomości e-mail.

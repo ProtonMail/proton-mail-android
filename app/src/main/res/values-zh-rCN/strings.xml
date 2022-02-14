@@ -59,6 +59,8 @@
     <string name="composer_from">发件人：</string>
     <string name="composer_subject">主题：</string>
     <string name="composer_to">收件人：</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">设置密码</string>
     <string name="set_msg_password_info">请为非 ProtonMail 用户设置密码将邮件加密，<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a>
     </string>
@@ -131,7 +133,7 @@
     <string name="update_app_title">需要更新</string>
     <string name="update_app">您的 ProtonMail 应用需要更新才能使用</string>
     <string name="you_are_offline">您已离线</string>
-    <string name="api_offline">ProtonMail 目前不可用，可前往我们的 Twitter 了解当前状况：https://twitter.com/protonmail</string>
+    <string name="api_offline">暂时无法连接 ProtonMail，可前往 https://protonstatus.com 或 https://twitter.com/protonmail 了解情况</string>
     <string name="contact_saved">联系人已保存</string>
     <string name="contact_saved_offline">联系人已保存，将在联网后同步</string>
     <string name="contact_exist">此联系人已存在</string>
@@ -495,7 +497,7 @@
     <string name="remove_password_question">确定要删除密码吗？</string>
     <string name="attachment_storage_value_current">已选择：%d MB</string>
     <string name="attachment_storage_value_current_unlimited">已选择：无限制</string>
-    <string name="attachment_offline_max_storage">设置 ProtonMail 可以在此设备上使用的存储空间。</string>
+    <string name="attachment_offline_max_storage">设置 ProtonMail 在此设备上允许使用的存储空间上限。</string>
     <string name="load_embedded_images_failed_no_network">嵌入图像载入失败，请检查网络状态。</string>
     <string name="load_embedded_images_failed">嵌入图像加载失败。</string>
     <string name="unlimited">无限制</string>
@@ -774,7 +776,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">图片未找到</string>
-    <string name="error_image_bad_url">图片网址不正确</string>
+    <string name="error_image_bad_url">图片网址格式不正确</string>
     <string name="error_saving_try_again">保存邮件失败，请重试。</string>
     <!-- endregion -->
     <string name="allowed">允许</string>

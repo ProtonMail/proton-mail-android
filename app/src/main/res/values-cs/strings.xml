@@ -59,6 +59,8 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Předmět:</string>
     <string name="composer_to">Komu:</string>
+    <string name="composer_removing_address_generic_error">Nelze ověřit adresu: %s1. Odesílání se nemusí podařit.</string>
+    <string name="composer_removing_address_server_error">Odebírání adresy: %s1. %s2</string>
     <string name="set_msg_password_title">Nastavit heslo</string>
     <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy uživatelům, kteří nepoužívají ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Je vyžadována aktualizace</string>
     <string name="update_app">Aplikaci Protonmail nelze použít dokud nebude aktualizována</string>
     <string name="you_are_offline">Jste v režimu offline</string>
-    <string name="api_offline">ProtonMail je nyní v režimu offline, aktuální stav můžete zkontrolovat na adrese https://protonstatus.com nebo https://twitter.com/protonmail.</string>
+    <string name="api_offline">ProtonMail je nyní v režimu offline, zkontrolujte https://protonstatus.com pro aktuální stav: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt byl uložen</string>
     <string name="contact_saved_offline">Kontakt byl uložen, synchronizace proběhne po připojení k internetu.</string>
-    <string name="contact_exist">Kontaktní e-mail již existuje</string>
+    <string name="contact_exist">E-mail kontaktu již existuje</string>
     <string name="invalid_email">E-mailová adresa je neplatná</string>
     <string name="duplicate_email">E-mailová adresa je duplicitní</string>
     <string name="message_drafted">Odeslání zprávy se nezdařilo. Zprávy jsou uloženy ve skožce Koncepty.</string>

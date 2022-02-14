@@ -59,6 +59,8 @@
     <string name="composer_from">Feladó:</string>
     <string name="composer_subject">Tárgy:</string>
     <string name="composer_to">Címzett:</string>
+    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Jelszó beállítása</string>
     <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Frissítés szükséges</string>
     <string name="update_app">A ProtonMail alkalmazás nem használható, amíg nincs frissítve</string>
     <string name="you_are_offline">Offline vagy</string>
-    <string name="api_offline">A ProtonMail nem érhető el. Kérjük, nézze meg a https://protonstatus.com vagy https://twitter.com/protonmail oldalakat a friss hírekért.</string>
+    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Névjegy elmentve</string>
     <string name="contact_saved_offline">Névjegy elmentve. A kapcsolat helyreállásakor lesz szinkronizálva.</string>
-    <string name="contact_exist">Már létezik névjegy ezzel az e-mail címmel</string>
+    <string name="contact_exist">Contact email already exists</string>
     <string name="invalid_email">Érvénytelen e-mail cím</string>
     <string name="duplicate_email">A megadott e-mail cím már létezik</string>
     <string name="message_drafted">Az üzenet küldése sikertelen volt. A Piszkozatok mappában került mentésre.</string>
@@ -500,7 +502,7 @@
     <string name="remove_password_question">Jelszó eltávolítása?</string>
     <string name="attachment_storage_value_current">Jelenleg kiválasztva: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Jelenleg kiválasztva: Korlátlan</string>
-    <string name="attachment_offline_max_storage">Beállítja a ProtonMail által, az eszközön helyileg használható maximális tárterületet.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Hiba a beágyazott képek betöltésekor. Ellenőrizze a kapcsolatot.</string>
     <string name="load_embedded_images_failed">Hiba a beágyazott képek betöltésekor.</string>
     <string name="unlimited">Korlátlan</string>
@@ -607,8 +609,8 @@
     <string name="fab_add_contact">Új névjegy</string>
     <string name="fab_add_contact_group">Új névjegy csoport</string>
     <string name="contacts_add_photo_title">Fénykép hozzáadása</string>
-    <string name="contacts_add_photo_select_gallery">Kiválasztás a galériából</string>
-    <string name="contacts_add_photo_select_camera">Fénykép készítése</string>
+    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
+    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
     <string name="save_group_validation_error">Adjon meg egy nevet a csoportnak</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Tárhely korlát túllépés. Nem lehet üzeneteket fogadni és küldeni.
@@ -794,7 +796,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">A kép nem található</string>
-    <string name="error_image_bad_url">Deformált kép url</string>
+    <string name="error_image_bad_url">Malformed image URL</string>
     <string name="error_saving_try_again">Hiba történt az üzenet mentése közben. Próbálja meg újra.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>

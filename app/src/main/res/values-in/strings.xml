@@ -59,6 +59,8 @@
     <string name="composer_from">Dari:</string>
     <string name="composer_subject">Subjek:</string>
     <string name="composer_to">Kepada:</string>
+    <string name="composer_removing_address_generic_error">Tidak dapat memverifikasi alamat: %s1. Pengiriman berpotensi gagal.</string>
+    <string name="composer_removing_address_server_error">Menghapus alamat: %s1. %s2</string>
     <string name="set_msg_password_title">Setel kata sandi</string>
     <string name="set_msg_password_info">Tentukan kata sandi untuk mengekripsi pesan ini bagi para pengguna non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Pelajari lebih lanjut</a>
     </string>
@@ -131,10 +133,10 @@
     <string name="update_app_title">Butuh pembaruan</string>
     <string name="update_app">Aplikasi ProtonMail Anda tidak dapat digunakan karena perlu diperbarui</string>
     <string name="you_are_offline">Anda sedang offline</string>
-    <string name="api_offline">ProtonMail saat ini sedang offline. Kunjungi Twitter kami untuk melihat status saat ini: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail sedang luring. Kunjungi https://protonstatus.com atau Twitter kami untuk mengetahui status saat ini: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
     <string name="contact_saved_offline">Kontak tersimpan, akan disinkronkan saat koneksi tersedia</string>
-    <string name="contact_exist">Kontak email sudah ada</string>
+    <string name="contact_exist">Email kontak sudah ada</string>
     <string name="invalid_email">Alamat email tidak valid</string>
     <string name="duplicate_email">Alamat email adalah duplikat</string>
     <string name="message_drafted">Gagal mengirim pesan. Pesan Anda disimpan dalam folder draf</string>
@@ -499,7 +501,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="remove_password_question">Hapus Kata Sandi?</string>
     <string name="attachment_storage_value_current">Sedang dipilih: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Sedang dipilih: Tidak terbatas</string>
-    <string name="attachment_offline_max_storage">Atur jumlah ruang penyimpanan maksimum yang dapat digunakan ProtonMail di perangkat seluler Anda.</string>
+    <string name="attachment_offline_max_storage">Mengatur jumlah ruang penyimpanan maksimum yang dapat digunakan ProtonMail di perangkat seluler Anda.</string>
     <string name="load_embedded_images_failed_no_network">Gagal memuat gambar-gambar yang tersemat. Mohon periksa koneksi internet Anda.</string>
     <string name="load_embedded_images_failed">Gagal memuat gambar-gambar yang tersemat.</string>
     <string name="unlimited">Tanpa Batas</string>
@@ -602,7 +604,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="fab_add_contact">Tambahkan kontak baru</string>
     <string name="fab_add_contact_group">Tambahkan grup kontak baru</string>
     <string name="contacts_add_photo_title">Tambahkan foto</string>
-    <string name="contacts_add_photo_select_gallery">Pilih Dari Galeri</string>
+    <string name="contacts_add_photo_select_gallery">Pilih dari Galeri</string>
     <string name="contacts_add_photo_select_camera">Jepret Dari Kamera</string>
     <string name="save_group_validation_error">Mohon masukkan nama grup</string>
     <!-- region Storage Limit Reached -->
@@ -787,7 +789,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Gambar tidak ditemukan</string>
-    <string name="error_image_bad_url">Url gambar tidak valid</string>
+    <string name="error_image_bad_url">URL gambar tidak valid</string>
     <string name="error_saving_try_again">Gagal menyimpan pesan. Coba lagi.</string>
     <!-- endregion -->
     <string name="allowed">Diizinkan</string>
