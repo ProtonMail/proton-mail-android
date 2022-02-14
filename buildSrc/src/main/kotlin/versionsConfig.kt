@@ -29,7 +29,7 @@ fun initVersions() {
     // endregion
 
     // region Android
-    `android-gradle-plugin version` =           "4.2.2"         // Released: Jun 30, 2021
+    `android-gradle-plugin version` =           "7.0.4"
 
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
@@ -54,8 +54,8 @@ fun initVersions() {
     `dagger version` =                          "2.40.5"        // Released: Dec 07, 2021
 
     `mockK version` =                           "1.12.2"        // Released: Dec 31, 2021
-    `retrofit version` =                         "2.6.1"         // Released: Jul 31, 2019
-    `retrofit-kotlin-serialization version` =    ""
+    `retrofit version` =                        "2.9.0"         // Released: May 20, 2020
+    `retrofit-kotlin-serialization version` =   "0.8.0"         // Released: Oct 09, 2020
     `robolectric version` =                     "4.3.1"         // Released: Oct 11, 2019
     `viewStateStore version` =                  "1.4-beta-4"    // Released: Mar 02, 2020
     // endregion
