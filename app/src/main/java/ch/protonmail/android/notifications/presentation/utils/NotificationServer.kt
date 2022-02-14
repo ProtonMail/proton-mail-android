@@ -374,7 +374,7 @@ class NotificationServer @Inject constructor(
             ringtoneUri,
             isNotificationVisibleInLockScreen
         ).apply {
-            setContentText("Multiple messages")
+            setContentText(context.getString(R.string.notification_summary_text_new_messages))
             setStyle(inboxStyle)
             setGroup(userId.id)
             setGroupSummary(true)
@@ -486,6 +486,60 @@ class NotificationServer @Inject constructor(
             username.s,
             notificationID = NOTIFICATION_ID_ATTACHMENT_ERROR
         )
+    }
+
+
+    fun notifyOpenUrlNotification(
+        user: User,
+        notificationSettings: Int,
+        ringtoneUri: Uri?,
+        isNotificationVisibleInLockScreen: Boolean,
+        notificationUrl: String,
+        messageId: String,
+        notificationBody: String?,
+        sender: String
+    ) {
+        val contentIntent = Intent(Intent.ACTION_VIEW, Uri.parse(notificationUrl))
+
+        val backIntent = Intent(context, MailboxActivity::class.java)
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        val contentPendingIntent = PendingIntent.getActivities(
+            context,
+            messageId.hashCode(),
+            arrayOf(backIntent, contentIntent),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Create Action Intent's
+        val dismissIntent = context.buildDismissIntent(messageId, user.id)
+
+        // Create Notification Style
+        val userDisplayName = user.addresses.primary?.email?.s
+            ?: user.name.s
+        val inboxStyle = NotificationCompat.InboxStyle().run {
+            setSummaryText(userDisplayName)
+            notificationBody?.let { addLine(it) }
+        }
+
+        // Create Notification's Builder with the prepared params
+        val notification =
+            createGenericEmailNotification(
+                notificationSettings,
+                ringtoneUri,
+                isNotificationVisibleInLockScreen
+            ).apply {
+                setContentTitle(sender)
+                notificationBody?.let { setContentText(it) }
+                setContentIntent(contentPendingIntent)
+                setDeleteIntent(dismissIntent)
+                setStyle(inboxStyle)
+                setShowWhen(false)
+            }.build()
+
+        NotificationManagerCompat.from(context).apply {
+            notify(messageId.hashCode(), notification)
+        }
     }
 }
 
