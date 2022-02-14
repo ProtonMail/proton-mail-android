@@ -35,6 +35,7 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
+import me.proton.core.util.kotlin.any
 import timber.log.Timber
 
 private const val HYPHEN = "-"
@@ -89,20 +90,22 @@ class MailboxItemView @JvmOverloads constructor(
         }
     }
 
-    private fun getSenderText(mailboxUiItem: MailboxUiItem) =
-        if (isDraftOrSentItem(mailboxUiItem)) {
+    private fun getCorrespondentsText(mailboxUiItem: MailboxUiItem, location: Constants.MessageLocationType) =
+        if (isDraftOrSentItem(mailboxUiItem, location)) {
             mailboxUiItem.recipients
         } else {
             mailboxUiItem.senderName
         }
 
-    private fun isDraftOrSentItem(mailboxUiItem: MailboxUiItem): Boolean {
+    private fun isDraftOrSentItem(mailboxUiItem: MailboxUiItem, location: Constants.MessageLocationType): Boolean {
         val messageLocation = mailboxUiItem.messageData?.location
             ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
-        return Constants.MessageLocationType.fromInt(messageLocation) in arrayOf(
-            Constants.MessageLocationType.DRAFT,
-            Constants.MessageLocationType.SENT
-        )
+        return any(location, Constants.MessageLocationType.fromInt(messageLocation)) {
+            it in arrayOf(
+                Constants.MessageLocationType.DRAFT,
+                Constants.MessageLocationType.SENT
+            )
+        }
     }
 
     private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
@@ -134,14 +137,14 @@ class MailboxItemView @JvmOverloads constructor(
         setIconsTint(readStatus)
 
         val showBigDraftIcon = mailboxUiItem.isDraft && !isDraftsLocation(mailboxLocation)
-        val senderText = getSenderText(mailboxUiItem)
+        val correspondentsText = getCorrespondentsText(mailboxUiItem, mailboxLocation)
         // Sender text can only be empty in drafts where we show recipients instead of senders
-        if (senderText.isEmpty()) {
+        if (correspondentsText.isEmpty()) {
             correspondents_text_view.text = context.getString(R.string.empty_recipients)
             sender_initial_view.bind(HYPHEN, showBigDraftIcon, isMultiSelectionMode)
         } else {
-            correspondents_text_view.text = senderText
-            sender_initial_view.bind(senderText.substring(0, 1), showBigDraftIcon, isMultiSelectionMode)
+            correspondents_text_view.text = correspondentsText
+            sender_initial_view.bind(correspondentsText.substring(0, 1), showBigDraftIcon, isMultiSelectionMode)
         }
 
         subject_text_view.text = mailboxUiItem.subject
