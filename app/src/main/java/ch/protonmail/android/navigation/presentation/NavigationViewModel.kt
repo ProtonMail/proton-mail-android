@@ -19,11 +19,13 @@
 
 package ch.protonmail.android.navigation.presentation
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.utils.notifier.UserNotifier
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.withContext
@@ -34,6 +36,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class NavigationViewModel @Inject constructor(
+    private val isAppInDarkMode: IsAppInDarkMode,
     private val secureSharedPreferencesFactory: SecureSharedPreferences.Factory,
     private val accountStateManager: AccountStateManager,
     private val userNotifier: UserNotifier,
@@ -51,4 +54,6 @@ internal class NavigationViewModel @Inject constructor(
             true
         }
     }
+
+    fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
 }

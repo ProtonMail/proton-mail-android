@@ -69,6 +69,7 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import ch.protonmail.android.views.messageDetails.ReplyActionsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_body.view.*
+import kotlinx.coroutines.runBlocking
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 
@@ -322,6 +323,10 @@ internal class MessageDetailsAdapter(
             val messageBodyProgress = itemView.messageWebViewContainer
                 .findViewById<ProgressBar>(R.id.item_message_body_progress_view_id) ?: return
 
+            message.messageId?.let {
+                setUpWebViewDarkModeBlocking(webView, it)
+            }
+
             messageBodyProgress.isVisible = listItem.messageFormattedHtml.isNullOrEmpty()
             displayRemoteContentButton.isVisible = false
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
@@ -427,8 +432,6 @@ internal class MessageDetailsAdapter(
             openInProtonCalenderView: View,
             editDraftButton: Button
         ) {
-            val item = visibleItems[position]
-
             loadEmbeddedImagesContainer.setOnClickListener { view ->
                 view.visibility = View.GONE
                 // Once images were loaded for one message, we automatically load them for all the others, so:
@@ -458,6 +461,7 @@ internal class MessageDetailsAdapter(
             }
 
             openInProtonCalenderView.setOnClickListener {
+                val item = visibleItems[position]
                 onOpenInProtonCalendarClicked(item.message)
             }
 
@@ -561,6 +565,18 @@ internal class MessageDetailsAdapter(
         expandLastNonDraftItem()
     }
 
+    fun reloadMessage(messageId: String) {
+        val item = visibleItems.find { it.message.messageId == messageId && it.itemType == TYPE_ITEM }
+        val itemIndex = visibleItems.indexOf(item)
+        // Set message formatted html to null, in order to trigger loading
+        // and switch to light/dark mode in the web view
+        val newItem = item?.apply { messageFormattedHtml = null }
+        newItem?.let {
+            visibleItems[itemIndex] = newItem
+            notifyItemChanged(itemIndex)
+        }
+    }
+
     private fun expandLastNonDraftItem() {
         val lastNonDraftHeaderIndex = visibleItems.indexOfLast {
             !it.message.isDraft() && it.itemType == TYPE_HEADER
@@ -613,8 +629,6 @@ internal class MessageDetailsAdapter(
     }
 
     private fun configureWebView(webView: WebView, pmWebViewClient: PMWebViewClient) {
-        setUpWebViewDarkModeHandlingIfSupported(context, webView)
-
         webView.isScrollbarFadingEnabled = false
         webView.isVerticalScrollBarEnabled = false
         webView.isHorizontalScrollBarEnabled = false
@@ -742,4 +756,7 @@ internal class MessageDetailsAdapter(
 
     private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
 
+    private fun setUpWebViewDarkModeBlocking(webView: WebView, messageId: String) = runBlocking {
+        setUpWebViewDarkModeHandlingIfSupported(context, userManager.requireCurrentUserId(), webView, messageId)
+    }
 }

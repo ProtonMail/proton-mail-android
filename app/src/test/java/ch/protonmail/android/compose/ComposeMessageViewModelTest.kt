@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.compose
 
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
@@ -31,6 +30,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
@@ -38,6 +38,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
+import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -61,6 +62,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     @get:Rule
     val trampolineSchedulerRule = TrampolineScheduler()
+
+    private val isAppInDarkMode: IsAppInDarkMode = mockk()
 
     private val stringResourceResolver: StringResourceResolver = mockk(relaxed = true)
 
@@ -89,13 +92,14 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val verifyConnection: VerifyConnection = mockk()
 
-    private val workManager: WorkManager = mockk(relaxed = true)
-
     private val htmlToSpanned: HtmlToSpanned = mockk(relaxed = true)
 
     private val addExpirationTimeToMessage: AddExpirationTimeToMessage = mockk()
 
+    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported = mockk()
+
     private val viewModel = ComposeMessageViewModel(
+        isAppInDarkMode = isAppInDarkMode,
         composeMessageRepository = composeMessageRepository,
         userManager = userManager,
         accountManager = accountManager,
@@ -109,7 +113,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         verifyConnection = verifyConnection,
         networkConfigurator = networkConfigurator,
         htmlToSpanned = htmlToSpanned,
-        addExpirationTimeToMessage = addExpirationTimeToMessage
+        addExpirationTimeToMessage = addExpirationTimeToMessage,
+        setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported
     )
 
     @BeforeTest

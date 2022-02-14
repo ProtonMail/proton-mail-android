@@ -30,7 +30,9 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.MessagePreferenceDao
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessagePreferenceEntity
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
@@ -93,10 +95,15 @@ class MessageRepositoryTest {
         coEvery { insertUnreadLocation(any()) } just runs
     }
 
+    private val messagePreferenceDao: MessagePreferenceDao = mockk {
+        coEvery { saveMessagePreference(any()) } returns 123
+    }
+
     private val databaseProvider: DatabaseProvider = mockk {
-        every { provideMessageDao(any()) } returns messageDao
-        every { provideUnreadCounterDao(any()) } returns unreadCounterDao
         every { provideCounterDao(any()) } returns counterDao
+        every { provideMessageDao(any()) } returns messageDao
+        every { provideMessagePreferenceDao(any()) } returns messagePreferenceDao
+        every { provideUnreadCounterDao(any()) } returns unreadCounterDao
     }
 
     private val messageBodyFileManager: MessageBodyFileManager = mockk()
@@ -832,6 +839,37 @@ class MessageRepositoryTest {
         assertEquals(expectedLabelIds, savedMessageCaptor.captured.allLabelIDs)
     }
 
+    @Test
+    fun `should save message preference if it does not exist in DB when saving view in dark mode preference`() = runBlockingTest {
+        // given
+        val expectedResult = buildMessagePreference(viewInDarkMode = true)
+        coEvery { messagePreferenceDao.findMessagePreference(messageId) } returns null
+
+        // when
+        messageRepository.saveViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true)
+
+        // then
+        val result = slot<MessagePreferenceEntity>()
+        coVerify { messagePreferenceDao.saveMessagePreference(capture(result)) }
+        assertEquals(expectedResult, result.captured)
+    }
+
+    @Test
+    fun `should update message preference if it already exists in DB when saving view in dark mode preference`() = runBlockingTest {
+        // given
+        val messagePreference = buildMessagePreference(viewInDarkMode = true)
+        val expectedResult = buildMessagePreference(viewInDarkMode = false)
+        coEvery { messagePreferenceDao.findMessagePreference(messageId) } returns messagePreference
+
+        // when
+        messageRepository.saveViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false)
+
+        // then
+        val result = slot<MessagePreferenceEntity>()
+        coVerify { messagePreferenceDao.saveMessagePreference(capture(result)) }
+        assertEquals(expectedResult, result.captured)
+    }
+
     private fun setupUnreadCounterDaoToSimulateReplace() {
 
         val counters = MutableStateFlow(emptyList<UnreadCounterEntity>())
@@ -871,5 +909,15 @@ class MessageRepositoryTest {
         type = type,
         path = path,
         parentId = parentId
+    )
+
+    private fun buildMessagePreference(
+        id: Long = 0,
+        messageId: String = this.messageId,
+        viewInDarkMode: Boolean = true
+    ) = MessagePreferenceEntity(
+        id = id,
+        messageId = messageId,
+        viewInDarkMode = viewInDarkMode
     )
 }

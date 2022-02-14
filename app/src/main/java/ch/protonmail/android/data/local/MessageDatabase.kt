@@ -25,6 +25,7 @@ import ch.protonmail.android.data.ProtonMailConverters
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.AttachmentTypesConverter
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessagePreferenceEntity
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.ConversationTypesConverter
@@ -38,9 +39,10 @@ import me.proton.core.data.room.db.CommonConverters
         Attachment::class,
         ConversationDatabaseModel::class,
         Message::class,
-        UnreadCounterEntity::class,
+        MessagePreferenceEntity::class,
+        UnreadCounterEntity::class
     ],
-    version = 14
+    version = 15
 )
 @TypeConverters(
     value = [
@@ -57,8 +59,9 @@ internal abstract class MessageDatabase : RoomDatabase() {
     fun getDao(): MessageDao =
         getMessageDao()
 
-    abstract fun getMessageDao(): MessageDao
     abstract fun getConversationDao(): ConversationDao
+    abstract fun getMessageDao(): MessageDao
+    abstract fun getMessagePreferenceDao(): MessagePreferenceDao
     abstract fun getUnreadCounterDao(): UnreadCounterDao
 
     companion object Factory : DatabaseFactory<MessageDatabase>(

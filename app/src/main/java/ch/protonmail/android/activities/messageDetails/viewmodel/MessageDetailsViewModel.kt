@@ -76,6 +76,7 @@ import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.model.LabelChipUiModel
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
@@ -89,6 +90,7 @@ import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -128,6 +130,8 @@ import javax.inject.Inject
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
+    private val isAppInDarkMode: IsAppInDarkMode,
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val messageRepository: MessageRepository,
     private val userManager: UserManager,
@@ -191,6 +195,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
     private val _showPermissionMissingDialog: MutableLiveData<Unit> = MutableLiveData()
     private val _conversationUiFlow = MutableSharedFlow<ConversationUiModel>(replay = 1)
+    private val _reloadMessageFlow = MutableSharedFlow<String>(replay = 1)
 
     val conversationUiModel: SharedFlow<ConversationUiModel>
         get() = _conversationUiFlow
@@ -212,6 +217,9 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     val messageRenderedWithImages: LiveData<Message>
         get() = _messageRenderedWithImages
+
+    val reloadMessageFlow: SharedFlow<String>
+        get() = _reloadMessageFlow
 
     private var areImagesDisplayed: Boolean = false
 
@@ -897,5 +905,15 @@ internal class MessageDetailsViewModel @Inject constructor(
                 Constants.MessageLocationType.SPAM
             )
         }
+    }
+
+    fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
+
+    fun isWebViewInDarkModeBlocking(context: Context, messageId: String) = runBlocking {
+        getViewInDarkModeMessagePreference(context, userManager.requireCurrentUserId(), messageId)
+    }
+
+    fun reloadMessage(messageId: String) {
+        _reloadMessageFlow.tryEmit(messageId)
     }
 }

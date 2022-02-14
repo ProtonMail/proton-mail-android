@@ -35,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.EXTRA_VIEW_HEADERS
 import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
+import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
@@ -63,6 +64,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private var actionSheetHeader: ActionSheetHeader? = null
     private val viewModel: MessageActionSheetViewModel by viewModels()
     private val mailboxViewModel: MailboxViewModel by activityViewModels()
+    private val messageDetailsViewModel: MessageDetailsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,13 +91,18 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             .onEach { updateViewState(it, binding) }
             .launchIn(lifecycleScope)
 
-        viewModel.setupViewState(messageIds, messageLocation, mailboxLabelId, actionsTarget)
+        viewModel.setupViewState(
+            requireContext(),
+            messageIds,
+            messageLocation,
+            mailboxLabelId,
+            actionsTarget
+        )
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupReplyActionsBindings(
             binding.includeLayoutActionSheetButtons, actionsTarget, messageIds, doesConversationHaveMoreThanOneMessage
         )
-        setupManageSectionBindings(binding, viewModel, actionsTarget, messageIds, messageLocation, mailboxLabelId)
         setupMoreSectionBindings(binding, actionsTarget, messageIds)
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
 
@@ -157,6 +164,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     ) {
         when (state) {
             is MessageActionSheetState.Data -> {
+                setupManageSectionBindings(binding, state.manageSectionState)
                 setupMoveSectionState(binding, state.moveSectionState)
             }
             MessageActionSheetState.Initial -> {
@@ -219,65 +227,65 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private fun setupManageSectionBindings(
         binding: FragmentMessageActionSheetBinding,
-        viewModel: MessageActionSheetViewModel,
-        actionsTarget: ActionSheetTarget,
-        messageIds: List<String>,
-        messageLocation: Constants.MessageLocationType,
-        mailboxLabelId: String
+        state: MessageActionSheetState.ManageSectionState
     ) {
         with(binding) {
-            val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
-
             textViewDetailsActionsUnstar.apply {
-                isVisible = actionsTarget in arrayOf(
-                    ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
-                    ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
-                ) || isStarred
+                isVisible = state.showUnstarAction
                 setOnClickListener {
                     viewModel.unStarMessage(
-                        messageIds,
-                        messageLocation,
-                        actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                        state.mailboxItemIds,
+                        state.messageLocation,
+                        state.actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
                     )
                 }
             }
 
             textViewDetailsActionsStar.apply {
-                isVisible = actionsTarget in arrayOf(
-                    ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
-                    ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
-                ) || !isStarred
+                isVisible = state.showStarAction
                 setOnClickListener {
                     viewModel.starMessage(
-                        messageIds,
-                        messageLocation,
-                        actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                        state.mailboxItemIds,
+                        state.messageLocation,
+                        state.actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
                     )
                 }
             }
 
             textViewDetailsActionsMarkRead.apply {
-                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
+                isVisible = state.showMarkReadAction
                 setOnClickListener {
                     viewModel.markRead(
-                        messageIds,
-                        messageLocation,
-                        mailboxLabelId,
-                        actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                        state.mailboxItemIds,
+                        state.messageLocation,
+                        state.currentLocationId,
+                        state.actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
                     )
                 }
             }
             textViewDetailsActionsMarkUnread.setOnClickListener {
                 viewModel.markUnread(
-                    messageIds,
-                    messageLocation,
-                    mailboxLabelId,
-                    actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                    state.mailboxItemIds,
+                    state.messageLocation,
+                    state.currentLocationId,
+                    state.actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
                 )
             }
             textViewDetailsActionsLabelAs.setOnClickListener {
-                viewModel.showLabelsManager(messageIds, messageLocation, mailboxLabelId)
+                viewModel.showLabelsManager(state.mailboxItemIds, state.messageLocation, state.currentLocationId)
                 dismiss()
+            }
+            detailsActionsViewInLightModeTextView.apply {
+                isVisible = state.showViewInLightModeAction
+                setOnClickListener {
+                    viewModel.viewInLightMode(state.mailboxItemIds.first())
+                }
+            }
+            detailsActionsViewInDarkModeTextView.apply {
+                isVisible = state.showViewInDarkModeAction
+                setOnClickListener {
+                    viewModel.viewInDarkMode(state.mailboxItemIds.first())
+                }
             }
         }
     }
@@ -415,6 +423,10 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             }
             is MessageActionSheetAction.CouldNotCompleteActionError ->
                 showCouldNotCompleteActionError()
+            is MessageActionSheetAction.ViewMessageInLightDarkMode -> {
+                messageDetailsViewModel.reloadMessage(sheetAction.messageId)
+                handleDismissBehavior(false)
+            }
             else -> Timber.v("unhandled action $sheetAction")
         }
     }
@@ -473,7 +485,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_MAILBOX_LABEL_ID = "arg_mailbox_label_id"
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
-        private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
+        const val EXTRA_ARG_IS_STARRED = "arg_extra_is_stared"
         private const val EXTRA_ARG_CONVERSATION_HAS_MORE_THAN_ONE_MESSAGE =
             "arg_conversation_has_more_than_one_message"
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
@@ -505,7 +517,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     EXTRA_ARG_MESSAGE_IDS to messagesIds.toTypedArray(),
                     EXTRA_ARG_TITLE to title,
                     EXTRA_ARG_SUBTITLE to subTitle,
-                    EXTRA_ARG_IS_STARED to isStarred,
+                    EXTRA_ARG_IS_STARRED to isStarred,
                     EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId,
                     EXTRA_ARG_MAILBOX_LABEL_ID to mailboxLabelId,
                     EXTRA_ARG_ACTION_TARGET to actionSheetTarget,

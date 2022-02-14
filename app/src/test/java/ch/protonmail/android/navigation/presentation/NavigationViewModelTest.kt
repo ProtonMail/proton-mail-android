@@ -25,6 +25,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.testdata.UserIdTestData
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.utils.notifier.UserNotifier
 import io.mockk.called
 import io.mockk.every
@@ -41,6 +42,8 @@ import kotlin.test.assertTrue
 
 class NavigationViewModelTest : ArchTest, CoroutinesTest {
 
+    private val isAppInDarkMode: IsAppInDarkMode = mockk()
+
     private val sharedPrefsMock = mockk<SharedPreferences>()
     private val sharedPreferencesFactoryMock = mockk<SecureSharedPreferences.Factory> {
         every { userPreferences(UserIdTestData.userId) } returns sharedPrefsMock
@@ -52,6 +55,7 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
         every { showError(R.string.logged_out_description) } just runs
     }
     private val navigationViewModel = NavigationViewModel(
+        isAppInDarkMode,
         sharedPreferencesFactoryMock,
         accountStateManagerMock,
         userNotifierMock,

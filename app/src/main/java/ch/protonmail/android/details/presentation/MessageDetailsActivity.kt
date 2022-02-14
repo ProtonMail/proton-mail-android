@@ -25,7 +25,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.ContextMenu
@@ -85,6 +84,7 @@ import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -196,6 +196,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             viewModel.handleStarUnStar(messageOrConversationId, isChecked)
         }
 
+        viewModel.reloadMessageFlow
+            .onEach { messageId ->
+                messageExpandableAdapter.reloadMessage(messageId)
+            }
+            .launchIn(lifecycleScope)
+
         lifecycle.addObserver(viewModel)
     }
 
@@ -251,13 +257,13 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
                 val showDecryptionError = messageBodyState is MessageBodyState.Error.DecryptionError
                 val loadedMessage = messageBodyState.message
+                val messageId = loadedMessage.messageId ?: return@mapLatest
                 val parsedBody = viewModel.formatMessageHtmlBody(
                     loadedMessage,
                     renderDimensionsProvider.getRenderWidth(this),
                     AppUtil.readTxt(this, R.raw.css_reset_with_custom_props),
-                    if (
-                        resources.configuration.uiMode and
-                        Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+                    if (viewModel.isAppInDarkMode(this) &&
+                        viewModel.isWebViewInDarkModeBlocking(this, messageId)
                     ) {
                         AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only)
                     } else {
@@ -266,7 +272,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     this.getString(R.string.request_timeout)
                 )
 
-                val messageId = loadedMessage.messageId ?: return@mapLatest
                 val showLoadEmbeddedImagesButton = handleEmbeddedImagesLoading(loadedMessage)
                 messageExpandableAdapter.showMessageDetails(
                     parsedBody,

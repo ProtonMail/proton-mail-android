@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.ui.actionsheet
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,9 +34,12 @@ import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,6 +64,9 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private val changeMessagesStarredStatus: ChangeMessagesStarredStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val conversationModeEnabled: ConversationModeEnabled,
+    private val isAppInDarkMode: IsAppInDarkMode,
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference,
+    private val setViewInDarkModeMessagePreference: SetViewInDarkModeMessagePreference,
     private val accountManager: AccountManager
 ) : ViewModel() {
 
@@ -73,13 +80,28 @@ internal class MessageActionSheetViewModel @Inject constructor(
         get() = actionsMutableFlow
 
     fun setupViewState(
+        context: Context,
         messageIds: List<String>,
         messageLocation: Constants.MessageLocationType,
         mailboxLocationId: String,
         actionsTarget: ActionSheetTarget
     ) {
-        val moveSectionState = computeMoveSectionState(actionsTarget, messageLocation, mailboxLocationId, messageIds)
-        mutableStateFlow.value = MessageActionSheetState.Data(moveSectionState)
+        viewModelScope.launch {
+            val manageSectionState = computeManageSectionState(
+                context,
+                messageLocation,
+                mailboxLocationId,
+                messageIds,
+                actionsTarget
+            )
+            val moveSectionState = computeMoveSectionState(
+                actionsTarget,
+                messageLocation,
+                mailboxLocationId,
+                messageIds
+            )
+            mutableStateFlow.value = MessageActionSheetState.Data(manageSectionState, moveSectionState)
+        }
     }
 
     fun showLabelsManager(
@@ -339,6 +361,30 @@ internal class MessageActionSheetViewModel @Inject constructor(
         }
     }
 
+    fun viewInLightMode(messageId: String) {
+        viewModelScope.launch {
+            accountManager.getPrimaryUserId().first()?.let {
+                setViewInDarkModeMessagePreference(it, messageId, viewInDarkMode = false)
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.ViewMessageInLightDarkMode(
+                messageId = messageId
+            )
+        }
+    }
+
+    fun viewInDarkMode(messageId: String) {
+        viewModelScope.launch {
+            accountManager.getPrimaryUserId().first()?.let {
+                setViewInDarkModeMessagePreference(it, messageId, viewInDarkMode = true)
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.ViewMessageInLightDarkMode(
+                messageId = messageId
+            )
+        }
+    }
+
     private fun moveMessagesToFolderAndDismiss(
         ids: List<String>,
         newFolderLocationId: Constants.MessageLocationType,
@@ -415,6 +461,59 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(
         MessageActionSheet.EXTRA_ARG_ACTION_TARGET
     ) ?: ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+
+    private fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
+
+    private suspend fun isWebViewInDarkMode(context: Context, messageId: String): Boolean {
+        accountManager.getPrimaryUserId().first()?.let {
+            return getViewInDarkModeMessagePreference(context, it, messageId)
+        }
+        return false
+    }
+
+    private suspend fun computeManageSectionState(
+        context: Context,
+        messageLocation: Constants.MessageLocationType,
+        mailboxLocationId: String,
+        messageIds: List<String>,
+        actionsTarget: ActionSheetTarget
+    ): MessageActionSheetState.ManageSectionState {
+        val isStarred = savedStateHandle.get<Boolean>(MessageActionSheet.EXTRA_ARG_IS_STARRED) ?: false
+
+        val showStarAction = actionsTarget in arrayOf(
+            ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
+            ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+        ) || !isStarred
+
+        val showUnstarAction = actionsTarget in arrayOf(
+            ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
+            ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+        ) || isStarred
+
+        val showMarkReadAction = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
+
+        val showViewInLightModeAction = actionsTarget in arrayOf(
+            ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
+            ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        ) && isAppInDarkMode(context) && isWebViewInDarkMode(context, messageIds.first())
+
+        val showViewInDarkModeAction = actionsTarget in arrayOf(
+            ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
+            ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        ) && isAppInDarkMode(context) && !isWebViewInDarkMode(context, messageIds.first())
+
+        return MessageActionSheetState.ManageSectionState(
+            messageIds,
+            messageLocation,
+            mailboxLocationId,
+            actionsTarget,
+            showStarAction,
+            showUnstarAction,
+            showMarkReadAction,
+            showViewInLightModeAction,
+            showViewInDarkModeAction
+        )
+    }
 
     private fun computeMoveSectionState(
         actionsTarget: ActionSheetTarget,

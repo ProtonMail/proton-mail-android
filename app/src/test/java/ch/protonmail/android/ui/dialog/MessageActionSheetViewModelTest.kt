@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.ui.dialog
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
@@ -31,13 +32,17 @@ import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.ui.actionsheet.MessageActionSheet.Companion.EXTRA_ARG_IS_STARRED
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetState
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
+import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -47,6 +52,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
@@ -90,11 +96,20 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @MockK
     private lateinit var deleteConversations: DeleteConversations
 
+    private val isAppInDarkMode: IsAppInDarkMode = mockk()
+
+    private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference = mockk()
+
+    @MockK
+    private lateinit var setViewInDarkModeMessagePreference: SetViewInDarkModeMessagePreference
+
     @MockK
     private lateinit var accountManager: AccountManager
 
     @MockK
     private lateinit var savedStateHandle: SavedStateHandle
+
+    private val context: Context = mockk()
 
     private lateinit var viewModel: MessageActionSheetViewModel
 
@@ -116,6 +131,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             changeMessagesStarredStatus,
             changeConversationsStarredStatus,
             conversationModeEnabled,
+            isAppInDarkMode,
+            getViewInDarkModeMessagePreference,
+            setViewInDarkModeMessagePreference,
             accountManager
         )
     }
@@ -612,13 +630,50 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun `verify the use case for saving message preference is called when view in light mode action is clicked`() = runBlockingTest {
+        // given
+        val messageId = "messageId"
+        val expectedActionsFlowValue = MessageActionSheetAction.ViewMessageInLightDarkMode(messageId)
+        coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) } just runs
+
+        // when
+        viewModel.viewInLightMode(messageId)
+
+        // then
+        coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) }
+        assertEquals(expectedActionsFlowValue, viewModel.actionsFlow.value)
+    }
+
+    @Test
+    fun `verify the use case for saving message preference is called when view in dark mode action is clicked`() = runBlockingTest {
+        // given
+        val messageId = "messageId"
+        val expectedActionsFlowValue = MessageActionSheetAction.ViewMessageInLightDarkMode(messageId)
+        coEvery { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) } just runs
+
+        // when
+        viewModel.viewInDarkMode(messageId)
+
+        // then
+        coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) }
+        assertEquals(expectedActionsFlowValue, viewModel.actionsFlow.value)
+    }
+
+    @Test
     fun verifySetupViewStateReturnsMoveSectionStateWithShowMoveToInboxActionTrueWhenActionTargetIsMessageAndMessageLocationIsTrash() {
         val messageIds = listOf("messageId7")
         val currentFolder = Constants.MessageLocationType.TRASH
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -632,7 +687,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -640,9 +695,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId7")
         val currentFolder = Constants.MessageLocationType.SENT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -656,7 +718,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -664,9 +726,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId8")
         val currentFolder = Constants.MessageLocationType.INBOX
         val actionsTarget = ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -680,7 +749,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -688,9 +757,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId8")
         val currentFolder = Constants.MessageLocationType.ARCHIVE
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -704,7 +780,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -712,9 +788,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId10")
         val currentFolder = Constants.MessageLocationType.TRASH
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -728,7 +811,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -736,9 +819,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId11")
         val currentFolder = Constants.MessageLocationType.LABEL
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -752,7 +842,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -760,9 +850,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId12")
         val currentFolder = Constants.MessageLocationType.SPAM
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -776,7 +873,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -784,9 +881,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId13")
         val currentFolder = Constants.MessageLocationType.INBOX
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -800,7 +904,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -808,9 +912,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId14")
         val currentFolder = Constants.MessageLocationType.DRAFT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -824,7 +935,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -832,9 +943,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId15")
         val currentFolder = Constants.MessageLocationType.DRAFT
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -848,7 +966,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = false,
             showDeleteAction = true
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
     @Test
@@ -856,9 +974,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf("messageId16")
         val currentFolder = Constants.MessageLocationType.ARCHIVE
         val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
 
         viewModel.setupViewState(
-            messageIds, currentFolder, currentFolder.messageLocationTypeValue.toString(), actionsTarget
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.messageLocationTypeValue.toString(),
+            actionsTarget
         )
 
         val expected = MessageActionSheetState.MoveSectionState(
@@ -872,7 +997,176 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             showMoveToSpamAction = true,
             showDeleteAction = false
         )
-        assertEquals(MessageActionSheetState.Data(expected), viewModel.stateFlow.value)
+        assertEquals(expected, (viewModel.stateFlow.value as MessageActionSheetState.Data).moveSectionState)
     }
 
+    @Test
+    fun `verify star, unstar and mark read actions are visible when action sheet is summoned from mailbox`() {
+        // given
+        val messageIds = listOf("messageId")
+        val currentFolder = Constants.MessageLocationType.INBOX
+        val actionsTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
+        val expectedResult = MessageActionSheetState.ManageSectionState(
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget,
+            showStarAction = true,
+            showUnstarAction = true,
+            showMarkReadAction = true,
+            showViewInLightModeAction = false,
+            showViewInDarkModeAction = false
+        )
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
+
+        // when
+        viewModel.setupViewState(
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget
+        )
+
+        // then
+        assertEquals(expectedResult, (viewModel.stateFlow.value as MessageActionSheetState.Data).manageSectionState)
+    }
+
+    @Test
+    fun `verify star action is visible when message is not starred in details screen`() {
+        // given
+        val messageIds = listOf("messageId")
+        val currentFolder = Constants.MessageLocationType.INBOX
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        val expectedResult = MessageActionSheetState.ManageSectionState(
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget,
+            showStarAction = true,
+            showUnstarAction = false,
+            showMarkReadAction = false,
+            showViewInLightModeAction = false,
+            showViewInDarkModeAction = false
+        )
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
+
+        // when
+        viewModel.setupViewState(
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget
+        )
+
+        // then
+        assertEquals(expectedResult, (viewModel.stateFlow.value as MessageActionSheetState.Data).manageSectionState)
+    }
+
+    @Test
+    fun `verify unstar action is visible when message is starred in details screen`() {
+        // given
+        val messageIds = listOf("messageId")
+        val currentFolder = Constants.MessageLocationType.INBOX
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        val expectedResult = MessageActionSheetState.ManageSectionState(
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget,
+            showStarAction = false,
+            showUnstarAction = true,
+            showMarkReadAction = false,
+            showViewInLightModeAction = false,
+            showViewInDarkModeAction = false
+        )
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns true
+        every { isAppInDarkMode(any()) } returns false
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
+
+        // when
+        viewModel.setupViewState(
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget
+        )
+
+        // then
+        assertEquals(expectedResult, (viewModel.stateFlow.value as MessageActionSheetState.Data).manageSectionState)
+    }
+
+    @Test
+    fun `verify view in dark mode action is visible when app is in dark mode and web view is in light mode`() {
+        // given
+        val messageIds = listOf("messageId")
+        val currentFolder = Constants.MessageLocationType.INBOX
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        val expectedResult = MessageActionSheetState.ManageSectionState(
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget,
+            showStarAction = true,
+            showUnstarAction = false,
+            showMarkReadAction = false,
+            showViewInLightModeAction = false,
+            showViewInDarkModeAction = true
+        )
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns true
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns false
+
+        // when
+        viewModel.setupViewState(
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget
+        )
+
+        // then
+        assertEquals(expectedResult, (viewModel.stateFlow.value as MessageActionSheetState.Data).manageSectionState)
+    }
+
+    @Test
+    fun `verify view in light mode action is visible when app and web view are in dark mode`() {
+        // given
+        val messageIds = listOf("messageId")
+        val currentFolder = Constants.MessageLocationType.INBOX
+        val actionsTarget = ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+        val expectedResult = MessageActionSheetState.ManageSectionState(
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget,
+            showStarAction = true,
+            showUnstarAction = false,
+            showMarkReadAction = false,
+            showViewInLightModeAction = true,
+            showViewInDarkModeAction = false
+        )
+        every { savedStateHandle.get<Boolean>(EXTRA_ARG_IS_STARRED) } returns false
+        every { isAppInDarkMode(any()) } returns true
+        coEvery { getViewInDarkModeMessagePreference(any(), any(), any()) } returns true
+
+        // when
+        viewModel.setupViewState(
+            context,
+            messageIds,
+            currentFolder,
+            currentFolder.asLabelId(),
+            actionsTarget
+        )
+
+        // then
+        assertEquals(expectedResult, (viewModel.stateFlow.value as MessageActionSheetState.Data).manageSectionState)
+    }
 }

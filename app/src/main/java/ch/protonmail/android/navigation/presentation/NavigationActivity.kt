@@ -19,8 +19,6 @@
 package ch.protonmail.android.navigation.presentation
 
 import android.content.Intent
-import android.content.res.Configuration.UI_MODE_NIGHT_MASK
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -284,7 +282,7 @@ internal abstract class NavigationActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS)
-            if (resources.configuration.uiMode and UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES) {
+            if (navigationViewModel.isAppInDarkMode(this)) {
                 setDarkStatusBar()
             } else {
                 setLightStatusBar()
@@ -360,7 +358,7 @@ internal abstract class NavigationActivity : BaseActivity() {
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
                 if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS)
-                    if (resources.configuration.uiMode and UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES) {
+                    if (navigationViewModel.isAppInDarkMode(this@NavigationActivity)) {
                         setDarkStatusBar()
                     } else {
                         setLightStatusBar()

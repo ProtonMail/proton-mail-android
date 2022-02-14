@@ -24,8 +24,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyDecryptor
-import ch.protonmail.android.details.domain.MessageBodyParser
-import ch.protonmail.android.details.domain.model.MessageBodyParts
 import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testdata.KeyInformationTestData
@@ -57,7 +55,7 @@ class MessageBodyLoaderTest {
     }
     private val messageBodyCssProviderMock = mockk<MessageBodyCssProvider> {
         every { getMessageBodyCss() } returns TestData.MESSAGE_BODY_CSS
-        every { getMessageBodyDarkModeCss() } returns TestData.MESSAGE_BODY_DARK_MODE_CSS
+        coEvery { getMessageBodyDarkModeCss(any(), any()) } returns TestData.MESSAGE_BODY_DARK_MODE_CSS
     }
     private val getStringResourceMock = mockk<StringResourceResolver> {
         every { this@mockk.invoke(R.string.request_timeout) } returns TestData.DEFAULT_ERROR_MESSAGE
