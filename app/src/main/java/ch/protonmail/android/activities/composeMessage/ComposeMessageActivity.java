@@ -162,7 +162,6 @@ import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
-import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
@@ -585,11 +584,16 @@ public class ComposeMessageActivity
     }
 
     private void setMessageBody() {
-        setMessageBodyInContainers(composeMessageViewModel.setMessageBody("", true, false,
-                getString(R.string.sender_name_address),
-                getString(R.string.original_message_divider),
-                getString(R.string.reply_prefix_on),
-                DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+        composeMessageViewModel.getFetchedBodyEvents().observe(this, it -> {
+            setMessageBodyInContainers(composeMessageViewModel.setMessageBody(
+                    it,
+                    true,
+                    false,
+                    getString(R.string.sender_name_address),
+                    getString(R.string.original_message_divider),
+                    getString(R.string.reply_prefix_on),
+                    DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+        });
     }
 
     private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {

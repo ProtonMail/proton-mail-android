@@ -96,7 +96,6 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
-import java.util.HashMap
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
@@ -152,6 +151,8 @@ class ComposeMessageViewModel @Inject constructor(
     private var _protonMailGroups: List<MessageRecipient> = java.util.ArrayList()
     private var _androidContactsLoaded: Boolean = false
     private var _protonMailContactsLoaded: Boolean = false
+
+    private val _fetchedBodyEvents: MutableLiveData<String> = MutableLiveData()
 
     private var _messageDataResult = MessageBuilderData
         .Builder()
@@ -226,6 +227,8 @@ class ComposeMessageViewModel @Inject constructor(
                 emit(fetchPublicKeys(request))
             }
         }
+    val fetchedBodyEvents: LiveData<String>
+        get() = _fetchedBodyEvents
 
     private val _events = MutableSharedFlow<ComposeMessageEventUiModel>(
         replay = 1,
@@ -425,6 +428,7 @@ class ComposeMessageViewModel @Inject constructor(
                     .decryptedMessage(decryptedMessage!!)
                     .build()
                 _actionType = UserAction.SAVE_DRAFT
+                _fetchedBodyEvents.value = decryptedMessage.orEmpty()
             }
         }
     }
