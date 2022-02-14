@@ -29,7 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.databinding.ListItemMailboxBinding
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
@@ -90,47 +90,44 @@ class MailboxItemView @JvmOverloads constructor(
         }
     }
 
-    private fun getCorrespondentsText(mailboxUiItem: MailboxUiItem, location: Constants.MessageLocationType) =
+    private fun getCorrespondentsText(mailboxUiItem: MailboxUiItem, location: MessageLocationType) =
         if (isDraftOrSentItem(mailboxUiItem, location)) {
             mailboxUiItem.recipients
         } else {
             mailboxUiItem.senderName
         }
 
-    private fun isDraftOrSentItem(mailboxUiItem: MailboxUiItem, location: Constants.MessageLocationType): Boolean {
+    private fun isDraftOrSentItem(mailboxUiItem: MailboxUiItem, location: MessageLocationType): Boolean {
         val messageLocation = mailboxUiItem.messageData?.location
-            ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
-        return any(location, Constants.MessageLocationType.fromInt(messageLocation)) {
-            it in arrayOf(
-                Constants.MessageLocationType.DRAFT,
-                Constants.MessageLocationType.SENT
-            )
+            ?: MessageLocationType.INVALID.messageLocationTypeValue
+        return any(location, MessageLocationType.fromInt(messageLocation)) {
+            it in arrayOf(MessageLocationType.DRAFT, MessageLocationType.SENT)
         }
     }
 
-    private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
-        Constants.MessageLocationType.INBOX -> R.drawable.ic_inbox
-        Constants.MessageLocationType.SENT -> R.drawable.ic_paper_plane
-        Constants.MessageLocationType.DRAFT -> R.drawable.ic_pencil
-        Constants.MessageLocationType.ALL_DRAFT -> R.drawable.ic_pencil
-        Constants.MessageLocationType.ALL_MAIL -> R.drawable.ic_folder
-        Constants.MessageLocationType.ALL_SENT -> R.drawable.ic_paper_plane
-        Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_archive
-        Constants.MessageLocationType.TRASH -> R.drawable.ic_trash
+    private fun getIconForMessageLocation(messageLocation: MessageLocationType) = when (messageLocation) {
+        MessageLocationType.INBOX -> R.drawable.ic_inbox
+        MessageLocationType.SENT -> R.drawable.ic_paper_plane
+        MessageLocationType.DRAFT -> R.drawable.ic_pencil
+        MessageLocationType.ALL_DRAFT -> R.drawable.ic_pencil
+        MessageLocationType.ALL_MAIL -> R.drawable.ic_folder
+        MessageLocationType.ALL_SENT -> R.drawable.ic_paper_plane
+        MessageLocationType.ARCHIVE -> R.drawable.ic_archive
+        MessageLocationType.TRASH -> R.drawable.ic_trash
         else -> null
     }
 
     fun bind(
         mailboxUiItem: MailboxUiItem,
         isMultiSelectionMode: Boolean,
-        mailboxLocation: Constants.MessageLocationType,
+        mailboxLocation: MessageLocationType,
         isBeingSent: Boolean,
         areAttachmentsBeingUploaded: Boolean
     ) {
         val readStatus = mailboxUiItem.isRead
-        val messageLocation = Constants.MessageLocationType.fromInt(
+        val messageLocation = MessageLocationType.fromInt(
             mailboxUiItem.messageData?.location
-                ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
+                ?: MessageLocationType.INVALID.messageLocationTypeValue
         )
 
         setTextViewStyles(readStatus)
@@ -167,10 +164,10 @@ class MailboxItemView @JvmOverloads constructor(
         // TODO: Currently there's a bug with showing the location on certain messages.
         //  Revisit the logic with MAILAND-1422
         if (mailboxLocation in arrayOf(
-                Constants.MessageLocationType.ALL_MAIL,
-                Constants.MessageLocationType.STARRED,
-                Constants.MessageLocationType.LABEL,
-                Constants.MessageLocationType.SEARCH
+                MessageLocationType.ALL_MAIL,
+                MessageLocationType.STARRED,
+                MessageLocationType.LABEL,
+                MessageLocationType.SEARCH
             )
         ) {
             val icon = getIconForMessageLocation(messageLocation)
@@ -197,10 +194,10 @@ class MailboxItemView @JvmOverloads constructor(
     }
 
     private fun isDraftsLocation(
-        mailboxLocation: Constants.MessageLocationType
+        mailboxLocation: MessageLocationType
     ) = mailboxLocation in arrayOf(
-        Constants.MessageLocationType.DRAFT,
-        Constants.MessageLocationType.ALL_DRAFT
+        MessageLocationType.DRAFT,
+        MessageLocationType.ALL_DRAFT
     )
 
 }
