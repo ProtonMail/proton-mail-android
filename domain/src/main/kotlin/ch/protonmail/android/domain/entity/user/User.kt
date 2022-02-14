@@ -107,3 +107,5 @@ enum class Role(val i: Int) {
 
 // TODO can this entity be used on other spaces under a different name?
 data class UserSpace(val used: Bytes, val total: Bytes)
+
+fun User.isPaidUser() = plans.filterIsInstance<Plan.Mail.Paid>().isNotEmpty()

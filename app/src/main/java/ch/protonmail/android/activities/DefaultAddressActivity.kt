@@ -31,16 +31,16 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import butterknife.OnClick
 import ch.protonmail.android.R
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.domain.entity.user.User
+import ch.protonmail.android.domain.entity.user.isPaidUser
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.showToast
 
 class DefaultAddressActivity : BaseActivity() {
 
-    private var addresses: List<Address>? = null
     private var mInflater: LayoutInflater? = null
     private lateinit var mAllRadioButtons: MutableList<RadioButton>
     private var mAvailableAddressesMap: MutableMap<Address, RadioButton>? = null
@@ -57,28 +57,28 @@ class DefaultAddressActivity : BaseActivity() {
 
     private val radioButtonClick = View.OnClickListener { v ->
         val selectedAddressRadioButton = v as RadioButton
-        for ((key, radioButton) in mAvailableAddressesMap!!) {
+        for ((address, radioButton) in mAvailableAddressesMap!!) {
             if (radioButton.id == selectedAddressRadioButton.id) {
                 // this is selected
-                if (MessageUtils.isPmMeAddress(key.email) && !mUser!!.isPaidUser) {
-                    mCurrentSelectedRadioButton!!.isChecked = true
-                    showToast(String.format(getString(R.string.pm_me_can_not_be_default), key.email))
+                if (MessageUtils.isPmMeAddress(address.email.s) && mUser?.isPaidUser() == false) {
+                    mCurrentSelectedRadioButton?.isChecked = true
+                    showToast(String.format(getString(R.string.pm_me_can_not_be_default), address.email.s))
                     return@OnClickListener
                 }
 
-                mSelectedAddress = key
+                mSelectedAddress = address
                 mCurrentSelectedRadioButton = selectedAddressRadioButton
                 clearSelection()
                 selectedAddressRadioButton.isChecked = true
-                defaultAddress.text = mSelectedAddress!!.email
+                defaultAddress.text = mSelectedAddress?.email?.s
 
-                val user = mUserManager.currentLegacyUser
+                val user = mUserManager.currentUser
                 val selectedAddress = mSelectedAddress
-                if (selectedAddress != null && user?.defaultAddressId != selectedAddress.id) {
+                if (selectedAddress != null && user?.addresses?.primary?.id?.id != selectedAddress.id.id) {
                     // Add first the selected address.
-                    val addressIds = mutableSetOf(selectedAddress.id)
+                    val addressIds = mutableSetOf(selectedAddress.id.id)
                     // Add all other.
-                    user?.addresses?.forEach { addressIds.add(it.id) }
+                    user?.addresses?.addresses?.forEach { addressIds.add(it.value.id.id) }
                     //
                     val job = UpdateSettingsJob(addressIds = addressIds.toList())
                     mJobManager.addJobInBackground(job)
@@ -99,10 +99,10 @@ class DefaultAddressActivity : BaseActivity() {
 
         mAvailableAddressesMap = HashMap()
         mAllRadioButtons = ArrayList()
-        mUser = mUserManager.currentLegacyUser
-        addresses = ArrayList(mUser!!.addresses)
+        mUser = mUserManager.currentUser
+        val addresses = mUser?.addresses?.addresses
         mInflater = LayoutInflater.from(this)
-        renderAddresses()
+        renderAddresses(addresses)
     }
 
     override fun onStart() {
@@ -148,23 +148,23 @@ class DefaultAddressActivity : BaseActivity() {
         }
     }
 
-    private fun renderAddresses() {
-        val sortedAddresses = addresses.orEmpty()
-            .sortedBy { it.order }
-            .sortedBy { it.status == 1 && it.receive == 1 }
-
-        mSelectedAddress = sortedAddresses[0]
-        defaultAddress.text = mSelectedAddress!!.email
+    private fun renderAddresses(addresses: Map<Int, Address>?) {
+        mSelectedAddress = addresses?.values?.elementAt(0)
+        defaultAddress.text = mSelectedAddress?.email?.s
         var mNoAvailableAddresses = true
         var mNoInactiveAddresses = true
 
-        sortedAddresses.forEachIndexed { index, address ->
-            val aliasAvailable = address.status == 1 && address.receive == 1
+        addresses?.values?.forEachIndexed { index, address ->
+            val aliasAvailable = address.enabled && address.allowedToReceive
             var addressRadio: RadioButton? = null
             var inactiveAddress: TextView? = null
             if (aliasAvailable) {
-                addressRadio = mInflater!!.inflate(R.layout.radio_button_list_item, availableAddresses, false) as RadioButton
-                addressRadio.text = address.email
+                addressRadio = mInflater?.inflate(
+                    R.layout.radio_button_list_item,
+                    availableAddresses,
+                    false
+                ) as RadioButton
+                addressRadio.text = address.email.s
                 addressRadio.isChecked = index == 0
                 if (index == 0) {
                     mCurrentSelectedRadioButton = addressRadio
@@ -176,8 +176,8 @@ class DefaultAddressActivity : BaseActivity() {
                 mAvailableAddressesMap!![address] = addressRadio
             } else {
                 inactiveAddress =
-                    mInflater!!.inflate(R.layout.alias_list_item_inactive, inactiveAddresses, false) as TextView
-                inactiveAddress.text = address.email
+                    mInflater?.inflate(R.layout.alias_list_item_inactive, inactiveAddresses, false) as TextView
+                inactiveAddress.text = address.email.s
             }
 
             if (aliasAvailable) {
@@ -185,7 +185,7 @@ class DefaultAddressActivity : BaseActivity() {
                 availableAddresses.addView(addressRadio)
             } else {
                 mNoInactiveAddresses = false
-                inactiveAddresses!!.addView(inactiveAddress)
+                inactiveAddresses?.addView(inactiveAddress)
             }
         }
         if (mNoAvailableAddresses) {
