@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -35,4 +35,7 @@ class MessageRecipientToCorrespondentMapper @Inject constructor() :
         name = messageRecipient.name ?: EMPTY_STRING,
         address = messageRecipient.emailAddress ?: EMPTY_STRING
     )
+
+    fun toDomainModels(messageRecipients: Collection<MessageRecipient>): List<Correspondent> =
+        messageRecipients.map(::toDomainModel)
 }

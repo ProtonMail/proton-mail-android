@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.mailbox.presentation
 
-import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -32,10 +31,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
@@ -43,7 +40,6 @@ import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSec
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
-import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.labels.domain.usecase.ObserveLabelsAndFoldersWithChildren
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
@@ -52,7 +48,6 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
-import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
@@ -61,17 +56,15 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
+import ch.protonmail.android.mailbox.presentation.mapper.MailboxUiItemMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
-import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.settings.domain.GetMailSettings
-import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.utils.Event
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
@@ -85,7 +78,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
@@ -106,7 +98,6 @@ const val FLOW_START_ACTIVITY = 1
 const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
 private const val STARRED_LABEL_ID = "10"
-private const val MIN_MESSAGES_TO_SHOW_COUNT = 2
 
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
@@ -136,6 +127,7 @@ internal class MailboxViewModel @Inject constructor(
     private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
     private val getMailSettings: GetMailSettings,
     private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper,
+    private val mailboxUiItemMapper: MailboxUiItemMapper,
     private val fetchEventsAndReschedule: FetchEventsAndReschedule
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
@@ -437,133 +429,23 @@ internal class MailboxViewModel @Inject constructor(
         conversations: List<Conversation>,
         locationId: String,
         labels: List<Label>
-    ): List<MailboxUiItem> {
-        val contacts = contactsRepository.findAllContactEmails().first()
-
-        return conversations.map { conversation ->
-            val lastMessageTimeMs = conversation.labels.find {
-                it.id == locationId
-            }?.contextTime?.let { it * 1000 } ?: 0
-
-            val conversationLabelsIds = conversation.labels.map { it.id }
-            val labelChipUiModels = labels
-                .filter { it.id.id in conversationLabelsIds }
-                .toLabelChipUiModels()
-
-            val isDraft = conversationContainsSingleDraftMessage(conversation)
-
-            MailboxUiItem(
-                itemId = conversation.id,
-                senderName = conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
-                subject = conversation.subject,
-                lastMessageTimeMs = lastMessageTimeMs,
-                hasAttachments = conversation.attachmentsCount > 0,
-                isStarred = conversation.labels.any { it.id == STARRED_LABEL_ID },
-                isRead = conversation.unreadCount == 0,
-                expirationTime = conversation.expirationTime,
-                messagesCount = getDisplayMessageCount(conversation),
-                messageData = null,
-                labels = labelChipUiModels,
-                recipients = conversation.receivers.joinToString { it.name },
-                isDraft = isDraft
-            )
-        }
-    }
-
-    private fun conversationContainsSingleDraftMessage(
-        conversation: Conversation
-    ) = conversation.messagesCount == 1 && conversation.labels.any {
-        it.id == Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString() ||
-            it.id == Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString()
-    }
-
-    private fun getDisplayMessageCount(conversation: Conversation) =
-        conversation.messagesCount.let {
-            if (it >= MIN_MESSAGES_TO_SHOW_COUNT) {
-                it
-            } else {
-                null
-            }
-        }
+    ): List<MailboxUiItem> =
+        mailboxUiItemMapper.toUiItems(
+            conversations = conversations,
+            currentLabelId = LabelId(locationId),
+            allLabels = labels
+        )
 
     private suspend fun messagesToMailboxItems(messages: List<Message>, labelsList: List<Label>?): List<MailboxUiItem> {
         Timber.v("messagesToMailboxItems size: ${messages.size}")
 
-        val emails = messages.map { message -> message.senderEmail }.distinct()
-        val contacts = emails
-            .chunked(Constants.MAX_SQL_ARGUMENTS)
-            .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first() }
         val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { LabelId(it) }
 
-        Timber.v("messagesToMailboxItems labels: $labelIds")
+        val allLabels = labelsList ?: labelIds
+            .chunked(Constants.MAX_SQL_ARGUMENTS)
+            .flatMap { idsChunk -> labelRepository.findLabels(idsChunk) }
 
-        val labels = labelsList?.toLabelChipUiModels()
-            ?: labelIds
-                .chunked(Constants.MAX_SQL_ARGUMENTS)
-                .flatMap { labelChunk -> labelRepository.findLabels(labelChunk) }
-                .toLabelChipUiModels()
-
-        return messages.map { message ->
-            val senderName = getSenderDisplayName(message, contacts)
-
-            val messageData = MessageData(
-                message.location,
-                message.isReplied ?: false,
-                message.isRepliedAll ?: false,
-                message.isForwarded ?: false,
-                message.isInline,
-            )
-
-            val labelChipUiModels = labels
-                .filter { it.id.id in message.allLabelIDs }
-
-            val messageLocation = message.locationFromLabel()
-            val isDraft = messageLocation == Constants.MessageLocationType.DRAFT ||
-                messageLocation == Constants.MessageLocationType.ALL_DRAFT
-
-            val mailboxUiItem = MailboxUiItem(
-                itemId = requireNotNull(message.messageId),
-                senderName = senderName,
-                subject = requireNotNull(message.subject),
-                lastMessageTimeMs = message.timeMs,
-                hasAttachments = message.numAttachments > 0,
-                isStarred = message.isStarred ?: false,
-                isRead = message.isRead,
-                expirationTime = message.expirationTime,
-                messagesCount = null,
-                messageData = messageData,
-                labels = labelChipUiModels,
-                recipients = message.toList.joinToString {
-                    getCorrespondentDisplayName(
-                        messageRecipientToCorrespondentMapper.toDomainModel(it), contacts
-                    )
-                },
-                isDraft = isDraft
-            )
-            mailboxUiItem
-        }
-    }
-
-    private fun getSenderDisplayName(message: Message, contacts: List<ContactEmail>): String {
-        val name = message.senderDisplayName?.takeIfNotBlank()
-            ?: message.senderName?.takeIfNotBlank()
-            ?: message.senderEmail
-
-        return getCorrespondentDisplayName(
-            Correspondent(name, message.senderEmail),
-            contacts
-        )
-    }
-
-    private fun getCorrespondentDisplayName(
-        correspondent: Correspondent,
-        contacts: List<ContactEmail>
-    ): String {
-        val senderNameFromContacts = contacts.find { correspondent.address == it.email }?.name
-
-        return senderNameFromContacts?.takeIfNotBlank()?.takeIf { it != correspondent.address }
-            ?: correspondent.name.takeIfNotBlank()
-            ?: correspondent.address
+        return mailboxUiItemMapper.toUiItems(messages, allLabels)
     }
 
     fun deleteAction(
@@ -584,14 +466,6 @@ internal class MailboxViewModel @Inject constructor(
             }
         }
     }
-
-    private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
-        filter { it.type == LabelType.MESSAGE_LABEL }.map { label ->
-            val labelColor = label.color.takeIfNotBlank()
-                ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-
-            LabelChipUiModel(label.id, Name(label.name), labelColor)
-        }
 
     fun markRead(
         ids: List<String>,
