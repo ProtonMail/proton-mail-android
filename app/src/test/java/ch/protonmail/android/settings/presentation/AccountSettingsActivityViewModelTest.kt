@@ -19,9 +19,9 @@
 
 package ch.protonmail.android.settings.presentation
 
-import app.cash.turbine.test
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.domain.UpdateViewMode
+import ch.protonmail.android.settings.domain.usecase.ObserveUserSettings
 import ch.protonmail.android.usecase.delete.ClearUserMessagesData
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import io.mockk.MockKAnnotations
@@ -29,6 +29,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
@@ -37,13 +38,11 @@ import me.proton.core.domain.type.IntEnum
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.usersettings.domain.entity.Flags
 import me.proton.core.usersettings.domain.entity.PasswordSetting
 import me.proton.core.usersettings.domain.entity.RecoverySetting
 import me.proton.core.usersettings.domain.entity.TwoFASetting
 import me.proton.core.usersettings.domain.entity.UserSettings
-import me.proton.core.usersettings.domain.usecase.GetUserSettings
 import me.proton.core.util.kotlin.EMPTY_STRING
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -59,9 +58,9 @@ class AccountSettingsActivityViewModelTest : ArchTest, CoroutinesTest {
 
     private var getMailSettings: GetMailSettings = mockk(relaxed = true)
 
-    private val getUserSettings: GetUserSettings = mockk()
-
     private val stringResourceResolver: StringResourceResolver = mockk()
+
+    private val observeUserSettings: ObserveUserSettings = mockk()
 
     private var viewModel: AccountSettingsActivityViewModel = mockk(relaxed = true)
 
@@ -77,9 +76,8 @@ class AccountSettingsActivityViewModelTest : ArchTest, CoroutinesTest {
                 clearUserMessagesData = clearUserMessagesData,
                 updateViewMode = updateViewMode,
                 getMailSettings = getMailSettings,
-                getUserSettings = getUserSettings,
-                dispatcherProvider = TestDispatcherProvider,
-                stringResourceResolver = stringResourceResolver
+                stringResourceResolver = stringResourceResolver,
+                observeUserSettings = observeUserSettings
             )
 
         coEvery { accountManager.getPrimaryUserId() } returns flowOf(userId)
@@ -111,30 +109,26 @@ class AccountSettingsActivityViewModelTest : ArchTest, CoroutinesTest {
         // given
         val recoveryEmail = buildRecoverySetting(value = "test@protonmail.com")
         val userSettings = buildUserSettings(userId, email = recoveryEmail)
-        coEvery { getUserSettings(userId, any()) } returns userSettings
+        coEvery { observeUserSettings(userId) } returns flowOf(userSettings)
 
-        viewModel.recoveryEmailResult.test {
-            // when
-            viewModel.getRecoveryEmail()
-            val result = expectMostRecentItem()
-            // then
-            assertEquals(recoveryEmail.value, result)
-        }
+        // when
+        val result = viewModel.getRecoveryEmailFlow()
+
+        // then
+        assertEquals(recoveryEmail.value, result.first())
     }
 
     @Test
     fun `should emit placeholder string when recovery email from user settings is null`() = runBlockingTest {
         // given
         val userSettings = buildUserSettings(userId)
-        coEvery { getUserSettings(userId, any()) } returns userSettings
+        coEvery { observeUserSettings(userId) } returns flowOf(userSettings)
 
-        viewModel.recoveryEmailResult.test {
-            // when
-            viewModel.getRecoveryEmail()
-            val result = expectMostRecentItem()
-            // then
-            assertEquals(stringResource, result)
-        }
+        // when
+        val result = viewModel.getRecoveryEmailFlow()
+
+        // then
+        assertEquals(stringResource, result.first())
     }
 
     @Test
@@ -142,15 +136,13 @@ class AccountSettingsActivityViewModelTest : ArchTest, CoroutinesTest {
         // given
         val recoveryEmail = buildRecoverySetting(value = EMPTY_STRING)
         val userSettings = buildUserSettings(userId, email = recoveryEmail)
-        coEvery { getUserSettings(userId, any()) } returns userSettings
+        coEvery { observeUserSettings(userId) } returns flowOf(userSettings)
 
-        viewModel.recoveryEmailResult.test {
-            // when
-            viewModel.getRecoveryEmail()
-            val result = expectMostRecentItem()
-            // then
-            assertEquals(stringResource, result)
-        }
+        // when
+        val result = viewModel.getRecoveryEmailFlow()
+
+        // then
+        assertEquals(stringResource, result.first())
     }
 
     private fun buildRecoverySetting(

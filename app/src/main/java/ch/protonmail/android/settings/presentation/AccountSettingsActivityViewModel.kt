@@ -24,22 +24,18 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.domain.UpdateViewMode
+import ch.protonmail.android.settings.domain.usecase.ObserveUserSettings
 import ch.protonmail.android.usecase.delete.ClearUserMessagesData
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.mailsettings.domain.entity.ViewMode
-import me.proton.core.usersettings.domain.usecase.GetUserSettings
-import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,14 +44,9 @@ class AccountSettingsActivityViewModel @Inject constructor(
     private var clearUserMessagesData: ClearUserMessagesData,
     private var updateViewMode: UpdateViewMode,
     private val getMailSettings: GetMailSettings,
-    private val getUserSettings: GetUserSettings,
-    private val dispatcherProvider: DispatcherProvider,
-    private val stringResourceResolver: StringResourceResolver
+    private val stringResourceResolver: StringResourceResolver,
+    private val observeUserSettings: ObserveUserSettings
 ) : ViewModel() {
-
-    private val _recoveryEmailResult = MutableSharedFlow<String>()
-    val recoveryEmailResult: SharedFlow<String>
-        get() = _recoveryEmailResult
 
     suspend fun getMailSettings() = getMailSettings.invoke()
 
@@ -70,19 +61,19 @@ class AccountSettingsActivityViewModel @Inject constructor(
         }
     }
 
-    fun getRecoveryEmail() {
-        accountManager.getPrimaryUserId()
+    fun getRecoveryEmailFlow(): Flow<String> {
+        return accountManager.getPrimaryUserId()
             .filterNotNull()
-            .map { userId ->
-                val emailAddress = getUserSettings(userId, refresh = false).email?.value
-                if (emailAddress.isNullOrEmpty()) {
-                    stringResourceResolver(R.string.not_set)
-                } else {
-                    emailAddress
-                }
+            .flatMapLatest { userId ->
+                observeUserSettings(userId)
+                    .map {
+                        val recoveryEmail = it?.email?.value
+                        if (recoveryEmail.isNullOrEmpty()) {
+                            stringResourceResolver(R.string.not_set)
+                        } else {
+                            recoveryEmail
+                        }
+                    }
             }
-            .flowOn(dispatcherProvider.Io)
-            .onEach { _recoveryEmailResult.emit(it) }
-            .launchIn(viewModelScope)
     }
 }

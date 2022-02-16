@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -62,19 +63,18 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         actionBar?.elevation = elevation
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
-
-        accountSettingsActivityViewModel.recoveryEmailResult
-            .onEach { recoveryEmail ->
-                setValue(
-                    SettingsEnum.RECOVERY_EMAIL,
-                    recoveryEmail
-                )
-            }
-            .launchIn(lifecycleScope)
     }
 
     override fun onResume() {
         super.onResume()
+        accountSettingsActivityViewModel.getRecoveryEmailFlow()
+            .onEach {
+                setValue(
+                    SettingsEnum.RECOVERY_EMAIL,
+                    it
+                )
+            }
+            .launchIn(lifecycleScope)
         setUpSettingsItems(R.raw.acc_settings_structure)
         renderViews()
     }
@@ -134,8 +134,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             }
             setValue(SettingsEnum.LOCAL_STORAGE_LIMIT, storageValueString)
         }
-
-        accountSettingsActivityViewModel.getRecoveryEmail()
 
         setupViewMode()
     }
