@@ -69,6 +69,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
+import me.proton.core.usersettings.domain.usecase.GetUserSettings
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 
@@ -92,7 +93,8 @@ internal class EventHandler @AssistedInject constructor(
     private val externalScope: CoroutineScope,
     private val messageFlagsToEncryptionMapper: MessageFlagsToEncryptionMapper,
     private val labelRepository: LabelRepository,
-    private val labelEventApiMapper: LabelEventApiMapper
+    private val labelEventApiMapper: LabelEventApiMapper,
+    private val getUserSettings: GetUserSettings
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
@@ -220,6 +222,7 @@ internal class EventHandler @AssistedInject constructor(
         val contactsEmails = response.contactEmailsUpdates
 
         val user = response.userUpdates
+        val userSettings = response.userSettingsUpdates
 
         val mailSettings = response.mailSettingsUpdates
         val labels = response.labelUpdates
@@ -248,6 +251,12 @@ internal class EventHandler @AssistedInject constructor(
         if (mailSettings != null) {
             writeMailSettings(context, mailSettings)
             fetchMailSettingsWorker.enqueue()
+        }
+        if (userSettings != null) {
+            // Core is the source of truth. Workaround: Force refresh Core.
+            externalScope.launch {
+                getUserSettings(userId, refresh = true)
+            }
         }
         if (user != null) {
             // Core is the source of truth. Workaround: Force refresh Core.

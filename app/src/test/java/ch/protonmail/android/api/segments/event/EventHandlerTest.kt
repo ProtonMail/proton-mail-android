@@ -34,6 +34,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.TestCoroutineScope
 import me.proton.core.domain.entity.UserId
+import me.proton.core.usersettings.domain.usecase.GetUserSettings
 import kotlin.test.Test
 
 class EventHandlerTest {
@@ -54,6 +55,7 @@ class EventHandlerTest {
         every { provideMessageDao(any()) } returns mockk()
         every { providePendingActionDao(any()) } returns mockk()
     }
+    private val getUserSettings: GetUserSettings = mockk()
 
     private val eventHandler = EventHandler(
         context = context,
@@ -75,7 +77,8 @@ class EventHandlerTest {
         externalScope = TestCoroutineScope(),
         messageFlagsToEncryptionMapper = mockk(),
         labelRepository = mockk(),
-        labelEventApiMapper = mockk()
+        labelEventApiMapper = mockk(),
+        getUserSettings = getUserSettings
     )
 
     @Test
@@ -116,6 +119,33 @@ class EventHandlerTest {
         coVerify { unreadCounterDao.insertOrUpdate(countsDatabaseModels) }
     }
 
+    @Test
+    fun `should refresh core user settings when an event with user settings change arrives`() {
+        // given
+        val eventResponse = mockEventResponse {
+            every { userSettingsUpdates } returns mockk()
+        }
+        coEvery { getUserSettings(testUserId(), refresh = true) } returns mockk()
+
+        // when
+        eventHandler.write(eventResponse)
+
+        // then
+        coVerify { getUserSettings(testUserId(), refresh = true) }
+    }
+
+    @Test
+    fun `should not refresh core user settings when an event without user settings change arrives`() {
+        // given
+        val eventResponse = mockEventResponse()
+
+        // when
+        eventHandler.write(eventResponse)
+
+        // then
+        coVerify(exactly = 0) { getUserSettings(testUserId(), refresh = true) }
+    }
+
     private fun testUserId() = UserId("user1")
     private fun countsApiModels() = listOf(
         CountsApiModel("Inbox", 5, 10),
@@ -133,8 +163,9 @@ class EventHandlerTest {
         every { mailSettingsUpdates } returns null
         every { messageCounts } returns null
         every { messageUpdates } returns null
-        every { userUpdates } returns null
+        every { userSettingsUpdates } returns null
         every { usedSpace } returns 0
+        every { userUpdates } returns null
         block()
     }
 }
