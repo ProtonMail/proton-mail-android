@@ -28,6 +28,16 @@ println("Modules: ${modules.sorted().joinToString()}")
 for (p in projects) includeBuild(p)
 for (m in modules) include(m)
 
+// Use core libs from maven artifacts or submodules (see gradle.properties).
+val useCoreGitSubmoduleAsBoolean: Boolean = extensions.extraProperties
+    .properties["useCoreGitSubmodule"].toString().toBoolean()
+if (useCoreGitSubmoduleAsBoolean) {
+    println("Use core libs from git submodule \'./proton-libs\'")
+    includeBuild("proton-libs")
+} else {
+    println("Use core libs from Maven artifacts")
+}
+
 pluginManagement {
     repositories {
         mavenCentral()
@@ -46,7 +56,8 @@ fun File.projectsAndModules() : Pair<Set<String>, Set<String>> {
         "buildSrc",
         "config",
         "build",
-        "src"
+        "src",
+        "proton-libs"
     )
 
     fun File.childrenDirectories() = listFiles { _, name -> name !in blacklist }!!

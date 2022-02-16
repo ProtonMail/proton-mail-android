@@ -77,7 +77,11 @@
         android:theme="@style/ProtonTheme.Mail"
         android:taskAffinity=""
         tools:replace="android:theme">
-
+        <!-- Disable Core SentryInitProvider. Replaced by SentryInitializer -->
+        <provider
+            android:name="io.sentry.android.core.SentryInitProvider"
+            android:authorities="io.sentry.android.core"
+            tools:node="remove" />
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -91,6 +95,11 @@
                 tools:node="remove" />
 
             <meta-data
+                android:name="ch.protonmail.android.feature.account.AccountStateHandlerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove"/>
+
+            <meta-data
                 android:name="me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer"
                 android:value="androidx.startup"
                 tools:node="remove"/>
@@ -99,8 +108,12 @@
                 android:name="ch.protonmail.android.security.presentation.SecurityManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove"/>
-        </provider>
 
+            <meta-data
+                android:name="ch.protonmail.android.core.SentryInitializer"
+                android:value="androidx.startup"
+                tools:node="remove"/>
+        </provider>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

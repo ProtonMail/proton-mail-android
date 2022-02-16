@@ -102,6 +102,7 @@ object AccountManagerModule {
     ): AccountMigrator =
         AccountMigratorImpl(accountManager, accountRepository, userRepository)
 
+    @Suppress("LongParameterList")
     @Provides
     @Singleton
     fun provideAccountStateHandler(
@@ -110,13 +111,15 @@ object AccountManagerModule {
         userManager: UserManager,
         accountManager: AccountManager,
         accountRepository: AccountRepository,
-        accountMigrator: AccountMigrator
+        accountMigrator: AccountMigrator,
+        product: Product
     ): AccountStateHandler = AccountStateHandler(
         scope,
         userManager,
         accountManager,
         accountRepository,
-        accountMigrator
+        accountMigrator,
+        product
     )
 
     @Provides

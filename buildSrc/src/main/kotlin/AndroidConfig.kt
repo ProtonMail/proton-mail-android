@@ -37,7 +37,6 @@ fun org.gradle.api.Project.android(
     version: Version? = null,
     versionCode: Int = ProtonMail.versionCode,
     versionName: String = ProtonMail.versionName,
-    useDataBinding: Boolean = false,
     config: ExtraConfig = {}
 
 ) = (this as ExtensionAware).extensions.configure<TestedExtension> {
@@ -62,10 +61,7 @@ fun org.gradle.api.Project.android(
 
         // Other
         vectorDrawables.useSupportLibrary = true
-
         buildFeatures.viewBinding = true
-        // Core needs dataBinding (to be removed).
-        dataBinding.isEnabled = useDataBinding
     }
 
     lintOptions {

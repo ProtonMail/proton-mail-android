@@ -26,7 +26,8 @@ import ch.protonmail.android.R
 object Constants {
 
     // region Urls
-    private const val API_HOST = "api.protonmail.ch"
+    const val HOST = "protonmail.ch"
+    const val API_HOST = "api.$HOST"
     const val BASE_URL = "https://$API_HOST"
     const val DUMMY_URL_PREFIX = "http://androidlinksfix.protonmail.com"
     const val HUMAN_VERIFICATION_URL = "https://verify.protonmail.com"

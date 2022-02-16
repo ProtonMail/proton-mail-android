@@ -123,7 +123,6 @@ val DependencyHandler.`leakcanary` get() =                  dependency("com.squa
 val DependencyHandler.`okhttp-url-connection` get() =       squareup("okhttp3", "okhttp-urlconnection") version `okHttp-url-connection version`
 val DependencyHandler.`okio` get() =                        dependency("com.squareup.okio", module = "okio") version `okio version`
 val DependencyHandler.`sentry-android` get() =              dependency("io.sentry", module = "sentry-android") version `sentry version`
-val DependencyHandler.`sentry-android-plugin` get() =       dependency("io.sentry", module = "sentry-android-gradle-plugin") version `sentry-plugin version`
 val DependencyHandler.`stetho` get() =                      dependency("com.facebook", "stetho") version `stetho version`
 val DependencyHandler.`timber` get() =                      jakeWharton("timber") version `timber version`
 val DependencyHandler.`trustKit` get() =                    dependency("com.datatheorem.android", "trustkit") version `trustKit version`

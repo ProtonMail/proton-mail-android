@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NonNls
 import timber.log.Timber
 
 class CoreTimberLogger : Logger {
+
     override fun e(tag: String, e: Throwable) =
         Timber.tag(tag).e(e)
 
@@ -51,8 +52,11 @@ class CoreTimberLogger : Logger {
         Timber.tag(tag).v(e, message)
 
     override fun log(tag: LoggerLogTag, message: String) = when (tag) {
-        LogTag.API_REQUEST -> Timber.tag(tag.name).d(message)
+        LogTag.API_REQUEST,
+        LogTag.API_RESPONSE,
+        LogTag.API_ERROR,
         LogTag.REFRESH_TOKEN -> Timber.tag(tag.name).d(message)
+        LogTag.SERVER_TIME_PARSE_ERROR -> Timber.tag(tag.name).e(message)
         else -> Timber.tag(tag.name).d(message)
     }
 }

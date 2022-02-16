@@ -24,7 +24,8 @@ import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.obfuscateEmail
 import io.sentry.Sentry
-import io.sentry.event.EventBuilder
+import io.sentry.SentryEvent
+import io.sentry.protocol.Message
 import timber.log.Timber
 
 /**
@@ -36,23 +37,24 @@ import timber.log.Timber
  */
 internal class SentryTree : Timber.Tree() {
 
-    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+    override fun isLoggable(tag: String?, priority: Int): Boolean = priority >= Log.WARN
 
-        if (priority >= Log.WARN) {
-            val event = EventBuilder().apply {
-                tag?.let { withTag(TAG_LOG, it) }
-                if (t is DetailedException) {
-                    for (extra in t.extras) {
-                        withExtra(extra.key, extra.value)
-                    }
-                }
-                withMessage(obfuscateEmails(message))
-                withTag(TAG_APP_VERSION, AppUtil.getAppVersion())
-                withTag(TAG_SDK_VERSION, "${Build.VERSION.SDK_INT}")
-                withTag(TAG_DEVICE_MODEL, Build.MODEL)
-            }.build()
-            Sentry.capture(event)
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        val event = SentryEvent().apply {
+            tag?.let { setTag(TAG_LOG, it) }
+            if (t is DetailedException) {
+                setExtras(t.extras)
+            }
+            setMessage(obfuscatedMessage(message))
+            setTag(TAG_APP_VERSION, AppUtil.getAppVersion())
+            setTag(TAG_SDK_VERSION, "${Build.VERSION.SDK_INT}")
+            setTag(TAG_DEVICE_MODEL, Build.MODEL)
         }
+        Sentry.captureEvent(event)
+    }
+
+    private fun obfuscatedMessage(string: String): Message = Message().apply {
+        message = obfuscateEmails(string)
     }
 
     private fun obfuscateEmails(string: String): String =

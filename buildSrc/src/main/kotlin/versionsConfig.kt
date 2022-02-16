@@ -29,7 +29,7 @@ fun initVersions() {
     // endregion
 
     // region Android
-    `android-gradle-plugin version` =           "4.2.2"         // Released: Jun 30, 2021
+    `android-gradle-plugin version` =           "7.0.4"
 
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
@@ -54,15 +54,15 @@ fun initVersions() {
     `dagger version` =                          "2.40.5"        // Released: Dec 07, 2021
 
     `mockK version` =                           "1.12.2"        // Released: Dec 31, 2021
-    `retrofit version` =                         "2.6.1"         // Released: Jul 31, 2019
-    `retrofit-kotlin-serialization version` =    ""
+    `retrofit version` =                        "2.9.0"         // Released: May 20, 2020
+    `retrofit-kotlin-serialization version` =   "0.8.0"         // Released: Oct 09, 2020
     `robolectric version` =                     "4.3.1"         // Released: Oct 11, 2019
     `viewStateStore version` =                  "1.4-beta-4"    // Released: Mar 02, 2020
     // endregion
 }
 
 // Proton Core
-const val `Proton-core version` = "6.0.0"
+const val `Proton-core version` = "7.0.0"
 
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
@@ -106,8 +106,7 @@ const val `okio version` =                      "2.10.0"        // Released: Jan
 const val `rf2 converter version` =             "2.9.0"         // Released: May 20, 2020
 const val `rxJava version` =                    "2.0.2"         // Released: Dec 02, 201
 const val `rxRelay version` =                   "2.1.1"         // Released: Aug 23, 201
-const val `sentry version` =                    "1.7.30"        // Released: Jan 28, 2020 TODO: 2.x requires minor refactor for captureEvent and different imports
-const val `sentry-plugin version` =             "1.7.36"        // Released: Oct 16, 2020
+const val `sentry version` =                    "5.6.1"         // Released: Feb 02, 2022
 const val `sonarQube version` =                 "2.7.1"         // Released: May 14, 2019
 const val `stetho version` =                    "1.5.1"         // Released: Mar 18, 2019
 const val `timber version` =                    "4.7.1"         // Released:

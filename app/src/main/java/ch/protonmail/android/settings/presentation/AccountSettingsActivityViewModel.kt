@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.mailsettings.domain.entity.ViewMode
-import me.proton.core.usersettings.domain.usecase.GetSettings
+import me.proton.core.usersettings.domain.usecase.GetUserSettings
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
@@ -48,7 +48,7 @@ class AccountSettingsActivityViewModel @Inject constructor(
     private var clearUserMessagesData: ClearUserMessagesData,
     private var updateViewMode: UpdateViewMode,
     private val getMailSettings: GetMailSettings,
-    private val getUserSettings: GetSettings,
+    private val getUserSettings: GetUserSettings,
     private val dispatcherProvider: DispatcherProvider,
     private val stringResourceResolver: StringResourceResolver
 ) : ViewModel() {
@@ -74,7 +74,7 @@ class AccountSettingsActivityViewModel @Inject constructor(
         accountManager.getPrimaryUserId()
             .filterNotNull()
             .map { userId ->
-                val emailAddress = getUserSettings(userId).email?.value
+                val emailAddress = getUserSettings(userId, refresh = false).email?.value
                 if (emailAddress.isNullOrEmpty()) {
                     stringResourceResolver(R.string.not_set)
                 } else {

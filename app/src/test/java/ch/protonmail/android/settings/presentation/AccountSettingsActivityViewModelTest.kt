@@ -43,7 +43,7 @@ import me.proton.core.usersettings.domain.entity.PasswordSetting
 import me.proton.core.usersettings.domain.entity.RecoverySetting
 import me.proton.core.usersettings.domain.entity.TwoFASetting
 import me.proton.core.usersettings.domain.entity.UserSettings
-import me.proton.core.usersettings.domain.usecase.GetSettings
+import me.proton.core.usersettings.domain.usecase.GetUserSettings
 import me.proton.core.util.kotlin.EMPTY_STRING
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -59,7 +59,7 @@ class AccountSettingsActivityViewModelTest : ArchTest, CoroutinesTest {
 
     private var getMailSettings: GetMailSettings = mockk(relaxed = true)
 
-    private val getUserSettings: GetSettings = mockk()
+    private val getUserSettings: GetUserSettings = mockk()
 
     private val stringResourceResolver: StringResourceResolver = mockk()
 
@@ -111,7 +111,7 @@ class AccountSettingsActivityViewModelTest : ArchTest, CoroutinesTest {
         // given
         val recoveryEmail = buildRecoverySetting(value = "test@protonmail.com")
         val userSettings = buildUserSettings(userId, email = recoveryEmail)
-        coEvery { getUserSettings(userId) } returns userSettings
+        coEvery { getUserSettings(userId, any()) } returns userSettings
 
         viewModel.recoveryEmailResult.test {
             // when
@@ -126,7 +126,7 @@ class AccountSettingsActivityViewModelTest : ArchTest, CoroutinesTest {
     fun `should emit placeholder string when recovery email from user settings is null`() = runBlockingTest {
         // given
         val userSettings = buildUserSettings(userId)
-        coEvery { getUserSettings(userId) } returns userSettings
+        coEvery { getUserSettings(userId, any()) } returns userSettings
 
         viewModel.recoveryEmailResult.test {
             // when
@@ -142,7 +142,7 @@ class AccountSettingsActivityViewModelTest : ArchTest, CoroutinesTest {
         // given
         val recoveryEmail = buildRecoverySetting(value = EMPTY_STRING)
         val userSettings = buildUserSettings(userId, email = recoveryEmail)
-        coEvery { getUserSettings(userId) } returns userSettings
+        coEvery { getUserSettings(userId, any()) } returns userSettings
 
         viewModel.recoveryEmailResult.test {
             // when

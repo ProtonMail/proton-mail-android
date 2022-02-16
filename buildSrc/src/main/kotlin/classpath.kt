@@ -32,5 +32,4 @@ val ScriptHandlerScope.classpathDependencies: DependencyHandlerScope.() -> Unit 
     classpath(`hilt-android-gradle-plugin`)
     classpath(`kotlin-gradle-plugin`)
     classpath(`serialization-gradle-plugin`)
-    classpath(`sentry-android-plugin`)
 }

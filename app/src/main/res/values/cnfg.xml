@@ -33,7 +33,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>su</item>
     </array>
     <string name="default_delimiter" translatable="false">:</string>
-    <string name="sentry_url" translatable="false">https://%1$s@%2$s</string>
     <array name="custom_language_labels" translatable="false">
         <item>English</item>
         <item>Català</item>

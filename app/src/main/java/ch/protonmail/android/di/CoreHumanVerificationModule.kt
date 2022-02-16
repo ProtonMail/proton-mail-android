@@ -18,6 +18,7 @@
 
 package ch.protonmail.android.di
 
+import ch.protonmail.android.core.Constants
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -34,7 +35,9 @@ import me.proton.core.humanverification.domain.HumanVerificationManager
 import me.proton.core.humanverification.domain.HumanVerificationWorkflowHandler
 import me.proton.core.humanverification.domain.repository.HumanVerificationRepository
 import me.proton.core.humanverification.domain.repository.UserVerificationRepository
+import me.proton.core.humanverification.presentation.CaptchaApiHost
 import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator
+import me.proton.core.humanverification.presentation.utils.HumanVerificationVersion
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.humanverification.HumanVerificationListener
 import me.proton.core.network.domain.humanverification.HumanVerificationProvider
@@ -45,8 +48,19 @@ import javax.inject.Singleton
 object HumanVerificationModule {
 
     @Provides
-    fun provideHumanVerificationOrchestrator(): HumanVerificationOrchestrator =
-        HumanVerificationOrchestrator()
+    // Can be either HumanVerificationVersion.HV2 or HV3.
+    fun provideHumanVerificationVersion() = HumanVerificationVersion.HV2
+
+    @Provides
+    @CaptchaApiHost
+    // Legacy Captcha api host dependency. Should point to 'api.$HOST'.
+    fun provideCaptchaApiHost(): String = Constants.API_HOST
+
+    @Provides
+    fun provideHumanVerificationOrchestrator(
+        humanVerificationVersion: HumanVerificationVersion
+    ): HumanVerificationOrchestrator =
+        HumanVerificationOrchestrator(humanVerificationVersion)
 
     @Provides
     @Singleton
