@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -22,7 +22,7 @@ package ch.protonmail.android.mailbox.presentation.model
 import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.ui.model.LabelChipUiModel
 
-data class MailboxUiItem(
+data class MailboxItemUiModel(
     val itemId: String,
     val senderName: String,
     val subject: String,
@@ -38,12 +38,12 @@ data class MailboxUiItem(
     val isDraft: Boolean
 ) {
 
-    class DiffCallback : DiffUtil.ItemCallback<MailboxUiItem>() {
+    class DiffCallback : DiffUtil.ItemCallback<MailboxItemUiModel>() {
 
-        override fun areItemsTheSame(oldItem: MailboxUiItem, newItem: MailboxUiItem) =
+        override fun areItemsTheSame(oldItem: MailboxItemUiModel, newItem: MailboxItemUiModel) =
             oldItem.itemId == newItem.itemId
 
-        override fun areContentsTheSame(oldItem: MailboxUiItem, newItem: MailboxUiItem) =
+        override fun areContentsTheSame(oldItem: MailboxItemUiModel, newItem: MailboxItemUiModel) =
             oldItem == newItem
     }
 

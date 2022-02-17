@@ -61,8 +61,8 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
-import ch.protonmail.android.mailbox.presentation.mapper.MailboxUiItemMapper
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.model.LabelChipUiModel
@@ -154,9 +154,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val messageRecipientToCorrespondentMapper = MessageRecipientToCorrespondentMapper()
 
-    private val mailboxUiItemMapper: MailboxUiItemMapper = mockk {
-        coEvery { toUiItems(any(), any()) } returns emptyList()
-        coEvery { toUiItems(any(), any(), any()) } returns emptyList()
+    private val mailboxItemUiModelMapper: MailboxItemUiModelMapper = mockk {
+        coEvery { toUiModels(any(), any()) } returns emptyList()
+        coEvery { toUiModels(any(), any(), any()) } returns emptyList()
     }
 
     private val fetchEventsAndReschedule: FetchEventsAndReschedule = mockk {
@@ -243,7 +243,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings,
             messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper,
-            mailboxUiItemMapper = mailboxUiItemMapper,
+            mailboxUiItemMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule
         )
     }
@@ -258,7 +258,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     fun verifyBasicInitFlowWithEmptyMessages() = runBlockingTest {
         // Given
         val messages = emptyList<Message>()
-        val expected = emptyList<MailboxUiItem>().toMailboxState()
+        val expected = emptyList<MailboxItemUiModel>().toMailboxState()
 
         // When
         viewModel.mailboxState.test {
@@ -292,7 +292,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val message = Message()
             val messages = listOf(message)
             val mailboxUiItems = listOf(buildMailboxUiItem())
-            coEvery { mailboxUiItemMapper.toUiItems(listOf(message), any()) } returns mailboxUiItems
+            coEvery { mailboxItemUiModelMapper.toUiModels(listOf(message), any()) } returns mailboxUiItems
             val expectedState = mailboxUiItems.toMailboxState()
 
             // When
@@ -312,7 +312,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val conversations = listOf(buildConversation())
             val successResult = GetConversationsResult.Success(conversations)
             val mailboxUiItems = listOf(buildMailboxUiItem())
-            coEvery { mailboxUiItemMapper.toUiItems(conversations, location.asLabelId(), any()) } returns mailboxUiItems
+            coEvery { mailboxItemUiModelMapper.toUiModels(conversations, location.asLabelId(), any()) } returns mailboxUiItems
 
             val expected = mailboxUiItems.toMailboxState()
 
@@ -537,9 +537,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coVerify(exactly = 2) { fetchEventsAndReschedule() }
         }
 
-    private fun MailboxUiItem.toMailboxState() = listOf(this).toMailboxState()
+    private fun MailboxItemUiModel.toMailboxState() = listOf(this).toMailboxState()
 
-    private fun List<MailboxUiItem>.toMailboxState(): MailboxState.Data =
+    private fun List<MailboxItemUiModel>.toMailboxState(): MailboxState.Data =
         MailboxState.Data(this, isFreshData = false, shouldResetPosition = true)
 
     private fun buildMailboxUiItem(
@@ -556,7 +556,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         labels: List<LabelChipUiModel> = emptyList(),
         recipients: String = "",
         isDraft: Boolean = false
-    ) = MailboxUiItem(
+    ) = MailboxItemUiModel(
         itemId = itemId,
         senderName = senderName,
         subject = subject,
@@ -587,7 +587,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             messages = emptyList()
         )
 
-        fun buildMailboxUiItem() = MailboxUiItem(
+        fun buildMailboxUiItem() = MailboxItemUiModel(
             itemId = EMPTY_STRING,
             senderName = EMPTY_STRING,
             subject = EMPTY_STRING,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -43,7 +43,7 @@ import ch.protonmail.android.events.NoResultsEvent
 import ch.protonmail.android.events.SearchResultEvent
 import ch.protonmail.android.jobs.SearchMessagesJob
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.utils.AppUtil
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
@@ -102,7 +102,7 @@ internal class SearchActivity : BaseActivity() {
                 }
             }
         })
-        adapter.setItemClick { mailboxUiItem: MailboxUiItem ->
+        adapter.setItemClick { mailboxUiItem: MailboxItemUiModel ->
             if (isDraft(mailboxUiItem)) {
                 val intent =
                     AppUtil.decorInAppIntent(Intent(this@SearchActivity, ComposeMessageActivity::class.java))
@@ -128,7 +128,7 @@ internal class SearchActivity : BaseActivity() {
 
     }
 
-    private fun showSearchResults(items: List<MailboxUiItem>) {
+    private fun showSearchResults(items: List<MailboxItemUiModel>) {
         adapter.submitList(items)
         progressBar.visibility = View.GONE
         adapter.setNewLocation(MessageLocationType.SEARCH)
@@ -195,7 +195,7 @@ internal class SearchActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun isDraft(item: MailboxUiItem): Boolean {
+    private fun isDraft(item: MailboxItemUiModel): Boolean {
         val messageLocation = item.messageData?.location?.let { fromInt(it) }
         return messageLocation === MessageLocationType.ALL_DRAFT ||
             messageLocation === MessageLocationType.DRAFT

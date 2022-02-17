@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.mailbox.presentation
 
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 sealed class MailboxState {
@@ -39,7 +39,7 @@ sealed class MailboxState {
      * @property isFreshData if `true` we already refreshed from remote, otherwise we're relying on cache
      */
     data class Data(
-        val items: List<MailboxUiItem>,
+        val items: List<MailboxItemUiModel>,
         val isFreshData: Boolean,
         val shouldResetPosition: Boolean = false
     ) : MailboxState()

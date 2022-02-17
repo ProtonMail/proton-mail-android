@@ -56,8 +56,8 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
-import ch.protonmail.android.mailbox.presentation.mapper.MailboxUiItemMapper
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -127,7 +127,7 @@ internal class MailboxViewModel @Inject constructor(
     private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
     private val getMailSettings: GetMailSettings,
     private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper,
-    private val mailboxUiItemMapper: MailboxUiItemMapper,
+    private val mailboxItemUiModelMapper: MailboxItemUiModelMapper,
     private val fetchEventsAndReschedule: FetchEventsAndReschedule
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
@@ -429,14 +429,14 @@ internal class MailboxViewModel @Inject constructor(
         conversations: List<Conversation>,
         locationId: String,
         labels: List<Label>
-    ): List<MailboxUiItem> =
-        mailboxUiItemMapper.toUiItems(
+    ): List<MailboxItemUiModel> =
+        mailboxItemUiModelMapper.toUiModels(
             conversations = conversations,
             currentLabelId = LabelId(locationId),
             allLabels = labels
         )
 
-    private suspend fun messagesToMailboxItems(messages: List<Message>, labelsList: List<Label>?): List<MailboxUiItem> {
+    private suspend fun messagesToMailboxItems(messages: List<Message>, labelsList: List<Label>?): List<MailboxItemUiModel> {
         Timber.v("messagesToMailboxItems size: ${messages.size}")
 
         val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { LabelId(it) }
@@ -445,7 +445,7 @@ internal class MailboxViewModel @Inject constructor(
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { idsChunk -> labelRepository.findLabels(idsChunk) }
 
-        return mailboxUiItemMapper.toUiItems(messages, allLabels)
+        return mailboxItemUiModelMapper.toUiModels(messages, allLabels)
     }
 
     fun deleteAction(
@@ -605,7 +605,7 @@ internal class MailboxViewModel @Inject constructor(
 
     fun handleConversationSwipe(
         swipeAction: SwipeAction,
-        mailboxUiItem: MailboxUiItem,
+        mailboxUiItem: MailboxItemUiModel,
         mailboxLocation: Constants.MessageLocationType,
         mailboxLocationId: String
     ) {

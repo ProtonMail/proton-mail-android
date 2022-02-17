@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -100,7 +100,7 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.navigation.presentation.NavigationActivity
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -302,7 +302,7 @@ internal class MailboxActivity :
             userManager.firstMailboxLoadDone()
         }
 
-        mailboxAdapter.setItemClick { mailboxUiItem: MailboxUiItem ->
+        mailboxAdapter.setItemClick { mailboxUiItem: MailboxItemUiModel ->
             OnMessageClickTask(
                 WeakReference(this@MailboxActivity),
                 messageDetailsRepositoryFactory,

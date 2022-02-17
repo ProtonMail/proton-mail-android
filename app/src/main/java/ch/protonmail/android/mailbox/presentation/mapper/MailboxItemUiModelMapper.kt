@@ -31,7 +31,7 @@ import ch.protonmail.android.labels.presentation.mapper.LabelChipUiModelMapper
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.arch.Mapper
@@ -39,13 +39,13 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
-class MailboxUiItemMapper @Inject constructor(
+class MailboxItemUiModelMapper @Inject constructor(
     private val contactsRepository: ContactsRepository,
     private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper,
     private val labelChipUiModelMapper: LabelChipUiModelMapper
-) : Mapper<Either<Message, Conversation>, MailboxUiItem> {
+) : Mapper<Either<Message, Conversation>, MailboxItemUiModel> {
 
-    suspend fun toUiItem(message: Message, allLabels: Collection<Label>): MailboxUiItem = MailboxUiItem(
+    suspend fun toUiModel(message: Message, allLabels: Collection<Label>): MailboxItemUiModel = MailboxItemUiModel(
         itemId = checkNotNull(message.messageId) { "Message id is null" },
         senderName = toDisplayNameFromContacts(message.sender, message.senderDisplayName),
         subject = checkNotNull(message.subject) { "Message subject is null" },
@@ -61,14 +61,14 @@ class MailboxUiItemMapper @Inject constructor(
         isDraft = message.isDraft()
     )
 
-    suspend fun toUiItems(messages: Collection<Message>, allLabels: Collection<Label>): List<MailboxUiItem> =
-        messages.map { toUiItem(it, allLabels) }
+    suspend fun toUiModels(messages: Collection<Message>, allLabels: Collection<Label>): List<MailboxItemUiModel> =
+        messages.map { toUiModel(it, allLabels) }
 
-    suspend fun toUiItem(
+    suspend fun toUiModel(
         conversation: Conversation,
         currentLabelId: LabelId,
         allLabels: Collection<Label>
-    ) = MailboxUiItem(
+    ) = MailboxItemUiModel(
         itemId = conversation.id,
         senderName = toDisplayNamesFromContacts(conversation.senders).joinToString(),
         subject = conversation.subject,
@@ -84,11 +84,11 @@ class MailboxUiItemMapper @Inject constructor(
         isDraft = conversation.containsSingleDraftMessage()
     )
 
-    suspend fun toUiItems(
+    suspend fun toUiModels(
         conversations: Collection<Conversation>,
         currentLabelId: LabelId,
         allLabels: Collection<Label>
-    ): List<MailboxUiItem> = conversations.map { toUiItem(it, currentLabelId, allLabels) }
+    ): List<MailboxItemUiModel> = conversations.map { toUiModel(it, currentLabelId, allLabels) }
 
     private suspend fun toDisplayNameFromContacts(sender: MessageSender?, senderDisplayName: String?): String {
         checkNotNull(sender) { "Message has null sender" }
