@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -82,26 +82,26 @@ private object TestData {
         private val messageMeetingTheCriteria = Message(
             Unread = false,
             location = Constants.MessageLocationType.INBOX.messageLocationTypeValue,
-            allLabelIDs = listOf(Constants.MessageLocationType.INBOX.asLabelId(), CURRENT_LOCATION_ID)
+            allLabelIDs = listOf(Constants.MessageLocationType.INBOX.asLabelIdString(), CURRENT_LOCATION_ID)
         )
         private val messageNotRead = messageMeetingTheCriteria.copy(Unread = true)
         private val messageDraft = messageMeetingTheCriteria.copy(
             location = Constants.MessageLocationType.DRAFT.messageLocationTypeValue
         )
         private val messageInWrongLocation = messageMeetingTheCriteria.copy(
-            allLabelIDs =  listOf(Constants.MessageLocationType.INBOX.asLabelId())
+            allLabelIDs =  listOf(Constants.MessageLocationType.INBOX.asLabelIdString())
         )
         private val messageNotReadAndDraft = messageNotRead.copy(
             location = Constants.MessageLocationType.DRAFT.messageLocationTypeValue
         )
         private val messageNotReadAndInWrongLocation = messageNotRead.copy(
-            allLabelIDs =  listOf(Constants.MessageLocationType.INBOX.asLabelId())
+            allLabelIDs =  listOf(Constants.MessageLocationType.INBOX.asLabelIdString())
         )
         private val messageDraftAndInWrongLocation = messageDraft.copy(
-            allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelId())
+            allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelIdString())
         )
         private val messageNotReadDraftAndInWrongLocation = messageNotReadAndDraft.copy(
-            allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelId())
+            allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelIdString())
         )
 
         val listWithAllButFirstMeetingTheCriteria = listOf(messageNotReadDraftAndInWrongLocation) +

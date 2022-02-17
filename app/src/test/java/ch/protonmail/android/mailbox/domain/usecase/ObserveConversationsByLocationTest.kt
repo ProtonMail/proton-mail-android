@@ -51,7 +51,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryMappingInputToGetConversationParameters() = runBlockingTest {
         // given
-        val location = MessageLocationType.ARCHIVE.asLabelId()
+        val location = MessageLocationType.ARCHIVE.asLabelIdString()
         coEvery { conversationRepository.observeConversations(any()) } returns loadMoreFlowOf()
 
         // when
@@ -75,7 +75,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         val expected = GetConversationsResult.DataRefresh(conversations)
 
         // when
-        observeConversationsByLocation(userId, MessageLocationType.INBOX.asLabelId()).test {
+        observeConversationsByLocation(userId, MessageLocationType.INBOX.asLabelIdString()).test {
 
             // then
             assertEquals(expected, awaitItem())
@@ -90,7 +90,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
             loadMoreFlowOf(DataResult.Error.Local(null, null))
 
         // when
-        val actual = observeConversationsByLocation.invoke(userId, MessageLocationType.INBOX.asLabelId())
+        val actual = observeConversationsByLocation.invoke(userId, MessageLocationType.INBOX.asLabelIdString())
 
         // then
         val error = GetConversationsResult.Error()
@@ -100,7 +100,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryPassingNullAsLastMessageTimeWhenInputWasNull() = runBlockingTest {
         // given
-        val location = MessageLocationType.ARCHIVE.asLabelId()
+        val location = MessageLocationType.ARCHIVE.asLabelIdString()
         coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf()
 
         // when
@@ -115,7 +115,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
     }
 
     private fun inboxLabelContext() = LabelContext(
-        id = MessageLocationType.INBOX.asLabelId(),
+        id = MessageLocationType.INBOX.asLabelIdString(),
         contextNumUnread = 0,
         contextNumMessages = 0,
         contextTime = 0L,

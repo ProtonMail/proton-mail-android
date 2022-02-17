@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -333,21 +333,21 @@ class MessageRepository @Inject constructor(
         // We treat Sent as a Label, since when we send a message to ourself it should be in both Sent and Inbox, but
         //  it can have only one location, which is Inbox
         fun sentAsLabelId() =
-            MessageLocationType.SENT.asLabelId()
+            MessageLocationType.SENT.asLabelIdString()
 
         // We treat Draft as a label in order to prevent draft messages being resolved as ALL_DRAFT and not shown in
         // the Draft folder
         fun draftAsLabelId() =
-            MessageLocationType.DRAFT.asLabelId()
+            MessageLocationType.DRAFT.asLabelIdString()
 
         fun starredAsLabelId() =
-            MessageLocationType.STARRED.asLabelId()
+            MessageLocationType.STARRED.asLabelIdString()
 
         fun allMailAsLabelId() =
-            MessageLocationType.ALL_MAIL.asLabelId()
+            MessageLocationType.ALL_MAIL.asLabelIdString()
 
         fun locationTypesAlLabelId() =
-            MessageLocationType.values().map { it.asLabelId() }
+            MessageLocationType.values().map { it.asLabelIdString() }
 
         return if (params.keyword != null) {
             dao.searchMessages(params.keyword)
@@ -501,20 +501,20 @@ class MessageRepository @Inject constructor(
             val isLabelExclusive = if (labelId.length > MAX_LABEL_ID_LENGTH) {
                 labelRepository.findLabel(LabelId(labelId))?.type == LabelType.FOLDER
             } else {
-                labelId != MessageLocationType.STARRED.asLabelId()
+                labelId != MessageLocationType.STARRED.asLabelIdString()
             }
 
             if (isTrashAction) return@filter labelId !in arrayOf(
-                MessageLocationType.ALL_DRAFT.asLabelId(),
-                MessageLocationType.ALL_SENT.asLabelId(),
-                MessageLocationType.ALL_MAIL.asLabelId()
+                MessageLocationType.ALL_DRAFT.asLabelIdString(),
+                MessageLocationType.ALL_SENT.asLabelIdString(),
+                MessageLocationType.ALL_MAIL.asLabelIdString()
             )
 
             return@filter isLabelExclusive &&
                 labelId !in arrayOf(
-                MessageLocationType.ALL_DRAFT.asLabelId(),
-                MessageLocationType.ALL_SENT.asLabelId(),
-                MessageLocationType.ALL_MAIL.asLabelId()
+                MessageLocationType.ALL_DRAFT.asLabelIdString(),
+                MessageLocationType.ALL_SENT.asLabelIdString(),
+                MessageLocationType.ALL_MAIL.asLabelIdString()
             )
         }
     }

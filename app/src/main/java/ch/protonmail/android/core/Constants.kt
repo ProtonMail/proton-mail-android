@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -22,6 +22,7 @@ import android.content.Context
 import android.text.TextUtils
 
 import ch.protonmail.android.R
+import ch.protonmail.android.labels.domain.model.LabelId
 
 object Constants {
 
@@ -190,7 +191,10 @@ object Constants {
         )
         override fun toString() = super.toString()
 
-        fun asLabelId(): String =
+        fun asLabelId(): LabelId =
+            LabelId(asLabelIdString())
+
+        fun asLabelIdString(): String =
             messageLocationTypeValue.toString()
 
         companion object {

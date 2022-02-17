@@ -434,7 +434,7 @@ class MessageRepositoryTest {
         val apiResponse = buildMockMessageResponse(
             messages = apiMessages
         )
-        val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelId())
+        val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelIdString())
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
@@ -479,7 +479,7 @@ class MessageRepositoryTest {
         val testException = IOException(exceptionMessage)
         val params = GetAllMessagesParameters(
             testUserId,
-            labelId = mailboxLocation.asLabelId()
+            labelId = mailboxLocation.asLabelIdString()
         )
         coEvery { protonMailApiManager.getMessages(params) } throws testException
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
@@ -563,7 +563,7 @@ class MessageRepositoryTest {
         coEvery { messageDao.observeAllMessages() } returns databaseMessagesFlow
         val params = GetAllMessagesParameters(
             testUserId,
-            labelId = mailboxLocation.asLabelId()
+            labelId = mailboxLocation.asLabelIdString()
         )
         coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } answers {
@@ -594,7 +594,7 @@ class MessageRepositoryTest {
             every { code } returns Constants.RESPONSE_CODE_OK
         }
         coEvery { messageDao.observeAllMessages() } returns flowOf(dbMessages)
-        val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelId())
+        val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelIdString())
         coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
         coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns false
@@ -619,7 +619,7 @@ class MessageRepositoryTest {
         )
         val params = GetAllMessagesParameters(
             testUserId,
-            labelId = mailboxLocation.asLabelId()
+            labelId = mailboxLocation.asLabelIdString()
         )
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 

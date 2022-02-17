@@ -126,7 +126,7 @@ class ObserveMessagesByLocationTest {
         val messagesResponseChannel = Channel<DataResult<List<Message>>>()
         val params = GetAllMessagesParameters(
             userId,
-            labelId = mailboxLocation.asLabelId()
+            labelId = mailboxLocation.asLabelIdString()
         )
         coEvery { mailboxRepository.observeMessages(params) } returns
             messagesResponseChannel.receiveAsFlow().asLoadMoreFlow()
