@@ -19,6 +19,55 @@
 
 package ch.protonmail.android.notifications.presentation.usecase
 
-import org.junit.Assert.*
+import android.app.NotificationManager
+import ch.protonmail.android.notifications.domain.NotificationRepository
+import io.mockk.coVerify
+import io.mockk.mockk
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
+import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.Test
 
-class ClearNotificationsForUserTest
+class ClearNotificationsForUserTest : CoroutinesTest {
+
+    private val testId = UserId("id")
+
+    private val notificationRepository: NotificationRepository = mockk(relaxed = true)
+
+    private val notificationManager: NotificationManager = mockk(relaxed = true)
+
+    private val clearNotificationsForUser = ClearNotificationsForUser(
+        notificationRepository,
+        notificationManager
+    )
+
+    @Test
+    fun `verify that notification is canceled`() {
+        runBlockingTest {
+            // given
+
+            // when
+            clearNotificationsForUser(testId)
+
+            // then
+            coVerify {
+                notificationManager.cancel(testId.hashCode())
+            }
+        }
+    }
+
+    @Test
+    fun `verify that notifications are removed from DB`() {
+        runBlockingTest {
+            // given
+
+            // when
+            clearNotificationsForUser(testId)
+
+            // then
+            coVerify {
+                notificationRepository.deleteAllNotificationsByUserId(testId)
+            }
+        }
+    }
+}

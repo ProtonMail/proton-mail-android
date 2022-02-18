@@ -32,15 +32,20 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
-import ch.protonmail.android.notifications.data.local.model.NotificationEntity
+import ch.protonmail.android.notifications.data.remote.model.NotificationAction
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationData
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationSender
+import ch.protonmail.android.notifications.domain.model.Notification
+import ch.protonmail.android.notifications.domain.model.NotificationId
+import ch.protonmail.android.notifications.domain.model.NotificationType
+import ch.protonmail.android.notifications.presentation.usecase.ClearNotification
 import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.just
@@ -101,6 +106,8 @@ class ProcessPushNotificationDataWorkerTest {
 
     private val conversationModeEnabled: ConversationModeEnabled = mockk(relaxed = true)
 
+    private val clearNotification: ClearNotification = mockk(relaxed = true)
+
     private val processPushNotificationDataWorker: ProcessPushNotificationDataWorker = spyk(
         ProcessPushNotificationDataWorker(
             context,
@@ -112,7 +119,8 @@ class ProcessPushNotificationDataWorkerTest {
             notificationRepository,
             messageRepository,
             sessionManager,
-            conversationModeEnabled
+            conversationModeEnabled,
+            clearNotification
         ),
         recordPrivateCalls = true
     ) {
@@ -313,7 +321,9 @@ class ProcessPushNotificationDataWorkerTest {
         }
     }
 
-    private fun mockForCallingSendNotificationSuccessfully(): Pair<PushNotificationSender, PushNotificationData> {
+    private fun mockForCallingSendNotificationSuccessfully(
+        notificationAction: NotificationAction
+    ): PushNotification {
         every { workerParameters.inputData } returns mockk {
             every { getString(KEY_PUSH_NOTIFICATION_UID) } returns "uid"
             every { getString(KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE) } returns "encryptedMessage"
@@ -336,34 +346,37 @@ class ProcessPushNotificationDataWorkerTest {
         }
         val mockNotificationEncryptedData = mockk<PushNotificationData> {
             every { messageId } returns "messageId"
-            every { body } returns "body"
+            every { body } returns "subject"
             every { sender } returns mockNotificationSender
+            every { action } returns notificationAction
+
         }
-        every { "decryptedData".deserialize<PushNotification>(any()) } returns mockk {
+        val mockPushNotification = mockk<PushNotification> {
             every { data } returns mockNotificationEncryptedData
         }
+
+        every { "decryptedData".deserialize<PushNotification>(any()) } returns mockPushNotification
+
         every { userManager.currentUserId } returns testId
         every { userManager.requireCurrentUserId() } returns testId
         coEvery { userManager.isSnoozeQuickEnabled() } returns false
         every { userManager.isSnoozeScheduledEnabled() } returns true
         every { processPushNotificationDataWorker invokeNoArgs "shouldSuppressNotification" } returns false
 
-        return Pair(mockNotificationSender, mockNotificationEncryptedData)
+        return mockPushNotification
     }
 
     @Test
     fun verifyCorrectMethodInvocationAfterDecryptionAndDeserializationSucceedsWhenSnoozingNotificationsIsNotActive() {
         runBlockingTest {
             // given
-            val (mockNotificationSender, mockNotificationEncryptedData) = mockForCallingSendNotificationSuccessfully()
+            val mockPushNotification = mockForCallingSendNotificationSuccessfully(NotificationAction.CREATED)
 
             justRun {
                 val arguments = listOf(
                     any<UserId>(), // userId
                     any<User>(), // user
-                    any<String>(), // messageId
-                    any<String>(), // notificationBody
-                    any<String>(), // sender
+                    any<PushNotification>(), // notification
                     any<Boolean>() // isPrimaryUser
                 )
                 processPushNotificationDataWorker invoke "sendNotification" withArguments arguments
@@ -374,11 +387,7 @@ class ProcessPushNotificationDataWorkerTest {
 
             // then
             coVerifyOrder {
-                mockNotificationEncryptedData.messageId
-                mockNotificationEncryptedData.body
-                mockNotificationEncryptedData.sender
-                mockNotificationSender.senderName
-                mockNotificationSender.senderAddress
+                mockPushNotification.data
                 userManager.currentUserId
                 userManager.isSnoozeQuickEnabled()
                 userManager.isSnoozeScheduledEnabled()
@@ -388,17 +397,18 @@ class ProcessPushNotificationDataWorkerTest {
     }
 
     @Test
-    fun verifyNotifySingleNewEmailIsCalledWithCorrectParametersWhenThereIsOneNotificationInTheDB() {
+    fun `verify notifySingleNewEmail is called with correct parameters when the notification type is EMAIL`() {
         runBlockingTest {
             // given
-            mockForCallingSendNotificationSuccessfully()
+            mockForCallingSendNotificationSuccessfully(NotificationAction.CREATED)
 
-            val mockNotification = mockk<NotificationEntity>()
-            coEvery { notificationRepository.saveNotification(any(), any()) } returns listOf(mockNotification)
+            val mockNotification = getTestNotification(NotificationType.EMAIL)
+            coEvery { notificationRepository.saveNotification(any(), any()) } returns mockNotification
             val mockMessage = mockk<Message>()
             coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
             every {
                 notificationServer.notifySingleNewEmail(
+                    any(),
                     any(),
                     any(),
                     any(),
@@ -433,6 +443,7 @@ class ProcessPushNotificationDataWorkerTest {
                     capture(messageSlot),
                     capture(messageIdSlot),
                     capture(notificationBodySlot),
+                    testId,
                     capture(senderSlot),
                     capture(primaryUserSlot)
                 )
@@ -441,57 +452,79 @@ class ProcessPushNotificationDataWorkerTest {
             assertEquals(testId, userSlot.captured.id)
             assertEquals(mockMessage, messageSlot.captured)
             assertEquals("messageId", messageIdSlot.captured)
-            assertEquals("body", notificationBodySlot.captured)
+            assertEquals("subject", notificationBodySlot.captured)
             assertEquals("senderAddress", senderSlot.captured)
             assertEquals(true, primaryUserSlot.captured)
         }
     }
 
     @Test
-    fun verifyNotifyMultipleUnreadEmailIsCalledWithCorrectParametersWhenThereAreMoreThanOneNotificationsInTheDB() {
+    fun `verify notifyOpenUrlNotification is called with correct parameters when the notification type is OPEN_URL`() {
         runBlockingTest {
             // given
-            mockForCallingSendNotificationSuccessfully()
+            mockForCallingSendNotificationSuccessfully(NotificationAction.CREATED)
 
-            val mockNotification1 = mockk<NotificationEntity>()
-            val mockNotification2 = mockk<NotificationEntity>()
-            val unreadNotifications = listOf(mockNotification1, mockNotification2)
-            coEvery { notificationRepository.saveNotification(any(), any()) } returns unreadNotifications
+            val mockNotification = getTestNotification(NotificationType.OPEN_URL)
+            coEvery { notificationRepository.saveNotification(any(), any()) } returns mockNotification
             val mockMessage = mockk<Message>()
             coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
-            every { notificationServer.notifyMultipleUnreadEmail(any(), any(), any(), any(), any()) } just runs
+            every {
+                notificationServer.notifyOpenUrlNotification(
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any()
+                )
+            } just runs
 
             // when
             processPushNotificationDataWorker.doWork()
 
             // then
             val userSlot = slot<ch.protonmail.android.domain.entity.user.User>()
-            val unreadNotificationsSlot = slot<List<NotificationEntity>>()
+            val notificationUrlSlot = slot<String>()
+            val messageIdSlot = slot<String>()
+            val notificationBodySlot = slot<String>()
+            val senderSlot = slot<String>()
             verify {
-                notificationServer.notifyMultipleUnreadEmail(
+                notificationServer.notifyOpenUrlNotification(
                     capture(userSlot),
                     any(),
                     any(),
                     any(),
-                    capture(unreadNotificationsSlot)
+                    capture(notificationUrlSlot),
+                    capture(messageIdSlot),
+                    capture(notificationBodySlot),
+                    capture(senderSlot)
                 )
             }
             assertEquals(testId, userSlot.captured.id)
-            assertEquals(unreadNotifications, unreadNotificationsSlot.captured)
+            assertEquals("https://www.example.com/", notificationUrlSlot.captured)
+            assertEquals("messageId", messageIdSlot.captured)
+            assertEquals("subject", notificationBodySlot.captured)
+            assertEquals("senderAddress", senderSlot.captured)
         }
     }
 
     @Test
-    fun returnSuccessWhenNotificationWasSent() {
+    fun `return success when notification was sent`() {
         runBlockingTest {
             // given
-            mockForCallingSendNotificationSuccessfully()
+            mockForCallingSendNotificationSuccessfully(NotificationAction.CREATED)
 
-            val mockNotification = mockk<NotificationEntity>()
-            coEvery { notificationRepository.saveNotification(any(), any()) } returns listOf(mockNotification)
+            val mockNotification = getTestNotification()
+            coEvery { notificationRepository.saveNotification(any(), any()) } returns mockNotification
             val mockMessage = mockk<Message>()
             coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
-            every { notificationServer.notifySingleNewEmail(any(), any(), any(), any(), any(), any(), any()) } just runs
+            every {
+                notificationServer.notifySingleNewEmail(
+                    any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+                )
+            } just runs
 
             val expectedResult = ListenableWorker.Result.success()
 
@@ -502,4 +535,49 @@ class ProcessPushNotificationDataWorkerTest {
             assertEquals(expectedResult, workerResult)
         }
     }
+
+    @Test
+    fun `verify that notifySingleNewEmail is not called when notification action is TOUCHED`() {
+        runBlockingTest {
+            // given
+            mockForCallingSendNotificationSuccessfully(NotificationAction.TOUCHED)
+
+            // when
+            processPushNotificationDataWorker.doWork()
+
+            // then
+            verify(exactly = 0) {
+                notificationServer.notifySingleNewEmail(
+                    any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `verify that notification is cleared when notification action is TOUCHED`() {
+        runBlockingTest {
+            // given
+            mockForCallingSendNotificationSuccessfully(NotificationAction.TOUCHED)
+            every {
+                notificationRepository.getNotificationByIdBlocking("messageId")
+            } returns getTestNotification()
+
+            // when
+            processPushNotificationDataWorker.doWork()
+
+            // then
+            coVerify {
+                clearNotification.invoke(testId, "messageId")
+            }
+        }
+    }
+
+    private fun getTestNotification(type: NotificationType = NotificationType.EMAIL) = Notification(
+        id = NotificationId("messageId"),
+        notificationTitle = "senderAddress",
+        notificationBody = "subject",
+        url = "https://www.example.com/",
+        type = type
+    )
 }

@@ -20,6 +20,7 @@
 package ch.protonmail.android.notifications.data.mapper
 
 import ch.protonmail.android.notifications.data.local.model.NotificationEntity
+import ch.protonmail.android.notifications.data.remote.model.NotificationAction
 import ch.protonmail.android.notifications.data.remote.model.PushNotification
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationData
 import ch.protonmail.android.notifications.data.remote.model.PushNotificationSender
@@ -49,8 +50,7 @@ internal class NotificationEntityApiMapperTest {
     private fun getTestNotificationApiModel(testId: String) = PushNotification(
         type = "email",
         version = 2,
-        data = getTestNotificationDataApiModel(testId),
-        action = "message_created"
+        data = getTestNotificationDataApiModel(testId)
     )
 
     private fun getTestNotificationDataApiModel(testId: String) = PushNotificationData(
@@ -65,7 +65,8 @@ internal class NotificationEntityApiMapperTest {
         messageId = testId,
         customId = "123-abc",
         sender = PushNotificationSender("testUser@protonmail.com", "testUser", ""),
-        url = "https://www.example.com/"
+        url = "https://www.example.com/",
+        action = NotificationAction.CREATED
     )
 
     private fun getTestNotificationEntity(userId: UserId, testId: String) = NotificationEntity(

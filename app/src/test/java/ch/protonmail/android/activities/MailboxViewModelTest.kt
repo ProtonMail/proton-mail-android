@@ -60,6 +60,7 @@ import ch.protonmail.android.mailbox.presentation.MailboxState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
+import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -147,6 +148,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         coEvery { toUiModels(any(), any(), any()) } returns emptyList()
     }
 
+    private val clearNotificationsForUser: ClearNotificationsForUser = mockk()
+
     private val fetchEventsAndReschedule: FetchEventsAndReschedule = mockk {
         coEvery { this@mockk.invoke() } just runs
     }
@@ -227,7 +230,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings,
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
-            fetchEventsAndReschedule = fetchEventsAndReschedule
+            fetchEventsAndReschedule = fetchEventsAndReschedule,
+            clearNotificationsForUser = clearNotificationsForUser
         )
     }
 
@@ -518,6 +522,18 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // then
             // called once per each refresh
             coVerify(exactly = 2) { fetchEventsAndReschedule() }
+        }
+
+    @Test
+    fun `verify clear notifications use case is called`() =
+        runBlockingTest {
+            // when
+            viewModel.clearNotifications(testUserId)
+
+            // then
+            coVerify {
+                clearNotificationsForUser(testUserId)
+            }
         }
 
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxState.Data =

@@ -201,8 +201,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
                     notification.id.value,
                     notification.notificationBody,
                     notification.notificationTitle,
-
-                    )
+                )
             }
 
         }
