@@ -26,6 +26,7 @@ stages:
   - test
   - bot-i18n
   - bot-release
+  - fixups
 
 detekt analysis:
   stage: analyze
@@ -300,7 +301,7 @@ publish-github:
     - small
 
 check for fixups:
-  stage: analyze
+  stage: fixups
   script:
     - git fetch origin $CI_COMMIT_BRANCH
     - git fetch origin develop
