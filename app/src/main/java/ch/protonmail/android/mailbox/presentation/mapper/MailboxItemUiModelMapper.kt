@@ -27,12 +27,14 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelChipUiModelMapper
 import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.model.MessageData
+import ch.protonmail.android.ui.model.LabelChipUiModel
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.arch.Mapper
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -56,7 +58,8 @@ class MailboxItemUiModelMapper @Inject constructor(
         expirationTime = message.expirationTime,
         messagesCount = null,
         messageData = buildMessageData(message),
-        labels = labelChipUiModelMapper.toUiModels(allLabels.filter { it.id.id in message.allLabelIDs }),
+        messageLabels = message.buildLabelChipFromMessageLabels(allLabels),
+        allLabelsIds = message.allLabelsIds(),
         recipients = toDisplayNamesFromContacts(message.toList).joinToString(),
         isDraft = message.isDraft()
     )
@@ -79,7 +82,8 @@ class MailboxItemUiModelMapper @Inject constructor(
         expirationTime = conversation.expirationTime,
         messagesCount = conversation.messagesCount.takeIf { it >= MIN_MESSAGES_TO_SHOW_COUNT },
         messageData = null,
-        labels = labelChipUiModelMapper.toUiModels(allLabels.filter { it.id in conversation.allLabelsIds() }),
+        messageLabels = conversation.buildLabelChipFromMessageLabels(allLabels),
+        allLabelsIds = conversation.allLabelsIds(),
         recipients = conversation.receivers.joinToString { it.name },
         isDraft = conversation.containsSingleDraftMessage()
     )
@@ -128,10 +132,23 @@ class MailboxItemUiModelMapper @Inject constructor(
         ?.let { it.contextTime * SEC_TO_MS_RATIO }
         ?: 0
 
+    private fun Conversation.buildLabelChipFromMessageLabels(allLabels: Collection<Label>): List<LabelChipUiModel> {
+        val conversationLabels: List<Label> =
+            allLabels.filter { it.type == LabelType.MESSAGE_LABEL && it.id in allLabelsIds() }
+        return labelChipUiModelMapper.toUiModels(conversationLabels)
+    }
+
+    private fun Message.buildLabelChipFromMessageLabels(allLabels: Collection<Label>): List<LabelChipUiModel> {
+        val messageLabels: List<Label> =
+            allLabels.filter { it.type == LabelType.MESSAGE_LABEL && it.id in allLabelsIds() }
+        return labelChipUiModelMapper.toUiModels(messageLabels)
+    }
+
     private fun Conversation.allLabelsIds(): List<LabelId> =
         labels.map { LabelId(it.id) }
 
-    private fun Message.isDraft() = locationFromLabel() in DRAFT_LABELS_IDS
+    private fun Message.allLabelsIds(): List<LabelId> =
+        allLabelIDs.map { LabelId(it) }
 
     private fun Conversation.containsSingleDraftMessage() = messagesCount == 1 && labels.any { labelContext ->
         labelContext.id in DRAFT_LABELS_IDS.map { it.asLabelIdString() }

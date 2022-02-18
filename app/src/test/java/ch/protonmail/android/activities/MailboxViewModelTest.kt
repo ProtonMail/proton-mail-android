@@ -54,7 +54,6 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
-import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
@@ -63,9 +62,7 @@ import ch.protonmail.android.mailbox.presentation.MailboxState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
-import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.settings.domain.GetMailSettings
-import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.delete.EmptyFolder
@@ -94,9 +91,6 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-
-private const val ALL_DRAFT_LABEL_ID = "1"
-private const val DRAFT_LABEL_ID = "8"
 
 class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
@@ -243,7 +237,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings,
             messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper,
-            mailboxUiItemMapper = mailboxItemUiModelMapper,
+            mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule
         )
     }
@@ -537,40 +531,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             coVerify(exactly = 2) { fetchEventsAndReschedule() }
         }
 
-    private fun MailboxItemUiModel.toMailboxState() = listOf(this).toMailboxState()
-
     private fun List<MailboxItemUiModel>.toMailboxState(): MailboxState.Data =
         MailboxState.Data(this, isFreshData = false, shouldResetPosition = true)
-
-    private fun buildMailboxUiItem(
-        itemId: String,
-        senderName: String = "senderName",
-        subject: String = "subject",
-        lastMessageTimeMs: Long = 0,
-        hasAttachments: Boolean = false,
-        isStarred: Boolean = false,
-        isRead: Boolean = true,
-        expirationTime: Long = 0,
-        messagesCount: Int? = null,
-        messageData: MessageData? = null,
-        labels: List<LabelChipUiModel> = emptyList(),
-        recipients: String = "",
-        isDraft: Boolean = false
-    ) = MailboxItemUiModel(
-        itemId = itemId,
-        senderName = senderName,
-        subject = subject,
-        lastMessageTimeMs = lastMessageTimeMs,
-        hasAttachments = hasAttachments,
-        isStarred = isStarred,
-        isRead = isRead,
-        expirationTime = expirationTime,
-        messagesCount = messagesCount,
-        messageData = messageData,
-        labels = labels,
-        recipients = recipients,
-        isDraft = isDraft
-    )
 
     companion object TestData {
 
@@ -587,29 +549,25 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             messages = emptyList()
         )
 
-        fun buildMailboxUiItem() = MailboxItemUiModel(
-            itemId = EMPTY_STRING,
+        fun buildMailboxUiItem(
+            itemId: String = EMPTY_STRING,
+            isStarred: Boolean = false,
+        ) = MailboxItemUiModel(
+            itemId = itemId,
             senderName = EMPTY_STRING,
             subject = EMPTY_STRING,
             lastMessageTimeMs = 0,
             hasAttachments = false,
-            isStarred = false,
+            isStarred = isStarred,
             isRead = false,
             expirationTime = 0,
             messagesCount = 0,
             messageData = null,
-            labels = emptyList(),
+            messageLabels = emptyList(),
+            allLabelsIds = emptyList(),
             recipients = EMPTY_STRING,
             isDraft = false
         )
 
-        fun buildLabelContext() = LabelContext(
-            id = EMPTY_STRING,
-            contextNumUnread = 0,
-            contextNumMessages = 0,
-            contextTime = 0,
-            contextSize = 0,
-            contextNumAttachments = 0
-        )
     }
 }

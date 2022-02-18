@@ -80,27 +80,37 @@ private object TestData {
 
     object Messages {
         private val messageMeetingTheCriteria = Message(
+            messageId = "messageMeetingTheCriteria",
             Unread = false,
             location = Constants.MessageLocationType.INBOX.messageLocationTypeValue,
             allLabelIDs = listOf(Constants.MessageLocationType.INBOX.asLabelIdString(), CURRENT_LOCATION_ID)
         )
-        private val messageNotRead = messageMeetingTheCriteria.copy(Unread = true)
+        private val messageNotRead = messageMeetingTheCriteria.copy(
+            messageId = "messageNotRead",
+            Unread = true
+        )
         private val messageDraft = messageMeetingTheCriteria.copy(
-            location = Constants.MessageLocationType.DRAFT.messageLocationTypeValue
+            messageId = "messageDraft",
+            allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelIdString())
         )
         private val messageInWrongLocation = messageMeetingTheCriteria.copy(
+            messageId = "messageInWrongLocation",
             allLabelIDs =  listOf(Constants.MessageLocationType.INBOX.asLabelIdString())
         )
         private val messageNotReadAndDraft = messageNotRead.copy(
+            messageId = "messageNotReadAndDraft",
             location = Constants.MessageLocationType.DRAFT.messageLocationTypeValue
         )
         private val messageNotReadAndInWrongLocation = messageNotRead.copy(
+            messageId = "messageNotReadAndInWrongLocation",
             allLabelIDs =  listOf(Constants.MessageLocationType.INBOX.asLabelIdString())
         )
         private val messageDraftAndInWrongLocation = messageDraft.copy(
+            messageId = "messageDraftAndInWrongLocation",
             allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelIdString())
         )
         private val messageNotReadDraftAndInWrongLocation = messageNotReadAndDraft.copy(
+            messageId = "messageNotReadDraftAndInWrongLocation",
             allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelIdString())
         )
 

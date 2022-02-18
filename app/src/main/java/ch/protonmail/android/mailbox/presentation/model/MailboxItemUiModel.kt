@@ -20,8 +20,14 @@
 package ch.protonmail.android.mailbox.presentation.model
 
 import androidx.recyclerview.widget.DiffUtil
+import ch.protonmail.android.labels.domain.model.LabelId
+import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.ui.model.LabelChipUiModel
 
+/**
+ * @property messageLabels Collection of [LabelChipUiModel] or type [LabelType.MESSAGE_LABEL]
+ * @property allLabelsIds Collection of IDs of all the Labels, including [LabelType.FOLDER]
+ */
 data class MailboxItemUiModel(
     val itemId: String,
     val senderName: String,
@@ -33,7 +39,8 @@ data class MailboxItemUiModel(
     val expirationTime: Long,
     val messagesCount: Int?,
     val messageData: MessageData?,
-    val labels: List<LabelChipUiModel>,
+    val messageLabels: List<LabelChipUiModel>,
+    val allLabelsIds: List<LabelId>,
     val recipients: String,
     val isDraft: Boolean
 ) {

@@ -35,7 +35,6 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
-import me.proton.core.util.kotlin.any
 import timber.log.Timber
 
 private const val HYPHEN = "-"
@@ -98,11 +97,16 @@ class MailboxItemView @JvmOverloads constructor(
         }
 
     private fun isDraftOrSentItem(mailboxUiItem: MailboxItemUiModel, location: MessageLocationType): Boolean {
-        val messageLocation = mailboxUiItem.messageData?.location
-            ?: MessageLocationType.INVALID.messageLocationTypeValue
-        return any(location, MessageLocationType.fromInt(messageLocation)) {
-            it in arrayOf(MessageLocationType.DRAFT, MessageLocationType.SENT)
-        }
+        val currentLabelId = location.asLabelId()
+        val mailboxItemLabelsIds = mailboxUiItem.allLabelsIds
+        val sentAndDraftLabels = listOf(
+            MessageLocationType.DRAFT,
+            MessageLocationType.ALL_DRAFT,
+            MessageLocationType.SENT,
+            MessageLocationType.ALL_SENT
+        ).map { it.asLabelId() }
+
+        return (mailboxItemLabelsIds + currentLabelId).any { it in sentAndDraftLabels }
     }
 
     private fun getIconForMessageLocation(messageLocation: MessageLocationType) = when (messageLocation) {
@@ -190,7 +194,7 @@ class MailboxItemView @JvmOverloads constructor(
 
         expiration_image_view.isVisible = mailboxUiItem.expirationTime > 0
 
-        labelsLayout.setLabels(mailboxUiItem.labels)
+        labelsLayout.setLabels(mailboxUiItem.messageLabels)
     }
 
     private fun isDraftsLocation(

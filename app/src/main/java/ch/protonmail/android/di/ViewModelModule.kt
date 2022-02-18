@@ -150,7 +150,7 @@ internal class ViewModelModule {
         drawerFoldersAndLabelsSectionUiModelMapper = drawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings = getMailSettings,
         messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper,
-        mailboxUiItemMapper = mailboxItemUiModelMapper,
+        mailboxItemUiModelMapper = mailboxItemUiModelMapper,
         fetchEventsAndReschedule = fetchEventsAndReschedule
     )
 }

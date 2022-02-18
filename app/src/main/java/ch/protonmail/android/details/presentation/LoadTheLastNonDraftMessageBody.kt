@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -42,7 +42,7 @@ class LoadTheLastNonDraftMessageBody @Inject constructor(
     ): ConversationUiModel {
         conversation.messages
             .withIndex()
-            .findLast { (_, message) -> !message.isDraft() }
+            .findLast { (_, message) -> message.isDraft().not() }
             ?.let { (index, message) ->
                 return addMessageBodyToConversation(
                     message,
