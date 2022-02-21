@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
     <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Definir senha</string>
-    <string name="set_msg_password_info">Defina uma senha para criptografar esta mensagem para usuários não-protonmail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saber mais</a>
+    <string name="set_msg_password_info">Defina uma senha para criptografar esta mensagem para não usuários do ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Saiba Mais</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informações</string>
     <string name="set_msg_password_msg_password_title">Senha da mensagem</string>
@@ -133,7 +133,7 @@
     <string name="update_app_title">Atualização necessária</string>
     <string name="update_app">Seu aplicativo ProtonMail não pode ser usado até que seja atualizado</string>
     <string name="you_are_offline">Você está desconectado</string>
-    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail está momentaneamente indisponível. Verifique o nosso twitter para maiores informações: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contato salvo</string>
     <string name="contact_saved_offline">Contato salvo. Ele será sincronizado quando uma conexão estiver disponível.</string>
     <string name="contact_exist">Contact email already exists</string>
@@ -827,6 +827,8 @@
     <string name="manage">Gerenciar</string>
     <string name="message_from">Mensagem de %s</string>
     <string name="not_spam_move_to_inbox">Não é spam (Mover para caixa de entrada)</string>
+    <string name="action_sheet_view_in_light_mode">Ver no modo claro</string>
+    <string name="action_sheet_view_in_dark_mode">Ver no modo escuro</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d mensagem</item>
         <item quantity="other">%d mensagens</item>

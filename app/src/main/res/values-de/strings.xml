@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
     <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Passwort festlegen</string>
-    <string name="set_msg_password_info">Legen Sie ein Passwort fest, um diese Nachricht für Nicht-Protonmail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Mehr erfahren</a>
+    <string name="set_msg_password_info">Lege ein Passwort fest, um diese Nachricht für Nicht-ProtonMail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Mehr erfahren</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Passwort der Nachricht</string>
@@ -818,6 +818,8 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="manage">Verwalten</string>
     <string name="message_from">Nachricht von %s</string>
     <string name="not_spam_move_to_inbox">Kein Spam (In Posteingang verschieben)</string>
+    <string name="action_sheet_view_in_light_mode">Im hellen Modus betrachten</string>
+    <string name="action_sheet_view_in_dark_mode">Im dunklen Modus betrachten</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d Nachricht</item>
         <item quantity="other">%d Nachrichten</item>

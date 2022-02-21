@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -849,6 +849,8 @@
     <string name="manage">Spravovat</string>
     <string name="message_from">Zpráva od %s</string>
     <string name="not_spam_move_to_inbox">Není spam (přesunout do doručené pošty)</string>
+    <string name="action_sheet_view_in_light_mode">Zobrazit ve světlém motivu</string>
+    <string name="action_sheet_view_in_dark_mode">Zobrazit ve tmavém motivu</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d zpráva</item>
         <item quantity="few">%d zprávy</item>

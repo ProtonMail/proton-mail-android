@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -59,8 +59,8 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Temat:</string>
     <string name="composer_to">Do:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Nie można zweryfikować adresu %s1. Wysyłanie może się nie powieść.</string>
+    <string name="composer_removing_address_server_error">Usuwanie adresu %s1. %s2</string>
     <string name="set_msg_password_title">Ustaw hasło</string>
     <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Dowiedz się więcej</a>
     </string>
@@ -847,6 +847,8 @@
     <string name="manage">Zarządzaj</string>
     <string name="message_from">Wiadomość od %s</string>
     <string name="not_spam_move_to_inbox">To nie jest spam (Przenieś do Odebranych)</string>
+    <string name="action_sheet_view_in_light_mode">Pokaż w jasnym motywie</string>
+    <string name="action_sheet_view_in_dark_mode">Pokaż w ciemnym motywie</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d wiadomość</item>
         <item quantity="few">%d wiadomości</item>

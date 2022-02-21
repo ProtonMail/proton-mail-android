@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -236,12 +236,12 @@
     <string name="no">Hayır</string>
     <string name="okay">Tamam</string>
     <string name="report_bugs">Hataları bildir</string>
-    <string name="send_report">Bildirim gönder</string>
+    <string name="send_report">Bildirimi gönder</string>
     <string name="bug_title">Başlık</string>
     <string name="bug_description">Hata açıklaması</string>
     <string name="sending_report">Bildirim gönderiliyor...</string>
-    <string name="received_report">Bildiriminiz alındı</string>
-    <string name="not_received_report">Bildiriminiz alınmadı</string>
+    <string name="received_report">Bildirim alındı</string>
+    <string name="not_received_report">Bildirim alınmadı</string>
     <string name="forward_prefix">İlt:</string>
     <string name="original_message_divider">-------- Özgün ileti --------</string>
     <string name="invalid_email_address">\'%s\' adresi geçersiz</string>
@@ -460,7 +460,7 @@
     <string name="update_folder">Klasörü güncelle</string>
     <string name="spam_score_100">Bu e-posta, bir ProtonMail adresinden gelmiş gibi görünüyor. Ancak sistemimizin dışından geldi ve kimlik doğrulama gereksinimlerini karşılayamadı. Sahte ya da hatalı iletilmiş olabilir!</string>
     <string name="spam_score_101">Bu e-posta, etki alanının doğrulama gereksinimlerini karşılayamadı. E-posta, sahte ya da hatalı iletilmiş olabilir!</string>
-    <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen göründüğü gibi olduklarından emin olmak için gönderen adresi ve içeriği kontrol edin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">AYRINTILI BİLGİ ALIN</a>
+    <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen göründüğü gibi olduklarından emin olmak için gönderici adresini ve ileti içeriğini kontrol edin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">AYRINTILI BİLGİ ALIN</a>
     </string>
     <string name="print_from_template">Kimden: %s</string>
     <string name="print_to_template">Kime: %s;  </string>
@@ -520,7 +520,7 @@
     <string name="sender_lock_sent_end_to_end">Sizin tarafınızdan uçtan uca şifreleme ile gönderildi</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">ProtonMail tarafından sıfır erişim şifrelemesiyle gönderildi</string>
-    <string name="sender_lock_verification_failed">Gönderen doğrulanamadı</string>
+    <string name="sender_lock_verification_failed">Gönderici doğrulanamadı</string>
     <string name="sender_lock_pgp_encrypted">PGP ile şifrelenmiş ileti</string>
     <string name="sender_lock_pgp_encrypted_verified">Doğrulanmış adresten PGP ile şifrelenmiş ileti</string>
     <string name="sender_lock_pgp_signed_verified_sender">Doğrulanmış adresten PGP ile imzalanmış ileti</string>
@@ -551,7 +551,7 @@
     <string name="channel_name_ongoing_operations">Süren işlemler</string>
     <string name="channel_description_ongoing_operations">Yeni iletilerin arka planda indirilmesi gibi süren tüm işlemleri gösterir</string>
     <string name="retrieving_notifications">Bildirimler alınıyor</string>
-    <string name="report_phishing">Kimlik avını bildir</string>
+    <string name="report_phishing">Kimlik avı bildir</string>
     <string name="print">Yazdır</string>
     <string name="phishing_dialog_title">Kimlik avı bildirimini onayla</string>
     <string name="phishing_dialog_message">Bir iletiyi kimlik avı girişimi olarak bildirdiğinizde, ileti bize gönderilir.
@@ -748,7 +748,7 @@
     <!-- region App Settings -->
     <string name="push_notifications">Anlık bildirimler</string>
     <string name="extended_notifications">Genişletilmiş bildirimler</string>
-    <string name="extended_notifications_description">Anlık bildirimlerde e-postayı göndereni görmek için bu özelliği etkinleştirin.</string>
+    <string name="extended_notifications_description">Anlık bildirimlerde e-posta göndericisini görmek için bu özelliği etkinleştirin.</string>
     <string name="notification_settings">Bildirim ayarları</string>
     <string name="auto_lock">Otomatik kilit</string>
     <string name="auto_lock_app">Uygulama otomatik kilitlensin</string>
@@ -824,6 +824,8 @@
     <string name="manage">Yönet</string>
     <string name="message_from">%s kişisinden ileti</string>
     <string name="not_spam_move_to_inbox">İstenmeyen değil (gelen kutusuna taşı)</string>
+    <string name="action_sheet_view_in_light_mode">Açık kipte görüntüle</string>
+    <string name="action_sheet_view_in_dark_mode">Koyu kipte görüntüle</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d ileti</item>
         <item quantity="other">%d ileti</item>

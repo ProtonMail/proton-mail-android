@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Kan adres niet verifiëren: %s1. Verzenden kan mislukken.</string>
     <string name="composer_removing_address_server_error">Adres verwijderen: %s1. %s2</string>
     <string name="set_msg_password_title">Wachtwoord instellen</string>
-    <string name="set_msg_password_info">Stel een wachtwoord in om dit bericht te versleutelen. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Meer informatie</a>
+    <string name="set_msg_password_info">Stel een wachtwoord in om dit bericht te versleutelen voor niet-ProtonMail gebruikers. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Meer informatie</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Wachtwoord van bericht</string>
@@ -83,7 +83,7 @@
     <string name="set_msg_expiration_3_days">3 dagen</string>
     <string name="set_msg_expiration_1_week">1 week</string>
     <string name="set_msg_expiration_custom">Aangepast</string>
-    <string name="set_msg_expiration_check_description">Dit item is gecontroleerd</string>
+    <string name="set_msg_expiration_check_description">Dit item is aangevinkt</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_theme_title">Thema</string>
@@ -95,7 +95,7 @@
     <string name="settings_storage_limit_unlimited_value">Onbeperkt (%1$.2f MB gebruikt)</string>
     <string name="settings_swipe_settings_info">Stel veeg gebaren in om toegang te krijgen tot de meest gebruikte acties.</string>
     <string name="settings_swipe_left_to_right">Links naar rechts</string>
-    <string name="settings_swipe_right_to_left">Van rechts naar links</string>
+    <string name="settings_swipe_right_to_left">Rechts naar links</string>
     <string name="settings_swipe_saving">Veegactie bewaren…</string>
     <string name="settings_swipe_generic_error">Veegactie kan niet worden bewaard</string>
     <string name="settings_swipe_offline_error">Veegactie kan niet bewaard worden terwijl u offline bent</string>
@@ -664,7 +664,7 @@
     <string name="mobile_footer">Mobiele voettekst</string>
     <string name="edit_mobile_footer">Mobiele voettekst inschakelen</string>
     <string name="default_mobile_footer">Verzonden met ProtonMail Mobile</string>
-    <string name="mobile_footer_is_premium">Het veranderen van de Mobile Footer is alleen toegestaan voor betaalde gebruikers</string>
+    <string name="mobile_footer_is_premium">Het veranderen van de mobiele voettekst is alleen toegestaan voor betaalde gebruikers</string>
     <string name="mobile_footer_info">Deze voettekst is toegevoegd na uw handtekening</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Uitstellen</string>
@@ -827,13 +827,15 @@
     <string name="manage">Beheren</string>
     <string name="message_from">Bericht van %s</string>
     <string name="not_spam_move_to_inbox">Geen spam (Verplaatsen naar Inbox)</string>
+    <string name="action_sheet_view_in_light_mode">Bekijken in Lichte modus</string>
+    <string name="action_sheet_view_in_dark_mode">Bekijken in Donkere modus</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d bericht</item>
         <item quantity="other">%d berichten</item>
     </plurals>
     <plurals name="x_conversations_count">
         <item quantity="one">%d gesprek</item>
-        <item quantity="other">%d conversaties</item>
+        <item quantity="other">%d gesprekken</item>
     </plurals>
     <string name="contacts_call">Bellen</string>
     <string name="contacts_send_group_message">Groepsbericht verzenden</string>

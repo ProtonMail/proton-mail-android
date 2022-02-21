@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">無法驗證地址：%s1。傳送可能失敗。</string>
     <string name="composer_removing_address_server_error">正在移除位置：%s1。%s2</string>
     <string name="set_msg_password_title">設定密碼</string>
-    <string name="set_msg_password_info">設定密碼以加密此郵件給非 Protonmail 使用者。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">瞭解更多</a>
+    <string name="set_msg_password_info">設定密碼以加密此郵件給非 ProtonMail 使用者。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">瞭解更多</a>
     </string>
     <string name="set_msg_password_info_icon_description">資訊</string>
     <string name="set_msg_password_msg_password_title">郵件密碼</string>
@@ -813,6 +813,8 @@
     <string name="manage">管理</string>
     <string name="message_from">來自 %s 的郵件</string>
     <string name="not_spam_move_to_inbox">非垃圾郵件 (移動至收件匣)</string>
+    <string name="action_sheet_view_in_light_mode">在淺色模式中檢視</string>
+    <string name="action_sheet_view_in_dark_mode">在深色模式中檢視</string>
     <plurals name="x_messages_count">
         <item quantity="other">%d 封郵件</item>
     </plurals>

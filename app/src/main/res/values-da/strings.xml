@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -827,6 +827,8 @@
     <string name="manage">Administrer</string>
     <string name="message_from">Besked fra %s</string>
     <string name="not_spam_move_to_inbox">Ikke spam (Flyt til Indbakke)</string>
+    <string name="action_sheet_view_in_light_mode">Vis i lys tilstand</string>
+    <string name="action_sheet_view_in_dark_mode">Vis i mørk tilstand</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d besked</item>
         <item quantity="other">%d beskeder</item>

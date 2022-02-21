@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -59,10 +59,10 @@
     <string name="composer_from">От:</string>
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">Невозможно проверить адрес: %s1. Отправка может быть неудачной.</string>
+    <string name="composer_removing_address_server_error">Удаление адреса: %s1. %s2</string>
     <string name="set_msg_password_title">Задать пароль</string>
-    <string name="set_msg_password_info">Установите пароль для шифрования этого сообщения для пользователей, не являющихся пользователями Protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Узнать больше</a>
+    <string name="set_msg_password_info">Установите пароль для шифрования этого сообщения для не пользователей ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Подробнее</a>
     </string>
     <string name="set_msg_password_info_icon_description">Информация</string>
     <string name="set_msg_password_msg_password_title">Пароль сообщения</string>
@@ -849,6 +849,8 @@
     <string name="manage">Управление</string>
     <string name="message_from">Сообщение от %s</string>
     <string name="not_spam_move_to_inbox">Не спам (переместить во Входящие)</string>
+    <string name="action_sheet_view_in_light_mode">Просмотр в светлом режиме</string>
+    <string name="action_sheet_view_in_dark_mode">Просмотр в темном режиме</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d сообщение</item>
         <item quantity="few">%d сообщения</item>
