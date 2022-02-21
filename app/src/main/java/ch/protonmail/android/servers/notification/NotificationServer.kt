@@ -586,7 +586,7 @@ class NotificationServer @Inject constructor(
     private fun notifyErrorWithTitle(
         userId: UserId,
         title: String,
-        bigText: String,
+        bigText: String?,
         summaryText: String,
         notificationID: Int
     ) {
@@ -604,7 +604,7 @@ class NotificationServer @Inject constructor(
 
     fun notifySaveDraftError(
         userId: UserId,
-        errorMessage: String,
+        errorMessage: String?,
         messageSubject: String?,
         username: Name
     ) {

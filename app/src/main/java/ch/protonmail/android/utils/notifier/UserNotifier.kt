@@ -23,7 +23,7 @@ import androidx.annotation.StringRes
 
 interface UserNotifier {
 
-    fun showPersistentError(errorMessage: String, messageSubject: String?)
+    fun showPersistentError(errorMessage: String?, messageSubject: String?)
     fun showError(errorMessage: String)
     fun showError(@StringRes errorMessageRes: Int)
     fun showSendMessageError(errorMessage: String, messageSubject: String?)
