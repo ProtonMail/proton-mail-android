@@ -1071,7 +1071,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val result = worker.doWork()
 
             // Then
-            verify { userNotifier.showPersistentError(errorMessage, "Subject001") }
+            verify { userNotifier.showPersistentError(null, "Subject001") }
             val expected = ListenableWorker.Result.failure(
                 Data.Builder().putString(
                     KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,

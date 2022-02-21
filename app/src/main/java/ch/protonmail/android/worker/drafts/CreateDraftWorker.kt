@@ -263,7 +263,7 @@ class CreateDraftWorker @AssistedInject constructor(
             return Result.retry()
         }
         Timber.e(throwable, "Create Draft Worker API call failed all the retries. error. FAILING")
-        userNotifier.showPersistentError(throwable.message.orEmpty(), messageSubject)
+        userNotifier.showPersistentError(null, messageSubject)
         return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 

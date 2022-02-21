@@ -37,7 +37,7 @@ class AndroidUserNotifier @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) : UserNotifier {
 
-    override fun showPersistentError(errorMessage: String, messageSubject: String?) {
+    override fun showPersistentError(errorMessage: String?, messageSubject: String?) {
         val user = userManager.requireCurrentUser()
         notificationServer.notifySaveDraftError(user.id, errorMessage, messageSubject, user.name)
     }
