@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
     <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">设置密码</string>
-    <string name="set_msg_password_info">请为非 ProtonMail 用户设置密码将邮件加密，<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">信息</string>
     <string name="set_msg_password_msg_password_title">邮件密码</string>
@@ -806,6 +806,8 @@
     <string name="manage">管理</string>
     <string name="message_from">来自 %s 的邮件</string>
     <string name="not_spam_move_to_inbox">不是垃圾邮件（移至收件箱）</string>
+    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
+    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
     <plurals name="x_messages_count">
         <item quantity="other">%d 封邮件</item>
     </plurals>

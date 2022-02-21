@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -40,7 +40,7 @@
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakter</string>
     <string name="drawer_lock_the_app">Lås appen</string>
-    <string name="drawer_report_bug">Rapportera bugg</string>
+    <string name="drawer_report_bug">Rapportera fel</string>
     <string name="drawer_settings">Inställningar</string>
     <string name="drawer_sign_out">Logga ut</string>
     <string name="drawer_create_folder_description">Skapa ny mapp</string>
@@ -49,7 +49,7 @@
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Öppna i Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Säker krypterad kalender</string>
-    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Ikon för Proton Calendar</string>
     <string name="details_play_store_error">Kan inte öppna Play Store</string>
     <!-- endregion -->
     <!-- region Composer -->
@@ -59,10 +59,10 @@
     <string name="composer_from">Från:</string>
     <string name="composer_subject">Ämne:</string>
     <string name="composer_to">Till:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
+    <string name="composer_removing_address_generic_error">Kan inte verifiera adress: %s1. Sändningen kan misslyckas.</string>
     <string name="composer_removing_address_server_error">Tar bort adresser: %s1. %s2</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
-    <string name="set_msg_password_info">Ange ett lösenord för att kryptera detta meddelande för användare som inte använder ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Läs mer</a>
+    <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke-ProtonMail-användare. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lär dig mer</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
@@ -133,14 +133,14 @@
     <string name="update_app_title">Uppdatering krävs</string>
     <string name="update_app">Din ProtonMail-app kan inte användas innan den är uppdaterad</string>
     <string name="you_are_offline">Du är offline</string>
-    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail är för närvarande offline, kontrollera https://protonstatus.com eller vår twitter för nuvarande status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt sparad</string>
     <string name="contact_saved_offline">Kontakt sparad, synkroniseras när anslutning är tillgänglig</string>
     <string name="contact_exist">E-postkontakt finns redan</string>
     <string name="invalid_email">E-postadress är inte giltig</string>
     <string name="duplicate_email">E-postadress är en dubblett</string>
     <string name="message_drafted">Meddelandet kunde inte skickas. Ditt meddelande sparades i mappen utkast</string>
-    <string name="attachment_failed_message_drafted">Please remove and re-attach \"%s\" and send the message again. Your message can be found in the \"Drafts\" folder.</string>
+    <string name="attachment_failed_message_drafted">Ta bort och bifoga “%s“ igen och skicka meddelandet igen. Ditt meddelande kan hittas i mappen “Utkast“.</string>
     <string name="open_drawer">Öppna</string>
     <string name="close_drawer">Stäng</string>
     <string name="inbox_option">Inkorg</string>
@@ -273,7 +273,7 @@
     <string name="label_add">Lägg till</string>
     <string name="no_browser_found">Installera en webbläsar-app för att avsluta denna åtgärd</string>
     <string name="no_application_found">Ingen app hittades för att hantera denna åtgärd</string>
-    <string name="no_application_found_or_link_invalid">Ingen app hittades som kan hantera begäran eller så är länken ogiltig</string>
+    <string name="no_application_found_or_link_invalid">Ingen app hittades för att hantera denna åtgärd eller ogiltig URL</string>
     <string name="label_deleted">Etikett borttagen</string>
     <string name="label_deleted_error">Fel vid borttagning av etikett</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
@@ -299,7 +299,7 @@
     <string name="engagement_title_support_protonmail">Stöd ProtonMail</string>
     <string name="engagement_subtitle_welcome">Ditt nya krypterade e-postkonto har konfigurerats och är redo att skicka och ta emot krypterade meddelanden.</string>
     <string name="engagement_subtitle_swipe">Du kan anpassa svepgester i ProtonMail-appens inställningar.</string>
-    <string name="engagement_subtitle_labels">Skapa och lägg till etiketter för att organisera din inkorg. Tryck och håll kvar på ett meddelande för alla val.</string>
+    <string name="engagement_subtitle_labels">Skapa och lägg till etiketter för att organisera din inkorg. Tryck och håll ned ett meddelande för alla alternativ.</string>
     <string name="engagement_subtitle_encryption">Din inkorg skyddas nu av end-to-end-kryptering. För att automatiskt skicka säker e-post till dina kontakter, bjud in dem att använda ProtonMail! Du kan också manuellt kryptera meddelanden till dem om de inte använder ProtonMail.</string>
     <string name="engagement_subtitle_expire">Meddelanden du skickar kan ställas in att automatiskt raderas efter en viss tid.</string>
     <string name="engagement_subtitle_help">Du kan får hjälp och support på protonmail.com/support. Fel kan också rapporteras via appen.</string>
@@ -473,7 +473,7 @@
     <string name="address_city">Ort</string>
     <string name="address_region">Region (delstat eller provins)</string>
     <string name="address_postcode">Postnummer</string>
-    <string name="address_po_box">PO Box</string>
+    <string name="address_po_box">Postbox</string>
     <string name="address_country">Land</string>
     <string name="recheck_delinquency">Kontrollera igen</string>
     <string name="close_app">Stäng appen</string>
@@ -503,7 +503,7 @@
     <string name="remove_password_question">Ta bort lösenordet?</string>
     <string name="attachment_storage_value_current">Nuvarande val: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Nuvarande val: obegränsat</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Ställer in den maximala mängden lagringsutrymme som ProtonMail kan använda på din mobila enhet.</string>
     <string name="load_embedded_images_failed_no_network">Kunde inte ladda inbäddade bilder. Kontrollera din nätverksanslutning.</string>
     <string name="load_embedded_images_failed">Misslyckades att ladda inbäddade bilder.</string>
     <string name="unlimited">Obegränsat</string>
@@ -756,8 +756,8 @@
     <string name="auto_lock_timer">Autolås timer</string>
     <string name="connections_via_third_parties">Alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties">Tillåt alternativ routing</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
+    <string name="allow_secure_connections_via_third_parties_settings_description">Om Proton-webbplatser blockeras tillåter denna inställning appen att prova alternativ nätverksrouting för att nå Proton, vilket kan vara användbart för att kringgå brandväggar eller nätverksproblem. Vi rekommenderar att du behåller denna inställning på för större tillförlitlighet.</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Om Proton-webbplatser blockeras tillåter denna inställning appen att prova alternativ nätverksrouting för att nå Proton, vilket kan vara användbart för att kringgå brandväggar eller nätverksproblem. Vi rekommenderar att du behåller denna inställning på för större tillförlitlighet.. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Lär dig mer</a>
     </string>
     <string name="app_language">App-språk</string>
     <string name="custom_language_dialog_title">Välj app-språk</string>
@@ -778,7 +778,7 @@
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Compose</string>
-    <string name="shortcut_compose_new_message">Compose a new message</string>
+    <string name="shortcut_compose_new_message">Skriv ett nytt meddelande</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Vanliga anslutningsproblem och lösningar</string>
@@ -793,7 +793,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Bild hittades inte</string>
-    <string name="error_image_bad_url">Malformed image URL</string>
+    <string name="error_image_bad_url">Felaktig bild-URL</string>
     <string name="error_saving_try_again">Fel vid sparande av meddelande. Försök igen.</string>
     <!-- endregion -->
     <string name="allowed">Tillåtet</string>
@@ -823,6 +823,8 @@
     <string name="manage">Hantera</string>
     <string name="message_from">Meddelande från %s</string>
     <string name="not_spam_move_to_inbox">Inte skräppost (flytta till inkorgen)</string>
+    <string name="action_sheet_view_in_light_mode">Visa i ljust läge</string>
+    <string name="action_sheet_view_in_dark_mode">Visa i mörkt läge</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d meddelande</item>
         <item quantity="other">%d meddelanden</item>

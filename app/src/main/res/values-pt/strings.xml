@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
     <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Definir senha</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informação</string>
     <string name="set_msg_password_msg_password_title">Senha da mensagem</string>
@@ -827,6 +827,8 @@
     <string name="manage">Gerir</string>
     <string name="message_from">Mensagem de %s</string>
     <string name="not_spam_move_to_inbox">Não é spam (mover para caixa de entrada)</string>
+    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
+    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d mensagem</item>
         <item quantity="other">%d mensagens</item>

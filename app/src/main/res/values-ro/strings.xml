@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Nu se poate verifica adresa: %s1. Trimiterea ar putea eșua.</string>
     <string name="composer_removing_address_server_error">Eliminare adresa: %s1. %s2</string>
     <string name="set_msg_password_title">Setare parolă</string>
-    <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai Protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Detalii</a>
+    <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru utilizatorii care nu folosesc ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Detalii</a>
     </string>
     <string name="set_msg_password_info_icon_description">Informaţii</string>
     <string name="set_msg_password_msg_password_title">Parolă mesaj</string>
@@ -838,6 +838,8 @@
     <string name="manage">Gestionare</string>
     <string name="message_from">Mesaj de la %s</string>
     <string name="not_spam_move_to_inbox">Nu este nedorit (mutare în «Primite»)</string>
+    <string name="action_sheet_view_in_light_mode">Vizualizare în modul Lumină</string>
+    <string name="action_sheet_view_in_dark_mode">Vizualizare în modul întunecat</string>
     <plurals name="x_messages_count">
         <item quantity="one">Un mesaj</item>
         <item quantity="few">%d mesaje</item>

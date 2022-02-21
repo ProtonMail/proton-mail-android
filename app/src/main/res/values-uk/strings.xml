@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -662,7 +662,7 @@
     <string name="settings">Налаштування</string>
     <string name="account_settings">Налаштування облікового запису</string>
     <!-- region Acc Settings -->
-    <string name="account">Обліковка</string>
+    <string name="account">Обліковий запис</string>
     <string name="subscription">Передплата</string>
     <string name="plan_and_user">Тарифний план</string>
     <string name="payment_method">Спосіб оплати</string>
@@ -849,6 +849,8 @@
     <string name="manage">Керувати</string>
     <string name="message_from">Повідомлення від %s</string>
     <string name="not_spam_move_to_inbox">Не спам (Перемістити до вхідних)</string>
+    <string name="action_sheet_view_in_light_mode">Переглянути у світлому режимі</string>
+    <string name="action_sheet_view_in_dark_mode">Переглянути у темному режимі</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d повідомлення</item>
         <item quantity="few">%d повідомлення</item>

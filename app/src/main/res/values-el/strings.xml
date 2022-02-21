@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Αδυναμία επικύρωσης διεύθυνσης: %s1. Η αποστολή ίσως αποτύχει.</string>
     <string name="composer_removing_address_server_error">Αφαίρεση διεύθυνσης: %s1. %s2</string>
     <string name="set_msg_password_title">Ορισμός κωδικού</string>
-    <string name="set_msg_password_info">Ορίστε έναν κωδικό για να κρυπτογραφήσετε αυτό το μήνυμα, για τους χρήστες που δεν ανήκουν στη Proton. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Μάθετε περισσότερα</a>
+    <string name="set_msg_password_info">Ορισμός κωδικού κρυπτογράφησης μηνύματος για χρήστες εκτός ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Μάθετε περισσότερα</a>
     </string>
     <string name="set_msg_password_info_icon_description">Πληροφορίες</string>
     <string name="set_msg_password_msg_password_title">Κωδικός πρόσβασης μηνύματος</string>
@@ -259,7 +259,7 @@
     <string name="cancel">Ακύρωση</string>
     <string name="close">Κλείσιμο</string>
     <string name="eo_password_title">Ορισμός Κωδικού</string>
-    <string name="eo_password_subtitle">Ορίστε έναν κωδικό πρόσβασης για την κρυπτογράφηση αυτού του μηνύματος, για χρήστες που δεν χρησιμοποιούν το ProtonMail</string>
+    <string name="eo_password_subtitle">Ορισμός κωδικού κρυπτογράφησης μηνύματος για χρήστες εκτός ProtonMail</string>
     <string name="eo_password_more_info">Λάβετε περισσότερες πληροφορίες</string>
     <string name="no_attachments">0 Συνημμένα</string>
     <string name="display_name_banned_chars">Μή Έγκυρο Εμφανιζόμενο Όνομα. &gt; και &lt; δεν επιτρέπονται</string>
@@ -827,6 +827,8 @@
     <string name="manage">Διαχείριση</string>
     <string name="message_from">Μήνυμα από %s</string>
     <string name="not_spam_move_to_inbox">Μη ενοχλητικό (Μετακίνηση στα Εισερχόμενα)</string>
+    <string name="action_sheet_view_in_light_mode">Προβολή σε Φωτεινή διαμόρφωση</string>
+    <string name="action_sheet_view_in_dark_mode">Προβολή σε Σκούρα διαμόρφωση</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d μήνυμα</item>
         <item quantity="other">%d μηνύματα</item>

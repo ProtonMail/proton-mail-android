@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Impossibile verificare l\'indirizzo: %s1. L\'invio potrebbe fallire.</string>
     <string name="composer_removing_address_server_error">Indirizzi in rimozione: %s1. %s2</string>
     <string name="set_msg_password_title">Imposta password</string>
-    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per utenti non protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Per saperne di più</a>
+    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per gli utenti non ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Per saperne di più</a>
     </string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Password messaggio</string>
@@ -827,6 +827,8 @@
     <string name="manage">Gestisci</string>
     <string name="message_from">Messaggio da %s</string>
     <string name="not_spam_move_to_inbox">Non spam (Sposta nella Posta in Arrivo)</string>
+    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
+    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d messaggio</item>
         <item quantity="other">%d messaggi</item>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -62,7 +62,7 @@
     <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
     <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
     <string name="set_msg_password_title">Stilltu lykilorð</string>
-    <string name="set_msg_password_info">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Skoða nánar</a>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
     </string>
     <string name="set_msg_password_info_icon_description">Upplýsingar</string>
     <string name="set_msg_password_msg_password_title">Lykilorð skilaboða</string>
@@ -825,6 +825,8 @@
     <string name="manage">Stjórna</string>
     <string name="message_from">Skilaboð frá %s</string>
     <string name="not_spam_move_to_inbox">Ekki ruslpóstur (flytja í innhólf)</string>
+    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
+    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d skilaboð</item>
         <item quantity="other">%d skilaboð</item>
