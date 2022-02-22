@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.first
 import me.proton.core.domain.arch.Mapper
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
+import me.proton.core.util.kotlin.takeIfNotEmpty
 import javax.inject.Inject
 
 class MailboxItemUiModelMapper @Inject constructor(
@@ -60,7 +61,7 @@ class MailboxItemUiModelMapper @Inject constructor(
         messageData = buildMessageData(message),
         messageLabels = message.buildLabelChipFromMessageLabels(allLabels),
         allLabelsIds = message.allLabelsIds(),
-        recipients = toDisplayNamesFromContacts(message.toList).joinToString(),
+        recipients = toDisplayNamesFromContacts(message.toList, message.ccList, message.bccList).joinToString(),
         isDraft = message.isDraft()
     )
 
@@ -105,8 +106,16 @@ class MailboxItemUiModelMapper @Inject constructor(
     }
 
     @JvmName("toDisplayNamesFromContacts_MessageRecipient")
-    private suspend fun toDisplayNamesFromContacts(recipients: Collection<MessageRecipient>): List<String> =
-        toDisplayNamesFromContacts(messageRecipientToCorrespondentMapper.toDomainModels(recipients))
+    private suspend fun toDisplayNamesFromContacts(
+        toRecipients: Collection<MessageRecipient>,
+        ccRecipients: Collection<MessageRecipient>,
+        bccRecipients: Collection<MessageRecipient>
+    ): List<String> {
+        val recipients = toRecipients.takeIfNotEmpty()
+            ?: ccRecipients.takeIfNotEmpty()
+            ?: bccRecipients
+        return toDisplayNamesFromContacts(messageRecipientToCorrespondentMapper.toDomainModels(recipients))
+    }
 
     private suspend fun toDisplayNamesFromContacts(correspondents: Collection<Correspondent>): List<String> {
         val contacts = contactsRepository.findContactsByEmail(correspondents.map { it.address }).first()

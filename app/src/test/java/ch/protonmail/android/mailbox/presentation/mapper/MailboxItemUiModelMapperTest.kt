@@ -216,6 +216,58 @@ class MailboxItemUiModelMapperTest {
         // then
         assertEquals(expected, result.allLabelsIds)
     }
+
+    @Test
+    fun `message recipients contains from TO field if any`() = runBlockingTest {
+        // given
+        val toRecipients = listOf(MessageRecipient(TEST_RECIPIENT_NAME, TEST_RECIPIENT_ADDRESS))
+        val message = buildMessage(toRecipients = toRecipients)
+        val expected = TEST_RECIPIENT_NAME
+
+        // when
+        val result = mapper.toUiModel(message, allLabels = emptyList())
+
+        // then
+        assertEquals(expected, result.recipients)
+    }
+
+    @Test
+    fun `message recipients contains from CC field if none in TO`() = runBlockingTest {
+        // given
+        val toRecipients = emptyList<MessageRecipient>()
+        val ccRecipients = listOf(MessageRecipient(TEST_RECIPIENT_NAME, TEST_RECIPIENT_ADDRESS))
+        val message = buildMessage(
+            toRecipients = toRecipients,
+            ccRecipients = ccRecipients
+        )
+        val expected = TEST_RECIPIENT_NAME
+
+        // when
+        val result = mapper.toUiModel(message, allLabels = emptyList())
+
+        // then
+        assertEquals(expected, result.recipients)
+    }
+
+    @Test
+    fun `message recipients contains from BCC field if none in TO and CC`() = runBlockingTest {
+        // given
+        val toRecipients = emptyList<MessageRecipient>()
+        val ccRecipients = emptyList<MessageRecipient>()
+        val bccRecipients = listOf(MessageRecipient(TEST_RECIPIENT_NAME, TEST_RECIPIENT_ADDRESS))
+        val message = buildMessage(
+            toRecipients = toRecipients,
+            ccRecipients = ccRecipients,
+            bccRecipients = bccRecipients
+        )
+        val expected = TEST_RECIPIENT_NAME
+
+        // when
+        val result = mapper.toUiModel(message, allLabels = emptyList())
+
+        // then
+        assertEquals(expected, result.recipients)
+    }
     // endregion
 
     // region Conversations
@@ -466,11 +518,17 @@ class MailboxItemUiModelMapperTest {
 
         fun buildMessage(
             sender: MessageSender = MessageSender(EMPTY_STRING, EMPTY_STRING),
+            toRecipients: List<MessageRecipient> = emptyList(),
+            ccRecipients: List<MessageRecipient> = emptyList(),
+            bccRecipients: List<MessageRecipient> = emptyList(),
             allLabelsIds: Collection<LabelId> = emptyList()
         ) = Message().apply {
             this.messageId = EMPTY_STRING
             this.subject = EMPTY_STRING
             this.sender = sender
+            this.toList = toRecipients
+            this.ccList = ccRecipients
+            this.bccList = bccRecipients
             this.Unread = true
             this.allLabelIDs = allLabelsIds.map { it.id }
         }
