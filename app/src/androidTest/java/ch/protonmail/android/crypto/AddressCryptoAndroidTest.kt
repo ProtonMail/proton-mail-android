@@ -140,7 +140,8 @@ class AddressCryptoAndroidTest {
                 UserId(USER_ID_VALUE),
                 0u,
                 PgpField.PrivateKey(NotBlankString(ACTIVER_USER_KEY.trimIndent())),
-                null
+                null,
+                active = true,
             )
         )
     }
@@ -183,13 +184,15 @@ class AddressCryptoAndroidTest {
                 UserId(USER_ID_VALUE),
                 0u,
                 PgpField.PrivateKey(NotBlankString(INACTIVE_USER_KEY.trimIndent())),
-                null
+                null,
+                active = true,
             ),
             UserKey(
                 UserId(USER_ID_VALUE),
                 0u,
                 PgpField.PrivateKey(NotBlankString(ACTIVER_USER_KEY.trimIndent())),
-                null
+                null,
+                active = true,
             ),
         )
         val key = AddressKey(

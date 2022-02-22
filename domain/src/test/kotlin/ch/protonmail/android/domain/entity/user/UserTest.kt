@@ -54,6 +54,7 @@ internal class UserTest {
             User(addresses = Addresses(emptyMap()), plans = listOf(Mail.Paid))
         }
     }
+
     // endregion
 
     // region keys
@@ -69,6 +70,7 @@ internal class UserTest {
             User(addresses = notEmptyAddresses, keys = UserKeys.Empty)
         }
     }
+
     // endregion
 
     // region plans
@@ -143,7 +145,8 @@ internal class UserTest {
         UserId("key"),
         4.toUInt(),
         PgpField.PrivateKey(NotBlankString("key")),
-        PgpField.Message(NotBlankString("token"))
+        PgpField.Message(NotBlankString("token")),
+        active = true
     )
 
     private val notEmptyKeys = UserKeys(dummyKey, listOf(dummyKey))
