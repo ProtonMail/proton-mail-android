@@ -69,6 +69,9 @@ public class EventResponse extends ResponseBody {
     @SerializedName(Fields.Events.MAIL_SETTINGS)
     private MailSettings mailSettings;
 
+    @SerializedName(Fields.Events.USER_SETTINGS)
+    private Object userSettings;
+
     @SerializedName(Fields.Events.MESSAGE_COUNTS)
     private List<CountsApiModel> messageCounts;
 
@@ -116,6 +119,10 @@ public class EventResponse extends ResponseBody {
 
     public MailSettings getMailSettingsUpdates() {
         return mailSettings;
+    }
+
+    public Object getUserSettingsUpdates() {
+        return userSettings;
     }
 
     public String getEventID() {
