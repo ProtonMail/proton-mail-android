@@ -218,49 +218,17 @@ class MailboxItemUiModelMapperTest {
     }
 
     @Test
-    fun `message recipients contains from TO field if any`() = runBlockingTest {
+    fun `message recipients contains from To, Cc and Bcc`() = runBlockingTest {
         // given
-        val toRecipients = listOf(MessageRecipient(TEST_RECIPIENT_NAME, TEST_RECIPIENT_ADDRESS))
-        val message = buildMessage(toRecipients = toRecipients)
-        val expected = TEST_RECIPIENT_NAME
-
-        // when
-        val result = mapper.toUiModel(message, allLabels = emptyList())
-
-        // then
-        assertEquals(expected, result.recipients)
-    }
-
-    @Test
-    fun `message recipients contains from CC field if none in TO`() = runBlockingTest {
-        // given
-        val toRecipients = emptyList<MessageRecipient>()
-        val ccRecipients = listOf(MessageRecipient(TEST_RECIPIENT_NAME, TEST_RECIPIENT_ADDRESS))
-        val message = buildMessage(
-            toRecipients = toRecipients,
-            ccRecipients = ccRecipients
-        )
-        val expected = TEST_RECIPIENT_NAME
-
-        // when
-        val result = mapper.toUiModel(message, allLabels = emptyList())
-
-        // then
-        assertEquals(expected, result.recipients)
-    }
-
-    @Test
-    fun `message recipients contains from BCC field if none in TO and CC`() = runBlockingTest {
-        // given
-        val toRecipients = emptyList<MessageRecipient>()
-        val ccRecipients = emptyList<MessageRecipient>()
-        val bccRecipients = listOf(MessageRecipient(TEST_RECIPIENT_NAME, TEST_RECIPIENT_ADDRESS))
+        val toRecipients = buildRecipients("first", "second")
+        val ccRecipients = buildRecipients("third, fourth")
+        val bccRecipients = buildRecipients("fifth", "sixth")
         val message = buildMessage(
             toRecipients = toRecipients,
             ccRecipients = ccRecipients,
             bccRecipients = bccRecipients
         )
-        val expected = TEST_RECIPIENT_NAME
+        val expected = "first, second, third, fourth, fifth, sixth"
 
         // when
         val result = mapper.toUiModel(message, allLabels = emptyList())
@@ -618,6 +586,9 @@ class MailboxItemUiModelMapperTest {
             email = EMPTY_STRING,
             name = EMPTY_STRING
         )
+
+        fun buildRecipients(vararg names: String): List<MessageRecipient> =
+            names.map { name -> MessageRecipient(name, TEST_EMAIL_ADDRESS) }
 
         fun LabelChipUiModelMapper.mockUiModelsCreation() {
             every { toUiModels(any()) } answers {
