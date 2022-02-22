@@ -360,8 +360,8 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         val messageWithDetails = if (message == null || !message.isDownloaded) {
             Timber.v("Message is not downloaded, trying to fetch it")
-            val userId = userManager.requireCurrentUserId()
-            messageRepository.getMessage(userId, messageOrConversationId, true)
+            userManager.currentUserId
+                ?.let { messageRepository.getMessage(it, messageOrConversationId, true) }
         } else {
             message
         }

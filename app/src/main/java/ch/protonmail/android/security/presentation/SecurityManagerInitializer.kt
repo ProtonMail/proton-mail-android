@@ -26,7 +26,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 
-class SecurityManagerInitializer : Initializer<SecurityManager> {
+internal class SecurityManagerInitializer : Initializer<SecurityManager> {
 
     override fun create(context: Context): SecurityManager {
         val entryPoint = EntryPointAccessors.fromApplication(context, SecurityManagerEntryPoint::class.java)

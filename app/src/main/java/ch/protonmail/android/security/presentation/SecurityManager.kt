@@ -21,12 +21,14 @@ package ch.protonmail.android.security.presentation
 
 import android.app.Activity
 import android.content.Context
+import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import ch.protonmail.android.pinlock.domain.usecase.ObserveIsPinLockEnabled
 import ch.protonmail.android.pinlock.presentation.PinLockManager
 import ch.protonmail.android.security.domain.usecase.ObserveIsPreventTakingScreenshots
 import ch.protonmail.android.usecase.GetElapsedRealTimeMillis
@@ -43,11 +45,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SecurityManager @Inject constructor(
+internal class SecurityManager @Inject constructor(
     context: Context,
     private val pinLockManager: PinLockManager,
     private val screenshotManager: ScreenshotManager,
-    observeIsPinLockEnabled: ObserveIsPinLockEnabled,
+    private val logoutHandler: LogoutHandler,
     observeIsPreventTakingScreenshots: ObserveIsPreventTakingScreenshots,
     private val getElapsedRealTimeMillis: GetElapsedRealTimeMillis,
 ) {
@@ -59,6 +61,7 @@ class SecurityManager @Inject constructor(
     private var lastForegroundTime: Long = 0
 
     private val shouldUseSecureScreen = observeIsPreventTakingScreenshots()
+        .flowWithLifecycle(processLifecycleOwner.lifecycle)
         .onEach { isSecure -> currentActivity.get()?.toggleSecureScreen(isSecure) }
         .stateIn(processLifecycleOwner.lifecycleScope, SharingStarted.Eagerly, false)
 
@@ -81,6 +84,15 @@ class SecurityManager @Inject constructor(
     }
 
     private val activityLifecycleObserver = object : EmptyActivityLifecycleCallbacks {
+
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            super.onActivityCreated(activity, savedInstanceState)
+            Timber.v("Activity created")
+
+            if (activity is ComponentActivity) {
+                logoutHandler.register(activity)
+            }
+        }
 
         override fun onActivityStarted(activity: Activity) {
             super.onActivityStarted(activity)

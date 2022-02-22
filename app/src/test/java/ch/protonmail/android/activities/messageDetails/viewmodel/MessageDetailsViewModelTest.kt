@@ -191,6 +191,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val userManager: UserManager = mockk(relaxed = true) {
         every { requireCurrentUserId() } returns testId1
+        every { currentUserId } returns testId1
         coEvery { primaryUserId } returns userIdFlow
     }
 
