@@ -62,13 +62,13 @@ internal class NotificationReceiver : BroadcastReceiver() {
 
             if (extras.containsKey(EXTRA_NOTIFICATION_GROUP_DISMISS)) {
                 coroutineScope.launch {
-                    clearNotificationsForUser(userId)
+                    clearNotificationsForUser(userId, false)
                 }
             } else {
                 val messageId = checkNotNull(extras.getString(EXTRA_NOTIFICATION_MESSAGE_ID))
 
                 if (extras.containsKey(EXTRA_NOTIFICATION_DISMISS)) {
-                    coroutineScope.launch { clearNotification(userId, messageId) }
+                    coroutineScope.launch { clearNotification(userId, messageId, false) }
                 } else {
                     val newLocation = checkNotNull(extras.getString(EXTRA_NOTIFICATION_NEW_LOCATION_MESSAGE))
 

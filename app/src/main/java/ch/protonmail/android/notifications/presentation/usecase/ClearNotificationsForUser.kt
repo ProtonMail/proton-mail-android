@@ -30,9 +30,13 @@ internal class ClearNotificationsForUser @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        userId: UserId
+        userId: UserId,
+        cancelStatusBarNotificationManually: Boolean = true
     ) {
-        notificationManager.cancel(userId.hashCode())
+
+        if (cancelStatusBarNotificationManually) {
+            notificationManager.cancel(userId.hashCode())
+        }
         notificationRepository.deleteAllNotificationsByUserId(userId)
     }
 }

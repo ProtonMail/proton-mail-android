@@ -31,10 +31,11 @@ internal class ClearNotification @Inject constructor(
 
     suspend operator fun invoke(
         userId: UserId,
-        notificationId: String
+        notificationId: String,
+        cancelStatusBarNotificationManually: Boolean = true
     ) {
 
-        if (checkIfShouldCancelSummaryNotification(userId)) {
+        if (checkIfShouldCancelSummaryNotification(cancelStatusBarNotificationManually, userId)) {
             notificationManager.cancel(userId.hashCode())
         } else {
             notificationManager.cancel(notificationId.hashCode())
@@ -45,8 +46,11 @@ internal class ClearNotification @Inject constructor(
         )
     }
 
-    private fun checkIfShouldCancelSummaryNotification(userId: UserId): Boolean =
+    private fun checkIfShouldCancelSummaryNotification(
+        cancelStatusBarNotificationManually: Boolean,
+        userId: UserId
+    ): Boolean =
         notificationManager.activeNotifications
-            .count { userId.id in it.groupKey } < 2
+            .count { userId.id in it.groupKey } <= 2 && cancelStatusBarNotificationManually
 
 }
