@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -41,13 +41,13 @@ object ConversationTestData {
 
     val withDraftsOnly = withNonDraftsOnly.copy(
         messages = withNonDraftsOnly.messages.map { message ->
-            message.copy(location = Constants.MessageLocationType.DRAFT.messageLocationTypeValue)
+            message.copy(allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelIdString()))
         }
     )
 
     val withDraftAsLastMessage = withNonDraftsOnly.copy().apply {
         messages.last().apply {
-            location = Constants.MessageLocationType.DRAFT.messageLocationTypeValue
+            allLabelIDs = listOf(Constants.MessageLocationType.DRAFT.asLabelIdString())
         }
     }
 }

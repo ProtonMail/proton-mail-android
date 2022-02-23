@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -119,7 +119,7 @@ internal class MessagesService : JobIntentService() {
     ) {
         try {
             val messages = runBlocking {
-                mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = location.asLabelId()))
+                mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = location.asLabelIdString()))
             }
             if (messages.code == Constants.RESPONSE_CODE_OK)
                 handleResult(messages, location, refreshDetails, uuid, currentUserId, refreshMessages)

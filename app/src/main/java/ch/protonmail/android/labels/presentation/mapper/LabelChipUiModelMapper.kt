@@ -17,25 +17,26 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data.mapper
+package ch.protonmail.android.labels.presentation.mapper
 
-import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.mailbox.domain.model.Correspondent
+import android.graphics.Color
+import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.ui.model.LabelChipUiModel
+import ch.protonmail.android.utils.UiUtil
 import me.proton.core.domain.arch.Mapper
-import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
-/**
- * Maps from [MessageRecipient] Database model to [Correspondent] Domain model
- */
-class MessageRecipientToCorrespondentMapper @Inject constructor() :
-    Mapper<MessageRecipient, Correspondent> {
+class LabelChipUiModelMapper @Inject constructor() : Mapper<Label, LabelChipUiModel> {
 
-    fun toDomainModel(messageRecipient: MessageRecipient) = Correspondent(
-        name = messageRecipient.name ?: EMPTY_STRING,
-        address = messageRecipient.emailAddress ?: EMPTY_STRING
-    )
+    fun toUiModel(label: Label): LabelChipUiModel {
+        val labelColor = label.color.takeIfNotBlank()
+            ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 
-    fun toDomainModels(messageRecipients: Collection<MessageRecipient>): List<Correspondent> =
-        messageRecipients.map(::toDomainModel)
+        return LabelChipUiModel(label.id, Name(label.name), labelColor)
+    }
+
+    fun toUiModels(labels: Collection<Label>): List<LabelChipUiModel> =
+        labels.map(::toUiModel)
 }

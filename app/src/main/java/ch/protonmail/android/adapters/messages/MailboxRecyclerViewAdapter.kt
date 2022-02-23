@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -24,17 +24,16 @@ import androidx.recyclerview.widget.ListAdapter
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messagesList.MailboxItemFooterView
 import ch.protonmail.android.views.messagesList.MailboxItemView
-import kotlinx.android.synthetic.main.layout_sender_initial.view.*
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 
 class MailboxRecyclerViewAdapter(
     private val context: Context,
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
-) : ListAdapter<MailboxUiItem, MailboxItemViewHolder>(MailboxUiItem.DiffCallback()) {
+) : ListAdapter<MailboxItemUiModel, MailboxItemViewHolder>(MailboxItemUiModel.DiffCallback()) {
 
     private var mailboxLocation = Constants.MessageLocationType.INVALID
 
@@ -43,15 +42,15 @@ class MailboxRecyclerViewAdapter(
     private var pendingUploadList: List<PendingUpload>? = null
     private var pendingSendList: List<PendingSend>? = null
 
-    private var onItemClick: ((MailboxUiItem) -> Unit)? = null
+    private var onItemClick: ((MailboxItemUiModel) -> Unit)? = null
     private var onItemSelectionChangedListener: (() -> Unit)? = null
 
     val checkedMailboxItems get() =
         selectedMailboxItemsIds.mapNotNull { currentList.find { message -> message.itemId == it } }
 
-    public fun getMailboxItem(position: Int): MailboxUiItem = getItem(position)
+    public fun getMailboxItem(position: Int): MailboxItemUiModel = getItem(position)
 
-    fun setItemClick(onItemClick: ((MailboxUiItem) -> Unit)?) {
+    fun setItemClick(onItemClick: ((MailboxItemUiModel) -> Unit)?) {
         this.onItemClick = onItemClick
     }
 
@@ -178,7 +177,7 @@ class MailboxRecyclerViewAdapter(
     }
 
     /**
-     * @return `true` if any items withing the given positions' range has an [MailboxUiItem.itemId] that matches one
+     * @return `true` if any items withing the given positions' range has an [MailboxItemUiModel.itemId] that matches one
      *  from [mailboxItemsIds]
      */
     fun isAnyMailboxItemWithinPositions(

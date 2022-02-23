@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -23,13 +23,15 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet.Companion.EXTRA_ARG_IS_STARRED
@@ -41,8 +43,6 @@ import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
-import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
-import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -1009,7 +1009,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expectedResult = MessageActionSheetState.ManageSectionState(
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget,
             showStarAction = true,
             showUnstarAction = true,
@@ -1026,7 +1026,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             context,
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget
         )
 
@@ -1043,7 +1043,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expectedResult = MessageActionSheetState.ManageSectionState(
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget,
             showStarAction = true,
             showUnstarAction = false,
@@ -1060,7 +1060,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             context,
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget
         )
 
@@ -1077,7 +1077,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expectedResult = MessageActionSheetState.ManageSectionState(
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget,
             showStarAction = false,
             showUnstarAction = true,
@@ -1094,7 +1094,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             context,
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget
         )
 
@@ -1111,7 +1111,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expectedResult = MessageActionSheetState.ManageSectionState(
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget,
             showStarAction = true,
             showUnstarAction = false,
@@ -1128,7 +1128,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             context,
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget
         )
 
@@ -1145,7 +1145,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expectedResult = MessageActionSheetState.ManageSectionState(
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget,
             showStarAction = true,
             showUnstarAction = false,
@@ -1162,7 +1162,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             context,
             messageIds,
             currentFolder,
-            currentFolder.asLabelId(),
+            currentFolder.asLabelIdString(),
             actionsTarget
         )
 

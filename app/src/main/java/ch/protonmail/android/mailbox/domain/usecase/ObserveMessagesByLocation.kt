@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -62,7 +62,7 @@ internal class ObserveMessagesByLocation @Inject constructor(
         labelId: String?
     ) = GetAllMessagesParameters(
         userId = userId,
-        labelId = labelId?.takeIfNotBlank() ?: mailboxLocation.asLabelId()
+        labelId = labelId?.takeIfNotBlank() ?: mailboxLocation.asLabelIdString()
     )
 
     private fun LoadMoreFlow<DataResult<List<Message>>>.mapToResult(): LoadMoreFlow<GetMessagesResult> {

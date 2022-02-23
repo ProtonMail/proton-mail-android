@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -37,6 +37,7 @@ import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.api.models.messages.receive.MessageLocationResolver
 import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
@@ -59,7 +60,6 @@ import me.proton.core.util.kotlin.toInt
 import org.apache.commons.lang3.StringEscapeUtils
 import timber.log.Timber
 import java.io.Serializable
-import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import javax.mail.internet.InternetHeaders
@@ -572,8 +572,12 @@ data class Message @JvmOverloads constructor(
         )
     }
 
-    fun isDraft() = location == Constants.MessageLocationType.DRAFT.messageLocationTypeValue ||
-        location == Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue
+    fun isDraft() = allLabelIDs.any { labelId ->
+        labelId in listOf(
+            MessageLocationType.DRAFT.asLabelIdString(),
+            MessageLocationType.ALL_DRAFT.asLabelIdString()
+        )
+    }
 
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT

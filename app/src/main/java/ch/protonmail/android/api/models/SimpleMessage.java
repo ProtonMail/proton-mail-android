@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -19,7 +19,7 @@
 package ch.protonmail.android.api.models;
 
 import ch.protonmail.android.data.local.model.Message;
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem;
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel;
 
 public class SimpleMessage {
 
@@ -27,10 +27,10 @@ public class SimpleMessage {
     private final boolean isRead;
     private final boolean isStarred;
 
-    public SimpleMessage(MailboxUiItem mailboxUiItem) {
-        messageID = mailboxUiItem.getItemId();
-        isRead = mailboxUiItem.isRead();
-        isStarred = mailboxUiItem.isStarred();
+    public SimpleMessage(MailboxItemUiModel mailboxItemUiModel) {
+        messageID = mailboxItemUiModel.getItemId();
+        isRead = mailboxItemUiModel.isRead();
+        isStarred = mailboxItemUiModel.isStarred();
     }
 
     public SimpleMessage(Message message) {

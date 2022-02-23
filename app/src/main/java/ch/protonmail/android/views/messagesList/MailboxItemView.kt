@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -29,9 +29,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.databinding.ListItemMailboxBinding
-import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
@@ -79,69 +79,73 @@ class MailboxItemView @JvmOverloads constructor(
 
     private fun setTextViewStyles(isRead: Boolean) {
         if (isRead) {
-            sender_text_view.setTextAppearance(R.style.Proton_Text_Default_Weak)
+            correspondents_text_view.setTextAppearance(R.style.Proton_Text_Default_Weak)
             subject_text_view.setTextAppearance(R.style.Proton_Text_DefaultSmall_Weak)
             time_date_text_view.setTextAppearance(R.style.Proton_Text_Caption_Weak)
         } else {
-            sender_text_view.setTextAppearance(R.style.Proton_Text_Default_Bold)
+            correspondents_text_view.setTextAppearance(R.style.Proton_Text_Default_Bold)
             subject_text_view.setTextAppearance(R.style.Proton_Text_DefaultSmall_Medium)
             time_date_text_view.setTextAppearance(R.style.Proton_Text_Caption_Strong)
         }
     }
 
-    private fun getSenderText(mailboxUiItem: MailboxUiItem) =
-        if (isDraftOrSentItem(mailboxUiItem)) {
+    private fun getCorrespondentsText(mailboxUiItem: MailboxItemUiModel, location: MessageLocationType) =
+        if (isDraftOrSentItem(mailboxUiItem, location)) {
             mailboxUiItem.recipients
         } else {
             mailboxUiItem.senderName
         }
 
-    private fun isDraftOrSentItem(mailboxUiItem: MailboxUiItem): Boolean {
-        val messageLocation = mailboxUiItem.messageData?.location
-            ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
-        return Constants.MessageLocationType.fromInt(messageLocation) in arrayOf(
-            Constants.MessageLocationType.DRAFT,
-            Constants.MessageLocationType.SENT
-        )
+    private fun isDraftOrSentItem(mailboxUiItem: MailboxItemUiModel, location: MessageLocationType): Boolean {
+        val currentLabelId = location.asLabelId()
+        val mailboxItemLabelsIds = mailboxUiItem.allLabelsIds
+        val sentAndDraftLabels = listOf(
+            MessageLocationType.DRAFT,
+            MessageLocationType.ALL_DRAFT,
+            MessageLocationType.SENT,
+            MessageLocationType.ALL_SENT
+        ).map { it.asLabelId() }
+
+        return (mailboxItemLabelsIds + currentLabelId).any { it in sentAndDraftLabels }
     }
 
-    private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
-        Constants.MessageLocationType.INBOX -> R.drawable.ic_inbox
-        Constants.MessageLocationType.SENT -> R.drawable.ic_paper_plane
-        Constants.MessageLocationType.DRAFT -> R.drawable.ic_pencil
-        Constants.MessageLocationType.ALL_DRAFT -> R.drawable.ic_pencil
-        Constants.MessageLocationType.ALL_MAIL -> R.drawable.ic_folder
-        Constants.MessageLocationType.ALL_SENT -> R.drawable.ic_paper_plane
-        Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_archive
-        Constants.MessageLocationType.TRASH -> R.drawable.ic_trash
+    private fun getIconForMessageLocation(messageLocation: MessageLocationType) = when (messageLocation) {
+        MessageLocationType.INBOX -> R.drawable.ic_inbox
+        MessageLocationType.SENT -> R.drawable.ic_paper_plane
+        MessageLocationType.DRAFT -> R.drawable.ic_pencil
+        MessageLocationType.ALL_DRAFT -> R.drawable.ic_pencil
+        MessageLocationType.ALL_MAIL -> R.drawable.ic_folder
+        MessageLocationType.ALL_SENT -> R.drawable.ic_paper_plane
+        MessageLocationType.ARCHIVE -> R.drawable.ic_archive
+        MessageLocationType.TRASH -> R.drawable.ic_trash
         else -> null
     }
 
     fun bind(
-        mailboxUiItem: MailboxUiItem,
+        mailboxUiItem: MailboxItemUiModel,
         isMultiSelectionMode: Boolean,
-        mailboxLocation: Constants.MessageLocationType,
+        mailboxLocation: MessageLocationType,
         isBeingSent: Boolean,
         areAttachmentsBeingUploaded: Boolean
     ) {
         val readStatus = mailboxUiItem.isRead
-        val messageLocation = Constants.MessageLocationType.fromInt(
+        val messageLocation = MessageLocationType.fromInt(
             mailboxUiItem.messageData?.location
-                ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
+                ?: MessageLocationType.INVALID.messageLocationTypeValue
         )
 
         setTextViewStyles(readStatus)
         setIconsTint(readStatus)
 
         val showBigDraftIcon = mailboxUiItem.isDraft && !isDraftsLocation(mailboxLocation)
-        val senderText = getSenderText(mailboxUiItem)
+        val correspondentsText = getCorrespondentsText(mailboxUiItem, mailboxLocation)
         // Sender text can only be empty in drafts where we show recipients instead of senders
-        if (senderText.isEmpty()) {
-            sender_text_view.text = context.getString(R.string.empty_recipients)
+        if (correspondentsText.isEmpty()) {
+            correspondents_text_view.text = context.getString(R.string.empty_recipients)
             sender_initial_view.bind(HYPHEN, showBigDraftIcon, isMultiSelectionMode)
         } else {
-            sender_text_view.text = senderText
-            sender_initial_view.bind(senderText.substring(0, 1), showBigDraftIcon, isMultiSelectionMode)
+            correspondents_text_view.text = correspondentsText
+            sender_initial_view.bind(correspondentsText.substring(0, 1), showBigDraftIcon, isMultiSelectionMode)
         }
 
         subject_text_view.text = mailboxUiItem.subject
@@ -164,10 +168,10 @@ class MailboxItemView @JvmOverloads constructor(
         // TODO: Currently there's a bug with showing the location on certain messages.
         //  Revisit the logic with MAILAND-1422
         if (mailboxLocation in arrayOf(
-                Constants.MessageLocationType.ALL_MAIL,
-                Constants.MessageLocationType.STARRED,
-                Constants.MessageLocationType.LABEL,
-                Constants.MessageLocationType.SEARCH
+                MessageLocationType.ALL_MAIL,
+                MessageLocationType.STARRED,
+                MessageLocationType.LABEL,
+                MessageLocationType.SEARCH
             )
         ) {
             val icon = getIconForMessageLocation(messageLocation)
@@ -190,14 +194,14 @@ class MailboxItemView @JvmOverloads constructor(
 
         expiration_image_view.isVisible = mailboxUiItem.expirationTime > 0
 
-        labelsLayout.setLabels(mailboxUiItem.labels)
+        labelsLayout.setLabels(mailboxUiItem.messageLabels)
     }
 
     private fun isDraftsLocation(
-        mailboxLocation: Constants.MessageLocationType
+        mailboxLocation: MessageLocationType
     ) = mailboxLocation in arrayOf(
-        Constants.MessageLocationType.DRAFT,
-        Constants.MessageLocationType.ALL_DRAFT
+        MessageLocationType.DRAFT,
+        MessageLocationType.ALL_DRAFT
     )
 
 }

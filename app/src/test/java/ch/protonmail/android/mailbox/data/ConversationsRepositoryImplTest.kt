@@ -379,7 +379,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     @Test
     fun verifyGetConversationsReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
         // given
-        val labelId = MessageLocationType.INBOX.asLabelId()
+        val labelId = MessageLocationType.INBOX.asLabelIdString()
         val parameters = buildGetConversationsParameters(labelId = labelId)
         val errorMessage = "Api call failed"
 
@@ -745,7 +745,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
             val mailboxLocation = MessageLocationType.ARCHIVE
-            val locationId = MessageLocationType.ARCHIVE.asLabelId()
+            val locationId = MessageLocationType.ARCHIVE.asLabelIdString()
             val message = Message(
                 location = mailboxLocation.messageLocationTypeValue
             )
@@ -787,7 +787,7 @@ class ConversationsRepositoryImplTest : ArchTest {
         runBlockingTest {
             // given
             val conversationIds = listOf(conversationId, conversationId1)
-            val locationId = MessageLocationType.ARCHIVE.asLabelId()
+            val locationId = MessageLocationType.ARCHIVE.asLabelIdString()
             coEvery { conversationDao.findConversation(any(), any()) } returns null
             val expectedResult = ConversationsActionResult.Error
 
@@ -1462,7 +1462,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             .local()
 
         // when
-        val params = GetAllConversationsParameters(testUserId, labelId = MessageLocationType.ARCHIVE.asLabelId())
+        val params = GetAllConversationsParameters(testUserId, labelId = MessageLocationType.ARCHIVE.asLabelIdString())
         conversationsRepository.observeConversations(params).test {
 
             // then
@@ -1727,7 +1727,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     )
 
     private fun buildGetConversationsParameters(
-        labelId: String = MessageLocationType.INBOX.asLabelId(),
+        labelId: String = MessageLocationType.INBOX.asLabelIdString(),
         end: Long? = 1_616_496_670,
         pageSize: Int? = 50
     ) = GetAllConversationsParameters(
@@ -1785,10 +1785,10 @@ class ConversationsRepositoryImplTest : ArchTest {
     )
 
     private fun inboxLabelContextDatabaseModel(): LabelContextDatabaseModel =
-        customContextDatabaseModel(MessageLocationType.INBOX.asLabelId())
+        customContextDatabaseModel(MessageLocationType.INBOX.asLabelIdString())
 
     private fun archiveLabelContextDatabaseModel(): LabelContextDatabaseModel =
-        customContextDatabaseModel(MessageLocationType.ARCHIVE.asLabelId())
+        customContextDatabaseModel(MessageLocationType.ARCHIVE.asLabelIdString())
 
     private fun <T> T.local() = DataResult.Success(ResponseSource.Local, this)
     private fun <T> T.remote() = DataResult.Success(ResponseSource.Remote, this)
