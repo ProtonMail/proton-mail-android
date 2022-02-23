@@ -102,6 +102,9 @@ class AddressCrypto @AssistedInject constructor(
                     pgpMessage,
                     userKeyRing
                 )?.let { decryptedToken ->
+                    if (!userKey.active) {
+                        Timber.w("Key used to decrypt token is inactive")
+                    }
                     if (
                         verifyTokenFormat(decryptedToken) &&
                         verifySignature(userKeyRing, decryptedToken, signature, userKey.id.id, key.id.id)

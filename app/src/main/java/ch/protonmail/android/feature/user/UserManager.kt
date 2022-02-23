@@ -21,13 +21,9 @@ package ch.protonmail.android.feature.user
 
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.address.Address
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.crypto.common.keystore.decrypt
-import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.key.domain.extension.primary
 import me.proton.core.network.domain.ApiException
@@ -65,7 +61,7 @@ fun UserManager.getLegacyKeysBlocking(userId: UserId): List<Keys> = getUserBlock
         null,
         null,
         key.activation,
-        1
+        key.privateKey.isActive.toInt()
     )
 }
 

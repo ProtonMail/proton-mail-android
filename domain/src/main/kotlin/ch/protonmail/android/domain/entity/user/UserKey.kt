@@ -34,7 +34,8 @@ data class UserKey(
     val id: UserId,
     val version: UInt,
     val privateKey: PgpField.PrivateKey,
-    val token: PgpField.Message?
+    val token: PgpField.Message?,
+    val active: Boolean,
 )
 
 /**

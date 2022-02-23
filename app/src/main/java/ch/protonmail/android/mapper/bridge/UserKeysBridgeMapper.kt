@@ -61,7 +61,8 @@ class UserKeyBridgeMapper @Inject constructor() : BridgeMapper<OldKey, UserKey> 
         id = UserId(id),
         version = 4.toUInt(), // TODO not implemented on old Keys
         privateKey = PgpField.PrivateKey(NotBlankString(privateKey)),
-        token = getToken(token)
+        token = getToken(token),
+        active = active == 1
     )
 
     private fun getToken(token: String?) = token?.takeIfNotBlank()?.let { PgpField.Message(NotBlankString(it)) }

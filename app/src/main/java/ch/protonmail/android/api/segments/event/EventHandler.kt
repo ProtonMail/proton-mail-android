@@ -136,6 +136,7 @@ internal class EventHandler @AssistedInject constructor(
             shouldRefreshDetails = false,
             shouldRefreshContacts = false
         )
+        fetchUserWorkerEnqueuer(userId)
     }
 
     /**
