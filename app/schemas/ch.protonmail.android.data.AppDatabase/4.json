@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "adbf882df9d3b8621a70c84f43d3dd9a",
+    "identityHash": "94812f6798375276a11f9ac79c331b31",
     "entities": [
       {
         "tableName": "AccountEntity",
@@ -2036,12 +2036,91 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "NotificationEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `message_id` TEXT NOT NULL, `notification_title` TEXT NOT NULL, `notification_body` TEXT NOT NULL, `url` TEXT, `type` TEXT NOT NULL, PRIMARY KEY(`message_id`), FOREIGN KEY(`userId`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageId",
+            "columnName": "message_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notificationTitle",
+            "columnName": "notification_title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notificationBody",
+            "columnName": "notification_body",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "message_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_NotificationEntity_message_id",
+            "unique": false,
+            "columnNames": [
+              "message_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_NotificationEntity_message_id` ON `${TABLE_NAME}` (`message_id`)"
+          },
+          {
+            "name": "index_NotificationEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_NotificationEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "UserEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'adbf882df9d3b8621a70c84f43d3dd9a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '94812f6798375276a11f9ac79c331b31')"
     ]
   }
 }
