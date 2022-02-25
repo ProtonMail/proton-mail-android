@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -300,7 +300,6 @@ class NotificationServer @Inject constructor(
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.id)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, message?.subject)
-            .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val backIntent = Intent(context, MailboxActivity::class.java)
