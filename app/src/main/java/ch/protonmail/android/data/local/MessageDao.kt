@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -32,7 +32,6 @@ import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ID
-import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_IS_STARRED
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_LABELS
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_LOCATION
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_PREFIX_SENDER
@@ -81,23 +80,6 @@ abstract class MessageDao : BaseDao<Message>() {
         """
     )
     abstract fun observeMessagesByLocation(location: Int): Flow<List<Message>>
-
-    @Query(
-        """
-        SELECT * FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_IS_STARRED = 1
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
-        """
-    )
-    abstract fun observeStarredMessages(): Flow<List<Message>>
-
-    @Query(
-        """
-        SELECT * FROM $TABLE_MESSAGES
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
-        """
-    )
-    abstract fun observeAllMessages(): Flow<List<Message>>
 
     @Query(
         """

@@ -330,36 +330,11 @@ class MessageRepository @Inject constructor(
     private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {
         val dao = databaseProvider.provideMessageDao(params.userId)
 
-        // We treat Sent as a Label, since when we send a message to ourself it should be in both Sent and Inbox, but
-        //  it can have only one location, which is Inbox
-        fun sentAsLabelId() =
-            MessageLocationType.SENT.asLabelIdString()
-
-        // We treat Draft as a label in order to prevent draft messages being resolved as ALL_DRAFT and not shown in
-        // the Draft folder
-        fun draftAsLabelId() =
-            MessageLocationType.DRAFT.asLabelIdString()
-
-        fun starredAsLabelId() =
-            MessageLocationType.STARRED.asLabelIdString()
-
-        fun allMailAsLabelId() =
-            MessageLocationType.ALL_MAIL.asLabelIdString()
-
-        fun locationTypesAlLabelId() =
-            MessageLocationType.values().map { it.asLabelIdString() }
-
         return if (params.keyword != null) {
             dao.searchMessages(params.keyword)
         } else {
-            when (requireNotNull(params.labelId) { "Label Id is required" }) {
-                sentAsLabelId() -> dao.observeMessagesByLabelId(params.labelId)
-                draftAsLabelId() -> dao.observeMessagesByLabelId(params.labelId)
-                allMailAsLabelId() -> dao.observeAllMessages()
-                starredAsLabelId() -> dao.observeStarredMessages()
-                in locationTypesAlLabelId() -> dao.observeMessagesByLocation(params.labelId.toInt())
-                else -> dao.observeMessagesByLabelId(params.labelId)
-            }
+            requireNotNull(params.labelId) { "Label Id is required" }
+            dao.observeMessagesByLabelId(params.labelId)
         }
     }
 

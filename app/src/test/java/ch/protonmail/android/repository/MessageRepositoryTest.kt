@@ -438,7 +438,7 @@ class MessageRepositoryTest {
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
-        every { messageDao.observeMessagesByLocation(mailboxLocation.messageLocationTypeValue) } returns
+        every { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns
             databaseMessages
         coEvery { messageDao.saveMessages(apiMessages) } answers {
             databaseMessages.tryEmit(databaseMessages.value + firstArg<List<Message>>())
@@ -470,11 +470,7 @@ class MessageRepositoryTest {
         val dbMessages = allMessages.take(2)
         val netMessages = allMessages
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-        coEvery {
-            messageDao.observeMessagesByLocation(
-                mailboxLocation.messageLocationTypeValue
-            )
-        } returns dbFlow
+        coEvery { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns dbFlow
         val exceptionMessage = "NetworkError!"
         val testException = IOException(exceptionMessage)
         val params = GetAllMessagesParameters(
@@ -560,7 +556,7 @@ class MessageRepositoryTest {
             every { messages } returns netMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        coEvery { messageDao.observeAllMessages() } returns databaseMessagesFlow
+        coEvery { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns databaseMessagesFlow
         val params = GetAllMessagesParameters(
             testUserId,
             labelId = mailboxLocation.asLabelIdString()
@@ -593,7 +589,7 @@ class MessageRepositoryTest {
             every { messages } returns netMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        coEvery { messageDao.observeAllMessages() } returns flowOf(dbMessages)
+        coEvery { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns flowOf(dbMessages)
         val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelIdString())
         coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
@@ -624,7 +620,7 @@ class MessageRepositoryTest {
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
-        every { messageDao.observeStarredMessages() } returns databaseMessages
+        every { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns databaseMessages
         coEvery { messageDao.saveMessages(apiMessages) } answers {
             databaseMessages.tryEmit(databaseMessages.value + firstArg<List<Message>>())
         }
