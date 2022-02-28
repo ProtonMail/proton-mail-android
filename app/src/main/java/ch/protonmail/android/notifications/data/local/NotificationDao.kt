@@ -26,10 +26,10 @@ import me.proton.core.data.room.db.BaseDao
 @Dao
 internal abstract class NotificationDao : BaseDao<NotificationEntity>() {
 
-    @Query("SELECT * FROM NotificationEntity WHERE message_id=:messageId")
+    @Query("SELECT * FROM NotificationEntity WHERE messageId=:messageId")
     abstract fun findByMessageIdBlocking(messageId: String): NotificationEntity?
 
-    @Query("DELETE FROM NotificationEntity WHERE message_id=:messageId")
+    @Query("DELETE FROM NotificationEntity WHERE messageId=:messageId")
     abstract suspend fun deleteByMessageId(messageId: String)
 
     @Query("DELETE FROM NotificationEntity WHERE userId=:userId")

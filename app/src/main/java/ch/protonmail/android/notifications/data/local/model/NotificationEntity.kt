@@ -27,10 +27,10 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.user.data.entity.UserEntity
 
 const val TABLE_NOTIFICATION = "NotificationEntity"
-internal const val COLUMN_NOTIFICATION_MESSAGE_ID = "message_id"
+internal const val COLUMN_NOTIFICATION_MESSAGE_ID = "messageId"
 internal const val COLUMN_NOTIFICATION_USER_ID = "userId"
-internal const val COLUMN_NOTIFICATION_TITLE = "notification_title"
-internal const val COLUMN_NOTIFICATION_BODY = "notification_body"
+internal const val COLUMN_NOTIFICATION_TITLE = "notificationTitle"
+internal const val COLUMN_NOTIFICATION_BODY = "notificationBody"
 internal const val COLUMN_NOTIFICATION_URL = "url"
 internal const val COLUMN_NOTIFICATION_TYPE = "type"
 
