@@ -109,7 +109,7 @@
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">選取上層資料夾（選擇性）</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>已選取主資料夾</b> 點擊可變更</string>
+        <b>已選取主資料夾。</b>點擊可變更</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">上層資料夾</string>
@@ -275,7 +275,7 @@
     <string name="label_deleted_error">刪除標籤時發生錯誤</string>
     <string name="message_deleted_error">刪除部分郵件時發生錯誤。一些選取的郵件在傳送過程?!</string>
     <string name="respond_inline">在內文回覆</string>
-    <string name="server_not_reachable_troubleshoot">無法連線到伺服器… (<u>疑難排解</u>)</string>
+    <string name="server_not_reachable_troubleshoot">無法連線到伺服器……（<u>疑難排解</u>）</string>
     <string name="connectivity_checking">正在檢查網際網路連線……</string>
     <string name="draft_label_attachments_uploading">正在上傳附件……</string>
     <string name="draft_label_message_uploading">正在傳送郵件……</string>
@@ -314,7 +314,8 @@
     </string-array>
     <string name="delete_label_confirmation_title">刪除選定的標籤？</string>
     <string name="delete_folder_confirmation_title">刪除選定的資料夾？</string>
-    <string name="delete_label_confirmation_message">其中的郵件可以在<b>所有郵件</b>中找到</string>
+    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b>
+    </string>
     <string name="pin_invalid">PIN 無效，輸入正確的 4 位數 PIN 碼</string>
     <string name="pin_not_match">PIN 碼不相符</string>
     <string name="new_pin_saved">已儲存新的 PIN</string>
@@ -397,7 +398,7 @@
     <string name="contacts_import_contact">匯入聯絡人</string>
     <string name="contacts_import">匯入</string>
     <string name="upload_contacts">上傳聯絡人</string>
-    <string name="uploading_contacts">正在上傳聯絡人…</string>
+    <string name="uploading_contacts">正在上傳聯絡人……</string>
     <string-array name="vcard_option_phone">
         <item>電話</item>
         <item>手機</item>
@@ -455,7 +456,7 @@
     <string name="update_folder">更新資料夾</string>
     <string name="spam_score_100">此郵件似乎來自一個 ProtonMail 電子郵件地址，但並非我們的系統寄出，而且未能通過我們的認證要求。這可能是偽造或不當轉寄的郵件！</string>
     <string name="spam_score_101">此電子郵件無法通過網域驗證。這可能是詐騙郵件或是轉發不當導致，請再三留意！</string>
-    <string name="spam_score_102">此郵件可能有網路釣魚的企圖。請檢查寄件者和內容，以確保它們是正當的。<a href="https://protonmail.com/blog/prevent-phishing-attacks/">瞭解更多</a>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a>
     </string>
     <string name="print_from_template">寄件者：%s</string>
     <string name="print_to_template">收件者：%s;  </string>
@@ -474,8 +475,7 @@
     <string name="empty_subject">（無主旨）</string>
     <string name="empty_recipients">(無收件人)</string>
     <string name="contacts_unknown">未知</string>
-    <string name="learn_more">
-        <u>瞭解更多</u>
+    <string name="learn_more"><u>Learn More</u>
     </string>
     <string name="info">資訊</string>
     <string name="error_can_not_send_from_this_address">升級到付費方案後再從您的 %s 地址寄送。</string>
@@ -534,8 +534,7 @@
     <string name="expiration_error_add_msg_password">請為以下收件者設定郵件密碼：</string>
     <string name="expiration_error_disable_pgp_sending">請對下列收件者停用 PGP 傳送，以啟用郵件時效：</string>
     <string name="expiration_error_proceed">點擊「仍然要寄送」，即使在沒有使用限時功能的情況下也直接寄給這些收件人。</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解更多</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a>
     </string>
     <string name="channel_name_attachments">附件</string>
     <string name="channel_description_attachments">通知附件下載狀態</string>
@@ -747,7 +746,7 @@
     <string name="connections_via_third_parties">替代路由</string>
     <string name="allow_secure_connections_via_third_parties">允許替代路由</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">瞭解更多</a>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
     </string>
     <string name="app_language">應用程式語言</string>
     <string name="custom_language_dialog_title">選擇應用程式語言</string>

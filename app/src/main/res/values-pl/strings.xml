@@ -334,7 +334,7 @@
     <string name="ringtone">Dzwonek</string>
     <string name="ringtone_selected">Dzwonek:</string>
     <string name="ringtone_invalid">Wystąpił błąd podczas wybierania dzwonka</string>
-    <string name="ringtone_no_default">Nie można wczytać domyślnego dzwonka</string>
+    <string name="ringtone_no_default">Nie można załadować domyślnego dzwonka</string>
     <string name="select_tone">Wybierz dźwięk</string>
     <string name="copy_link">Kopiuj link</string>
     <string name="share_link">Udostępnij link</string>
@@ -474,9 +474,9 @@
     <string name="spam_score_102">Ta wiadomość może być próbą wyłudzenia informacji. Upewnij się, czy nadawca wiadomości i jej treść są wiarygodne. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">DOWIEDZ SIĘ WIĘCEJ</a>
     </string>
     <string name="print_from_template">Od: %s</string>
-    <string name="print_to_template">Do: %s;  </string>
-    <string name="print_cc_template">DW: %s;  </string>
-    <string name="print_bcc_template">UDW: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Adres: </string>
     <string name="address_street">Ulica</string>
     <string name="address_extended_street">Rozszerzony adres</string>
@@ -490,8 +490,7 @@
     <string name="empty_subject">(Brak tematu)</string>
     <string name="empty_recipients">(brak odbiorców)</string>
     <string name="contacts_unknown">Nieznany</string>
-    <string name="learn_more">
-        <u>Dowiedz się więcej</u>
+    <string name="learn_more"><u>Dowiedz się więcej</u>
     </string>
     <string name="info">Informacje</string>
     <string name="error_can_not_send_from_this_address">Ulepsz do płatnego planu, aby wysyłać wiadomości z adresu %s.</string>
@@ -504,7 +503,7 @@
     <string name="protonmail_contacts">Kontakty ProtonMaila</string>
     <string name="device_contacts">Kontakty urządzenia</string>
     <string name="print_date_template">Data: %s</string>
-    <string name="print_attachment_template">Załącznik: %s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Wysyłanie wiadomości z adresu @pm.me jest płatną funkcją. Wiadomości zostaną wysłane z Twojego domyślnego adresu %s</string>
     <string name="pm_me_can_not_be_default">Ulepsz do płatnego planu, aby móc ustawić adres %s jako domyślny</string>
     <string name="dont_remind_again">Nie przypominaj</string>
@@ -550,8 +549,7 @@
     <string name="expiration_error_add_msg_password">Wpisz hasło wiadomości dla następujących odbiorców:</string>
     <string name="expiration_error_disable_pgp_sending">Wyłącz wysyłanie poprzez PGP, aby włączyć wygasanie dla następujących odbiorców:</string>
     <string name="expiration_error_proceed">Wybierz \"wyślij mimo to\", aby wysłać bez wygasania do tych odbiorców.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">DOWIEDZ SIĘ WIĘCEJ</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">DOWIEDZ SIĘ WIĘCEJ</a>
     </string>
     <string name="channel_name_attachments">Załączniki</string>
     <string name="channel_description_attachments">Informuje o statusie pobierania załączników</string>
@@ -566,7 +564,7 @@
     <string name="report_phishing">Zgłoś próbę wyłudzenia informacji</string>
     <string name="print">Drukuj</string>
     <string name="phishing_dialog_title">Potwierdź próbę wyłudzenia informacji</string>
-    <string name="phishing_dialog_message">Zgłoszenie wiadomości jako próby wyłudzenia informacji, prześle ją do nas w celu dalszej analizy i ulepszania filtrów antyspamowych. Oznacza to, że będziemy mogli zobaczyć jej pełną treść.</string>
+    <string name="phishing_dialog_message">Zgłoszenie wiadomości jako próby wyłudzenia informacji spowoduje wysłanie jej do nas w celu analizy i ulepszania filtrów antyspamowych. Oznacza to, że będziemy mogli zobaczyć pełną treść wiadomości.</string>
     <string name="phishing_report_send_message_moved_to_spam">Raport został wysłany. Wiadomość została przeniesiona do Spamu.</string>
     <string name="cannot_send_report_send">Nie można wysłać raportu</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>

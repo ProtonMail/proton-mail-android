@@ -109,7 +109,7 @@
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Bovenliggende map kiezen (optioneel)</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Bovenliggende map gekozen.</b>Tik om te wijzigen</string>
+        <b>Parent folder selected.</b> Tap to change</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Bovenliggende map</string>
@@ -317,7 +317,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Geselecteerde labels verwijderen?</string>
     <string name="delete_folder_confirmation_title">Geselecteerde mappen verwijderen?</string>
-    <string name="delete_label_confirmation_message">De e-mails die hier zijn opgenomen worden gevonden in <b>Alle e-mails</b>
+    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b>
     </string>
     <string name="pin_invalid">De PIN-code is ongeldig, voer de juiste 4-cijferige code in</string>
     <string name="pin_not_match">PIN-codes komen niet overeen</string>
@@ -480,8 +480,7 @@
     <string name="empty_subject">(Geen onderwerp)</string>
     <string name="empty_recipients">(Geen geadresseerden)</string>
     <string name="contacts_unknown">Onbekend</string>
-    <string name="learn_more">
-        <u>Meer informatie</u>
+    <string name="learn_more"><u>Meer informatie</u>
     </string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Upgrade naar een betaald abonnement om te verzenden vanaf uw adres %s.</string>
@@ -494,7 +493,7 @@
     <string name="protonmail_contacts">ProtonMail Contacts</string>
     <string name="device_contacts">Contactpersonen van apparaat</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Bijlage: %s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Het verzenden van berichten vanaf een @pm.me adres is een betaalde functionaliteit. Uw bericht zal vanaf uw standaard adres %s worden verzonden</string>
     <string name="pm_me_can_not_be_default">Upgrade naar een betaald plan om uw %s -adres als standaard te kunnen instellen</string>
     <string name="dont_remind_again">Niet opnieuw herinneren</string>
@@ -540,8 +539,7 @@
     <string name="expiration_error_add_msg_password">Voeg een wachtwoord toe voor de volgende ontvangers:</string>
     <string name="expiration_error_disable_pgp_sending">Schakel verzenden met PGP uit om een verlooptijd in te stellen voor de volgende ontvangers:</string>
     <string name="expiration_error_proceed">Door alsnog op verzenden te tikken kiest u er voor om het bericht naar deze ontvangers te verzenden zonder het gebruik van een verlooptijd.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">MEER INFORMATIE</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a>
     </string>
     <string name="channel_name_attachments">Bijlagen</string>
     <string name="channel_description_attachments">Informeert over de downloadstatus van de bijlage</string>

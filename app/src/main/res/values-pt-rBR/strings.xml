@@ -480,8 +480,7 @@
     <string name="empty_subject">(Sem assunto)</string>
     <string name="empty_recipients">(Nenhum destinatário)</string>
     <string name="contacts_unknown">Desconhecido</string>
-    <string name="learn_more">
-        <u>Saiba mais</u>
+    <string name="learn_more"><u>Saiba mais</u>
     </string>
     <string name="info">Informações</string>
     <string name="error_can_not_send_from_this_address">Faça o upgrade para um plano pago para enviar do seu endereço %s.</string>
@@ -494,7 +493,7 @@
     <string name="protonmail_contacts">Contatos ProtonMail</string>
     <string name="device_contacts">Contatos do dispositivo</string>
     <string name="print_date_template">Data: %s</string>
-    <string name="print_attachment_template">Anexo: %s;  </string>
+    <string name="print_attachment_template">Anexo: %s  </string>
     <string name="pm_me_changed">O envio de mensagens de um endereço @pm.me é um recurso pago. A sua mensagem será enviada do seu endereço padrão %s</string>
     <string name="pm_me_can_not_be_default">Faça o upgrade para um plano pago para poder definir seu endereço %s como padrão</string>
     <string name="dont_remind_again">Não lembrar novamente</string>
@@ -540,8 +539,7 @@
     <string name="expiration_error_add_msg_password">Por favor, adicione uma senha de mensagem para os seguintes destinatários:</string>
     <string name="expiration_error_disable_pgp_sending">Por favor, desabilite o envio de PGP para habilitar a expiração para os seguintes destinatários:</string>
     <string name="expiration_error_proceed">Toque em enviar mesmo assim para enviar sem usar a expiração para estes destinatários.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">SAIBA MAIS</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">SAIBA MAIS</a>
     </string>
     <string name="channel_name_attachments">Anexos</string>
     <string name="channel_description_attachments">Informa sobre o status do download do anexo</string>

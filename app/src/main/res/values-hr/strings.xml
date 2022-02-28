@@ -281,7 +281,7 @@
     <string name="label_deleted_error">Pogreška tijekom brisanja oznake</string>
     <string name="message_deleted_error">Pogreška tijekom brisanja nekih poruka. Neke od odabranih poruka su u procesu slanja?!</string>
     <string name="respond_inline">Odgovori u ravnini s ostalim tekstom</string>
-    <string name="server_not_reachable_troubleshoot">Poslužitelj nije dostupan… (<u>Rješavanje problema</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Provjera veze...</string>
     <string name="draft_label_attachments_uploading">učitavanje privitaka…</string>
     <string name="draft_label_message_uploading">slanje poruke…</string>
@@ -320,7 +320,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Ukloni odabrane oznake?</string>
     <string name="delete_folder_confirmation_title">Ukloni odabrane mape?</string>
-    <string name="delete_label_confirmation_message">Poruke e-pošte koje se ovdje nalaze mogu biti pronađene u <b>Sva pošta</b>
+    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b>
     </string>
     <string name="pin_invalid">PIN nije valjan. Unesite ispravan PIN s četiri znamenke</string>
     <string name="pin_not_match">PIN se ne podudara</string>
@@ -408,7 +408,7 @@
     <string name="contacts_import_contact">Uvezi kontakte</string>
     <string name="contacts_import">Uvoz</string>
     <string name="upload_contacts">Učitavanje kontakata</string>
-    <string name="uploading_contacts">Učitavanje kontakata…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobitel</item>
@@ -466,7 +466,7 @@
     <string name="update_folder">Ažuriraj mapu</string>
     <string name="spam_score_100">Čini se da je ova poruka e-pošte s adrese ProtonMail, ali je došla izvan našeg sustava i nije ispunila naše zahtjeve za provjeru autentičnosti. Može biti lažna ili nepropisno proslijeđena!</string>
     <string name="spam_score_101">Ova poruka e-pošte nije ispunila zahtjeve za provjeru autentičnosti svoje domene. Može biti lažna ili nepropisno proslijeđena!</string>
-    <string name="spam_score_102">Ova poruka može biti pokušaj krađe identiteta. Provjerite pošiljatelja i sadržaj kako biste bili sigurni da su legitimni. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SAZNAJTE VIŠE</a>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a>
     </string>
     <string name="print_from_template">Od: %s</string>
     <string name="print_to_template">To: %s;  </string>
@@ -485,8 +485,7 @@
     <string name="empty_subject">(Bez predmeta)</string>
     <string name="empty_recipients">(Nema primatelja)</string>
     <string name="contacts_unknown">Nepoznato</string>
-    <string name="learn_more">
-        <u>Saznajte više</u>
+    <string name="learn_more"><u>Learn More</u>
     </string>
     <string name="info">Informacije</string>
     <string name="error_can_not_send_from_this_address">Nadogradite na plaćeni plan kako biste mogli slati s vaše %s adrese.</string>
@@ -499,7 +498,7 @@
     <string name="protonmail_contacts">ProtonMail kontakti</string>
     <string name="device_contacts">Kontakti uređaja</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Privitak: %s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Slanje poruka s @pm.me adrese je plaćena značajka. Vaša će poruka biti poslana s Vaše zadane adrese %s</string>
     <string name="pm_me_can_not_be_default">Nadogradite na plaćeni plan kako biste mogli postaviti vašu %s adresu e-pošte kao zadanu</string>
     <string name="dont_remind_again">Ne podsjećaj me više</string>
@@ -545,8 +544,7 @@
     <string name="expiration_error_add_msg_password">Molimo dodajte lozinku za poruku za sljedeće primatelje:</string>
     <string name="expiration_error_disable_pgp_sending">Molimo onemogućite PGP Slanja, kako biste omogući vremenski istek poruka za sljedeće primatelje:</string>
     <string name="expiration_error_proceed">Pritisnite pošalji ako svejedno želite poslati poruku ovim primateljima, ali bez isteka poruke.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">SAZNAJTE VIŠE</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a>
     </string>
     <string name="channel_name_attachments">Privitci</string>
     <string name="channel_description_attachments">Informira o statusu preuzimanja privitka</string>
@@ -772,7 +770,7 @@
     <string name="connections_via_third_parties">Alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties">Omogući alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Saznajte više</a>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
     </string>
     <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Odaberite jezik za aplikaciju</string>

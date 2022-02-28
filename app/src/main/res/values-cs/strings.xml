@@ -109,7 +109,7 @@
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Vybrat hlavní složku (volitelné)</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Vybraná nadřazená složka.</b> Klepnutím změňte</string>
+        <b>Vybrána nadřazená složka.</b> Klepnutím změňte</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Nadřazená složka</string>
@@ -284,7 +284,7 @@
     <string name="label_deleted_error">Chyba při mazání štítku</string>
     <string name="message_deleted_error">Chyba při odstraňování některých zpráv. Některé z vybraných zpráv jsou v procesu odesílání?!</string>
     <string name="respond_inline">Odpovědět v řádku</string>
-    <string name="server_not_reachable_troubleshoot">Server není dosažitelný… (<u>Řešení problémů</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server je nedostupný… (<u>Řešení problémů</u>)</string>
     <string name="connectivity_checking">Kontrola síťového připojení...</string>
     <string name="draft_label_attachments_uploading">nahrávání příloh…</string>
     <string name="draft_label_message_uploading">odesílání zprávy…</string>
@@ -471,7 +471,7 @@
     <string name="update_folder">Aktualizace složky</string>
     <string name="spam_score_100">Zdá se, že e-mail byl odeslán z adresy ProtonMail, ale pochází z externího systému a požadavky na ověření selhaly. E-mail může být falešný, nebo špatně přeposlaný!</string>
     <string name="spam_score_101">Zpráva nesplňuje požadavky na ověření domény odesílatele. Může být falešná, nebo špatně přeposlaná!</string>
-    <string name="spam_score_102">Tato zpráva může být pokus o phishing. Prosím zkontrolujte odesílatele a obsah, ujistěte se, že jsou legitimní. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">DOZVĚDĚT SE VÍCE</a>
+    <string name="spam_score_102">Tato zpráva může být pokusem o phishing. Zkontrolujte odesílatele a obsah, abyste se ujistili, že jsou legitimní. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">VÍCE INFORMACÍ</a>
     </string>
     <string name="print_from_template">Od: %s</string>
     <string name="print_to_template">Komu: %s;  </string>
@@ -490,8 +490,7 @@
     <string name="empty_subject">(Bez předmětu)</string>
     <string name="empty_recipients">(Žádní příjemci)</string>
     <string name="contacts_unknown">Neznámé</string>
-    <string name="learn_more">
-        <u>Dozvědět se více</u>
+    <string name="learn_more"><u>Zjistit více</u>
     </string>
     <string name="info">Informace</string>
     <string name="error_can_not_send_from_this_address">Pro posílání z vaší adresy %s, přejděte prosím na placenou verzi.</string>
@@ -550,8 +549,7 @@
     <string name="expiration_error_add_msg_password">Prosím, přidejte heslo zpávy pro následující příjemce:</string>
     <string name="expiration_error_disable_pgp_sending">Prosím, zakažte PGP odesílání pro zapnutí vypršení platnosti pro následující příjemce:</string>
     <string name="expiration_error_proceed">Klepněte na \"Beztak Odeslat\" pro odeslání bez vypršení platnosti těmto příjemcům.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">VÍCE INFORMACÍ</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">VÍCE INFORMACÍ</a>
     </string>
     <string name="channel_name_attachments">Přílohy</string>
     <string name="channel_description_attachments">Informuje o stavu stahování příloh</string>
@@ -783,7 +781,7 @@
     <string name="connections_via_third_parties">Alternativní směrování</string>
     <string name="allow_secure_connections_via_third_parties">Povolit alternativní směrování</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">V případě, že jsou stránky Proton blokovány, toto nastavení umožňuje aplikaci vyzkoušet alternativní síťové směrování na Proton, což může být užitečné pro obejití bran firewall nebo problémům se sítí. Pro větší spolehlivost doporučujeme ponechat toto nastavení zapnuté.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">V případě, že jsou stránky Proton blokovány, toto nastavení umožňuje aplikaci vyzkoušet alternativní síťové směrování na Proton, což může být užitečné pro obejití bran firewall nebo problémům se sítí. Pro větší spolehlivost doporučujeme ponechat toto nastavení zapnuté. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Další informace</a>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">V případě, že jsou stránky Proton blokovány, toto nastavení umožňuje aplikaci vyzkoušet alternativní směrování sítě k dosažení Protonu, což může být užitečné pro obejití firewallů nebo problémů se sítí. Doporučujeme ponechat toto nastavení zapnuté pro větší spolehlivost. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Více informací</a>
     </string>
     <string name="app_language">Jazyk aplikace</string>
     <string name="custom_language_dialog_title">Vybrat jazyk aplikace</string>
