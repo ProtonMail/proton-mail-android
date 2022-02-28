@@ -33,6 +33,8 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
+import ch.protonmail.android.domain.loadMoreBuffer
+import ch.protonmail.android.domain.loadMoreCombine
 import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
@@ -73,6 +75,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
@@ -231,11 +234,7 @@ internal class MailboxViewModel @Inject constructor(
             .onEach {
                 mutableMailboxState.value = MailboxState.Loading
             }
-            .flatMapLatest { parameters ->
-                val location = parameters.first
-                val labelId = parameters.second
-                val userId = parameters.third
-
+            .flatMapLatest { (location, labelId, userId) ->
                 mailboxStateFlow = if (conversationModeEnabled(location)) {
                     Timber.v("Getting conversations for $location, label: $labelId, user: $userId")
                     conversationsAsMailboxItems(location, labelId, userId)
@@ -327,15 +326,14 @@ internal class MailboxViewModel @Inject constructor(
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
-        return loadMoreCombineTransform<List<Label>, GetConversationsResult, Pair<List<Label>, GetConversationsResult>>(
+        return loadMoreCombine(
             observeLabels(userId),
             observeConversationsByLocation(
                 userId,
                 locationId
             )
-        ) { conversations, labels ->
-            emit(conversations to labels)
-        }
+        ) { labels, conversations -> labels to conversations }
+            .loadMoreBuffer()
             .loadMoreMap { pair ->
                 val labels = pair.first
                 when (val result = pair.second) {
@@ -380,49 +378,49 @@ internal class MailboxViewModel @Inject constructor(
         Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
-        return loadMoreCombineTransform<List<Label>, GetMessagesResult, Pair<List<Label>, GetMessagesResult>>(
+        return loadMoreCombine(
             observeLabels(userId),
             observeMessagesByLocation(
                 userId = userId,
                 mailboxLocation = location,
                 labelId = labelId
             )
-        ) { messages, labels ->
-            emit(messages to labels)
-        }.loadMoreMap { pair ->
-            val labels = pair.first
-            when (val result = pair.second) {
-                is GetMessagesResult.Success -> {
-                    val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
-                    isFirstData = false
+        ) { labels, messages -> labels to messages }
+            .loadMoreBuffer()
+            .loadMoreMap { pair ->
+                val labels = pair.first
+                when (val result = pair.second) {
+                    is GetMessagesResult.Success -> {
+                        val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
+                        isFirstData = false
 
-                    MailboxState.Data(
-                        items = messagesToMailboxItems(result.messages, labels),
-                        isFreshData = hasReceivedFirstApiRefresh != null,
-                        shouldResetPosition = shouldResetPosition
-                    )
-                }
-                is GetMessagesResult.DataRefresh -> {
-                    if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
-                    else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
+                        MailboxState.Data(
+                            items = messagesToMailboxItems(result.messages, labels),
+                            isFreshData = hasReceivedFirstApiRefresh != null,
+                            shouldResetPosition = shouldResetPosition
+                        )
+                    }
+                    is GetMessagesResult.DataRefresh -> {
+                        if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
+                        else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
-                    MailboxState.DataRefresh(
-                        lastFetchedItemsIds = result.lastFetchedMessages.mapNotNull { it.messageId }
-                    )
-                }
-                is GetMessagesResult.Error -> {
-                    hasReceivedFirstApiRefresh = false
+                        MailboxState.DataRefresh(
+                            lastFetchedItemsIds = result.lastFetchedMessages.mapNotNull { it.messageId }
+                        )
+                    }
+                    is GetMessagesResult.Error -> {
+                        hasReceivedFirstApiRefresh = false
 
-                    MailboxState.Error(
-                        error = "GetMessagesResult Error",
-                        throwable = result.throwable,
-                        isOffline = result.isOffline
-                    )
+                        MailboxState.Error(
+                            error = "GetMessagesResult Error",
+                            throwable = result.throwable,
+                            isOffline = result.isOffline
+                        )
+                    }
+                    is GetMessagesResult.Loading ->
+                        MailboxState.Loading
                 }
-                is GetMessagesResult.Loading ->
-                    MailboxState.Loading
             }
-        }
     }
 
     private suspend fun conversationsToMailboxItems(
@@ -436,7 +434,9 @@ internal class MailboxViewModel @Inject constructor(
             allLabels = labels
         )
 
-    private suspend fun messagesToMailboxItems(messages: List<Message>, labelsList: List<Label>?): List<MailboxItemUiModel> {
+    private suspend fun messagesToMailboxItems(
+        messages: List<Message>, labelsList: List<Label>?
+    ): List<MailboxItemUiModel> {
         Timber.v("messagesToMailboxItems size: ${messages.size}")
 
         val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { LabelId(it) }
