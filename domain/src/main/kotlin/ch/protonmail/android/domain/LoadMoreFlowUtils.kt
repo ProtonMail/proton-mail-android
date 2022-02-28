@@ -19,9 +19,12 @@
 
 package ch.protonmail.android.domain
 
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
@@ -99,6 +102,12 @@ fun <B, T> Flow<T>.asLoadMoreFlow(
 fun <T> LoadMoreFlow<T>.loadMoreCatch(action: suspend FlowCollector<T>.(Throwable) -> Unit): LoadMoreFlow<T> =
     LoadMoreFlow(catch(action), trigger)
 
+fun <T> LoadMoreFlow<T>.loadMoreBuffer(
+    capacity: Int = Channel.BUFFERED,
+    onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND
+): LoadMoreFlow<T> =
+    LoadMoreFlow(buffer(capacity, onBufferOverflow), trigger)
+
 /**
  * Same as [combineTransform], but returns a [LoadMoreFlow] instead
  */
@@ -107,6 +116,12 @@ public fun <T1, T2, R> loadMoreCombineTransform(
     loadMoreFlow: LoadMoreFlow<T2>,
     transform: suspend FlowCollector<R>.(a: T1, b: T2) -> Unit
 ): LoadMoreFlow<R> = LoadMoreFlow(combineTransform(flow, loadMoreFlow, transform), loadMoreFlow.trigger)
+
+public fun <T1, T2, R> loadMoreCombine(
+    flow: Flow<T1>,
+    loadMoreFlow: LoadMoreFlow<T2>,
+    transform: suspend (a: T1, b: T2) -> R
+): LoadMoreFlow<R> = LoadMoreFlow(combine(flow, loadMoreFlow, transform), loadMoreFlow.trigger)
 
 /**
  * @return [LoadMoreFlow] with nullable [T], emitting one `null` when Flow is started
