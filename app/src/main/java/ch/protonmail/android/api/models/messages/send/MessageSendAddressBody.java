@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
- * 
- * This file is part of ProtonMail.
- * 
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Copyright (c) 2022 Proton AG
+ *
+ * This file is part of Proton Mail.
+ *
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
- * ProtonMail is distributed in the hope that it will be useful,
+ *
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.api.models.messages.send;
 
@@ -33,7 +33,7 @@ import ch.protonmail.android.api.utils.Fields;
 public class MessageSendAddressBody implements Serializable {
 
     @SerializedName(Fields.Message.Send.TYPE)
-    private int type; // ProtonMail internal = 1, 2 = EO, 4 = Cleartext inline, 8 = Inline PGP
+    private int type; // Proton Mail internal = 1, 2 = EO, 4 = Cleartext inline, 8 = Inline PGP
     @SerializedName(Fields.Message.Send.BODY_KEY_PACKET)
     private String bodyKeyPacket; // <base64_encoded_key_packet>
     @SerializedName(Fields.Message.Send.ATTACHMENT_KEY_PACKETS)
