@@ -43,6 +43,7 @@ import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.postDelayed
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.lifecycle.Observer
@@ -90,6 +91,7 @@ import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -249,7 +251,9 @@ internal class MailboxActivity :
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.ProtonTheme_Mail)
+        installSplashScreen().setKeepOnScreenCondition {
+            accountStateManager.state.value != AccountStateManager.State.PrimaryExist
+        }
         super.onCreate(savedInstanceState)
 
         // TODO if we decide to use special flag for switching (and not login), change this

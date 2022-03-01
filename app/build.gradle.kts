@@ -330,6 +330,7 @@ dependencies {
         // Android
         `android-annotation`,
         `android-biometric`,
+        `android-core-splashscreen`,
         `android-fragment`,
         `android-flexbox`,
         `android-ktx`,

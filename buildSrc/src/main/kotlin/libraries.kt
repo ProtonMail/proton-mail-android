@@ -68,6 +68,7 @@ fun DependencyHandler.proton(module: String, moduleSuffix: String? = null, versi
 
 // region Android
 val DependencyHandler.`android-biometric` get() =           androidx("biometric") version `android-biometric version`
+val DependencyHandler.`android-core-splashscreen` get() =   androidx("core", moduleSuffix = "splashscreen") version `android-core-splashscreen version`
 val DependencyHandler.`android-flexbox` get() =             google("android", "flexbox") version `flexbox version`
 val DependencyHandler.`android-fragment` get() =            androidx("fragment", moduleSuffix = "ktx") version `android-fragment version`
 val DependencyHandler.`android-media` get() =               androidx("media") version `android-media version`

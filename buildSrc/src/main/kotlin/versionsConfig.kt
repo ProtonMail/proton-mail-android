@@ -79,6 +79,7 @@ const val `junit-ktx version` =                 "1.1.2"         // Released: Aug
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
+const val `android-core-splashscreen version` = "1.0.0-beta01"  // Released: Jan 12, 2022
 const val `android-fragment version` =          "1.3.6"         // Released: Jul 21, 2021
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
 const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020

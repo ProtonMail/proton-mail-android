@@ -74,7 +74,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/ProtonTheme.Mail"
+        android:theme="@style/ProtonTheme.Mail.V5"
         android:taskAffinity=""
         tools:replace="android:theme">
         <!-- Disable Core SentryInitProvider. Replaced by SentryInitializer -->
@@ -183,7 +183,7 @@
             android:exported="true"
             android:launchMode="standard"
             android:maxRecents="1"
-            android:theme="@style/ProtonTheme.Splash.Mail.Light">
+            android:theme="@style/ProtonTheme.Splash.Mail.V5">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
