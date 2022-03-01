@@ -43,6 +43,8 @@ import me.proton.core.contact.data.local.db.entity.ContactEntity
 import me.proton.core.crypto.android.keystore.CryptoConverters
 import me.proton.core.data.room.db.BaseDatabase
 import me.proton.core.data.room.db.CommonConverters
+import me.proton.core.featureflag.data.db.FeatureFlagDatabase
+import me.proton.core.featureflag.data.entity.FeatureFlagEntity
 import me.proton.core.humanverification.data.db.HumanVerificationConverters
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.humanverification.data.entity.HumanVerificationEntity
@@ -91,6 +93,7 @@ import timber.log.Timber
         ContactCardEntity::class,
         ContactEmailEntity::class,
         ContactEmailLabelEntity::class,
+        FeatureFlagEntity::class,
         // Mail
         LabelEntity::class,
     ],
@@ -120,13 +123,14 @@ internal abstract class AppDatabase :
     OrganizationDatabase,
     PublicAddressDatabase,
     UserDatabase,
-    UserSettingsDatabase {
+    UserSettingsDatabase,
+    FeatureFlagDatabase {
 
     abstract fun labelDao(): LabelDao
 
     companion object {
 
-        const val version = 3
+        const val version = 4
         private const val name = "proton-mail.db"
 
         private fun getDbCreationCallback(context: Context): Callback = object : Callback() {
@@ -148,6 +152,7 @@ internal abstract class AppDatabase :
             val migrations = arrayOf(
                 AppDatabaseMigrations.MIGRATION_1_2,
                 AppDatabaseMigrations.MIGRATION_2_3,
+                AppDatabaseMigrations.MIGRATION_3_4,
             )
             Timber.v("Db migrations list size ${migrations.size}")
             return migrations

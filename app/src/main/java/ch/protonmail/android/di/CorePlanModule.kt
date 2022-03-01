@@ -28,6 +28,7 @@ import me.proton.core.plan.data.repository.PlansRepositoryImpl
 import me.proton.core.plan.domain.SupportedSignupPaidPlans
 import me.proton.core.plan.domain.SupportedUpgradePaidPlans
 import me.proton.core.plan.domain.repository.PlansRepository
+import me.proton.core.plan.presentation.entity.SupportedPlan
 import javax.inject.Singleton
 
 @Module
@@ -36,7 +37,8 @@ object CorePlanModule {
 
     @Provides
     @SupportedSignupPaidPlans
-    fun provideClientSupportedPaidPlanIds(): List<String> = listOf("plus")
+    fun provideClientSupportedPaidPlan(): List<SupportedPlan> =
+        listOf(SupportedPlan("plus"))
 
     @Provides
     @Singleton
@@ -49,5 +51,7 @@ object CorePlanModule {
 interface PlansBindsModule {
     @Binds
     @SupportedUpgradePaidPlans
-    fun bindClientSupportedUpgradePaidPlanNames(@SupportedSignupPaidPlans plans: List<String>): List<String>
+    fun bindClientSupportedUpgradePaidPlanNames(
+        @SupportedSignupPaidPlans plans: List<SupportedPlan>
+    ): List<SupportedPlan>
 }

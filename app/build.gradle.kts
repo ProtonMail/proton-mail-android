@@ -309,6 +309,7 @@ dependencies {
         `Proton-plan`,
         `Proton-report`,
         `Proton-report-dagger`,
+        `Proton-feature-flag`,
 
         // Modules
         project(Module.domain),
