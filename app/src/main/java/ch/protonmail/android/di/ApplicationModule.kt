@@ -30,7 +30,6 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
-import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.IAttachmentFactory
@@ -68,6 +67,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.domain.entity.UserId
+import me.proton.core.network.data.ProtonCookieStore
 import me.proton.core.network.domain.server.ServerTimeListener
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.File
@@ -178,11 +178,11 @@ object ApplicationModule {
     @Provides
     @Singleton
     fun protonRetrofitBuilder(
-        context: Context,
         userManager: UserManager,
         jobManager: JobManager,
         serverTimeListener: ServerTimeListener,
         networkUtil: QueueNetworkUtil,
+        cookieStore: ProtonCookieStore,
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
         userNotifier: UserNotifier,
@@ -202,7 +202,7 @@ object ApplicationModule {
             jobManager,
             serverTimeListener,
             networkUtil,
-            ProtonCookieStore(context),
+            cookieStore,
             userNotifier,
             sessionManager
         ).apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }

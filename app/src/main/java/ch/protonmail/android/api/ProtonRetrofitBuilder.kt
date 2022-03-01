@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api
 
-import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.segments.ATTACH_PATH
@@ -35,6 +34,7 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.proton.core.accountmanager.domain.SessionManager
+import me.proton.core.network.data.ProtonCookieStore
 import me.proton.core.network.domain.server.ServerTimeListener
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
