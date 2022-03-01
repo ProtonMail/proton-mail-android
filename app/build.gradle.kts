@@ -373,7 +373,6 @@ dependencies {
         `fasterxml-jackson-databind`,
         `firebase-messaging`,
         `gson`,
-        `gotev-cookieStore`,
         `jsoup`,
         `minidns`,
         `okhttp-url-connection`,

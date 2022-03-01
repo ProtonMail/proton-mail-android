@@ -117,7 +117,6 @@ val DependencyHandler.`apache-commons-lang` get() =         dependency("org.apac
 val DependencyHandler.`butterknife-runtime` get() =         jakeWharton(module = "butterknife") version `butterKnife version`
 val DependencyHandler.`butterknife-compiler` get() =        jakeWharton(module = "butterknife", moduleSuffix = "compiler") version `butterKnife version`
 val DependencyHandler.`firebase-messaging` get() =          google("firebase", moduleSuffix = "messaging") version `firebase-messaging version`
-val DependencyHandler.`gotev-cookieStore` get() =           dependency("net.gotev", module = "cookie-store") version `gotev-cookieStore version`
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
 val DependencyHandler.`jsoup` get() =                       dependency("org.jsoup", module = "jsoup") version `jsoup version`
 val DependencyHandler.`leakcanary` get() =                  dependency("com.squareup.leakcanary", module = "leakcanary-android") version `leakcanary version`

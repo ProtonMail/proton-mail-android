@@ -18,18 +18,15 @@
  */
 package ch.protonmail.android.api
 
-import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import com.datatheorem.android.trustkit.TrustKit
 import com.datatheorem.android.trustkit.config.PublicKeyPin
+import me.proton.core.network.data.ProtonCookieStore
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
-import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import java.net.CookieManager
-import java.net.CookiePolicy
 import java.net.URL
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
@@ -68,12 +65,7 @@ sealed class ProtonOkHttpClient(
 
     init {
         if (cookieStore != null) {
-            val cookieManager = CookieManager(
-                cookieStore,
-                CookiePolicy.ACCEPT_ALL
-            )
-            CookieManager.setDefault(cookieManager)
-            okClientBuilder.cookieJar(JavaNetCookieJar(cookieManager))
+            okClientBuilder.cookieJar(cookieStore)
         }
 
         okClientBuilder.connectTimeout(timeout, TimeUnit.SECONDS)

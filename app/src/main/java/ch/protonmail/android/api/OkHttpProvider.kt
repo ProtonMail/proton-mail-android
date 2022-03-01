@@ -18,10 +18,10 @@
  */
 package ch.protonmail.android.api
 
-import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.di.BaseUrl
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
+import me.proton.core.network.data.ProtonCookieStore
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
