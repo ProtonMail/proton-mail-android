@@ -37,6 +37,7 @@
     <dimen name="message_number_view_padding_vertical">2dp</dimen>
 
     <!-- generic height -->
+    <dimen name="height_indicator_m">8dp</dimen>
     <dimen name="height_list_item_l">56dp</dimen>
 
     <!-- generic padding -->
