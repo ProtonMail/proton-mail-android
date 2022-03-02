@@ -63,6 +63,9 @@
     <!-- generic margin -->
     <dimen name="margin_s">4dp</dimen>
     <dimen name="margin_m">8dp</dimen>
+    <dimen name="margin_l">16dp</dimen>
+    <dimen name="margin_xl">24dp</dimen>
+    <dimen name="margin_xxl">32dp</dimen>
 
     <!-- Toolbars -->
     <dimen name="toolbar_padding_start">0dp</dimen>
