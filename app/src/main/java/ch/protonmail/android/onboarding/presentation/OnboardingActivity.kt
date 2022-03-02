@@ -73,7 +73,7 @@ class OnboardingActivity : AppCompatActivity() {
         binding.onboardingViewPager.registerOnPageChangeCallback(onPageChangeCallback)
         binding.onboardingButton.setOnClickListener {
             if (binding.onboardingViewPager.currentItem == onboardingAdapter.itemCount - 1) {
-                finish()
+                finishOnboardingActivity()
             } else {
                 binding.onboardingViewPager.currentItem = binding.onboardingViewPager.currentItem + 1
             }
@@ -86,7 +86,7 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.skip) finish()
+        if (item.itemId == R.id.skip) finishOnboardingActivity()
         return super.onOptionsItemSelected(item)
     }
 
@@ -101,5 +101,10 @@ class OnboardingActivity : AppCompatActivity() {
 
     private fun setOnboardingAdapterItems(onboardingItemsList: List<OnboardingItemUiModel>) {
         onboardingAdapter.setOnboardingItemsList(onboardingItemsList)
+    }
+
+    private fun finishOnboardingActivity() {
+        viewModel.saveOnboardingShown()
+        finish()
     }
 }

@@ -19,9 +19,12 @@
 
 package ch.protonmail.android.onboarding.presentation
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.onboarding.presentation.model.OnboardingItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,7 +33,9 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor() : ViewModel() {
+class OnboardingViewModel @Inject constructor(
+    @DefaultSharedPreferences private val defaultSharedPreferences: SharedPreferences
+) : ViewModel() {
 
     val onboardingState = flowOf(
         OnboardingState(
@@ -48,6 +53,9 @@ class OnboardingViewModel @Inject constructor() : ViewModel() {
             )
         )
     ).stateIn(viewModelScope, SharingStarted.Lazily, OnboardingState(emptyList()))
+
+    fun saveOnboardingShown() =
+        defaultSharedPreferences.edit().putBoolean(Constants.Prefs.PREF_ONBOARDING_SHOWN, true).apply()
 
     data class OnboardingState(val onboardingItemsList: List<OnboardingItemUiModel>)
 }

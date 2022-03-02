@@ -107,6 +107,8 @@ object Constants {
         const val PREF_PM_ADDRESS_CHANGED = "pmAddressChanged"
         const val PREF_HYPERLINK_CONFIRM = "confirmHyperlinks"
 
+        const val PREF_ONBOARDING_SHOWN = "onboarding_shown"
+
         // user
         const val PREF_ADDRESS = "address"
         const val PREF_ADDRESS_ID = "address_id"

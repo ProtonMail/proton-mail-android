@@ -58,7 +58,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EditSettingsItemActivity
-import ch.protonmail.android.activities.EngagementActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.activities.StartMessageDetails
@@ -80,6 +79,7 @@ import ch.protonmail.android.core.Constants.DrawerOptionType
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES
+import ch.protonmail.android.core.Constants.Prefs.PREF_ONBOARDING_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
@@ -104,6 +104,7 @@ import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.navigation.presentation.NavigationActivity
+import ch.protonmail.android.onboarding.presentation.OnboardingActivity
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -224,9 +225,7 @@ internal class MailboxActivity :
             multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking() // force FCM to re-register
         }
         val extras = intent.extras
-        if (!userManager.isEngagementShown) {
-            startActivity(AppUtil.decorInAppIntent(Intent(this, EngagementActivity::class.java)))
-        }
+
         // Set the padding to match the Status Bar height
         if (savedInstanceState != null) {
             val locationInt = savedInstanceState.getInt(STATE_MAILBOX_LOCATION)
@@ -719,6 +718,9 @@ internal class MailboxActivity :
 
     override fun onResume() {
         super.onResume()
+        if (userManager.currentUserId != null && !defaultSharedPreferences.getBoolean(PREF_ONBOARDING_SHOWN, false)) {
+            startActivity(Intent(this, OnboardingActivity::class.java))
+        }
 
         registerFcmReceiver()
         checkDelinquency()
