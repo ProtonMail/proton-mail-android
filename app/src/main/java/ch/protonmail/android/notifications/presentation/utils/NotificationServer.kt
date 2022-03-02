@@ -516,9 +516,9 @@ class NotificationServer @Inject constructor(
         // Create Notification Style
         val userDisplayName = user.addresses.primary?.email?.s
             ?: user.name.s
-        val inboxStyle = NotificationCompat.InboxStyle().run {
+        val inboxStyle = NotificationCompat.BigTextStyle().run {
             setSummaryText(userDisplayName)
-            notificationBody?.let { addLine(it) }
+            notificationBody?.let { bigText(it) }
         }
 
         // Create Notification's Builder with the prepared params
