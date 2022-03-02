@@ -819,12 +819,25 @@ public class ComposeMessageActivity
             addStringRecipientsToView(mailToData.getAddresses(), mToRecipientsView);
         } else {
             try {
-                ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
+                List<String> emails = getEmailList(Intent.EXTRA_EMAIL, intent);
                 addStringRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
                 Timber.e(e, "Extract mail to getting extra email");
             }
         }
+    }
+
+    @Nullable
+    public List<String> getEmailList(String field, Intent intent) {
+        final Serializable emailList = intent.getSerializableExtra(field);
+        if (emailList instanceof ArrayList) {
+            return (ArrayList<String>) emailList;
+        }
+        final String[] arrayEmails = intent.getStringArrayExtra(field);
+        if (arrayEmails != null) {
+            return Arrays.asList(arrayEmails);
+        }
+        return null;
     }
 
     /**
@@ -855,7 +868,7 @@ public class ComposeMessageActivity
 
         } else {
             try {
-                ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
+                List<String> emails = getEmailList(Intent.EXTRA_EMAIL, intent);
                 addStringRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
                 Timber.w(e, "Extract mail to getting extra email");
