@@ -1,14 +1,11 @@
-default:
-  image: $CI_REGISTRY/protonvpn/android/android-app-new:branch-compose
-
-variables:
-  GIT_SUBMODULE_STRATEGY: recursive
-
 before_script:
+  - source /load-env.sh
   - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
+
+image: ${CI_REGISTRY}/android/shared/docker-android:new-ci-runners-k8s-snapshot
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -46,7 +43,7 @@ detekt analysis:
 build debug:
   stage: build
   tags:
-    - large
+    - xlarge-k8s
   script:
     - ./gradlew assembleBetaDebug
     - ./gradlew assembleBetaDebugAndroidTest
@@ -58,7 +55,7 @@ build debug:
 build uiAutomation:
   stage: build
   tags:
-    - large
+    - xlarge-k8s
   script:
     - ./gradlew assembleUiAutomationDebug -PtestEnv=live
     - ./gradlew assembleUiAutomationDebugAndroidTest -PtestEnv=live
@@ -73,7 +70,7 @@ build alpha:
   only:
     - develop
   tags:
-    - large
+    - xlarge-k8s
   script:
     - ./gradlew clean
     - ./gradlew assembleAlphaRelease
@@ -91,7 +88,7 @@ build release:
     - release
     - tags
   tags:
-    - large
+    - xlarge-k8s
   script:
     - ./gradlew clean
     - ./gradlew assembleProductionRelease
@@ -116,7 +113,7 @@ firebase ui tests:
   tags:
     - medium
   script:
-    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+    - curl https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz -o /tmp/google-cloud-sdk.tar.gz
     - mkdir -p /opt
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
     - /opt/google-cloud-sdk/install.sh --quiet
@@ -150,7 +147,7 @@ firebase feature tests:
     MODEL: ""
   script:
     - if [ -z ${DEVICE_MODEL+x} ]; then MODEL="Pixel2"; else MODEL=$DEVICE_MODEL; fi
-    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+    - curl https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz -o /tmp/google-cloud-sdk.tar.gz
     - mkdir -p /opt
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
     - /opt/google-cloud-sdk/install.sh --quiet
@@ -182,9 +179,9 @@ firebase instrumentation tests:
   except:
     - schedules
   tags:
-    - small
+    - medium
   script:
-    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+    - curl https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz -o /tmp/google-cloud-sdk.tar.gz
     - mkdir -p /opt
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
     - /opt/google-cloud-sdk/install.sh --quiet
