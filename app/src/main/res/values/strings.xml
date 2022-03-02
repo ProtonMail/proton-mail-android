@@ -330,22 +330,7 @@
     <string name="display_images">Show remote content</string>
     <string name="retry">Retry</string>
     <string name="saving_failed_no_conn">Saving failed, no connection</string>
-    <string name="close_engagement">close tour</string>
 
-    <string name="engagement_title_welcome">Welcome to ProtonMail!</string>
-    <string name="engagement_title_swipe">Quick Swipe actions</string>
-    <string name="engagement_title_labels">Label management</string>
-    <string name="engagement_title_encryption">End-to-End Encryption</string>
-    <string name="engagement_title_expire">Expiring messages</string>
-    <string name="engagement_title_help">Help &amp; Support</string>
-    <string name="engagement_title_support_protonmail">Support ProtonMail</string>
-
-    <string name="engagement_subtitle_welcome">Your new encrypted email account has been set up and is ready to send and receive encrypted messages.</string>
-    <string name="engagement_subtitle_swipe">You can customize swipe gestures in the ProtonMail App Settings.</string>
-    <string name="engagement_subtitle_labels">Create and add Labels to organize your inbox. Press and hold down on a message for all options.</string>
-    <string name="engagement_subtitle_encryption">Your inbox is now protected with end-to-end encryption. To automatically send secure emails to your contacts, invite them to use ProtonMail!  You can also manually encrypt messages to them if they don\'t use ProtonMail.</string>
-    <string name="engagement_subtitle_expire">Messages you send can be set to auto delete after a certain time period.</string>
-    <string name="engagement_subtitle_help">You can get help and support at protonmail.com/support. Bugs can also be reported with the app.</string>
     <string name="attachment_exists">Attachment already attached</string>
 
     <string name="eo_password_not_completed">Message Password not completed.</string>

@@ -279,10 +279,6 @@
             android:screenOrientation="portrait"
             android:label="@string/account_settings"/>
         <activity
-            android:name=".activities.EngagementActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Dialog" />
-        <activity
             android:name=".activities.EditSettingsItemActivity"
             android:exported="false"
             android:parentActivityName=".activities.SettingsActivity"
