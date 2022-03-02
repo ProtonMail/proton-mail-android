@@ -123,6 +123,7 @@ object AppDatabaseMigrations {
         override fun migrate(database: SupportSQLiteDatabase) {
             FeatureFlagDatabase.MIGRATION_0.migrate(database)
             FeatureFlagDatabase.MIGRATION_1.migrate(database)
+            OrganizationDatabase.MIGRATION_1.migrate(database)
         }
     }
 }
