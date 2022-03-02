@@ -51,8 +51,7 @@ class LabelApi(private val apiProvider: ApiProvider) : LabelApiSpec {
         userId: UserId,
         labelId: String,
         labelRequestBody: LabelRequestBody
-    ):
-        ApiResult<LabelResponse> = apiProvider.get<LabelService>(userId).invoke {
+    ): ApiResult<LabelResponse> = apiProvider.get<LabelService>(userId).invoke {
         updateLabel(labelId, labelRequestBody)
     }
 
@@ -60,5 +59,4 @@ class LabelApi(private val apiProvider: ApiProvider) : LabelApiSpec {
         apiProvider.get<LabelService>(userId).invoke {
             deleteLabel(labelId)
         }
-
 }
