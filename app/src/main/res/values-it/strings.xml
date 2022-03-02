@@ -278,7 +278,7 @@
     <string name="label_deleted_error">Errore durante l\'eliminazione dell\'etichetta</string>
     <string name="message_deleted_error">Errore durante l\'eliminazione di alcuni messaggi. Alcuni dei messaggi selezionati sono in fase di invio?!</string>
     <string name="respond_inline">Rispondi in linea</string>
-    <string name="server_not_reachable_troubleshoot">Server non raggiungibile… (<u>Risoluzione dei problemi</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server irraggiungibile… (<u>Risoluzione dei problemi</u>)</string>
     <string name="connectivity_checking">Verificando la connessione...</string>
     <string name="draft_label_attachments_uploading">caricamento degli allegati…</string>
     <string name="draft_label_message_uploading">invio del messaggio…</string>
@@ -403,7 +403,7 @@
     <string name="contacts_import_contact">Importa Contatto</string>
     <string name="contacts_import">Importa</string>
     <string name="upload_contacts">Carica contatti</string>
-    <string name="uploading_contacts">Caricamento dei contatti…</string>
+    <string name="uploading_contacts">Caricando i contatti…</string>
     <string-array name="vcard_option_phone">
         <item>Telefono</item>
         <item>Mobile</item>
@@ -480,8 +480,7 @@
     <string name="empty_subject">(Nessun Oggetto)</string>
     <string name="empty_recipients">(Nessun destinatario)</string>
     <string name="contacts_unknown">Sconosciuto</string>
-    <string name="learn_more">
-        <u>Per saperne di più</u>
+    <string name="learn_more"><u>Per saperne di più</u>
     </string>
     <string name="info">Informazioni</string>
     <string name="error_can_not_send_from_this_address">Effettui l\'upgrade ad un piano a pagamento per inviare dal suo indirizzo %s.</string>
@@ -540,8 +539,7 @@
     <string name="expiration_error_add_msg_password">Aggiungi una password al messaggio per i seguenti destinatari:</string>
     <string name="expiration_error_disable_pgp_sending">Disabilita l\'invio con PGP per abilitare la scadenza per i seguenti destinatari:</string>
     <string name="expiration_error_proceed">Tocca invia ugualmente per inviare senza scadenza a questi destinatari.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">APPROFONDISCI</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">APPROFONDISCI</a>
     </string>
     <string name="channel_name_attachments">Allegati</string>
     <string name="channel_description_attachments">Informa riguardo lo stato di download degli allegati</string>
@@ -827,8 +825,8 @@
     <string name="manage">Gestisci</string>
     <string name="message_from">Messaggio da %s</string>
     <string name="not_spam_move_to_inbox">Non spam (Sposta nella Posta in Arrivo)</string>
-    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
-    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
+    <string name="action_sheet_view_in_light_mode">Visualizza in modalità Chiara</string>
+    <string name="action_sheet_view_in_dark_mode">Visualizza in modalità Scura</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d messaggio</item>
         <item quantity="other">%d messaggi</item>

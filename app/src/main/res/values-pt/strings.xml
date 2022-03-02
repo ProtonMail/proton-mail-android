@@ -278,7 +278,7 @@
     <string name="label_deleted_error">Erro ao eliminar a etiqueta</string>
     <string name="message_deleted_error">Erro ao eliminar algumas mensagens. Algumas das mensagens seleccionadas estão em processo de envio?!</string>
     <string name="respond_inline">Responder em linha</string>
-    <string name="server_not_reachable_troubleshoot">Servidor inalcançável… (<u>Resolução de problemas</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">A verificar a ligação...</string>
     <string name="draft_label_attachments_uploading">a enviar anexos…</string>
     <string name="draft_label_message_uploading">a enviar mensagem…</string>
@@ -317,7 +317,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Eliminar etiquetas seleccionadas?</string>
     <string name="delete_folder_confirmation_title">Eliminar pastas seleccionadas?</string>
-    <string name="delete_label_confirmation_message">Os emails aqui contidos serão encontrados em <b>Todos os emails</b>
+    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b>
     </string>
     <string name="pin_invalid">PIN inválido, insira o PIN de 4 algarismos correcto</string>
     <string name="pin_not_match">O PIN não coincide</string>
@@ -403,7 +403,7 @@
     <string name="contacts_import_contact">Importar contacto</string>
     <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Importar contactos</string>
-    <string name="uploading_contacts">A enviar contactos…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Telefone</item>
         <item>Telemóvel</item>
@@ -461,12 +461,12 @@
     <string name="update_folder">Actualizar pasta</string>
     <string name="spam_score_100">Este e-mail aparenta ser oriundo de um endereço ProtonMail, mas foi enviado por um sistema externo e não cumpre os nossos requisitos de autenticação. Pode ser falsificado ou reencaminhado incorretamente!</string>
     <string name="spam_score_101">Este e-mail falhou os requisitos de autenticação do domínio. Pode ser falsificado ou ter sido reencaminhado incorretamente!</string>
-    <string name="spam_score_102">Esta mensagem pode ser uma tentativa de phishing. Verifique o remetente e o conteúdo para garantir que são legítimos. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SAIBA MAIS</a>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a>
     </string>
     <string name="print_from_template">De: %s</string>
-    <string name="print_to_template">Para: %s;  </string>
-    <string name="print_cc_template">Cc: %s;  </string>
-    <string name="print_bcc_template">Bcc: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Endereço: </string>
     <string name="address_street">Rua</string>
     <string name="address_extended_street">Extended street</string>
@@ -480,8 +480,7 @@
     <string name="empty_subject">(sem assunto)</string>
     <string name="empty_recipients">(sem destinatários)</string>
     <string name="contacts_unknown">Desconhecido</string>
-    <string name="learn_more">
-        <u>Saiba mais</u>
+    <string name="learn_more"><u>Learn More</u>
     </string>
     <string name="info">Informação</string>
     <string name="error_can_not_send_from_this_address">Actualize para um plano pago para poder enviar do seu endereço %s.</string>
@@ -494,7 +493,7 @@
     <string name="protonmail_contacts">Contactos ProtonMail</string>
     <string name="device_contacts">Contactos do dispositivo</string>
     <string name="print_date_template">Data: %s</string>
-    <string name="print_attachment_template">Anexo: %s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Enviar mensagens de um endereço @pm.me é uma funcionalidade paga. A sua mensagem será enviada do seu endereço predefinido %s</string>
     <string name="pm_me_can_not_be_default">Actualize para um plano pago para poder definir o seu endereço %s como predefinição</string>
     <string name="dont_remind_again">Não lembrar novamente</string>
@@ -540,8 +539,7 @@
     <string name="expiration_error_add_msg_password">Por favor, adicione uma senha da mensagem para os seguintes destinatários:</string>
     <string name="expiration_error_disable_pgp_sending">Desactive o envio com PGP para activar a validade para os seguintes destinatários:</string>
     <string name="expiration_error_proceed">Toque em Enviar mesmo assim para enviar sem validade para estes destinatários.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">SAIBA MAIS</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a>
     </string>
     <string name="channel_name_attachments">Anexos</string>
     <string name="channel_description_attachments">Informa sobre o estado da transferência do anexo</string>
@@ -761,7 +759,7 @@
     <string name="connections_via_third_parties">Redireccionamento alternativo</string>
     <string name="allow_secure_connections_via_third_parties">Permitir redireccionamento alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Caso as páginas do Proton estejam bloqueadas, esta definição permite à aplicação tentar redireccionar o tráfego para ligar ao Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos que mantenha esta definição para maior confiança.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Caso as páginas do Proton estejam bloqueadas, esta definição permite à aplicação tentar redireccionar o tráfego para ligar ao Proton, o que pode ser útil para contornar firewalls ou problemas de rede. Recomendamos que mantenha esta definição para maior confiança. <a href="ps://protonmail.com/blog/anti-censorship-alternative-routing/">Saiba mais</a>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
     </string>
     <string name="app_language">App language</string>
     <string name="custom_language_dialog_title">Seleccionar idioma da aplicação</string>

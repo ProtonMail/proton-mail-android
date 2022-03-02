@@ -109,7 +109,7 @@
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
     <string name="labels_manager_parent_folder_selected">
-        <b>Yfirmappa valin.</b> Smella til að breyta</string>
+        <b>Parent folder selected.</b> Tap to change</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Yfirmappa</string>
@@ -278,7 +278,7 @@
     <string name="label_deleted_error">Villa kom upp við að eyða merkingu</string>
     <string name="message_deleted_error">Villa kom upp við eyðingu á sumum skilaboðum. Gætu skilaboðin verið í sendingarferli?!</string>
     <string name="respond_inline">Svara innan-texta</string>
-    <string name="server_not_reachable_troubleshoot">Netþjónn ekki aðgengilegur… (<u>Leysa vandamál</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Athuga með tengingu...</string>
     <string name="draft_label_attachments_uploading">sendi inn viðhengi…</string>
     <string name="draft_label_message_uploading">sendi skilaboð…</string>
@@ -317,7 +317,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Eyða völdum merkingum?</string>
     <string name="delete_folder_confirmation_title">Eyða völdum möppum?</string>
-    <string name="delete_label_confirmation_message">Þessa tölvupósta má finna í <b>Allur póstur</b>
+    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b>
     </string>
     <string name="pin_invalid">PIN-númer er ógilt, settu inn rétt 4 stafa PIN-númer</string>
     <string name="pin_not_match">PIN-númer passa ekki saman</string>
@@ -403,7 +403,7 @@
     <string name="contacts_import_contact">Flytja inn tengilið</string>
     <string name="contacts_import">Flytja inn</string>
     <string name="upload_contacts">Senda inn tengiliði</string>
-    <string name="uploading_contacts">Sendi inn tengiliði…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Sími</item>
         <item>Farsími</item>
@@ -461,12 +461,12 @@
     <string name="update_folder">Uppfæra möppu</string>
     <string name="spam_score_100">Þessi tölvupóstur lítur út eins og hann komi frá ProtonMail-vistfangi en kom í rauninni frá utan kerfisins og féll á auðkenningarprófunum okkar. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
     <string name="spam_score_101">Þessi tölvupóstur féll á auðkenningarprófunum lénsins. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
-    <string name="spam_score_102">Þessi skilaboð gætu verið tilraun til gagnaveiði (phishing). Skoðaðu vel sendandann og efni þeirra til að ganga úr skugga um gildi þeirra. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SKOÐA NÁNAR</a>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a>
     </string>
     <string name="print_from_template">Frá: %s</string>
-    <string name="print_to_template">Til: %s;  </string>
-    <string name="print_cc_template">Afrit: %s;  </string>
-    <string name="print_bcc_template">Falið afrit: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Heimilisfang: </string>
     <string name="address_street">Gata</string>
     <string name="address_extended_street">Extended street</string>
@@ -480,8 +480,7 @@
     <string name="empty_subject">(ekkert viðfangsefni)</string>
     <string name="empty_recipients">(Engir viðtakendur)</string>
     <string name="contacts_unknown">Óþekkt</string>
-    <string name="learn_more">
-        <u>Kanna nánar</u>
+    <string name="learn_more"><u>Learn More</u>
     </string>
     <string name="info">Upplýsingar</string>
     <string name="error_can_not_send_from_this_address">Uppfærðu í greidda áskrift til að senda úr %s tölvupóstfanginu þínu.</string>
@@ -494,7 +493,7 @@
     <string name="protonmail_contacts">Tengiliðir í ProtonMail</string>
     <string name="device_contacts">Tengiliðir tækis</string>
     <string name="print_date_template">Dagsetning: %s</string>
-    <string name="print_attachment_template">Viðhengi: %s;  </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Að senda skilaboð frá @pm.me póstföngum er eiginleiki sem greiða þarf fyrir. Skilaboðin þín verða send frá sjálfgefna tölvupóstfanginu %s</string>
     <string name="pm_me_can_not_be_default">Uppfærðu í greidda áskrift til að geta sett %s netfangið þitt sem sjálfgefið</string>
     <string name="dont_remind_again">Ekki minna mig aftur á þetta</string>
@@ -540,7 +539,8 @@
     <string name="expiration_error_add_msg_password">Settu inn lykilorð á skilaboð fyrir eftirfarandi viðtakendur:</string>
     <string name="expiration_error_disable_pgp_sending">Gerðu PGP-sendingu óvirka til að gera kleift að nota gildistíma á skilaboð fyrir eftirfarandi viðtakendur:</string>
     <string name="expiration_error_proceed">Ýttu samt á sendihnappinn til að senda án gildistíma til þessara viðtakenda.</string>
-    <string name="expiration_error_learn_more">&lt;a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/"LÆRA MEIRA&lt;/a&gt;</string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a>
+    </string>
     <string name="channel_name_attachments">Viðhengi</string>
     <string name="channel_description_attachments">Sýnir framvindu niðurhals á viðhengjum</string>
     <string name="channel_name_emails">Tölvupóstar</string>
@@ -759,7 +759,7 @@
     <string name="connections_via_third_parties">Varaleið beiningar</string>
     <string name="allow_secure_connections_via_third_parties">Leyfa varaleið beiningar</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Sé lokað á Proton-vefsvæði, gerir þessi stilling forritinu kleift að reyna að nota aðra leið um netið til að tengjast Proton, sem aftur getur nýst til að komast fram hjá eldveggjum eða vandamálum varðandi netkerfið. Við mælum með því að hafa þessa stillingu virka til að auka áreiðanleika forritsins.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Sé lokað á Proton-vefsvæði, gerir þessi stilling forritinu kleift að reyna að nota aðra leið um netið til að tengjast Proton, sem aftur getur nýst til að komast fram hjá eldveggjum eða vandamálum varðandi netkerfið. Við mælum með því að hafa þessa stillingu virka til að auka áreiðanleika forritsins. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Kanna nánar</a>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
     </string>
     <string name="app_language">Tungumál forrits</string>
     <string name="custom_language_dialog_title">Veldu tungumál forrits</string>

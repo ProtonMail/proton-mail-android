@@ -278,7 +278,7 @@
     <string name="label_deleted_error">Tuccḍa di tukksa n tabzimt</string>
     <string name="message_deleted_error">Tuccḍa di tukksa n kra n yiznan. Kra n yiznan yettwakksen tetteddu tuzna-nnsen amira?!</string>
     <string name="respond_inline">Err degi imayl</string>
-    <string name="server_not_reachable_troubleshoot">Aqeddac ur yettwaweḍ ara… (<u> Aqeɛɛed</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Asenqed n tuqqna...</string>
     <string name="draft_label_attachments_uploading">asali n yifuyla yeddan…</string>
     <string name="draft_label_message_uploading">tuzna n yizen…</string>
@@ -317,7 +317,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Kkes tabzimt yetwafernen?</string>
     <string name="delete_folder_confirmation_title">Kkes akaram yettwafernen?</string>
-    <string name="delete_label_confirmation_message">Imaylen yellan dagi ad ten-tafeḍ di <b>Akk imaylen</b>
+    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b>
     </string>
     <string name="pin_invalid">PIN mačči d ameɣtu, sekcem PIN s 4 n izwilen</string>
     <string name="pin_not_match">Tangalt PIN ur tmenṭaḍ ara</string>
@@ -403,7 +403,7 @@
     <string name="contacts_import_contact">Kter anermis</string>
     <string name="contacts_import">Kter</string>
     <string name="upload_contacts">Sali inermisen</string>
-    <string name="uploading_contacts">Akter n inermisen…</string>
+    <string name="uploading_contacts">Uploading contacts…</string>
     <string-array name="vcard_option_phone">
         <item>Tiliɣri</item>
         <item>Aziraz</item>
@@ -461,12 +461,12 @@
     <string name="update_folder">Leqqem akaram</string>
     <string name="spam_score_100">Imayl-agi yettban d akken yekka-d si ProtonMail, acu kan yussa-d si beṛṛa n unagraw ihi ur iɛedda ara asekyed n usesteb. Ahat beddlen-t neɣ win-t s tuccḍa aniɣer nniḍen!</string>
     <string name="spam_score_101">Imayl-agi yecceḍ deg usekyed n usesteb n taɣult-is. Ahat beddlen-t neɣ wwin-t s tuccḍa aniɣer nniḍen!</string>
-    <string name="spam_score_102">Izen-agi yezmer ad yili d aneɛruḍ n ukellex. Ttxil-k senqed amazan akked ugbur iwakken ad tḥeqqqeḍ belli d izerfanen. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ISSIN UGAR</a>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a>
     </string>
     <string name="print_from_template">Si: %s</string>
-    <string name="print_to_template">I: %s;  </string>
-    <string name="print_cc_template">Anɣ. I.: %s;  </string>
-    <string name="print_bcc_template">Anɣ. Uffi. I.: %s;  </string>
+    <string name="print_to_template">To: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">Tansa: </string>
     <string name="address_street">Abrid</string>
     <string name="address_extended_street">Extended street</string>
@@ -480,8 +480,7 @@
     <string name="empty_subject">(Ulac asentel)</string>
     <string name="empty_recipients">(Ulac iɣerwaḍen)</string>
     <string name="contacts_unknown">Arussin</string>
-    <string name="learn_more">
-        <u>Issin Ugar</u>
+    <string name="learn_more"><u>Learn More</u>
     </string>
     <string name="info">Talɣut</string>
     <string name="error_can_not_send_from_this_address">Ali ar lqem s yidrimen akken ad tazneḍ neɣ ad d-remseḍ imaylen seg tansa-ik %s.</string>
@@ -494,7 +493,7 @@
     <string name="protonmail_contacts">Inermisen ProtonMail</string>
     <string name="device_contacts">Inermisen n ibenk</string>
     <string name="print_date_template">Azemz:%s</string>
-    <string name="print_attachment_template">Imseddi: %s; </string>
+    <string name="print_attachment_template">Attachment: %s;  </string>
     <string name="pm_me_changed">Tuzna n iznan seg @pm.me d tamahilt s uxeles. Izen-inek ad itwazen seg tansa-inek tamezwart %s</string>
     <string name="pm_me_can_not_be_default">Leqem γer lqem s uxeles akken ad tesbaduḍ tansa-inek tamezwart %s</string>
     <string name="dont_remind_again">Ur d-smektay ara tikkelt-nniḍen</string>
@@ -540,8 +539,7 @@
     <string name="expiration_error_add_msg_password">Ttxil-k rnu awal n uɛeddi n yizen i iɣerwaḍn-agi:</string>
     <string name="expiration_error_disable_pgp_sending">Ttxil-k sexsi tuzzna PGP iwakken ad tesremdeḍ afati i iɣerwaḍen-agi:</string>
     <string name="expiration_error_proceed">Sit akken ibɣu yili iwakken ad tazneḍ s war afati i iɣerwaḍen-agi.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ẒER UGAR</a>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a>
     </string>
     <string name="channel_name_attachments">Imseddayen</string>
     <string name="channel_description_attachments">Ad d-yefk talɣut ɣef waddad n usider n ufaylu yeddan</string>
@@ -761,7 +759,7 @@
     <string name="connections_via_third_parties">Aseglu amlellay</string>
     <string name="allow_secure_connections_via_third_parties">Rnu aseglu amlellay</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. [Issin ugar]<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/"> Issin ugar</a>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
     </string>
     <string name="app_language">Tutlayt n usnas</string>
     <string name="custom_language_dialog_title">Fren tutlayt n usnas</string>
