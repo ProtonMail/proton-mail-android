@@ -137,6 +137,15 @@
     <!-- region Dialogs -->
     <!-- endregion -->
 
+    <!-- region Onboarding -->
+    <string name="onboarding_privacy_for_all_headline">Privacy for all</string>
+    <string name="onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
+    <string name="onboarding_neat_and_tidy_headline">Neat and tidy</string>
+    <string name="onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get started</string>
+    <!-- endregion -->
+
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="sign_out">Sign Out</string>
@@ -951,5 +960,4 @@
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
 
     <string name="labels_selected_limit_reached">Limit reached</string>
-
 </resources>
