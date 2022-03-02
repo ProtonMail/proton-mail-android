@@ -144,6 +144,7 @@
     <string name="onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
     <!-- endregion -->
 
     <!-- region Old / V3 / pre-conventions -->
