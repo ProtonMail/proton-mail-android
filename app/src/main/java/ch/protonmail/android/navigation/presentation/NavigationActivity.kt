@@ -56,7 +56,6 @@ import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_USER_ID
 import ch.protonmail.android.pinlock.presentation.PinLockManager
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
@@ -71,8 +70,6 @@ import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
 import me.proton.core.domain.entity.UserId
 import me.proton.core.plan.presentation.PlansOrchestrator
-import me.proton.core.presentation.utils.setDarkStatusBar
-import me.proton.core.presentation.utils.setLightStatusBar
 import me.proton.core.presentation.utils.showToast
 import me.proton.core.report.presentation.ReportOrchestrator
 import me.proton.core.report.presentation.entity.BugReportInput
@@ -177,10 +174,6 @@ internal abstract class NavigationActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) {
-            // This is needed for the status bar to change correctly, it doesn't without this. Is there a way to mime
-            //  the behaviour with newer API?
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             setDrawBehindSystemBars()
         }
 
@@ -298,12 +291,6 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS)
-            if (navigationViewModel.isAppInDarkMode(this)) {
-                setDarkStatusBar()
-            } else {
-                setLightStatusBar()
-            }
 
         checkUserId()
         closeDrawerAndDialog()
@@ -361,32 +348,13 @@ internal abstract class NavigationActivity : BaseActivity() {
             R.string.open_drawer,
             R.string.close_drawer
         )
-        drawerLayout.setStatusBarBackgroundColor(
-            UiUtil.scaleColor(
-                getColor(R.color.dark_purple),
-                0.6f,
-                true
-            )
-        )
+
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
         setUpInitialDrawerItems(userManager.currentLegacyUser?.isUsePin ?: false)
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-
-            override fun onDrawerOpened(drawerView: View) {
-                super.onDrawerOpened(drawerView)
-                if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setDarkStatusBar()
-            }
-
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
-                if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS)
-                    if (navigationViewModel.isAppInDarkMode(this@NavigationActivity)) {
-                        setDarkStatusBar()
-                    } else {
-                        setLightStatusBar()
-                    }
-
                 onDrawerClose()
                 onDrawerClose = {}
             }

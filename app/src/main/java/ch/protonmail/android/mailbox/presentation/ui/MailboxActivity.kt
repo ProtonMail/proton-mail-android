@@ -1029,20 +1029,10 @@ internal class MailboxActivity :
     override fun onActionModeStarted(mode: ActionMode?) {
         super.onActionModeStarted(mode)
         // We need to set a solid color for status bar during Action mode, or it will be black
-        window.statusBarColor = getColor(R.color.status_bar)
+        window.statusBarColor = getColor(R.color.background_norm)
     }
 
     override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem) = true
-
-    override fun onActionModeFinished(mode: ActionMode?) {
-        super.onActionModeFinished(mode)
-        // The ActionMode will be visually closed with a small delay after this callback ( or any other, like
-        //  onDestroyActionMode ), for this reason we apply a small delay before making the status bar transparent
-        //  again, in order to avoid to flash a black status bar
-        window.decorView.postDelayed(ACTION_MODE_STATUS_BAR_COLOR_DELAY) {
-            window.statusBarColor = getColor(R.color.transparent)
-        }
-    }
 
     override fun onDestroyActionMode(mode: ActionMode) {
         actionMode = null
