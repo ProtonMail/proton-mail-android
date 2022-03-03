@@ -38,6 +38,7 @@ class AccountSettingsTests : BaseTest() {
         super.setUp()
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .settings()
             .openUserAccountSettings(onePassUser)

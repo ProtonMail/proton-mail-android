@@ -35,6 +35,7 @@ class SettingsTests : BaseTest() {
         super.setUp()
         settingsRobot = loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .settings()
     }

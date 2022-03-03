@@ -58,6 +58,7 @@ class DraftsTests : BaseTest() {
     fun saveDraft() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -73,6 +74,7 @@ class DraftsTests : BaseTest() {
     fun saveDraftWithAttachment() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftSubjectBodyAttachment(to, subject, body)
             .clickUpButton()
@@ -88,6 +90,7 @@ class DraftsTests : BaseTest() {
     fun sendDraftWithAttachment() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftSubjectBodyAttachment(to, subject, body)
             .clickUpButton()
@@ -112,6 +115,7 @@ class DraftsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -133,6 +137,7 @@ class DraftsTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftSubjectBody(subject, body)
             .clickUpButton()
@@ -151,6 +156,7 @@ class DraftsTests : BaseTest() {
     fun openDraftFromSearch() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -167,6 +173,7 @@ class DraftsTests : BaseTest() {
     fun addAttachmentToDraft() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -189,6 +196,7 @@ class DraftsTests : BaseTest() {
     fun minimiseTheAppWhileReplyingToMessage() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .refreshMessageList()
             .clickMessageByPosition(0)
             .openActionSheet()
@@ -213,6 +221,7 @@ class DraftsTests : BaseTest() {
         val noSubject = stringFromResource(R.string.empty_subject)
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftToBody(to, body)
             .clickUpButton()
@@ -234,6 +243,7 @@ class DraftsTests : BaseTest() {
         val subjectWithHyphens = "This-is-subject-with-hyphens-$subject"
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftSubjectBody(subjectWithHyphens, bodyWithHyphens)
             .clickUpButton()
@@ -257,6 +267,7 @@ class DraftsTests : BaseTest() {
         val bodyEditTwo = "Edit two $body"
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
@@ -289,6 +300,7 @@ class DraftsTests : BaseTest() {
     fun replaceAttachmentsSavingDraftsAndSend() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .refreshMessageList()
             .compose()
             .sendMessageWithFileAttachment(to, subject, body)

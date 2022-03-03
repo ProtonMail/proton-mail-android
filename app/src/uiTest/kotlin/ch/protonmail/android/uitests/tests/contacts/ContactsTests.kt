@@ -42,6 +42,7 @@ class ContactsTests : BaseTest() {
         super.setUp()
         contactsRobot = loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .contacts()
     }
