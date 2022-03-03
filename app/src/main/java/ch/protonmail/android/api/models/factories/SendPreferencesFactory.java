@@ -357,17 +357,21 @@ public class SendPreferencesFactory {
         boolean isInternal = pubKeyResp.getRecipientType() == PublicKeyResponse.RecipientType.INTERNAL;
         boolean isOwnAddress = getAddress(email) != null;
         String pubKey = findPrimaryKey(pubKeyResp);
-
-        if (isInternal && pubKey != null) {
-            return new SendPreference(email, true, true,
-                    MIMEType.HTML, pubKey, PackageType.PM,
-                    false, false, false, isOwnAddress);
-        }
+        boolean globalSign = mailSettings.getDefaultSign();
         PackageType defaultPGPScheme = mailSettings.getPGPScheme();
+        if (pubKey != null) {
+            if(isInternal){
+                return new SendPreference(email, true, true,
+                        MIMEType.HTML, pubKey, PackageType.PM,
+                        false, false, false, isOwnAddress);
+            } else {
+                return new SendPreference(email, true, globalSign,
+                        MIMEType.MIME, pubKey, defaultPGPScheme,
+                        false, false, false, isOwnAddress);
+            }
+        }
         defaultPGPScheme = defaultPGPScheme == PackageType.PGP_MIME ? PackageType.MIME : PackageType.CLEAR;
         MIMEType defaultPGPMime = defaultPGPScheme == PackageType.MIME ? MIMEType.MIME : MIMEType.PLAINTEXT;
-        boolean globalSign = mailSettings.getDefaultSign();
-
         return new SendPreference(email, false, globalSign,
                 globalSign ? defaultPGPMime : MIMEType.HTML, null,
                 globalSign ? defaultPGPScheme : PackageType.CLEAR,
