@@ -2,7 +2,7 @@
 
 
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -33,8 +33,8 @@
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/padding_xl"
         android:gravity="center"
-        android:text="@string/inbox_nothing_to_see_here"
-        app:drawableTopCompat="@drawable/img_desert" />
+        android:text="@string/no_messages"
+        app:drawableTopCompat="@drawable/img_empty_folder" />
 
     <TextView
         style="@style/Proton.Text.Default"
