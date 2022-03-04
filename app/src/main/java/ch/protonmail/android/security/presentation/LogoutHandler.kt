@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -25,6 +25,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.navigation.presentation.NavigationActivity
+import ch.protonmail.android.settings.pin.ValidatePinActivity
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -39,7 +40,7 @@ internal class LogoutHandler @Inject constructor(
 ) {
 
     fun register(activity: ComponentActivity) {
-        if (activity.isAuthActivity() || activity.isRootActivity()) return
+        if (activity.isAuthActivity() || activity.isRootActivity() || activity.isPinLockActivity()) return
 
         val currentUserId = userManager.currentUserId
 
@@ -56,5 +57,5 @@ internal class LogoutHandler @Inject constructor(
     }
 
     private fun Activity.isRootActivity() = this is NavigationActivity
-
+    private fun Activity.isPinLockActivity() = this is ValidatePinActivity
 }
