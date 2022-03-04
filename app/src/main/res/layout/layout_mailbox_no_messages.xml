@@ -18,26 +18,29 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat">
 
     <TextView
+        android:id="@+id/layout_no_messages_title_text_view"
         style="@style/Proton.Text.Headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/padding_xl"
         android:gravity="center"
-        android:text="@string/mailbox_no_messages"
-        app:drawableTopCompat="@drawable/img_empty_folder" />
+        tools:text="@string/mailbox_no_messages"
+        tools:drawableTopCompat="@drawable/img_empty_folder" />
 
     <TextView
+        android:id="@+id/layout_no_messages_subtitle_text_view"
         style="@style/Proton.Text.Default"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/padding_l"
-        android:text="@string/inbox_this_folder_is_empty" />
-</androidx.appcompat.widget.LinearLayoutCompat>
+        tools:text="@string/inbox_this_folder_is_empty" />
+</merge>
