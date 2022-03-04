@@ -334,9 +334,8 @@ internal class MailboxViewModel @Inject constructor(
             )
         ) { labels, conversations -> labels to conversations }
             .loadMoreBuffer()
-            .loadMoreMap { pair ->
-                val labels = pair.first
-                when (val result = pair.second) {
+            .loadMoreMap { (labels, result) ->
+                when (result) {
                     is GetConversationsResult.Success -> {
                         val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
                         isFirstData = false

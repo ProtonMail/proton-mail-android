@@ -100,7 +100,7 @@ class PingWorker @AssistedInject constructor(
 
             workManager.enqueueUniqueWork(
                 uniqueWorkerName,
-                ExistingWorkPolicy.REPLACE,
+                ExistingWorkPolicy.KEEP,
                 workRequest
             )
             Timber.v("Scheduled ping work request id:${workRequest.id}")
