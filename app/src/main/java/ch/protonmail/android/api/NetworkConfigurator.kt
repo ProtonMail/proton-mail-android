@@ -37,7 +37,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 // region constants
-const val DOH_PROVIDER_TIMEOUT = 20_000L
+const val DOH_PROVIDER_TIMEOUT = 30_000L
 // endregion
 
 /**
