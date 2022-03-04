@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Ertu viss um að þú viljir eyða öllum skilaboðum úr þessari möppu?</string>
     <string name="send">Senda</string>
     <string name="selected">Valið</string>
-    <string name="no_messages">Engin skilaboð</string>
+    <string name="mailbox_no_messages">Engin skilaboð</string>
     <string name="no_labels">Engar merkingar</string>
     <string name="to">Til</string>
     <string name="cc">Afrit (Cc)</string>

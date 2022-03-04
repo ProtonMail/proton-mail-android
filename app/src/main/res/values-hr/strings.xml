@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Jeste li sigurni da želite izbrisati sve poruke iz ove mape?</string>
     <string name="send">Pošalji</string>
     <string name="selected">Odabrano</string>
-    <string name="no_messages">Nema poruka</string>
+    <string name="mailbox_no_messages">Nema poruka</string>
     <string name="no_labels">Bez oznake</string>
     <string name="to">Za</string>
     <string name="cc">Cc</string>

@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Você tem certeza que deseja excluir todas as mensagens nesta pasta?</string>
     <string name="send">Enviar</string>
     <string name="selected">Selecionado</string>
-    <string name="no_messages">Não há mensagens</string>
+    <string name="mailbox_no_messages">Não há mensagens</string>
     <string name="no_labels">Sem marcadores</string>
     <string name="to">Para</string>
     <string name="cc">Cc</string>

@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Weet u zeker dat u alle berichten uit deze folder wilt verwijderen?</string>
     <string name="send">Verstuur</string>
     <string name="selected">Geselecteerd</string>
-    <string name="no_messages">Geen berichten</string>
+    <string name="mailbox_no_messages">Geen berichten</string>
     <string name="no_labels">Geen labels</string>
     <string name="to">Aan</string>
     <string name="cc">Cc</string>

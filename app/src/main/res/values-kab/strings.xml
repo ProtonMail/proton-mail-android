@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Tebɣiḍ ad tekkseḍ akk iznan seg ukaram?</string>
     <string name="send">Azen</string>
     <string name="selected">Yettwafren</string>
-    <string name="no_messages">Ulac iznan</string>
+    <string name="mailbox_no_messages">Ulac iznan</string>
     <string name="no_labels">Ulac tibzimin</string>
     <string name="to">I</string>
     <string name="cc">Anɣ. I</string>

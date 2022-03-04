@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Είστε σίγουροι ότι θέλετε να διαγράψετε όλα τα μηνύματα από αυτόν τον φάκελο;</string>
     <string name="send">Αποστολή</string>
     <string name="selected">Επιλεγμένα</string>
-    <string name="no_messages">Δεν υπάρχουν μηνύματα</string>
+    <string name="mailbox_no_messages">Δεν υπάρχουν μηνύματα</string>
     <string name="no_labels">Χωρίς ετικέτες</string>
     <string name="to">Προς</string>
     <string name="cc">Κοινοποίηση</string>

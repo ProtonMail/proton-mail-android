@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Sigur doriți să ștergeți toate mesajele din acest folder?</string>
     <string name="send">Trimite</string>
     <string name="selected">Selectat</string>
-    <string name="no_messages">Nu sunt mesaje</string>
+    <string name="mailbox_no_messages">Nu sunt mesaje</string>
     <string name="no_labels">Nu sunt etichete</string>
     <string name="to">Către</string>
     <string name="cc">Cc</string>

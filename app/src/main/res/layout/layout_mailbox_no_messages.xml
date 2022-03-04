@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/padding_xl"
         android:gravity="center"
-        android:text="@string/no_messages"
+        android:text="@string/mailbox_no_messages"
         app:drawableTopCompat="@drawable/img_empty_folder" />
 
     <TextView

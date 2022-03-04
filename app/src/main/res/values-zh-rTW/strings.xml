@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">您確定要刪除此資料夾中的全部郵件？</string>
     <string name="send">送出</string>
     <string name="selected">已選取</string>
-    <string name="no_messages">沒有郵件</string>
+    <string name="mailbox_no_messages">沒有郵件</string>
     <string name="no_labels">沒有標籤</string>
     <string name="to">收件者</string>
     <string name="cc">副本</string>

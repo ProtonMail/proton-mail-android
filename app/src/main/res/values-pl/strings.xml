@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Czy na pewno chcesz usunąć wszystkie wiadomości z tego folderu?</string>
     <string name="send">Wyślij</string>
     <string name="selected">Zaznaczone</string>
-    <string name="no_messages">Brak wiadomości</string>
+    <string name="mailbox_no_messages">Brak wiadomości</string>
     <string name="no_labels">Brak etykiet</string>
     <string name="to">Do</string>
     <string name="cc">Dw</string>

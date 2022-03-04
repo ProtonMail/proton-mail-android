@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Bu klasördeki tüm iletileri silmek istediğinize emin misiniz?</string>
     <string name="send">Gönder</string>
     <string name="selected">Seçilmiş</string>
-    <string name="no_messages">Herhangi bir ileti yok</string>
+    <string name="mailbox_no_messages">Herhangi bir ileti yok</string>
     <string name="no_labels">Herhangi bir etiket yok</string>
     <string name="to">Kime</string>
     <string name="cc">Kopya</string>

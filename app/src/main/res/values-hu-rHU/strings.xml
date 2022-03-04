@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Biztosan törli az összes üzenetet ebben a mappában?</string>
     <string name="send">Küldés</string>
     <string name="selected">Kiválasztva</string>
-    <string name="no_messages">Nincs üzenet</string>
+    <string name="mailbox_no_messages">Nincs üzenet</string>
     <string name="no_labels">Nincs címke</string>
     <string name="to">Címzett</string>
     <string name="cc">Másolatot kap</string>

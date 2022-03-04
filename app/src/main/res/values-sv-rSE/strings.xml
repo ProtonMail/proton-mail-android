@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna mapp?</string>
     <string name="send">Skicka</string>
     <string name="selected">Valda</string>
-    <string name="no_messages">Inga meddelanden</string>
+    <string name="mailbox_no_messages">Inga meddelanden</string>
     <string name="no_labels">Inga etiketter</string>
     <string name="to">Till</string>
     <string name="cc">Cc</string>

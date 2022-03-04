@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">确定要删除文件夹内的所有邮件吗？</string>
     <string name="send">发送​​</string>
     <string name="selected">已选择</string>
-    <string name="no_messages">无邮件</string>
+    <string name="mailbox_no_messages">无邮件</string>
     <string name="no_labels">无标签</string>
     <string name="to">收件人</string>
     <string name="cc">抄送</string>

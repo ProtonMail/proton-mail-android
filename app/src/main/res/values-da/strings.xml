@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Er du sikker på, at du vil slette alle beskeder fra denne mappe?</string>
     <string name="send">Send</string>
     <string name="selected">Valgte</string>
-    <string name="no_messages">Ingen beskeder</string>
+    <string name="mailbox_no_messages">Ingen beskeder</string>
     <string name="no_labels">Ingen etiketter</string>
     <string name="to">Til</string>
     <string name="cc">Cc</string>

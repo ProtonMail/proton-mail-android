@@ -50,6 +50,10 @@
     <string name="drawer_create_label_description">Create new label</string>
     <!-- endregion -->
 
+    <!-- region Mailbox -->
+    <string name="mailbox_no_messages">No messages</string>
+    <!-- endregion -->
+
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
@@ -191,7 +195,6 @@
     <string name="are_you_sure_empty">Are you sure you want to delete all messages from this folder?</string>
     <string name="send">Send</string>
     <string name="selected">Selected</string>
-    <string name="no_messages">No messages</string>
     <string name="no_labels">No labels</string>
     <string name="to">To</string>
     <string name="cc">Cc</string>

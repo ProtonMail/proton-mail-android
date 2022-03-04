@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Êtes-vous sûr de vouloir supprimer tous les messages de ce dossier ?</string>
     <string name="send">Envoyer</string>
     <string name="selected">Sélectionné</string>
-    <string name="no_messages">Aucun message</string>
+    <string name="mailbox_no_messages">Aucun message</string>
     <string name="no_labels">Aucun label</string>
     <string name="to">À</string>
     <string name="cc">Cc</string>

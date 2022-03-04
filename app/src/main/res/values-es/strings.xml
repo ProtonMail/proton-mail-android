@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">¿Está seguro de que desea eliminar todos los mensajes de esta carpeta?</string>
     <string name="send">Enviar</string>
     <string name="selected">Seleccionado</string>
-    <string name="no_messages">No hay mensajes</string>
+    <string name="mailbox_no_messages">No hay mensajes</string>
     <string name="no_labels">No hay etiquetas</string>
     <string name="to">Para</string>
     <string name="cc">Cc</string>

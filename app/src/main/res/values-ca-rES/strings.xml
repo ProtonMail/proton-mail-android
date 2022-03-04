@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Està segur que vol esborrar tots els missatges d\'aquesta carpeta?</string>
     <string name="send">Enviar</string>
     <string name="selected">Seleccionat</string>
-    <string name="no_messages">No hi ha missatges</string>
+    <string name="mailbox_no_messages">No hi ha missatges</string>
     <string name="no_labels">Sense etiquetes</string>
     <string name="to">Per a</string>
     <string name="cc">Cc</string>

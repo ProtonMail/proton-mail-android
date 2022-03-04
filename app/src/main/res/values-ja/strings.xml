@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">このフォルダー内の全てのメッセージを削除してよろしいですか？</string>
     <string name="send">送信</string>
     <string name="selected">選択済</string>
-    <string name="no_messages">メッセージはありません。</string>
+    <string name="mailbox_no_messages">メッセージはありません。</string>
     <string name="no_labels">ラベルはありません。</string>
     <string name="to">宛先</string>
     <string name="cc">Cc</string>

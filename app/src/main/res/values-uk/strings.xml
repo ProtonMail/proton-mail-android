@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Ви дійсно хочете видалити всі повідомлення з цієї теки?</string>
     <string name="send">Надіслати</string>
     <string name="selected">Вибрано</string>
-    <string name="no_messages">Немає повідомлень</string>
+    <string name="mailbox_no_messages">Немає повідомлень</string>
     <string name="no_labels">Немає міток</string>
     <string name="to">Кому</string>
     <string name="cc">Копія</string>

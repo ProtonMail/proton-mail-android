@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Вы уверены, что хотите удалить все сообщения из этой папки?</string>
     <string name="send">Отправить</string>
     <string name="selected">Выбрано</string>
-    <string name="no_messages">Нет сообщений</string>
+    <string name="mailbox_no_messages">Нет сообщений</string>
     <string name="no_labels">Нет ярлыков</string>
     <string name="to">Кому</string>
     <string name="cc">Копия</string>
