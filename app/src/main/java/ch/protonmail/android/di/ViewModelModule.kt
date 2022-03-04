@@ -30,12 +30,10 @@ import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateViewMode
 import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.labels.domain.usecase.ObserveLabelsAndFoldersWithChildren
-import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -100,7 +98,6 @@ internal class ViewModelModule {
         messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
         userManager: UserManager,
         deleteMessage: DeleteMessage,
-        contactsRepository: ContactsRepository,
         labelRepository: LabelRepository,
         verifyConnection: VerifyConnection,
         networkConfigurator: NetworkConfigurator,
@@ -121,14 +118,12 @@ internal class ViewModelModule {
         observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren,
         drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings: GetMailSettings,
-        messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper,
         mailboxItemUiModelMapper: MailboxItemUiModelMapper,
         fetchEventsAndReschedule: FetchEventsAndReschedule
     ) = MailboxViewModel(
         messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
         userManager = userManager,
         deleteMessage = deleteMessage,
-        contactsRepository = contactsRepository,
         labelRepository = labelRepository,
         verifyConnection = verifyConnection,
         networkConfigurator = networkConfigurator,
@@ -149,7 +144,6 @@ internal class ViewModelModule {
         observeLabelsAndFoldersWithChildren = observeLabelsAndFoldersWithChildren,
         drawerFoldersAndLabelsSectionUiModelMapper = drawerFoldersAndLabelsSectionUiModelMapper,
         getMailSettings = getMailSettings,
-        messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper,
         mailboxItemUiModelMapper = mailboxItemUiModelMapper,
         fetchEventsAndReschedule = fetchEventsAndReschedule
     )

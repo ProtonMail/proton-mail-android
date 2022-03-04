@@ -30,12 +30,10 @@ import ch.protonmail.android.api.segments.event.FetchEventsAndReschedule
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreBuffer
 import ch.protonmail.android.domain.loadMoreCombine
-import ch.protonmail.android.domain.loadMoreCombineTransform
 import ch.protonmail.android.domain.loadMoreMap
 import ch.protonmail.android.drawer.presentation.mapper.DrawerFoldersAndLabelsSectionUiModelMapper
 import ch.protonmail.android.drawer.presentation.model.DrawerFoldersAndLabelsSectionUiModel
@@ -44,7 +42,6 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
 import ch.protonmail.android.labels.domain.usecase.ObserveLabelsAndFoldersWithChildren
-import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -75,7 +72,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
@@ -100,7 +96,6 @@ import javax.inject.Inject
 const val FLOW_START_ACTIVITY = 1
 const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
-private const val STARRED_LABEL_ID = "10"
 
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
@@ -108,7 +103,6 @@ internal class MailboxViewModel @Inject constructor(
     private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val userManager: UserManager,
     private val deleteMessage: DeleteMessage,
-    private val contactsRepository: ContactsRepository,
     private val labelRepository: LabelRepository,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
@@ -129,7 +123,6 @@ internal class MailboxViewModel @Inject constructor(
     private val observeLabelsAndFoldersWithChildren: ObserveLabelsAndFoldersWithChildren,
     private val drawerFoldersAndLabelsSectionUiModelMapper: DrawerFoldersAndLabelsSectionUiModelMapper,
     private val getMailSettings: GetMailSettings,
-    private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper,
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper,
     private val fetchEventsAndReschedule: FetchEventsAndReschedule
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {

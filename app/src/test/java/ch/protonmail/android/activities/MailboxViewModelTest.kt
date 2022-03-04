@@ -33,7 +33,6 @@ import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.Constants.MessageLocationType.LABEL
 import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
@@ -45,7 +44,6 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.domain.usecase.ObserveLabels
-import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -96,8 +94,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val testUserId = UserId("8237462347237428")
 
-    private val contactsRepository: ContactsRepository = mockk()
-
     private val messageDetailsRepository: MessageDetailsRepository = mockk {
         every { findAllPendingSendsAsync() } returns liveData { emit(emptyList<PendingSend>()) }
         every { findAllPendingUploadsAsync() } returns liveData { emit(emptyList<PendingUpload>()) }
@@ -146,8 +142,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private val observeLabels: ObserveLabels = mockk()
 
-    private val messageRecipientToCorrespondentMapper = MessageRecipientToCorrespondentMapper()
-
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper = mockk {
         coEvery { toUiModels(any(), any()) } returns emptyList()
         coEvery { toUiModels(any(), any(), any()) } returns emptyList()
@@ -189,9 +183,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
         every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
 
-        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
-        coEvery { contactsRepository.findContactsByEmail(any()) } returns flowOf(emptyList())
-
         val allLabels = (0..11).map {
             Label(
                 id = LabelId("$it"),
@@ -215,7 +206,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             messageDetailsRepositoryFactory = messageDetailsRepositoryFactory,
             userManager = userManager,
             deleteMessage = deleteMessage,
-            contactsRepository = contactsRepository,
             labelRepository = labelRepository,
             verifyConnection = verifyConnection,
             networkConfigurator = networkConfigurator,
@@ -236,7 +226,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             observeLabelsAndFoldersWithChildren = mockk(),
             drawerFoldersAndLabelsSectionUiModelMapper = mockk(),
             getMailSettings = getMailSettings,
-            messageRecipientToCorrespondentMapper = messageRecipientToCorrespondentMapper,
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule
         )
