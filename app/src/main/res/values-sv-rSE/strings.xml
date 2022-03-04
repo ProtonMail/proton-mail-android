@@ -834,7 +834,6 @@
     <string name="contacts_call">Ring</string>
     <string name="contacts_send_group_message">Skicka gruppmeddelande</string>
     <string name="inbox_this_folder_is_empty">Denna mapp är tom</string>
-    <string name="inbox_nothing_to_see_here">Inget att se här</string>
     <string name="inbox_could_not_retrieve_messages">Kunde inte hämta dina meddelanden</string>
     <string name="inbox_pull_down_to_retry">Dra ner för att försöka igen</string>
     <string name="edit_draft">Redigera utkast</string>

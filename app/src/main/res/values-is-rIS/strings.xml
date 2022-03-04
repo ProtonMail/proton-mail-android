@@ -838,7 +838,6 @@
     <string name="contacts_call">Hringja</string>
     <string name="contacts_send_group_message">Senda hópskilaboð</string>
     <string name="inbox_this_folder_is_empty">Þessi mappa er tóm</string>
-    <string name="inbox_nothing_to_see_here">Ekkert að sjá hér</string>
     <string name="inbox_could_not_retrieve_messages">Tókst ekki að sækja skilaboðin þín</string>
     <string name="inbox_pull_down_to_retry">Dragðu niður til að reyna aftur</string>
     <string name="edit_draft">Breyta drögum</string>

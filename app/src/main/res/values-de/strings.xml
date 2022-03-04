@@ -829,7 +829,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="contacts_call">Anrufen</string>
     <string name="contacts_send_group_message">Gruppennachricht senden</string>
     <string name="inbox_this_folder_is_empty">Dieser Ordner ist leer</string>
-    <string name="inbox_nothing_to_see_here">Hier gibt es nichts zu sehen</string>
     <string name="inbox_could_not_retrieve_messages">Ihre Nachrichten konnten nicht abgerufen werden</string>
     <string name="inbox_pull_down_to_retry">Bitte nach unten ziehen, um es erneut zu versuchen</string>
     <string name="edit_draft">Entwurf bearbeiten</string>

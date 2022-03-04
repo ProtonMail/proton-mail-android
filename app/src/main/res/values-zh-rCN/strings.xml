@@ -816,7 +816,6 @@
     <string name="contacts_call">呼叫</string>
     <string name="contacts_send_group_message">群发邮件</string>
     <string name="inbox_this_folder_is_empty">此文件夹为空</string>
-    <string name="inbox_nothing_to_see_here">暂无内容</string>
     <string name="inbox_could_not_retrieve_messages">获取邮件失败</string>
     <string name="inbox_pull_down_to_retry">请下拉重试</string>
     <string name="edit_draft">编辑草稿</string>

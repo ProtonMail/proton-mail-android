@@ -823,7 +823,6 @@
     <string name="contacts_call">通話</string>
     <string name="contacts_send_group_message">發送群組訊息</string>
     <string name="inbox_this_folder_is_empty">此資料夾是空的</string>
-    <string name="inbox_nothing_to_see_here">這裡空空如也</string>
     <string name="inbox_could_not_retrieve_messages">無法擷取您的郵件</string>
     <string name="inbox_pull_down_to_retry">請往下拉來重試</string>
     <string name="edit_draft">編輯草稿</string>

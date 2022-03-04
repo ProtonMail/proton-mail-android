@@ -864,7 +864,6 @@
     <string name="contacts_call">Zavolat</string>
     <string name="contacts_send_group_message">Odeslat skupinovou zprávu</string>
     <string name="inbox_this_folder_is_empty">Tato složka je prázdná</string>
-    <string name="inbox_nothing_to_see_here">Zde není nic k zobrazení</string>
     <string name="inbox_could_not_retrieve_messages">Nepodařilo se načíst Vaše zprávy</string>
     <string name="inbox_pull_down_to_retry">Pro nový pokus potáhněte dolů</string>
     <string name="edit_draft">Upravit koncept</string>

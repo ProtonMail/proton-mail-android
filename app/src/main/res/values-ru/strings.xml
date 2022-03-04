@@ -864,7 +864,6 @@
     <string name="contacts_call">Позвонить</string>
     <string name="contacts_send_group_message">Отправить сообщение всей группе</string>
     <string name="inbox_this_folder_is_empty">Эта папка пуста</string>
-    <string name="inbox_nothing_to_see_here">Здесь не на что смотреть</string>
     <string name="inbox_could_not_retrieve_messages">Не удалось получить ваши сообщения</string>
     <string name="inbox_pull_down_to_retry">Пожалуйста, потяните вниз, чтобы повторить</string>
     <string name="edit_draft">Редактировать черновик</string>

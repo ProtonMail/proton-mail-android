@@ -864,7 +864,6 @@
     <string name="contacts_call">Виклик</string>
     <string name="contacts_send_group_message">Надіслати групове повідомлення</string>
     <string name="inbox_this_folder_is_empty">Ця тека порожня</string>
-    <string name="inbox_nothing_to_see_here">Тут нічого немає</string>
     <string name="inbox_could_not_retrieve_messages">Не вдалося отримати ваші повідомлення</string>
     <string name="inbox_pull_down_to_retry">Потягніть вниз, щоб повторити спробу</string>
     <string name="edit_draft">Редагувати чернетку</string>
