@@ -365,8 +365,12 @@ public class SendPreferencesFactory {
                         MIMEType.HTML, pubKey, PackageType.PM,
                         false, false, false, isOwnAddress);
             } else {
+                MIMEType mimeType = MIMEType.MIME;
+                if(defaultPGPScheme == PackageType.PGP_INLINE){
+                    mimeType = MIMEType.PLAINTEXT;
+                }
                 return new SendPreference(email, true, globalSign,
-                        MIMEType.MIME, pubKey, defaultPGPScheme,
+                        mimeType, pubKey, defaultPGPScheme,
                         false, false, false, isOwnAddress);
             }
         }
