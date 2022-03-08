@@ -299,6 +299,7 @@ dependencies {
         `Proton-user`,
         `Proton-user-settings`,
         `Proton-mail-settings`,
+        `Proton-metrics`,
         `Proton-key`,
         `Proton-human-verification`,
         `Proton-payment`,

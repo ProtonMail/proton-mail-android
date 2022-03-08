@@ -44,6 +44,7 @@ val DependencyHandler.`Proton-feature-flag` get() =                 proton("feat
 val DependencyHandler.`Proton-human-verification` get() =           proton("human-verification") version `Proton-core version`
 val DependencyHandler.`Proton-key` get() =                          proton("key") version `Proton-core version`
 val DependencyHandler.`Proton-mail-settings` get() =                proton("mail-settings") version `Proton-core version`
+val DependencyHandler.`Proton-metrics` get() =                      proton("metrics") version `Proton-core version`
 val DependencyHandler.`Proton-network` get() =                      proton("network") version `Proton-core version`
 val DependencyHandler.`Proton-payment` get() =                      proton("payment") version `Proton-core version`
 val DependencyHandler.`Proton-plan` get() =                         proton("plan") version `Proton-core version`
