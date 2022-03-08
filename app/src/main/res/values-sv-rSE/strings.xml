@@ -235,11 +235,6 @@
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="okay">Okej</string>
-    <string name="report_bugs">Rapportera fel</string>
-    <string name="send_report">Skicka rapport</string>
-    <string name="bug_title">Rubrik</string>
-    <string name="bug_description">Felbeskrivning</string>
-    <string name="sending_report">Skickar rapport...</string>
     <string name="received_report">Rapport mottagen</string>
     <string name="not_received_report">Rapport ej mottagen</string>
     <string name="forward_prefix">Vb:</string>

@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.labelsManager.LabelsManagerViewModel
+import ch.protonmail.android.labels.presentation.viewmodel.LabelsManagerViewModel
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.labels.domain.model.LabelId

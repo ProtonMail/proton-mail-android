@@ -232,11 +232,6 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="okay">确定</string>
-    <string name="report_bugs">反馈问题</string>
-    <string name="send_report">提交反馈</string>
-    <string name="bug_title">标题</string>
-    <string name="bug_description">问题描述</string>
-    <string name="sending_report">正在提交反馈...</string>
     <string name="received_report">反馈已提交</string>
     <string name="not_received_report">反馈未能提交</string>
     <string name="forward_prefix">转发：</string>

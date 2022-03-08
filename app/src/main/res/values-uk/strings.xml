@@ -241,11 +241,6 @@
     <string name="yes">Так</string>
     <string name="no">Ні</string>
     <string name="okay">Гаразд</string>
-    <string name="report_bugs">Повідомити про помилку</string>
-    <string name="send_report">Надіслати звіт</string>
-    <string name="bug_title">Заголовок</string>
-    <string name="bug_description">Опис помилки</string>
-    <string name="sending_report">Надсилання звіту...</string>
     <string name="received_report">Звіт отримано</string>
     <string name="not_received_report">Звіт не отримано</string>
     <string name="forward_prefix">Fw:</string>

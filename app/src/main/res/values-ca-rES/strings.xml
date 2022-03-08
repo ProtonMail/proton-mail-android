@@ -235,11 +235,6 @@
     <string name="yes">Sí</string>
     <string name="no">No</string>
     <string name="okay">D\'acord</string>
-    <string name="report_bugs">Informa d\'un error</string>
-    <string name="send_report">Enviar informe</string>
-    <string name="bug_title">Títol</string>
-    <string name="bug_description">Descripció de l\'error</string>
-    <string name="sending_report">Enviant informe...</string>
     <string name="received_report">Informe rebut</string>
     <string name="not_received_report">Informe no rebut</string>
     <string name="forward_prefix">Fw:</string>

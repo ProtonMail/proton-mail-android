@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.segments.report
 
-import ch.protonmail.android.api.models.BugsBody
 import ch.protonmail.android.api.models.PostPhishingReportBody
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
@@ -28,10 +27,6 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface ReportService : BaseRetrofitApi {
-
-    @POST("reports/bug")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun postBugs(@Body bugsBody: BugsBody)
 
     @POST("reports/phishing")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

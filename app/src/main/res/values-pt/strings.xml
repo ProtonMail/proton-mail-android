@@ -235,11 +235,6 @@
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="okay">Aceitar</string>
-    <string name="report_bugs">Reportar erros</string>
-    <string name="send_report">Enviar relatório</string>
-    <string name="bug_title">Título</string>
-    <string name="bug_description">Descrição do erro</string>
-    <string name="sending_report">A enviar relatório...</string>
     <string name="received_report">Relatório recebido</string>
     <string name="not_received_report">Relatório não recebido</string>
     <string name="forward_prefix">Enc:</string>

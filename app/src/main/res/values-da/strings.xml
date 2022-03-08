@@ -235,11 +235,6 @@
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="okay">OK</string>
-    <string name="report_bugs">Anmeld fejl</string>
-    <string name="send_report">Indsend rapport</string>
-    <string name="bug_title">Titel</string>
-    <string name="bug_description">Fejlbeskriveslse</string>
-    <string name="sending_report">Indsender rapport...</string>
     <string name="received_report">Anmeldelse modtaget</string>
     <string name="not_received_report">Anmeldelse ikke modtaget</string>
     <string name="forward_prefix">Vs:</string>

@@ -23,17 +23,6 @@ import me.proton.core.network.domain.ApiResult
 
 interface ReportApiSpec {
 
-    suspend fun reportBug(
-        osName: String,
-        appVersion: String,
-        client: String,
-        clientVersion: String,
-        title: String,
-        description: String,
-        username: String,
-        email: String
-    ): ApiResult<Unit>
-
     suspend fun postPhishingReport(
         messageId: String,
         messageBody: String,

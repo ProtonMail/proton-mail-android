@@ -235,11 +235,6 @@
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
     <string name="okay">Tamam</string>
-    <string name="report_bugs">Hataları bildir</string>
-    <string name="send_report">Bildirimi gönder</string>
-    <string name="bug_title">Başlık</string>
-    <string name="bug_description">Hata açıklaması</string>
-    <string name="sending_report">Bildirim gönderiliyor...</string>
     <string name="received_report">Bildirim alındı</string>
     <string name="not_received_report">Bildirim alınmadı</string>
     <string name="forward_prefix">İlt:</string>

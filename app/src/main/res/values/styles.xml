@@ -306,15 +306,6 @@
         <item name="android:textSize">@dimen/h5</item>
     </style>
 
-    <style name="ReportBugsEditText" parent="@android:style/Widget.EditText">
-        <item name="android:background">@null</item>
-        <item name="android:gravity">top</item>
-        <item name="android:inputType">textMultiLine|textLongMessage|textCapSentences</item>
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textColorHint">@color/chateau_gray</item>
-        <item name="android:textSize">@dimen/h4</item>
-    </style>
-
     <style name="SettingsItemPadding">
         <item name="android:background">@drawable/settings_item_selector</item>
         <item name="android:clickable">true</item>

@@ -235,11 +235,6 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="okay">D\'accord</string>
-    <string name="report_bugs">Signaler un bug</string>
-    <string name="send_report">Envoyer un rapport</string>
-    <string name="bug_title">Titre</string>
-    <string name="bug_description">Description du bug</string>
-    <string name="sending_report">Envoi du rapport en cours...</string>
     <string name="received_report">Rapport reçu</string>
     <string name="not_received_report">Rapport non reçu</string>
     <string name="forward_prefix">Tr :</string>

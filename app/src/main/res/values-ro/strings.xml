@@ -238,11 +238,6 @@
     <string name="yes">Da</string>
     <string name="no">Nu</string>
     <string name="okay">OK</string>
-    <string name="report_bugs">Raportare erori</string>
-    <string name="send_report">Trimite raport</string>
-    <string name="bug_title">Titlu</string>
-    <string name="bug_description">Descriere eroare</string>
-    <string name="sending_report">Se trimite raportul...</string>
     <string name="received_report">Raport recepționat</string>
     <string name="not_received_report">Raport nerecepționat</string>
     <string name="forward_prefix">Redir:</string>

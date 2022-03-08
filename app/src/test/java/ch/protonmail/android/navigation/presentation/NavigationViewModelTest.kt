@@ -19,7 +19,9 @@
 
 package ch.protonmail.android.navigation.presentation
 
+import android.content.Context
 import android.content.SharedPreferences
+import app.cash.turbine.test
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.feature.account.AccountStateManager
@@ -34,9 +36,11 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.report.presentation.entity.BugReportOutput
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -89,7 +93,43 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
         verify { userNotifierMock.showError(R.string.logged_out_description) }
     }
 
+    @Test
+    fun `should check if app is in dark mode`() {
+        // given
+        val contextMock = mockk<Context>()
+        every { isAppInDarkMode(contextMock) } returns true
+
+        // when
+        val isAppInDarkMode = navigationViewModel.isAppInDarkMode(contextMock)
+
+        // then
+        assertTrue(isAppInDarkMode)
+    }
+
+    @Test
+    fun `should emit success message when sending bug report is successful`() = runBlockingTest {
+        navigationViewModel.bugReportResultMessageFlow.test {
+            // when
+            navigationViewModel.onBugReportSent(BugReportOutput.SuccessfullySent(""))
+
+            // then
+            assertEquals(R.string.received_report, awaitItem())
+        }
+    }
+
+    @Test
+    fun `should emit error message when sending bug report is cancelled`() = runBlockingTest {
+        navigationViewModel.bugReportResultMessageFlow.test {
+            // when
+            navigationViewModel.onBugReportSent(BugReportOutput.Cancelled)
+
+            // then
+            assertEquals(R.string.not_received_report, awaitItem())
+        }
+    }
+
     private companion object TestData {
+
         const val USERNAME = "username"
     }
 }

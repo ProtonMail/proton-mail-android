@@ -234,11 +234,6 @@
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
     <string name="okay">Baik</string>
-    <string name="report_bugs">Laporkan Bug</string>
-    <string name="send_report">Kirim laporan</string>
-    <string name="bug_title">Judul</string>
-    <string name="bug_description">Deskripsi Bug</string>
-    <string name="sending_report">Mengirim laporan...</string>
     <string name="received_report">Laporan diterima</string>
     <string name="not_received_report">Laporan tidak diterima</string>
     <string name="forward_prefix">Trs:</string>

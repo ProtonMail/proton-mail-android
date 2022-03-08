@@ -18,27 +18,12 @@
  */
 package ch.protonmail.android.api.segments.report
 
-import ch.protonmail.android.api.models.BugsBody
 import ch.protonmail.android.api.models.PostPhishingReportBody
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiResult
 
 class ReportApi(private val apiProvider: ApiProvider) : ReportApiSpec {
-
-    override suspend fun reportBug(
-        osName: String,
-        appVersion: String,
-        client: String,
-        clientVersion: String,
-        title: String,
-        description: String,
-        username: String,
-        email: String
-    ): ApiResult<Unit> =
-        apiProvider.get<ReportService>().invoke {
-            postBugs(BugsBody(osName, appVersion, client, clientVersion, title, description, username, email))
-        }
 
     override suspend fun postPhishingReport(
         messageId: String,

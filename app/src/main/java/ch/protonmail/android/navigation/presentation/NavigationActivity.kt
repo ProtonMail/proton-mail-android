@@ -35,7 +35,6 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.StartContacts
-import ch.protonmail.android.activities.StartReportBugs
 import ch.protonmail.android.activities.StartSettings
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -58,6 +57,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
+import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,6 +71,8 @@ import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewM
 import me.proton.core.domain.entity.UserId
 import me.proton.core.presentation.utils.setDarkStatusBar
 import me.proton.core.presentation.utils.setLightStatusBar
+import me.proton.core.report.presentation.ReportOrchestrator
+import me.proton.core.report.presentation.entity.BugReportInput
 import javax.inject.Inject
 
 // region constants
@@ -112,12 +114,14 @@ internal abstract class NavigationActivity : BaseActivity() {
     @Inject
     lateinit var userManager: UserManager
 
+    @Inject
+    lateinit var reportOrchestrator: ReportOrchestrator
+
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
     private val navigationViewModel by viewModels<NavigationViewModel>()
 
     private val startSettingsLauncher = registerForActivityResult(StartSettings()) {}
     private val startContactsLauncher = registerForActivityResult(StartContacts()) {}
-    private val startReportBugsLauncher = registerForActivityResult(StartReportBugs()) {}
 
     protected abstract val currentMailboxLocation: Constants.MessageLocationType
     protected abstract val currentLabelId: String?
@@ -246,6 +250,7 @@ internal abstract class NavigationActivity : BaseActivity() {
             )
             startActivity(createLabelIntent)
         }
+
         fun launchCreateFolder() {
             val createFolderIntent = AppUtil.decorInAppIntent(
                 Intent(this, LabelsManagerActivity::class.java)
@@ -272,6 +277,7 @@ internal abstract class NavigationActivity : BaseActivity() {
         )
 
         setUpDrawer()
+        setUpBugReporting()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -304,6 +310,11 @@ internal abstract class NavigationActivity : BaseActivity() {
     override fun onStop() {
         super.onStop()
         app.bus.unregister(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        reportOrchestrator.unregister()
     }
 
     private fun checkUserId() {
@@ -436,7 +447,12 @@ internal abstract class NavigationActivity : BaseActivity() {
         when (type) {
             Type.SIGNOUT -> onSignOutSelected()
             Type.CONTACTS -> startContactsLauncher.launch(Unit)
-            Type.REPORT_BUGS -> startReportBugsLauncher.launch(Unit)
+            Type.REPORT_BUGS -> reportOrchestrator.startBugReport(
+                BugReportInput(
+                    email = requireNotNull(userManager.requireCurrentUser().addresses.primary).email.s,
+                    username = userManager.requireCurrentUser().name.s
+                )
+            )
             Type.SETTINGS -> startSettingsLauncher.launch(
                 StartSettings.Input(currentMailboxLocation, currentLabelId)
             )
@@ -461,4 +477,10 @@ internal abstract class NavigationActivity : BaseActivity() {
         onLabelMailBox(Constants.DrawerOptionType.LABEL, label.labelId, label.name, isFolder)
     }
 
+    private fun setUpBugReporting() {
+        reportOrchestrator.register(this, navigationViewModel::onBugReportSent)
+        navigationViewModel.bugReportResultMessageFlow
+            .onEach { showToast(it) }
+            .launchIn(lifecycleScope)
+    }
 }

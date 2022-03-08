@@ -28,8 +28,11 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.utils.notifier.UserNotifier
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.report.presentation.entity.BugReportOutput
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,6 +45,9 @@ internal class NavigationViewModel @Inject constructor(
     private val userNotifier: UserNotifier,
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
+
+    private val bugReportResultMessageMutableFlow = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+    val bugReportResultMessageFlow = bugReportResultMessageMutableFlow.asSharedFlow()
 
     suspend fun verifyPrimaryUserId(userId: UserId): Boolean = withContext(dispatchers.Io) {
         val prefs = secureSharedPreferencesFactory.userPreferences(userId)
@@ -56,4 +62,11 @@ internal class NavigationViewModel @Inject constructor(
     }
 
     fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
+
+    fun onBugReportSent(bugReportOutput: BugReportOutput) {
+        bugReportResultMessageMutableFlow.tryEmit(
+            if (bugReportOutput is BugReportOutput.SuccessfullySent) R.string.received_report
+            else R.string.not_received_report
+        )
+    }
 }

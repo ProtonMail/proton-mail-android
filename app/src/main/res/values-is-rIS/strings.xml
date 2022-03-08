@@ -235,11 +235,6 @@
     <string name="yes">Já</string>
     <string name="no">Nei</string>
     <string name="okay">Í lagi</string>
-    <string name="report_bugs">Tilkynna villur</string>
-    <string name="send_report">Senda skýrslu</string>
-    <string name="bug_title">Titill</string>
-    <string name="bug_description">Lýsing á villu</string>
-    <string name="sending_report">Sendi inn skýrslu...</string>
     <string name="received_report">Skýrsla móttekin</string>
     <string name="not_received_report">Skýrsla barst ekki</string>
     <string name="forward_prefix">Áfram:</string>
