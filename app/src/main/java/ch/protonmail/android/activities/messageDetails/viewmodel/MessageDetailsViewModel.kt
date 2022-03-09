@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -53,6 +53,7 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.toConversationUiModel
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
@@ -90,7 +91,6 @@ import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
-import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -899,9 +899,11 @@ internal class MessageDetailsViewModel @Inject constructor(
             location == Constants.MessageLocationType.TRASH
         } else {
             location in arrayOf(
-                Constants.MessageLocationType.TRASH,
                 Constants.MessageLocationType.DRAFT,
+                Constants.MessageLocationType.ALL_DRAFT,
                 Constants.MessageLocationType.SENT,
+                Constants.MessageLocationType.ALL_SENT,
+                Constants.MessageLocationType.TRASH,
                 Constants.MessageLocationType.SPAM
             )
         }

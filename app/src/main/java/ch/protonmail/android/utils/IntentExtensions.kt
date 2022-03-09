@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -20,12 +20,15 @@ package ch.protonmail.android.utils
 
 import android.content.Context
 import android.content.Intent
+import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.mailbox.presentation.MailboxActivity
 import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
+import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_USER_ID
+import ch.protonmail.android.utils.extensions.app
 import me.proton.core.domain.entity.UserId
 
 fun Context.startMailboxActivity(
@@ -41,5 +44,5 @@ fun Context.getMailboxActivityIntent(
     Intent(this, MailboxActivity::class.java).apply {
         userId?.let { putExtra(EXTRA_USER_ID, it.id) }
         type?.let { putExtra(EXTRA_MAILBOX_LOCATION, it.messageLocationTypeValue) }
-        putExtra(EXTRA_FIRST_LOGIN, ProtonMailApplication.getApplication().hasUpdateOccurred())
+        putExtra(EXTRA_FIRST_LOGIN, app.hasUpdateOccurred())
     }

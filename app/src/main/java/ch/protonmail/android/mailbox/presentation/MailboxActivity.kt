@@ -778,12 +778,13 @@ internal class MailboxActivity :
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH,
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_FOLDER
-        )
+                MessageLocationType.DRAFT,
+                MessageLocationType.ALL_DRAFT,
+                MessageLocationType.SPAM,
+                MessageLocationType.TRASH,
+                MessageLocationType.LABEL,
+                MessageLocationType.LABEL_FOLDER
+            )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -857,8 +858,8 @@ internal class MailboxActivity :
         val titleRes: Int = when (mailboxViewModel.mailboxLocation.value) {
             MessageLocationType.INBOX -> R.string.inbox_option
             MessageLocationType.STARRED -> R.string.starred_option
-            MessageLocationType.DRAFT -> R.string.drafts_option
-            MessageLocationType.SENT -> R.string.sent_option
+            MessageLocationType.DRAFT, MessageLocationType.ALL_DRAFT -> R.string.drafts_option
+            MessageLocationType.SENT, MessageLocationType.ALL_SENT -> R.string.sent_option
             MessageLocationType.ARCHIVE -> R.string.archive_option
             MessageLocationType.TRASH -> R.string.trash_option
             MessageLocationType.SPAM -> R.string.spam_option
@@ -1001,10 +1002,12 @@ internal class MailboxActivity :
         val actionsUiModel = BottomActionsView.UiModel(
             R.drawable.ic_envelope_dot,
             if (currentMailboxLocation in arrayOf(
-                    MessageLocationType.TRASH,
                     MessageLocationType.DRAFT,
-                    MessageLocationType.SPAM,
-                    MessageLocationType.SENT
+                    MessageLocationType.ALL_DRAFT,
+                    MessageLocationType.SENT,
+                    MessageLocationType.ALL_SENT,
+                    MessageLocationType.TRASH,
+                    MessageLocationType.SPAM
                 )
             ) R.drawable.ic_trash_empty else R.drawable.ic_trash,
             R.drawable.ic_folder_move,
@@ -1032,10 +1035,12 @@ internal class MailboxActivity :
         mailboxActionsView.setOnSecondActionClickListener {
             val messageIds = getSelectedMessageIds()
             if (currentMailboxLocation in arrayOf(
-                    MessageLocationType.TRASH,
                     MessageLocationType.DRAFT,
-                    MessageLocationType.SPAM,
-                    MessageLocationType.SENT
+                    MessageLocationType.ALL_DRAFT,
+                    MessageLocationType.SENT,
+                    MessageLocationType.ALL_SENT,
+                    MessageLocationType.TRASH,
+                    MessageLocationType.SPAM
                 )
             ) {
                 showDeleteConfirmationDialog(
@@ -1464,7 +1469,9 @@ internal class MailboxActivity :
                 },
                 false
             ).apply { anchorView = mailboxActionsView }
-            if (!(swipeAction == SwipeAction.TRASH && currentMailboxLocation == MessageLocationType.DRAFT)) {
+            val isDraftLocation =
+                currentMailboxLocation in listOf(MessageLocationType.DRAFT, MessageLocationType.ALL_DRAFT)
+            if (!(swipeAction == SwipeAction.TRASH && isDraftLocation)) {
                 undoSnack!!.show()
             }
             if (swipeCustomizeSnack != null && !customizeSwipeSnackShown) {
@@ -1490,7 +1497,7 @@ internal class MailboxActivity :
                 val height = itemView.bottom - itemView.top
                 val width = itemView.right - itemView.left
                 val layoutId: Int = when {
-                    currentMailboxLocation == MessageLocationType.DRAFT -> {
+                    currentMailboxLocation in listOf(MessageLocationType.DRAFT, MessageLocationType.ALL_DRAFT) -> {
                         SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0)
                     }
                     deltaX < 0 -> {
