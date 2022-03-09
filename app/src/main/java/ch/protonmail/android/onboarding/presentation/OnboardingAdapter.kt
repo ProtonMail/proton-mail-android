@@ -22,13 +22,15 @@ package ch.protonmail.android.onboarding.presentation
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.databinding.LayoutOnboardingItemBinding
 import ch.protonmail.android.onboarding.presentation.model.OnboardingItemUiModel
+import me.proton.core.presentation.ui.adapter.ClickableAdapter
+import me.proton.core.presentation.ui.adapter.ProtonAdapter
 
-class OnboardingAdapter : RecyclerView.Adapter<OnboardingViewHolder>() {
-
-    private var onboardingItemsList: List<OnboardingItemUiModel> = emptyList()
+class OnboardingAdapter : ProtonAdapter<OnboardingItemUiModel, LayoutOnboardingItemBinding, OnboardingViewHolder>(
+    {}, {}, true,
+    OnboardingItemUiModelDiffCallback(),
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OnboardingViewHolder {
         val binding = LayoutOnboardingItemBinding.inflate(
@@ -41,18 +43,12 @@ class OnboardingAdapter : RecyclerView.Adapter<OnboardingViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: OnboardingViewHolder, position: Int) {
-        holder.bind(onboardingItemsList[position], position, itemCount)
-    }
-
-    override fun getItemCount(): Int = onboardingItemsList.size
-
-    fun setOnboardingItemsList(onboardingItemsList: List<OnboardingItemUiModel>) {
-        this.onboardingItemsList = onboardingItemsList
-        notifyDataSetChanged()
+        holder.bind(getItem(position), position, itemCount)
     }
 }
 
-class OnboardingViewHolder(val binding: LayoutOnboardingItemBinding) : RecyclerView.ViewHolder(binding.root) {
+class OnboardingViewHolder(val binding: LayoutOnboardingItemBinding) :
+    ClickableAdapter.ViewHolder<OnboardingItemUiModel, LayoutOnboardingItemBinding>(binding, {}, {}) {
 
     fun bind(onboardingItemUiModel: OnboardingItemUiModel, position: Int, itemCount: Int) {
         binding.onboardingImageView.setImageResource(onboardingItemUiModel.onboardingImage)

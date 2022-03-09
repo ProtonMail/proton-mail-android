@@ -100,7 +100,7 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun setOnboardingAdapterItems(onboardingItemsList: List<OnboardingItemUiModel>) {
-        onboardingAdapter.setOnboardingItemsList(onboardingItemsList)
+        onboardingAdapter.submitList(onboardingItemsList)
     }
 
     private fun finishOnboardingActivity() {
