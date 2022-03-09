@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -87,7 +87,7 @@ internal class SecurityManager @Inject constructor(
 
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             super.onActivityCreated(activity, savedInstanceState)
-            Timber.v("Activity created")
+            Timber.v("Activity created: ${activity::class.simpleName}")
 
             if (activity is ComponentActivity) {
                 logoutHandler.register(activity)
@@ -96,7 +96,7 @@ internal class SecurityManager @Inject constructor(
 
         override fun onActivityStarted(activity: Activity) {
             super.onActivityStarted(activity)
-            Timber.v("Activity started")
+            Timber.v("Activity started: ${activity::class.simpleName}")
 
             currentActivity = WeakReference(activity)
 

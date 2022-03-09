@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -27,19 +27,11 @@ import androidx.biometric.BiometricPrompt
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.ISecurePINListener
 import java.util.concurrent.Executors
-
-// region constants
-const val EXTRA_PIN_VALID = "extra_pin_valid"
-const val EXTRA_ATTACHMENT_IMPORT_EVENT = "extra_attachment_import_event"
-const val EXTRA_MESSAGE_DETAIL_EVENT = "extra_message_details_event"
-const val EXTRA_DRAFT_DETAILS_EVENT = "extra_draft_details_event"
-// endregion
 
 class ValidatePinActivity :
     BaseActivity(),
@@ -74,16 +66,6 @@ class ValidatePinActivity :
         if (user.isUseFingerprint) {
             initBiometricPrompt()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        ProtonMailApplication.getApplication().bus.register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
     override fun onPinCreated(pin: String) {
