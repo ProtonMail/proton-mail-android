@@ -43,6 +43,13 @@ private const val DEFAULT_TOAST_GRAVITY = Gravity.BOTTOM
  * @param gravity [Int] gravity for the [Toast]. Default is [DEFAULT_TOAST_GRAVITY]
  */
 @JvmOverloads
+@Deprecated(
+    replaceWith = ReplaceWith(
+        expression = "Context.showToast",
+        imports = arrayOf("me.proton.core.presentation.utils.showToast")
+    ),
+    message = "Prefer the extension from core"
+)
 fun Context.showToast(
     @StringRes messageRes: Int,
     length: Int = DEFAULT_TOAST_LENGTH,
