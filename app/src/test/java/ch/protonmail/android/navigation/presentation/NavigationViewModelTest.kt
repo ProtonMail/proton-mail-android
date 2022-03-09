@@ -25,6 +25,8 @@ import app.cash.turbine.test
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.feature.account.AccountStateManager
+import ch.protonmail.android.navigation.presentation.model.NavigationViewState
+import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.usecase.IsAppInDarkMode
@@ -107,29 +109,43 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun `should emit success message when sending bug report is successful`() = runBlockingTest {
-        navigationViewModel.bugReportResultMessageFlow.test {
+    fun `should emit initial, show, and hide message states when report sent`() = runBlockingTest {
+        navigationViewModel.viewStateFlow.test {
+
             // when
             navigationViewModel.onBugReportSent(BugReportOutput.SuccessfullySent(""))
 
             // then
-            assertEquals(R.string.received_report, awaitItem())
+            assertEquals(NavigationViewState.INITIAL, awaitItem())
+            assertEquals(ViewState.SHOW_BUG_REPORT_SENT_MESSAGE, awaitItem())
+            assertEquals(ViewState.HIDE_BUG_REPORT_SENT_MESSAGE, awaitItem())
         }
     }
 
     @Test
-    fun `should emit error message when sending bug report is cancelled`() = runBlockingTest {
-        navigationViewModel.bugReportResultMessageFlow.test {
+    fun `should emit only the initial state when sending report cancelled`() = runBlockingTest {
+        navigationViewModel.viewStateFlow.test {
+
             // when
             navigationViewModel.onBugReportSent(BugReportOutput.Cancelled)
 
             // then
-            assertEquals(R.string.not_received_report, awaitItem())
+            assertEquals(NavigationViewState.INITIAL, awaitItem())
         }
     }
 
     private companion object TestData {
 
         const val USERNAME = "username"
+
+        object ViewState {
+
+            val SHOW_BUG_REPORT_SENT_MESSAGE = NavigationViewState(
+                temporaryMessage = TemporaryMessage(R.string.received_report)
+            )
+            val HIDE_BUG_REPORT_SENT_MESSAGE = SHOW_BUG_REPORT_SENT_MESSAGE.copy(
+                temporaryMessage = TemporaryMessage.NONE
+            )
+        }
     }
 }

@@ -24,12 +24,15 @@ import androidx.lifecycle.ViewModel
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.feature.account.AccountStateManager
+import ch.protonmail.android.navigation.presentation.model.NavigationViewAction
+import ch.protonmail.android.navigation.presentation.model.NavigationViewState
+import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.utils.notifier.UserNotifier
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.report.presentation.entity.BugReportOutput
@@ -46,8 +49,8 @@ internal class NavigationViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
-    private val bugReportResultMessageMutableFlow = MutableSharedFlow<Int>(extraBufferCapacity = 1)
-    val bugReportResultMessageFlow = bugReportResultMessageMutableFlow.asSharedFlow()
+    private val viewStateMutableFlow = MutableStateFlow(NavigationViewState.INITIAL)
+    val viewStateFlow = viewStateMutableFlow.asStateFlow()
 
     suspend fun verifyPrimaryUserId(userId: UserId): Boolean = withContext(dispatchers.Io) {
         val prefs = secureSharedPreferencesFactory.userPreferences(userId)
@@ -64,9 +67,33 @@ internal class NavigationViewModel @Inject constructor(
     fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
 
     fun onBugReportSent(bugReportOutput: BugReportOutput) {
-        bugReportResultMessageMutableFlow.tryEmit(
-            if (bugReportOutput is BugReportOutput.SuccessfullySent) R.string.received_report
-            else R.string.not_received_report
-        )
+        if (bugReportOutput is BugReportOutput.SuccessfullySent) {
+            viewStateMutableFlow.value = nextStateFrom(
+                currentState = viewStateFlow.value,
+                action = NavigationViewAction.ShowTemporaryMessage(
+                    TemporaryMessage(R.string.received_report)
+                )
+            )
+            viewStateMutableFlow.value = nextStateFrom(
+                currentState = viewStateFlow.value,
+                action = NavigationViewAction.HideTemporaryMessage
+            )
+        }
+    }
+
+    private fun nextStateFrom(
+        currentState: NavigationViewState,
+        action: NavigationViewAction
+    ): NavigationViewState = when (action) {
+        is NavigationViewAction.ShowTemporaryMessage -> {
+            currentState.copy(
+                temporaryMessage = action.message
+            )
+        }
+        NavigationViewAction.HideTemporaryMessage -> {
+            currentState.copy(
+                temporaryMessage = TemporaryMessage.NONE
+            )
+        }
     }
 }

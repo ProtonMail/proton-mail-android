@@ -51,13 +51,14 @@ import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.labels.presentation.ui.LabelsManagerActivity
+import ch.protonmail.android.navigation.presentation.model.NavigationViewState
+import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
-import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,6 +72,7 @@ import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewM
 import me.proton.core.domain.entity.UserId
 import me.proton.core.presentation.utils.setDarkStatusBar
 import me.proton.core.presentation.utils.setLightStatusBar
+import me.proton.core.presentation.utils.showToast
 import me.proton.core.report.presentation.ReportOrchestrator
 import me.proton.core.report.presentation.entity.BugReportInput
 import javax.inject.Inject
@@ -278,6 +280,7 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         setUpDrawer()
         setUpBugReporting()
+        observeViewState()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -479,8 +482,17 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     private fun setUpBugReporting() {
         reportOrchestrator.register(this, navigationViewModel::onBugReportSent)
-        navigationViewModel.bugReportResultMessageFlow
-            .onEach { showToast(it) }
+    }
+
+    private fun observeViewState() {
+        navigationViewModel.viewStateFlow
+            .onEach(::renderViewState)
             .launchIn(lifecycleScope)
+    }
+
+    private fun renderViewState(navigationViewState: NavigationViewState) {
+        if (navigationViewState.temporaryMessage != TemporaryMessage.NONE) {
+            showToast(navigationViewState.temporaryMessage.messageRes)
+        }
     }
 }
