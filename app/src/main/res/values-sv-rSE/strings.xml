@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna mapp?</string>
     <string name="send">Skicka</string>
     <string name="selected">Valda</string>
-    <string name="no_messages">Inga meddelanden</string>
+    <string name="mailbox_no_messages">Inga meddelanden</string>
     <string name="no_labels">Inga etiketter</string>
     <string name="to">Till</string>
     <string name="cc">Cc</string>
@@ -834,7 +834,6 @@
     <string name="contacts_call">Ring</string>
     <string name="contacts_send_group_message">Skicka gruppmeddelande</string>
     <string name="inbox_this_folder_is_empty">Denna mapp är tom</string>
-    <string name="inbox_nothing_to_see_here">Inget att se här</string>
     <string name="inbox_could_not_retrieve_messages">Kunde inte hämta dina meddelanden</string>
     <string name="inbox_pull_down_to_retry">Dra ner för att försöka igen</string>
     <string name="edit_draft">Redigera utkast</string>

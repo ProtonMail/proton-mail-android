@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Ertu viss um að þú viljir eyða öllum skilaboðum úr þessari möppu?</string>
     <string name="send">Senda</string>
     <string name="selected">Valið</string>
-    <string name="no_messages">Engin skilaboð</string>
+    <string name="mailbox_no_messages">Engin skilaboð</string>
     <string name="no_labels">Engar merkingar</string>
     <string name="to">Til</string>
     <string name="cc">Afrit (Cc)</string>
@@ -838,7 +838,6 @@
     <string name="contacts_call">Hringja</string>
     <string name="contacts_send_group_message">Senda hópskilaboð</string>
     <string name="inbox_this_folder_is_empty">Þessi mappa er tóm</string>
-    <string name="inbox_nothing_to_see_here">Ekkert að sjá hér</string>
     <string name="inbox_could_not_retrieve_messages">Tókst ekki að sækja skilaboðin þín</string>
     <string name="inbox_pull_down_to_retry">Dragðu niður til að reyna aftur</string>
     <string name="edit_draft">Breyta drögum</string>

@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Sigur doriți să ștergeți toate mesajele din acest folder?</string>
     <string name="send">Trimite</string>
     <string name="selected">Selectat</string>
-    <string name="no_messages">Nu sunt mesaje</string>
+    <string name="mailbox_no_messages">Nu sunt mesaje</string>
     <string name="no_labels">Nu sunt etichete</string>
     <string name="to">Către</string>
     <string name="cc">Cc</string>
@@ -851,7 +851,6 @@
     <string name="contacts_call">Apelare</string>
     <string name="contacts_send_group_message">Trimitere mesaj la grup</string>
     <string name="inbox_this_folder_is_empty">Acest folder este gol</string>
-    <string name="inbox_nothing_to_see_here">Nimic de văzut aici</string>
     <string name="inbox_could_not_retrieve_messages">Nu s-a putut prelua mesajul</string>
     <string name="inbox_pull_down_to_retry">Trageți în jos pentru reîncercare</string>
     <string name="edit_draft">Editare schiță</string>

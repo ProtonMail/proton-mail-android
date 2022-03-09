@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Czy na pewno chcesz usunąć wszystkie wiadomości z tego folderu?</string>
     <string name="send">Wyślij</string>
     <string name="selected">Zaznaczone</string>
-    <string name="no_messages">Brak wiadomości</string>
+    <string name="mailbox_no_messages">Brak wiadomości</string>
     <string name="no_labels">Brak etykiet</string>
     <string name="to">Do</string>
     <string name="cc">Dw</string>
@@ -862,7 +862,6 @@
     <string name="contacts_call">Zadzwoń</string>
     <string name="contacts_send_group_message">Wyślij wiadomość grupową</string>
     <string name="inbox_this_folder_is_empty">Folder jest pusty</string>
-    <string name="inbox_nothing_to_see_here">Niczego tutaj nie ma</string>
     <string name="inbox_could_not_retrieve_messages">Nie można pobrać wiadomości</string>
     <string name="inbox_pull_down_to_retry">Przeciągnij w dół, aby ponowić próbę</string>
     <string name="edit_draft">Edytuj szkic</string>

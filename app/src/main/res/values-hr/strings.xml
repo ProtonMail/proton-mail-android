@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Jeste li sigurni da želite izbrisati sve poruke iz ove mape?</string>
     <string name="send">Pošalji</string>
     <string name="selected">Odabrano</string>
-    <string name="no_messages">Nema poruka</string>
+    <string name="mailbox_no_messages">Nema poruka</string>
     <string name="no_labels">Bez oznake</string>
     <string name="to">Za</string>
     <string name="cc">Cc</string>
@@ -851,7 +851,6 @@
     <string name="contacts_call">Nazovi</string>
     <string name="contacts_send_group_message">Pošalji grupnu poruku</string>
     <string name="inbox_this_folder_is_empty">Ova mapa je prazna</string>
-    <string name="inbox_nothing_to_see_here">Ovdje se nema što vidjeti</string>
     <string name="inbox_could_not_retrieve_messages">Neuspješno dohvaćanje vaših poruka</string>
     <string name="inbox_pull_down_to_retry">Povucite prema dolje za ponovni pokušaj</string>
     <string name="edit_draft">Uredi skicu</string>

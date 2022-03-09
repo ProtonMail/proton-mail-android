@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Bu klasördeki tüm iletileri silmek istediğinize emin misiniz?</string>
     <string name="send">Gönder</string>
     <string name="selected">Seçilmiş</string>
-    <string name="no_messages">Herhangi bir ileti yok</string>
+    <string name="mailbox_no_messages">Herhangi bir ileti yok</string>
     <string name="no_labels">Herhangi bir etiket yok</string>
     <string name="to">Kime</string>
     <string name="cc">Kopya</string>
@@ -835,7 +835,6 @@
     <string name="contacts_call">Ara</string>
     <string name="contacts_send_group_message">Grup iletisi gönder</string>
     <string name="inbox_this_folder_is_empty">Bu klasör boş</string>
-    <string name="inbox_nothing_to_see_here">Burada görülecek bir şey yok</string>
     <string name="inbox_could_not_retrieve_messages">İletileriniz alınamadı</string>
     <string name="inbox_pull_down_to_retry">Lütfen yeniden denemek için aşağıya çekin</string>
     <string name="edit_draft">Taslağı düzenle</string>

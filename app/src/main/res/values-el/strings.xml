@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Είστε σίγουροι ότι θέλετε να διαγράψετε όλα τα μηνύματα από αυτόν τον φάκελο;</string>
     <string name="send">Αποστολή</string>
     <string name="selected">Επιλεγμένα</string>
-    <string name="no_messages">Δεν υπάρχουν μηνύματα</string>
+    <string name="mailbox_no_messages">Δεν υπάρχουν μηνύματα</string>
     <string name="no_labels">Χωρίς ετικέτες</string>
     <string name="to">Προς</string>
     <string name="cc">Κοινοποίηση</string>
@@ -838,7 +838,6 @@
     <string name="contacts_call">Κλήση</string>
     <string name="contacts_send_group_message">Στείλτε μήνυμα ομάδας</string>
     <string name="inbox_this_folder_is_empty">Αυτός ο φάκελος είναι κενός</string>
-    <string name="inbox_nothing_to_see_here">Τίποτα ενδιαφέρον εδώ</string>
     <string name="inbox_could_not_retrieve_messages">Αδυναμία ανάκτησης των μηνυμάτων σας</string>
     <string name="inbox_pull_down_to_retry">Παρακαλώ τραβήξτε προς τα κάτω για να ξαναδοκιμάσετε</string>
     <string name="edit_draft">Τροποποίηση πρόχειρου</string>

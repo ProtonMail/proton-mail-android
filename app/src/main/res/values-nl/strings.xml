@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Weet u zeker dat u alle berichten uit deze folder wilt verwijderen?</string>
     <string name="send">Verstuur</string>
     <string name="selected">Geselecteerd</string>
-    <string name="no_messages">Geen berichten</string>
+    <string name="mailbox_no_messages">Geen berichten</string>
     <string name="no_labels">Geen labels</string>
     <string name="to">Aan</string>
     <string name="cc">Cc</string>
@@ -838,7 +838,6 @@
     <string name="contacts_call">Bellen</string>
     <string name="contacts_send_group_message">Groepsbericht verzenden</string>
     <string name="inbox_this_folder_is_empty">Deze map is leeg</string>
-    <string name="inbox_nothing_to_see_here">Niets te zien hier</string>
     <string name="inbox_could_not_retrieve_messages">Kon uw berichten niet ophalen</string>
     <string name="inbox_pull_down_to_retry">Trek omlaag om opnieuw te proberen</string>
     <string name="edit_draft">Concept bewerken</string>

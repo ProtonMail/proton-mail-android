@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Вы уверены, что хотите удалить все сообщения из этой папки?</string>
     <string name="send">Отправить</string>
     <string name="selected">Выбрано</string>
-    <string name="no_messages">Нет сообщений</string>
+    <string name="mailbox_no_messages">Нет сообщений</string>
     <string name="no_labels">Нет ярлыков</string>
     <string name="to">Кому</string>
     <string name="cc">Копия</string>
@@ -864,7 +864,6 @@
     <string name="contacts_call">Позвонить</string>
     <string name="contacts_send_group_message">Отправить сообщение всей группе</string>
     <string name="inbox_this_folder_is_empty">Эта папка пуста</string>
-    <string name="inbox_nothing_to_see_here">Здесь не на что смотреть</string>
     <string name="inbox_could_not_retrieve_messages">Не удалось получить ваши сообщения</string>
     <string name="inbox_pull_down_to_retry">Пожалуйста, потяните вниз, чтобы повторить</string>
     <string name="edit_draft">Редактировать черновик</string>

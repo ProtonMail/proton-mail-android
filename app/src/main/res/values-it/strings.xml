@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">È sicuro di voler eliminare tutti i messaggi da questa cartella?</string>
     <string name="send">Invia</string>
     <string name="selected">Selezionato</string>
-    <string name="no_messages">Nessun messaggio</string>
+    <string name="mailbox_no_messages">Nessun messaggio</string>
     <string name="no_labels">Nessuna etichetta</string>
     <string name="to">A</string>
     <string name="cc">Cc</string>
@@ -838,7 +838,6 @@
     <string name="contacts_call">Chiama</string>
     <string name="contacts_send_group_message">Invia messaggio di gruppo</string>
     <string name="inbox_this_folder_is_empty">Questa cartella è vuota</string>
-    <string name="inbox_nothing_to_see_here">Niente da vedere qui</string>
     <string name="inbox_could_not_retrieve_messages">Impossibile recuperare i tuoi messaggi</string>
     <string name="inbox_pull_down_to_retry">Sei pregato di tirare in giù e riprovare</string>
     <string name="edit_draft">Modifica la bozza</string>

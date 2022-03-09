@@ -50,6 +50,14 @@
     <string name="drawer_create_label_description">Create new label</string>
     <!-- endregion -->
 
+    <!-- region Mailbox -->
+    <string name="mailbox_no_messages">No messages</string>
+    <string name="mailbox_empty_folder_subtitle">This folder is empty</string>
+    <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
+    <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
+    <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <!-- endregion -->
+
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
@@ -191,7 +199,6 @@
     <string name="are_you_sure_empty">Are you sure you want to delete all messages from this folder?</string>
     <string name="send">Send</string>
     <string name="selected">Selected</string>
-    <string name="no_messages">No messages</string>
     <string name="no_labels">No labels</string>
     <string name="to">To</string>
     <string name="cc">Cc</string>
@@ -932,7 +939,6 @@
     <string name="contacts_call">Call</string>
     <string name="contacts_send_group_message">Send group message</string>
     <string name="inbox_this_folder_is_empty">This folder is empty</string>
-    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
     <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
     <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
     <string name="edit_draft">Edit draft</string>

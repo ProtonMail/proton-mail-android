@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">このフォルダー内の全てのメッセージを削除してよろしいですか？</string>
     <string name="send">送信</string>
     <string name="selected">選択済</string>
-    <string name="no_messages">メッセージはありません。</string>
+    <string name="mailbox_no_messages">メッセージはありません。</string>
     <string name="no_labels">ラベルはありません。</string>
     <string name="to">宛先</string>
     <string name="cc">Cc</string>
@@ -817,7 +817,6 @@
     <string name="contacts_call">電話</string>
     <string name="contacts_send_group_message">グループメッセージを送信</string>
     <string name="inbox_this_folder_is_empty">このフォルダーは空です</string>
-    <string name="inbox_nothing_to_see_here">何もありません</string>
     <string name="inbox_could_not_retrieve_messages">メッセージの取得に失敗しました。</string>
     <string name="inbox_pull_down_to_retry">引っ張って再試行</string>
     <string name="edit_draft">下書きを編集</string>

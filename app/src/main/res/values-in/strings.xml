@@ -179,7 +179,7 @@
     <string name="are_you_sure_empty">Yakin ingin menghapus semua pesan dari folder ini?</string>
     <string name="send">Kirim</string>
     <string name="selected">Dipilih</string>
-    <string name="no_messages">Tidak ada pesan</string>
+    <string name="mailbox_no_messages">Tidak ada pesan</string>
     <string name="no_labels">Tidak ada label</string>
     <string name="to">Kepada</string>
     <string name="cc">Cc</string>
@@ -828,7 +828,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contacts_call">Hubungi</string>
     <string name="contacts_send_group_message">Kirim pesan grup</string>
     <string name="inbox_this_folder_is_empty">Folder ini kosong</string>
-    <string name="inbox_nothing_to_see_here">Tidak ada apa-apa di sini</string>
     <string name="inbox_could_not_retrieve_messages">Tidak dapat mengambil pesan Anda</string>
     <string name="inbox_pull_down_to_retry">Silakan tarik ke bawah untuk coba ulang</string>
     <string name="edit_draft">Edit draf</string>
