@@ -86,6 +86,7 @@ import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -208,7 +209,7 @@ internal class MailboxActivity :
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private val handler = Handler(Looper.getMainLooper())
 
-    private val startMessageDetailsLauncher = registerForActivityResult(StartMessageDetails()) {}
+    private val startMessageDetailsLauncher = registerForActivityResult(MessageDetailsActivity.Launcher()) {}
     private val startComposeLauncher = registerForActivityResult(StartCompose()) {}
     private val startSearchLauncher = registerForActivityResult(StartSearch()) {}
 
@@ -1267,11 +1268,11 @@ internal class MailboxActivity :
                 ).execute()
             } else {
                 mailboxActivity?.startMessageDetailsLauncher?.launch(
-                    StartMessageDetails.Input(
-                        messageId,
-                        currentMailboxLocationType,
-                        mailboxActivity.mailboxLabelId,
-                        messageSubject
+                    MessageDetailsActivity.Input(
+                        messageId = messageId,
+                        locationType = currentMailboxLocationType,
+                        labelId = mailboxActivity.mailboxLabelId?.let(::LabelId),
+                        messageSubject = messageSubject
                     )
                 )
             }

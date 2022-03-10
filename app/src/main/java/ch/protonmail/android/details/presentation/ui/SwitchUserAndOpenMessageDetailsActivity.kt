@@ -38,6 +38,8 @@ internal class SwitchUserAndOpenMessageDetailsActivity : AppCompatActivity() {
     @Inject
     lateinit var accountStateManager: AccountStateManager
 
+    private val messageDetailsLauncher = registerForActivityResult(MessageDetailsActivity.Launcher()) {}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val input = Input.fromIntent(intent)
@@ -46,7 +48,8 @@ internal class SwitchUserAndOpenMessageDetailsActivity : AppCompatActivity() {
     }
 
     private fun launchMessageDetailsActivity() {
-
+        val input = MessageDetailsActivity.Input(TODO(), TODO(), TODO(), TODO())
+        messageDetailsLauncher.launch(input)
     }
 
     data class Input(val recipientUserId: UserId) {
