@@ -235,13 +235,6 @@
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
     <string name="okay">OK</string>
-    <string name="report_bugs">Hiba bejelentése</string>
-    <string name="send_report">Bejelentés elküldése</string>
-    <string name="bug_title">Cím</string>
-    <string name="bug_description">Hiba leírása</string>
-    <string name="sending_report">Bejelentés elküldése...</string>
-    <string name="received_report">Bejelentés megérkezett</string>
-    <string name="not_received_report">Bejelentés nem érkezett meg</string>
     <string name="forward_prefix">Fwd:</string>
     <string name="original_message_divider">-------- Eredeti üzenet --------</string>
     <string name="invalid_email_address">A cím érvénytelen: %s</string>

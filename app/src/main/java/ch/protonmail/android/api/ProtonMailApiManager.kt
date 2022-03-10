@@ -307,18 +307,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     ): AvailablePlansResponse =
         api.fetchAvailablePlans(currency, cycle)
 
-    override suspend fun reportBug(
-        osName: String,
-        appVersion: String,
-        client: String,
-        clientVersion: String,
-        title: String,
-        description: String,
-        username: String,
-        email: String
-    ): ApiResult<Unit> =
-        api.reportBug(osName, appVersion, client, clientVersion, title, description, username, email)
-
     override suspend fun postPhishingReport(
         messageId: String,
         messageBody: String,

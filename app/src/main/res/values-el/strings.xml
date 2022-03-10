@@ -235,13 +235,6 @@
     <string name="yes">Ναι</string>
     <string name="no">Όχι</string>
     <string name="okay">Εντάξει</string>
-    <string name="report_bugs">Αναφορά Σφαλμάτων</string>
-    <string name="send_report">Αποστολή αναφοράς</string>
-    <string name="bug_title">Τίτλος</string>
-    <string name="bug_description">Περιγραφή Σφάλματος</string>
-    <string name="sending_report">Αποστολή αναφοράς...</string>
-    <string name="received_report">Η αναφορά ελήφθη</string>
-    <string name="not_received_report">Η αναφορά δεν ελήφθη</string>
     <string name="forward_prefix">Προώθ:</string>
     <string name="original_message_divider">-------- Αρχικό Μήνυμα --------</string>
     <string name="invalid_email_address">Η διεύθυνση \'%s\' δεν είναι έγκυρη</string>

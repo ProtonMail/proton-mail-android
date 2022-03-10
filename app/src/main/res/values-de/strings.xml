@@ -235,13 +235,6 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="okay">OK</string>
-    <string name="report_bugs">Fehler melden</string>
-    <string name="send_report">Bericht senden</string>
-    <string name="bug_title">Titel</string>
-    <string name="bug_description">Fehlerbeschreibung</string>
-    <string name="sending_report">Bericht wird gesendet …</string>
-    <string name="received_report">Bericht empfangen</string>
-    <string name="not_received_report">Bericht nicht empfangen</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Original-Nachricht --------</string>
     <string name="invalid_email_address">Die Adresse „%s” ist ungültig</string>

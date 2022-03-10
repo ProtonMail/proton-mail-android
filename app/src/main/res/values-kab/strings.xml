@@ -235,13 +235,6 @@
     <string name="yes">Ih</string>
     <string name="no">Ala</string>
     <string name="okay">Ok</string>
-    <string name="report_bugs">Azen ibugen</string>
-    <string name="send_report">Azen aneqis</string>
-    <string name="bug_title">Azwel</string>
-    <string name="bug_description">Aglam n ubug</string>
-    <string name="sending_report">Tuzna n uneqqis...</string>
-    <string name="received_report">Aneqqis yettwarmes</string>
-    <string name="not_received_report">Aneqqis ur yettwarmes ara</string>
     <string name="forward_prefix">Welleh:</string>
     <string name="original_message_divider">-------- Izen aneṣli --------</string>
     <string name="invalid_email_address">ThTansa \'%s\' mačči d tameɣtut</string>

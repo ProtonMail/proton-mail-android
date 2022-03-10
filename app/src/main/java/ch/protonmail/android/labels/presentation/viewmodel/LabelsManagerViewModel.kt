@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.labelsManager
+package ch.protonmail.android.labels.presentation.viewmodel
 
 import android.graphics.Color
 import androidx.annotation.ColorInt

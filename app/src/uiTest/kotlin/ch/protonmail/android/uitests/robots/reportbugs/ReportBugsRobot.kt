@@ -32,7 +32,7 @@ class ReportBugsRobot {
     class Verify : Robot {
 
         fun reportBugOpened() {
-            view.withId(R.id.bug_description_title).checkDisplayed()
+            view.withId(R.id.bug_report_subject).checkDisplayed()
         }
     }
 

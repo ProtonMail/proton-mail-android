@@ -241,13 +241,6 @@
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
     <string name="okay">Potvrdit</string>
-    <string name="report_bugs">Nahlásit chybu</string>
-    <string name="send_report">Odeslat hlášení</string>
-    <string name="bug_title">Nadpis</string>
-    <string name="bug_description">Popis chyby</string>
-    <string name="sending_report">Odesílání hlášení...</string>
-    <string name="received_report">Chybová zpráva obdržena</string>
-    <string name="not_received_report">Chybová zpráva nebyla obdržena</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Původní zpráva --------</string>
     <string name="invalid_email_address">Adresa \'%s\' je neplatná</string>

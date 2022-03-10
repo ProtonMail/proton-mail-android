@@ -61,17 +61,6 @@ class StartContacts : ActivityResultContract<Unit, Unit?>() {
     }
 }
 
-class StartReportBugs : ActivityResultContract<Unit, Unit?>() {
-
-    override fun createIntent(context: Context, input: Unit): Intent =
-        AppUtil.decorInAppIntent(Intent(context, ReportBugsActivity::class.java))
-
-    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
-        if (resultCode != Activity.RESULT_OK) return null
-        return Unit
-    }
-}
-
 class StartMessageDetails : ActivityResultContract<StartMessageDetails.Input, Unit?>() {
 
     override fun createIntent(context: Context, input: Input): Intent =

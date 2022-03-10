@@ -235,13 +235,6 @@
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
     <string name="okay">Oké</string>
-    <string name="report_bugs">Bugs melden</string>
-    <string name="send_report">Rapport indienen</string>
-    <string name="bug_title">Onderwerp</string>
-    <string name="bug_description">Omschrijving van de bug</string>
-    <string name="sending_report">Rapport verzenden...</string>
-    <string name="received_report">Rapport ontvangen</string>
-    <string name="not_received_report">Melding niet ontvangen</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Oorspronkelijk bericht --------</string>
     <string name="invalid_email_address">Het adres \'%s\' is ongeldig</string>

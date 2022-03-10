@@ -241,13 +241,6 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="okay">Ладно</string>
-    <string name="report_bugs">Сообщить об ошибках</string>
-    <string name="send_report">Отправить отчёт</string>
-    <string name="bug_title">Заголовок</string>
-    <string name="bug_description">Описание ошибки</string>
-    <string name="sending_report">Отправка отчёта...</string>
-    <string name="received_report">Отчёт получен</string>
-    <string name="not_received_report">Отчёт об ошибке не получен</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Исходное сообщение --------</string>
     <string name="invalid_email_address">Адрес \'%s\' неверен</string>

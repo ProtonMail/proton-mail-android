@@ -232,13 +232,6 @@
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
     <string name="okay">OK</string>
-    <string name="report_bugs">バグの報告</string>
-    <string name="send_report">レポートを送信</string>
-    <string name="bug_title">件名</string>
-    <string name="bug_description">バグの説明</string>
-    <string name="sending_report">レポートを送信しています...</string>
-    <string name="received_report">レポートが受理されました。</string>
-    <string name="not_received_report">レポートが受理されませんでした。</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">---元のメッセージ---</string>
     <string name="invalid_email_address">\'%s\' は無効です。</string>

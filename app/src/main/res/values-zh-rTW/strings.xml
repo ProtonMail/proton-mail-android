@@ -232,13 +232,6 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="okay">好</string>
-    <string name="report_bugs">回報臭蟲</string>
-    <string name="send_report">傳送回報</string>
-    <string name="bug_title">標題</string>
-    <string name="bug_description">臭蟲描述</string>
-    <string name="sending_report">正在傳送回報……</string>
-    <string name="received_report">已收到回報</string>
-    <string name="not_received_report">未收到回報</string>
     <string name="forward_prefix">轉寄：</string>
     <string name="original_message_divider">-------- 原始郵件 --------</string>
     <string name="invalid_email_address">這個地址「%s」是無效的。</string>

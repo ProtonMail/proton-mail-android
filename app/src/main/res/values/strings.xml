@@ -265,13 +265,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="okay">Okay</string>
-    <string name="report_bugs">Report Bugs</string>
-    <string name="send_report">Send report</string>
-    <string name="bug_title">Title</string>
-    <string name="bug_description">Bug Description</string>
-    <string name="sending_report">Sending report...</string>
-    <string name="received_report">Report received</string>
-    <string name="not_received_report">Report not received</string>
 
     <string name="reply_prefix" translatable="false">Re:</string>
     <string name="forward_prefix">Fw:</string>
@@ -596,7 +589,6 @@
     <string name="expiration_error_disable_pgp_sending">Please disable PGP sending to enable expiration for the following recipients:</string>
     <string name="expiration_error_proceed">Tap send anyway to send without expiration to these recipients.</string>
     <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a></string>
-    <string name="full_version_name_report_bugs" translatable="false">%s (%d)</string>
     <string name="channel_name_attachments">Attachments</string>
     <string name="channel_description_attachments">Informs about attachment download status</string>
     <string name="channel_name_emails">Emails</string>

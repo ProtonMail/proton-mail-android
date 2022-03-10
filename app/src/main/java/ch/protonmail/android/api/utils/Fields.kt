@@ -97,17 +97,6 @@ object Fields {
 
     }
 
-    object Bugs {
-        const val OS = "OS"
-        const val OS_VERSION = "OSVersion"
-        const val CLIENT = "Client"
-        const val CLIENT_VERSION = "ClientVersion"
-        const val TITLE = "Title"
-        const val DESCRIPTION = "Description"
-        const val USERNAME = "Username"
-        const val EMAIL = "Email"
-    }
-
     object Message {
         const val MESSAGE_IDS = "MessageIDs"
         const val LABEL_ID = "LabelID"

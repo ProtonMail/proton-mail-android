@@ -19,10 +19,14 @@
 
 package ch.protonmail.android.navigation.presentation
 
+import android.content.Context
 import android.content.SharedPreferences
+import app.cash.turbine.test
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.feature.account.AccountStateManager
+import ch.protonmail.android.navigation.presentation.model.NavigationViewState
+import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.usecase.IsAppInDarkMode
@@ -34,9 +38,11 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.report.presentation.entity.BugReportOutput
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -89,7 +95,58 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
         verify { userNotifierMock.showError(R.string.logged_out_description) }
     }
 
+    @Test
+    fun `should check if app is in dark mode`() {
+        // given
+        val contextMock = mockk<Context>()
+        every { isAppInDarkMode(contextMock) } returns true
+
+        // when
+        val isAppInDarkMode = navigationViewModel.isAppInDarkMode(contextMock)
+
+        // then
+        assertTrue(isAppInDarkMode)
+    }
+
+    @Test
+    fun `should emit initial, show, and hide message states when report sent`() = runBlockingTest {
+        navigationViewModel.viewStateFlow.test {
+
+            // when
+            navigationViewModel.onBugReportSent(BugReportOutput.SuccessfullySent(SUCCESS_MESSAGE))
+
+            // then
+            assertEquals(NavigationViewState.INITIAL, awaitItem())
+            assertEquals(ViewState.SHOW_BUG_REPORT_SENT_MESSAGE, awaitItem())
+            assertEquals(ViewState.HIDE_BUG_REPORT_SENT_MESSAGE, awaitItem())
+        }
+    }
+
+    @Test
+    fun `should emit only the initial state when sending report cancelled`() = runBlockingTest {
+        navigationViewModel.viewStateFlow.test {
+
+            // when
+            navigationViewModel.onBugReportSent(BugReportOutput.Cancelled)
+
+            // then
+            assertEquals(NavigationViewState.INITIAL, awaitItem())
+        }
+    }
+
     private companion object TestData {
+
         const val USERNAME = "username"
+        const val SUCCESS_MESSAGE = "Thank you for the report."
+
+        object ViewState {
+
+            val SHOW_BUG_REPORT_SENT_MESSAGE = NavigationViewState(
+                temporaryMessage = TemporaryMessage(SUCCESS_MESSAGE)
+            )
+            val HIDE_BUG_REPORT_SENT_MESSAGE = SHOW_BUG_REPORT_SENT_MESSAGE.copy(
+                temporaryMessage = TemporaryMessage.NONE
+            )
+        }
     }
 }
