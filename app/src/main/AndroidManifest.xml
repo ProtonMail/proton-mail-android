@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -193,6 +193,7 @@
             android:exported="false"
             android:label="@string/local_storage"
             android:screenOrientation="portrait" />
+        <activity android:name=".details.presentation.ui.SwitchUserAndOpenMessageDetailsActivity" />
         <activity
             android:name=".details.presentation.ui.MessageDetailsActivity"
             android:exported="false"
