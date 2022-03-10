@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -21,7 +21,7 @@ package ch.protonmail.android.details.presentation.mapper
 
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
-import ch.protonmail.android.details.presentation.MessageDetailsListItem
+import ch.protonmail.android.details.presentation.model.MessageDetailsListItem
 import ch.protonmail.android.util.ProtonCalendarUtil
 import me.proton.core.domain.arch.Mapper
 import javax.inject.Inject

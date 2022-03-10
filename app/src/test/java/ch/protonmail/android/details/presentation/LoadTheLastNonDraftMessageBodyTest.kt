@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -23,6 +23,9 @@ import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.usecase.MarkMessageAsReadIfNeeded
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
+import ch.protonmail.android.details.presentation.model.MessageDetailsListItem
+import ch.protonmail.android.details.presentation.util.LoadTheLastNonDraftMessageBody
+import ch.protonmail.android.details.presentation.util.MessageBodyLoader
 import ch.protonmail.android.testdata.ConversationTestData
 import ch.protonmail.android.testdata.KeyInformationTestData
 import ch.protonmail.android.testdata.MessageDetailsListItemTestData

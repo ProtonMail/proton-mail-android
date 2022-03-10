@@ -28,7 +28,7 @@ import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.utils.AppUtil
 
 class StartSettings : ActivityResultContract<StartSettings.Input, Unit?>() {

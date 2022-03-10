@@ -36,12 +36,13 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.toConversationUiModel
-import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MAILBOX_LABEL_ID
-import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_LOCATION_ID
-import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.details.presentation.model.RenderedMessage
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity.Companion.EXTRA_MAILBOX_LABEL_ID
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity.Companion.EXTRA_MESSAGE_LOCATION_ID
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
@@ -69,7 +70,6 @@ import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.DownloadUtils
-import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify

@@ -40,7 +40,7 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mailbox.presentation.MailboxActivity

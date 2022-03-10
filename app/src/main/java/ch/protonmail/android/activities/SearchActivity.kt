@@ -38,7 +38,7 @@ import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.events.NoResultsEvent
 import ch.protonmail.android.events.SearchResultEvent
 import ch.protonmail.android.jobs.SearchMessagesJob
