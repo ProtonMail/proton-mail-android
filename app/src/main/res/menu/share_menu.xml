@@ -22,7 +22,7 @@
 
     <item
         android:id="@+id/share"
-        android:icon="@drawable/ic_share"
+        android:icon="@drawable/ic_proton_arrow_up_from_square"
         android:title="@string/share"
         app:showAsAction="ifRoom" />
 

@@ -36,7 +36,7 @@
         android:paddingEnd="@dimen/toolbar_padding_end"
         app:contentInsetStartWithNavigation="0dp"
         app:layout_collapseMode="pin"
-        app:navigationIcon="@drawable/ic_arrow_left">
+        app:navigationIcon="@drawable/ic_proton_arrow_left">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

@@ -175,6 +175,6 @@ private fun ItemParentPickerFolderBinding.setEnabled(isEnabled: Boolean) {
 }
 
 private fun TextView.setCheckmark(isSelected: Boolean) {
-    val drawable = R.drawable.ic_check.takeIf { isSelected } ?: 0
+    val drawable = R.drawable.ic_proton_checkmark.takeIf { isSelected } ?: 0
     setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, drawable, 0)
 }

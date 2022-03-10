@@ -35,7 +35,7 @@
         android:text="@string/add_new_email"
         android:textAllCaps="true"
         android:textColor="@color/cornflower_blue"
-        app:drawableStartCompat="@drawable/ic_plus" />
+        app:drawableStartCompat="@drawable/ic_proton_plus" />
 
     <LinearLayout
         android:id="@+id/fields_parent"

@@ -32,7 +32,7 @@
         android:layout_gravity="center_vertical|end"
         android:text="@string/swipe_action_star_short"
         style="@style/Proton.Text.Caption.Strong.Inverted"
-        app:drawableTopCompat="@drawable/ic_star"
+        app:drawableTopCompat="@drawable/ic_proton_star"
         app:drawableTint="@color/icon_inverted" />
 
 </FrameLayout>

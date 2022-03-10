@@ -39,7 +39,7 @@
         android:layout_height="@dimen/settings_color_item_size"
         android:background="@android:color/transparent"
         android:padding="@dimen/padding_m"
-        android:src="@drawable/ic_done_white"
+        android:src="@drawable/ic_proton_checkmark"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

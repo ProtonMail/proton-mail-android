@@ -90,14 +90,14 @@ class MailboxItemView @JvmOverloads constructor(
     }
 
     private fun getIconForMessageLocation(messageLocation: MessageLocationType) = when (messageLocation) {
-        MessageLocationType.INBOX -> R.drawable.ic_inbox
-        MessageLocationType.SENT -> R.drawable.ic_paper_plane
-        MessageLocationType.DRAFT -> R.drawable.ic_pencil
-        MessageLocationType.ALL_DRAFT -> R.drawable.ic_pencil
-        MessageLocationType.ALL_MAIL -> R.drawable.ic_folder
-        MessageLocationType.ALL_SENT -> R.drawable.ic_paper_plane
-        MessageLocationType.ARCHIVE -> R.drawable.ic_archive
-        MessageLocationType.TRASH -> R.drawable.ic_trash
+        MessageLocationType.INBOX -> R.drawable.ic_proton_inbox
+        MessageLocationType.SENT -> R.drawable.ic_proton_paper_plane
+        MessageLocationType.DRAFT -> R.drawable.ic_proton_pencil
+        MessageLocationType.ALL_DRAFT -> R.drawable.ic_proton_pencil
+        MessageLocationType.ALL_MAIL -> R.drawable.ic_proton_folder
+        MessageLocationType.ALL_SENT -> R.drawable.ic_proton_paper_plane
+        MessageLocationType.ARCHIVE -> R.drawable.ic_proton_archive_box
+        MessageLocationType.TRASH -> R.drawable.ic_proton_trash
         else -> null
     }
 

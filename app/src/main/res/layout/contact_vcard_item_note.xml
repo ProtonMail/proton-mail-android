@@ -45,7 +45,7 @@
         android:textAllCaps="true"
         android:textColor="@color/cornflower_blue"
         android:visibility="gone"
-        app:drawableStartCompat="@drawable/ic_plus"
+        app:drawableStartCompat="@drawable/ic_proton_plus"
         tools:text="Add new x"
         tools:visibility="visible" />
 </LinearLayout>

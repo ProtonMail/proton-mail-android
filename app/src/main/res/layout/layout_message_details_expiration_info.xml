@@ -36,7 +36,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:textAppearance="@style/Proton.Text.DefaultSmall.Medium"
-        app:drawableStartCompat="@drawable/ic_hourglass"
+        app:drawableStartCompat="@drawable/ic_proton_hourglass"
         android:drawablePadding="@dimen/message_details_banner_drawable_padding"
         android:gravity="center_vertical"
         tools:text="This message will expire 2D 5H 37M" />

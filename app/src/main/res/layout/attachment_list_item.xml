@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@null"
             android:scaleType="center"
-            android:src="@drawable/ic_paper_clip" />
+            android:src="@drawable/ic_proton_paper_clip" />
 
         <ch.protonmail.android.views.CustomFontTextView
             android:id="@+id/embedded_image_attachment"
@@ -82,6 +82,7 @@
         android:layout_alignParentRight="true"
         android:background="@drawable/compose_message_button_selector"
         android:contentDescription="@null"
-        android:src="@drawable/exclude" />
+        android:src="@drawable/ic_proton_cross_circle"
+        app:tint="@color/notification_error" />
 
 </RelativeLayout>

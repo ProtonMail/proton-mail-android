@@ -32,7 +32,7 @@
         android:layout_height="@dimen/size_icon_l"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:src="@drawable/ic_contact_groups"/>
+        android:src="@drawable/ic_proton_users" />
 
     <TextView
         android:id="@+id/dialog_group_recipients_group_name_text_view"

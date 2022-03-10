@@ -48,37 +48,37 @@
         android:layout_width="@dimen/message_details_header_small_icon_size"
         android:layout_height="@dimen/message_details_header_small_icon_size"
         android:layout_marginEnd="@dimen/message_details_header_margin_normal"
-        android:src="@drawable/ic_reply"
+        android:src="@drawable/ic_proton_arrow_up_and_left"
         app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
         app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
         app:layout_constraintRight_toLeftOf="@id/repliedAllImageView"
         app:layout_constraintTop_toTopOf="@id/senderNameTextView"
         app:tint="@color/icon_norm"
-        tools:src="@drawable/ic_reply" />
+        tools:src="@drawable/ic_proton_arrow_up_and_left" />
 
     <ImageView
         android:id="@+id/repliedAllImageView"
         android:layout_width="@dimen/message_details_header_small_icon_size"
         android:layout_height="@dimen/message_details_header_small_icon_size"
         android:layout_marginEnd="@dimen/message_details_header_margin_normal"
-        android:src="@drawable/ic_reply_all"
+        android:src="@drawable/ic_proton_arrows_up_and_left"
         app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
         app:layout_constraintLeft_toRightOf="@id/repliedImageView"
         app:layout_constraintTop_toTopOf="@id/senderNameTextView"
         app:tint="@color/icon_norm"
-        tools:src="@drawable/ic_reply_all" />
+        tools:src="@drawable/ic_proton_arrows_up_and_left" />
 
     <ImageView
         android:id="@+id/forwardedImageView"
         android:layout_width="@dimen/message_details_header_small_icon_size"
         android:layout_height="@dimen/message_details_header_small_icon_size"
         android:layout_marginEnd="@dimen/message_details_header_margin_normal"
-        android:src="@drawable/ic_forward"
+        android:src="@drawable/ic_proton_arrow_right"
         app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
         app:layout_constraintLeft_toRightOf="@id/repliedAllImageView"
         app:layout_constraintTop_toTopOf="@id/senderNameTextView"
         app:tint="@color/icon_norm"
-        tools:src="@drawable/ic_forward" />
+        tools:src="@drawable/ic_proton_arrow_right" />
 
     <TextView
         android:id="@+id/senderNameTextView"
@@ -140,7 +140,7 @@
         app:layout_constraintEnd_toStartOf="@id/timeDateTextView"
         app:layout_constraintTop_toTopOf="@id/senderNameTextView"
         app:tint="@color/icon_weak"
-        tools:src="@drawable/ic_inbox" />
+        tools:src="@drawable/ic_proton_inbox" />
 
     <TextView
         android:id="@+id/timeDateTextView"
@@ -266,7 +266,7 @@
         android:id="@+id/labelsImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_label"
+        android:src="@drawable/ic_proton_tag"
         app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
         app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@+id/labelsExpandedGroupView"
@@ -295,7 +295,7 @@
         android:id="@+id/calendarImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_calendar_today"
+        android:src="@drawable/ic_proton_calendar_today"
         app:layout_constraintBottom_toBottomOf="@id/timeDateExtendedTextView"
         app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
         app:layout_constraintRight_toRightOf="@id/senderInitialView"
@@ -322,7 +322,7 @@
         app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@+id/locationTextView"
         app:tint="@color/icon_weak"
-        tools:src="@drawable/ic_inbox" />
+        tools:src="@drawable/ic_proton_inbox" />
 
     <TextView
         android:id="@+id/locationTextView"
@@ -339,7 +339,7 @@
         android:id="@+id/storageImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_user_storage"
+        android:src="@drawable/ic_proton_storage"
         app:layout_constraintBottom_toBottomOf="@id/storageTextView"
         app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
         app:layout_constraintRight_toRightOf="@id/senderInitialView"

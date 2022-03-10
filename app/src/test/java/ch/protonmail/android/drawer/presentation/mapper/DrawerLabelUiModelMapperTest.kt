@@ -331,7 +331,7 @@ class DrawerLabelUiModelMapperTest {
         hasChildren: Boolean = false,
         colorInt: Int = DUMMY_ICON_INVERTED_COLOR
     ): DrawerLabelUiModel {
-        val drawableRes = if (hasChildren) R.drawable.ic_folder_multiple_filled else R.drawable.ic_folder_filled
+        val drawableRes = if (hasChildren) R.drawable.ic_proton_folders_filled else R.drawable.ic_proton_folder_filled
         return DrawerLabelUiModel(
             labelId = name,
             name = name,

@@ -35,7 +35,7 @@
         android:layout_height="@dimen/size_icon_m"
         android:scaleType="center"
         android:layout_marginEnd="@dimen/padding_l"
-        tools:src="@drawable/ic_folder_filled"
+        tools:src="@drawable/ic_proton_folder_filled"
         tools:tint="@color/aqua_base"
         tools:ignore="ContentDescription"
         tools:visibility="visible"/>

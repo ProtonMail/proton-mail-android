@@ -21,7 +21,7 @@
 
     <item
         android:id="@+id/delete_contacts"
-        android:icon="@drawable/ic_trash"
+        android:icon="@drawable/ic_proton_trash"
         android:title="@string/delete_selected" />
 
     <item

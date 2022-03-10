@@ -50,7 +50,7 @@
         android:background="@drawable/shape_oval"
         android:visibility="visible"
         android:padding="@dimen/padding_contact_group_icon"
-        app:srcCompat="@drawable/ic_contact_groups" />
+        app:srcCompat="@drawable/ic_proton_users" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/contact_text_barrier"

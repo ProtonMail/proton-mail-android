@@ -33,7 +33,7 @@
         android:layout_gravity="center"
         android:text="@string/trash"
         style="@style/Proton.Text.Caption.Strong.Inverted"
-        app:drawableTopCompat="@drawable/ic_trash"
+        app:drawableTopCompat="@drawable/ic_proton_trash"
         app:drawableTint="@color/icon_inverted" />
 
 </FrameLayout>

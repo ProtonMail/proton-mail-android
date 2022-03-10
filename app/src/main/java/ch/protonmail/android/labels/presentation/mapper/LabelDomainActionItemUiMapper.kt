@@ -98,9 +98,9 @@ class LabelDomainActionItemUiMapper @Inject constructor(
             is LabelOrFolderWithChildren.Label -> R.drawable.circle_labels_selection
             is LabelOrFolderWithChildren.Folder ->
                 if (useFolderColor) {
-                    if (label.children.isEmpty()) R.drawable.ic_folder_filled else R.drawable.ic_folder_multiple_filled
+                    if (label.children.isEmpty()) R.drawable.ic_proton_folder_filled else R.drawable.ic_proton_folders_filled
                 } else {
-                    if (label.children.isEmpty()) R.drawable.ic_folder else R.drawable.ic_folder_multiple
+                    if (label.children.isEmpty()) R.drawable.ic_proton_folder else R.drawable.ic_proton_folders
                 }
         }
 

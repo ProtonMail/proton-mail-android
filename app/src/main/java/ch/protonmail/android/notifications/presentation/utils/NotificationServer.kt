@@ -341,14 +341,14 @@ class NotificationServer @Inject constructor(
                 setGroup(userId.id)
                 addAction(
                     NotificationCompat.Action(
-                        R.drawable.archive,
+                        R.drawable.ic_proton_archive_box,
                         context.getString(R.string.archive),
                         archiveIntent
                     )
                 )
                 addAction(
                     NotificationCompat.Action(
-                        R.drawable.action_notification_trash,
+                        R.drawable.ic_proton_trash,
                         context.getString(R.string.trash),
                         trashIntent
                     )
@@ -356,7 +356,7 @@ class NotificationServer @Inject constructor(
                 if (replyIntent != null) {
                     addAction(
                         NotificationCompat.Action(
-                            R.drawable.action_notification_reply,
+                            R.drawable.ic_proton_arrow_up_and_left,
                             context.getString(R.string.reply),
                             replyIntent
                         )

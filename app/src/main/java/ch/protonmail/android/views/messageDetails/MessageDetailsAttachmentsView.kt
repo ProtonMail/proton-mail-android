@@ -63,7 +63,9 @@ class MessageDetailsAttachmentsView @JvmOverloads constructor(
     private var expanded = false
         set(value) {
             attachmentsListLinearLayout.isVisible = value
-            chevronImageView.setImageResource(if (value) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down)
+            chevronImageView.setImageResource(
+                if (value) R.drawable.ic_proton_chevron_up else R.drawable.ic_proton_chevron_down
+            )
             field = value
         }
 

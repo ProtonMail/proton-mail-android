@@ -1262,7 +1262,7 @@ public class ComposeMessageActivity
     }
 
     private void setAdditionalRowVisibility(boolean show) {
-        final int icon = show ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down;
+        final int icon = show ? R.drawable.ic_proton_chevron_up : R.drawable.ic_proton_chevron_down;
         binding.composerExpandRecipientsButton.setImageResource(icon);
         final int visibility = show ? View.VISIBLE : View.GONE;
         binding.composerExpandedRecipientsGroup.setVisibility(visibility);

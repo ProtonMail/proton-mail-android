@@ -65,7 +65,7 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginStart="@dimen/padding_m"
-        android:src="@drawable/ic_pencil"
+        android:src="@drawable/ic_proton_pen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

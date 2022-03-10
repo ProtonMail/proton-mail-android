@@ -16,14 +16,12 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
-
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
-    android:viewportWidth="16"
-    android:viewportHeight="16">
+    android:viewportWidth="24"
+    android:viewportHeight="24">
   <path
-      android:pathData="M15.07,6.2999L10.19,5.5899L8,1.1599L5.81,5.5899L0.93,6.2999L4.46,9.7499L3.63,14.6199L8,12.3199L12.37,14.6199L11.54,9.7499L15.07,6.2999Z"
-      android:fillColor="@color/notification_warning"
-      android:fillType="evenOdd"/>
+      android:pathData="M11.2879,2.411C11.5953,1.863 12.4047,1.863 12.7121,2.411L15.353,7.1194C15.4697,7.3274 15.6763,7.4734 15.9158,7.517L21.3375,8.5042C21.9685,8.6191 22.2186,9.3675 21.7776,9.8211L17.9881,13.7182C17.8207,13.8903 17.7418,14.1265 17.7731,14.3614L18.4829,19.68C18.5656,20.299 17.9108,20.7615 17.3308,20.4938L12.3478,18.194C12.1277,18.0924 11.8723,18.0924 11.6522,18.194L6.6692,20.4938C6.0892,20.7615 5.4345,20.299 5.5171,19.68L6.2269,14.3614C6.2582,14.1265 6.1793,13.8903 6.0119,13.7182L2.2225,9.8211C1.7814,9.3675 2.0315,8.6191 2.6625,8.5042L8.0842,7.517C8.3237,7.4734 8.5303,7.3274 8.647,7.1194L11.2879,2.411Z"
+      android:fillColor="@color/notification_warning"/>
 </vector>

@@ -75,7 +75,7 @@
                 app:contentInsetStartWithNavigation="0dp"
                 app:layout_collapseMode="pin"
                 app:menu="@menu/menu_contact_details"
-                app:navigationIcon="@drawable/ic_arrow_left"
+                app:navigationIcon="@drawable/ic_proton_arrow_left"
                 tools:title="Title" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>

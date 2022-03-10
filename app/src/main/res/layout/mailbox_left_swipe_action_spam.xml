@@ -32,7 +32,7 @@
         android:layout_gravity="center_vertical|end"
         android:text="@string/spam"
         style="@style/Proton.Text.Caption.Strong.Inverted"
-        app:drawableTopCompat="@drawable/ic_fire"
+        app:drawableTopCompat="@drawable/ic_proton_fire"
         app:drawableTint="@color/icon_inverted" />
 
 </FrameLayout>

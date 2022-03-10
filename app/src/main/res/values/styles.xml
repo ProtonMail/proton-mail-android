@@ -354,8 +354,8 @@
         <item name="android:textColorHint">#CACACA</item>
         <item name="android:textSize">@dimen/h3</item>
         <item name="android:paddingLeft">8dp</item>
-        <item name="android:drawableStart">@drawable/ic_search</item>
-        <item name="android:drawableLeft">@drawable/ic_search</item>
+        <item name="android:drawableStart">@drawable/ic_proton_magnifier</item>
+        <item name="android:drawableLeft">@drawable/ic_proton_magnifier</item>
         <item name="android:drawablePadding">@dimen/fields_default_space_small</item>
         <item name="android:background">@drawable/search_edittext_shape</item>
     </style>

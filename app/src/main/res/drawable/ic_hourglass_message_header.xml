@@ -22,6 +22,6 @@
     <item
         android:width="@dimen/message_details_header_hourglass_icon_size"
         android:height="@dimen/message_details_header_hourglass_icon_size"
-        android:drawable="@drawable/ic_hourglass" />
+        android:drawable="@drawable/ic_proton_hourglass" />
 
 </layer-list>

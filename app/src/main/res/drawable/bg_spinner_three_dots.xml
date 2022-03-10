@@ -22,10 +22,7 @@
     <item>
         <layer-list>
             <item
-                android:drawable="@drawable/ic_three_dots_horizontal"
-                android:width="@dimen/size_icon_m"
-                android:height="@dimen/size_icon_m"
-                android:gravity="center_vertical|right"
+                android:drawable="@drawable/ic_proton_three_dots_horizontal" android:gravity="center_vertical|right"
                 android:end="12dp"/>
         </layer-list>
     </item>

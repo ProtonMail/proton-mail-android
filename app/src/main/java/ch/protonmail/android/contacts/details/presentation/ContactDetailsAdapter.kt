@@ -177,7 +177,7 @@ class ContactDetailsAdapter(
             }
             textViewContactDetailsItem.apply {
                 text = item.value
-                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_envelope_full, 0, 0, 0)
+                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_proton_envelope, 0, 0, 0)
                 isClickable = true
             }
         }
@@ -192,7 +192,7 @@ class ContactDetailsAdapter(
             }
             textViewContactDetailsItem.apply {
                 text = item.value
-                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_contact_phone_dark, 0, 0, 0)
+                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_proton_mobile, 0, 0, 0)
                 isClickable = true
             }
         }
@@ -207,7 +207,7 @@ class ContactDetailsAdapter(
             }
             textViewContactDetailsItem.apply {
                 text = getAddressToDisplay(item)
-                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_map_marker, 0, 0, 0)
+                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_proton_map_pin, 0, 0, 0)
                 isClickable = true
             }
         }

@@ -31,5 +31,5 @@
         </shape>
     </item>
     <item
-        android:drawable="@drawable/ic_menu_compose"/>
+        android:drawable="@drawable/ic_pen_white"/>
 </layer-list>

@@ -107,9 +107,9 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
             LabelType.MESSAGE_LABEL -> R.drawable.shape_ellipse
             LabelType.FOLDER -> {
                 if (useFolderColor) {
-                    if (hasChildren.not()) R.drawable.ic_folder_filled else R.drawable.ic_folder_multiple_filled
+                    if (hasChildren.not()) R.drawable.ic_proton_folder_filled else R.drawable.ic_proton_folders_filled
                 } else {
-                    if (hasChildren.not()) R.drawable.ic_folder else R.drawable.ic_folder_multiple
+                    if (hasChildren.not()) R.drawable.ic_proton_folder else R.drawable.ic_proton_folders
                 }
             }
             LabelType.CONTACT_GROUP ->

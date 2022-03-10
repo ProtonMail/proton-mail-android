@@ -658,10 +658,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
         val hasMultipleRecipients = message.toList.size + message.ccList.size > 1
         val actionsUiModel = BottomActionsView.UiModel(
-            if (hasMultipleRecipients) R.drawable.ic_reply_all else R.drawable.ic_reply,
-            R.drawable.ic_envelope_dot,
-            if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_trash_empty else R.drawable.ic_trash,
-            R.drawable.ic_label
+            if (hasMultipleRecipients) R.drawable.ic_proton_arrows_up_and_left else R.drawable.ic_proton_arrow_up_and_left,
+            R.drawable.ic_proton_envelope_dot,
+            if (viewModel.shouldShowDeleteActionInBottomActionBar()) R.drawable.ic_proton_trash_cross else R.drawable.ic_proton_trash,
+            R.drawable.ic_proton_tag
         )
         messageDetailsActionsView.bind(actionsUiModel)
         messageDetailsActionsView.setOnFourthActionClickListener {

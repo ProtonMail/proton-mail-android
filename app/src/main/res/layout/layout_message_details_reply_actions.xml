@@ -43,7 +43,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/reply"
-            app:drawableStartCompat="@drawable/ic_reply" />
+            app:drawableStartCompat="@drawable/ic_proton_arrow_up_and_left" />
 
     </FrameLayout>
 
@@ -66,7 +66,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/reply_all"
-            app:drawableStartCompat="@drawable/ic_reply_all" />
+            app:drawableStartCompat="@drawable/ic_proton_arrows_up_and_left" />
 
     </FrameLayout>
 
@@ -89,7 +89,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/forward"
-            app:drawableStartCompat="@drawable/ic_forward" />
+            app:drawableStartCompat="@drawable/ic_proton_arrow_right" />
 
     </FrameLayout>
 

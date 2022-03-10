@@ -314,7 +314,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         expandedHeaderGroup.isVisible = true
         locationImageView.isVisible = false
         expandCollapseChevronImageView.setImageDrawable(
-            ContextCompat.getDrawable(context, R.drawable.ic_chevron_up)
+            ContextCompat.getDrawable(context, R.drawable.ic_proton_chevron_up)
         )
     }
 
@@ -338,16 +338,16 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     }
 
     private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
-        Constants.MessageLocationType.INBOX -> R.drawable.ic_inbox
-        Constants.MessageLocationType.SENT -> R.drawable.ic_paper_plane
-        Constants.MessageLocationType.DRAFT -> R.drawable.ic_pencil
-        Constants.MessageLocationType.ALL_DRAFT -> R.drawable.ic_pencil
-        Constants.MessageLocationType.ALL_SENT -> R.drawable.ic_paper_plane
-        Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_archive
-        Constants.MessageLocationType.TRASH -> R.drawable.ic_trash
-        Constants.MessageLocationType.SPAM -> R.drawable.ic_fire
-        Constants.MessageLocationType.LABEL_FOLDER -> R.drawable.ic_folder_filled
-        Constants.MessageLocationType.LABEL -> R.drawable.ic_folder_filled
+        Constants.MessageLocationType.INBOX -> R.drawable.ic_proton_inbox
+        Constants.MessageLocationType.SENT -> R.drawable.ic_proton_paper_plane
+        Constants.MessageLocationType.DRAFT -> R.drawable.ic_proton_pencil
+        Constants.MessageLocationType.ALL_DRAFT -> R.drawable.ic_proton_pencil
+        Constants.MessageLocationType.ALL_SENT -> R.drawable.ic_proton_paper_plane
+        Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_proton_archive_box
+        Constants.MessageLocationType.TRASH -> R.drawable.ic_proton_trash
+        Constants.MessageLocationType.SPAM -> R.drawable.ic_proton_fire
+        Constants.MessageLocationType.LABEL_FOLDER -> R.drawable.ic_proton_folder_filled
+        Constants.MessageLocationType.LABEL -> R.drawable.ic_proton_folder_filled
         else -> null
     }
 

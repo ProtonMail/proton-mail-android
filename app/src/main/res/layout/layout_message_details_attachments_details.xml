@@ -72,7 +72,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/ic_download"
+        android:src="@drawable/ic_proton_arrow_down_line"
         android:background="?selectableItemBackgroundBorderless" />
 
     <ProgressBar

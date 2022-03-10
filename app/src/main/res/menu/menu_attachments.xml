@@ -22,14 +22,14 @@
 
     <item
         android:id="@+id/attach_file"
-        android:icon="@drawable/ic_menu_attach"
+        android:icon="@drawable/ic_proton_paper_clip"
         app:iconTint="@color/icon_norm"
         android:title="@string/attach_file"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/take_photo"
-        android:icon="@drawable/ic_menu_photo"
+        android:icon="@drawable/ic_proton_camera"
         app:iconTint="@color/icon_norm"
         android:title="@string/take_photo"
         app:showAsAction="ifRoom" />

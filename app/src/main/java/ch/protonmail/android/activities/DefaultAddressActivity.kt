@@ -133,7 +133,8 @@ class DefaultAddressActivity : BaseActivity() {
     @OnClick(R.id.defaultAddress)
     fun onDefaultAddressClicked() {
         val icon = ResourcesCompat.getDrawable(
-            resources, if (!addressChooser.isVisible) R.drawable.ic_chevron_down else R.drawable.ic_chevron_up, null
+            resources,
+            if (!addressChooser.isVisible) R.drawable.ic_proton_chevron_down else R.drawable.ic_proton_chevron_up, null
         )?.mutate()
 
         defaultAddress.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, icon, null)

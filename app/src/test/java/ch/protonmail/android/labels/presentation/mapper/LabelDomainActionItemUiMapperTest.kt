@@ -122,7 +122,7 @@ class LabelDomainActionItemUiMapperTest {
         val expected = listOf(
             LabelActonItemUiModel(
                 labelId = TEST_LABEL_ID,
-                iconRes = R.drawable.ic_folder_filled,
+                iconRes = R.drawable.ic_proton_folder_filled,
                 title = TEST_LABEL_NAME,
                 titleRes = null,
                 colorInt = TEST_COLOR_INT,
@@ -293,7 +293,7 @@ class LabelDomainActionItemUiMapperTest {
         labelId = LabelId(name),
         title = name,
         folderLevel = folderLevel,
-        iconRes = if (hasChildren) R.drawable.ic_folder_multiple_filled else R.drawable.ic_folder_filled,
+        iconRes = if (hasChildren) R.drawable.ic_proton_folders_filled else R.drawable.ic_proton_folder_filled,
         colorInt = colorInt,
         labelType = LabelType.FOLDER
     )

@@ -223,7 +223,7 @@ internal class DrawerAdapter(
 
         override fun onBind(item: CreateItem, position: Int) {
             super.onBind(item, position)
-            binding.drawerItemIconView.setImageResource(R.drawable.ic_plus)
+            binding.drawerItemIconView.setImageResource(R.drawable.ic_proton_plus)
             binding.drawerItemLabelTextView.apply {
                 setText(item.textRes)
                 setTextColor(getColor(R.color.text_weak))

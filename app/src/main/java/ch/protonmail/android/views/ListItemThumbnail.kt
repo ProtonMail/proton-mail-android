@@ -72,14 +72,15 @@ class ListItemThumbnail @JvmOverloads constructor(
         }
 
     @DrawableRes
-    var iconResource = R.drawable.ic_contact_groups_filled
+    var iconResource = R.drawable.ic_proton_users_filled
         set(value) {
             iconDrawable = AppCompatResources.getDrawable(context, value)
+            iconDrawable?.setTint(ContextCompat.getColor(context, R.color.icon_inverted))
             text = ""
         }
     private var iconDrawable = AppCompatResources.getDrawable(context, iconResource)
 
-    private val checkIconDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_white)
+    private val checkIconDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_proton_checkmark)?.mutate()
 
     private var isMultiselectModeActive: Boolean = false
 
@@ -92,7 +93,7 @@ class ListItemThumbnail @JvmOverloads constructor(
         ) {
             val defaultCircleSize = context.resources.getDimensionPixelSize(R.dimen.padding_3xl)
             circleSize = getDimensionPixelSize(R.styleable.ListItemThumbnail_circleSize, defaultCircleSize)
-            iconResource = getResourceId(R.styleable.ListItemThumbnail_icon, R.drawable.ic_contact_groups_filled)
+            iconResource = getResourceId(R.styleable.ListItemThumbnail_icon, R.drawable.ic_proton_users_filled)
         }
     }
 
@@ -137,6 +138,7 @@ class ListItemThumbnail @JvmOverloads constructor(
         borderPaint.style = Paint.Style.FILL
         canvas.drawCircle(centerX, centerY, centerX, borderPaint)
 
+        checkIconDrawable?.setTint(ContextCompat.getColor(context, R.color.icon_inverted))
         val imageWidth = checkIconDrawable?.intrinsicWidth?.div(2) ?: 0
         val imageHeight = checkIconDrawable?.intrinsicHeight?.div(2) ?: 0
         checkIconDrawable?.setBounds(

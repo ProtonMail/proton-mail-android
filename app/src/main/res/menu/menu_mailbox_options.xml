@@ -25,13 +25,13 @@
     <item
         android:id="@+id/search"
         android:title="@string/x_search"
-        app:actionLayout="@layout/layout_search_action"
+        android:icon="@drawable/ic_proton_magnifier"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/compose"
         android:title="@string/compose_message"
-        app:actionLayout="@layout/layout_compose_action"
+        android:icon="@drawable/ic_proton_pen_square"
         app:showAsAction="always" />
 
     <item

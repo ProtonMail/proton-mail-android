@@ -42,7 +42,6 @@
     <color name="icon_warning">#ffa500</color>
 
     <!-- Grays -->
-    <color name="white">@android:color/white</color>
     <color name="white_30">#4DFFFFFF</color>
     <color name="white_55">#8CFFFFFF</color>
     <color name="white_85">#D9FFFFFF</color>

@@ -36,7 +36,6 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -45,7 +44,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.postDelayed
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
-import androidx.core.view.postDelayed
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.loader.app.LoaderManager
@@ -359,7 +357,7 @@ internal class MailboxActivity :
                 if (MessageUtils.areAllUnRead(
                         selectedMessages
                     )
-                ) R.drawable.ic_envelope_open_text else R.drawable.ic_envelope_dot
+                ) R.drawable.ic_proton_envelope_open_text else R.drawable.ic_proton_envelope_dot
             )
         }
 
@@ -475,7 +473,7 @@ internal class MailboxActivity :
             userManager.setShowStorageLimitWarning(true)
             storageLimitAlert.apply {
                 visibility = View.VISIBLE
-                setIcon(getDrawable(R.drawable.inbox)!!)
+                setIcon(getDrawable(R.drawable.ic_proton_inbox)!!)
                 setText(getString(R.string.storage_limit_alert))
             }
         }
@@ -808,17 +806,8 @@ internal class MailboxActivity :
         super.onSaveInstanceState(outState)
     }
 
-    private fun setUpMenuItems(composeMenuItem: MenuItem, searchMenuItem: MenuItem) {
-        composeMenuItem.actionView.findViewById<ImageView>(R.id.composeImageButton)
-            .setOnClickListener { onOptionsItemSelected(R.id.compose) }
-
-        searchMenuItem.actionView.findViewById<ImageView>(R.id.searchImageButton)
-            .setOnClickListener { onOptionsItemSelected(R.id.search) }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_mailbox_options, menu)
-        setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(MessageLocationType.DRAFT, MessageLocationType.SPAM, MessageLocationType.TRASH)
@@ -828,7 +817,6 @@ internal class MailboxActivity :
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.clear()
         menuInflater.inflate(R.menu.menu_mailbox_options, menu)
-        setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
@@ -1044,7 +1032,7 @@ internal class MailboxActivity :
 
     private fun setUpMailboxActionsView() {
         val actionsUiModel = BottomActionsView.UiModel(
-            R.drawable.ic_envelope_dot,
+            R.drawable.ic_proton_envelope_dot,
             if (currentMailboxLocation in arrayOf(
                     MessageLocationType.DRAFT,
                     MessageLocationType.ALL_DRAFT,
@@ -1053,9 +1041,9 @@ internal class MailboxActivity :
                     MessageLocationType.TRASH,
                     MessageLocationType.SPAM
                 )
-            ) R.drawable.ic_trash_empty else R.drawable.ic_trash,
-            R.drawable.ic_folder_move,
-            R.drawable.ic_label
+            ) R.drawable.ic_proton_trash_cross else R.drawable.ic_proton_trash,
+            R.drawable.ic_proton_folder_arrow_in,
+            R.drawable.ic_proton_tag
         )
         mailboxActionsView.bind(actionsUiModel)
         mailboxActionsView.setOnFirstActionClickListener {

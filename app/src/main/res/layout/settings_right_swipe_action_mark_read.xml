@@ -32,7 +32,7 @@
         android:layout_gravity="center"
         android:text="@string/swipe_action_mark_read_short"
         style="@style/Proton.Text.Caption.Strong.Inverted"
-        app:drawableTopCompat="@drawable/ic_envelope_open_text"
+        app:drawableTopCompat="@drawable/ic_proton_envelope_open_text"
         app:drawableTint="@color/icon_inverted" />
 
 </FrameLayout>

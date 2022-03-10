@@ -26,5 +26,5 @@
     android:paddingStart="@dimen/toolbar_padding_start"
     android:paddingEnd="@dimen/toolbar_padding_end"
     app:contentInsetStartWithNavigation="0dp"
-    app:navigationIcon="@drawable/ic_hamburger"
+    app:navigationIcon="@drawable/ic_proton_hamburger"
     app:titleTextAppearance="@style/Proton.Text.Headline.Small" />

@@ -74,7 +74,7 @@ class SenderInitialView @JvmOverloads constructor(
 
         if (showDraftIcon) {
             senderInitialTextView.text = EMPTY_STRING
-            senderInitialTextView.background = context.getDrawable(R.drawable.ic_pencil)
+            senderInitialTextView.background = context.getDrawable(R.drawable.ic_proton_pen)
         } else {
             senderInitialTextView.background = context.getDrawable(R.drawable.background_sender_initial)
         }

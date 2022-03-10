@@ -89,7 +89,7 @@
                 android:focusable="true"
                 android:text="@string/x_add_label"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_add"
+                app:drawableStartCompat="@drawable/ic_proton_plus"
                 tools:visibility="visible" />
 
             <TextView
@@ -102,7 +102,7 @@
                 android:focusable="true"
                 android:text="@string/x_add_folder"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_add"
+                app:drawableStartCompat="@drawable/ic_proton_plus"
                 tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView

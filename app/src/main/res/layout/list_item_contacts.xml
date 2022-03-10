@@ -80,7 +80,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_paper_plane"
+        app:srcCompat="@drawable/ic_proton_paper_plane"
         tools:visibility="visible" />
 
 

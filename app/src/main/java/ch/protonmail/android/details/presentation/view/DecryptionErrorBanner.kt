@@ -44,7 +44,7 @@ class DecryptionErrorBanner @JvmOverloads constructor(
         text = resources.getString(R.string.decryption_of_message_failed)
         setTextColor(ContextCompat.getColor(context, R.color.text_inverted))
 
-        val warningDrawable = ContextCompat.getDrawable(context, R.drawable.ic_exclamation_triangle)
+        val warningDrawable = ContextCompat.getDrawable(context, R.drawable.ic_proton_exclamation_circle)
         setCompoundDrawablesRelativeWithIntrinsicBounds(warningDrawable, null, null, null)
         compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.message_details_banner_drawable_padding)
         compoundDrawableTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.icon_inverted))

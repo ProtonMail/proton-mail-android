@@ -36,7 +36,7 @@
         android:padding="@dimen/padding_m"
         android:textAllCaps="true"
         android:textColor="@color/cornflower_blue"
-        app:drawableStartCompat="@drawable/ic_plus"
+        app:drawableStartCompat="@drawable/ic_proton_plus"
         tools:text="Option title" />
 
     <LinearLayout
@@ -75,7 +75,8 @@
                 android:layout_width="@dimen/padding_xl"
                 android:layout_height="@dimen/padding_xl"
                 android:background="?android:selectableItemBackground"
-                android:src="@drawable/triangle_down"
+                android:src="@drawable/ic_proton_chevron_down_filled"
+                app:tint="@color/icon_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

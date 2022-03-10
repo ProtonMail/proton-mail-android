@@ -55,7 +55,6 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.delete.EmptyFolder
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
-import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -88,11 +87,6 @@ internal class ViewModelModule {
     fun providePinFragmentViewModelFactory(
         pinFragmentViewModelFactory: PinFragmentViewModelFactory
     ): ViewModelProvider.NewInstanceFactory = pinFragmentViewModelFactory
-
-    @Provides
-    fun provideManageLabelsDialogViewModelFactory(
-        factory: ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory
-    ): ViewModelProvider.NewInstanceFactory = factory
 
     @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
     @Provides

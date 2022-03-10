@@ -34,7 +34,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1"
-        tools:src="@drawable/ic_lock_wide"/>
+        tools:src="@drawable/ic_proton_lock" />
 
     <ImageView
         android:id="@+id/checkable_button_check"

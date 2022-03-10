@@ -52,14 +52,14 @@ sealed class LabelIcon {
             object BlackWhite : WithChildren() {
 
                 override val colorInt = R.color.icon_norm
-                override val drawableRes = R.drawable.ic_folder_multiple
+                override val drawableRes = R.drawable.ic_proton_folders
             }
 
             data class Colored(
                 @ColorInt override val colorInt: Int
             ) : WithChildren() {
 
-                override val drawableRes = R.drawable.ic_folder_multiple_filled
+                override val drawableRes = R.drawable.ic_proton_folders_filled
             }
         }
 
@@ -70,14 +70,14 @@ sealed class LabelIcon {
             object BlackWhite : WithoutChildren() {
 
                 override val colorInt = R.color.icon_norm
-                override val drawableRes = R.drawable.ic_folder
+                override val drawableRes = R.drawable.ic_proton_folder
             }
 
             data class Colored(
                 @ColorInt override val colorInt: Int
             ) : WithChildren() {
 
-                override val drawableRes = R.drawable.ic_folder_filled
+                override val drawableRes = R.drawable.ic_proton_folder_filled
             }
         }
     }

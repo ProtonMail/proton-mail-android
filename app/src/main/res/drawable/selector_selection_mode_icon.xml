@@ -25,7 +25,7 @@
         android:state_activated="false" />
 
     <item
-        android:drawable="@drawable/ic_check"
+        android:drawable="@drawable/ic_proton_checkmark"
         android:state_activated="true" />
 
 </selector>

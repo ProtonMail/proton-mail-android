@@ -25,7 +25,6 @@ import androidx.annotation.IdRes
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -40,7 +39,6 @@ import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_30S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_60S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
 import ch.protonmail.android.uitests.testsHelper.waitForCondition
@@ -76,16 +74,16 @@ interface MailboxRobotInterface : Robot {
     }
 
     fun searchBar(): SearchRobot {
-        view.withId(R.id.searchImageButton).click()
+        view.withId(R.id.search).click()
         return SearchRobot()
     }
 
     fun compose(): ComposerRobot {
         waitForCondition(
-            { onView(withId(R.id.composeImageButton)).check(matches(isDisplayed())) },
+            { onView(withId(R.id.compose)).check(matches(isDisplayed())) },
             watchTimeout = TIMEOUT_60S
         )
-        view.withId(R.id.composeImageButton).click()
+        view.withId(R.id.compose).click()
         return ComposerRobot()
     }
 

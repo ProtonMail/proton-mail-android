@@ -21,7 +21,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@drawable/ic_star"
+        android:drawable="@drawable/ic_proton_star"
         android:state_checked="false" />
 
     <item

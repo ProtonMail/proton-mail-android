@@ -52,7 +52,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:tint="?attr/proton_sidebar_icon_weak"
-        tools:src="@drawable/ic_inbox" />
+        tools:src="@drawable/ic_proton_inbox" />
 
     <!-- Badge -->
     <TextView
