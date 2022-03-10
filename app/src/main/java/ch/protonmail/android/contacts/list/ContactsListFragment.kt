@@ -390,6 +390,10 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             adapter = contactsAdapter
             addItemDecoration(itemDecoration)
         }
+
+        contactsRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
+            listener.selectPage(0)
+        }
     }
 
     override fun updateRecyclerViewBottomPadding(@Px size: Int) {

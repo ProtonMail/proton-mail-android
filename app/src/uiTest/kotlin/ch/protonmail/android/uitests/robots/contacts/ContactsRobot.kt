@@ -29,7 +29,7 @@ import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContac
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactNameAndEmail
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import com.github.clans.fab.FloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import me.proton.core.test.android.instrumented.Robot
 import me.proton.core.test.android.instrumented.utils.StringUtils.stringFromResource
 import org.hamcrest.CoreMatchers.containsString

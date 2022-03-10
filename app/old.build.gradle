@@ -50,6 +50,4 @@ dependencies {
         // jCard functionality not needed
         exclude group: 'com.fasterxml.jackson.core'
     }
-
-    implementation 'com.github.clans:fab:1.6.4'
 }

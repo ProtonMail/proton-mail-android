@@ -218,4 +218,7 @@
 
     <!-- endregion -->
 
+    <dimen name="animation_translation_55">55dp</dimen>
+    <dimen name="animation_translation_105">105dp</dimen>
+
 </resources>
