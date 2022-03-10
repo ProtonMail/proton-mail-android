@@ -39,6 +39,7 @@ class SearchTests : BaseTest() {
         super.setUp()
         searchRobot = loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .searchBar()
     }
 

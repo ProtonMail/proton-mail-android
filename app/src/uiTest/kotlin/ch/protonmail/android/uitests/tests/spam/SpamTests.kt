@@ -43,6 +43,7 @@ class SpamTests : BaseTest() {
         Mail.gmail.from(from).to(to).withSubject(subject).withBody(body).send()
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .clickMessageBySubject(subject)
             .moveToTrash()
             .menuDrawer()

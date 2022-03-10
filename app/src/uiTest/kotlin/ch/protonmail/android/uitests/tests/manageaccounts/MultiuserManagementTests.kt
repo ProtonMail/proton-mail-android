@@ -38,6 +38,7 @@ class MultiuserManagementTests : BaseTest() {
     fun connectOnePassAccount() {
         loginRobot
             .loginTwoPassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -52,6 +53,7 @@ class MultiuserManagementTests : BaseTest() {
     fun connectTwoPassAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -66,6 +68,7 @@ class MultiuserManagementTests : BaseTest() {
     fun connectOnePassAccountWithTwoFa() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -80,6 +83,7 @@ class MultiuserManagementTests : BaseTest() {
     fun connectTwoPassAccountWithTwoFa() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -94,6 +98,7 @@ class MultiuserManagementTests : BaseTest() {
     fun logoutPrimaryAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -111,6 +116,7 @@ class MultiuserManagementTests : BaseTest() {
     fun logoutSecondaryAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -126,6 +132,7 @@ class MultiuserManagementTests : BaseTest() {
     fun logoutOnlyRemainingAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .logoutLastAccount(onePassUser.email)
@@ -137,6 +144,7 @@ class MultiuserManagementTests : BaseTest() {
     fun removePrimaryAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -152,6 +160,7 @@ class MultiuserManagementTests : BaseTest() {
     fun removeSecondaryAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -167,6 +176,7 @@ class MultiuserManagementTests : BaseTest() {
     fun removeOnlyRemainingAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .removeLastAccount(onePassUser.email)
@@ -178,6 +188,7 @@ class MultiuserManagementTests : BaseTest() {
     fun logoutOneRemoveAnotherAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -196,6 +207,7 @@ class MultiuserManagementTests : BaseTest() {
     fun cancelLoginOnTwoFaPrompt() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -210,6 +222,7 @@ class MultiuserManagementTests : BaseTest() {
     fun switchAccount() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
@@ -227,6 +240,7 @@ class MultiuserManagementTests : BaseTest() {
     fun addTwoFreeAccounts() {
         loginRobot
             .loginAutoAttachPublicKeyUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()

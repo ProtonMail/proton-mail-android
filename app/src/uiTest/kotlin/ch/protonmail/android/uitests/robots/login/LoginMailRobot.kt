@@ -22,6 +22,7 @@ package ch.protonmail.android.uitests.robots.login
 import android.widget.EditText
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
+import ch.protonmail.android.uitests.robots.onboarding.OnboardingRobot
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.users
 import me.proton.core.test.android.instrumented.Robot
 import me.proton.core.test.android.robots.auth.login.LoginRobot
@@ -32,17 +33,28 @@ class LoginMailRobot : Robot {
 
     val loginRobot = LoginRobot()
 
-    fun loginOnePassUser(): InboxRobot {
+    fun loginOnePassUser(): OnboardingRobot {
         val onePassUser = users.getUser { it.name == "onePassUser" }
         view.withId(R.id.sign_in).click()
         loginRobot
             .username(onePassUser.name)
             .password(onePassUser.password)
             .signIn<InboxRobot>()
-        return InboxRobot()
+        return OnboardingRobot()
     }
 
-    fun loginTwoPassUser(): InboxRobot {
+    fun loginTwoPassUser(): OnboardingRobot {
+        val twoPassUser = users.getUser { it.name == "twoPassUser" }
+        view.withId(R.id.sign_in).click()
+        loginRobot
+            .username(twoPassUser.name)
+            .password(twoPassUser.password)
+            .signIn<MailboxPasswordRobot>()
+            .unlockMailbox<InboxRobot>(twoPassUser)
+        return OnboardingRobot()
+    }
+
+    fun loginTwoPassUserAsSecondUser(): InboxRobot {
         val twoPassUser = users.getUser { it.name == "twoPassUser" }
         view.withId(R.id.sign_in).click()
         loginRobot
@@ -78,14 +90,14 @@ class LoginMailRobot : Robot {
         return InboxRobot()
     }
 
-    fun loginAutoAttachPublicKeyUser(): InboxRobot {
+    fun loginAutoAttachPublicKeyUser(): OnboardingRobot {
         val autoAttachPublicKey = users.getUser { it.name == "autoAttachPublicKey" }
         view.withId(R.id.sign_in).click()
         loginRobot
             .username(autoAttachPublicKey.name)
             .password(autoAttachPublicKey.password)
             .signIn<InboxRobot>()
-        return InboxRobot()
+        return OnboardingRobot()
     }
 
     fun addFreeAccount(): LoginMailRobot {

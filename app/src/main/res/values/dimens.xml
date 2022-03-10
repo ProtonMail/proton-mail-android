@@ -37,6 +37,7 @@
     <dimen name="message_number_view_padding_vertical">2dp</dimen>
 
     <!-- generic height -->
+    <dimen name="height_indicator_m">8dp</dimen>
     <dimen name="height_list_item_l">56dp</dimen>
 
     <!-- generic padding -->
@@ -63,6 +64,9 @@
     <!-- generic margin -->
     <dimen name="margin_s">4dp</dimen>
     <dimen name="margin_m">8dp</dimen>
+    <dimen name="margin_l">16dp</dimen>
+    <dimen name="margin_xl">24dp</dimen>
+    <dimen name="margin_xxl">32dp</dimen>
 
     <!-- Toolbars -->
     <dimen name="toolbar_padding_start">0dp</dimen>

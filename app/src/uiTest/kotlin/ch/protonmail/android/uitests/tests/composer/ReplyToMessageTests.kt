@@ -48,6 +48,7 @@ class ReplyToMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()
@@ -69,6 +70,7 @@ class ReplyToMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
@@ -87,6 +89,7 @@ class ReplyToMessageTests : BaseTest() {
         val to = internalEmailTrustedKeys.email
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .compose()
             .sendMessage(to, subject, body)
             .menuDrawer()

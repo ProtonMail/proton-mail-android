@@ -56,6 +56,7 @@ class InboxTests : BaseTest() {
         Mail.gmail.from(from).to(to).withSubject(subject).withBody(body).send()
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .clickMessageBySubject(subject)
             .verify { messageWebViewContainerShown() }
     }
@@ -68,6 +69,7 @@ class InboxTests : BaseTest() {
         Mail.outlook.from(from).to(to).withSubject(subject).withBody(body).send()
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .clickMessageBySubject(subject)
             .verify { messageWebViewContainerShown() }
     }
@@ -80,6 +82,7 @@ class InboxTests : BaseTest() {
         Mail.outlook.from(from).to(to).withSubject(subject).withBody(body).sendToPmMe()
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .refreshMessageList()
             .clickMessageBySubject(subject)
             .verify { messageWebViewContainerShown() }
@@ -90,10 +93,11 @@ class InboxTests : BaseTest() {
     fun receiveMessageWithAttachmentOnPmMe() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
-            .loginTwoPassUser()
+            .loginTwoPassUserAsSecondUser()
             .compose()
             .sendMessageWithFileAttachment(onePassUser.pmMe, subject, body)
             .menuDrawer()
@@ -109,6 +113,7 @@ class InboxTests : BaseTest() {
         Mail.gmail.from(from).to(to).withSubject(subject).withBody(pgpEncryptedBody).send()
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .clickMessageBySubject(subject)
             .verify { pgpEncryptedMessageDecrypted() }
     }
@@ -121,6 +126,7 @@ class InboxTests : BaseTest() {
         Mail.outlook.from(from).to(to).withSubject(subject).withBody(pgpSignedBody).send()
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .clickMessageBySubject(subject)
             .verify { pgpSignedMessageDecrypted() }
     }
@@ -130,10 +136,11 @@ class InboxTests : BaseTest() {
     fun receiveMessageFromPMUser() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .accountsList()
             .addAccount()
-            .loginTwoPassUser()
+            .loginTwoPassUserAsSecondUser()
             .compose()
             .sendMessage(onePassUser.email, subject, body)
             .menuDrawer()
@@ -147,6 +154,7 @@ class InboxTests : BaseTest() {
     fun deleteMultipleMessages() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .sent()
             .longClickMessageOnPosition(0)
@@ -164,6 +172,7 @@ class InboxTests : BaseTest() {
         val folder = "Folder 1"
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .sent()
             .longClickMessageOnPosition(0)
@@ -179,6 +188,7 @@ class InboxTests : BaseTest() {
     fun deleteMessageLongClick() {
         loginRobot
             .loginOnePassUser()
+            .skipOnboarding()
             .menuDrawer()
             .sent()
             .longClickMessageOnPosition(0)

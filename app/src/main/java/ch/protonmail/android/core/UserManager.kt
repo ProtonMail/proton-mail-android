@@ -67,7 +67,6 @@ private const val PREF_PIN_INCORRECT_ATTEMPTS = "mailbox_pin_incorrect_attempts"
 private const val PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN = "is_first_mailbox_load_after_login"
 const val PREF_SHOW_STORAGE_LIMIT_WARNING = "show_storage_limit_warning"
 const val PREF_SHOW_STORAGE_LIMIT_REACHED = "show_storage_limit_reached"
-private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 // endregion
 
 /**
@@ -205,10 +204,6 @@ class UserManager @Inject constructor(
     val isFirstMailboxLoad: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, true)
 
-    val isEngagementShown: Boolean
-        // Disable Engagement screen.
-        get() = true // backupPrefs.getBoolean(PREF_ENGAGEMENT_SHOWN, false)
-
     private val currentUserPreferences
         get() = currentUserId?.let(::preferencesFor)
 
@@ -253,10 +248,6 @@ class UserManager @Inject constructor(
 
     fun firstMailboxLoadDone() {
         prefs.edit().putBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, false).apply()
-    }
-
-    fun engagementDone() {
-        backupPrefs.edit().putBoolean(PREF_ENGAGEMENT_SHOWN, true).apply()
     }
 
     fun increaseIncorrectPinAttempt() {
