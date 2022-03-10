@@ -37,7 +37,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 // region constants
-const val DOH_PROVIDER_TIMEOUT = 30_000L
+const val DOH_PROVIDER_TIMEOUT = 20_000L
 // endregion
 
 /**
@@ -140,13 +140,24 @@ class NetworkConfigurator @Inject constructor(
                     val result = try {
                         networkSwitcher.tryRequest()
                     } catch (e: Exception) {
-                        Timber.w(e, "Exception while pinging API before using alternative routing")
+                        Timber.w(
+                            e,
+                            """
+                            Exception while pinging API before using alternative routing.
+                            UserId = ${userManager.currentUserId}
+                            """.trimIndent()
+                        )
                         null
                     }
                     result != null
                 }
                 if (success == null) {
-                    Timber.w("Timeout while pinging API before using alternative routing")
+                    Timber.w(
+                        """
+                        Timeout while pinging API before using alternative routing.
+                        UserId = ${userManager.currentUserId}
+                        """.trimIndent()
+                    )
                 }
                 if (success == true) {
                     callback?.stopAutoRetry()
