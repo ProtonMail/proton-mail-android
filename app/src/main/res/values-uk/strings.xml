@@ -241,8 +241,6 @@
     <string name="yes">Так</string>
     <string name="no">Ні</string>
     <string name="okay">Гаразд</string>
-    <string name="received_report">Звіт отримано</string>
-    <string name="not_received_report">Звіт не отримано</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Оригінальне повідомлення --------</string>
     <string name="invalid_email_address">Адреса %s недійсна</string>

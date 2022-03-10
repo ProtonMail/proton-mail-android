@@ -241,8 +241,6 @@
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="okay">Ok</string>
-    <string name="received_report">Raport został odebrany</string>
-    <string name="not_received_report">Raport nie został odebrany</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Oryginalna wiadomość --------</string>
     <string name="invalid_email_address">Adres \'%s\' jest nieprawidłowy</string>

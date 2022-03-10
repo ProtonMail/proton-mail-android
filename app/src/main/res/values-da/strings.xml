@@ -235,8 +235,6 @@
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="okay">OK</string>
-    <string name="received_report">Anmeldelse modtaget</string>
-    <string name="not_received_report">Anmeldelse ikke modtaget</string>
     <string name="forward_prefix">Vs:</string>
     <string name="original_message_divider">-------- Oprindelig besked --------</string>
     <string name="invalid_email_address">Adressen \'%s\' er ugyldig</string>

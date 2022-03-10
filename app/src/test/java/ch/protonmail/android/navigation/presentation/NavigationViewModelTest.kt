@@ -113,7 +113,7 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
         navigationViewModel.viewStateFlow.test {
 
             // when
-            navigationViewModel.onBugReportSent(BugReportOutput.SuccessfullySent(""))
+            navigationViewModel.onBugReportSent(BugReportOutput.SuccessfullySent(SUCCESS_MESSAGE))
 
             // then
             assertEquals(NavigationViewState.INITIAL, awaitItem())
@@ -137,11 +137,12 @@ class NavigationViewModelTest : ArchTest, CoroutinesTest {
     private companion object TestData {
 
         const val USERNAME = "username"
+        const val SUCCESS_MESSAGE = "Thank you for the report."
 
         object ViewState {
 
             val SHOW_BUG_REPORT_SENT_MESSAGE = NavigationViewState(
-                temporaryMessage = TemporaryMessage(R.string.received_report)
+                temporaryMessage = TemporaryMessage(SUCCESS_MESSAGE)
             )
             val HIDE_BUG_REPORT_SENT_MESSAGE = SHOW_BUG_REPORT_SENT_MESSAGE.copy(
                 temporaryMessage = TemporaryMessage.NONE

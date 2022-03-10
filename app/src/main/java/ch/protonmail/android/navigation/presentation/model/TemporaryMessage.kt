@@ -19,15 +19,11 @@
 
 package ch.protonmail.android.navigation.presentation.model
 
-import androidx.annotation.StringRes
-
 @JvmInline
-value class TemporaryMessage(
-    @StringRes val messageRes: Int
-) {
+value class TemporaryMessage(val value: String) {
 
     companion object {
 
-        val NONE = TemporaryMessage(-1)
+        val NONE = TemporaryMessage("")
     }
 }

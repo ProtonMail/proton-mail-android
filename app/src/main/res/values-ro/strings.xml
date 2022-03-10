@@ -238,8 +238,6 @@
     <string name="yes">Da</string>
     <string name="no">Nu</string>
     <string name="okay">OK</string>
-    <string name="received_report">Raport recepționat</string>
-    <string name="not_received_report">Raport nerecepționat</string>
     <string name="forward_prefix">Redir:</string>
     <string name="original_message_divider">-------- Mesaj original --------</string>
     <string name="invalid_email_address">Adresa \'%s\' nu este validă</string>

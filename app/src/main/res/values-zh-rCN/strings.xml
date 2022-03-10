@@ -232,8 +232,6 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="okay">确定</string>
-    <string name="received_report">反馈已提交</string>
-    <string name="not_received_report">反馈未能提交</string>
     <string name="forward_prefix">转发：</string>
     <string name="original_message_divider">--------原始邮件--------</string>
     <string name="invalid_email_address">地址 %s 无效</string>

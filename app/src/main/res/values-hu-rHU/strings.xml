@@ -235,8 +235,6 @@
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
     <string name="okay">OK</string>
-    <string name="received_report">Bejelentés megérkezett</string>
-    <string name="not_received_report">Bejelentés nem érkezett meg</string>
     <string name="forward_prefix">Fwd:</string>
     <string name="original_message_divider">-------- Eredeti üzenet --------</string>
     <string name="invalid_email_address">A cím érvénytelen: %s</string>

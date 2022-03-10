@@ -235,8 +235,6 @@
     <string name="yes">Já</string>
     <string name="no">Nei</string>
     <string name="okay">Í lagi</string>
-    <string name="received_report">Skýrsla móttekin</string>
-    <string name="not_received_report">Skýrsla barst ekki</string>
     <string name="forward_prefix">Áfram:</string>
     <string name="original_message_divider">-------- Upprunaleg skilaboð --------</string>
     <string name="invalid_email_address">Tölvupóstfangið \'%s\' er ógilt</string>

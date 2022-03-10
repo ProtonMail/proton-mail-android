@@ -232,8 +232,6 @@
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
     <string name="okay">OK</string>
-    <string name="received_report">レポートが受理されました。</string>
-    <string name="not_received_report">レポートが受理されませんでした。</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">---元のメッセージ---</string>
     <string name="invalid_email_address">\'%s\' は無効です。</string>

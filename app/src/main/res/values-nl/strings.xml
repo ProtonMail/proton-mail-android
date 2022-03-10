@@ -235,8 +235,6 @@
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
     <string name="okay">Oké</string>
-    <string name="received_report">Rapport ontvangen</string>
-    <string name="not_received_report">Melding niet ontvangen</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Oorspronkelijk bericht --------</string>
     <string name="invalid_email_address">Het adres \'%s\' is ongeldig</string>

@@ -265,8 +265,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="okay">Okay</string>
-    <string name="received_report">Report received</string>
-    <string name="not_received_report">Report not received</string>
 
     <string name="reply_prefix" translatable="false">Re:</string>
     <string name="forward_prefix">Fw:</string>

@@ -71,7 +71,7 @@ internal class NavigationViewModel @Inject constructor(
             viewStateMutableFlow.value = nextStateFrom(
                 currentState = viewStateFlow.value,
                 action = NavigationViewAction.ShowTemporaryMessage(
-                    TemporaryMessage(R.string.received_report)
+                    TemporaryMessage(bugReportOutput.successMessage)
                 )
             )
             viewStateMutableFlow.value = nextStateFrom(

@@ -492,7 +492,7 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     private fun renderViewState(navigationViewState: NavigationViewState) {
         if (navigationViewState.temporaryMessage != TemporaryMessage.NONE) {
-            showToast(navigationViewState.temporaryMessage.messageRes)
+            showToast(navigationViewState.temporaryMessage.value)
         }
     }
 }

@@ -238,8 +238,6 @@
     <string name="yes">Da</string>
     <string name="no">Ne</string>
     <string name="okay">U redu</string>
-    <string name="received_report">Izvještaj zaprimljen</string>
-    <string name="not_received_report">Izvještaj nije zaprimljen</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Izvorna poruka --------</string>
     <string name="invalid_email_address">Ova adresa \'%s\' nije valjana</string>

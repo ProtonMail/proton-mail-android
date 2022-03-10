@@ -235,8 +235,6 @@
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="okay">Okej</string>
-    <string name="received_report">Rapport mottagen</string>
-    <string name="not_received_report">Rapport ej mottagen</string>
     <string name="forward_prefix">Vb:</string>
     <string name="original_message_divider">-------- Originalmeddelande --------</string>
     <string name="invalid_email_address">Adressen \'%s\' är ogiltig</string>

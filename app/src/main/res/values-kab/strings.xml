@@ -235,8 +235,6 @@
     <string name="yes">Ih</string>
     <string name="no">Ala</string>
     <string name="okay">Ok</string>
-    <string name="received_report">Aneqqis yettwarmes</string>
-    <string name="not_received_report">Aneqqis ur yettwarmes ara</string>
     <string name="forward_prefix">Welleh:</string>
     <string name="original_message_divider">-------- Izen aneṣli --------</string>
     <string name="invalid_email_address">ThTansa \'%s\' mačči d tameɣtut</string>

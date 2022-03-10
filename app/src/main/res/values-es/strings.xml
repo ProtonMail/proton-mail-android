@@ -235,8 +235,6 @@
     <string name="yes">Sí</string>
     <string name="no">No</string>
     <string name="okay">Aceptar</string>
-    <string name="received_report">Reporte recibido</string>
-    <string name="not_received_report">Reporte no recibido</string>
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Mensaje original --------</string>
     <string name="invalid_email_address">La dirección \'%s\' es inválida</string>
