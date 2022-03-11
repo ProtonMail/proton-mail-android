@@ -19,18 +19,35 @@
 
 package ch.protonmail.android.uitests.robots.onboarding
 
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.matcher.ViewMatchers
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions
+import ch.protonmail.android.uitests.testsHelper.waitForCondition
 import me.proton.core.test.android.instrumented.Robot
 
 class OnboardingRobot : Robot {
 
     fun skipOnboarding(): InboxRobot {
+        waitForCondition(
+            {
+                onView(ViewMatchers.withId(R.id.skip)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+            },
+            watchTimeout = UICustomViewActions.TIMEOUT_60S
+        )
         view.withId(R.id.skip).click()
         return InboxRobot()
     }
 
     fun nextOnboardingScreen(): OnboardingRobot {
+        waitForCondition(
+            {
+                onView(ViewMatchers.withId(R.id.onboarding_button)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+            },
+            watchTimeout = UICustomViewActions.TIMEOUT_60S
+        )
         view.withId(R.id.onboarding_button).withText(R.string.onboarding_next).click()
         return OnboardingRobot()
     }
