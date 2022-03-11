@@ -33,18 +33,6 @@ class Proxies constructor(
     val prefs: SharedPreferences
 ) {
 
-    var isDohActive: Boolean = false
-
-    // init {
-    //     save()
-    // }
-
-    fun getNextProxy(): ProxyItem {
-        return proxyList.proxies.first {
-            !it.active && it.success == null && it.lastTrialTimestamp == 0L
-        }
-    }
-
     /**
      * Returns the currently active proxy (active proxy doesn't mean that it works successfully, but
      * only that the network is set to work with it).
@@ -93,7 +81,7 @@ class Proxies constructor(
     }
 
     fun getCurrentWorkingProxyDomain(): String {
-        return prefs.getString(PREF_DNS_OVER_HTTPS_API_URL, Constants.BASE_URL)!!
+        return prefs.getString(PREF_DNS_OVER_HTTPS_API_URL, Constants.BASE_URL) ?: Constants.BASE_URL
     }
 
     companion object {
@@ -123,6 +111,4 @@ class Proxies constructor(
     }
 }
 
-data class ProxyList(val proxies: List<ProxyItem>) {
-    constructor() : this(emptyList<ProxyItem>())
-}
+data class ProxyList(val proxies: List<ProxyItem>)

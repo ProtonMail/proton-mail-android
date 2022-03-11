@@ -36,7 +36,10 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -53,7 +56,8 @@ class PingWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
     private val queueNetworkUtil: QueueNetworkUtil,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val accountManager: AccountManager
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result =
@@ -71,7 +75,13 @@ class PingWorker @AssistedInject constructor(
                     }
                 },
                 onFailure = { throwable ->
-                    Timber.v("Ping isAccessible: failed")
+                    Timber.w(
+                        throwable,
+                        """
+                        Ping call has failed. 
+                        UserId = ${accountManager.getPrimaryAccount().first()?.userId}
+                        """.trimIndent()
+                    )
                     queueNetworkUtil.setConnectivityHasFailed(throwable)
                     Result.failure(
                         workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${throwable.message}")
@@ -80,14 +90,28 @@ class PingWorker @AssistedInject constructor(
             )
         }
 
-    private suspend fun isBackendStillReachable(): Boolean =
-        when (api.ping().code) {
+    private suspend fun isBackendStillReachable(): Boolean {
+        val responseBody = api.ping()
+        return when (responseBody.code) {
             Constants.RESPONSE_CODE_OK,
             Constants.RESPONSE_CODE_API_OFFLINE -> true
-            else -> false
+            else -> {
+                Timber.w(
+                    """
+                    Ping call has failed.
+                    Response code = ${responseBody.code}
+                    Response error = ${responseBody.error}
+                    UserId = ${accountManager.getPrimaryAccount().first()?.userId}
+                    """.trimIndent()
+                )
+                false
+            }
         }
+    }
+
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
+
         private val uniqueWorkerName = "PingWorker"
 
         fun enqueue() {

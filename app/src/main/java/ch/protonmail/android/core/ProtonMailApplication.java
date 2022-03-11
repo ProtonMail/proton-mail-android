@@ -70,13 +70,10 @@ import javax.inject.Inject;
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseActivity;
-import ch.protonmail.android.api.NetworkConfigurator;
-import ch.protonmail.android.api.NetworkSwitcher;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.OrganizationResponse;
-import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.di.DefaultSharedPreferences;
@@ -92,7 +89,6 @@ import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.feature.account.AccountStateHandlerInitializer;
 import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
-import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.security.presentation.SecurityManagerInitializer;
 import ch.protonmail.android.servers.notification.NotificationServer;
@@ -106,7 +102,6 @@ import ch.protonmail.android.utils.crypto.OpenPGP;
 import ch.protonmail.android.worker.FetchContactsDataWorker;
 import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 import dagger.hilt.android.HiltAndroidApp;
-import me.proton.core.accountmanager.data.AccountStateHandler;
 import me.proton.core.accountmanager.domain.AccountManager;
 import me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer;
 import me.proton.core.domain.entity.UserId;
@@ -138,10 +133,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     @Inject
     ApplyAppThemeFromSettings applyAppThemeFromSettings;
-    @Inject
-    NetworkConfigurator networkConfigurator;
-    @Inject
-    NetworkSwitcher networkSwitcher;
+
     @Inject
     DownloadUtils downloadUtils;
 
@@ -168,7 +160,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private Organization mOrganization;
     private String mCurrentLocale;
     private AlertDialog forceUpgradeDialog;
-    private boolean changedSystemTimeDate;
 
     @NonNull
     @Deprecated // Using this is an ERROR!
@@ -518,11 +509,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         mOrganization = organization;
     }
 
-    public void fetchOrganization() {
-        GetOrganizationJob getOrganizationJob = new GetOrganizationJob();
-        jobManager.addJobInBackground(getOrganizationJob);
-    }
-
     public String getCurrentLocale() {
         mCurrentLocale = getResources().getConfiguration().locale.toString();
         return mCurrentLocale;
@@ -538,15 +524,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
         CustomLocale.INSTANCE.apply(this);
     }
 
-    public void changeApiProviders() {
-        networkConfigurator.networkSwitcher
-                .reconfigureProxy(Proxies.Companion.getInstance(null, defaultSharedPreferences));
-    }
-
     public boolean isChangedSystemTimeDate() {
         final SharedPreferences pref = getSharedPreferences(BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        changedSystemTimeDate = pref.getBoolean(PREF_TIME_AND_DATE_CHANGED, false);
-        return changedSystemTimeDate;
+        return pref.getBoolean(PREF_TIME_AND_DATE_CHANGED, false);
     }
 
     public void setChangedSystemTimeDate(boolean changed) {
