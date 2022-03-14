@@ -73,7 +73,7 @@ import me.proton.core.usersettings.domain.usecase.GetUserSettings
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 
-internal class EventHandler @AssistedInject constructor(
+class EventHandler @AssistedInject constructor(
     private val context: Context,
     private val protonMailApiManager: ProtonMailApiManager,
     private val unreadCounterDao: UnreadCounterDao,

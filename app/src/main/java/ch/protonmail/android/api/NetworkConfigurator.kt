@@ -28,6 +28,7 @@ import ch.protonmail.android.di.AppCoroutineScope
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.di.DohProviders
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
+import dagger.Lazy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -49,10 +50,11 @@ class NetworkConfigurator @Inject constructor(
     @DefaultSharedPreferences private val prefs: SharedPreferences,
     @AppCoroutineScope private val scope: CoroutineScope,
     private val userManager: UserManager,
-    private val connectivityManager: NetworkConnectivityManager
+    private val connectivityManager: NetworkConnectivityManager,
+    networkSwitcherLazy: Lazy<NetworkSwitcher>
 ) {
 
-    lateinit var networkSwitcher: INetworkSwitcher
+    private val networkSwitcher: NetworkSwitcher by lazy { networkSwitcherLazy.get() }
     private var isRunning = false
     private var callback: INetworkConfiguratorCallback? = null
 
@@ -72,6 +74,10 @@ class NetworkConfigurator @Inject constructor(
                 refreshDomainsAsync()
             }
         }
+    }
+
+    fun reconfigureProxy(proxies: Proxies?) {
+        networkSwitcher.reconfigureProxy(proxies)
     }
 
     private suspend fun queryDomains() {
