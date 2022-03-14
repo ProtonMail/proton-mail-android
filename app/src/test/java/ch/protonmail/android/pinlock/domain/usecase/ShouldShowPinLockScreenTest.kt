@@ -62,6 +62,7 @@ class ShouldShowPinLockScreenTest(
         val result = shouldShowPinLockScreen(
             wasAppInBackground = input.wasAppInBackground,
             isPinLockScreenShown = input.isPinLockScreenShown,
+            isPinLockScreenOpen = input.isPinLockScreenOpen,
             isAddingAttachments = input.isAddingAttachments,
             lastForegroundTime = input.lastForegroundTime
         )
@@ -81,6 +82,7 @@ class ShouldShowPinLockScreenTest(
             val pinLockTimer: Duration = 5.toDuration(MINUTES),
             val wasAppInBackground: Boolean,
             val isPinLockScreenShown: Boolean,
+            val isPinLockScreenOpen: Boolean,
             val isAddingAttachments: Boolean,
             val lastForegroundTime: Long
         )
@@ -102,6 +104,7 @@ class ShouldShowPinLockScreenTest(
                 Input(
                     wasAppInBackground = false,
                     isPinLockScreenShown = false,
+                    isPinLockScreenOpen = false,
                     isAddingAttachments = false,
                     lastForegroundTime = SIX_MIN_AGO_TIME
                 ),
@@ -113,6 +116,7 @@ class ShouldShowPinLockScreenTest(
                 Input(
                     wasAppInBackground = true,
                     isPinLockScreenShown = true,
+                    isPinLockScreenOpen = false,
                     isAddingAttachments = false,
                     lastForegroundTime = SIX_MIN_AGO_TIME
                 ),
@@ -125,6 +129,7 @@ class ShouldShowPinLockScreenTest(
                     pinLockTimer = Duration.ZERO,
                     wasAppInBackground = true,
                     isPinLockScreenShown = false,
+                    isPinLockScreenOpen = false,
                     isAddingAttachments = true,
                     lastForegroundTime = SIX_MIN_AGO_TIME
                 ),
@@ -137,6 +142,7 @@ class ShouldShowPinLockScreenTest(
                     pinLockTimer = 5.toDuration(MINUTES),
                     wasAppInBackground = true,
                     isPinLockScreenShown = false,
+                    isPinLockScreenOpen = false,
                     isAddingAttachments = true,
                     lastForegroundTime = SIX_MIN_AGO_TIME
                 ),
@@ -149,6 +155,7 @@ class ShouldShowPinLockScreenTest(
                     isPinLockEnabled = false,
                     wasAppInBackground = true,
                     isPinLockScreenShown = false,
+                    isPinLockScreenOpen = false,
                     isAddingAttachments = false,
                     lastForegroundTime = SIX_MIN_AGO_TIME
                 ),
@@ -160,6 +167,7 @@ class ShouldShowPinLockScreenTest(
                 Input(
                     wasAppInBackground = true,
                     isPinLockScreenShown = false,
+                    isPinLockScreenOpen = false,
                     isAddingAttachments = false,
                     lastForegroundTime = NOW_TIME
                 ),
@@ -172,11 +180,37 @@ class ShouldShowPinLockScreenTest(
                 Input(
                     wasAppInBackground = true,
                     isPinLockScreenShown = false,
+                    isPinLockScreenOpen = false,
                     isAddingAttachments = false,
                     lastForegroundTime = SIX_MIN_AGO_TIME
                 ),
                 Output(result = true)
-            )
+            ),
+
+            Parameters(
+                name = "return *true* if app was not in background, but Pin Lock is the last screen shown",
+                Input(
+                    wasAppInBackground = false,
+                    isPinLockScreenShown = false,
+                    isPinLockScreenOpen = true,
+                    isAddingAttachments = false,
+                    lastForegroundTime = SIX_MIN_AGO_TIME
+                ),
+                Output(result = true)
+            ),
+
+            Parameters(
+                name = "return *false* if Pin Lock is the last screen shown, but also the current screen",
+                Input(
+                    wasAppInBackground = false,
+                    isPinLockScreenShown = true,
+                    isPinLockScreenOpen = true,
+                    isAddingAttachments = false,
+                    lastForegroundTime = SIX_MIN_AGO_TIME
+                ),
+                Output(result = false)
+            ),
+
         ).map { arrayOf(it.name, it.input, it.output) }
     }
 }
