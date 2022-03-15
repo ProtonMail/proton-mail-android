@@ -35,6 +35,7 @@ import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.labels.data.local.LabelDao
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
+import ch.protonmail.android.notifications.data.local.NotificationDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,6 +58,11 @@ internal object DatabaseModule {
     fun provideLabelDao(
         appDatabase: AppDatabase
     ): LabelDao = appDatabase.labelDao()
+
+    @Provides
+    fun provideNotificationDao(
+        appDatabase: AppDatabase
+    ): NotificationDao = appDatabase.notificationDao()
 
     @Provides
     fun provideAttachmentMetadataDao(

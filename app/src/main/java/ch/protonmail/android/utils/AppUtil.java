@@ -27,7 +27,6 @@ import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
 import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
 
 import android.app.ActivityManager;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,15 +55,12 @@ import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import ch.protonmail.android.data.local.ContactDao;
 import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.data.local.NotificationDao;
-import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDao;
 import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.events.ApiOfflineEvent;
@@ -175,7 +171,6 @@ public class AppUtil {
                     ContactDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Factory.getInstance(context, userId).getDao(),
                     MessageDatabase.Factory.getInstance(context, userId).getConversationDao(),
-                    NotificationDatabase.Companion.getInstance(context, userId).getDao(),
                     AttachmentMetadataDatabase.Companion.getInstance(context, userId).getDao(),
                     PendingActionDatabase.Companion.getInstance(context, userId).getDao(),
                     clearDoneListener, clearContacts
@@ -218,32 +213,6 @@ public class AppUtil {
         }
         // Deprecated in API level 23.
         return activityManager.isInLockTaskMode();
-    }
-
-    @Deprecated // Use with User Id
-    public static void clearNotifications(Context context) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-        final UserManager userManager = ((ProtonMailApplication) context.getApplicationContext()).getUserManager();
-        final UserId userId = userManager.requireCurrentUserId();
-        final NotificationDao notificationDao = NotificationDatabase.Companion
-                .getInstance(context, userId)
-                .getDao();
-        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
-    }
-
-    public static void clearNotifications(Context context, UserId userId) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(userId.hashCode());
-        final NotificationDao notificationDao = NotificationDatabase.Companion
-                .getInstance(context, userId)
-                .getDao();
-        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
-    }
-
-    public static void clearNotifications(Context context, int notificationId) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(notificationId);
     }
 
     /// read string from raw
@@ -303,7 +272,6 @@ public class AppUtil {
             final MessageDao messageDao,
             final MessageDao searchDatabase,
             final ConversationDao conversationDao,
-            final NotificationDao notificationDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionDao pendingActionDao,
             final boolean clearContacts
@@ -314,7 +282,6 @@ public class AppUtil {
                 contactDao,
                 messageDao,
                 conversationDao,
-                notificationDao,
                 attachmentMetadataDao,
                 pendingActionDao,
                 null,
@@ -329,7 +296,6 @@ public class AppUtil {
             final ContactDao contactDao,
             final MessageDao messageDao,
             final ConversationDao conversationDao,
-            final NotificationDao notificationDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionDao pendingActionDao,
             final IDBClearDone clearDone,
@@ -345,13 +311,11 @@ public class AppUtil {
                 if (clearContacts) {
                     contactDao.clearContactEmailsCache();
                     contactDao.clearContactDataCache();
-                    //contactDao.clearContactGroupsLabelsTableBlocking();
                     contactDao.clearFullContactDetailsCache();
                 }
                 messageDao.clearMessagesCache();
                 messageDao.clearAttachmentsCache();
                 conversationDao.clear();
-                notificationDao.clearNotificationCache();
                 attachmentMetadataDao.clearAttachmentMetadataCache();
                 return null;
             }
@@ -390,38 +354,6 @@ public class AppUtil {
         SharedPreferences globalSecureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences();
         globalSecureSharedPreferences.edit().remove(PREF_PIN).apply();
         backupSharedPrefs.edit().clear().apply();
-    }
-
-    /**
-     * Deletes user's Secure Shared Preferences and preserves some important values.
-     */
-    public static void deleteSecurePrefs(
-            @NonNull SharedPreferences userPreferences,
-            boolean deletePin
-    ) {
-        String mailboxPinBackup = userPreferences.getString(PREF_PIN, null);
-        SharedPreferences.Editor editor = userPreferences.edit()
-                .clear();
-        if (!deletePin) {
-            editor.putString(PREF_PIN, mailboxPinBackup);
-        }
-        editor.apply();
-    }
-
-    // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
-    private static class ClearNotificationsFromDatabaseTask extends AsyncTask<Void, Void, Void> {
-        private final NotificationDao notificationDao;
-
-        ClearNotificationsFromDatabaseTask(
-                NotificationDao notificationDao) {
-            this.notificationDao = notificationDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            notificationDao.clearNotificationCache();
-            return null;
-        }
     }
 
     public interface IDBClearDone {

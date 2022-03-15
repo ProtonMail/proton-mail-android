@@ -29,8 +29,8 @@ import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.di.AppProcessLifecycleOwner
-import ch.protonmail.android.fcm.FcmTokenManager
-import ch.protonmail.android.fcm.UnregisterDeviceWorker
+import ch.protonmail.android.notifications.data.remote.fcm.FcmTokenManager
+import ch.protonmail.android.notifications.data.remote.fcm.UnregisterDeviceWorker
 import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil

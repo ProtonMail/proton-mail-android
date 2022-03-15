@@ -34,7 +34,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.StrictMode;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -85,13 +84,13 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
-import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.feature.account.AccountStateHandlerInitializer;
 import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
+import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenManager;
+import ch.protonmail.android.notifications.presentation.utils.NotificationServer;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.security.presentation.SecurityManagerInitializer;
-import ch.protonmail.android.servers.notification.NotificationServer;
 import ch.protonmail.android.settings.domain.usecase.ApplyAppThemeFromSettings;
 import ch.protonmail.android.utils.CoreTimberLogger;
 import ch.protonmail.android.utils.CustomLocale;
@@ -356,14 +355,12 @@ public class ProtonMailApplication extends Application implements androidx.work.
     }
 
     private void setupNotificationChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationServer notificationServer = new NotificationServer(this, notificationManager);
             notificationServer.createEmailsChannel();
             notificationServer.createAttachmentsChannel();
             notificationServer.createRetrievingNotificationsNotification();
             notificationServer.createAccountChannel();
-        }
     }
 
     private void checkForUpdateAndClearCache() {

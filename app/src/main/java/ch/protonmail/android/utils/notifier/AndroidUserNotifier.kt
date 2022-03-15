@@ -24,7 +24,7 @@ import android.os.Handler
 import android.os.Looper
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.servers.notification.NotificationServer
+import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.utils.extensions.showToast
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider

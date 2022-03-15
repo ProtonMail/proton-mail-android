@@ -134,6 +134,10 @@
     <string name="parent_picker_header">If you do not select a parent folder, this new folder will be created as a top level folder.</string>
     <!-- endregion -->
 
+    <!-- region Notifications -->
+    <string name="notification_summary_text_new_messages">New messages</string>
+    <!-- endregion -->
+
     <!-- region Dialogs -->
     <!-- endregion -->
 

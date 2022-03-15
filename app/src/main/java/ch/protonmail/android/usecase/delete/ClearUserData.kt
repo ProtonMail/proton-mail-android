@@ -22,7 +22,6 @@ package ch.protonmail.android.usecase.delete
 import android.content.Context
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.storage.MessageBodyClearingService
 import ch.protonmail.android.utils.AppUtil
@@ -46,8 +45,7 @@ import javax.inject.Inject
 class ClearUserData @Inject constructor(
     private val context: Context,
     private val databaseProvider: DatabaseProvider,
-    private val dispatchers: DispatcherProvider,
-    private val labelRepository: LabelRepository
+    private val dispatchers: DispatcherProvider
 ) {
 
     suspend operator fun invoke(userId: UserId, alsoClearContacts: Boolean = true) {
@@ -61,7 +59,6 @@ class ClearUserData @Inject constructor(
         val conversationDao = runCatching { databaseProvider.provideConversationDao(userId) }.getOrNull()
         val counterDao = runCatching { databaseProvider.provideUnreadCounterDao(userId) }.getOrNull()
 
-        val notificationDao = runCatching { databaseProvider.provideNotificationDao(userId) }.getOrNull()
         val pendingActionDao = runCatching { databaseProvider.providePendingActionDao(userId) }.getOrNull()
 
         // Ensure that all the queries run on Io thread, as some are still blocking calls
@@ -81,7 +78,6 @@ class ClearUserData @Inject constructor(
                 clearAttachmentsCache()
             }
             conversationDao?.clear()
-            notificationDao?.clearNotificationCache()
             pendingActionDao?.run {
                 clearPendingSendCache()
                 clearPendingUploadCache()

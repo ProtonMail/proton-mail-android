@@ -22,6 +22,7 @@ package ch.protonmail.android.data
 import android.content.Context
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import ch.protonmail.android.notifications.data.local.NotificationDatabase
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
@@ -124,6 +125,7 @@ object AppDatabaseMigrations {
             FeatureFlagDatabase.MIGRATION_0.migrate(database)
             FeatureFlagDatabase.MIGRATION_1.migrate(database)
             OrganizationDatabase.MIGRATION_1.migrate(database)
+            NotificationDatabase.MIGRATION_0.migrate(database)
         }
     }
 }

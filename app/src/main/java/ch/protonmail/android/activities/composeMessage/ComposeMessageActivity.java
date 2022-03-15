@@ -162,7 +162,6 @@ import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
-import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
@@ -201,7 +200,7 @@ public class ComposeMessageActivity
     public static final String EXTRA_MESSAGE_RESPONSE_INLINE = "response_inline";
     public static final String EXTRA_MESSAGE_ADDRESS_ID = "address_id";
     public static final String EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS = "address_email_alias";
-    public static final String EXTRA_REPLY_FROM_GCM = "reply_from_gcm";
+    public static final String EXTRA_REPLY_FROM_NOTIFICATION = "reply_from_notification";
     public static final String EXTRA_LOAD_IMAGES = "load_images";
     public static final String EXTRA_LOAD_REMOTE_CONTENT = "load_remote_content";
     private static final int REQUEST_CODE_ADD_ATTACHMENTS = 1;
@@ -460,13 +459,13 @@ public class ComposeMessageActivity
             composeMessageViewModel.prepareMessageData(extras.getBoolean(EXTRA_PGP_MIME, false), extras.getString(EXTRA_MESSAGE_ADDRESS_ID, ""), extras.getString(EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS));
             composeMessageViewModel.setShowImages(extras.getBoolean(EXTRA_LOAD_IMAGES, false));
             composeMessageViewModel.setShowRemoteContent(extras.getBoolean(EXTRA_LOAD_REMOTE_CONTENT, false));
-            boolean replyFromGcm = extras.getBoolean(EXTRA_REPLY_FROM_GCM, false);
+            boolean replyFromNotification = extras.getBoolean(EXTRA_REPLY_FROM_NOTIFICATION, false);
             String messageId = extras.getString(EXTRA_MESSAGE_ID);
             if (TextUtils.isEmpty(messageId)) {
                 messageId = extras.getString(STATE_DRAFT_ID);
             }
 
-            if (!TextUtils.isEmpty(messageId) && !replyFromGcm) {
+            if (!TextUtils.isEmpty(messageId) && !replyFromNotification) {
                 // already saved draft trying to edit here
                 composeMessageViewModel.setDraftId(messageId);
                 binding.composerProgressLayout.setVisibility(View.VISIBLE);
@@ -562,7 +561,7 @@ public class ComposeMessageActivity
             } catch (Exception exc) {
                 Timber.tag("588").e(exc, "Exception on initialise message body");
             }
-        } else if (extras != null && extras.containsKey(EXTRA_MESSAGE_ID) && extras.getBoolean(EXTRA_REPLY_FROM_GCM, false)) {
+        } else if (extras != null && extras.containsKey(EXTRA_MESSAGE_ID) && extras.getBoolean(EXTRA_REPLY_FROM_NOTIFICATION, false)) {
             // reply from notification here
             composeMessageViewModel.setMessageTimestamp(extras.getLong(EXTRA_MESSAGE_TIMESTAMP));
             composeMessageViewModel.setSender(extras.getString(EXTRA_SENDER_NAME, ""), extras.getString(EXTRA_SENDER_ADDRESS, ""));
@@ -585,11 +584,16 @@ public class ComposeMessageActivity
     }
 
     private void setMessageBody() {
-        setMessageBodyInContainers(composeMessageViewModel.setMessageBody("", true, false,
-                getString(R.string.sender_name_address),
-                getString(R.string.original_message_divider),
-                getString(R.string.reply_prefix_on),
-                DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+        composeMessageViewModel.getFetchedBodyEvents().observe(this, it -> {
+            setMessageBodyInContainers(composeMessageViewModel.setMessageBody(
+                    it,
+                    true,
+                    false,
+                    getString(R.string.sender_name_address),
+                    getString(R.string.original_message_divider),
+                    getString(R.string.reply_prefix_on),
+                    DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+        });
     }
 
     private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {
@@ -871,7 +875,6 @@ public class ComposeMessageActivity
         super.onResume();
         checkDelinquency();
         renderViews();
-        AppUtil.clearNotifications(this);
         composeMessageViewModel.checkConnectivity();
     }
 

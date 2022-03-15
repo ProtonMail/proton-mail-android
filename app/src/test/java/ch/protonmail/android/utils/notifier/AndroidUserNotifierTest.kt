@@ -22,9 +22,8 @@ package ch.protonmail.android.utils.notifier
 import android.content.Context
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.servers.notification.NotificationServer
+import ch.protonmail.android.notifications.presentation.utils.NotificationServer
 import ch.protonmail.android.utils.extensions.showToast
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -35,6 +34,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

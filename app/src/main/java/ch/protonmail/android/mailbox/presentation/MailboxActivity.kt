@@ -92,9 +92,6 @@ import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.fcm.MultiUserFcmTokenManager
-import ch.protonmail.android.fcm.RegisterDeviceWorker
-import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
@@ -104,9 +101,12 @@ import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.navigation.presentation.NavigationActivity
+import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenManager
+import ch.protonmail.android.notifications.data.remote.fcm.RegisterDeviceWorker
+import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
+import ch.protonmail.android.notifications.presentation.utils.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.onboarding.presentation.OnboardingActivity
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -727,7 +727,7 @@ internal class MailboxActivity :
         mailboxViewModel.checkConnectivity()
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         if (mailboxLocation == MessageLocationType.INBOX) {
-            userManager.currentUserId?.let { AppUtil.clearNotifications(this, it) }
+            userManager.currentUserId?.let { mailboxViewModel.clearNotifications(it) }
         }
 
         if (shouldShowSwipeGesturesChangedDialog()) {
@@ -833,7 +833,7 @@ internal class MailboxActivity :
         isLoadingMore.getAndSet(loadingMore)
 
     override fun onInbox(type: DrawerOptionType) {
-        AppUtil.clearNotifications(applicationContext, userManager.requireCurrentUserId())
+        mailboxViewModel.clearNotifications(userManager.requireCurrentUserId())
         switchToMailboxLocation(type.drawerOptionTypeValue)
     }
 
