@@ -28,21 +28,21 @@ import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.utils.ServerTime
-import io.mockk.MockKAnnotations
+import ch.protonmail.android.utils.UuidProvider
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.user.domain.entity.AddressId
-import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -50,25 +50,26 @@ class SendMessageTest : CoroutinesTest {
 
     private val testUserId = UserId("id")
 
-    @RelaxedMockK
-    private lateinit var addressCryptoFactory: AddressCrypto.Factory
-
-    @RelaxedMockK
-    private lateinit var sendMessageScheduler: SendMessageWorker.Enqueuer
-
-    @RelaxedMockK
-    private lateinit var pendingActionDao: PendingActionDao
-
-    @RelaxedMockK
-    lateinit var messageDetailsRepository: MessageDetailsRepository
-
-    @InjectMockKs
-    lateinit var sendMessage: SendMessage
-
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
+    private val addressCryptoFactory = mockk<AddressCrypto.Factory>(relaxed = true)
+    private val sendMessageScheduler = mockk<SendMessageWorker.Enqueuer> {
+        every { enqueue(any(), any(), any(), any(), any(), any()) } returns flowOf(mockk())
     }
+    private val pendingActionDao = mockk<PendingActionDao>(relaxUnitFun = true)
+    private val messageDetailsRepository = mockk<MessageDetailsRepository> {
+        coEvery { saveMessage(any()) } returns 1L
+    }
+    private val uuidProvider = mockk<UuidProvider> {
+        every { randomUuid() } returns RANDOM_UUID
+    }
+    private val sendMessage = SendMessage(
+        messageDetailsRepository,
+        TestDispatcherProvider,
+        pendingActionDao,
+        sendMessageScheduler,
+        addressCryptoFactory,
+        testUserId,
+        uuidProvider
+    )
 
     @Test
     fun saveMessageEncryptsMessageBodyAndSavesItLocally() = runBlockingTest {
@@ -136,8 +137,8 @@ class SendMessageTest : CoroutinesTest {
         sendMessage(parameters)
 
         // Then
-        val pendingSend = PendingSend(messageId = messageId, localDatabaseId = messageDbId)
-        coVerify { pendingActionDao.insertPendingForSend(pendingSend) }
+        val expectedPendingSend = PendingSend(id = RANDOM_UUID, messageId = messageId, localDatabaseId = messageDbId)
+        coVerify { pendingActionDao.insertPendingForSend(expectedPendingSend) }
     }
 
     @Test
@@ -175,5 +176,10 @@ class SendMessageTest : CoroutinesTest {
                 securityOptions
             )
         }
+    }
+
+    private companion object TestData {
+
+        const val RANDOM_UUID = "UUID"
     }
 }

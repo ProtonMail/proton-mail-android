@@ -28,6 +28,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.utils.ServerTime
+import ch.protonmail.android.utils.UuidProvider
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
@@ -43,7 +44,8 @@ class SendMessage @Inject constructor(
     private val pendingActionDao: PendingActionDao,
     private val sendMessageScheduler: SendMessageWorker.Enqueuer,
     private val addressCryptoFactory: AddressCrypto.Factory,
-    @CurrentUserId private val currentUserId: UserId
+    @CurrentUserId private val currentUserId: UserId,
+    private val uuidProvider: UuidProvider
 ) {
 
     suspend operator fun invoke(parameters: SendMessageParameters) = withContext(dispatchers.Io) {
@@ -70,6 +72,7 @@ class SendMessage @Inject constructor(
 
     private fun setMessageAsPendingForSend(message: Message) {
         val pendingSend = PendingSend(
+            id = uuidProvider.randomUuid(),
             localDatabaseId = message.dbId ?: MISSING_DB_ID,
             messageId = message.messageId
         )
