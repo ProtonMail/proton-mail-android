@@ -46,7 +46,7 @@ const val PREF_LATEST_EVENT = "latest_event"
  * EventManager manages the fetching of the proper events and delegates their handling.
  */
 @Singleton
-internal class EventManager @Inject constructor(
+class EventManager @Inject constructor(
     private val context: Context,
     protonMailApiManager: ProtonMailApiManager,
     private val eventHandlerFactory: EventHandler.AssistedFactory,

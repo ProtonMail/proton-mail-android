@@ -259,7 +259,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     legacyUser.allowSecureConnectionsViaThirdParties = isChecked
 
                     if (!isChecked) {
-                        mNetworkUtil.networkConfigurator.networkSwitcher.reconfigureProxy(null)
+                        mNetworkUtil.networkConfigurator.reconfigureProxy(null)
                         legacyUser.usingDefaultApi = true
                     }
                 }
