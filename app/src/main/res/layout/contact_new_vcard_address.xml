@@ -35,7 +35,7 @@
         android:gravity="start|center_vertical"
         android:padding="@dimen/padding_m"
         android:textAllCaps="true"
-        android:textColor="@color/cornflower_blue"
+        android:textColor="?attr/brand_norm"
         app:drawableStartCompat="@drawable/ic_proton_plus"
         tools:text="Option title" />
 
@@ -89,24 +89,24 @@
             android:layout_marginTop="@dimen/padding_l">
 
             <ImageButton
-                android:id="@+id/btn_minus"
+                android:id="@+id/btn_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_minus" />
+                android:src="@drawable/ic_proton_cross_circle" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/btn_minus"
-                android:layout_toLeftOf="@id/btn_minus">
+                android:layout_toStartOf="@id/btn_clear"
+                android:layout_toLeftOf="@id/btn_clear">
 
                 <TextView
                     android:id="@+id/address_full_combined"
-                    style="@style/V3EditText.Inverted"
+                    style="@style/ProtonEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

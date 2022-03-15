@@ -145,7 +145,10 @@ class SetMessagePasswordActivity : AppCompatActivity() {
     private fun setDeleteButton(enabled: Boolean) {
         binding.setMsgPasswordRemoveButton.apply {
             isEnabled = enabled
-            if (!enabled) setTextColor(getColor(R.color.text_disabled))
+            if (!enabled) {
+                setTextColor(getColor(R.color.text_disabled))
+                setStrokeColorResource(R.color.interaction_weak)
+            }
         }
     }
 

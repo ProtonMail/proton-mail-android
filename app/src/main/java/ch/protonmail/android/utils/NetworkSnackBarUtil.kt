@@ -29,6 +29,7 @@ import androidx.annotation.IdRes
 import androidx.appcompat.widget.SwitchCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
+import ch.protonmail.android.utils.extensions.getColorFromAttr
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithCustomView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.scopes.ActivityScoped
@@ -191,13 +192,13 @@ class NetworkSnackBarUtil @Inject constructor() {
 }
 
 private val Snackbar.textColor get() =
-    context.getColor(R.color.white)
+    context.getColor(R.color.text_inverted)
 
 private val Snackbar.warningColor get() =
-    context.getColor(R.color.warning)
+    context.getColor(R.color.notification_warning)
 
 private val Snackbar.errorColor get() =
     context.getColor(R.color.notification_error)
 
 private val Snackbar.infoColor get() =
-    context.getColor(R.color.blue)
+    context.getColorFromAttr(R.attr.brand_norm)

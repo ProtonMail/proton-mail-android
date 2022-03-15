@@ -123,6 +123,7 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.NetworkSnackBarUtil
 import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.extensions.getColorIdFromAttr
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
@@ -166,7 +167,6 @@ private const val STATE_MAILBOX_LOCATION = "mailbox_location"
 private const val STATE_MAILBOX_LABEL_LOCATION = "mailbox_label_location"
 private const val STATE_MAILBOX_LABEL_LOCATION_NAME = "mailbox_label_location_name"
 const val LOADER_ID_LABELS_OFFLINE = 32
-private const val ACTION_MODE_STATUS_BAR_COLOR_DELAY = 500L
 
 @AndroidEntryPoint
 internal class MailboxActivity :
@@ -863,7 +863,7 @@ internal class MailboxActivity :
     }
 
     private fun initializeSwipeRefreshLayout(swipeRefreshLayoutAux: SwipeRefreshLayout) {
-        swipeRefreshLayoutAux.setColorSchemeResources(R.color.cornflower_blue)
+        swipeRefreshLayoutAux.setColorSchemeResources(getColorIdFromAttr(R.attr.brand_norm))
         swipeRefreshLayoutAux.setOnRefreshListener(this)
     }
 

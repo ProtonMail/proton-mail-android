@@ -57,10 +57,10 @@
             android:id="@+id/noResults"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
+            android:layout_gravity="center"
             android:layout_margin="@dimen/fields_default_space"
             android:text="@string/no_contacts"
-            android:textColor="@color/new_purple_dark"
+            android:textColor="?attr/brand_norm"
             android:textSize="@dimen/h2"
             android:visibility="gone"
             tools:visibility="visible" />

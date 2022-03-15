@@ -106,7 +106,7 @@
             android:padding="@dimen/padding_l"
             android:text="@string/contact_groups_manage_members"
             android:textAllCaps="true"
-            android:textColor="@color/cornflower_blue" />
+            android:textColor="?attr/brand_norm" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/no_contacts"
-                android:textColor="@color/new_purple_dark"
+                android:textColor="?attr/brand_norm"
                 android:textSize="@dimen/h2"
                 android:visibility="gone"
                 tools:visibility="visible" />

@@ -33,6 +33,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import ch.protonmail.android.R
+import ch.protonmail.android.utils.extensions.getColorFromAttr
 import timber.log.Timber
 
 private const val TEXT_SIZE_PROPORTION = 2.75f
@@ -51,7 +52,7 @@ class ListItemThumbnail @JvmOverloads constructor(
         color = ContextCompat.getColor(context, R.color.interaction_weak)
     }
     private val borderPaint = Paint(ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.cornflower_blue)
+        color = context.getColorFromAttr(R.attr.brand_norm)
         style = Paint.Style.STROKE
         strokeWidth = context.resources.getDimension(R.dimen.padding_xxs)
     }

@@ -31,7 +31,7 @@
                 android:scaleX="0.70"
                 android:scaleY="0.70">
                 <path
-                    android:fillColor="@color/pacific_base"
+                    android:fillColor="@color/purple_base"
                     android:pathData="M102,149.043C102,142.266 109.898,138.559 115.111,142.888L253,257.4C266.334,268.473 285.666,268.473 299,257.4L436.889,142.888C442.102,138.559 450,142.266 450,149.043V384C450,403.882 433.882,420 414,420H138C118.118,420 102,403.882 102,384V149.043Z" />
                 <path
                     android:fillType="evenOdd"
@@ -47,7 +47,7 @@
                                 android:color="#FFE2DBFF"
                                 android:offset="0" />
                             <item
-                                android:color="@color/pacific_base"
+                                android:color="@color/purple_base"
                                 android:offset="1" />
                         </gradient>
                     </aapt:attr>
@@ -66,7 +66,7 @@
                                 android:color="#FFE2DBFF"
                                 android:offset="0.271019" />
                             <item
-                                android:color="@color/pacific_base"
+                                android:color="@color/purple_base"
                                 android:offset="1" />
                         </gradient>
                     </aapt:attr>

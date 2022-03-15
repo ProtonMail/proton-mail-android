@@ -93,8 +93,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ch.protonmail.android.views.CustomFontTextView
-            style="@style/App.Text.Subtitle"
+        <TextView
+            style="@style/Proton.Text.Default.Weak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fields_default_space_small"

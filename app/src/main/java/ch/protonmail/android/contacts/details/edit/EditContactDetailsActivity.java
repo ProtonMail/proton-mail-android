@@ -660,7 +660,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 return false;
             });
         }
-        final ImageButton btnMinus = emailRowView.findViewById(R.id.btn_minus);
+        final ImageButton btnMinus = emailRowView.findViewById(R.id.btn_clear);
         btnMinus.setVisibility(View.VISIBLE);
         optionValueView.addTextChangedListener(new DirtyWatcher());
         optionValueView.setHintText(optionHint);
@@ -728,7 +728,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         final ProtonInput option = newOptionRowView.findViewById(R.id.option);
         final View inputFields = newOptionRowView.findViewById(R.id.fields_parent);
         final ImageButton btnOptionType = newOptionRowView.findViewById(R.id.btnOptionType);
-        final ImageButton btnMinus = newOptionRowView.findViewById(R.id.btn_minus);
+        final ImageButton btnMinus = newOptionRowView.findViewById(R.id.btn_clear);
         final TextView optionTitle = newOptionRowView.findViewById(R.id.optionTitle);
 
         String optionUITypeText;

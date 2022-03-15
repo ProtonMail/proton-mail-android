@@ -65,23 +65,23 @@
         android:layout_marginBottom="@dimen/padding_m">
 
         <ImageButton
-            android:id="@+id/btn_minus"
+            android:id="@+id/btn_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_minus" />
+            android:src="@drawable/ic_proton_cross_circle" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/btn_minus">
+            android:layout_toStartOf="@id/btn_clear">
 
             <TextView
                 android:id="@+id/address_full_combined"
-                style="@style/V3EditText.NoBg"
+                style=""
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"

@@ -26,7 +26,7 @@
     </style>
 
     <style name="Proton.Text.DefaultSmall.Interaction">
-        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:textColor">?attr/brand_norm</item>
     </style>
 
     <style name="Proton.Text.Caption.Strong.Inverted">
@@ -126,11 +126,11 @@
         <item name="android:paddingBottom">@dimen/padding_m</item>
         <item name="android:paddingStart">@dimen/padding_l</item>
         <item name="android:paddingEnd">@dimen/padding_l</item>
-        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:textColor">?attr/brand_norm</item>
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
         <item name="android:maxLines">3</item>
         <item name="android:ellipsize">end</item>
-        <item name="drawableTint">@color/cornflower_blue</item>
+        <item name="drawableTint">?attr/brand_norm</item>
     </style>
 
     <style name="ProtonMail.BottomSheetDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
@@ -162,7 +162,7 @@
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
         <item name="android:letterSpacing">0.4</item>
         <item name="android:textSize">@dimen/settings_pin_font_size</item>
-        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:textColor">?attr/brand_norm</item>
         <item name="android:background">@color/transparent</item>
     </style>
 
@@ -192,21 +192,21 @@
         <item name="android:background">@drawable/v3_edittext</item>
     </style>
 
-    <style name="V3EditText.Inverted" parent="V3EditText">
-        <item name="android:textColor">@color/new_purple</item>
-        <item name="android:textColorHint">@color/name_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@drawable/v3_edittext_inverted</item>
-    </style>
+    <!--    <style name="V3EditText.Inverted" parent="V3EditText">-->
+    <!--        <item name="android:textColor">@color/new_purple</item>-->
+    <!--        <item name="android:textColorHint">@color/name_gray</item>-->
+    <!--        <item name="android:textSize">@dimen/h5</item>-->
+    <!--        <item name="android:paddingLeft">8dp</item>-->
+    <!--        <item name="android:background">@drawable/v3_edittext_inverted</item>-->
+    <!--    </style>-->
 
-    <style name="V3EditText.NoBg" parent="V3EditText">
-        <item name="android:textColor">@color/new_purple</item>
-        <item name="android:textColorHint">@color/name_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@color/background_norm</item>
-    </style>
+    <!--    <style name="V3EditText.NoBg" parent="V3EditText">-->
+    <!--        <item name="android:textColor">@color/new_purple</item>-->
+    <!--        <item name="android:textColorHint">@color/name_gray</item>-->
+    <!--        <item name="android:textSize">@dimen/h5</item>-->
+    <!--        <item name="android:paddingLeft">8dp</item>-->
+    <!--        <item name="android:background">@color/background_norm</item>-->
+    <!--    </style>-->
 
     <style name="NoMessagesText">
         <item name="android:textColor">@color/rain_gray</item>
@@ -358,13 +358,6 @@
         <item name="android:drawableLeft">@drawable/ic_proton_magnifier</item>
         <item name="android:drawablePadding">@dimen/fields_default_space_small</item>
         <item name="android:background">@drawable/search_edittext_shape</item>
-    </style>
-
-    <!-- Text Appearance -->
-
-    <style name="App.Text.Subtitle" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/new_purple</item>
-        <item name="android:fontFamily">Roboto-Thin.ttf</item>
     </style>
 
     <!-- endregion -->

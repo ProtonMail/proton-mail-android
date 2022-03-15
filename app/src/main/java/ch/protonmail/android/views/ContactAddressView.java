@@ -236,7 +236,7 @@ public class ContactAddressView extends LinearLayout {
         return mIsDirty;
     }
 
-    @OnClick(R.id.btn_minus)
+    @OnClick(R.id.btn_clear)
     public void onMinusClicked() {
         int childCount = mLinearLayoutParent.getChildCount();
         if (childCount <= 2) {

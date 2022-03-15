@@ -131,7 +131,6 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/height_composer_field"
                 android:background="@drawable/bg_spinner_three_dots"
-                android:backgroundTint="@color/shade_80"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/composer_from_hint_text_view"
                 app:layout_constraintEnd_toEndOf="parent"

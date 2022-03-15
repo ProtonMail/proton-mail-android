@@ -34,7 +34,7 @@
         android:padding="@dimen/padding_m"
         android:text="@string/add_new_email"
         android:textAllCaps="true"
-        android:textColor="@color/cornflower_blue"
+        android:textColor="?attr/brand_norm"
         app:drawableStartCompat="@drawable/ic_proton_plus" />
 
     <LinearLayout

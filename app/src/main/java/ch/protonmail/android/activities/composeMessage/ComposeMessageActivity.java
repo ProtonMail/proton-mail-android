@@ -349,7 +349,7 @@ public class ComposeMessageActivity
 
         }
 
-        fromAddressSpinner.getBackground().setColorFilter(getResources().getColor(R.color.new_purple), PorterDuff.Mode.SRC_ATOP);
+        fromAddressSpinner.getBackground().setColorFilter(getResources().getColor(R.color.icon_norm), PorterDuff.Mode.SRC_ATOP);
         List<String> senderAddresses = composeMessageViewModel.getSenderAddresses();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item_black, senderAddresses);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

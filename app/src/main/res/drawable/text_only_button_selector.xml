@@ -18,6 +18,6 @@
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/new_purple_dark" android:state_pressed="true" />
+    <item android:color="?attr/brand_norm" android:state_pressed="true" />
     <item android:color="@color/label_buttons" />
 </selector>
