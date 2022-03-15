@@ -162,7 +162,6 @@ import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
 import ch.protonmail.android.views.MessageExpirationView;
-import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PmWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -175,8 +174,7 @@ import timber.log.Timber;
 @AndroidEntryPoint
 public class ComposeMessageActivity
         extends ComposeMessageKotlinActivity
-        implements MessagePasswordButton.OnMessagePasswordChangedListener,
-        MessageExpirationView.OnMessageExpirationChangedListener,
+        implements MessageExpirationView.OnMessageExpirationChangedListener,
         LoaderManager.LoaderCallbacks<Cursor>,
         GroupRecipientsDialogFragment.IGroupRecipientsListener {
     //region extras
@@ -1523,12 +1521,6 @@ public class ComposeMessageActivity
         messageBodyEditText.setVisibility(View.VISIBLE);
         composeMessageViewModel.setContent(messageBody);
         setBodyContent(true, isPlainText);
-    }
-
-    @Override
-    public void onMessagePasswordChanged() {
-
-        renderViews();
     }
 
     @Override
