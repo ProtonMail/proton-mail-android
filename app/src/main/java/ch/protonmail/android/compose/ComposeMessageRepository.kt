@@ -51,7 +51,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
@@ -64,7 +63,6 @@ class ComposeMessageRepository @Inject constructor(
     private val userManager: UserManager,
     private val labelRepository: LabelRepository,
     private val contactRepository: ContactsRepository,
-    private val dispatcherProvider: DispatcherProvider,
 ) {
 
     val lazyManager = resettableManager()
@@ -84,7 +82,7 @@ class ComposeMessageRepository @Inject constructor(
         listOfDaos
     }
 
-    fun getContactGroupsFromDB(userId: UserId, combinedContacts: Boolean): Flow<List<ContactLabelUiModel>> {
+    fun getContactGroupsFromDB(userId: UserId): Flow<List<ContactLabelUiModel>> {
         return labelRepository.observeContactGroups(userId)
             .map { list ->
                 list.map { entity ->

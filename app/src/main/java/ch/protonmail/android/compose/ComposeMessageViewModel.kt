@@ -346,7 +346,7 @@ class ComposeMessageViewModel @Inject constructor(
             handleContactGroupsResult()
             return
         }
-        composeMessageRepository.getContactGroupsFromDB(userId, legacyUser.combinedContacts)
+        composeMessageRepository.getContactGroupsFromDB(userId)
             .onEach { models ->
                 for (group in models) {
                     val emails = composeMessageRepository.getContactGroupEmailsSync(group.id.id)
