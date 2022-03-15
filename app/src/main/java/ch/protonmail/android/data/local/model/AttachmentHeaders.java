@@ -40,6 +40,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.utils.Logger;
@@ -59,7 +60,7 @@ public class AttachmentHeaders implements Serializable {
     private String contentLocation;
     @SerializedName(Fields.Attachment.CONTENT_ENCRYPTION)
     private String contentEncryption;
-    private Long serialVersionUID = -8741548902749037534L;
+    private static final Long serialVersionUID = -8741548902749037534L;
 
     // region getters
     public String getContentType() {
@@ -144,6 +145,18 @@ public class AttachmentHeaders implements Serializable {
                 contentEncryption.equals(attachmentHeaders.contentEncryption) &&
                 (contentId != null && contentId.equals(attachmentHeaders.contentId)) &&
                 (contentDisposition != null && contentDisposition.equals(attachmentHeaders.contentDisposition));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                contentType,
+                contentTransferEncoding,
+                contentDisposition,
+                contentId,
+                contentLocation,
+                contentEncryption
+        );
     }
 
     public static class AttachmentHeadersDeserializer implements JsonDeserializer<AttachmentHeaders> {
