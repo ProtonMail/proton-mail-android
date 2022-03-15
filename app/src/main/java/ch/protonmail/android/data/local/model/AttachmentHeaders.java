@@ -120,7 +120,7 @@ public class AttachmentHeaders implements Serializable {
         try {
             result = (AttachmentHeaders) new ObjectInputStream(in).readObject();
         } catch (Exception e) {
-            Timber.e(e, "DeSerialization of recipients failed");
+            Timber.e(e, "Deserialization of attachment headers failed");
         }
         return result;
     }
