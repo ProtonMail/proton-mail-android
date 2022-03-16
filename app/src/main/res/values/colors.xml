@@ -19,9 +19,6 @@
   -->
 <resources>
 
-    <!-- Monochromatic Blues -->
-    <color name="deep_blue">#475F77</color>
-    <color name="ocean_blue">#384C5F</color>
     <color name="black">#000000</color>
 
     <!-- new color scheme -->

@@ -102,7 +102,7 @@ internal class NotificationSettingsViewModelTest {
         val uri = viewModel(soundUri).currentRingtoneUri
         val notificationManager = app.getSystemService<NotificationManager>()!!
         val notification = NotificationCompat.Builder(app)
-            .setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(R.drawable.ic_brand_mail)
             .setContentTitle("ciao")
             .setSound(uri)
             .build()

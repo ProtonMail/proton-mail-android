@@ -152,7 +152,6 @@ class ComposerRobot : Robot {
             .definePasswordWithHint(password, hint)
             .messageExpiration()
             .setExpirationInDays(days)
-            .hideExpirationView()
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
             .send()
@@ -170,7 +169,6 @@ class ComposerRobot : Robot {
             .definePasswordWithHint(password, hint)
             .messageExpiration()
             .setExpirationInDays(days)
-            .hideExpirationView()
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
             .sendWithNotSupportedExpiryConfirmation()
@@ -311,11 +309,6 @@ class ComposerRobot : Robot {
         return MessageExpirationRobot()
     }
 
-    private fun hideExpirationView(): ComposerRobot {
-        view.withId(R.id.hide_view).click()
-        return this
-    }
-
     fun attachments(): MessageAttachmentsRobot {
         view.withId(R.id.composer_attachments_button).click()
         return MessageAttachmentsRobot()
@@ -398,7 +391,7 @@ class ComposerRobot : Robot {
         const val sendMessageId = R.id.send_button
         const val messageBodyId = R.id.composer_message_body_edit_text
         const val subjectId = R.id.composer_subject_edit_text
-        const val logoDrawable = R.drawable.logo
+        const val logoDrawable = R.drawable.ic_launcher_foreground
         const val welcomeDrawable = R.drawable.welcome
         const val addressSpinnerId = R.id.composer_from_spinner
         const val toRecipientsId = R.id.composer_to_recipient_view

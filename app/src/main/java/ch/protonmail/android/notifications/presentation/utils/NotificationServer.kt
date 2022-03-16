@@ -50,6 +50,7 @@ import ch.protonmail.android.utils.buildArchiveIntent
 import ch.protonmail.android.utils.buildDismissGroupIntent
 import ch.protonmail.android.utils.buildDismissIntent
 import ch.protonmail.android.utils.buildTrashIntent
+import ch.protonmail.android.utils.extensions.getColorFromAttr
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.getMailboxActivityIntent
 import me.proton.core.domain.entity.UserId
@@ -162,7 +163,7 @@ class NotificationServer @Inject constructor(
         val notificationTitle = context.getString(R.string.retrieving_notifications)
         return NotificationCompat.Builder(context, channelId)
             .setPriority(PRIORITY_LOW)
-            .setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(R.drawable.ic_brand_mail)
             .setContentTitle(notificationTitle)
             .build()
     }
@@ -222,12 +223,12 @@ class NotificationServer @Inject constructor(
         alarmReceiver.setAlarm(context, true)
 
         // Set Notification's colors
-        val mainColor = context.getColor(R.color.ocean_blue)
+        val mainColor = context.getColor(R.color.icon_norm)
         val lightColor = context.getColor(R.color.light_indicator)
 
         // Create Notification's Builder with the prepared params
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_EMAIL)
-            .setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(R.drawable.ic_brand_mail)
             .setCategory(NotificationCompat.CATEGORY_EMAIL)
             .setColor(mainColor)
             .setLights(lightColor, 1500, 2000)
@@ -411,12 +412,12 @@ class NotificationServer @Inject constructor(
         )
 
         // Set Notification's colors
-        val mainColor = context.getColor(R.color.ocean_blue)
-        val lightColor = context.getColor(R.color.light_indicator)
+        val mainColor = context.getColor(R.color.icon_norm)
+        val lightColor = context.getColorFromAttr(R.attr.brand_norm)
 
         // Create notification builder
         return NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(R.drawable.ic_brand_mail)
             .setContentIntent(contentPendingIntent)
             .setColor(mainColor)
             .setLights(lightColor, 1500, 2000)
