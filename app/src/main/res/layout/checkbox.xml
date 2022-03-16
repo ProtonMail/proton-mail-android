@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2022 Proton AG
   ~
   ~ This file is part of Proton Mail.
@@ -18,20 +17,21 @@
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
 
     <CheckBox
         android:id="@+id/checkbox"
-        android:button="@drawable/custom_labels_checkbox"
+        style="@style/ProtonCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        android:paddingLeft="8dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="20dp"
+        android:button="@drawable/custom_labels_checkbox"
         android:paddingStart="8dp"
+        android:paddingLeft="8dp"
         tools:text="Checkbox Text" />
 
 </FrameLayout>

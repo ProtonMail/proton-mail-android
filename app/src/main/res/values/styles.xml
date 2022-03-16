@@ -65,6 +65,11 @@
         <item name="backgroundTint">?brand_norm</item>
     </style>
 
+
+    <style name="AlertDialog" parent="Proton.ThemeOverlay.AlertDialog">
+        <item name="android:background">@color/background_norm</item>
+    </style>
+
     <!-- region Mailbox -->
     <style name="UnreadMessagesStatusChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="android:textAppearance">@style/Proton.Text.Caption.Strong</item>

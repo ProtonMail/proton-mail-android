@@ -29,6 +29,9 @@
         <item name="snackbarButtonStyle">@style/Widget.App.SnackbarButton</item>
 
         <item name="elevationOverlayEnabled">false</item>
+
+        <item name="android:alertDialogTheme">@style/AlertDialog</item>
+
     </style>
 
     <style name="ProtonTheme.Splash.Mail.V5" parent="ProtonTheme.Splash.Mail">
