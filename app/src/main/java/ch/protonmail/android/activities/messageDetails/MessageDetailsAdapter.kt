@@ -511,7 +511,9 @@ internal class MessageDetailsAdapter(
         showLoadEmbeddedImagesButton: Boolean,
         showDecryptionError: Boolean,
         attachments: List<Attachment>,
-        embeddedImageIds: List<String>
+        embeddedImageIds: List<String>,
+        hasValidSignature: Boolean,
+        hasInvalidSignature: Boolean,
     ) {
         val item: MessageDetailsListItem? = visibleItems.firstOrNull {
             it.itemType == TYPE_ITEM && it.message.messageId == messageId
@@ -534,6 +536,8 @@ internal class MessageDetailsAdapter(
             // Mark the message as read optimistically to reflect the change on the UI right away.
             // Note that this message is being referenced to from both the header and the item.
             this.message.Unread = false
+            this.message.hasInvalidSignature = hasInvalidSignature
+            this.message.hasValidSignature = hasValidSignature
         }
 
         visibleItems.indexOf(item).let { changedItemIndex ->

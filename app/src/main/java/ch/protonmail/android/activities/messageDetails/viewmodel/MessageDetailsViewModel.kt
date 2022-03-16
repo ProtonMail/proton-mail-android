@@ -38,7 +38,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
-import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.User
@@ -177,15 +176,11 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope) }
 
-    private var publicKeys: List<KeyInformation>? = null
-
     var renderingPassed = false
     var hasEmbeddedImages: Boolean = false
-    private var fetchingPubKeys: Boolean = false
     private var embeddedImagesAttachments: ArrayList<Attachment> = ArrayList()
     private var embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
-    var refreshedKeys: Boolean = true
     private var calendarAttachmentId: String? = null
 
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
@@ -331,8 +326,10 @@ internal class MessageDetailsViewModel @Inject constructor(
             val userId = userManager.requireCurrentUserId()
             val messageId = requireNotNull(message.messageId)
             val fetchedMessage = messageRepository.getMessage(userId, messageId, true) ?: return@flow
-
-            val isDecrypted = fetchedMessage.tryDecrypt(publicKeys)
+            val verificationKeys = runCatching {
+                fetchVerificationKeys.invoke(message.senderEmail)
+            }.getOrNull()
+            val isDecrypted = fetchedMessage.tryDecrypt(verificationKeys)
             Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")
             if (!fetchedMessage.isRead && visibleToTheUser) {
                 messageRepository.markRead(listOf(messageId))
@@ -442,7 +439,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private suspend fun emitConversationUiItem(conversationUiModel: ConversationUiModel) {
-        refreshedKeys = true
         _decryptedConversationUiModel.postValue(conversationUiModel)
         _conversationUiFlow.emit(conversationUiModel)
     }
@@ -455,13 +451,14 @@ internal class MessageDetailsViewModel @Inject constructor(
         } catch (exception: Exception) {
             // signature verification failed with special case, try to decrypt again without verification
             // and hardcode verification error
-            if (verificationKeys != null && verificationKeys.isNotEmpty() &&
-                exception.message == "Signature Verification Error: No matching signature"
+            if (verificationKeys != null &&
+                verificationKeys.isNotEmpty() &&
+                exception.isSignatureError()
             ) {
                 Timber.i(exception, "Decrypting message again without verkeys")
                 decrypt(userManager, userManager.requireCurrentUserId())
                 this.hasValidSignature = false
-                this.hasInvalidSignature = true
+                this.hasInvalidSignature = !exception.isMessageNotSignedError()
                 true
             } else {
                 Timber.w(exception, "Cannot decrypt message")
@@ -469,6 +466,12 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    private fun Exception.isSignatureError() =
+        message?.matches("Signature Verification Error: .+".toRegex()) == true
+
+    private fun Exception.isMessageNotSignedError() =
+        message?.equals("Signature Verification Error: Missing signature") == true
 
     fun startDownloadEmbeddedImagesJob(message: Message, embeddedImageIds: List<String>) {
         hasEmbeddedImages = false
@@ -577,8 +580,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
         }
     }
-
-    private suspend fun lastMessage() = conversationUiModel.firstOrNull()?.messages?.maxByOrNull { it.time }
 
     /**
      * Explicitly make a copy of embedded attachment to downloads and display it (product requirement)
@@ -728,32 +729,6 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
         return hasEmbeddedImages
-    }
-
-    fun triggerVerificationKeyLoading() {
-        if (!fetchingPubKeys && publicKeys == null) {
-            viewModelScope.launch {
-                val message = lastMessage()
-                message?.let {
-                    fetchingPubKeys = true
-                    val result = fetchVerificationKeys(message.senderEmail)
-                    onFetchVerificationKeysEvent(result, message)
-                }
-            }
-        }
-    }
-
-    private fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>, message: Message) {
-        Timber.v("FetchVerificationKeys received $pubKeys")
-
-        publicKeys = pubKeys
-        refreshedKeys = false
-
-        fetchingPubKeys = false
-        // render with the new verification keys
-        if (renderingPassed) {
-            RegisterReloadTask(message, labelRepository).execute()
-        }
     }
 
     fun printMessage(messageId: String, activityContext: Context) {

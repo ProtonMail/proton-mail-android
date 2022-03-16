@@ -216,7 +216,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 false,
                 false,
                 message.attachments,
-                message.embeddedImageIds
+                message.embeddedImageIds,
+                hasValidSignature = message.hasValidSignature,
+                hasInvalidSignature = message.hasInvalidSignature,
             )
         }
 
@@ -280,7 +282,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     showLoadEmbeddedImagesButton,
                     showDecryptionError,
                     loadedMessage.attachments,
-                    loadedMessage.embeddedImageIds
+                    loadedMessage.embeddedImageIds,
+                    hasValidSignature = loadedMessage.hasValidSignature,
+                    hasInvalidSignature = loadedMessage.hasInvalidSignature,
                 )
             }.launchIn(lifecycleScope)
         }
@@ -531,10 +535,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             Timber.v("setMessage conversations size: ${conversation.messages.size}")
             messageExpandableAdapter.setMessageData(conversation)
-            if (viewModel.refreshedKeys && isAutoShowRemoteImages) {
+            if (isAutoShowRemoteImages) {
                 viewModel.remoteContentDisplayed()
             }
-            viewModel.triggerVerificationKeyLoading()
 
             progress.visibility = View.GONE
             invalidateOptionsMenu()
