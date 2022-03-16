@@ -157,7 +157,7 @@ public class FcmIntentService extends IntentService {
                     }
                 }
 
-                if (notificationData == null || messageData == null) {
+                if (notificationData == null || messageData == null || messageData.getSender() == null) {
                     return;
                 }
 
