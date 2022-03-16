@@ -20,13 +20,12 @@ package ch.protonmail.android.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import ch.protonmail.android.data.local.model.PendingDraft
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 
 @Database(
-    entities = [PendingSend::class, PendingUpload::class, PendingDraft::class],
-    version = 3
+    entities = [PendingSend::class, PendingUpload::class],
+    version = 4
 )
 abstract class PendingActionDatabase : RoomDatabase() {
 
