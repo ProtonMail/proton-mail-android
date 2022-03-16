@@ -16,21 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.data.local
+package ch.protonmail.android.pendingaction.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import ch.protonmail.android.data.local.model.COLUMN_PENDING_SEND_LOCAL_DB_ID
-import ch.protonmail.android.data.local.model.COLUMN_PENDING_SEND_MESSAGE_ID
-import ch.protonmail.android.data.local.model.COLUMN_PENDING_SEND_OFFLINE_MESSAGE_ID
-import ch.protonmail.android.data.local.model.COLUMN_PENDING_UPLOAD_MESSAGE_ID
-import ch.protonmail.android.data.local.model.PendingSend
-import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.data.local.model.TABLE_PENDING_SEND
-import ch.protonmail.android.data.local.model.TABLE_PENDING_UPLOADS
+import ch.protonmail.android.pendingaction.data.model.COLUMN_PENDING_SEND_LOCAL_DB_ID
+import ch.protonmail.android.pendingaction.data.model.COLUMN_PENDING_SEND_MESSAGE_ID
+import ch.protonmail.android.pendingaction.data.model.COLUMN_PENDING_SEND_OFFLINE_MESSAGE_ID
+import ch.protonmail.android.pendingaction.data.model.COLUMN_PENDING_UPLOAD_MESSAGE_ID
+import ch.protonmail.android.pendingaction.data.model.PendingSend
+import ch.protonmail.android.pendingaction.data.model.PendingUpload
+import ch.protonmail.android.pendingaction.data.model.TABLE_PENDING_SEND
+import ch.protonmail.android.pendingaction.data.model.TABLE_PENDING_UPLOADS
 
 @Dao
 interface PendingActionDao {

@@ -47,7 +47,7 @@ import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.core.apiError
 import ch.protonmail.android.core.messageId
-import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.usecase.compose.SaveDraft

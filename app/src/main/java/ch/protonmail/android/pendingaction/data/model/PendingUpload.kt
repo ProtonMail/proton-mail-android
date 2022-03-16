@@ -16,23 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.data.local
+package ch.protonmail.android.pendingaction.data.model
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import ch.protonmail.android.data.local.model.PendingSend
-import ch.protonmail.android.data.local.model.PendingUpload
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Database(
-    entities = [PendingSend::class, PendingUpload::class],
-    version = 4
+const val TABLE_PENDING_UPLOADS = "pending_uploads"
+const val COLUMN_PENDING_UPLOAD_MESSAGE_ID = "message_id"
+
+@Entity(tableName = TABLE_PENDING_UPLOADS)
+data class PendingUpload(
+
+    @PrimaryKey
+    @ColumnInfo(name = COLUMN_PENDING_UPLOAD_MESSAGE_ID)
+    var messageId: String
 )
-abstract class PendingActionDatabase : RoomDatabase() {
-
-    abstract fun getDao(): PendingActionDao
-
-    companion object : DatabaseFactory<PendingActionDatabase>(
-        PendingActionDatabase::class,
-        "PendingActionDatabase.db"
-    )
-}

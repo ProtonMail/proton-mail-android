@@ -33,10 +33,10 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.usecase.compose.SaveDraft.SaveDraftParameters
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker.Enqueuer

@@ -42,7 +42,7 @@ import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.data.local.PendingActionDatabase;
+import ch.protonmail.android.pendingaction.data.PendingActionDatabase;
 import ch.protonmail.android.data.local.model.AttachmentMetadata;
 import ch.protonmail.android.data.local.model.Message;
 import dagger.hilt.android.AndroidEntryPoint;

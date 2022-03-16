@@ -83,8 +83,8 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_ONBOARDING_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
-import ch.protonmail.android.data.local.PendingActionDao
-import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.pendingaction.data.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.events.FetchLabelsEvent
