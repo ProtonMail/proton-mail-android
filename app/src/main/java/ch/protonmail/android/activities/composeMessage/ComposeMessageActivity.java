@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -382,6 +382,8 @@ public class ComposeMessageActivity
         fromAddressSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
         composeMessageViewModel.setSignature(composeMessageViewModel.getSignatureByEmailAddress((String) fromAddressSpinner.getSelectedItem()));
+
+        composeMessageViewModel.getFetchedBodyEvents().observe(this, this::setMessageBody);
     }
 
     private void setUpQuotedMessageWebView() {
@@ -584,16 +586,21 @@ public class ComposeMessageActivity
     }
 
     private void setMessageBody() {
-        composeMessageViewModel.getFetchedBodyEvents().observe(this, it -> {
-            setMessageBodyInContainers(composeMessageViewModel.setMessageBody(
-                    it,
-                    true,
-                    false,
-                    getString(R.string.sender_name_address),
-                    getString(R.string.original_message_divider),
-                    getString(R.string.reply_prefix_on),
-                    DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
-        });
+        setMessageBody("");
+    }
+
+    private void setMessageBody(String composerBody) {
+        setMessageBodyInContainers(
+                composeMessageViewModel.setMessageBody(
+                        composerBody,
+                        true,
+                        false,
+                        getString(R.string.sender_name_address),
+                        getString(R.string.original_message_divider),
+                        getString(R.string.reply_prefix_on),
+                        DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())
+                )
+        );
     }
 
     private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {
