@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -31,7 +31,6 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_NAME;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_SIGNATURE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_GCM_DOWNLOAD_MESSAGE_DETAILS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_KEYS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_LAST_INTERACTION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MANUALLY_LOCKED;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_ATTACHMENT_STORAGE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_SPACE;
@@ -56,7 +55,6 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.SystemClock;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -271,10 +269,6 @@ public class User {
         getPreferences().edit().putBoolean(PREF_DISPLAY_SIGNATURE, ShowSignature).apply();
     }
 
-    private boolean loadShowSignatureSetting() {
-        return getPreferences().getBoolean(PREF_DISPLAY_SIGNATURE, false);
-    }
-
     private void saveShowMobileFooterSetting() {
         getPreferences().edit().putBoolean(PREF_DISPLAY_MOBILE, ShowMobileFooter).apply();
     }
@@ -283,24 +277,12 @@ public class User {
         getPreferences().edit().putString(PREF_MOBILE_FOOTER, mobileFooter).apply();
     }
 
-    private boolean loadShowMobileFooterSetting() {
-        return getPreferences().getBoolean(PREF_DISPLAY_MOBILE, true);
-    }
-
     private void saveGcmDownloadMessageDetailsSetting() {
         getPreferences().edit().putBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, GcmDownloadMessageDetails).apply();
     }
 
-    private boolean loadGcmDownloadMessageDetailsSetting() {
-        return getPreferences().getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
-    }
-
     private void saveBackgroundSyncSetting() {
         getPreferences().edit().putBoolean(PREF_BACKGROUND_SYNC, BackgroundSync).apply();
-    }
-
-    private boolean loadBackgroundSyncSetting() {
-        return getPreferences().getBoolean(PREF_BACKGROUND_SYNC, true);
     }
 
     private void savePreventTakingScreenshotsSetting() {
@@ -313,10 +295,6 @@ public class User {
 
     public void saveManuallyLockedSetting() {
         getPreferences().edit().putBoolean(PREF_MANUALLY_LOCKED, ManuallyLocked).apply();
-    }
-
-    private int loadPreventTakingScreenshotsSetting() {
-        return getPreferences().getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
     }
 
     public void setAllowSecureConnectionsViaThirdParties(boolean allowSecureConnectionsViaThirdParties) {
