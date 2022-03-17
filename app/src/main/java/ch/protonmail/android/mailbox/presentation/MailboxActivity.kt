@@ -60,7 +60,6 @@ import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.StartCompose
-import ch.protonmail.android.activities.StartMessageDetails
 import ch.protonmail.android.activities.StartSearch
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.SettingsEnum
