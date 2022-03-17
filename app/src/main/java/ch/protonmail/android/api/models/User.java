@@ -38,7 +38,6 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_UPLOAD_FILE_SI
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MOBILE_FOOTER;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_PREVENT_TAKING_SCREENSHOTS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_RINGTONE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ROLE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SUBSCRIBED;
@@ -125,7 +124,6 @@ public class User {
     private int NotificationSetting = -1; // this can remain here, local only setting
     private boolean BackgroundSync = true; // this can remain here, local only setting
     private int NotificationVisibilityLockScreen = -1; // this can remain here, local only setting
-    private int PreventTakingScreenshots = 0; // this can remain here, local only setting
     private boolean GcmDownloadMessageDetails; // this can remain here, local only setting
     private boolean UsePin; // this can remain here, local only setting
     private boolean UseFingerprint; // this can remain here, local only setting
@@ -237,7 +235,6 @@ public class User {
         user.ShowSignature = securePrefs.getBoolean(PREF_DISPLAY_SIGNATURE, true);
         user.NotificationSetting = user.loadNotificationSettingsFromBackup();
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
-        user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
         user.GcmDownloadMessageDetails = securePrefs.getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
         int maxAttachmentStorage = securePrefs.getInt(PREF_MAX_ATTACHMENT_STORAGE, Constants.DEFAULT_ATTACHMENT_STORAGE_IN_MB);
         if (maxAttachmentStorage == 0) {
@@ -283,10 +280,6 @@ public class User {
 
     private void saveBackgroundSyncSetting() {
         getPreferences().edit().putBoolean(PREF_BACKGROUND_SYNC, BackgroundSync).apply();
-    }
-
-    private void savePreventTakingScreenshotsSetting() {
-        getPreferences().edit().putInt(PREF_PREVENT_TAKING_SCREENSHOTS, PreventTakingScreenshots).apply();
     }
 
     public void saveMaxAttachmentStorageSetting() {
@@ -703,15 +696,6 @@ public class User {
     public void setNotificationVisibilityLockScreen(boolean notificationVisibilityLockScreen) {
         NotificationVisibilityLockScreen = notificationVisibilityLockScreen ? 1 : 0;
         saveNotificationVisibilityLockScreenSettingsBackup();
-    }
-
-    public boolean isPreventTakingScreenshots() {
-        return PreventTakingScreenshots == 1;
-    }
-
-    public void setPreventTakingScreenshots(boolean preventTakingScreenshots) {
-        PreventTakingScreenshots = preventTakingScreenshots ? 1 : 0;
-        savePreventTakingScreenshotsSetting();
     }
 
     public boolean isGcmDownloadMessageDetails() {
