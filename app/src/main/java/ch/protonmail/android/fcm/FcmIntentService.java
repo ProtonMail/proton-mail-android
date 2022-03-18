@@ -51,6 +51,7 @@ import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
+import ch.protonmail.android.fcm.models.NotificationAction;
 import ch.protonmail.android.fcm.models.NotificationData;
 import ch.protonmail.android.fcm.models.NotificationEncryptedData;
 import ch.protonmail.android.fcm.models.NotificationSender;
@@ -157,7 +158,7 @@ public class FcmIntentService extends IntentService {
                     }
                 }
 
-                if (notificationData == null || messageData == null || messageData.getSender() == null) {
+                if (notificationData == null || messageData == null || messageData.getSender() == null || messageData.getAction() != NotificationAction.CREATED) {
                     return;
                 }
 

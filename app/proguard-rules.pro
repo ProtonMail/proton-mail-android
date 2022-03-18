@@ -215,6 +215,7 @@
 #PM
 -keep class ch.protonmail.android.api.** { *;}
 -keep class ch.protonmail.android.uiModel.** { *; }
+-keepclassmembers class ch.protonmail.android.fcm.models.NotificationAction { *; }
 
 #kotlin coroutines
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
