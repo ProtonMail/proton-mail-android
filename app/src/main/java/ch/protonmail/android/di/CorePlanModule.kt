@@ -18,17 +18,16 @@
 
 package ch.protonmail.android.di
 
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.plan.data.repository.PlansRepositoryImpl
-import me.proton.core.plan.domain.SupportedSignupPaidPlans
-import me.proton.core.plan.domain.SupportedUpgradePaidPlans
+import me.proton.core.plan.domain.ProductOnlyPaidPlans
+import me.proton.core.plan.domain.SupportSignupPaidPlans
+import me.proton.core.plan.domain.SupportUpgradePaidPlans
 import me.proton.core.plan.domain.repository.PlansRepository
-import me.proton.core.plan.presentation.entity.SupportedPlan
 import javax.inject.Singleton
 
 @Module
@@ -36,22 +35,19 @@ import javax.inject.Singleton
 object CorePlanModule {
 
     @Provides
-    @SupportedSignupPaidPlans
-    fun provideClientSupportedPaidPlan(): List<SupportedPlan> =
-        listOf(SupportedPlan("plus"))
+    @SupportSignupPaidPlans
+    fun provideSupportSignupPaidPlans() = true
 
     @Provides
     @Singleton
     fun providePlansRepository(apiProvider: ApiProvider): PlansRepository =
         PlansRepositoryImpl(apiProvider)
-}
 
-@Module
-@InstallIn(SingletonComponent::class)
-interface PlansBindsModule {
-    @Binds
-    @SupportedUpgradePaidPlans
-    fun bindClientSupportedUpgradePaidPlanNames(
-        @SupportedSignupPaidPlans plans: List<SupportedPlan>
-    ): List<SupportedPlan>
+    @Provides
+    @SupportUpgradePaidPlans
+    fun provideSupportUpgradePaidPlans() = true
+
+    @Provides
+    @ProductOnlyPaidPlans
+    fun provideProductOnlyPaidPlans() = false
 }
