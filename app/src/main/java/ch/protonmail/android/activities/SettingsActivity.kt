@@ -19,6 +19,7 @@
 package ch.protonmail.android.activities
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.text.TextUtils
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
@@ -71,7 +72,7 @@ class SettingsActivity : BaseSettingsActivity() {
 
         val languageValues = resources.getStringArray(R.array.custom_language_values)
         val languageLabels = resources.getStringArray(R.array.custom_language_labels)
-        val appLanguage = preferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
+        val appLanguage = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_CUSTOM_APP_LANGUAGE, "")
         if (appLanguage.isNullOrEmpty()) {
             setValue(SettingsEnum.APP_LANGUAGE, getString(R.string.auto_detect))
         } else {
