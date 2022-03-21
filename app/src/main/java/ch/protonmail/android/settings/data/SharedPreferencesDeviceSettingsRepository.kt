@@ -23,7 +23,9 @@ import android.content.SharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.settings.domain.DeviceSettingsRepository
 import ch.protonmail.android.settings.domain.model.AppThemeSettings
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -45,12 +47,23 @@ class SharedPreferencesDeviceSettingsRepository @Inject constructor(
 
     override suspend fun getIsPreventTakingScreenshots(): Boolean =
         withContext(dispatchers.Io) {
-            preferences.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0) == 1
+            isPreventTakingScreenshots()
         }
 
-    override fun observePreventTakingScreenshots(): Flow<Boolean> {
-        TODO("Not yet implemented")
+    override fun observeIsPreventTakingScreenshots(): Flow<Boolean> = callbackFlow {
+        send(isPreventTakingScreenshots())
+
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == PREF_PREVENT_TAKING_SCREENSHOTS) {
+                trySend(isPreventTakingScreenshots())
+            }
+        }
+        preferences.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { preferences.unregisterOnSharedPreferenceChangeListener(listener) }
     }
+
+    private fun isPreventTakingScreenshots() =
+        preferences.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0) == 1
 
     override suspend fun saveAppThemeSettings(settings: AppThemeSettings) {
         withContext(dispatchers.Io) {

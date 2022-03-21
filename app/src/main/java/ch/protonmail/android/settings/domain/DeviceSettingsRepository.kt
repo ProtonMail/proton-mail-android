@@ -28,7 +28,7 @@ interface DeviceSettingsRepository {
 
     suspend fun getIsPreventTakingScreenshots(): Boolean
 
-    fun observePreventTakingScreenshots(): Flow<Boolean>
+    fun observeIsPreventTakingScreenshots(): Flow<Boolean>
 
     suspend fun saveAppThemeSettings(settings: AppThemeSettings)
 

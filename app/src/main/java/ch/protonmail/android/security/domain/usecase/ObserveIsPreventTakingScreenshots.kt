@@ -28,5 +28,5 @@ class ObserveIsPreventTakingScreenshots @Inject constructor(
 ) {
 
     operator fun invoke(): Flow<Boolean> =
-        settingsRepository.observePreventTakingScreenshots()
+        settingsRepository.observeIsPreventTakingScreenshots()
 }
