@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -20,10 +20,17 @@
 package ch.protonmail.android.settings.domain
 
 import ch.protonmail.android.settings.domain.model.AppThemeSettings
+import kotlinx.coroutines.flow.Flow
 
 interface DeviceSettingsRepository {
 
     suspend fun getAppThemeSettings(): AppThemeSettings
 
+    suspend fun getIsPreventTakingScreenshots(): Boolean
+
+    fun observePreventTakingScreenshots(): Flow<Boolean>
+
     suspend fun saveAppThemeSettings(settings: AppThemeSettings)
+
+    suspend fun savePreventTakingScreenshots(shouldPrevent: Boolean)
 }

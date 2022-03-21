@@ -19,23 +19,17 @@
 
 package ch.protonmail.android.security.domain.usecase
 
-import android.content.SharedPreferences
-import ch.protonmail.android.core.Constants.Prefs.PREF_PREVENT_TAKING_SCREENSHOTS
-import ch.protonmail.android.di.BackupSharedPreferences
-import kotlinx.coroutines.withContext
-import me.proton.core.util.kotlin.DispatcherProvider
+import ch.protonmail.android.settings.domain.DeviceSettingsRepository
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class GetIsPreventTakingScreenshots @Inject constructor(
-    @BackupSharedPreferences
-    private val preferences: SharedPreferences,
-    private val dispatchers: DispatcherProvider
+    private val settingsRepository: DeviceSettingsRepository
 ) {
 
-    suspend operator fun invoke(): Boolean = withContext(dispatchers.Io) {
-        blocking()
-    }
+    suspend operator fun invoke(): Boolean =
+        settingsRepository.getIsPreventTakingScreenshots()
 
     fun blocking(): Boolean =
-        preferences.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0) == 1
+        runBlocking { invoke() }
 }
