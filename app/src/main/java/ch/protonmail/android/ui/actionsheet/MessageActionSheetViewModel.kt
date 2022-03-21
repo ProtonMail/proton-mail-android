@@ -40,6 +40,7 @@ import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
 import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
+import ch.protonmail.android.metrics.domain.SendMetricsForViewInDarkModePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +68,8 @@ internal class MessageActionSheetViewModel @Inject constructor(
     private val isAppInDarkMode: IsAppInDarkMode,
     private val getViewInDarkModeMessagePreference: GetViewInDarkModeMessagePreference,
     private val setViewInDarkModeMessagePreference: SetViewInDarkModeMessagePreference,
-    private val accountManager: AccountManager
+    private val accountManager: AccountManager,
+    private val sendMetricsForViewInDarkModePreference: SendMetricsForViewInDarkModePreference
 ) : ViewModel() {
 
 
@@ -365,6 +367,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
         viewModelScope.launch {
             accountManager.getPrimaryUserId().first()?.let {
                 setViewInDarkModeMessagePreference(it, messageId, viewInDarkMode = false)
+                sendMetricsForViewInDarkModePreference(it, viewInDarkMode = false)
             }
         }.invokeOnCompletion {
             actionsMutableFlow.value = MessageActionSheetAction.ViewMessageInLightDarkMode(
@@ -377,6 +380,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
         viewModelScope.launch {
             accountManager.getPrimaryUserId().first()?.let {
                 setViewInDarkModeMessagePreference(it, messageId, viewInDarkMode = true)
+                sendMetricsForViewInDarkModePreference(it, viewInDarkMode = true)
             }
         }.invokeOnCompletion {
             actionsMutableFlow.value = MessageActionSheetAction.ViewMessageInLightDarkMode(

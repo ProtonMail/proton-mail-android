@@ -33,6 +33,7 @@ import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.metrics.domain.SendMetricsForViewInDarkModePreference
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet.Companion.EXTRA_ARG_IS_STARRED
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
@@ -109,6 +110,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @MockK
     private lateinit var savedStateHandle: SavedStateHandle
 
+    private val sendMetricsForViewInDarkModePreference: SendMetricsForViewInDarkModePreference = mockk()
+
     private val context: Context = mockk()
 
     private lateinit var viewModel: MessageActionSheetViewModel
@@ -134,7 +137,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             isAppInDarkMode,
             getViewInDarkModeMessagePreference,
             setViewInDarkModeMessagePreference,
-            accountManager
+            accountManager,
+            sendMetricsForViewInDarkModePreference
         )
     }
 
@@ -641,6 +645,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = false) }
+        coVerify { sendMetricsForViewInDarkModePreference(testUserId, viewInDarkMode = false) }
         assertEquals(expectedActionsFlowValue, viewModel.actionsFlow.value)
     }
 
@@ -656,6 +661,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         coVerify { setViewInDarkModeMessagePreference(testUserId, messageId, viewInDarkMode = true) }
+        coVerify { sendMetricsForViewInDarkModePreference(testUserId, viewInDarkMode = true) }
         assertEquals(expectedActionsFlowValue, viewModel.actionsFlow.value)
     }
 
