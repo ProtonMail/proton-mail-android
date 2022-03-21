@@ -54,6 +54,7 @@ import ch.protonmail.android.databinding.ActivityContactDetailsBinding
 import ch.protonmail.android.usecase.create.VCARD_TEMP_FILE_NAME
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.ListItemThumbnail
 import coil.ImageLoader
 import coil.request.ImageRequest
@@ -278,7 +279,15 @@ class ContactDetailsActivity : AppCompatActivity() {
         if (!photoBytes.isNullOrEmpty()) {
             setThumbnailImage(photoBytes)
         } else if (photoUrl != null) {
-            loadThumbnailImage(photoUrl)
+            showTwoButtonInfoDialog(
+                titleStringId = R.string.contact_details_remote_content_dialog_title,
+                messageStringId = R.string.contact_details_remote_content_dialog_message,
+                rightStringId = R.string.contact_details_remote_content_dialog_positive_button,
+                dismissOnButtonClick = true,
+                cancelable = false,
+                cancelOnTouchOutside = false,
+                onPositiveButtonClicked = { loadThumbnailImage(photoUrl) }
+            )
         }
     }
 
