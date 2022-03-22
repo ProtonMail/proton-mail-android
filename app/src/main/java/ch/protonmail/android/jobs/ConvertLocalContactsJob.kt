@@ -292,10 +292,11 @@ class ConvertLocalContactsJob(
                 )
                 val response = getApi().createLabel(currentUser, requestBody)
 
-                if (response is ApiResult.Error.Http &&
-                    response.proton?.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST
-                ) {
-                    someGroupsAlreadyExist = true
+                if (response is ApiResult.Error.Http) {
+                    // All errors of ApiResult.Error.Http type will be ignored here unless we decide to handle them
+                    if (response.proton?.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST) {
+                        someGroupsAlreadyExist = true
+                    }
                 } else {
                     val serverLabel = response.valueOrThrow.label
                     result[it.value] = serverLabel.id
@@ -321,7 +322,6 @@ class ConvertLocalContactsJob(
                     }
                 }
             }
-
         }
 
         return result
