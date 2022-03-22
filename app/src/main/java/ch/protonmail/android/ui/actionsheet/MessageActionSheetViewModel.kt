@@ -28,7 +28,6 @@ import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
@@ -36,15 +35,13 @@ import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.metrics.domain.SendMetricsForViewInDarkModePreference
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
-import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
-import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
-import ch.protonmail.android.metrics.domain.SendMetricsForViewInDarkModePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow

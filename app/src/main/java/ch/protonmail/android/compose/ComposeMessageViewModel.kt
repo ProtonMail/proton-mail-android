@@ -461,7 +461,12 @@ class ComposeMessageViewModel @Inject constructor(
                 val newAttachments = calculateNewAttachments(message, uploadAttachments)
 
                 invokeSaveDraftUseCase(
-                    message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger
+                    message,
+                    newAttachments,
+                    parentId,
+                    _actionId,
+                    _oldSenderAddressId,
+                    saveDraftTrigger
                 )
 
                 // overwrite "old sender ID" when updating draft
