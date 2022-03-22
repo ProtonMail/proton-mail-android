@@ -47,9 +47,13 @@ class MailboxItemUiModelMapper @Inject constructor(
     private val labelChipUiModelMapper: LabelChipUiModelMapper
 ) : Mapper<Either<Message, Conversation>, MailboxItemUiModel> {
 
-    suspend fun toUiModel(message: Message, allLabels: Collection<Label>): MailboxItemUiModel = MailboxItemUiModel(
+    suspend fun toUiModel(
+        message: Message,
+        currentLabelId: LabelId,
+        allLabels: Collection<Label>
+    ): MailboxItemUiModel = MailboxItemUiModel(
         itemId = checkNotNull(message.messageId) { "Message id is null" },
-        senderName = toDisplayNameFromContacts(message.sender, message.senderDisplayName),
+        correspondentsNames = getCorrespondentsNames(message, currentLabelId),
         subject = checkNotNull(message.subject) { "Message subject is null" },
         lastMessageTimeMs = message.timeMs,
         hasAttachments = message.numAttachments > 0,
@@ -60,12 +64,16 @@ class MailboxItemUiModelMapper @Inject constructor(
         messageData = buildMessageData(message),
         messageLabels = message.buildLabelChipFromMessageLabels(allLabels),
         allLabelsIds = message.allLabelsIds(),
-        recipients = toDisplayNamesFromContacts(message.toList + message.ccList + message.bccList).joinToString(),
         isDraft = message.isDraft()
     )
 
-    suspend fun toUiModels(messages: Collection<Message>, allLabels: Collection<Label>): List<MailboxItemUiModel> =
-        messages.map { toUiModel(it, allLabels) }
+    @JvmName("messagesToUiModels")
+    suspend fun toUiModels(
+        messages: Collection<Message>,
+        currentLabelId: LabelId,
+        allLabels: Collection<Label>
+    ): List<MailboxItemUiModel> =
+        messages.map { toUiModel(it, currentLabelId, allLabels) }
 
     suspend fun toUiModel(
         conversation: Conversation,
@@ -73,7 +81,7 @@ class MailboxItemUiModelMapper @Inject constructor(
         allLabels: Collection<Label>
     ) = MailboxItemUiModel(
         itemId = conversation.id,
-        senderName = toDisplayNamesFromContacts(conversation.senders).joinToString(),
+        correspondentsNames = getCorrespondentsNames(conversation, currentLabelId),
         subject = conversation.subject,
         lastMessageTimeMs = conversation.lastMessageTimeMs(currentLabelId),
         hasAttachments = conversation.attachmentsCount > 0,
@@ -84,15 +92,37 @@ class MailboxItemUiModelMapper @Inject constructor(
         messageData = null,
         messageLabels = conversation.buildLabelChipFromMessageLabels(allLabels),
         allLabelsIds = conversation.allLabelsIds(),
-        recipients = conversation.receivers.joinToString { it.name },
         isDraft = conversation.containsSingleDraftMessage()
     )
 
+    @JvmName("conversationsToUiModels")
     suspend fun toUiModels(
         conversations: Collection<Conversation>,
         currentLabelId: LabelId,
         allLabels: Collection<Label>
     ): List<MailboxItemUiModel> = conversations.map { toUiModel(it, currentLabelId, allLabels) }
+
+    private suspend fun getCorrespondentsNames(conversation: Conversation, currentLabelId: LabelId): String =
+        if (isDraftOrSentLabel(currentLabelId)) conversation.receivers.joinToString { it.name }
+        else toDisplayNamesFromContacts(conversation.senders).joinToString()
+
+    private suspend fun getCorrespondentsNames(message: Message, currentLabelId: LabelId): String =
+        if (isDraftOrSentLabel(currentLabelId)) {
+            toDisplayNamesFromContacts(message.toList + message.ccList + message.bccList).joinToString()
+        } else {
+            toDisplayNameFromContacts(message.sender, message.senderDisplayName)
+        }
+
+    private fun isDraftOrSentLabel(currentLabelId: LabelId): Boolean {
+        val sentAndDraftLabels = listOf(
+            MessageLocationType.DRAFT,
+            MessageLocationType.ALL_DRAFT,
+            MessageLocationType.SENT,
+            MessageLocationType.ALL_SENT
+        ).map { it.asLabelId() }
+
+        return currentLabelId in sentAndDraftLabels
+    }
 
     private suspend fun toDisplayNameFromContacts(sender: MessageSender?, senderDisplayName: String?): String {
         checkNotNull(sender) { "Message has null sender" }
