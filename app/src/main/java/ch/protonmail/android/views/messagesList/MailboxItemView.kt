@@ -90,15 +90,14 @@ class MailboxItemView @JvmOverloads constructor(
     }
 
     private fun getCorrespondentsText(mailboxUiItem: MailboxItemUiModel, location: MessageLocationType) =
-        if (isDraftOrSentItem(mailboxUiItem, location)) {
+        if (isDraftOrSentFolder(location)) {
             mailboxUiItem.recipients
         } else {
             mailboxUiItem.senderName
         }
 
-    private fun isDraftOrSentItem(mailboxUiItem: MailboxItemUiModel, location: MessageLocationType): Boolean {
+    private fun isDraftOrSentFolder(location: MessageLocationType): Boolean {
         val currentLabelId = location.asLabelId()
-        val mailboxItemLabelsIds = mailboxUiItem.allLabelsIds
         val sentAndDraftLabels = listOf(
             MessageLocationType.DRAFT,
             MessageLocationType.ALL_DRAFT,
@@ -106,7 +105,7 @@ class MailboxItemView @JvmOverloads constructor(
             MessageLocationType.ALL_SENT
         ).map { it.asLabelId() }
 
-        return (mailboxItemLabelsIds + currentLabelId).any { it in sentAndDraftLabels }
+        return currentLabelId in sentAndDraftLabels
     }
 
     private fun getIconForMessageLocation(messageLocation: MessageLocationType) = when (messageLocation) {
@@ -203,5 +202,4 @@ class MailboxItemView @JvmOverloads constructor(
         MessageLocationType.DRAFT,
         MessageLocationType.ALL_DRAFT
     )
-
 }
