@@ -1,3 +1,0 @@
-gopenpgp: 2.2.4
-go-srp: 0.0.2
-golang: 1.17.1
