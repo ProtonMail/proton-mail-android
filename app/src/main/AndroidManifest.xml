@@ -216,7 +216,7 @@
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".mailbox.presentation.MailboxActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
-            android:exported="false">
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".mailbox.presentation.MailboxActivity" />
