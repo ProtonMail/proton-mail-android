@@ -89,7 +89,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
@@ -137,7 +136,7 @@ internal class MailboxViewModel @Inject constructor(
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
     private val mutableMailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
     private val mutableMailboxLocation = MutableStateFlow(INBOX)
-    private val mutableMailboxLabelId = MutableStateFlow(EMPTY_STRING)
+    private val mutableMailboxLabelId = MutableStateFlow<String?>(null)
     private val mutableUserId = userManager.primaryUserId
     private val mutableRefreshFlow = MutableSharedFlow<Boolean>(
         replay = 1,
@@ -593,7 +592,7 @@ internal class MailboxViewModel @Inject constructor(
 
     fun setNewMailboxLabel(labelId: String) {
         if (mutableMailboxLabelId.value != labelId) {
-            mutableMailboxLabelId.value = labelId
+            mutableMailboxLabelId.value = labelId.takeIfNotBlank()
         }
     }
 
