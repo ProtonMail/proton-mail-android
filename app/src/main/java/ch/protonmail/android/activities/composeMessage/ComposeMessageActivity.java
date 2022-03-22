@@ -1283,7 +1283,9 @@ public class ComposeMessageActivity
             composeMessageViewModel.setAttachmentList(listToSet);
             afterAttachmentsAdded();
         } else {
-            Timber.w("ComposeMessageAct.onActivityResult Received result not handled", requestCode, resultCode);
+            Timber.w("ComposeMessageAct.onActivityResult Received result not handled. \n" +
+                    "Request code = %s\n" +
+                    "Result code = %s", requestCode, resultCode);
             super.onActivityResult(requestCode, resultCode, data);
         }
     }

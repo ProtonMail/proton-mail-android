@@ -181,7 +181,7 @@ class EventHandler @AssistedInject constructor(
                         Timber.e("Error when fetching message: ${messageResponse.error}")
                     }
                     else -> {
-                        Timber.e("Error when fetching message")
+                        Timber.e("Error when fetching message: ${messageResponse.error}")
                     }
                 }
                 true
