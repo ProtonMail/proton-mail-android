@@ -31,7 +31,6 @@ import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import javax.inject.Inject
@@ -124,7 +123,7 @@ class AddressChooserActivity : BaseActivity() {
 
     private fun initFilterView() {
         filterView.apply {
-            UiUtil.setTextViewDrawableColor(this@AddressChooserActivity, this, R.color.lead_gray)
+//            UiUtil.setTextViewDrawableColor(this@AddressChooserActivity, this, R.color.lead_gray)
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 

@@ -48,7 +48,6 @@
     <color name="orange">#D9804B</color>
     <color name="green">#A2C276</color>
     <color name="blue">#7569D1</color>
-    <color name="labels_dialog_bg">@color/white</color>
 
     <!-- login -->
     <color name="new_purple">#9199cb</color>

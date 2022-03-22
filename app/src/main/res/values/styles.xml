@@ -197,22 +197,6 @@
         <item name="android:background">@drawable/v3_edittext</item>
     </style>
 
-    <!--    <style name="V3EditText.Inverted" parent="V3EditText">-->
-    <!--        <item name="android:textColor">@color/new_purple</item>-->
-    <!--        <item name="android:textColorHint">@color/name_gray</item>-->
-    <!--        <item name="android:textSize">@dimen/h5</item>-->
-    <!--        <item name="android:paddingLeft">8dp</item>-->
-    <!--        <item name="android:background">@drawable/v3_edittext_inverted</item>-->
-    <!--    </style>-->
-
-    <!--    <style name="V3EditText.NoBg" parent="V3EditText">-->
-    <!--        <item name="android:textColor">@color/new_purple</item>-->
-    <!--        <item name="android:textColorHint">@color/name_gray</item>-->
-    <!--        <item name="android:textSize">@dimen/h5</item>-->
-    <!--        <item name="android:paddingLeft">8dp</item>-->
-    <!--        <item name="android:background">@color/background_norm</item>-->
-    <!--    </style>-->
-
     <style name="NoMessagesText">
         <item name="android:textColor">@color/rain_gray</item>
         <item name="android:textSize">@dimen/h4</item>
@@ -283,28 +267,15 @@
         <item name="android:lineSpacingExtra">@dimen/padding_m</item>
     </style>
 
-    <style name="AttachmentText">
-        <item name="android:ellipsize">middle</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
     <style name="SettingsItemPadding">
         <item name="android:background">@drawable/settings_item_selector</item>
         <item name="android:clickable">true</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:padding">@dimen/message_spacing</item>
-        <item name="android:layout_marginLeft">@dimen/fields_default_space</item>
-        <item name="android:layout_marginRight">@dimen/fields_default_space_small</item>
+        <item name="android:padding">@dimen/padding_m</item>
+        <item name="android:layout_marginLeft">@dimen/margin_m</item>
+        <item name="android:layout_marginRight">@dimen/margin_m</item>
         <item name="android:paddingLeft">0dp</item>
         <item name="android:paddingRight">0dp</item>
-    </style>
-
-    <style name="SettingsHeadingText">
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textSize">@dimen/h4</item>
-        <item name="fontName">Roboto-Regular.ttf</item>
     </style>
 
     <style name="DialogAnimation">
@@ -314,7 +285,7 @@
 
     <style name="AppTheme.Dialog.Labels" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/labels_dialog_bg</item>
+        <item name="android:windowBackground">@color/background_norm</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowFullscreen">false</item>
     </style>
@@ -327,7 +298,6 @@
         <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowIsTranslucent">true</item>
-
         <item name="android:windowCloseOnTouchOutside">false</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:backgroundDimEnabled">true</item>
@@ -362,7 +332,6 @@
         <item name="android:drawableStart">@drawable/ic_proton_magnifier</item>
         <item name="android:drawableLeft">@drawable/ic_proton_magnifier</item>
         <item name="android:drawablePadding">@dimen/fields_default_space_small</item>
-        <item name="android:background">@drawable/search_edittext_shape</item>
     </style>
 
     <!-- endregion -->

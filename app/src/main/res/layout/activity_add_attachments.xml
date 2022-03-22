@@ -18,7 +18,6 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -41,33 +40,27 @@
         android:layout_below="@id/toolbar"
         android:background="@drawable/actionbar_shadow" />
 
-    <ch.protonmail.android.views.CustomFontTextView
+    <TextView
+        style="@style/Proton.Text.Default"
         android:id="@+id/no_attachments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/spacing"
-        android:gravity="center"
+        android:textColor="?attr/brand_norm"
         android:text="@string/no_attachments"
-        android:textColor="@color/new_purple"
-        android:textSize="@dimen/h2"
-        android:visibility="gone"
-        app:fontName="Roboto-Thin.ttf" />
+        android:visibility="gone" />
 
-    <ch.protonmail.android.views.CustomFontTextView
+    <TextView
+        style="@style/Proton.Text.Default"
         android:id="@+id/num_attachments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/fields_default_space"
-        android:gravity="center"
-        android:textColor="@color/new_purple"
-        android:textSize="@dimen/h2"
-        android:visibility="gone"
-        app:fontName="Roboto-Thin.ttf" />
+        android:textColor="?attr/brand_norm"
+        android:layout_marginTop="@dimen/margin_m"
+        android:layout_marginBottom="@dimen/margin_m"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/attachment_list"
@@ -91,19 +84,17 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center" />
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
+            style="@style/Proton.Text.Default"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/fields_default_space"
-            android:gravity="center"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/fields_default_space_small"
-            android:textColor="@color/new_purple"
-            android:textSize="@dimen/h2"
+            android:layout_marginTop="@dimen/margin_m"
+            android:layout_marginBottom="@dimen/margin_m"
             android:layout_below="@id/progress_bar"
-            android:text="@string/sync_attachments"
-            app:fontName="Roboto-Thin.ttf" />
+            android:textColor="?attr/brand_norm"
+            android:text="@string/sync_attachments" />
 
     </RelativeLayout>
 
@@ -121,19 +112,17 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center" />
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
+            style="@style/Proton.Text.Default"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/fields_default_space"
-            android:gravity="center"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/fields_default_space_small"
-            android:textColor="@color/new_purple"
-            android:textSize="@dimen/h2"
             android:layout_below="@id/progress_bar_processing"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin_m"
+            android:layout_marginBottom="@dimen/margin_m"
             android:text="@string/processing_attachment"
-            app:fontName="Roboto-Thin.ttf" />
+            android:textColor="?attr/brand_norm" />
 
     </RelativeLayout>
 </RelativeLayout>

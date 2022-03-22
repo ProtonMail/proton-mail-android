@@ -17,14 +17,12 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
-<ch.protonmail.android.views.CustomFontTextView android:id="@android:id/text1"
+<TextView android:id="@android:id/text1"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Proton.Text.Default"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical|left"
+    android:layout_gravity="center_vertical|start"
     android:ellipsize="end"
-    android:gravity="center_vertical|left"
-    android:maxLines="1"
-    android:textColor="@color/iron_gray"
-    app:fontName="Roboto-Light.ttf" />
+    android:gravity="center_vertical|start"
+    android:maxLines="1" />

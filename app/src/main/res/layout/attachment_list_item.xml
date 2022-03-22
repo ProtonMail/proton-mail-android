@@ -27,7 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/remove"
         android:layout_toStartOf="@+id/remove">
 
         <ImageView
@@ -37,15 +36,14 @@
             android:scaleType="center"
             android:src="@drawable/ic_proton_paper_clip" />
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
+            style="@style/Proton.Text.DefaultSmall"
             android:id="@+id/embedded_image_attachment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:text="@string/inline_prefix"
-            android:textColor="@color/text_norm"
-            app:fontName="Roboto-Thin.ttf" />
+            android:text="@string/inline_prefix" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -55,18 +53,17 @@
 
             <TextView
                 android:id="@+id/attachment_name"
-                style="@style/AttachmentText"
+                style="@style/Proton.Text.DefaultSmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/text_norm"
-                android:layout_marginRight="4dp"
+                android:layout_marginEnd="@dimen/margin_s"
+                android:ellipsize="middle"
+                android:maxLines="1"
                 android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/attachment_size"
-                style="@style/AttachmentText"
-                android:textColor="@color/text_norm"
+                style="@style/Proton.Text.DefaultSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

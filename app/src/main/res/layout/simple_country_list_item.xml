@@ -18,24 +18,21 @@
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="45dp"
     android:orientation="vertical">
 
-    <ch.protonmail.android.views.CustomFontTextView
+    <TextView
+        style="@style/Proton.Text.Default"
         android:id="@+id/country_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:paddingBottom="16dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="16dp"
-        android:paddingStart="8dp"
-        android:paddingTop="16dp"
-        android:textColor="@color/iron_gray"
-        app:fontName="Roboto-Light.ttf" />
+        android:paddingBottom="@dimen/padding_l"
+        android:paddingStart="@dimen/padding_m"
+        android:paddingEnd="@dimen/padding_m"
+        android:paddingTop="@dimen/padding_l" />
 
     <View
         android:id="@+id/separator"

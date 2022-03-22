@@ -74,16 +74,13 @@
                 android:layout_marginBottom="@dimen/padding_l"
                 android:orientation="horizontal">
 
-                <ch.protonmail.android.views.CustomFontTextView
-                    style="@style/SettingsHeadingText"
+                <TextView
+                    style="@style/Proton.Text.Default.Weak"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="@string/expiration_error_add_msg_password"
-                    android:textColor="@color/text_weak"
-                    android:textSize="@dimen/h3"
-                    app:fontName="Roboto-Regular.ttf" />
+                    android:text="@string/expiration_error_add_msg_password" />
 
                 <ImageButton
                     android:id="@+id/recipients_missing_password_switch"
@@ -111,16 +108,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <ch.protonmail.android.views.CustomFontTextView
-                    style="@style/SettingsHeadingText"
+                <TextView
+                    style="@style/Proton.Text.Default.Weak"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="@string/expiration_error_disable_pgp_sending"
-                    android:textColor="@color/text_weak"
-                    android:textSize="@dimen/h3"
-                    app:fontName="Roboto-Regular.ttf" />
+                    android:text="@string/expiration_error_disable_pgp_sending" />
 
                 <ImageButton
                     android:id="@+id/recipients_disable_pgp_switch"
@@ -158,13 +152,10 @@
                 android:paddingRight="@dimen/activity_horizontal_margin">
 
                 <TextView
-                    style="@style/SettingsHeadingText"
+                    style="@style/Proton.Text.Default.Weak"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/expiration_error_proceed"
-                    android:textAppearance="@style/Proton.Text.Caption"
-                    android:textColor="@color/text_hint"
-                    app:fontName="Roboto-Regular.ttf" />
+                    android:text="@string/expiration_error_proceed" />
 
                 <TextView
                     android:id="@+id/learn_more_button"

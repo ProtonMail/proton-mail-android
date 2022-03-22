@@ -260,7 +260,7 @@
     <string name="expiration_hours">%dH</string>
     <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
-        <item quantity="one">One Attachment</item>
+        <item quantity="one">1 Attachment</item>
         <item quantity="other">%d Attachments</item>
     </plurals>
     <plurals name="attachments_non_descriptive">

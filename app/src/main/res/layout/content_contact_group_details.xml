@@ -22,25 +22,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingEnd="@dimen/padding_l"
+    android:paddingStart="@dimen/padding_l"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="ch.protonmail.android.contacts.groups.details.ContactGroupDetailsActivity"
     tools:showIn="@layout/activity_contact_group_details">
 
-    <ch.protonmail.android.views.CustomFontEditText
+    <me.proton.core.presentation.ui.view.ProtonInput
         android:id="@+id/filterView"
         style="@style/CustomSearchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:hint="@string/search_contacts_inside_group"
-        android:imeOptions="actionNext"
-        android:inputType="text"
-        android:maxLines="1"
-        android:minHeight="50dp"
-        android:minLines="1" />
+        android:layout_marginTop="@dimen/padding_m"
+        android:layout_marginBottom="@dimen/padding_m"
+        android:hint="@string/search_contacts_inside_group" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -53,15 +48,15 @@
             android:layout_height="match_parent"
             android:divider="@null" />
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
+            style="@style/Proton.Text.Default"
             android:id="@+id/noResults"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/fields_default_space"
+            android:layout_margin="@dimen/margin_m"
             android:text="@string/no_contacts"
             android:textColor="?attr/brand_norm"
-            android:textSize="@dimen/h2"
             android:visibility="gone"
             tools:visibility="visible" />
 

@@ -21,86 +21,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingTop="@dimen/fields_default_space">
+    android:paddingTop="@dimen/padding_m">
 
-    <ch.protonmail.android.views.CustomFontTextView
+    <TextView
+        style="@style/Proton.Text.Default"
         android:id="@+id/num_embedded_images_attachments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/fields_default_space_small"
-        android:gravity="center"
-        android:textColor="@color/new_purple"
-        android:textSize="@dimen/h2"
-        app:fontName="Roboto-Thin.ttf" />
+        android:layout_marginTop="@dimen/margin_m"
+        android:textColor="?attr/brand_norm" />
 
-    <RelativeLayout
+    <include
+        layout="@layout/attachment_list_item"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/attachment_list_spacing">
-
-        <LinearLayout
-            android:id="@+id/attachment_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/remove"
-            android:layout_toStartOf="@+id/remove">
-
-            <ImageView
-                android:layout_width="@dimen/attachment_list_spacing"
-                android:layout_height="wrap_content"
-                android:contentDescription="@null"
-                android:scaleType="center"
-                android:src="@drawable/ic_proton_paper_clip" />
-
-            <ch.protonmail.android.views.CustomFontTextView
-                android:id="@+id/embedded_image_attachment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:text="@string/inline_prefix"
-                android:textColor="@color/text_norm"
-                app:fontName="Roboto-Thin.ttf" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/attachment_name"
-                    style="@style/AttachmentText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:textColor="@color/text_norm"
-                    android:layout_marginRight="4dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/attachment_size"
-                    style="@style/AttachmentText"
-                    android:textColor="@color/text_norm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <ImageButton
-            android:id="@id/remove"
-            android:layout_width="@dimen/attachment_list_spacing"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/compose_message_button_selector"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_proton_cross_circle"
-            app:tint="@color/notification_error" />
-
-    </RelativeLayout>
+        android:layout_height="@dimen/attachment_list_spacing" />
 </LinearLayout>

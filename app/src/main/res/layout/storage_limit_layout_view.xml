@@ -21,27 +21,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/red">
+    android:background="@color/notification_error">
 
     <ImageView
         android:id="@+id/imageStorageLimit"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:gravity="center_vertical"
         android:padding="@dimen/fields_default_space"
         tools:ignore="ContentDescription" />
 
     <TextView
+        style="@style/Proton.Text.Default.Inverted"
         android:id="@+id/textStorageLimit"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_toEndOf="@id/imageStorageLimit"
-        android:layout_toRightOf="@id/imageStorageLimit"
         android:gravity="center_vertical"
-        android:maxLines="2"
-        android:textColor="@color/white" />
+        android:maxLines="2" />
 </RelativeLayout>
