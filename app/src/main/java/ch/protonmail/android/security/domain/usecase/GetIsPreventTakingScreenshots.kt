@@ -17,20 +17,19 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.settings.domain
+package ch.protonmail.android.security.domain.usecase
 
-import ch.protonmail.android.settings.domain.model.AppThemeSettings
-import kotlinx.coroutines.flow.Flow
+import ch.protonmail.android.settings.domain.DeviceSettingsRepository
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-interface DeviceSettingsRepository {
+class GetIsPreventTakingScreenshots @Inject constructor(
+    private val settingsRepository: DeviceSettingsRepository
+) {
 
-    suspend fun getAppThemeSettings(): AppThemeSettings
+    suspend operator fun invoke(): Boolean =
+        settingsRepository.getIsPreventTakingScreenshots()
 
-    suspend fun getIsPreventTakingScreenshots(): Boolean
-
-    fun observeIsPreventTakingScreenshots(): Flow<Boolean>
-
-    suspend fun saveAppThemeSettings(settings: AppThemeSettings)
-
-    suspend fun savePreventTakingScreenshots(shouldPrevent: Boolean)
+    fun blocking(): Boolean =
+        runBlocking { invoke() }
 }

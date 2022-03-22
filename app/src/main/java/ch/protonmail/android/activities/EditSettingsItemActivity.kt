@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -32,6 +32,8 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_HYPERLINK_CONFIRM
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.security.domain.usecase.GetIsPreventTakingScreenshots
+import ch.protonmail.android.security.domain.usecase.SavePreventTakingScreenshots
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.utils.extensions.showToast
 import com.google.gson.Gson
@@ -39,6 +41,7 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
 import me.proton.core.util.android.sharedpreferences.set
+import javax.inject.Inject
 
 // region constants
 const val EXTRA_SETTINGS_ITEM_TYPE = "EXTRA_SETTINGS_ITEM_TYPE"
@@ -57,6 +60,12 @@ enum class SettingsItem {
 
 @AndroidEntryPoint
 class EditSettingsItemActivity : BaseSettingsActivity() {
+
+    @Inject
+    lateinit var savePreventTakingScreenshots: SavePreventTakingScreenshots
+
+    @Inject
+    lateinit var getIsPreventTakingScreenshots: GetIsPreventTakingScreenshots
 
     private val mailSettings by lazy {
         checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
@@ -141,10 +150,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     }
                 }
 
-                setEnabled(SettingsEnum.PREVENT_SCREENSHOTS, legacyUser.isPreventTakingScreenshots)
+                setEnabled(SettingsEnum.PREVENT_SCREENSHOTS, getIsPreventTakingScreenshots.blocking())
                 setToggleListener(SettingsEnum.PREVENT_SCREENSHOTS) { view: View, isChecked: Boolean ->
-                    if (view.isPressed && isChecked != legacyUser.isPreventTakingScreenshots) {
-                        legacyUser.isPreventTakingScreenshots = isChecked
+                    if (view.isPressed && isChecked != getIsPreventTakingScreenshots.blocking()) {
+                        savePreventTakingScreenshots.blocking(shouldPrevent = isChecked)
                     }
                 }
 

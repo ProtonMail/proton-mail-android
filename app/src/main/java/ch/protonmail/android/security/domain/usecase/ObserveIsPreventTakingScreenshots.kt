@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -19,31 +19,14 @@
 
 package ch.protonmail.android.security.domain.usecase
 
-import android.content.SharedPreferences
-import ch.protonmail.android.core.Constants.Prefs.PREF_PREVENT_TAKING_SCREENSHOTS
-import ch.protonmail.android.di.BackupSharedPreferences
-import kotlinx.coroutines.channels.awaitClose
+import ch.protonmail.android.settings.domain.DeviceSettingsRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class ObserveIsPreventTakingScreenshots @Inject constructor(
-    @BackupSharedPreferences
-    private val preferences: SharedPreferences
+    private val settingsRepository: DeviceSettingsRepository
 ) {
 
-    operator fun invoke(): Flow<Boolean> = callbackFlow {
-        send(isPreventTakingScreenshots())
-        
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == PREF_PREVENT_TAKING_SCREENSHOTS) {
-                trySend(isPreventTakingScreenshots())
-            }
-        }
-        preferences.registerOnSharedPreferenceChangeListener(listener)
-        awaitClose { preferences.unregisterOnSharedPreferenceChangeListener(listener) }
-    }
-
-    private fun isPreventTakingScreenshots() =
-        preferences.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0) == 1
+    operator fun invoke(): Flow<Boolean> =
+        settingsRepository.observeIsPreventTakingScreenshots()
 }
