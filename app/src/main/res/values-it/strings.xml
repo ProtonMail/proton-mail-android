@@ -19,7 +19,7 @@
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Aggiungi cartella</string>
     <string name="x_add_label">Aggiungi etichetta</string>
     <string name="x_days">Giorni</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Scarta</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Esci</string>
     <string name="sign_out_question">È sicuro di voler uscire?</string>
     <string name="processing_request">La tua richiesta è in elaborazione</string>

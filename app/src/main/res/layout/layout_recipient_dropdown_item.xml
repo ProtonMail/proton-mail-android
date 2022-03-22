@@ -72,7 +72,7 @@
         android:textAppearance="@style/Proton.Text.Default"
         android:maxLines="1"
         android:ellipsize="end"
-        tools:text="ProtonMail user"/>
+        tools:text="Proton Mail user" />
 
     <!-- email -->
     <TextView

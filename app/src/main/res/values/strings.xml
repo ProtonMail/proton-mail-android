@@ -20,7 +20,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
     <!-- region All -->
-    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_app_version_name_code">Proton Mail %s (%d)</string>
     <string name="x_add_folder">Add folder</string>
     <string name="x_add_label">Add label</string>
     <string name="x_days">Days</string>
@@ -85,7 +85,7 @@
     <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
 
     <string name="set_msg_password_title">Set password</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Message password</string>
     <string name="set_msg_password_msg_password_hint">4 to 21 characters long</string>
@@ -174,7 +174,7 @@
     <!-- endregion -->
 
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_question">Are you sure you want to sign out?</string>
     <string name="processing_request">Your request is being processed</string>
@@ -187,9 +187,9 @@
     <string name="no_more_messages">No more messages</string>
     <string name="no_network_queued">No network, message queued</string>
     <string name="update_app_title">Update required</string>
-    <string name="update_app">Your ProtonMail app cannot be used until it is updated</string>
+    <string name="update_app">Your Proton Mail app cannot be used until it is updated</string>
     <string name="you_are_offline">You are offline</string>
-    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact saved</string>
     <string name="contact_saved_offline">Contact saved, will be synced when connection is available</string>
     <string name="contact_exist">Contact email already exists</string>
@@ -217,7 +217,7 @@
     <string name="all_mail">All Mail</string>
     <string name="contacts">Contacts</string>
     <string name="search_contacts">Search contacts</string>
-    <string name="fetching_contacts">Fetching ProtonMail contacts...</string>
+    <string name="fetching_contacts">Fetching Proton Mail contacts...</string>
     <string name="fetching_contacts_success">Contacts refreshed successfully</string>
     <string name="fetching_contacts_failure">Unable to refresh contacts</string>
     <string name="no_search_results">No search results</string>
@@ -296,7 +296,7 @@
     <string name="invalid_email_address">The address \'%s\' is invalid</string>
     <string name="invalid_email_address_removed">The address \'%s\' is invalid and was removed</string>
     <string name="no_recipients_specified">Please add at least one recipient</string>
-    <string name="no_password_specified">Expiration times can only be set on fully encrypted messages. Please set a password for your non-ProtonMail recipients.</string>
+    <string name="no_password_specified">Expiration times can only be set on fully encrypted messages. Please set a password for your non-Proton Mail recipients.</string>
     <string name="attachment_limit">Attachments are limited to %1$s. Total attached would be %2$s.</string>
     <string name="sending_message">Sending message...</string>
     <string name="sending_message_offline">Offline, queued for sending later...</string>
@@ -311,7 +311,7 @@
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
     <string name="eo_password_title">Set Password</string>
-    <string name="eo_password_subtitle">Set a password to encrypt this message for non-ProtonMail users</string>
+    <string name="eo_password_subtitle">Set a password to encrypt this message for non-Proton Mail users</string>
     <string name="eo_password_more_info">Get more information</string>
 
     <string name="no_attachments">0 Attachments</string>
@@ -432,7 +432,7 @@
     <string name="contact_details">Contact Details</string>
     <string name="email_type_home">Home</string>
     <string name="type_title">Choose Type</string>
-    <string name="sync_local_contacts">Upload to ProtonMail</string>
+    <string name="sync_local_contacts">Upload to Proton Mail</string>
     <string name="please_select_only_phone_contacts">Please select only Local Phone Contacts</string>
 
     <string name="contact_vcard_hint_email">Enter Email</string>
@@ -522,7 +522,7 @@
     <string name="saving">Saving...</string>
 
     <string name="update_folder">Update Folder</string>
-    <string name="spam_score_100">This email seems to be from a ProtonMail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
+    <string name="spam_score_100">This email seems to be from a Proton Mail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
     <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded!</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
 
@@ -552,10 +552,10 @@
     <string name="email_empty">Email address is missing</string>
     <string name="encrypted_contact_details">Encrypted Contact Details</string>
     <string name="convert_question">Upload local contacts</string>
-    <string name="convert_question_subtitle">This will upload the local contacts on your device to your ProtonMail contacts directory. You will then be able to access these contacts on your other devices through ProtonMail.</string>
+    <string name="convert_question_subtitle">This will upload the local contacts on your device to your Proton Mail contacts directory. You will then be able to access these contacts on your other devices through Proton Mail.</string>
     <string name="refresh_contacts">Refresh</string>
     <string name="invalid_email_some_contacts">Email address is not valid for some of your contacts</string>
-    <string name="protonmail_contacts">ProtonMail Contacts</string>
+    <string name="protonmail_contacts">Proton Mail Contacts</string>
     <string name="device_contacts">Device Contacts</string>
 
     <string name="print_date_template">Date: %s</string>
@@ -569,7 +569,7 @@
 
     <string name="attachment_storage_value_current">Currently selected: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Currently selected: Unlimited</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Embedded images loading failed. Please check your network connection.</string>
     <string name="load_embedded_images_failed">Embedded images loading failed.</string>
     <string name="unlimited">Unlimited</string>
@@ -585,7 +585,7 @@
     <!-- Sender locks -->
     <string name="sender_lock_zero_access">Stored with zero access encryption</string> <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Sent by you with end-to-end encryption</string> <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Sent by ProtonMail with zero access encryption</string>
+    <string name="sender_lock_sent_autoresponder">Sent by Proton Mail with zero access encryption</string>
     <string name="sender_lock_verification_failed">Sender verification failed</string>
     <string name="sender_lock_pgp_encrypted">PGP-encrypted message</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-encrypted message from verified address</string>
@@ -700,7 +700,7 @@
         access to storage.</string>
     <string name="need_contacts_permissions_text">In order to import contacts you need to allow access to contacts.</string>
     <string name="push_notifications_alert_title">Push notifications alert</string>
-    <string name="push_notifications_alert_subtitle">Push notifications for ProtonMail do not work without updated Google Play services.</string>
+    <string name="push_notifications_alert_subtitle">Push notifications for Proton Mail do not work without updated Google Play services.</string>
     <string name="app_locked">App locked</string>
     <string name="use_pin_instead">Use PIN instead</string>
 
@@ -741,7 +741,7 @@
     <string name="signature">Signature</string>
     <string name="mobile_footer">Mobile footer</string>
     <string name="edit_mobile_footer">Enable mobile footer</string>
-    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
+    <string name="default_mobile_footer">Sent from Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
     <string name="mobile_footer_info">This footer is added after your signature</string>
 
