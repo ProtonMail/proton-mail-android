@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -32,12 +32,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.labels.presentation.viewmodel.LabelsManagerViewModel
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.labels.data.remote.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.model.LabelsManagerItemUiModel
+import ch.protonmail.android.labels.presentation.viewmodel.LabelsManagerViewModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
@@ -264,13 +264,12 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         if (label is LabelsManagerItemUiModel.Folder) updateParentFolder(label.parentId)
         toggleEditor(true)
 
-        val currentColorPosition = colorOptions.indexOf(label.icon.colorInt)
-        colorsAdapter.setChecked(currentColorPosition)
+        viewModel.onLabelEdit(label)
 
-        // Set viewModel
-        viewModel.apply {
-            onLabelEdit(label)
-            setLabelColor(colorOptions[currentColorPosition])
+        val currentColorPosition = colorOptions.indexOf(label.icon.colorInt)
+        if (currentColorPosition > -1) {
+            colorsAdapter.setChecked(currentColorPosition)
+            viewModel.setLabelColor(colorOptions[currentColorPosition])
         }
     }
 
