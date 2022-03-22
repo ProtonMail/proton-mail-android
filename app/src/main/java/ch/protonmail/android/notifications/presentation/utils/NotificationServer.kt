@@ -33,7 +33,6 @@ import androidx.core.app.NotificationCompat.PRIORITY_HIGH
 import androidx.core.app.NotificationCompat.PRIORITY_LOW
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
-import androidx.core.content.ContextCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.api.segments.event.AlarmReceiver
@@ -78,7 +77,7 @@ class NotificationServer @Inject constructor(
 ) {
 
     private val lightIndicatorColor by lazy {
-        ContextCompat.getColor(context, R.color.light_indicator)
+        context.getColorFromAttr(R.attr.brand_norm)
     }
 
     fun createAccountChannel(): String {
@@ -224,7 +223,7 @@ class NotificationServer @Inject constructor(
 
         // Set Notification's colors
         val mainColor = context.getColor(R.color.icon_norm)
-        val lightColor = context.getColor(R.color.light_indicator)
+        val lightColor = context.getColorFromAttr(R.attr.brand_norm)
 
         // Create Notification's Builder with the prepared params
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_EMAIL)

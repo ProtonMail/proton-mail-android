@@ -21,7 +21,7 @@
     <item>
         <shape
             android:shape="oval">
-            <solid android:color="?attr/brand_norm" />
+            <solid android:color="@color/cornflower_blue" />
             <padding
                 android:bottom="16dp"
                 android:left="16dp"

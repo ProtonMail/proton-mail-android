@@ -19,13 +19,6 @@
   -->
 <resources>
 
-    <color name="black">#000000</color>
-
-    <!-- new color scheme -->
-    <color name="dark_purple_statusbar">#333341</color>
-    <color name="message_divider_gray">#DADEE8</color>
-    <color name="name_gray">#838897</color>
-
     <!-- lock and unlock -->
     <color name="icon_purple">#9397cd</color>
     <color name="icon_gray">#c2c2cc</color>
@@ -34,20 +27,6 @@
 
     <!-- Grays -->
     <color name="white_30">#4DFFFFFF</color>
-    <color name="white_55">#8CFFFFFF</color>
-    <color name="white_85">#D9FFFFFF</color>
-    <color name="dark_silver_gray">#CFD2D4</color>
-    <color name="fog_gray">#C9CED4</color>
-    <color name="iron_gray">#808487</color>
-    <color name="rain_gray">#383A3B</color>
-    <color name="lead_gray">#4F4F4F</color>
-    <color name="chateau_gray">#A4A6A7</color>
-
-    <color name="red">#BF0000</color>
-    <color name="red_orange">#EA644C</color>
-    <color name="orange">#D9804B</color>
-    <color name="green">#A2C276</color>
-    <color name="blue">#7569D1</color>
 
     <!-- account types -->
     <color name="professional">#D4B46E</color>
@@ -62,15 +41,6 @@
         <item>@color/professional</item>
     </array>
 
-    <!-- signature verification -->
-
-    <!-- contacts -->
-    <color name="contact_heading">@color/dark_purple_statusbar</color>
-
-    <!--lights-->
-	<color name="light_indicator">#6A6A9C</color>
-
-    <color name="label_buttons">#9497ce</color>
     <!-- labels -->
     <color name="purple_base">#7272A7</color>
     <color name="heather_base">#8989AC</color>
@@ -118,8 +88,6 @@
     </array>
 
     <color name="hyperlink_color">#0000EE</color>
-
-    <color name="spam_score">@color/red_orange</color>
     <!-- endregion -->
 
 </resources>

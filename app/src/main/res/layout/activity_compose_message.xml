@@ -58,7 +58,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:elevation="99dp"
-        android:background="@color/white_55"
+        android:background="@color/background_norm"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -139,7 +139,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_divider"
-                android:background="@color/message_divider_gray"
+                android:background="@color/separator_norm"
                 app:layout_constraintTop_toBottomOf="@id/composer_from_hint_text_view"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -187,7 +187,7 @@
                 android:id="@+id/composer_cc_top_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_divider"
-                android:background="@color/message_divider_gray"
+                android:background="@color/separator_norm"
                 app:layout_constraintTop_toBottomOf="@id/composer_to_recipient_view"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -224,7 +224,7 @@
                 android:id="@+id/composer_bcc_top_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_divider"
-                android:background="@color/message_divider_gray"
+                android:background="@color/separator_norm"
                 app:layout_constraintTop_toBottomOf="@id/composer_cc_recipient_view"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -270,7 +270,7 @@
                 android:id="@+id/composer_subject_top_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_divider"
-                android:background="@color/message_divider_gray"
+                android:background="@color/separator_norm"
                 app:layout_constraintTop_toBottomOf="@id/composer_bcc_recipient_view"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -295,7 +295,7 @@
                 android:id="@+id/composer_body_top_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_divider"
-                android:background="@color/message_divider_gray"
+                android:background="@color/separator_norm"
                 app:layout_constraintTop_toBottomOf="@id/composer_subject_edit_text"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -308,6 +308,7 @@
                 app:layout_constraintTop_toBottomOf="@id/composer_subject_edit_text"
                 android:padding="@dimen/padding_composer_body"
                 android:focusable="true"
+                android:background="@color/transparent"
                 android:focusableInTouchMode="true"
                 android:hint="@string/composer_compose_email"
                 android:paddingBottom="@dimen/padding_s" />
@@ -361,7 +362,7 @@
                 android:visibility="gone"
                 tools:visibility="visible"
                 tools:layout_height="20dp"
-                tools:background="@color/green">
+                tools:background="@color/notification_success">
                 <!-- add WebView through code use application context to avoid memory leaks -->
                 <!-- https://code.google.com/p/android/issues/detail?id=9375 -->
             </FrameLayout>
@@ -386,7 +387,7 @@
         android:layout_height="@dimen/size_divider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/composer_bottom_app_bar"
-        android:background="@color/message_divider_gray"/>
+        android:background="@color/separator_norm" />
 
     <!-- Buttons -->
     <ch.protonmail.android.ui.view.ComposerBottomAppBar

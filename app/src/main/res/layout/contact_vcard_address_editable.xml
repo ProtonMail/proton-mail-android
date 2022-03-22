@@ -32,13 +32,12 @@
 
         <TextView
             android:id="@+id/optionTitle"
+            style="@style/Proton.Text.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
             android:paddingVertical="@dimen/padding_m"
-            android:textColor="@color/contact_heading"
-            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -81,13 +80,14 @@
 
             <TextView
                 android:id="@+id/address_full_combined"
-                style=""
+                style="@style/Proton.Text.DefaultSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
                 android:paddingBottom="@dimen/padding_s"
                 android:maxLines="7"
+                android:layout_marginHorizontal="@dimen/margin_m"
                 android:textAlignment="viewStart"
                 android:textColor="@color/text_norm"
                 android:textStyle="bold" />

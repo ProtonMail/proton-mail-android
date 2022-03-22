@@ -39,7 +39,7 @@
 
     <TextView
         android:id="@+id/no_messages"
-        style="@style/NoMessagesText"
+        style="@style/Proton.Text.Default"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

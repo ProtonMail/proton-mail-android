@@ -32,6 +32,6 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_margin="@dimen/padding_s"
-        android:background="@color/lead_gray" />
+        android:background="@color/separator_norm" />
 
 </LinearLayout>

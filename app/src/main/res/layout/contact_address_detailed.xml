@@ -31,6 +31,7 @@
         android:orientation="vertical">
 
         <TextView
+            style="@style/Proton.Text.DefaultSmall"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
@@ -40,9 +41,7 @@
             android:focusable="false"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:text="@string/address_street"
-            android:textColor="@color/contact_heading"
-            android:textSize="13sp" />
+            android:text="@string/address_street" />
 
         <me.proton.core.presentation.ui.view.ProtonInput
             android:id="@+id/address_street"
@@ -50,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/padding_m"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/text_norm"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -61,6 +60,7 @@
         android:orientation="vertical">
 
         <TextView
+            style="@style/Proton.Text.DefaultSmall"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
@@ -70,9 +70,7 @@
             android:focusable="false"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:text="@string/address_extended_street"
-            android:textColor="@color/contact_heading"
-            android:textSize="13sp" />
+            android:text="@string/address_extended_street" />
 
         <me.proton.core.presentation.ui.view.ProtonInput
             android:id="@+id/address_street_extended"
@@ -80,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/padding_m"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/text_norm"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -91,6 +89,7 @@
         android:orientation="vertical">
 
         <TextView
+            style="@style/Proton.Text.DefaultSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -100,9 +99,7 @@
             android:focusable="false"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:text="@string/address_city"
-            android:textColor="@color/contact_heading"
-            android:textSize="13sp" />
+            android:text="@string/address_city" />
 
         <me.proton.core.presentation.ui.view.ProtonInput
             android:id="@+id/address_city"
@@ -110,7 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/padding_m"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/text_norm"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -128,6 +125,7 @@
             android:orientation="vertical">
 
             <TextView
+                style="@style/Proton.Text.DefaultSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -137,9 +135,7 @@
                 android:focusable="false"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="@string/address_region"
-                android:textColor="@color/contact_heading"
-                android:textSize="13sp" />
+                android:text="@string/address_region" />
 
             <me.proton.core.presentation.ui.view.ProtonInput
                 android:id="@+id/address_region"
@@ -147,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/padding_m"
                 android:singleLine="true"
-                android:textColor="@color/black"
+                android:textColor="@color/text_norm"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -159,6 +155,7 @@
             android:orientation="vertical">
 
             <TextView
+                style="@style/Proton.Text.DefaultSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -168,9 +165,7 @@
                 android:focusable="false"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="@string/address_postcode"
-                android:textColor="@color/contact_heading"
-                android:textSize="13sp" />
+                android:text="@string/address_postcode" />
 
             <me.proton.core.presentation.ui.view.ProtonInput
                 android:id="@+id/address_postcode"
@@ -179,7 +174,7 @@
                 android:layout_marginStart="@dimen/padding_m"
                 android:layout_marginEnd="@dimen/padding_m"
                 android:singleLine="true"
-                android:textColor="@color/black"
+                android:textColor="@color/text_norm"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -196,6 +191,7 @@
             android:orientation="vertical">
 
             <TextView
+                style="@style/Proton.Text.DefaultSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -205,9 +201,7 @@
                 android:focusable="false"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="@string/address_po_box"
-                android:textColor="@color/contact_heading"
-                android:textSize="13sp" />
+                android:text="@string/address_po_box" />
 
             <me.proton.core.presentation.ui.view.ProtonInput
                 android:id="@+id/address_po_box"
@@ -215,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/padding_m"
                 android:singleLine="true"
-                android:textColor="@color/black"
+                android:textColor="@color/text_norm"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -226,6 +220,7 @@
             android:orientation="vertical">
 
             <TextView
+                style="@style/Proton.Text.DefaultSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -235,9 +230,7 @@
                 android:focusable="false"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="@string/address_country"
-                android:textColor="@color/contact_heading"
-                android:textSize="13sp" />
+                android:text="@string/address_country" />
 
             <me.proton.core.presentation.ui.view.ProtonInput
                 android:id="@+id/address_country"
@@ -245,7 +238,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/padding_m"
                 android:singleLine="true"
-                android:textColor="@color/black"
+                android:textColor="@color/text_norm"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

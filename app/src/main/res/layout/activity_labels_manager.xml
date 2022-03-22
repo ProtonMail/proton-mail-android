@@ -153,7 +153,6 @@
                     android:layout_below="@id/available_labels_title"
                     android:layout_marginStart="@dimen/fields_default_space_large"
                     android:text="@string/no_labels"
-                    android:textColor="@color/iron_gray"
                     android:visibility="gone" />
 
                 <Button

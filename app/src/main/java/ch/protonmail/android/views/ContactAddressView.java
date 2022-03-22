@@ -108,7 +108,6 @@ public class ContactAddressView extends LinearLayout {
         final FragmentManager fragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
         mOptionTitleView.setText(optionTitleText);
         mRowTitleView.setOnClickListener(v -> {
-            mRowTitleView.setVisibility(View.GONE);
             mInputFieldsView.setVisibility(View.VISIBLE);
             mRowTitleView.setVisibility(View.GONE);
             ContactOptionTypeClickListener optionTypeClickListener =

@@ -91,7 +91,7 @@
                     android:singleLine="true"
                     android:text="@string/turn_off"
                     android:textAllCaps="true"
-                    android:textColor="@color/red"
+                    android:textColor="@color/notification_error"
                     android:textSize="@dimen/h5" />
 
             </FrameLayout>

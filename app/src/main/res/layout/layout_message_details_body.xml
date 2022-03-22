@@ -142,7 +142,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editDraftButton"
-        android:background="@color/spam_score"
+        android:background="@color/notification_warning"
         android:padding="@dimen/fields_default_space"
         android:textColor="@color/white"
         android:visibility="visible"

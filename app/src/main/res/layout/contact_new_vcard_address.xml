@@ -55,6 +55,7 @@
 
             <TextView
                 android:id="@+id/optionTitle"
+                style="@style/Proton.Text.Default"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -64,8 +65,6 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:padding="@dimen/padding_s"
-                android:textColor="@color/contact_heading"
-                android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="option title" />
@@ -101,8 +100,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/btn_clear"
-                android:layout_toLeftOf="@id/btn_clear">
+                android:layout_toStartOf="@id/btn_clear">
 
                 <TextView
                     android:id="@+id/address_full_combined"
@@ -116,6 +114,7 @@
                     android:gravity="center_vertical"
                     android:hint="@string/address"
                     android:paddingBottom="@dimen/padding_s"
+                    android:layout_marginHorizontal="@dimen/margin_m"
                     android:singleLine="true"
                     android:textColor="@color/text_norm"
                     android:textStyle="bold"

@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/num_attachments"
-        android:divider="@color/fog_gray"
+        android:divider="@color/separator_norm"
         android:dividerHeight="@dimen/divider_height" />
 
     <RelativeLayout

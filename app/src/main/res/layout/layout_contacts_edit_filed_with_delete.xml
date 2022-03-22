@@ -48,7 +48,7 @@
         android:layout_marginTop="@dimen/padding_s"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/option"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/option"
         android:contentDescription="@string/delete" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

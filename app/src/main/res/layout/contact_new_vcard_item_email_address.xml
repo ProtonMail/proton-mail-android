@@ -48,15 +48,6 @@
         <include layout="@layout/layout_contacts_edit_filed_type_selector" />
 
         <include layout="@layout/layout_contacts_edit_filed_with_delete" />
-
-        <View
-            android:id="@+id/separator"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginStart="@dimen/fields_default_space_small"
-            android:layout_marginTop="@dimen/fields_default_space"
-            android:layout_marginEnd="@dimen/fields_default_space_small"
-            android:background="@color/lead_gray" />
     </LinearLayout>
 
 

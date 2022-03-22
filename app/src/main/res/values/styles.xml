@@ -189,11 +189,6 @@
 
     <style name="AppTheme" parent="ProtonTheme" />
 
-    <style name="NoMessagesText">
-        <item name="android:textColor">@color/rain_gray</item>
-        <item name="android:textSize">@dimen/h4</item>
-    </style>
-
     <style name="MessageRecipientView">
         <item name="android:background">@null</item>
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
@@ -203,7 +198,7 @@
     </style>
 
     <style name="SettingsItemPadding">
-        <item name="android:background">@drawable/settings_item_selector</item>
+        <item name="android:background">@drawable/ripple_background_norm</item>
         <item name="android:clickable">true</item>
         <item name="android:orientation">vertical</item>
         <item name="android:padding">@dimen/padding_m</item>

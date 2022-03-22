@@ -20,4 +20,4 @@
 <View xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/divider_width"
-    android:background="@color/fog_gray" />
+    android:background="@color/separator_norm" />

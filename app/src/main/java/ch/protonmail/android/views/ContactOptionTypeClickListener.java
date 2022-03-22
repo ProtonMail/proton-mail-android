@@ -76,7 +76,7 @@ public class ContactOptionTypeClickListener implements View.OnClickListener {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View dialogView = inflater.inflate(R.layout.dialog_email_type, null);
         mStandardOptionsView = dialogView.findViewById(R.id.standard_option_types);
-        ((TextView) (mRowView.findViewById(R.id.optionTitle))).setTextColor(ContextCompat.getColor(mContext, R.color.contact_heading));
+        ((TextView) (mRowView.findViewById(R.id.optionTitle))).setTextColor(ContextCompat.getColor(mContext, R.color.text_norm));
         String[] currentValueSplit;
         if (mCurrentUIValue.contains(" ")) {
             currentValueSplit = mCurrentUIValue.split(" ");

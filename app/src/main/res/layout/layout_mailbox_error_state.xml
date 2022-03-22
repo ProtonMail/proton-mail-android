@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/inbox_could_not_retrieve_messages"
-        android:textColor="@color/red" />
+        android:textColor="@color/notification_error" />
 
     <TextView
         style="@style/Proton.Text.Default"

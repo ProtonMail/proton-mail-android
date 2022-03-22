@@ -66,13 +66,12 @@
             android:paddingHorizontal="@dimen/padding_l">
 
             <TextView
+                style="@style/Proton.Text.Default"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:padding="@dimen/padding_s"
-                android:text="@string/contact_group_display_name"
-                android:textColor="@color/contact_heading"
-                android:textSize="16sp" />
+                android:text="@string/contact_group_display_name" />
 
             <me.proton.core.presentation.ui.view.ProtonInput
                 android:id="@+id/contactGroupName"
@@ -138,7 +137,7 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white_85"
+        android:background="@color/background_norm"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone">
