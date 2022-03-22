@@ -231,7 +231,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             getMailSettings = getMailSettings,
             mailboxItemUiModelMapper = mailboxItemUiModelMapper,
             fetchEventsAndReschedule = fetchEventsAndReschedule,
-            clearNotificationsForUser = clearNotificationsForUser
+            clearNotificationsForUser = clearNotificationsForUser,
+            vibrator = mockk()
         )
     }
 
