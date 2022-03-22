@@ -64,6 +64,7 @@
                     android:layout_marginBottom="@dimen/padding_6xl"
                     app:circleSize="@dimen/avatar_size"
                     app:icon="@drawable/ic_proton_camera"
+                    app:tint="@color/icon_norm"
                     app:layout_collapseMode="parallax"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

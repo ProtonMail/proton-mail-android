@@ -189,81 +189,16 @@
 
     <style name="AppTheme" parent="ProtonTheme" />
 
-    <style name="V3EditText" parent="@android:style/Widget.EditText">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textColorHint">@color/white</item>
-        <item name="android:textSize">@dimen/h5</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@drawable/v3_edittext</item>
-    </style>
-
     <style name="NoMessagesText">
         <item name="android:textColor">@color/rain_gray</item>
         <item name="android:textSize">@dimen/h4</item>
     </style>
 
-    <style name="ComposeMessageEditText" parent="@android:style/Widget.EditText">
-        <item name="android:background">@null</item>
-        <item name="android:textColor">@color/text_norm</item>
-        <item name="android:textColorHint">@color/text_hint</item>
-    </style>
-
-    <style name="ComposeMessageBodyText" parent="ComposeMessageEditText">
-        <item name="android:gravity">top</item>
-        <item name="android:inputType">textMultiLine|textLongMessage|textCapSentences</item>
-        <item name="android:textSize">@dimen/h4</item>
-    </style>
-
-    <style name="MessagePasswordEditTextBase" parent="@android:style/Widget.EditText">
-        <item name="android:background">@null</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">@dimen/message_spacing</item>
-        <item name="android:paddingRight">@dimen/message_spacing</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textColorHint">@color/chateau_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="MessagePasswordEditText" parent="MessagePasswordEditTextBase">
-        <item name="android:imeOptions">actionNext</item>
-        <item name="android:inputType">textPassword</item>
-    </style>
-
-    <style name="MessagePasswordHintEditText" parent="MessagePasswordEditTextBase">
-        <item name="android:imeOptions">actionDone</item>
-        <item name="android:inputType">textCapSentences</item>
-    </style>
-
-    <style name="MessagePasswordEditText.Dialog" parent="MessagePasswordEditText">
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:background">@drawable/v3_edittext_inverted</item>
-        <item name="android:layout_marginLeft">@dimen/fields_default_space</item>
-        <item name="android:layout_marginRight">@dimen/fields_default_space</item>
-        <item name="android:layout_marginTop">@dimen/fields_default_space_small</item>
-        <item name="android:layout_marginBottom">@dimen/fields_default_space_small</item>
-    </style>
-
-    <style name="MessageExpirationText">
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">@dimen/message_spacing</item>
-        <item name="android:paddingRight">@dimen/message_spacing</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/lead_gray</item>
-        <item name="android:textColorHint">@color/chateau_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="MessageRecipientBase">
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="MessageRecipientView" parent="MessageRecipientBase">
+    <style name="MessageRecipientView">
         <item name="android:background">@null</item>
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
         <item name="android:textColor">@color/text_norm</item>
+        <item name="android:textAppearance">@style/Proton.Text.DefaultSmall</item>
         <item name="android:lineSpacingExtra">@dimen/padding_m</item>
     </style>
 
@@ -324,11 +259,9 @@
         <item name="tabSelectedTextColor">?proton_text_norm</item>
     </style>
 
-    <style name="CustomSearchView" parent="@android:style/Widget.EditText">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textColorHint">#CACACA</item>
-        <item name="android:textSize">@dimen/h3</item>
-        <item name="android:paddingLeft">8dp</item>
+    <style name="CustomSearchView" parent="ProtonInput">
+        <item name="android:textColor">@color/text_norm</item>
+        <item name="android:textColorHint">@color/text_hint</item>
         <item name="android:drawableStart">@drawable/ic_proton_magnifier</item>
         <item name="android:drawableLeft">@drawable/ic_proton_magnifier</item>
         <item name="android:drawablePadding">@dimen/fields_default_space_small</item>

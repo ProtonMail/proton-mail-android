@@ -76,7 +76,7 @@ class ListItemThumbnail @JvmOverloads constructor(
     var iconResource = R.drawable.ic_proton_users_filled
         set(value) {
             iconDrawable = AppCompatResources.getDrawable(context, value)
-            iconDrawable?.setTint(ContextCompat.getColor(context, R.color.icon_inverted))
+            iconDrawable?.setTint(ContextCompat.getColor(context, R.color.icon_norm))
             text = ""
         }
     private var iconDrawable = AppCompatResources.getDrawable(context, iconResource)

@@ -49,17 +49,6 @@
     <color name="green">#A2C276</color>
     <color name="blue">#7569D1</color>
 
-    <!-- login -->
-    <color name="new_purple">#9199cb</color>
-    <color name="new_purple_dark">#656FAC</color>
-
-    <!-- nav drawer -->
-
-    <!-- upselling -->
-    <color name="upgrade_section">#9497CE</color>
-
-    <!-- edit settings screens-->
-
     <!-- account types -->
     <color name="professional">#D4B46E</color>
     <color name="visionary">#6ddcfb</color>

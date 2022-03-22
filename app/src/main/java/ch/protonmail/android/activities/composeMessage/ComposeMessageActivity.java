@@ -161,7 +161,6 @@ import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
-import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PmWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -174,8 +173,7 @@ import timber.log.Timber;
 @AndroidEntryPoint
 public class ComposeMessageActivity
         extends ComposeMessageKotlinActivity
-        implements MessageExpirationView.OnMessageExpirationChangedListener,
-        LoaderManager.LoaderCallbacks<Cursor>,
+        implements LoaderManager.LoaderCallbacks<Cursor>,
         GroupRecipientsDialogFragment.IGroupRecipientsListener {
     //region extras
     public static final String EXTRA_PARENT_ID = "parent_id";
@@ -1521,12 +1519,6 @@ public class ComposeMessageActivity
         messageBodyEditText.setVisibility(View.VISIBLE);
         composeMessageViewModel.setContent(messageBody);
         setBodyContent(true, isPlainText);
-    }
-
-    @Override
-    public void onMessageExpirationChanged() {
-
-        renderViews();
     }
 
     private Map<MessageRecipientView, List<MessageRecipient>> pendingRecipients = new HashMap<>();

@@ -302,7 +302,7 @@
             <!-- Body -->
             <EditText
                 android:id="@+id/composer_message_body_edit_text"
-                style="@style/ComposeMessageBodyText"
+                style="@style/Proton.Text.Default"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/composer_subject_edit_text"
@@ -310,7 +310,7 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:hint="@string/composer_compose_email"
-                android:paddingBottom="4dp" />
+                android:paddingBottom="@dimen/padding_s" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/composer_body_start_guideline"
