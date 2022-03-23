@@ -55,6 +55,8 @@
     <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
     <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
     <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <string name="mailbox_empty_state_no_results_found">No results found</string>
+    <string name="mailbox_empty_state_try_a_different_term">Try a different search term</string>
     <string name="mailbox_no_messages">No messages</string>
     <string name="mailbox_unread_count">%d unread</string>
     <string name="mailbox_updated_just_now">Updated just now</string>
@@ -65,7 +67,7 @@
     <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
     <string name="details_play_store_error">Can\'t open Play Store</string>
-    
+
     <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/>&lt;br/>&lt;u>%s&lt;/u>&lt;br/>&lt;br/>For your security, do not continue.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
@@ -146,6 +148,11 @@
     <string name="notification_summary_text_new_messages">New messages</string>
     <!-- endregion -->
 
+    <!-- region Contacts Empty States -->
+    <string name="contacts_empty_state_no_contacts">No contacts</string>
+    <string name="contacts_empty_state_no_groups">No groups</string>
+    <!-- endregion -->
+
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
     <string name="contact_details_remote_content_dialog_title">Remote content</string>
@@ -220,7 +227,6 @@
     <string name="fetching_contacts">Fetching Proton Mail contacts...</string>
     <string name="fetching_contacts_success">Contacts refreshed successfully</string>
     <string name="fetching_contacts_failure">Unable to refresh contacts</string>
-    <string name="no_search_results">No search results</string>
     <string name="compose">Compose</string>
     <string name="compose_message">Compose message</string>
     <string name="empty_folder">Empty Folder</string>

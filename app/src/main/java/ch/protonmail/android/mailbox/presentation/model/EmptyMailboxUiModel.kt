@@ -40,12 +40,12 @@ data class EmptyMailboxUiModel(
                 INBOX -> EmptyMailboxUiModel(
                     titleRes = R.string.mailbox_no_messages,
                     subtitleRes = R.string.mailbox_empty_inbox_subtitle,
-                    imageRes = R.drawable.img_empty_inbox
+                    imageRes = R.drawable.img_empty_mailbox
                 )
                 SPAM -> EmptyMailboxUiModel(
                     titleRes = R.string.mailbox_no_messages,
                     subtitleRes = R.string.mailbox_empty_spam_subtitle,
-                    imageRes = R.drawable.img_empty_spam
+                    imageRes = R.drawable.img_no_messages_in_spam
                 )
                 TRASH -> EmptyMailboxUiModel(
                     titleRes = R.string.mailbox_no_messages,

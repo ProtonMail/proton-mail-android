@@ -1201,6 +1201,7 @@ internal class MailboxActivity :
         labelName: String?,
         isFolder: Boolean
     ) {
+        val newMessageLocationType = fromInt(newLocation)
         SetUpNewMessageLocationTask(
             WeakReference(this),
             messageDetailsRepositoryFactory,
@@ -1210,6 +1211,10 @@ internal class MailboxActivity :
             labelName,
             userManager.requireCurrentUserId()
         ).execute()
+        include_mailbox_no_messages.apply {
+            isVisible = false
+            bind(EmptyMailboxUiModel.fromLocation(newMessageLocationType))
+        }
     }
 
     private var undoSnack: Snackbar? = null

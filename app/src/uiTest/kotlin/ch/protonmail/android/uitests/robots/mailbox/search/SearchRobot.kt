@@ -84,7 +84,7 @@ class SearchRobot : Robot {
         }
 
         fun noSearchResults() {
-            view.withId(R.id.no_messages).withText(R.string.no_search_results).checkDisplayed()
+            view.withId(R.id.no_messages).checkDisplayed()
         }
     }
 

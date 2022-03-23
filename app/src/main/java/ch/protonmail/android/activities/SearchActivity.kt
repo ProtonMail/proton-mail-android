@@ -26,8 +26,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
@@ -54,7 +54,7 @@ import javax.inject.Provider
 internal class SearchActivity : BaseActivity() {
 
     private lateinit var adapter: MailboxRecyclerViewAdapter
-    private lateinit var noMessagesView: TextView
+    private lateinit var noMessagesView: ConstraintLayout
     private lateinit var progressBar: ProgressBar
     private var scrollStateChanged = false
     private var queryText = ""

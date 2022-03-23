@@ -31,16 +31,15 @@
         style="@style/Proton.Text.Headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/padding_xl"
         android:gravity="center"
         tools:text="@string/mailbox_no_messages"
         tools:drawableTopCompat="@drawable/img_empty_folder" />
 
     <TextView
         android:id="@+id/layout_no_messages_subtitle_text_view"
-        style="@style/Proton.Text.Default"
+        style="@style/Proton.Text.Default.Weak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding_l"
+        android:layout_marginTop="@dimen/margin_s"
         tools:text="@string/inbox_this_folder_is_empty" />
 </merge>

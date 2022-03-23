@@ -67,7 +67,7 @@ class TrashRobot : MailboxRobotInterface, Robot {
     class Verify : Robot {
 
         fun folderEmpty() {
-            view.withId(R.id.no_messages).withText(R.string.mailbox_no_messages).checkDisplayed()
+            view.withId(R.id.no_messages).checkDisplayed()
         }
     }
 
