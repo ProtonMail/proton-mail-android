@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -88,7 +88,8 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
             }
             unreadIncrease = true;
         }
-        if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
+        Constants.MessageLocationType location = Constants.MessageLocationType.Companion.fromInt(message.getLocation());
+        if (location == Constants.MessageLocationType.SENT || location == Constants.MessageLocationType.ALL_SENT) {
             message.addLabels(Collections.singletonList(mLabelId));
         } else {
             message.setLocation(Constants.MessageLocationType.LABEL_FOLDER.getMessageLocationTypeValue());

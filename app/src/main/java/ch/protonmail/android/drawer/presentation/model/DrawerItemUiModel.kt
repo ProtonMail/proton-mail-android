@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -115,8 +115,8 @@ internal sealed class DrawerItemUiModel {
 
                 INBOX(MessageLocationType.INBOX.messageLocationTypeValue, DrawerOptionType.INBOX),
                 STARRED(MessageLocationType.STARRED.messageLocationTypeValue, DrawerOptionType.STARRED),
-                DRAFTS(MessageLocationType.DRAFT.messageLocationTypeValue, DrawerOptionType.DRAFTS),
-                SENT(MessageLocationType.SENT.messageLocationTypeValue, DrawerOptionType.SENT),
+                DRAFTS(MessageLocationType.ALL_DRAFT.messageLocationTypeValue, DrawerOptionType.DRAFTS),
+                SENT(MessageLocationType.ALL_SENT.messageLocationTypeValue, DrawerOptionType.SENT),
                 ARCHIVE(MessageLocationType.ARCHIVE.messageLocationTypeValue, DrawerOptionType.ARCHIVE),
                 TRASH(MessageLocationType.TRASH.messageLocationTypeValue, DrawerOptionType.TRASH),
                 SPAM(MessageLocationType.SPAM.messageLocationTypeValue, DrawerOptionType.SPAM),

@@ -1170,7 +1170,7 @@ public class ComposeMessageActivity
         message.setInline(composeMessageViewModel.getMessageDataResult().isRespondInlineChecked());
         if (isDraft) {
             message.setIsRead(true);
-            message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue()),
+            message.addLabels(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue()),
                     String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue()),
                     String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
             message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -162,11 +162,11 @@ class SaveDraft @Inject constructor(
     }
 
     private suspend fun saveMessageLocallyAsDraft(message: Message) {
-        message.setLabelIDs(
+        message.addLabels(
             listOf(
-                ALL_DRAFT.messageLocationTypeValue.toString(),
-                ALL_MAIL.messageLocationTypeValue.toString(),
-                DRAFT.messageLocationTypeValue.toString()
+                ALL_DRAFT.asLabelIdString(),
+                ALL_MAIL.asLabelIdString(),
+                DRAFT.asLabelIdString()
             )
         )
 

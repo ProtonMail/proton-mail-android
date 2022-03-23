@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -24,23 +24,24 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.metrics.domain.SendMetricsForViewInDarkModePreference
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.IsAppInDarkMode
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.message.ChangeMessagesReadStatus
 import ch.protonmail.android.usecase.message.ChangeMessagesStarredStatus
-import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
-import ch.protonmail.android.details.domain.usecase.SetViewInDarkModeMessagePreference
-import ch.protonmail.android.metrics.domain.SendMetricsForViewInDarkModePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -546,23 +547,29 @@ internal class MessageActionSheetViewModel @Inject constructor(
                 }
         } else true
 
+        val moveToSpamHiddenLocations = listOf(
+            MessageLocationType.DRAFT,
+            MessageLocationType.ALL_DRAFT,
+            MessageLocationType.SENT,
+            MessageLocationType.ALL_SENT,
+            MessageLocationType.SPAM,
+            MessageLocationType.TRASH
+        )
         val isMoveToSpamVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
-            messageLocation in Constants.MessageLocationType.values()
-                .filter { type ->
-                    type != Constants.MessageLocationType.SPAM &&
-                        type != Constants.MessageLocationType.DRAFT &&
-                        type != Constants.MessageLocationType.SENT &&
-                        type != Constants.MessageLocationType.TRASH
-                }
+            messageLocation in MessageLocationType.values()
+                .filter { type -> type !in moveToSpamHiddenLocations }
         } else true
 
-        val isDeleteVisible = messageLocation in Constants.MessageLocationType.values()
-            .filter { type ->
-                type == Constants.MessageLocationType.DRAFT ||
-                    type == Constants.MessageLocationType.SENT ||
-                    type == Constants.MessageLocationType.TRASH ||
-                    type == Constants.MessageLocationType.SPAM
-            }
+        val deleteVisibleLocations = listOf(
+            MessageLocationType.DRAFT,
+            MessageLocationType.ALL_DRAFT,
+            MessageLocationType.SENT,
+            MessageLocationType.ALL_SENT,
+            MessageLocationType.TRASH,
+            MessageLocationType.SPAM
+        )
+        val isDeleteVisible = messageLocation in MessageLocationType.values()
+            .filter { type -> type in deleteVisibleLocations }
 
         val moveSectionState = MessageActionSheetState.MoveSectionState(
             messageIds,

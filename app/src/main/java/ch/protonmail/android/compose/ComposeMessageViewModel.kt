@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -50,6 +50,7 @@ import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiModel
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.LocalAttachment
@@ -460,7 +461,12 @@ class ComposeMessageViewModel @Inject constructor(
                 val newAttachments = calculateNewAttachments(message, uploadAttachments)
 
                 invokeSaveDraftUseCase(
-                    message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger
+                    message,
+                    newAttachments,
+                    parentId,
+                    _actionId,
+                    _oldSenderAddressId,
+                    saveDraftTrigger
                 )
 
                 // overwrite "old sender ID" when updating draft
@@ -1203,12 +1209,8 @@ class ComposeMessageViewModel @Inject constructor(
                 .observeOn(ThreadSchedulers.main())
                 .subscribe(
                     {
-                        if (Constants.MessageLocationType.fromInt(
-                                it.location
-                            ) == Constants.MessageLocationType.SENT || Constants.MessageLocationType.fromInt(
-                                    it.location
-                                ) == Constants.MessageLocationType.ALL_SENT
-                        ) {
+                        val location = MessageLocationType.fromInt(it.location)
+                        if (location == MessageLocationType.SENT || location == MessageLocationType.ALL_SENT) {
                             _closeComposer.postValue(Event(true))
                         }
                     },
