@@ -139,6 +139,7 @@
     <!-- endregion -->
 
     <!-- region Dialogs -->
+    <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
     <!-- endregion -->
 
     <!-- region Onboarding -->

@@ -56,6 +56,8 @@ import ch.protonmail.android.contacts.list.progress.ProgressDialogFactory
 import ch.protonmail.android.contacts.list.progress.UploadProgressObserver
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.user.isPaidUser
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
@@ -89,6 +91,9 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     @Inject
     lateinit var jobManager: JobManager
+
+    @Inject
+    lateinit var userManager: UserManager
 
     override var actionMode: ActionMode? = null
         private set
@@ -257,6 +262,14 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                     }
                 } else {
                     listener.doRequestContactsPermission()
+                }
+
+                if (!userManager.requireCurrentUser().isPaidUser()) {
+                    DialogUtils.showInfoDialog(
+                        requireContext(),
+                        "",
+                        requireContext().getString(R.string.contact_list_cannot_upload_groups_dialog_message)
+                    ) {}
                 }
 
                 true
