@@ -89,7 +89,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
@@ -137,7 +136,7 @@ internal class MailboxViewModel @Inject constructor(
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
     private val mutableMailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
     private val mutableMailboxLocation = MutableStateFlow(INBOX)
-    private val mutableMailboxLabelId = MutableStateFlow(EMPTY_STRING)
+    private val mutableMailboxLabelId = MutableStateFlow<String?>(null)
     private val mutableUserId = userManager.primaryUserId
     private val mutableRefreshFlow = MutableSharedFlow<Boolean>(
         replay = 1,
@@ -309,7 +308,8 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     fun messagesToMailboxItemsBlocking(messages: List<Message>) = runBlocking {
-        return@runBlocking messagesToMailboxItems(messages, null)
+        val currentLabelId = getLabelId(mailboxLocation.value, mutableMailboxLabelId.value)
+        return@runBlocking messagesToMailboxItems(messages, currentLabelId, null)
     }
 
     private fun conversationsAsMailboxItems(
@@ -389,7 +389,11 @@ internal class MailboxViewModel @Inject constructor(
                         isFirstData = false
 
                         MailboxState.Data(
-                            items = messagesToMailboxItems(result.messages, labels),
+                            items = messagesToMailboxItems(
+                                messages = result.messages,
+                                currentLabelId = getLabelId(location, labelId),
+                                labelsList = labels
+                            ),
                             isFreshData = hasReceivedFirstApiRefresh != null,
                             shouldResetPosition = shouldResetPosition
                         )
@@ -417,6 +421,9 @@ internal class MailboxViewModel @Inject constructor(
             }
     }
 
+    private fun getLabelId(location: Constants.MessageLocationType, labelId: String?): LabelId =
+        labelId?.let(::LabelId) ?: location.asLabelId()
+
     private suspend fun conversationsToMailboxItems(
         conversations: List<Conversation>,
         locationId: String,
@@ -429,7 +436,9 @@ internal class MailboxViewModel @Inject constructor(
         )
 
     private suspend fun messagesToMailboxItems(
-        messages: List<Message>, labelsList: List<Label>?
+        messages: List<Message>,
+        currentLabelId: LabelId,
+        labelsList: List<Label>?
     ): List<MailboxItemUiModel> {
         Timber.v("messagesToMailboxItems size: ${messages.size}")
 
@@ -439,7 +448,7 @@ internal class MailboxViewModel @Inject constructor(
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { idsChunk -> labelRepository.findLabels(idsChunk) }
 
-        return mailboxItemUiModelMapper.toUiModels(messages, allLabels)
+        return mailboxItemUiModelMapper.toUiModels(messages, currentLabelId, allLabels)
     }
 
     fun deleteAction(
@@ -583,7 +592,7 @@ internal class MailboxViewModel @Inject constructor(
 
     fun setNewMailboxLabel(labelId: String) {
         if (mutableMailboxLabelId.value != labelId) {
-            mutableMailboxLabelId.value = labelId
+            mutableMailboxLabelId.value = labelId.takeIfNotBlank()
         }
     }
 

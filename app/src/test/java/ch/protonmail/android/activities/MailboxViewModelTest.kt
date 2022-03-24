@@ -144,8 +144,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val observeLabels: ObserveLabels = mockk()
 
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper = mockk {
-        coEvery { toUiModels(any(), any()) } returns emptyList()
-        coEvery { toUiModels(any(), any(), any()) } returns emptyList()
+        coEvery { toUiModels(any<Collection<Message>>(), any(), any()) } returns emptyList()
+        coEvery { toUiModels(any<Collection<Conversation>>(), any(), any()) } returns emptyList()
     }
 
     private val clearNotificationsForUser: ClearNotificationsForUser = mockk()
@@ -279,7 +279,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val message = Message()
             val messages = listOf(message)
             val mailboxUiItems = listOf(buildMailboxUiItem())
-            coEvery { mailboxItemUiModelMapper.toUiModels(listOf(message), any()) } returns mailboxUiItems
+            coEvery { mailboxItemUiModelMapper.toUiModels(listOf(message), any(), any()) } returns mailboxUiItems
             val expectedState = mailboxUiItems.toMailboxState()
 
             // When
@@ -559,7 +559,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             isStarred: Boolean = false,
         ) = MailboxItemUiModel(
             itemId = itemId,
-            senderName = EMPTY_STRING,
+            correspondentsNames = EMPTY_STRING,
             subject = EMPTY_STRING,
             lastMessageTimeMs = 0,
             hasAttachments = false,
@@ -570,7 +570,6 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             messageData = null,
             messageLabels = emptyList(),
             allLabelsIds = emptyList(),
-            recipients = EMPTY_STRING,
             isDraft = false
         )
 

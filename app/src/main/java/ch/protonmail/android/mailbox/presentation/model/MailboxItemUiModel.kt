@@ -30,7 +30,7 @@ import ch.protonmail.android.ui.model.LabelChipUiModel
  */
 data class MailboxItemUiModel(
     val itemId: String,
-    val senderName: String,
+    val correspondentsNames: String,
     val subject: String,
     val lastMessageTimeMs: Long,
     val hasAttachments: Boolean,
@@ -41,7 +41,6 @@ data class MailboxItemUiModel(
     val messageData: MessageData?,
     val messageLabels: List<LabelChipUiModel>,
     val allLabelsIds: List<LabelId>,
-    val recipients: String,
     val isDraft: Boolean
 ) {
 

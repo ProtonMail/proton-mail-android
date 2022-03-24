@@ -89,26 +89,6 @@ class MailboxItemView @JvmOverloads constructor(
         }
     }
 
-    private fun getCorrespondentsText(mailboxUiItem: MailboxItemUiModel, location: MessageLocationType) =
-        if (isDraftOrSentItem(mailboxUiItem, location)) {
-            mailboxUiItem.recipients
-        } else {
-            mailboxUiItem.senderName
-        }
-
-    private fun isDraftOrSentItem(mailboxUiItem: MailboxItemUiModel, location: MessageLocationType): Boolean {
-        val currentLabelId = location.asLabelId()
-        val mailboxItemLabelsIds = mailboxUiItem.allLabelsIds
-        val sentAndDraftLabels = listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.ALL_DRAFT,
-            MessageLocationType.SENT,
-            MessageLocationType.ALL_SENT
-        ).map { it.asLabelId() }
-
-        return (mailboxItemLabelsIds + currentLabelId).any { it in sentAndDraftLabels }
-    }
-
     private fun getIconForMessageLocation(messageLocation: MessageLocationType) = when (messageLocation) {
         MessageLocationType.INBOX -> R.drawable.ic_inbox
         MessageLocationType.SENT -> R.drawable.ic_paper_plane
@@ -122,35 +102,38 @@ class MailboxItemView @JvmOverloads constructor(
     }
 
     fun bind(
-        mailboxUiItem: MailboxItemUiModel,
+        mailboxItem: MailboxItemUiModel,
         isMultiSelectionMode: Boolean,
         mailboxLocation: MessageLocationType,
         isBeingSent: Boolean,
         areAttachmentsBeingUploaded: Boolean
     ) {
-        val readStatus = mailboxUiItem.isRead
+        val readStatus = mailboxItem.isRead
         val messageLocation = MessageLocationType.fromInt(
-            mailboxUiItem.messageData?.location
+            mailboxItem.messageData?.location
                 ?: MessageLocationType.INVALID.messageLocationTypeValue
         )
 
         setTextViewStyles(readStatus)
         setIconsTint(readStatus)
 
-        val showBigDraftIcon = mailboxUiItem.isDraft && !isDraftsLocation(mailboxLocation)
-        val correspondentsText = getCorrespondentsText(mailboxUiItem, mailboxLocation)
+        val showBigDraftIcon = mailboxItem.isDraft && !isDraftsLocation(mailboxLocation)
         // Sender text can only be empty in drafts where we show recipients instead of senders
-        if (correspondentsText.isEmpty()) {
+        if (mailboxItem.correspondentsNames.isEmpty()) {
             correspondents_text_view.text = context.getString(R.string.empty_recipients)
             sender_initial_view.bind(HYPHEN, showBigDraftIcon, isMultiSelectionMode)
         } else {
-            correspondents_text_view.text = correspondentsText
-            sender_initial_view.bind(correspondentsText.substring(0, 1), showBigDraftIcon, isMultiSelectionMode)
+            correspondents_text_view.text = mailboxItem.correspondentsNames
+            sender_initial_view.bind(
+                senderText = mailboxItem.correspondentsNames.substring(0, 1),
+                showDraftIcon = showBigDraftIcon,
+                isMultiSelectionMode = isMultiSelectionMode
+            )
         }
 
-        subject_text_view.text = mailboxUiItem.subject
+        subject_text_view.text = mailboxItem.subject
 
-        time_date_text_view.text = DateUtil.formatDateTime(context, mailboxUiItem.lastMessageTimeMs)
+        time_date_text_view.text = DateUtil.formatDateTime(context, mailboxItem.lastMessageTimeMs)
         if (areAttachmentsBeingUploaded) {
             time_date_text_view.text = context.getString(R.string.draft_label_attachments_uploading)
         }
@@ -158,10 +141,10 @@ class MailboxItemView @JvmOverloads constructor(
             time_date_text_view.text = context.getString(R.string.draft_label_message_uploading)
         }
 
-        replyImageView.isVisible = mailboxUiItem.messageData?.isReplied == true &&
-            !mailboxUiItem.messageData.isRepliedAll
-        replyAllImageView.isVisible = mailboxUiItem.messageData?.isRepliedAll == true
-        forward_image_view.isVisible = mailboxUiItem.messageData?.isForwarded == true
+        replyImageView.isVisible = mailboxItem.messageData?.isReplied == true &&
+            !mailboxItem.messageData.isRepliedAll
+        replyAllImageView.isVisible = mailboxItem.messageData?.isRepliedAll == true
+        forward_image_view.isVisible = mailboxItem.messageData?.isForwarded == true
 
         draft_image_view.isVisible = isDraftsLocation(mailboxLocation)
 
@@ -178,23 +161,23 @@ class MailboxItemView @JvmOverloads constructor(
             if (icon != null) {
                 first_location_image_view.setImageDrawable(ContextCompat.getDrawable(context, icon))
             }
-            Timber.v("Message location: $messageLocation, icon: $icon, subject: ${mailboxUiItem.subject}")
+            Timber.v("Message location: $messageLocation, icon: $icon, subject: ${mailboxItem.subject}")
             first_location_image_view.isVisible = icon != null
         } else {
             first_location_image_view.visibility = View.GONE
         }
 
-        messages_number_text_view.isVisible = mailboxUiItem.messagesCount != null
-        messages_number_text_view.text = mailboxUiItem.messagesCount.toString()
+        messages_number_text_view.isVisible = mailboxItem.messagesCount != null
+        messages_number_text_view.text = mailboxItem.messagesCount.toString()
         sending_uploading_progress_bar.isVisible = isBeingSent || areAttachmentsBeingUploaded
-        attachment_image_view.isVisible = mailboxUiItem.hasAttachments
-        star_image_view.isVisible = mailboxUiItem.isStarred
+        attachment_image_view.isVisible = mailboxItem.hasAttachments
+        star_image_view.isVisible = mailboxItem.isStarred
 
         empty_space_view.isVisible = attachment_image_view.isVisible || star_image_view.isVisible
 
-        expiration_image_view.isVisible = mailboxUiItem.expirationTime > 0
+        expiration_image_view.isVisible = mailboxItem.expirationTime > 0
 
-        labelsLayout.setLabels(mailboxUiItem.messageLabels)
+        labelsLayout.setLabels(mailboxItem.messageLabels)
     }
 
     private fun isDraftsLocation(
@@ -203,5 +186,4 @@ class MailboxItemView @JvmOverloads constructor(
         MessageLocationType.DRAFT,
         MessageLocationType.ALL_DRAFT
     )
-
 }
