@@ -437,7 +437,10 @@ class NotificationServer @Inject constructor(
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()
-        notificationManager.notify(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
+        notificationManager.notify(
+            (userId.id + error).hashCode() + NOTIFICATION_ID_SENDING_FAILED,
+            notification
+        )
     }
 
     private fun notifyErrorWithTitle(
