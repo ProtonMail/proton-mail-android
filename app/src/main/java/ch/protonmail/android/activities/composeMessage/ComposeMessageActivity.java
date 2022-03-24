@@ -1690,27 +1690,23 @@ public class ComposeMessageActivity
 
     private void loadPMContacts() {
         if (mUserManager.getCurrentLegacyUser().getCombinedContacts()) {
-            composeMessageViewModel.getMergedContactsLiveData().observe(this, messageRecipients -> {
-                recipientAdapter.setData(messageRecipients);
-            });
             Set<UserId> userIds = AccountManagerKt.allLoggedInBlocking(accountManager);
             for(UserId userId : userIds) {
                 composeMessageViewModel.fetchContactGroups(userId);
             }
-            composeMessageViewModel.loadPMContacts();
         } else {
-
-            composeMessageViewModel.getContactGroupsResult().observe(this, messageRecipients -> {
-                recipientAdapter.setData(messageRecipients);
-            });
             composeMessageViewModel.fetchContactGroups(mUserManager.requireCurrentUserId());
-            composeMessageViewModel.getPmMessageRecipientsResult().observe(this, messageRecipients -> {
-                recipientAdapter.setData(messageRecipients);
-            });
-            composeMessageViewModel.loadPMContacts();
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-                getSupportLoaderManager().initLoader(LOADER_ID_ANDROID_CONTACTS, null, this);
-            }
+        }
+
+        composeMessageViewModel.getContactGroupsResult().observe(this, messageRecipients -> {
+            recipientAdapter.setData(messageRecipients);
+        });
+        composeMessageViewModel.getPmMessageRecipientsResult().observe(this, messageRecipients -> {
+            recipientAdapter.setData(messageRecipients);
+        });
+        composeMessageViewModel.loadPMContacts();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            getSupportLoaderManager().initLoader(LOADER_ID_ANDROID_CONTACTS, null, this);
         }
     }
 
