@@ -1444,6 +1444,7 @@ internal class MailboxActivity :
             }
             val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], currentMailboxLocation)
             val currentLocationId = mailboxLabelId ?: mailboxLocation.messageLocationTypeValue.toString()
+            mailboxViewModel.vibrateOnSwipe()
             if (isConversationModeEnabled(mailboxLocation)) {
                 mailboxViewModel.handleConversationSwipe(
                     swipeAction,
