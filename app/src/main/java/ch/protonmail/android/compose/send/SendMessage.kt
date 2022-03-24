@@ -27,22 +27,25 @@ import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.pendingaction.data.model.PendingSend
+import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.UuidProvider
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import javax.inject.Inject
 
-internal const val MISSING_DB_ID = 0L
+private const val MISSING_DB_ID = 0L
 
 class SendMessage @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
     private val pendingActionDao: PendingActionDao,
     private val sendMessageScheduler: SendMessageWorker.Enqueuer,
+    private val pendingSendRepository: PendingSendRepository,
     private val addressCryptoFactory: AddressCrypto.Factory,
     @CurrentUserId private val currentUserId: UserId,
     private val uuidProvider: UuidProvider
@@ -68,6 +71,14 @@ class SendMessage @Inject constructor(
             parameters.previousSenderAddressId,
             parameters.securityOptions
         )
+
+        message.messageId?.let { messageId ->
+            pendingSendRepository.schedulePendingSendCleanupByMessageId(
+                messageId,
+                message.subject ?: EMPTY_STRING,
+                message.dbId ?: MISSING_DB_ID
+            )
+        }
     }
 
     private fun setMessageAsPendingForSend(message: Message) {

@@ -63,9 +63,11 @@ import ch.protonmail.android.core.apiError
 import ch.protonmail.android.core.messageId
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.pendingaction.data.worker.CleanUpPendingSendWorker
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
+import ch.protonmail.android.worker.repository.WorkerRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
@@ -109,7 +111,9 @@ class SendMessageWorker @AssistedInject constructor(
     private val packagesFactory: PackageFactory,
     private val userManager: UserManager,
     private val userNotifier: UserNotifier,
-    private val pendingActionDao: PendingActionDao
+    private val pendingActionDao: PendingActionDao,
+    private val workerRepository: WorkerRepository,
+    private val getCleanUpPendingSendWorkName: CleanUpPendingSendWorker.ProvideUniqueName
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -211,6 +215,7 @@ class SendMessageWorker @AssistedInject constructor(
         responseMessage.writeTo(savedDraftMessage)
         saveMessageAsSent(savedDraftMessage)
         userNotifier.showMessageSent()
+        savedDraftMessage.dbId?.let { workerRepository.cancelUniqueWork(getCleanUpPendingSendWorkName(it)) }
         return Result.success()
     }
 
@@ -340,7 +345,8 @@ class SendMessageWorker @AssistedInject constructor(
 
     class Enqueuer @Inject constructor(
         private val workManager: WorkManager,
-        private val userManager: UserManager
+        private val userManager: UserManager,
+        private val provideUniqueName: ProvideUniqueName
     ) {
 
         fun enqueue(
@@ -372,11 +378,16 @@ class SendMessageWorker @AssistedInject constructor(
                 .build()
 
             workManager.enqueueUniqueWork(
-                "$SEND_MESSAGE_WORK_NAME_PREFIX-${requireNotNull(message.messageId)}",
+                provideUniqueName(requireNotNull(message.messageId)),
                 ExistingWorkPolicy.REPLACE,
                 sendMessageRequest
             )
             return workManager.getWorkInfoByIdLiveData(sendMessageRequest.id).asFlow()
         }
+    }
+
+    class ProvideUniqueName @Inject constructor() {
+
+        operator fun invoke(messageId: String) = "$SEND_MESSAGE_WORK_NAME_PREFIX-$messageId"
     }
 }
