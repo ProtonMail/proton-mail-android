@@ -247,7 +247,6 @@ object Constants {
         FREE("free"),
         PLUS("plus"),
         VISIONARY("visionary"),
-        BUSINESS("business"),
         PROFESSIONAL("professional");
 
         companion object {
@@ -260,8 +259,6 @@ object Constants {
     }
 
     enum class CurrencyType {
-        USD,
-        CHF,
         EUR
     }
 
