@@ -302,6 +302,8 @@ class NotificationServer @Inject constructor(
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, message?.subject)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
+        val summaryContentIntent = getMailboxActivityIntent(userId)
+
         val backIntent = Intent(context, MailboxActivity::class.java)
         backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
@@ -378,6 +380,7 @@ class NotificationServer @Inject constructor(
             setGroup(userId.id)
             setGroupSummary(true)
             setAutoCancel(true)
+            setContentIntent(summaryContentIntent)
             setDeleteIntent(dismissGroupIntent)
         }.build()
 
@@ -386,6 +389,13 @@ class NotificationServer @Inject constructor(
             notify(messageId.hashCode(), notification)
             notify(userId.id.hashCode(), summaryNotification)
         }
+    }
+
+    private fun getMailboxActivityIntent(loggedInUserId: UserId): PendingIntent {
+        // Create content Intent for open MailboxActivity
+        val contentIntent = context.getMailboxActivityIntent(UserId(loggedInUserId.id))
+        val requestCode = System.currentTimeMillis().toInt()
+        return PendingIntent.getActivity(context, requestCode, contentIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     private fun createGenericErrorSendingMessageNotification(
