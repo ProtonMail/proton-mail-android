@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -19,7 +19,6 @@
 package ch.protonmail.android.data
 
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
@@ -29,34 +28,29 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 class ContactsRepository @Inject constructor(
     private val databaseProvider: DatabaseProvider,
-    private val userManager: UserManager,
     private val labelRepository: LabelRepository
 ) {
 
-    private val contactDao by lazy {
-        Timber.v("Instantiating contactDao in ContactsRepository")
-        databaseProvider.provideContactDao(userManager.requireCurrentUserId())
-    }
+    suspend fun findContactEmailByEmail(userId: UserId, email: String): ContactEmail? =
+        contactDao(userId).findContactEmailByEmail(email)
 
-    suspend fun findContactEmailByEmail(email: String): ContactEmail? =
-        contactDao.findContactEmailByEmail(email)
+    fun findAllContactEmails(userId: UserId): Flow<List<ContactEmail>> =
+        contactDao(userId).findAllContactsEmails()
 
-    fun findAllContactEmails(): Flow<List<ContactEmail>> = contactDao.findAllContactsEmails()
+    fun findContactsByEmail(userId: UserId, emails: List<String>): Flow<List<ContactEmail>> =
+        contactDao(userId).findContactsByEmail(emails)
 
-    fun findContactsByEmail(emails: List<String>): Flow<List<ContactEmail>> =
-        contactDao.findContactsByEmail(emails)
-
-    suspend fun countContactEmailsByLabelId(labelId: LabelId): Int =
+    suspend fun countContactEmailsByLabelId(userId: UserId, labelId: LabelId): Int =
         // we take only a part of the label as in the old DB they were Unicode escaped and has some brackets
-        contactDao.countContactEmailsByGroupId(labelId.id.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
+        contactDao(userId).countContactEmailsByGroupId(labelId.id.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
 
-    suspend fun getAllContactGroupsByContactEmail(emailId: String): List<Label> =
-        contactDao.observeContactEmailById(emailId)
+    suspend fun getAllContactGroupsByContactEmail(userId: UserId, emailId: String): List<Label> =
+        contactDao(userId).observeContactEmailById(emailId)
             .filterNotNull()
             .map { contactEmail ->
                 val labelsIds = contactEmail.labelIds?.map { LabelId(it) }
@@ -67,25 +61,30 @@ class ContactsRepository @Inject constructor(
                 }
             }.first()
 
-    suspend fun findAllContactEmailsByContactGroupId(groupLabelId: String): List<ContactEmail> =
-        contactDao.observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
+    suspend fun findAllContactEmailsByContactGroupId(userId: UserId, groupLabelId: String): List<ContactEmail> =
+        contactDao(userId).observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
             .first()
 
-    suspend fun findAllContactEmailsById(emailId: String): ContactEmail? =
-        contactDao.findContactEmailById(emailId)
+    suspend fun findAllContactEmailsById(userId: UserId, emailId: String): ContactEmail? =
+        contactDao(userId).findContactEmailById(emailId)
 
-    fun observeAllContactEmailsByContactGroupId(groupLabelId: String): Flow<List<ContactEmail>> =
+    fun observeAllContactEmailsByContactGroupId(userId: UserId, groupLabelId: String): Flow<List<ContactEmail>> =
         if (groupLabelId.isBlank()) {
             flowOf(emptyList())
         } else {
-            contactDao.observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
+            contactDao(userId)
+                .observeAllContactsEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT))
         }
 
-    fun observeFilterContactEmailsByContactGroup(groupLabelId: String, filter: String): Flow<List<ContactEmail>> =
-        contactDao.observeFilterContactEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT), filter)
+    fun observeFilterContactEmailsByContactGroup(userId: UserId, groupLabelId: String, filter: String): Flow<List<ContactEmail>> =
+        contactDao(userId)
+            .observeFilterContactEmailsByContactGroup(groupLabelId.take(IMPORTANT_LABEL_CHARACTERS_COUNT), filter)
 
-    suspend fun saveContactEmail(contactEmail: ContactEmail) =
-        contactDao.saveContactEmail(contactEmail)
+    suspend fun saveContactEmail(userId: UserId, contactEmail: ContactEmail) =
+        contactDao(userId).saveContactEmail(contactEmail)
+
+    private fun contactDao(userId: UserId) =
+        databaseProvider.provideContactDao(userId)
 
     companion object {
 
