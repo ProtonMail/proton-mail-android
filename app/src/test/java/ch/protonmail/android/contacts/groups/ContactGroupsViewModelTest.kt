@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -28,14 +28,12 @@ import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
-import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.labels.domain.usecase.DeleteLabels
+import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.utils.Event
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
@@ -52,19 +50,20 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     @get: Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
-    @RelaxedMockK
-    private lateinit var userManager: UserManager
+    private val userManager: UserManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var deleteLabels: DeleteLabels
+    private val deleteLabels: DeleteLabels = mockk(relaxed = true)
 
     private val contactsListMapper = ContactsListMapper()
 
-    @RelaxedMockK
-    private lateinit var contactGroupsRepository: ContactGroupsRepository
+    private val contactGroupsRepository: ContactGroupsRepository = mockk(relaxed = true)
 
-    @InjectMockKs
-    private lateinit var contactGroupsViewModel: ContactGroupsViewModel
+    private val contactGroupsViewModel = ContactGroupsViewModel(
+        contactGroupsRepository = contactGroupsRepository,
+        contactsListMapper = contactsListMapper,
+        deleteLabels = deleteLabels,
+        userManager = userManager
+    )
 
     private val testPath = "test/path1234"
     private val label1 =
@@ -78,7 +77,6 @@ class ContactGroupsViewModelTest : CoroutinesTest {
 
     @BeforeTest
     fun setUp() {
-        MockKAnnotations.init(this)
         mockkStatic(Color::class)
         every { Color.parseColor(any()) } returns testColorInt
     }
@@ -113,7 +111,7 @@ class ContactGroupsViewModelTest : CoroutinesTest {
             color = testColorInt,
         )
         val contactListItems = listOf(listItem1, listItem2, listItem3)
-        coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } returns flowOf(contactLabels)
+        coEvery { contactGroupsRepository.observeContactGroups(any(), searchTerm) } returns flowOf(contactLabels)
 
         // when
         contactGroupsViewModel.setSearchPhrase(searchTerm)
@@ -131,7 +129,7 @@ class ContactGroupsViewModelTest : CoroutinesTest {
             val searchTerm = "searchTerm"
             val resultLiveData = contactGroupsViewModel.contactGroupsError.testObserver()
             val exception = Exception("test-exception")
-            coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } throws exception
+            coEvery { contactGroupsRepository.observeContactGroups(any(), searchTerm) } throws exception
 
             // when
             contactGroupsViewModel.setSearchPhrase(searchTerm)
@@ -142,5 +140,4 @@ class ContactGroupsViewModelTest : CoroutinesTest {
             assertEquals("test-exception", (observedError as Event).getContentIfNotHandled())
         }
     }
-
 }

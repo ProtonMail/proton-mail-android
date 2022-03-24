@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -24,6 +24,7 @@ import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 class ContactGroupDetailsRepository @Inject constructor(
@@ -34,10 +35,10 @@ class ContactGroupDetailsRepository @Inject constructor(
     fun observeContactGroupDetails(id: String): Flow<Label?> =
         labelRepository.observeLabel(LabelId(id))
 
-    fun observeContactGroupEmails(groupLabelId: String): Flow<List<ContactEmail>> =
-        contactRepository.observeAllContactEmailsByContactGroupId(groupLabelId)
+    fun observeContactGroupEmails(userId: UserId, groupLabelId: String): Flow<List<ContactEmail>> =
+        contactRepository.observeAllContactEmailsByContactGroupId(userId, groupLabelId)
 
-    fun filterContactGroupEmails(groupLabelId: String, filter: String): Flow<List<ContactEmail>> =
-        contactRepository.observeFilterContactEmailsByContactGroup(groupLabelId, filter)
+    fun filterContactGroupEmails(userId: UserId, groupLabelId: String, filter: String): Flow<List<ContactEmail>> =
+        contactRepository.observeFilterContactEmailsByContactGroup(userId, groupLabelId, filter)
 
 }

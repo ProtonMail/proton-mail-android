@@ -357,6 +357,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private suspend fun loadMessageDetails(message: Message?): ConversationUiModel? {
+        val userId = userManager.currentUserId
+            ?: return null
 
         val messageWithDetails = if (message == null || !message.isDownloaded) {
             Timber.v("Message is not downloaded, trying to fetch it")
@@ -372,7 +374,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             return null
         }
 
-        val contact = contactsRepository.findContactEmailByEmail(messageWithDetails.senderEmail)
+        val contact = contactsRepository.findContactEmailByEmail(userId, messageWithDetails.senderEmail)
         val contactName = contact?.name?.takeIfNotBlank()
         if (contactName != null && contactName != contact.email) {
             messageWithDetails.senderDisplayName = contact.name
@@ -420,7 +422,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     ): ConversationUiModel? {
         val messages = conversation.messages?.mapNotNull { message ->
             messageRepository.findMessage(userId, message.id)?.let { localMessage ->
-                val contact = contactsRepository.findContactEmailByEmail(localMessage.senderEmail)
+                val contact = contactsRepository.findContactEmailByEmail(userId, localMessage.senderEmail)
                 val contactName = contact?.name?.takeIfNotBlank()
                 if (contactName != null && contactName != contact.email) {
                     localMessage.senderDisplayName = contact.name

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -29,6 +29,7 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.domain.model.LabelId
@@ -56,7 +57,8 @@ class ContactGroupDetailsViewModel @Inject constructor(
     private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
     private val deleteLabels: DeleteLabels,
     private val contactsMapper: ContactsListMapper,
-    private val contactRepository: ContactsRepository
+    private val contactRepository: ContactsRepository,
+    private val userManager: UserManager
 ) : ViewModel() {
 
     private lateinit var _contactLabel: ContactGroupListItem
@@ -114,10 +116,12 @@ class ContactGroupDetailsViewModel @Inject constructor(
     fun getData(): ContactGroupListItem = _contactLabel
 
     private fun initFiltering() {
+        val userId = userManager.currentUserId
+            ?: return
         filteringChannel
             .debounce(300.toDuration(DurationUnit.MILLISECONDS))
             .distinctUntilChanged()
-            .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.contactId, it) }
+            .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(userId, _contactLabel.contactId, it) }
             .catch {
                 _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
             }
@@ -129,9 +133,11 @@ class ContactGroupDetailsViewModel @Inject constructor(
     }
 
     private fun initGroupsObserving() {
+        val userId = userManager.currentUserId
+            ?: return
         _contactGroupItemFlow
             .filterNotNull()
-            .flatMapLatest { contactGroupDetailsRepository.observeContactGroupEmails(it.contactId) }
+            .flatMapLatest { contactGroupDetailsRepository.observeContactGroupEmails(userId, it.contactId) }
             .onEach { list ->
                 _contactGroupEmailsResult.postValue(list)
             }
@@ -144,6 +150,8 @@ class ContactGroupDetailsViewModel @Inject constructor(
     }
 
     private fun initGroupLabelObserving() {
+        val userId = userManager.currentUserId
+            ?: return
         _contactGroupItemFlow
             .filterNotNull()
             .flatMapLatest { contactGroupListItem ->
@@ -152,7 +160,10 @@ class ContactGroupDetailsViewModel @Inject constructor(
                     .map { label ->
                         contactsMapper.mapLabelEntityToContactGroup(
                             label,
-                            contactRepository.countContactEmailsByLabelId(LabelId(contactGroupListItem.contactId))
+                            contactRepository.countContactEmailsByLabelId(
+                                userId,
+                                LabelId(contactGroupListItem.contactId)
+                            )
                         )
                     }
             }

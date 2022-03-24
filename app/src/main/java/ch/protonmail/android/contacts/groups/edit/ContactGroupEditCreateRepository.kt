@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -75,10 +75,11 @@ class ContactGroupEditCreateRepository @Inject constructor(
         return updateLabelResult
     }
 
-    fun observeContactGroupEmails(id: String): Flow<List<ContactEmail>> =
-        contactRepository.observeAllContactEmailsByContactGroupId(id)
+    fun observeContactGroupEmails(userId: UserId, id: String): Flow<List<ContactEmail>> =
+        contactRepository.observeAllContactEmailsByContactGroupId(userId, id)
 
     suspend fun removeMembersFromContactGroup(
+        userId: UserId,
         contactGroupLabelId: String,
         contactGroupName: String,
         membersList: List<String>
@@ -93,13 +94,13 @@ class ContactGroupEditCreateRepository @Inject constructor(
             apiManager.unlabelContactEmails(labelContactsBody)
         }.fold(
             onSuccess = {
-                val contactEmails = contactRepository.findAllContactEmailsByContactGroupId(contactGroupLabelId)
+                val contactEmails = contactRepository.findAllContactEmailsByContactGroupId(userId, contactGroupLabelId)
                 contactEmails.forEach { contactEmail ->
                     if (contactEmail.contactEmailId in membersList) {
                         val updatedList = contactEmail.labelIds?.toMutableList()
                         if (updatedList != null) {
                             updatedList.remove(contactGroupLabelId)
-                            contactRepository.saveContactEmail(contactEmail.copy(labelIds = updatedList))
+                            contactRepository.saveContactEmail(userId, contactEmail.copy(labelIds = updatedList))
                         }
                     }
                 }
@@ -117,6 +118,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     }
 
     suspend fun setMembersForContactGroup(
+        userId: UserId,
         contactGroupLabelId: String,
         contactGroupName: String,
         membersList: List<String>
@@ -132,11 +134,11 @@ class ContactGroupEditCreateRepository @Inject constructor(
         }.fold(
             onSuccess = {
                 membersList.forEach { newMemberEmailId ->
-                    val contactEmail = contactRepository.findAllContactEmailsById(newMemberEmailId)
+                    val contactEmail = contactRepository.findAllContactEmailsById(userId, newMemberEmailId)
                     if (contactEmail != null) {
                         val updatedList = contactEmail.labelIds?.toMutableSet() ?: mutableSetOf()
                         updatedList.add(contactGroupLabelId)
-                        contactRepository.saveContactEmail(contactEmail.copy(labelIds = updatedList.toList()))
+                        contactRepository.saveContactEmail(userId, contactEmail.copy(labelIds = updatedList.toList()))
                     } else {
                         Timber.i("Cannot add email with ID: $newMemberEmailId to a group!")
                     }

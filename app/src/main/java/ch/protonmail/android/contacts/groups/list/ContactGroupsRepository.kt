@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -40,7 +40,7 @@ class ContactGroupsRepository @Inject constructor(
     private val contactRepository: ContactsRepository
 ) {
 
-    fun observeContactGroups(filter: String): Flow<List<ContactLabelUiModel>> =
+    fun observeContactGroups(userId: UserId, filter: String): Flow<List<ContactLabelUiModel>> =
         accountsManager.getPrimaryUserId().filterNotNull()
             .flatMapLatest {
                 labelRepository.observeSearchContactGroups(filter, it)
@@ -54,14 +54,14 @@ class ContactGroupsRepository @Inject constructor(
                         type = entity.type,
                         path = entity.path,
                         parentId = entity.parentId,
-                        contactEmailsCount = contactRepository.countContactEmailsByLabelId(entity.id)
+                        contactEmailsCount = contactRepository.countContactEmailsByLabelId(userId, entity.id)
                     )
                 }
             }
             .flowOn(dispatchers.Io)
 
-    suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
-        contactRepository.findAllContactEmailsByContactGroupId(id)
+    suspend fun getContactGroupEmails(userId: UserId, id: String): List<ContactEmail> =
+        contactRepository.findAllContactEmailsByContactGroupId(userId, id)
 
     suspend fun saveContactGroup(contactLabel: Label, userId: UserId) {
         labelRepository.saveLabel(contactLabel, userId)

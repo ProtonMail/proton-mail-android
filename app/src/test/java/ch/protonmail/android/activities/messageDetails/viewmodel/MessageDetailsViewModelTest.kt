@@ -37,6 +37,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
+import ch.protonmail.android.details.domain.usecase.GetViewInDarkModeMessagePreference
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.details.presentation.model.MessageBodyState
 import ch.protonmail.android.details.presentation.model.RenderedMessage
@@ -147,7 +148,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         "defaultMockContactName"
     )
     private val contactsRepository: ContactsRepository = mockk {
-        coEvery { findContactEmailByEmail(any()) } returns testSenderContactEmail
+        coEvery { findContactEmailByEmail(any(), any()) } returns testSenderContactEmail
     }
 
     private val attachmentsHelper: AttachmentsHelper = mockk(relaxed = true)
@@ -348,7 +349,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             // Then
             coVerify { messageRepository.observeMessage(testUserId1, INPUT_ITEM_DETAIL_ID) }
             observeMessageFlow.emit(message)
-            coVerify { contactsRepository.findContactEmailByEmail(any()) }
+            coVerify { contactsRepository.findContactEmailByEmail(any(), any()) }
             val actualItem = awaitItem()
             assertEquals(expected, actualItem)
             assertEquals(testSenderContactEmail.name, actualItem.messages[0].senderDisplayName)
@@ -461,7 +462,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             // Then
             coVerify { conversationRepository.getConversation(testId2, INPUT_ITEM_DETAIL_ID) }
             observeConversationFlow.emit(testConversationResult)
-            coVerify { contactsRepository.findContactEmailByEmail(any()) }
+            coVerify { contactsRepository.findContactEmailByEmail(any(), any()) }
             val actualItem = awaitItem()
             assertNotNull(actualItem)
             assertEquals(testConversation.toConversationUiModel(), actualItem)

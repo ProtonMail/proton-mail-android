@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -142,7 +142,9 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         type = entity.type,
                         path = entity.path,
                         parentId = entity.parentId,
-                        contactEmailsCount = runBlocking { contactDetailsRepository.getContactEmailsCount(entity.id) }
+                        contactEmailsCount = runBlocking {
+                            contactDetailsRepository.getContactEmailsCount(userId, entity.id)
+                        }
                     )
                 }
                 allContactEmails = emails

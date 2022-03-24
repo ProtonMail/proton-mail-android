@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -21,11 +21,11 @@ package ch.protonmail.android.contacts.details.domain
 
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
-import ch.protonmail.android.labels.domain.model.Label
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
@@ -34,15 +34,15 @@ class FetchContactGroups @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    operator fun invoke(contactId: String): Flow<FetchContactGroupsResult> =
+    operator fun invoke(userId: UserId, contactId: String): Flow<FetchContactGroupsResult> =
 
         repository.observeContactEmails(contactId)
             .transformLatest { list ->
                 if (list.isEmpty()) {
-                    emit(emptyList<Label>())
+                    emit(emptyList())
                 } else {
                     val result = list.map { contactEmail ->
-                        repository.getContactGroupsLabelForId(contactEmail.contactEmailId)
+                        repository.getContactGroupsLabelForId(userId, contactEmail.contactEmailId)
                     }
                     emit(result.flatten())
                 }

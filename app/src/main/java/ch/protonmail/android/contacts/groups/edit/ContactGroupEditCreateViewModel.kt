@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -36,6 +36,7 @@ import ch.protonmail.android.utils.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -88,10 +89,13 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         get() = _cleanUpComplete
 
     init {
-        _contactGroupItemFlow
-            .filterNotNull()
-            .flatMapLatest { contactGroupEditCreateRepository.observeContactGroupEmails(it.contactId) }
-            .onEach {
+        combine(
+            _contactGroupItemFlow.filterNotNull(),
+            accountManager.getPrimaryUserId().filterNotNull()
+        ) { group, userId -> group to userId }
+            .flatMapLatest { (group, userId) ->
+                contactGroupEditCreateRepository.observeContactGroupEmails(userId, group.contactId)
+            }.onEach {
                 _data = it
                 _contactGroupEmailsResult.postValue(it)
             }
@@ -171,9 +175,17 @@ class ContactGroupEditCreateViewModel @Inject constructor(
             val editContactResult = contactGroupEditCreateRepository.editContactGroup(contactLabel, userId)
         ) {
             is ApiResult.Success -> {
-                contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel.id.id, name, toBeAdded)
+                contactGroupEditCreateRepository.setMembersForContactGroup(
+                    userId = userId,
+                    contactGroupLabelId = contactLabel.id.id,
+                    contactGroupName = name,
+                    membersList = toBeAdded
+                )
                 contactGroupEditCreateRepository.removeMembersFromContactGroup(
-                    contactLabel.id.id, name, toBeDeleted
+                    userId = userId,
+                    contactGroupLabelId = contactLabel.id.id,
+                    contactGroupName = name,
+                    membersList = toBeDeleted
                 )
                 _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
             }
@@ -214,7 +226,10 @@ class ContactGroupEditCreateViewModel @Inject constructor(
         when (createGroupResponse) {
             is ApiResult.Success -> {
                 contactGroupEditCreateRepository.setMembersForContactGroup(
-                    createGroupResponse.value.label.id, name, membersList
+                    userId = userId,
+                    contactGroupLabelId = createGroupResponse.value.label.id,
+                    contactGroupName = name,
+                    membersList = membersList
                 )
                 _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
             }

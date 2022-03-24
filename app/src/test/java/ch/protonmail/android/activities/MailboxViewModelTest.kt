@@ -144,8 +144,10 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private val observeLabels: ObserveLabels = mockk()
 
     private val mailboxItemUiModelMapper: MailboxItemUiModelMapper = mockk {
-        coEvery { toUiModels(any<Collection<Message>>(), any(), any()) } returns emptyList()
-        coEvery { toUiModels(any<Collection<Conversation>>(), any(), any()) } returns emptyList()
+        coEvery { toUiModels(userId = any(), messages = any<Collection<Message>>(), any(), allLabels = any()) } returns emptyList()
+        coEvery {
+            toUiModels(userId = any(), conversations = any<Collection<Conversation>>(), currentLabelId = any(), allLabels = any())
+        } returns emptyList()
     }
 
     private val clearNotificationsForUser: ClearNotificationsForUser = mockk()
@@ -280,7 +282,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val message = Message()
             val messages = listOf(message)
             val mailboxUiItems = listOf(buildMailboxUiItem())
-            coEvery { mailboxItemUiModelMapper.toUiModels(listOf(message), any(), any()) } returns mailboxUiItems
+            coEvery { mailboxItemUiModelMapper.toUiModels(any(), listOf(message), any(), any()) } returns mailboxUiItems
             val expectedState = mailboxUiItems.toMailboxState()
 
             // When
@@ -300,7 +302,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val conversations = listOf(buildConversation())
             val successResult = GetConversationsResult.Success(conversations)
             val mailboxUiItems = listOf(buildMailboxUiItem())
-            coEvery { mailboxItemUiModelMapper.toUiModels(conversations, location.asLabelId(), any()) } returns mailboxUiItems
+            coEvery {
+                mailboxItemUiModelMapper.toUiModels(any(), conversations, location.asLabelId(), any())
+            } returns mailboxUiItems
 
             val expected = mailboxUiItems.toMailboxState()
 
