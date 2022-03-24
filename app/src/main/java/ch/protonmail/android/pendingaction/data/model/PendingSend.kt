@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.data.local.model
+package ch.protonmail.android.pendingaction.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

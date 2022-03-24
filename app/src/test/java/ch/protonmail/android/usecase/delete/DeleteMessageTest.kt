@@ -21,10 +21,10 @@ package ch.protonmail.android.usecase.delete
 
 import androidx.work.Operation
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.data.local.PendingActionDao
-import ch.protonmail.android.data.local.model.PendingSend
-import ch.protonmail.android.data.local.model.PendingUpload
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.pendingaction.data.model.PendingSend
+import ch.protonmail.android.pendingaction.data.model.PendingUpload
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.worker.DeleteMessageWorker
 import io.mockk.MockKAnnotations

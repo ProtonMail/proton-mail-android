@@ -24,9 +24,9 @@ import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.utils.ServerTime
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify

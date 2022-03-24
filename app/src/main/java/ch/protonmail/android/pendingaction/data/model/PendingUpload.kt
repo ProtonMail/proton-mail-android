@@ -16,20 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.data.local.model
+package ch.protonmail.android.pendingaction.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-const val TABLE_PENDING_DRAFT = "pending_draft"
-const val COLUMN_PENDING_DRAFT_MESSAGE_ID = "message_db_id"
+const val TABLE_PENDING_UPLOADS = "pending_uploads"
+const val COLUMN_PENDING_UPLOAD_MESSAGE_ID = "message_id"
 
-@Entity(tableName = TABLE_PENDING_DRAFT)
-data class PendingDraft(
-
+@Entity(tableName = TABLE_PENDING_UPLOADS)
+data class PendingUpload(
 
     @PrimaryKey
-    @ColumnInfo(name = COLUMN_PENDING_DRAFT_MESSAGE_ID)
-    var messageDbId: Long
+    @ColumnInfo(name = COLUMN_PENDING_UPLOAD_MESSAGE_ID)
+    var messageId: String
 )

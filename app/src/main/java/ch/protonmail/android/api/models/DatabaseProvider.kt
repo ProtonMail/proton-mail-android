@@ -27,8 +27,8 @@ import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.MessagePreferenceDao
-import ch.protonmail.android.data.local.PendingActionDao
-import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.pendingaction.data.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject

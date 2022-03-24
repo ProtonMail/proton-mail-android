@@ -34,8 +34,6 @@ import ch.protonmail.android.core.Constants.MessageLocationType.LABEL
 import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.PendingSend
-import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.loadMoreFlowOf
 import ch.protonmail.android.domain.withLoadMore
@@ -61,6 +59,8 @@ import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
+import ch.protonmail.android.pendingaction.data.model.PendingSend
+import ch.protonmail.android.pendingaction.data.model.PendingUpload
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage

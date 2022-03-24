@@ -23,10 +23,10 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.di.CurrentUserId
+import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.utils.ServerTime
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId

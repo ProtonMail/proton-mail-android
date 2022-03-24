@@ -33,10 +33,10 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.PendingUpload
+import ch.protonmail.android.pendingaction.data.model.PendingUpload
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder

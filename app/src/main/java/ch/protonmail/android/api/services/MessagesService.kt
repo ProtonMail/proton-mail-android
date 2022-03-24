@@ -28,7 +28,7 @@ import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.Status

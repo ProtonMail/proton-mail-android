@@ -21,9 +21,9 @@ package ch.protonmail.android.usecase.delete
 
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants.MAX_MESSAGE_ID_WORKER_ARGUMENTS
-import ch.protonmail.android.data.local.model.PendingSend
-import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.pendingaction.data.model.PendingSend
+import ch.protonmail.android.pendingaction.data.model.PendingUpload
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.model.DeleteMessageResult
 import ch.protonmail.android.worker.DeleteMessageWorker
