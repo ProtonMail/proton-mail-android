@@ -21,15 +21,16 @@ package ch.protonmail.android.fcm.models
 import com.google.gson.annotations.SerializedName
 
 data class NotificationEncryptedData(
-        @SerializedName("title") val title: String? = null,
-        @SerializedName("subtitle") val subtitle: String? = null,
-        @SerializedName("body") val body: String? = null,
-        @SerializedName("vibrate") val vibrate: Int = 0,
-        @SerializedName("sound") val sound: Int = 0,
-        @SerializedName("largeIcon") val largeIcon: String? = null,
-        @SerializedName("smallIcon") val smallIcon: String? = null,
-        @SerializedName("badge") val badge: Int = 0,
-        @SerializedName("messageId") val messageId: String? = null,
-        @SerializedName("customId") val customId: String? = null,
-        @SerializedName("sender") val sender: NotificationSender? = null
+    @SerializedName("title") val title: String? = null,
+    @SerializedName("subtitle") val subtitle: String? = null,
+    @SerializedName("body") val body: String? = null,
+    @SerializedName("vibrate") val vibrate: Int = 0,
+    @SerializedName("sound") val sound: Int = 0,
+    @SerializedName("largeIcon") val largeIcon: String? = null,
+    @SerializedName("smallIcon") val smallIcon: String? = null,
+    @SerializedName("badge") val badge: Int = 0,
+    @SerializedName("messageId") val messageId: String? = null,
+    @SerializedName("customId") val customId: String? = null,
+    @SerializedName("sender") val sender: NotificationSender? = null,
+    @SerializedName("action") val action: NotificationAction = NotificationAction.CREATED
 )
