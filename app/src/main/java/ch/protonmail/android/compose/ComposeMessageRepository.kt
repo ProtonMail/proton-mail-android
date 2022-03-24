@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -70,9 +70,6 @@ class ComposeMessageRepository @Inject constructor(
     private val messageDao: MessageDao
         get() = databaseProvider.provideMessageDao(userManager.requireCurrentUserId())
 
-    private val contactDao: ContactDao
-        get() = databaseProvider.provideContactDao(userManager.requireCurrentUserId())
-
     private val contactDaos: HashMap<UserId, ContactDao> by resettableLazy(lazyManager) {
         val userIds = accountManager.allLoggedInBlocking()
         val listOfDaos: HashMap<UserId, ContactDao> = HashMap()
@@ -93,14 +90,15 @@ class ComposeMessageRepository @Inject constructor(
                         type = entity.type,
                         path = entity.path,
                         parentId = entity.parentId,
-                        contactEmailsCount = contactRepository.countContactEmailsByLabelId(entity.id)
+                        contactEmailsCount = contactRepository.countContactEmailsByLabelId(userId, entity.id)
                     )
                 }
             }
     }
 
-    suspend fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> =
-        contactDao.observeAllContactsEmailsByContactGroup(groupId).first()
+    suspend fun getContactGroupEmailsSync(userId: UserId, groupId: String): List<ContactEmail> =
+        databaseProvider.provideContactDao(userId)
+            .observeAllContactsEmailsByContactGroup(groupId).first()
 
     suspend fun getAttachments(message: Message, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {
