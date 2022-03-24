@@ -196,7 +196,7 @@
             android:id="@+id/openFingerprintPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_fingerprint"
+            android:background="@drawable/ic_proton_fingerprint"
             android:importantForAccessibility="yes"
             android:visibility="gone" />
     </LinearLayout>
@@ -235,7 +235,7 @@
             android:id="@+id/backward_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_delete_big"
+            android:background="@drawable/ic_proton_backspace"
             android:importantForAccessibility="yes"
             android:visibility="visible" />
     </LinearLayout>

@@ -37,13 +37,13 @@ class MessageDetailsAttachmentListAdapter(
     @DrawableRes
     private fun String?.getIconRes(): Int {
         return when (this) {
-            "image/jpeg", "image/pjpeg", "image/png" -> R.drawable.ic_file_image_variants
+            "image/jpeg", "image/pjpeg", "image/png" -> R.drawable.ic_proton_file_image_24
             "application/zip", "application/x-compressed", "application/x-zip-compressed", "multipart/x-zip" ->
-                R.drawable.ic_file_rar_zip_variants
-            "text/plain" -> R.drawable.ic_file_attachment_variants // currently no icon for plain text files
-            "application/pdf" -> R.drawable.ic_file_pdf_variants
-            "application/msword" -> R.drawable.ic_file_word_variants
-            else -> R.drawable.ic_file_attachment_variants
+                R.drawable.ic_proton_file_rar_zip_24
+            "text/plain" -> R.drawable.ic_proton_file_attachment_24 // currently no icon for plain text files
+            "application/pdf" -> R.drawable.ic_proton_file_pdf_24
+            "application/msword" -> R.drawable.ic_proton_file_word_24
+            else -> R.drawable.ic_proton_file_attachment_24
         }
     }
 

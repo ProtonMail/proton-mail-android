@@ -22,7 +22,8 @@
     <style name="ProtonTheme.Mail.V5" parent="ProtonTheme.Mail">
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/ProtonMailActionMode</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_arrow_left</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_proton_arrow_left</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlowIcon</item>
         <item name="bottomSheetDialogTheme">@style/ProtonMail.BottomSheetDialogTheme</item>
 
         <item name="snackbarStyle">@style/Widget.App.Snackbar</item>

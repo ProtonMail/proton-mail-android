@@ -48,7 +48,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/attachments_list_linear_layout"
-        android:src="@drawable/ic_chevron_down"
+        android:src="@drawable/ic_proton_chevron_down"
         app:tint="@color/icon_weak" />
 
     <!-- TODO: Will be removed when the separate screen for attachments is created -->

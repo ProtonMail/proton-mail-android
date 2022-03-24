@@ -58,7 +58,7 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:padding="@dimen/padding_l"
-                app:drawableEndCompat="@drawable/ic_chevron_down" />
+                app:drawableEndCompat="@drawable/ic_proton_chevron_down" />
 
             <View style="@style/ViewSeparatorHorizontal"/>
 

@@ -293,7 +293,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         collapsedHeaderGroup.isVisible = true
         locationImageView.isVisible = true
         expandCollapseChevronImageView.setImageDrawable(
-            ContextCompat.getDrawable(context, R.drawable.ic_chevron_down)
+            ContextCompat.getDrawable(context, R.drawable.ic_proton_chevron_down)
         )
     }
 

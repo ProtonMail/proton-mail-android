@@ -169,7 +169,7 @@
         android:layout_width="@dimen/message_details_header_chevron_icon_size"
         android:layout_height="@dimen/message_details_header_chevron_icon_size"
         android:padding="@dimen/message_details_header_chevron_icon_padding"
-        android:src="@drawable/ic_chevron_down"
+        android:src="@drawable/ic_proton_chevron_down"
         android:visibility="gone"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timeDateTextView"

@@ -70,6 +70,11 @@
         <item name="android:background">@color/background_norm</item>
     </style>
 
+    <style name="OverFlowIcon" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_proton_three_dots_vertical</item>
+    </style>
+
+
     <!-- region Mailbox -->
     <style name="UnreadMessagesStatusChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="android:textAppearance">@style/Proton.Text.Caption.Strong</item>
@@ -138,13 +143,7 @@
         <item name="drawableTint">?attr/brand_norm</item>
     </style>
 
-    <style name="ProtonMail.BottomSheetDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet.Modal</item>
-    </style>
-
-    <style name="Widget.App.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
-        <item name="backgroundTint">@color/background_norm</item>
-    </style>
+    <style name="ProtonMail.BottomSheetDialogTheme" parent="@style/ProtonBottomSheetDialog" />
     <!-- endregion -->
 
     <!-- region Snackbar -->

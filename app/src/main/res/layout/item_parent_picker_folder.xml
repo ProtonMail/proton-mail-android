@@ -48,7 +48,7 @@
         android:layout_gravity="center_vertical"
         android:textAppearance="@style/Proton.Text.Default"
         android:textColor="@color/text_norm"
-        tools:drawableEndCompat="@drawable/ic_check"
+        tools:drawableEndCompat="@drawable/ic_proton_checkmark"
         app:drawableTint="?attr/brand_norm"
         tools:text="@string/inbox"/>
 

@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         app:title=" "
-        app:navigationIcon="@drawable/ic_close"
+        app:navigationIcon="@drawable/ic_proton_cross"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -180,7 +180,7 @@
                 app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/composer_from_spinner"
-                android:src="@drawable/ic_chevron_down"
+                android:src="@drawable/ic_proton_chevron_down"
                 app:tint="@color/shade_80"/>
 
             <View
