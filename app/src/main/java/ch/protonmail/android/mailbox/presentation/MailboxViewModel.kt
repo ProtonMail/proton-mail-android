@@ -397,6 +397,7 @@ internal class MailboxViewModel @Inject constructor(
 
                         MailboxState.Data(
                             items = messagesToMailboxItems(
+                                userId = userId,
                                 messages = result.messages,
                                 currentLabelId = getLabelId(location, labelId),
                                 labelsList = labels

@@ -51,7 +51,8 @@ class MailboxItemUiModelMapper @Inject constructor(
     suspend fun toUiModel(
         userId: UserId,
         message: Message,
-       currentLabelId: LabelId, allLabels: Collection<Label>
+        currentLabelId: LabelId,
+        allLabels: Collection<Label>
     ): MailboxItemUiModel = MailboxItemUiModel(
         itemId = checkNotNull(message.messageId) { "Message id is null" },
         correspondentsNames = getCorrespondentsNames(userId, message, currentLabelId),
@@ -72,7 +73,8 @@ class MailboxItemUiModelMapper @Inject constructor(
     suspend fun toUiModels(
         userId: UserId,
         messages: Collection<Message>,
-       currentLabelId: LabelId, allLabels: Collection<Label>
+        currentLabelId: LabelId,
+        allLabels: Collection<Label>
     ): List<MailboxItemUiModel> =
         messages.map { toUiModel(userId, it, currentLabelId, allLabels) }
 
@@ -83,7 +85,7 @@ class MailboxItemUiModelMapper @Inject constructor(
         allLabels: Collection<Label>
     ) = MailboxItemUiModel(
         itemId = conversation.id,
-        correspondentsNames = getCorrespondentsNames(conversation, currentLabelId),
+        correspondentsNames = getCorrespondentsNames(userId, conversation, currentLabelId),
         subject = conversation.subject,
         lastMessageTimeMs = conversation.lastMessageTimeMs(currentLabelId),
         hasAttachments = conversation.attachmentsCount > 0,
@@ -105,15 +107,26 @@ class MailboxItemUiModelMapper @Inject constructor(
         allLabels: Collection<Label>
     ): List<MailboxItemUiModel> = conversations.map { toUiModel(userId, it, currentLabelId, allLabels) }
 
-    private suspend fun getCorrespondentsNames(conversation: Conversation, currentLabelId: LabelId): String =
+    private suspend fun getCorrespondentsNames(
+        userId: UserId,
+        conversation: Conversation,
+        currentLabelId: LabelId
+    ): String =
         if (isDraftOrSentLabel(currentLabelId)) conversation.receivers.joinToString { it.name }
-        else toDisplayNamesFromContacts(conversation.senders).joinToString()
+        else toDisplayNamesFromContacts(userId, conversation.senders).joinToString()
 
-    private suspend fun getCorrespondentsNames(message: Message, currentLabelId: LabelId): String =
+    private suspend fun getCorrespondentsNames(userId: UserId, message: Message, currentLabelId: LabelId): String =
         if (isDraftOrSentLabel(currentLabelId)) {
-            toDisplayNamesFromContacts(message.toList + message.ccList + message.bccList).joinToString()
+            toDisplayNamesFromContacts(
+                userId = userId,
+                allRecipients = message.toList + message.ccList + message.bccList
+            ).joinToString()
         } else {
-            toDisplayNameFromContacts(message.sender, message.senderDisplayName)
+            toDisplayNameFromContacts(
+                userId = userId,
+                sender = message.sender,
+                senderDisplayName = message.senderDisplayName
+            )
         }
 
     private fun isDraftOrSentLabel(currentLabelId: LabelId): Boolean {

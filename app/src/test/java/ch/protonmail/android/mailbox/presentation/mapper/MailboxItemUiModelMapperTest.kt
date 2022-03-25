@@ -173,7 +173,7 @@ class MailboxItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModel(message, INBOX.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -189,7 +189,7 @@ class MailboxItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModel(message, INBOX.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -205,7 +205,7 @@ class MailboxItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModel(message, SENT.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(TEST_USER_ID, message, SENT.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
