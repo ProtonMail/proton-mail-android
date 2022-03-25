@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -55,7 +55,8 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
             end = params.end,
             beginId = params.beginId,
             endId = params.endId,
-            keyword = params.keyword
+            keyword = params.keyword,
+            unread = params.unreadStatus.intValue
         )
 
     override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =

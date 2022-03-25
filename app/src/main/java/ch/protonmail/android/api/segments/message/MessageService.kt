@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -78,7 +78,8 @@ interface MessageService {
         @Query("End") end: Long?,
         @Query("BeginID") beginId: String?,
         @Query("EndID") endId: String?,
-        @Query("Keyword") keyword: String?
+        @Query("Keyword") keyword: String?,
+        @Query("Unread") unread: Int?
     ): MessagesResponse
 
     @POST("mail/v4/messages")
