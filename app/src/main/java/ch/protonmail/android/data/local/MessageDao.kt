@@ -39,6 +39,7 @@ import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_EMAIL
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_NAME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SUBJECT
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_TIME
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_UNREAD
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TABLE_ATTACHMENTS
 import ch.protonmail.android.data.local.model.TABLE_MESSAGES
@@ -91,23 +92,49 @@ abstract class MessageDao : BaseDao<Message>() {
     )
     abstract suspend fun getMessageIdsByLabelId(label: String): List<String>
 
+    fun observeMessages(label: String, unread: Boolean? = null): Flow<List<Message>> =
+        if (unread == null) observeMessages(label)
+        else observeMessagesWithUnreadStatus(label, unread)
+
     /** Since we have decided to use this query to also retrieve messages that are SENT
-     now the query looks for the :label at the beginning, middle or end of the $COLUMN_MESSAGE_LABELS string.
-     The $COLUMN_MESSAGE_LABELS string uses semicolon(;) as separator ex.
-     `0;5;7;N2ttCeO9GZ7kNTfW5MUfZ8nP6pUOEnNiWVVlOIPgeIFGBKqrBowMR4wefbeIelXsgDLiYZ5YFRDiFZ-VPC0YUA==`
-     so the label that we are looking for can be preceded and followed by zero or one semicolon(;)
+    now the query looks for the :label at the beginning, middle or end of the $COLUMN_MESSAGE_LABELS string.
+    The $COLUMN_MESSAGE_LABELS string uses semicolon(;) as separator ex.
+    `0;5;7;N2ttCeO9GZ7kNTfW5MUfZ8nP6pUOEnNiWVVlOIPgeIFGBKqrBowMR4wefbeIelXsgDLiYZ5YFRDiFZ-VPC0YUA==`
+    so the label that we are looking for can be preceded and followed by zero or one semicolon(;)
      **/
     @Query(
         """
         SELECT *
         FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+        WHERE 
+          ($COLUMN_MESSAGE_LABELS LIKE :label || ';%'
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
-          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%'
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    abstract fun observeMessagesByLabelId(label: String): Flow<List<Message>>
+    protected abstract fun observeMessages(label: String): Flow<List<Message>>
+
+    /** Since we have decided to use this query to also retrieve messages that are SENT
+    now the query looks for the :label at the beginning, middle or end of the $COLUMN_MESSAGE_LABELS string.
+    The $COLUMN_MESSAGE_LABELS string uses semicolon(;) as separator ex.
+    `0;5;7;N2ttCeO9GZ7kNTfW5MUfZ8nP6pUOEnNiWVVlOIPgeIFGBKqrBowMR4wefbeIelXsgDLiYZ5YFRDiFZ-VPC0YUA==`
+    so the label that we are looking for can be preceded and followed by zero or one semicolon(;)
+     **/
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE 
+          ($COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
+        AND
+          $COLUMN_MESSAGE_UNREAD = :unread
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """
+    )
+    protected abstract fun observeMessagesWithUnreadStatus(label: String, unread: Boolean): Flow<List<Message>>
 
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
         .onEach { message ->

@@ -334,7 +334,7 @@ class MessageRepository @Inject constructor(
             dao.searchMessages(params.keyword)
         } else {
             requireNotNull(params.labelId) { "Label Id is required" }
-            dao.observeMessagesByLabelId(params.labelId)
+            dao.observeMessages(params.labelId)
         }
     }
 
