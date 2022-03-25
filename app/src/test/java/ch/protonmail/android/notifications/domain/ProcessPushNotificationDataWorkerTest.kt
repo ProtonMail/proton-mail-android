@@ -27,6 +27,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.segments.event.AlarmReceiver
+import ch.protonmail.android.api.segments.event.FetchEventsAndReschedule
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
@@ -106,6 +107,8 @@ class ProcessPushNotificationDataWorkerTest {
 
     private val conversationModeEnabled: ConversationModeEnabled = mockk(relaxed = true)
 
+    private val fetchEventsAndReschedule: FetchEventsAndReschedule = mockk(relaxed = true)
+
     private val clearNotification: ClearNotification = mockk(relaxed = true)
 
     private val processPushNotificationDataWorker: ProcessPushNotificationDataWorker = spyk(
@@ -120,6 +123,7 @@ class ProcessPushNotificationDataWorkerTest {
             messageRepository,
             sessionManager,
             conversationModeEnabled,
+            fetchEventsAndReschedule,
             clearNotification
         ),
         recordPrivateCalls = true
