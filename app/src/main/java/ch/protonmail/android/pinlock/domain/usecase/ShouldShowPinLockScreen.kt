@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -33,24 +33,26 @@ class ShouldShowPinLockScreen @Inject constructor(
 ) {
 
     /**
-     * @param wasAppInBackground lambda that returns whether the app was in background before calling this function
-     * @param isPinLockScreenShown lambda that returns whether a Pin screen is shown
-     * @param isAddingAttachments whether [AddAttachmentsActivity] is shown. In that case, we may not show the Pin Lock
-     *  screen, because it can be triggered after closing the File Picker
+     * @param wasAppInBackground `true` if the app was in background before calling this function
+     * @param isPinLockScreenShown `true` if a Pin screen is shown
+     * @param isPinLockScreenOpen `true` if PinLock is open in the background, but not currently shown. This means that
+     *  another Activity has been launcher at the top of it, without the user has correctly unlocked it
+     * @param isAddingAttachments `true` if [AddAttachmentsActivity] is shown. In that case, we may not show the Pin
+     *  Lock screen, because it can be triggered after closing the File Picker
      * @param lastForegroundTime time in milliseconds when the app has last been in foreground
      */
     suspend operator fun invoke(
         wasAppInBackground: Boolean,
         isPinLockScreenShown: Boolean,
+        isPinLockScreenOpen: Boolean,
         isAddingAttachments: Boolean,
         lastForegroundTime: Long
     ): Boolean {
-        if (wasAppInBackground.not() || isPinLockScreenShown) {
-            return false
+        if (isPinLockScreenOpen && isPinLockScreenShown.not()) {
+            return true
         }
 
-        val isPinLockEnabled = isPinLockEnabled()
-        if (isPinLockEnabled.not()) {
+        if (wasAppInBackground.not() || isPinLockScreenShown || isPinLockEnabled().not()) {
             return false
         }
 

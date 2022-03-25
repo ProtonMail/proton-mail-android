@@ -38,9 +38,10 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.ui.SwitchUserAndOpenMessageDetailsActivity
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mailbox.presentation.MailboxActivity
@@ -293,13 +294,13 @@ class NotificationServer @Inject constructor(
         sender: String,
         primaryUser: Boolean
     ) {
-        // Create content Intent for open MessageDetailsActivity
-        val contentIntent = Intent(context, MessageDetailsActivity::class.java)
-            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, messageId)
-            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID, message?.location)
-            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.id)
-            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
-            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, message?.subject)
+        // Create content Intent for open SwitchUserAndOpenMessageDetailsActivity
+        val contentIntent = SwitchUserAndOpenMessageDetailsActivity.Input(
+            userId = user.id,
+            messageId = messageId,
+            locationType = message?.location?.let(MessageLocationType::fromInt) ?: MessageLocationType.INVALID,
+            messageSubject = message?.subject
+        ).toIntent(context)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val summaryContentIntent = getMailboxActivityIntent(userId)

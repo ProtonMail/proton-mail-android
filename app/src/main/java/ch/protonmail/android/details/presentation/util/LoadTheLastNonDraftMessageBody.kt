@@ -17,12 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.details.presentation
+package ch.protonmail.android.details.presentation.util
 
 import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.usecase.MarkMessageAsReadIfNeeded
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
+import ch.protonmail.android.details.presentation.model.MessageDetailsListItem
 import ch.protonmail.android.utils.crypto.KeyInformation
 import javax.inject.Inject
 

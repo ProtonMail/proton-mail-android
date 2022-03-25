@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -193,8 +193,9 @@
             android:exported="false"
             android:label="@string/local_storage"
             android:screenOrientation="portrait" />
+        <activity android:name=".details.presentation.ui.SwitchUserAndOpenMessageDetailsActivity" />
         <activity
-            android:name=".details.presentation.MessageDetailsActivity"
+            android:name=".details.presentation.ui.MessageDetailsActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".mailbox.presentation.MailboxActivity">
@@ -206,10 +207,10 @@
             android:name=".activities.messageDetails.MessageViewHeadersActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:parentActivityName=".details.presentation.MessageDetailsActivity">
+            android:parentActivityName=".details.presentation.ui.MessageDetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".details.presentation.MessageDetailsActivity" />
+                android:value=".details.presentation.ui.MessageDetailsActivity" />
         </activity>
         <activity
             android:name=".activities.composeMessage.ComposeMessageActivity"

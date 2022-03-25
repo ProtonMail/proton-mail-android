@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -28,12 +28,15 @@ import ch.protonmail.android.settings.pin.ChangePinActivity
 import ch.protonmail.android.settings.pin.CreatePinActivity
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import me.proton.core.presentation.app.AppLifecycleProvider
+import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 class PinLockManager @Inject constructor(
     private val context: Context,
     private val shouldShowPinLockScreen: ShouldShowPinLockScreen
 ) {
+
+    private var pinLockActivity = WeakReference<Activity>(null)
 
     suspend fun shouldLock(
         appState: AppLifecycleProvider.State,
@@ -42,6 +45,7 @@ class PinLockManager @Inject constructor(
     ): Boolean = shouldShowPinLockScreen(
         wasAppInBackground = appState == AppLifecycleProvider.State.Background,
         isPinLockScreenShown = isPinScreenActivity(currentActivity),
+        isPinLockScreenOpen = isPinLockActivityOpen(),
         isAddingAttachments = currentActivity is AddAttachmentsActivity,
         lastForegroundTime = lastForegroundTime
     )
@@ -50,8 +54,21 @@ class PinLockManager @Inject constructor(
         launchPinLockActivity(activity)
     }
 
+    fun onActivityCreated(activity: Activity) {
+        if (activity is ValidatePinActivity) {
+            pinLockActivity = WeakReference(activity)
+        }
+    }
+
+    fun onActivityDestroyed(activity: Activity) {
+        if (activity is ValidatePinActivity) {
+            pinLockActivity.clear()
+        }
+    }
+
     private fun launchPinLockActivity(callingActivity: Activity) {
         val intent = Intent(context, ValidatePinActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         callingActivity.startActivity(intent)
     }
 
@@ -60,4 +77,7 @@ class PinLockManager @Inject constructor(
             is CreatePinActivity, is ChangePinActivity, is ValidatePinActivity -> true
             else -> false
         }
+
+    private fun isPinLockActivityOpen() =
+        pinLockActivity.get()?.isFinishing?.not() ?: false
 }

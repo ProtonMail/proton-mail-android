@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.details.presentation
+package ch.protonmail.android.details.presentation.ui
 
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
@@ -35,6 +35,7 @@ import android.view.animation.AlphaAnimation
 import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.getSystemService
@@ -61,6 +62,7 @@ import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostSpamJob
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
@@ -601,11 +603,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun setupLastMessageActionsListener(message: Message) {
-        val actionSheetTarget = if (viewModel.isConversationEnabled() && viewModel.doesConversationHaveMoreThanOneMessage()) {
-            ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
-        } else {
-            ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
-        }
+        val actionSheetTarget =
+            if (viewModel.isConversationEnabled() && viewModel.doesConversationHaveMoreThanOneMessage()) {
+                ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+            } else {
+                ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
+            }
         val id = if (viewModel.isConversationEnabled() && viewModel.doesConversationHaveMoreThanOneMessage()) {
             messageOrConversationId
         } else {
@@ -948,6 +951,28 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     fun printMessage(messageId: String) {
         viewModel.printMessage(messageId, primaryBaseActivity)
+    }
+
+    class Launcher : ActivityResultContract<Input, Unit>() {
+
+        override fun createIntent(context: Context, input: Input): Intent =
+            input.toIntent(context)
+
+        override fun parseResult(resultCode: Int, intent: Intent?) {}
+    }
+
+    data class Input(
+        val messageId: String,
+        val locationType: Constants.MessageLocationType?,
+        val labelId: LabelId?,
+        val messageSubject: String?
+    ) {
+
+        fun toIntent(context: Context) = Intent(context, MessageDetailsActivity::class.java)
+            .putExtra(EXTRA_MESSAGE_OR_CONVERSATION_ID, messageId)
+            .putExtra(EXTRA_MESSAGE_LOCATION_ID, locationType?.messageLocationTypeValue)
+            .putExtra(EXTRA_MAILBOX_LABEL_ID, labelId?.id)
+            .putExtra(EXTRA_MESSAGE_SUBJECT, messageSubject)
     }
 
     companion object {

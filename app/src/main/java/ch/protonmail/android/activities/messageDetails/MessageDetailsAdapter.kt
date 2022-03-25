@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -49,11 +49,11 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.model.SignatureVerification
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.details.presentation.mapper.MessageEncryptionUiModelMapper
 import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
+import ch.protonmail.android.details.presentation.model.MessageDetailsListItem
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.ui.model.LabelChipUiModel

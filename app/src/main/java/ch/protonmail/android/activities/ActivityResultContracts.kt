@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -28,7 +28,6 @@ import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.utils.AppUtil
 
 class StartSettings : ActivityResultContract<StartSettings.Input, Unit?>() {
@@ -59,29 +58,6 @@ class StartContacts : ActivityResultContract<Unit, Unit?>() {
         if (resultCode != Activity.RESULT_OK) return null
         return Unit
     }
-}
-
-class StartMessageDetails : ActivityResultContract<StartMessageDetails.Input, Unit?>() {
-
-    override fun createIntent(context: Context, input: Input): Intent =
-        AppUtil.decorInAppIntent(Intent(context, MessageDetailsActivity::class.java)).apply {
-            putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, input.messageId)
-            putExtra(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID, input.locationType.messageLocationTypeValue)
-            putExtra(MessageDetailsActivity.EXTRA_MAILBOX_LABEL_ID, input.labelId)
-            putExtra(MessageDetailsActivity.EXTRA_MESSAGE_SUBJECT, input.messageSubject)
-        }
-
-    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
-        if (resultCode != Activity.RESULT_OK) return null
-        return Unit
-    }
-
-    data class Input(
-        val messageId: String,
-        val locationType: Constants.MessageLocationType,
-        val labelId: String?,
-        val messageSubject: String
-    )
 }
 
 class StartCompose : ActivityResultContract<StartCompose.Input, Unit?>() {

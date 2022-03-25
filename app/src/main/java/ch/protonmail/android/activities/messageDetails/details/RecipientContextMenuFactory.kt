@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -19,8 +19,8 @@
 package ch.protonmail.android.activities.messageDetails.details
 
 import android.view.View
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.ui.RecipientDropDownClickListener
 

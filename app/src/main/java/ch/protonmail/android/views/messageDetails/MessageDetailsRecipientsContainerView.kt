@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -28,7 +28,7 @@ import android.widget.TextView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import me.proton.core.presentation.utils.inflate
 
 private const val MARGIN_TOP_RECIPIENT_TEXT_VIEW = 8

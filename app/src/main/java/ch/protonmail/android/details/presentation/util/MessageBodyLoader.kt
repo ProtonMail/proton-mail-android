@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -17,16 +17,15 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.details.presentation
+package ch.protonmail.android.details.presentation.util
 
 import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.details.presentation.MessageDetailsListItem
-import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
 import ch.protonmail.android.details.domain.MessageBodyDecryptor
-import ch.protonmail.android.details.domain.MessageBodyParser
+import ch.protonmail.android.details.presentation.mapper.MessageToMessageDetailsListItemMapper
+import ch.protonmail.android.details.presentation.model.MessageDetailsListItem
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.css.MessageBodyCssProvider
