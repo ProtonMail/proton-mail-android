@@ -42,9 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="0dp"
-        android:paddingLeft="0dp"
-        android:paddingEnd="22dp"
-        android:paddingRight="22dp">
+        android:paddingEnd="@dimen/padding_xl">
 
         <LinearLayout
             android:id="@+id/standard_option_types"

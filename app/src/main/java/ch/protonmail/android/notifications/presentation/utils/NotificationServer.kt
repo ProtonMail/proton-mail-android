@@ -222,14 +222,12 @@ class NotificationServer @Inject constructor(
         alarmReceiver.setAlarm(context, true)
 
         // Set Notification's colors
-        val mainColor = context.getColor(R.color.icon_norm)
         val lightColor = context.getColorFromAttr(R.attr.brand_norm)
 
         // Create Notification's Builder with the prepared params
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_EMAIL)
             .setSmallIcon(R.drawable.ic_brand_mail)
             .setCategory(NotificationCompat.CATEGORY_EMAIL)
-            .setColor(mainColor)
             .setLights(lightColor, 1500, 2000)
             .setAutoCancel(true)
             .setPriority(PRIORITY_HIGH)
@@ -411,14 +409,12 @@ class NotificationServer @Inject constructor(
         )
 
         // Set Notification's colors
-        val mainColor = context.getColor(R.color.icon_norm)
         val lightColor = context.getColorFromAttr(R.attr.brand_norm)
 
         // Create notification builder
         return NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_brand_mail)
             .setContentIntent(contentPendingIntent)
-            .setColor(mainColor)
             .setLights(lightColor, 1500, 2000)
             .setAutoCancel(true)
     }

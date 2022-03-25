@@ -22,7 +22,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="?attr/brand_norm" />
+    <solid android:color="?attr/proton_interaction_norm" />
 
     <corners android:radius="8dp" />
 </shape>

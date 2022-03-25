@@ -26,7 +26,7 @@
     </style>
 
     <style name="Proton.Text.DefaultSmall.Interaction">
-        <item name="android:textColor">?attr/brand_norm</item>
+        <item name="android:textColor">?attr/proton_interaction_norm</item>
     </style>
 
     <style name="Proton.Text.Caption.Strong.Inverted">

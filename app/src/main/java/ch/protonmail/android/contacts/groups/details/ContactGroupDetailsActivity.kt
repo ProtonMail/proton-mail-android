@@ -203,7 +203,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
 
     private fun initFilterView() {
         filterView.apply {
-//            UiUtil.setTextViewDrawableColor(this@ContactGroupDetailsActivity, this, R.color.lead_gray)
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
