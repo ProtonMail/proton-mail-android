@@ -23,7 +23,7 @@
     <string name="x_add_folder">Lägg till mapp</string>
     <string name="x_add_label">Lägg till etikett</string>
     <string name="x_days">Dagar</string>
-    <string name="x_done">Färdig</string>
+    <string name="x_done">Klar</string>
     <string name="x_edit">Redigera</string>
     <string name="x_hours">Timmar</string>
     <string name="x_more">Mer</string>
@@ -46,6 +46,13 @@
     <string name="drawer_create_folder_description">Skapa ny mapp</string>
     <string name="drawer_create_label_description">Skapa ny etikett</string>
     <!-- endregion -->
+    <!-- region Mailbox -->
+    <string name="mailbox_no_messages">Inga meddelanden</string>
+    <string name="mailbox_empty_folder_subtitle">Denna mapp är tom</string>
+    <string name="mailbox_empty_inbox_subtitle">Du är uppdaterad</string>
+    <string name="mailbox_empty_spam_subtitle">Din skräppostmapp är tom</string>
+    <string name="mailbox_empty_trash_subtitle">Papperskorg är tom</string>
+    <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Öppna i Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Säker krypterad kalender</string>
@@ -62,8 +69,7 @@
     <string name="composer_removing_address_generic_error">Kan inte verifiera adress: %s1. Sändningen kan misslyckas.</string>
     <string name="composer_removing_address_server_error">Tar bort adresser: %s1. %s2</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
-    <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke ProtonMail-användare. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lär dig mer</a>
-    </string>
+    <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke ProtonMail-användare. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lär dig mer</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
     <string name="set_msg_password_msg_password_hint">4 till 21 tecken långt</string>
@@ -108,14 +114,29 @@
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Välj överordnad mapp (valfritt)</string>
-    <string name="labels_manager_parent_folder_selected">
-        <b>Överordnad mapp vald.</b> Tryck för att ändra</string>
+    <string name="labels_manager_parent_folder_selected"><b>Överordnad mapp vald.</b> Tryck för att ändra</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Överordnad mapp</string>
     <string name="parent_picker_header">Om du inte väljer en överordnad mapp kommer den nya mappen att skapas som en mapp i toppnivå.</string>
     <!-- endregion -->
+    <!-- region Notifications -->
+    <string name="notification_summary_text_new_messages">Nya meddelanden</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
+    <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
+    <string name="contact_details_remote_content_dialog_title">Fjärrinnehåll</string>
+    <string name="contact_details_remote_content_dialog_message">Denna kontakt innehåller fjärrinnehåll.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Ladda innehåll</string>
+    <!-- endregion -->
+    <!-- region Onboarding -->
+    <string name="onboarding_privacy_for_all_headline">Integritet för alla</string>
+    <string name="onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
+    <string name="onboarding_neat_and_tidy_headline">Neat and tidy</string>
+    <string name="onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="onboarding_next">Nästa</string>
+    <string name="onboarding_get_started">Kom igång</string>
+    <string name="onboarding_image_view_content_description">Proton Mail-illustration</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -179,7 +200,6 @@
     <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna mapp?</string>
     <string name="send">Skicka</string>
     <string name="selected">Valda</string>
-    <string name="mailbox_no_messages">Inga meddelanden</string>
     <string name="no_labels">Inga etiketter</string>
     <string name="to">Till</string>
     <string name="cc">Cc</string>
@@ -282,20 +302,6 @@
     <string name="display_images">Visa fjärrinnehåll</string>
     <string name="retry">Försök igen</string>
     <string name="saving_failed_no_conn">Misslyckades att spara, ingen anslutning</string>
-    <string name="close_engagement">stäng rundtur</string>
-    <string name="engagement_title_welcome">Välkommen till ProtonMail!</string>
-    <string name="engagement_title_swipe">Snabba svepåtgärder</string>
-    <string name="engagement_title_labels">Etiketthantering</string>
-    <string name="engagement_title_encryption">End-to-end-kryptering</string>
-    <string name="engagement_title_expire">Förfallande meddelanden</string>
-    <string name="engagement_title_help">Hjälp &amp; support</string>
-    <string name="engagement_title_support_protonmail">Stöd ProtonMail</string>
-    <string name="engagement_subtitle_welcome">Ditt nya krypterade e-postkonto har konfigurerats och är redo att skicka och ta emot krypterade meddelanden.</string>
-    <string name="engagement_subtitle_swipe">Du kan anpassa svepgester i ProtonMail-appens inställningar.</string>
-    <string name="engagement_subtitle_labels">Skapa och lägg till etiketter för att organisera din inkorg. Tryck och håll ned ett meddelande för alla alternativ.</string>
-    <string name="engagement_subtitle_encryption">Din inkorg skyddas nu av end-to-end-kryptering. För att automatiskt skicka säker e-post till dina kontakter, bjud in dem att använda ProtonMail! Du kan också manuellt kryptera meddelanden till dem om de inte använder ProtonMail.</string>
-    <string name="engagement_subtitle_expire">Meddelanden du skickar kan ställas in att automatiskt raderas efter en viss tid.</string>
-    <string name="engagement_subtitle_help">Du kan får hjälp och support på protonmail.com/support. Fel kan också rapporteras via appen.</string>
     <string name="attachment_exists">Bilagan är redan bifogad</string>
     <string name="eo_password_not_completed">Lösenord för meddelandet är inte angivet.</string>
     <string name="delinquency_subtitle">Tillgång till detta konto avstängt på grund av utebliven betalning. Logga in via protonmail.com för att betala utestående fakturor.</string>
@@ -310,9 +316,8 @@
     </string-array>
     <string name="delete_label_confirmation_title">Ta bort valda etiketter?</string>
     <string name="delete_folder_confirmation_title">Ta bort valda mappar?</string>
-    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b>
-    </string>
-    <string name="pin_invalid">PIN-koden är ogiltig. Ange korrekt 4-siffrig PIN-kod</string>
+    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b></string>
+    <string name="pin_invalid">PIN-kod är ogiltig, ange korrekt 4-siffrig PIN-kod</string>
     <string name="pin_not_match">PIN-koder matchar inte</string>
     <string name="new_pin_saved">Ny PIN-kod sparad</string>
     <string name="new_emails">%d nya e-postmeddelanden</string>
@@ -347,7 +352,7 @@
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Löper ut %s</string>
     <string name="no_payment_methods">Du har inga sparade betalningsmetoder.</string>
-    <string name="edit_payment_methods">Logga in på protonmail.com för att ändra faktureringsuppgifter.</string>
+    <string name="edit_payment_methods">Logga in via protonmail.com för att redigera faktureringsinformation.</string>
     <string name="available_addresses">Tillgängliga adresser</string>
     <string name="inactive_addresses">Inaktiva adresser</string>
     <string name="not_set">Inte inställt</string>
@@ -454,8 +459,7 @@
     <string name="update_folder">Uppdatera mapp</string>
     <string name="spam_score_100">Detta e-post verkar vara från en ProtonMail-adress men kom från utanför vårt system och misslyckades våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefodrat!</string>
     <string name="spam_score_101">Detta mail har misslyckats med sin domäns autentiseringskrav. Det kan vara falskt eller felaktigt vidarebefordrat!</string>
-    <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LÄR DIG MER</a>
-    </string>
+    <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LÄR DIG MER</a></string>
     <string name="print_from_template">Från: %s</string>
     <string name="print_to_template">Till: %s;  </string>
     <string name="print_cc_template">CC: %s</string>
@@ -473,8 +477,7 @@
     <string name="empty_subject">(Inget ämne)</string>
     <string name="empty_recipients">(Inga mottagare)</string>
     <string name="contacts_unknown">Okänd</string>
-    <string name="learn_more"><u>Lär dig mer</u>
-    </string>
+    <string name="learn_more"><u>Lär dig mer</u></string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Uppgradera till en betald plan för att skicka från din %s-adress.</string>
     <string name="email_empty">E-postadressen saknas</string>
@@ -486,7 +489,7 @@
     <string name="protonmail_contacts">ProtonMail-kontakter</string>
     <string name="device_contacts">Enhetens kontakter</string>
     <string name="print_date_template">Datum: %s</string>
-    <string name="print_attachment_template">Bilaga: %s</string>
+    <string name="print_attachment_template">Bilaga: %s;  </string>
     <string name="pm_me_changed">Att skicka meddelanden från en @pm.me adress är en betalfunktion. Ditt meddelande kommer att skickas från din standardadress %s</string>
     <string name="pm_me_can_not_be_default">Uppgradera till en betal-plan för att kunna ange din %s-adress som standard</string>
     <string name="dont_remind_again">Påminn mig inte igen</string>
@@ -496,7 +499,7 @@
     <string name="attachment_storage_value_current">Nuvarande val: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Nuvarande val: obegränsat</string>
     <string name="attachment_offline_max_storage">Ställer in den maximala mängden lagringsutrymme som ProtonMail kan använda på din mobila enhet.</string>
-    <string name="load_embedded_images_failed_no_network">Kunde inte ladda inbäddade bilder. Kontrollera din nätverksanslutning.</string>
+    <string name="load_embedded_images_failed_no_network">Misslyckades att ladda inbäddade bilder. Kontrollera din nätverksanslutning.</string>
     <string name="load_embedded_images_failed">Misslyckades att ladda inbäddade bilder.</string>
     <string name="unlimited">Obegränsat</string>
     <string name="local_storage_cleared">Lokal lagring rensad</string>
@@ -522,8 +525,8 @@
     <string name="sender_lock_internal_verified">End-to-end-krypterat meddelande från verifierad adress</string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end-krypterat</string>
-    <string name="composer_lock_internal_pinned">End-to-end krypterad till verifierad mottagare</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP-krypterat till bekräftad mottagare</string>
+    <string name="composer_lock_internal_pinned">End-to-end krypterad till verifierad adress</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-krypterad till verifierad mottagare</string>
     <string name="composer_lock_pgp_signed">PGP-signerat</string>
     <string name="recipient_not_found_and_removed">Mottagaren kunde inte hittas: %s och den har därför tagits bort</string>
     <string name="recipient_error_and_removed">Ett fel uppstod vid hämtning av mottagarinformation och mottagaren har därför tagits bort: %s</string>
@@ -532,8 +535,7 @@
     <string name="expiration_error_add_msg_password">Lägg till ett lösenord för meddelandet för följande mottagare:</string>
     <string name="expiration_error_disable_pgp_sending">Avaktivera PGP-skickande för att kunna aktivera förfallotid för följande mottagare:</string>
     <string name="expiration_error_proceed">Klicka skicka ändå för att skicka utan förfallotid till dessa mottagare.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LÄR DIG MER</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LÄR DIG MER</a></string>
     <string name="channel_name_attachments">Bilagor</string>
     <string name="channel_description_attachments">Visar nedladdningsstatus för bifogad fil</string>
     <string name="channel_name_emails">E-postmeddelanden</string>
@@ -619,7 +621,7 @@
     <string name="push_notifications_alert_title">Push-notifieringar</string>
     <string name="push_notifications_alert_subtitle">Push-meddelanden för ProtonMail fungerar inte utan uppdaterade Google Play-tjänster.</string>
     <string name="app_locked">Appen är låst</string>
-    <string name="use_pin_instead">Använd PIN istället</string>
+    <string name="use_pin_instead">Använd PIN-kod istället</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Inga biometriska data registrerade</string>
     <string name="log_in_using_biometric_credential">Lås upp med dina biometriska inloggningsuppgifter</string>
@@ -748,8 +750,7 @@
     <string name="connections_via_third_parties">Alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties">Tillåt alternativ routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Om Proton-webbplatser blockeras tillåter denna inställning appen att prova alternativ nätverksrouting för att nå Proton, vilket kan vara användbart för att kringgå brandväggar eller nätverksproblem. Vi rekommenderar att du behåller denna inställning på för större tillförlitlighet.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
-    </string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Om Proton-webbplatser blockeras tillåter denna inställning appen att prova alternativ nätverksrouting för att nå Proton, vilket kan vara användbart för att kringgå brandväggar eller nätverksproblem. Vi rekommenderar att du behåller denna inställning på för större tillförlitlighet.. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Lär dig mer</a></string>
     <string name="app_language">App-språk</string>
     <string name="custom_language_dialog_title">Välj app-språk</string>
     <string name="auto_detect">Identifiera automatiskt</string>

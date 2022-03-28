@@ -46,6 +46,13 @@
     <string name="drawer_create_folder_description">Creazione nuova cartella</string>
     <string name="drawer_create_label_description">Creazione nuova etichetta</string>
     <!-- endregion -->
+    <!-- region Mailbox -->
+    <string name="mailbox_no_messages">Nessun messaggio</string>
+    <string name="mailbox_empty_folder_subtitle">Questa cartella è vuota</string>
+    <string name="mailbox_empty_inbox_subtitle">Aggiornato</string>
+    <string name="mailbox_empty_spam_subtitle">La cartella Spam è vuota</string>
+    <string name="mailbox_empty_trash_subtitle">Il cestino è vuoto</string>
+    <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Apri in Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Calendario criptato sicuro</string>
@@ -62,8 +69,7 @@
     <string name="composer_removing_address_generic_error">Impossibile verificare l\'indirizzo: %s1. L\'invio potrebbe fallire.</string>
     <string name="composer_removing_address_server_error">Indirizzi in rimozione: %s1. %s2</string>
     <string name="set_msg_password_title">Imposta password</string>
-    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per gli utenti non ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Per saperne di più</a>
-    </string>
+    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per gli utenti non ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Per saperne di più</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Password messaggio</string>
     <string name="set_msg_password_msg_password_hint">da 4 a 21 caratteri</string>
@@ -108,14 +114,29 @@
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Seleziona cartella principale (facoltativo)</string>
-    <string name="labels_manager_parent_folder_selected">
-        <b>Cartella principale selezionata.</b> Tocca per modificare</string>
+    <string name="labels_manager_parent_folder_selected"><b>Cartella principale selezionata.</b> Tocca per modificare</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Cartella principale</string>
     <string name="parent_picker_header">Se non selezioni una cartella principale, questa nuova cartella verrà creata come cartella di primo livello.</string>
     <!-- endregion -->
+    <!-- region Notifications -->
+    <string name="notification_summary_text_new_messages">Nuovi messaggi</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
+    <string name="contact_list_cannot_upload_groups_dialog_message">I gruppi di contatti non verranno importati. Esegui l\'upgrade a un piano a pagamento per usufruire delle funzionalità premium.</string>
+    <string name="contact_details_remote_content_dialog_title">Contenuto remoto</string>
+    <string name="contact_details_remote_content_dialog_message">Questo contatto contiene contenuti remoti.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Carica il contenuto</string>
+    <!-- endregion -->
+    <!-- region Onboarding -->
+    <string name="onboarding_privacy_for_all_headline">Privacy per tutti</string>
+    <string name="onboarding_privacy_for_all_description">Invita i tuoi contatti su Proton Mail per usufruire della crittografia end-to-end senza interruzioni o aggiungi la protezione con password ai messaggi che invii loro.</string>
+    <string name="onboarding_neat_and_tidy_headline">Pulito e ordinato</string>
+    <string name="onboarding_neat_and_tidy_description">File, etichetta e messaggi di codice del colore per creare la tua casella perfetta e personalizzata.</string>
+    <string name="onboarding_next">Successiva</string>
+    <string name="onboarding_get_started">Per iniziare</string>
+    <string name="onboarding_image_view_content_description">Illustrazione di Proton Mail</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -179,7 +200,6 @@
     <string name="are_you_sure_empty">È sicuro di voler eliminare tutti i messaggi da questa cartella?</string>
     <string name="send">Invia</string>
     <string name="selected">Selezionato</string>
-    <string name="mailbox_no_messages">Nessun messaggio</string>
     <string name="no_labels">Nessuna etichetta</string>
     <string name="to">A</string>
     <string name="cc">Cc</string>
@@ -282,20 +302,6 @@
     <string name="display_images">Mostra immagini</string>
     <string name="retry">Riprova</string>
     <string name="saving_failed_no_conn">Salvataggio fallito, nessuna connessione</string>
-    <string name="close_engagement">termina tour</string>
-    <string name="engagement_title_welcome">Benvenuto in ProtonMail!</string>
-    <string name="engagement_title_swipe">Azioni rapide con gesti di scorrimento</string>
-    <string name="engagement_title_labels">Gestione etichette</string>
-    <string name="engagement_title_encryption">Crittografia end-to-end</string>
-    <string name="engagement_title_expire">Scadenza dei messaggi</string>
-    <string name="engagement_title_help">Aiuto &amp; assistenza</string>
-    <string name="engagement_title_support_protonmail">Sostenga ProtonMail</string>
-    <string name="engagement_subtitle_welcome">Il suo nuovo account di posta elettronica crittografata è stato impostato ed è pronto per inviare e ricevere messaggi crittografati.</string>
-    <string name="engagement_subtitle_swipe">È possibile personalizzare i gesti di scorrimento nelle impostazioni di ProtonMail.</string>
-    <string name="engagement_subtitle_labels">Crea e aggiungi etichette per organizzare la tua posta in arrivo. Tieni premuto su un messaggio per visualizzare tutte le opzioni.</string>
-    <string name="engagement_subtitle_encryption">La casella di posta è ora protetta con la crittografia end-to-end. Per inviare email sicure ai tuoi contatti, invitali ad usare ProtonMail! Puoi crittografare manualmente i messaggi inviati a loro anche se non usano ProtonMail.</string>
-    <string name="engagement_subtitle_expire">I messaggi che spedisci possono essere predisposti per autocancellarsi dopo un certo periodo di tempo.</string>
-    <string name="engagement_subtitle_help">Puoi ricevere aiuto e assistenza su protonmail.com/support. I bug possono essere segnalati anche tramite l\'app.</string>
     <string name="attachment_exists">Allegato già presente</string>
     <string name="eo_password_not_completed">Password del messaggio non completata.</string>
     <string name="delinquency_subtitle">L\'accesso a questo account è disabilitato a causa di mancato pagamento. Per favore accedi su protonmail.com per pagare la fattura pendente.</string>
@@ -310,8 +316,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Eliminare le etichette selezionate?</string>
     <string name="delete_folder_confirmation_title">Eliminare le cartelle selezionate?</string>
-    <string name="delete_label_confirmation_message">Le email qui contenute saranno trovate in <b>Tutte le email</b>
-    </string>
+    <string name="delete_label_confirmation_message">Le email qui contenute saranno trovate in <b>Tutte le email</b></string>
     <string name="pin_invalid">PIN non valido, inserisci il PIN di 4 cifre corretto</string>
     <string name="pin_not_match">Il PIN non corrisponde</string>
     <string name="new_pin_saved">Nuovo PIN salvato</string>
@@ -454,8 +459,7 @@
     <string name="update_folder">Aggiorna cartella</string>
     <string name="spam_score_100">Questa email sembra provenire da un indirizzo ProtonMail, ma arriva dall\'esterno del nostro sistema e ha fallito i nostri requisiti d\'autenticazione. Potrebbe essere falsificata o inoltrata scorrettamente!</string>
     <string name="spam_score_101">Questa email ha fallito l\'autenticazione del proprio dominio. Potrebbe essere falsa o non correttamente inoltrata!</string>
-    <string name="spam_score_102">Questo messaggio potrebbe essere un tentativo di phishing. Per favore, controlla il mittente e il contenuto per verificare che siano veritieri. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MAGGIORI INFORMAZIONI</a>
-    </string>
+    <string name="spam_score_102">Questo messaggio potrebbe essere un tentativo di phishing. Per favore, controlla il mittente e il contenuto per verificare che siano veritieri. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MAGGIORI INFORMAZIONI</a></string>
     <string name="print_from_template">Da: %s</string>
     <string name="print_to_template">A: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -473,8 +477,7 @@
     <string name="empty_subject">(Nessun Oggetto)</string>
     <string name="empty_recipients">(Nessun destinatario)</string>
     <string name="contacts_unknown">Sconosciuto</string>
-    <string name="learn_more"><u>Per saperne di più</u>
-    </string>
+    <string name="learn_more"><u>Per saperne di più</u></string>
     <string name="info">Informazioni</string>
     <string name="error_can_not_send_from_this_address">Effettui l\'upgrade ad un piano a pagamento per inviare dal suo indirizzo %s.</string>
     <string name="email_empty">Indirizzo email mancante</string>
@@ -532,8 +535,7 @@
     <string name="expiration_error_add_msg_password">Aggiungi una password al messaggio per i seguenti destinatari:</string>
     <string name="expiration_error_disable_pgp_sending">Disabilita l\'invio con PGP per abilitare la scadenza per i seguenti destinatari:</string>
     <string name="expiration_error_proceed">Tocca invia ugualmente per inviare senza scadenza a questi destinatari.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">APPROFONDISCI</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">APPROFONDISCI</a></string>
     <string name="channel_name_attachments">Allegati</string>
     <string name="channel_description_attachments">Informa riguardo lo stato di download degli allegati</string>
     <string name="channel_name_emails">Email</string>
@@ -752,8 +754,7 @@
     <string name="connections_via_third_parties">Percorso alternativo</string>
     <string name="allow_secure_connections_via_third_parties">Consenti routing alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Nel caso in cui i siti Proton siano bloccati, questa impostazione consente all\'app di provare l\'instradamento di rete alternativo per raggiungere Proton, che può essere utile per aggirare i firewall o problemi di rete. Consigliamo di mantenere questa impostazione per una maggiore affidabilità.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Nel caso in cui i siti Proton siano bloccati, questa impostazione consente all\'app di provare l\'instradamento di rete alternativo per raggiungere Proton, che può essere utile per aggirare i firewall o problemi di rete. Consigliamo di mantenere questa impostazione per una maggiore affidabilità. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Per saperne di più</a>
-    </string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Nel caso in cui i siti Proton siano bloccati, questa impostazione consente all\'app di provare l\'instradamento di rete alternativo per raggiungere Proton, che può essere utile per aggirare i firewall o problemi di rete. Consigliamo di mantenere questa impostazione per una maggiore affidabilità. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Per saperne di più</a></string>
     <string name="app_language">Lingua dell\'app</string>
     <string name="custom_language_dialog_title">Seleziona la lingua dell\'app</string>
     <string name="auto_detect">Riconoscimento automatico</string>
