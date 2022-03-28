@@ -34,7 +34,7 @@ data class PendingSend @JvmOverloads constructor(
 
     @PrimaryKey
     @ColumnInfo(name = COLUMN_PENDING_SEND_ID)
-    var id: String = "",
+    var id: String,
 
     @ColumnInfo(name = COLUMN_PENDING_SEND_MESSAGE_ID)
     var messageId: String? = null,
