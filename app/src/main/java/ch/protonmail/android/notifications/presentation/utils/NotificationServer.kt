@@ -326,11 +326,6 @@ class NotificationServer @Inject constructor(
         // Create Notification Style
         val userDisplayName = user.addresses.primary?.email?.s
             ?: user.name.s
-        val inboxStyle = NotificationCompat.InboxStyle().run {
-            setSummaryText(message?.toListString ?: userDisplayName)
-            notificationBody?.let { addLine(it) }
-        }
-
 
         // Create Notification's Builder with the prepared params
         val notification =
@@ -344,8 +339,6 @@ class NotificationServer @Inject constructor(
                 setContentIntent(contentPendingIntent)
                 setDeleteIntent(dismissIntent)
                 setGroup(userId.id)
-                setStyle(inboxStyle)
-                setShowWhen(false)
                 addAction(
                     NotificationCompat.Action(
                         R.drawable.archive,
@@ -377,7 +370,7 @@ class NotificationServer @Inject constructor(
             isNotificationVisibleInLockScreen
         ).apply {
             setContentText(context.getString(R.string.notification_summary_text_new_messages))
-            setStyle(inboxStyle)
+            setSubText(message?.toListString ?: userDisplayName)
             setGroup(userId.id)
             setGroupSummary(true)
             setAutoCancel(true)
@@ -436,11 +429,11 @@ class NotificationServer @Inject constructor(
         error: String,
     ) {
         val bigTextStyle = NotificationCompat.BigTextStyle()
-            .setBigContentTitle(context.getString(R.string.message_failed))
             .setSummaryText(username.s)
             .bigText(error)
 
         val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
+            .setContentTitle(context.getString(R.string.message_failed))
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()
@@ -455,11 +448,10 @@ class NotificationServer @Inject constructor(
         notificationID: Int
     ) {
         val bigTextStyle = NotificationCompat.BigTextStyle()
-            .setBigContentTitle(title)
             .setSummaryText(summaryText)
             .bigText(bigText)
 
-        val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(userId).setContentTitle(title)
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()

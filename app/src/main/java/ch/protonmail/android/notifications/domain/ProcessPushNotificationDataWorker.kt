@@ -32,6 +32,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.segments.event.AlarmReceiver
+import ch.protonmail.android.api.segments.event.FetchEventsAndReschedule
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
@@ -73,6 +74,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
     private val messageRepository: MessageRepository,
     private val sessionManager: SessionManager,
     private val conversationModeEnabled: ConversationModeEnabled,
+    private val fetchEventsAndReschedule: FetchEventsAndReschedule,
     private val clearNotification: ClearNotification
 ) : CoroutineWorker(context, workerParameters) {
 
@@ -149,6 +151,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
                 }
             }
             NotificationAction.TOUCHED -> {
+                fetchEventsAndReschedule()
                 val notification =
                     checkNotNull(notificationRepository.getNotificationByIdBlocking(pushNotificationData.messageId))
                 clearNotification.invoke(userId, notification.id.value)
