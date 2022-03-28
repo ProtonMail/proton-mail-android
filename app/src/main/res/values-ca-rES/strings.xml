@@ -46,6 +46,13 @@
     <string name="drawer_create_folder_description">Crear carpeta nova</string>
     <string name="drawer_create_label_description">Crear etiqueta nova</string>
     <!-- endregion -->
+    <!-- region Mailbox -->
+    <string name="mailbox_no_messages">No messages</string>
+    <string name="mailbox_empty_folder_subtitle">This folder is empty</string>
+    <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
+    <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
+    <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Obrir a Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Calendari segur xifrat</string>
@@ -62,8 +69,7 @@
     <string name="composer_removing_address_generic_error">No es pot verificar l\'adreça: %s1. L\'enviament podria fallar.</string>
     <string name="composer_removing_address_server_error">Eliminant l\'adreça: %s1. %s2</string>
     <string name="set_msg_password_title">Establir contrasenya</string>
-    <string name="set_msg_password_info">Establiu una contrasenya per xifrar el missatge als no usuaris de ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Més informació</a>
-    </string>
+    <string name="set_msg_password_info">Establiu una contrasenya per xifrar el missatge als no usuaris de ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Més informació</a></string>
     <string name="set_msg_password_info_icon_description">Informació</string>
     <string name="set_msg_password_msg_password_title">Contrasenya del missatge</string>
     <string name="set_msg_password_msg_password_hint">Longitud de 4 a 21 caràcters</string>
@@ -108,14 +114,29 @@
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Seleccionar la carpeta principal (opcional)</string>
-    <string name="labels_manager_parent_folder_selected">
-        <b>Carpeta principal seleccionada.</b> Toqueu per canviar-la</string>
+    <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Carpeta superior</string>
     <string name="parent_picker_header">Si no seleccioneu una carpeta superior, aquesta carpeta nova es crearà a la carpeta arrel.</string>
     <!-- endregion -->
+    <!-- region Notifications -->
+    <string name="notification_summary_text_new_messages">New messages</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
+    <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
+    <string name="contact_details_remote_content_dialog_title">Remote content</string>
+    <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <!-- endregion -->
+    <!-- region Onboarding -->
+    <string name="onboarding_privacy_for_all_headline">Privacy for all</string>
+    <string name="onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
+    <string name="onboarding_neat_and_tidy_headline">Neat and tidy</string>
+    <string name="onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -179,7 +200,6 @@
     <string name="are_you_sure_empty">Està segur que vol esborrar tots els missatges d\'aquesta carpeta?</string>
     <string name="send">Enviar</string>
     <string name="selected">Seleccionat</string>
-    <string name="mailbox_no_messages">No hi ha missatges</string>
     <string name="no_labels">Sense etiquetes</string>
     <string name="to">Per a</string>
     <string name="cc">Cc</string>
@@ -282,20 +302,6 @@
     <string name="display_images">Mostra el contingut remot</string>
     <string name="retry">Reintentar</string>
     <string name="saving_failed_no_conn">Error al desar, sense connexió</string>
-    <string name="close_engagement">tancar recorregut</string>
-    <string name="engagement_title_welcome">Benvingut/benvinguda a ProtonMail!</string>
-    <string name="engagement_title_swipe">Accions de desplaçament ràpid</string>
-    <string name="engagement_title_labels">Gestió d\'etiquetes</string>
-    <string name="engagement_title_encryption">Xifrat d\'extrem a extrem</string>
-    <string name="engagement_title_expire">Missatges amb expiració</string>
-    <string name="engagement_title_help">Ajuda &amp; Support</string>
-    <string name="engagement_title_support_protonmail">Suport ProtonMail</string>
-    <string name="engagement_subtitle_welcome">La seva nova compte de correu electrònic ja està configurada i llesta per enviar i rebre missatges xifrats.</string>
-    <string name="engagement_subtitle_swipe">Pots personalitzar els gestos de lliscament en la configuració de l\'aplicació de ProtonMail.</string>
-    <string name="engagement_subtitle_labels">Crea i afegeix etiquetes per organitzar la safata d\'entrada. Mantingui pressionat sobre un missatge per visualitzar totes les opcions.</string>
-    <string name="engagement_subtitle_encryption">La safata d\'entrada està protegida amb el xifrat extrem a extrem. Per enviar automàticament correus electrònics segurs als vostres contactes, convida\'ls a utilitzar ProtonMail. També podeu xifrar manualment missatges si no utilitza ProtonMail.</string>
-    <string name="engagement_subtitle_expire">Els missatges que envieu poden configurar-se com a supressió automàtica després d\'un cert període de temps.</string>
-    <string name="engagement_subtitle_help">Podeu obtenir ajuda i assistència a protonmail.com/support. Els errors també es poden informar amb l\'aplicació.</string>
     <string name="attachment_exists">Fitxer adjunt ja adjuntat</string>
     <string name="eo_password_not_completed">La contrasenya del missatge no s\'ha completat.</string>
     <string name="delinquency_subtitle">L\'accés a aquest compte està desactivat per falta de pagament. Inicieu la sessió a través de protonmail.com per pagar la factura no pagada.</string>
@@ -310,8 +316,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">Voleu suprimir les etiquetes seleccionades?</string>
     <string name="delete_folder_confirmation_title">Voleu suprimir les carpetes seleccionades?</string>
-    <string name="delete_label_confirmation_message">Els correus que apareixen aquí es troben a <b>Tots els correus</b>
-    </string>
+    <string name="delete_label_confirmation_message">Els correus que apareixen aquí es troben a <b>Tots els correus</b></string>
     <string name="pin_invalid">El PIN no és vàlid, introduïu el PIN de 4 dígits correcte</string>
     <string name="pin_not_match">El PIN no coincideix</string>
     <string name="new_pin_saved">Nou PIN desat</string>
@@ -454,8 +459,7 @@
     <string name="update_folder">Actualitza la carpeta</string>
     <string name="spam_score_100">Aquest correu sembla que sigui d\'una adreça de ProtonMail però ha arribat des de fora del nostre sistema i no ha passat els requisits d\'autentificació. És possible que es tracti d\'un correu falsejat o reenviat indegudament!</string>
     <string name="spam_score_101">Aquest correu no ha superat els requisits d\'autentificació del domini. Pot ser que estigui falsejat o reenviat indegudament!</string>
-    <string name="spam_score_102">Aquest missatge pot ser un intent de pesca de credencials. Comproveu el remitent i el contingut per assegurar-vos que són legítims. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MÉS INFORMACIÓ</a>
-    </string>
+    <string name="spam_score_102">Aquest missatge pot ser un intent de pesca de credencials. Comproveu el remitent i el contingut per assegurar-vos que són legítims. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MÉS INFORMACIÓ</a></string>
     <string name="print_from_template">Des de: %s</string>
     <string name="print_to_template">Per a: %s; </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -473,8 +477,7 @@
     <string name="empty_subject">(Sense assumpte)</string>
     <string name="empty_recipients">(Sense destinataris)</string>
     <string name="contacts_unknown">Desconegut</string>
-    <string name="learn_more"><u>Més informació</u>
-    </string>
+    <string name="learn_more"><u>Més informació</u></string>
     <string name="info">Informació</string>
     <string name="error_can_not_send_from_this_address">Actualitza a un pla de pagament per enviar des de la teva adreça %s.</string>
     <string name="email_empty">Falta l\'adreça de correu electrònic</string>
@@ -532,8 +535,7 @@
     <string name="expiration_error_add_msg_password">Afegiu una contrasenya de missatge per als destinataris següents:</string>
     <string name="expiration_error_disable_pgp_sending">Desactiva l\'enviament PGP per habilitar la caducitat dels següents destinataris:</string>
     <string name="expiration_error_proceed">Toca enviar de totes maneres per enviar sense venciment a aquests destinataris.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">MÉS INFORMACIÓ</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">MÉS INFORMACIÓ</a></string>
     <string name="channel_name_attachments">Adjunts</string>
     <string name="channel_description_attachments">Informa sobre l\'estat de la baixada de dades adjunts</string>
     <string name="channel_name_emails">Correus electrònics</string>
@@ -752,8 +754,7 @@
     <string name="connections_via_third_parties">Encaminament alternatiu</string>
     <string name="allow_secure_connections_via_third_parties">Permetre encaminament alternatiu</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En cas que es bloquegin els llocs de Proton, aquest paràmetre permet a l\'aplicació provar l\'encaminament de xarxa alternatiu per arribar a Proton, cosa que pot ser útil per evitar els tallafocs o problemes de xarxa. Recomanem mantenir aquesta configuració per a una major fiabilitat.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En cas que es bloquegin els llocs de Proton, aquest paràmetre permet a l\'aplicació provar un encaminament de xarxa alternatiu per arribar a Proton, cosa que pot ser útil per evitar tallafocs o problemes de xarxa. Recomanem mantenir aquesta configuració per a una major fiabilitat. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Més informació</a>
-    </string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En cas que es bloquegin els llocs de Proton, aquest paràmetre permet a l\'aplicació provar un encaminament de xarxa alternatiu per arribar a Proton, cosa que pot ser útil per evitar tallafocs o problemes de xarxa. Recomanem mantenir aquesta configuració per a una major fiabilitat. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Més informació</a></string>
     <string name="app_language">Idioma de l\'aplicació</string>
     <string name="custom_language_dialog_title">Tria la llengua de l\'App</string>
     <string name="auto_detect">Detectar automàticament</string>

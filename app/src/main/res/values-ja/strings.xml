@@ -46,6 +46,13 @@
     <string name="drawer_create_folder_description">新しいフォルダを作成</string>
     <string name="drawer_create_label_description">新しいラベルを作成</string>
     <!-- endregion -->
+    <!-- region Mailbox -->
+    <string name="mailbox_no_messages">メッセージはありません</string>
+    <string name="mailbox_empty_folder_subtitle">フォルダーは空です</string>
+    <string name="mailbox_empty_inbox_subtitle">最新です</string>
+    <string name="mailbox_empty_spam_subtitle">迷惑メールフォルダーは空です。</string>
+    <string name="mailbox_empty_trash_subtitle">ごみ箱は空です</string>
+    <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Proton Calendar で開く</string>
     <string name="details_open_in_proton_calendar_subtitle">安全で暗号化されたカレンダー</string>
@@ -53,17 +60,16 @@
     <string name="details_play_store_error">Play Store を開くことができません</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">Bcc:</string>
-    <string name="composer_cc">Cc:</string>
+    <string name="composer_bcc">BCC:</string>
+    <string name="composer_cc">CC:</string>
     <string name="composer_compose_email">Eメールの作成</string>
     <string name="composer_from">差出人:</string>
     <string name="composer_subject">件名:</string>
     <string name="composer_to">宛先:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">アドレスを検証できません: %s1。おそらく送信に失敗します。</string>
+    <string name="composer_removing_address_server_error">アドレスを削除中: %s1. %s2</string>
     <string name="set_msg_password_title">パスワードを設定</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a>
-    </string>
+    <string name="set_msg_password_info">ProtonMail ユーザー以外への暗号化パスワードを設定してください。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a></string>
     <string name="set_msg_password_info_icon_description">情報</string>
     <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>
     <string name="set_msg_password_msg_password_hint">4〜21 文字</string>
@@ -108,14 +114,29 @@
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">親フォルダを選択 (任意)</string>
-    <string name="labels_manager_parent_folder_selected">
-        <b>Parent folder selected.</b> Tap to change</string>
+    <string name="labels_manager_parent_folder_selected"><b>親フォルダーが選択されました。</b> タップして変更</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">親フォルダー</string>
     <string name="parent_picker_header">親フォルダーを選択しない場合、このフォルダが親フォルダーとして作成されます。</string>
     <!-- endregion -->
+    <!-- region Notifications -->
+    <string name="notification_summary_text_new_messages">新しいメッセージ</string>
+    <!-- endregion -->
     <!-- region Dialogs -->
+    <string name="contact_list_cannot_upload_groups_dialog_message">連絡先グループはインポートされません。有料プランにアップグレードしてプレミアム機能を利用できます。</string>
+    <string name="contact_details_remote_content_dialog_title">リモートコンテンツ</string>
+    <string name="contact_details_remote_content_dialog_message">この連絡先にはリモートコンテンツが含まれています。</string>
+    <string name="contact_details_remote_content_dialog_positive_button">コンテンツを読み込む</string>
+    <!-- endregion -->
+    <!-- region Onboarding -->
+    <string name="onboarding_privacy_for_all_headline">すべての人にプライバシーを</string>
+    <string name="onboarding_privacy_for_all_description">連絡先を Proton Mail に招待するとエンドツーエンド暗号化をシームレスに利用でき、メッセージを送信する際にパスワード保護を追加できます。</string>
+    <string name="onboarding_neat_and_tidy_headline">自分だけの外観</string>
+    <string name="onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="onboarding_next">次へ</string>
+    <string name="onboarding_get_started">はじめましょう</string>
+    <string name="onboarding_image_view_content_description">Proton Mail イラストレーション</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -133,10 +154,10 @@
     <string name="update_app_title">アップデートが必要です。</string>
     <string name="update_app">アップデートされるまで、Protonmailアプリはご利用いただけません。</string>
     <string name="you_are_offline">オフラインです</string>
-    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">ProtonMail は現在ご利用できません。https://protonstatus.com または Twitter (https://twitter.com/protonmail) で現在の状態を確認してください。</string>
     <string name="contact_saved">連絡先が保存されました。</string>
     <string name="contact_saved_offline">連絡先が保存されました。ネットワーク接続が使用可能なときに同期します。</string>
-    <string name="contact_exist">Contact email already exists</string>
+    <string name="contact_exist">連絡先メールアドレスは既に存在しています</string>
     <string name="invalid_email">メールアドレスが無効です。</string>
     <string name="duplicate_email">メール アドレスが重複しています。</string>
     <string name="message_drafted">メッセージの送信に失敗しました。メッセージは下書きフォルダーに保存されます。</string>
@@ -179,7 +200,6 @@
     <string name="are_you_sure_empty">このフォルダー内の全てのメッセージを削除してよろしいですか？</string>
     <string name="send">送信</string>
     <string name="selected">選択済</string>
-    <string name="mailbox_no_messages">メッセージはありません。</string>
     <string name="no_labels">ラベルはありません。</string>
     <string name="to">宛先</string>
     <string name="cc">Cc</string>
@@ -268,7 +288,7 @@
     <string name="label_deleted_error">ラベル削除中にエラーが発生しました。</string>
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">サーバーに接続できません… (<u>トラブルシューティング</u>)</string>
     <string name="connectivity_checking">接続を確認しています...</string>
     <string name="draft_label_attachments_uploading">添付ファイルをアップロードしています…</string>
     <string name="draft_label_message_uploading">メッセージを送信しています…</string>
@@ -279,23 +299,9 @@
     <string name="display_images">外部コンテンツを表示</string>
     <string name="retry">再試行</string>
     <string name="saving_failed_no_conn">保存に失敗しました。接続が切れています。</string>
-    <string name="close_engagement">ツアーを閉じる</string>
-    <string name="engagement_title_welcome">ProtonMail へようこそ</string>
-    <string name="engagement_title_swipe">クイックスワイプ操作</string>
-    <string name="engagement_title_labels">ラベルの管理</string>
-    <string name="engagement_title_encryption">エンドツーエンド暗号化</string>
-    <string name="engagement_title_expire">有効期限付きメッセージ</string>
-    <string name="engagement_title_help">ヘルプとサポート</string>
-    <string name="engagement_title_support_protonmail">ProtonMail を支援する</string>
-    <string name="engagement_subtitle_welcome">新しい暗号化された電子メールアカウントが設定され、暗号化されたメッセージを送受信する準備ができました。</string>
-    <string name="engagement_subtitle_swipe">ProtonMailアプリの設定で、スワイプ操作をカスタマイズできます。</string>
-    <string name="engagement_subtitle_labels">受信箱を整理するラベルの作成ができます。メッセージを長押しすると全てのオプションが表示されます。</string>
-    <string name="engagement_subtitle_encryption">受信箱は、エンドツーエンド暗号化で暗号保護されています。保護された電子メールを自動的に送信するためには、送信相手に ProtonMail を使用するように招待してください。送信相手が ProtonMail を使用しない場合には、メッセージを手動で暗号化することもできます。</string>
-    <string name="engagement_subtitle_expire">送信メッセージが一定時間後に自動的に削除されるように設定できます。</string>
-    <string name="engagement_subtitle_help">protonmail.com/supportでヘルプとサポートが受けられます。バグの報告はアプリ内からも行えます。</string>
     <string name="attachment_exists">既に添付されている添付ファイル</string>
     <string name="eo_password_not_completed">メッセージのパスワードが不完全です。</string>
-    <string name="delinquency_subtitle">このアカウントへのアクセスは不払いのため無効化されています。未払い分を支払うには、 protonmail.comからサインインしてください。</string>
+    <string name="delinquency_subtitle">このアカウントへのアクセスは不払いのため無効化されています。未払い分を支払うには、 protonmail.com からサインインしてください。</string>
     <string name="downloading">ダウンロード中...</string>
     <string name="cant_download_attachment">添付ファイルをダウンロードできません。</string>
     <string-array name="auto_logout_options_array">
@@ -307,8 +313,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">選択したラベルを削除してよろしいですか？</string>
     <string name="delete_folder_confirmation_title">選択したフォルダーを削除してよろしいですか？</string>
-    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b>
-    </string>
+    <string name="delete_label_confirmation_message">ここに含まれているメッセージは<b>すべてのメール</b>から閲覧できます。</string>
     <string name="pin_invalid">無効なPINコードです。4桁の正しいPINコードを入力してください。</string>
     <string name="pin_not_match">PINコードが一致しません。</string>
     <string name="new_pin_saved">新しいPINコードが保存されました。</string>
@@ -391,7 +396,7 @@
     <string name="contacts_import_contact">連絡先をインポート</string>
     <string name="contacts_import">インポート</string>
     <string name="upload_contacts">連絡先をアップロード</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">連絡先をアップロード中…</string>
     <string-array name="vcard_option_phone">
         <item>電話</item>
         <item>携帯電話</item>
@@ -449,10 +454,9 @@
     <string name="update_folder">フォルダーを更新</string>
     <string name="spam_score_100">このメールはProtonMailのアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
-    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a>
-    </string>
+    <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。送信者と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
-    <string name="print_to_template">To: %s;  </string>
+    <string name="print_to_template">宛先: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
     <string name="address">アドレス: </string>
@@ -468,20 +472,19 @@
     <string name="empty_subject">(件名なし)</string>
     <string name="empty_recipients">(宛先がありません)</string>
     <string name="contacts_unknown">不明</string>
-    <string name="learn_more"><u>Learn More</u>
-    </string>
+    <string name="learn_more"><u>詳細</u></string>
     <string name="info">情報</string>
-    <string name="error_can_not_send_from_this_address">あなたの %s アドレスから送信するには有料プランへのアップグレードが必要です。</string>
+    <string name="error_can_not_send_from_this_address">%s アドレスから送信するには有料プランへのアップグレードが必要です。</string>
     <string name="email_empty">メールアドレスがありません。</string>
     <string name="encrypted_contact_details">暗号化された連絡先の詳細</string>
     <string name="convert_question">ローカルの連絡先をアップロード</string>
-    <string name="convert_question_subtitle">これで、あなたのデバイスのローカル連絡先があなたのProtonMail連絡先ディレクトリにアップロードされます。 ProtonMailを使用して、他のデバイスの連絡先にアクセスできます。</string>
+    <string name="convert_question_subtitle">デバイスのローカル連絡先が ProtonMail 連絡先ディレクトリにアップロードされます。 ProtonMail を使用して、他のデバイスの連絡先にアクセスできます。</string>
     <string name="refresh_contacts">再読み込み</string>
     <string name="invalid_email_some_contacts">一部の連絡先でメールアドレスが有効ではありません。</string>
     <string name="protonmail_contacts">ProtonMailの連絡先</string>
     <string name="device_contacts">デバイスの連絡先</string>
     <string name="print_date_template">日付: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">添付ファイル: %s; </string>
     <string name="pm_me_changed">\@pm.meアドレスからのメッセージ送信は有料の機能です。メッセージは既定アドレスの%sから送信されます。</string>
     <string name="pm_me_can_not_be_default">%s のアドレスを既定にするためには有料プランにアップグレードしてください。</string>
     <string name="dont_remind_again">今後このメッセージを表示しない</string>
@@ -490,7 +493,7 @@
     <string name="remove_password_question">パスワードを削除しますか？</string>
     <string name="attachment_storage_value_current">現在の選択: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">現在の選択: 無制限</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">モバイル端末で ProtonMail が使用できるストレージの最大容量を設定してください。</string>
     <string name="load_embedded_images_failed_no_network">埋め込み画像の読み込みに失敗しました。ネットワーク接続を確認してください。</string>
     <string name="load_embedded_images_failed">埋め込み画像の読み込みに失敗しました。</string>
     <string name="unlimited">無制限</string>
@@ -527,8 +530,7 @@
     <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください:</string>
     <string name="expiration_error_disable_pgp_sending">次の宛先に対して期限付きメッセージを送信するには、PGPを無効にしてください：</string>
     <string name="expiration_error_proceed">タップしてこれらの宛先には有効期限なしでそのまま送信する</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a></string>
     <string name="channel_name_attachments">添付ファイル</string>
     <string name="channel_description_attachments">添付ファイルのダウンロード状態を知らせる</string>
     <string name="channel_name_emails">メール</string>
@@ -589,8 +591,8 @@
     <string name="fab_add_contact">新しい連絡先を追加</string>
     <string name="fab_add_contact_group">新しい連絡先グループを追加</string>
     <string name="contacts_add_photo_title">写真を追加</string>
-    <string name="contacts_add_photo_select_gallery">Select from Gallery</string>
-    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
+    <string name="contacts_add_photo_select_gallery">ギャラリーから選択</string>
+    <string name="contacts_add_photo_select_camera">カメラで撮影</string>
     <string name="save_group_validation_error">グループ名を入力してください</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">ストレージの上限に達したため、メールの送受信ができなくなります。
@@ -733,8 +735,7 @@
     <string name="connections_via_third_parties">代替ルーティング</string>
     <string name="allow_secure_connections_via_third_parties">代替ルーティングを許可</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a>
-    </string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Proton のサイトがブロックされている場合、この設定により、アプリは別のネットワーク経由で Proton へ接続を試みます。この設定は、ファイアウォールやネットワーク上の問題を回避するのに役立ちます。サービスへの接続の信頼性向上の観点から、私たちはこの設定を有効にしておくことをお勧めします。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">より詳しく</a></string>
     <string name="app_language">アプリ言語</string>
     <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
     <string name="auto_detect">自動検出</string>
@@ -769,7 +770,7 @@
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">画像が見つかりませんでした。</string>
-    <string name="error_image_bad_url">Malformed image URL</string>
+    <string name="error_image_bad_url">不正な画像 URL です。</string>
     <string name="error_saving_try_again">メッセージの保存中にエラーが発生しました。もう一度やり直してください。</string>
     <!-- endregion -->
     <string name="allowed">許可</string>
@@ -799,8 +800,8 @@
     <string name="manage">管理</string>
     <string name="message_from">\"%s\"からのメッセージ</string>
     <string name="not_spam_move_to_inbox">迷惑メールではない (受信箱に移動)</string>
-    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
-    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
+    <string name="action_sheet_view_in_light_mode">ライトモードで表示</string>
+    <string name="action_sheet_view_in_dark_mode">ダークモードで表示</string>
     <plurals name="x_messages_count">
         <item quantity="other">%d 件のメッセージ</item>
     </plurals>
