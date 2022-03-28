@@ -41,50 +41,20 @@
         <item>@color/professional</item>
     </array>
 
-    <!-- labels -->
-    <color name="purple_base">#7272A7</color>
-    <color name="heather_base">#8989AC</color>
-    <color name="strawberry_base">#CF5858</color>
-    <color name="blush_base">#CF7E7E</color>
-    <color name="pink_base">#C26CC7</color>
-    <color name="lilac_base">#C793CA</color>
-    <color name="slateblue_base">#7569D1</color>
-    <color name="kimberly_base">#9B94D1</color>
-    <color name="pacific_base">#69A9D1</color>
-    <color name="glacier_base">#A8C4D5</color>
     <color name="aqua_base">#5EC7B7</color>
     <color name="sage_base">#97C9C1</color>
-    <color name="fern_base">#72BB75</color>
-    <color name="moss_base">#9DB99F</color>
-    <color name="pear_base">#C3D261</color>
-    <color name="olive_base">#C6CD97</color>
-    <color name="mustard_base">#E6C04C</color>
-    <color name="sahara_base">#E7D292</color>
-    <color name="carrot_base">#E6984C</color>
-    <color name="cinnamon_base">#DFB286</color>
-
 
     <array name="label_colors">
         <item>@color/purple_base</item>
-        <item>@color/heather_base</item>
-        <item>@color/strawberry_base</item>
-        <item>@color/blush_base</item>
         <item>@color/pink_base</item>
-        <item>@color/lilac_base</item>
-        <item>@color/slateblue_base</item>
-        <item>@color/kimberly_base</item>
-        <item>@color/pacific_base</item>
-        <item>@color/glacier_base</item>
-        <item>@color/aqua_base</item>
-        <item>@color/sage_base</item>
-        <item>@color/fern_base</item>
-        <item>@color/moss_base</item>
-        <item>@color/pear_base</item>
-        <item>@color/olive_base</item>
-        <item>@color/mustard_base</item>
-        <item>@color/sahara_base</item>
+        <item>@color/strawberry_base</item>
         <item>@color/carrot_base</item>
-        <item>@color/cinnamon_base</item>
+        <item>@color/sahara_base</item>
+        <item>@color/slateblue_base</item>
+        <item>@color/pacific_base</item>
+        <item>@color/reef_base</item>
+        <item>@color/fern_base</item>
+        <item>@color/olive_base</item>
     </array>
 
     <color name="hyperlink_color">#0000EE</color>
