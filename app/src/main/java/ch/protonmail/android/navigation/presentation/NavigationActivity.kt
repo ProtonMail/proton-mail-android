@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -54,7 +54,7 @@ import ch.protonmail.android.labels.presentation.ui.LabelsManagerActivity
 import ch.protonmail.android.navigation.presentation.model.NavigationViewState
 import ch.protonmail.android.navigation.presentation.model.TemporaryMessage
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_USER_ID
-import ch.protonmail.android.settings.pin.ValidatePinActivity
+import ch.protonmail.android.pinlock.presentation.PinLockManager
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -118,6 +118,9 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     @Inject
     lateinit var reportOrchestrator: ReportOrchestrator
+
+    @Inject
+    lateinit var pinLockManager: PinLockManager
 
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
     private val navigationViewModel by viewModels<NavigationViewModel>()
@@ -465,9 +468,7 @@ internal abstract class NavigationActivity : BaseActivity() {
             Type.LOCK -> {
                 val user = userManager.currentLegacyUser
                 if (user != null && user.isUsePin && userManager.getMailboxPin() != null) {
-                    user.setManuallyLocked(true)
-                    val intent = Intent(this, ValidatePinActivity::class.java)
-                    startActivity(intent)
+                    pinLockManager.lock(this)
                 }
             }
             Type.LABEL -> { /* We don't need it, perhaps we could remove the value from enum */

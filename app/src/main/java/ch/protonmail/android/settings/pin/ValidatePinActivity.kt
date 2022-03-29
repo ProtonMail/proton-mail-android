@@ -101,7 +101,6 @@ class ValidatePinActivity :
     }
 
     override fun onPinSuccess() {
-        mUserManager.requireCurrentLegacyUser().setManuallyLocked(false)
         pinLockManager.unlock()
         setResult(Activity.RESULT_OK)
         finish()
