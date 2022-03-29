@@ -82,8 +82,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_ONBOARDING_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
-import ch.protonmail.android.pendingaction.data.PendingActionDao
-import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.di.DefaultSharedPreferences
@@ -99,6 +97,7 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
+import ch.protonmail.android.mailbox.presentation.model.UnreadChipUiModel
 import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.navigation.presentation.NavigationActivity
 import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenManager
@@ -106,6 +105,8 @@ import ch.protonmail.android.notifications.data.remote.fcm.RegisterDeviceWorker
 import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.onboarding.presentation.OnboardingActivity
+import ch.protonmail.android.pendingaction.data.PendingActionDao
+import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
@@ -128,6 +129,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.android.synthetic.main.layout_mailbox_status_view.*
 import kotlinx.android.synthetic.main.navigation_drawer.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flatMapLatest
@@ -142,6 +144,7 @@ import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.exhaustive
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -349,7 +352,20 @@ internal class MailboxActivity :
                 .launchIn(lifecycleScope)
 
             unreadCounters
-                .onEach { sideDrawer.setUnreadCounters(it) }
+                .onEach { list ->
+                    val currentLocationUnreadCount = list.find {
+                        it.labelId == currentLabelId?.takeIfNotBlank() ?: currentMailboxLocation.asLabelIdString()
+                    }?.unreadCount ?: 0
+                    unreadMessagesStatusChip.bind(
+                        UnreadChipUiModel(
+                            unreadCount = currentLocationUnreadCount,
+                            isFilterEnabled = false
+                        ),
+                        onEnabledFilter = {},
+                        onDisableFilter = {}
+                    )
+                    sideDrawer.setUnreadCounters(list)
+                }
                 .launchIn(lifecycleScope)
 
             exitSelectionModeSharedFlow

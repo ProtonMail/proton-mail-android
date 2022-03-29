@@ -18,10 +18,8 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/mailbox_status_view_height"
     android:paddingHorizontal="@dimen/mailbox_status_view_padding_horizontal"
@@ -48,7 +46,7 @@
         app:chipMinTouchTargetSize="0dp"
         app:chipStartPadding="0dp"
         app:chipEndPadding="2dp"
-        tools:checked="true"
+        android:checked="false"
         style="@style/UnreadMessagesStatusChip" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
