@@ -336,11 +336,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     fun fetchContactGroups(userId: UserId) {
-        if (!isPaidUser()) {
-            return
-        }
-        if (::_data.isInitialized) {
-            handleContactGroupsResult()
+        if (isPaidUser().not()) {
             return
         }
         composeMessageRepository.getContactGroupsFromDB(userId)
