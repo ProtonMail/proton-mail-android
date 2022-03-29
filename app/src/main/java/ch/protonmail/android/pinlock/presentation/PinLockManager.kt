@@ -28,15 +28,16 @@ import ch.protonmail.android.settings.pin.ChangePinActivity
 import ch.protonmail.android.settings.pin.CreatePinActivity
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import me.proton.core.presentation.app.AppLifecycleProvider
-import java.lang.ref.WeakReference
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PinLockManager @Inject constructor(
     private val context: Context,
     private val shouldShowPinLockScreen: ShouldShowPinLockScreen
 ) {
 
-    private var pinLockActivity = WeakReference<Activity>(null)
+    private var isLocked = false
 
     suspend fun shouldLock(
         appState: AppLifecycleProvider.State,
@@ -45,30 +46,23 @@ class PinLockManager @Inject constructor(
     ): Boolean = shouldShowPinLockScreen(
         wasAppInBackground = appState == AppLifecycleProvider.State.Background,
         isPinLockScreenShown = isPinScreenActivity(currentActivity),
-        isPinLockScreenOpen = isPinLockActivityOpen(),
+        isPinLockScreenOpen = isLocked,
         isAddingAttachments = currentActivity is AddAttachmentsActivity,
         lastForegroundTime = lastForegroundTime
     )
 
     fun lock(activity: Activity) {
+        isLocked = true
         launchPinLockActivity(activity)
     }
 
-    fun onActivityCreated(activity: Activity) {
-        if (activity is ValidatePinActivity) {
-            pinLockActivity = WeakReference(activity)
-        }
-    }
-
-    fun onActivityDestroyed(activity: Activity) {
-        if (activity is ValidatePinActivity) {
-            pinLockActivity.clear()
-        }
+    fun unlock() {
+        isLocked = false
     }
 
     private fun launchPinLockActivity(callingActivity: Activity) {
         val intent = Intent(context, ValidatePinActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_NO_HISTORY)
         callingActivity.startActivity(intent)
     }
 
@@ -77,7 +71,4 @@ class PinLockManager @Inject constructor(
             is CreatePinActivity, is ChangePinActivity, is ValidatePinActivity -> true
             else -> false
         }
-
-    private fun isPinLockActivityOpen() =
-        pinLockActivity.get()?.isFinishing?.not() ?: false
 }
