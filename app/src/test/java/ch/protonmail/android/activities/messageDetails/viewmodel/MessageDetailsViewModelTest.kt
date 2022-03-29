@@ -147,7 +147,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         "defaultMockContactName"
     )
     private val contactsRepository: ContactsRepository = mockk {
-        coEvery { findContactEmailByEmail(any()) } returns testSenderContactEmail
+        coEvery { findContactEmailByEmail(any(), any()) } returns testSenderContactEmail
     }
 
     private val attachmentsHelper: AttachmentsHelper = mockk(relaxed = true)
@@ -348,7 +348,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             // Then
             coVerify { messageRepository.observeMessage(testUserId1, INPUT_ITEM_DETAIL_ID) }
             observeMessageFlow.emit(message)
-            coVerify { contactsRepository.findContactEmailByEmail(any()) }
+            coVerify { contactsRepository.findContactEmailByEmail(any(), any()) }
             val actualItem = awaitItem()
             assertEquals(expected, actualItem)
             assertEquals(testSenderContactEmail.name, actualItem.messages[0].senderDisplayName)
@@ -461,7 +461,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             // Then
             coVerify { conversationRepository.getConversation(testId2, INPUT_ITEM_DETAIL_ID) }
             observeConversationFlow.emit(testConversationResult)
-            coVerify { contactsRepository.findContactEmailByEmail(any()) }
+            coVerify { contactsRepository.findContactEmailByEmail(any(), any()) }
             val actualItem = awaitItem()
             assertNotNull(actualItem)
             assertEquals(testConversation.toConversationUiModel(), actualItem)

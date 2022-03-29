@@ -312,9 +312,11 @@ internal class MailboxViewModel @Inject constructor(
         mailboxStateFlow.loadMore()
     }
 
-    fun messagesToMailboxItemsBlocking(messages: List<Message>) = runBlocking {
+    fun messagesToMailboxItemsBlocking(messages: List<Message>): List<MailboxItemUiModel> = runBlocking {
+        val userId = userManager.currentUserId
+            ?: return@runBlocking emptyList()
         val currentLabelId = getLabelId(mailboxLocation.value, mutableMailboxLabelId.value)
-        return@runBlocking messagesToMailboxItems(messages, currentLabelId, null)
+        return@runBlocking messagesToMailboxItems(userId, messages, currentLabelId, null)
     }
 
     private fun conversationsAsMailboxItems(
@@ -341,7 +343,7 @@ internal class MailboxViewModel @Inject constructor(
                         isFirstData = false
 
                         MailboxState.Data(
-                            conversationsToMailboxItems(result.conversations, locationId, labels),
+                            conversationsToMailboxItems(userId, result.conversations, locationId, labels),
                             isFreshData = hasReceivedFirstApiRefresh != null,
                             shouldResetPosition = shouldResetPosition
                         )
@@ -395,6 +397,7 @@ internal class MailboxViewModel @Inject constructor(
 
                         MailboxState.Data(
                             items = messagesToMailboxItems(
+                                userId = userId,
                                 messages = result.messages,
                                 currentLabelId = getLabelId(location, labelId),
                                 labelsList = labels
@@ -430,19 +433,22 @@ internal class MailboxViewModel @Inject constructor(
         labelId?.let(::LabelId) ?: location.asLabelId()
 
     private suspend fun conversationsToMailboxItems(
+        userId: UserId,
         conversations: List<Conversation>,
         locationId: String,
         labels: List<Label>
     ): List<MailboxItemUiModel> =
         mailboxItemUiModelMapper.toUiModels(
+            userId = userId,
             conversations = conversations,
             currentLabelId = LabelId(locationId),
             allLabels = labels
         )
 
     private suspend fun messagesToMailboxItems(
+        userId: UserId,
         messages: List<Message>,
-        currentLabelId: LabelId,
+       currentLabelId: LabelId,
         labelsList: List<Label>?
     ): List<MailboxItemUiModel> {
         Timber.v("messagesToMailboxItems size: ${messages.size}")
@@ -453,7 +459,7 @@ internal class MailboxViewModel @Inject constructor(
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { idsChunk -> labelRepository.findLabels(idsChunk) }
 
-        return mailboxItemUiModelMapper.toUiModels(messages, currentLabelId, allLabels)
+        return mailboxItemUiModelMapper.toUiModels(userId, messages, currentLabelId, allLabels)
     }
 
     fun deleteAction(

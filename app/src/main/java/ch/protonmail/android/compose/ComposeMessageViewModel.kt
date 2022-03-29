@@ -26,7 +26,6 @@ import android.text.TextUtils
 import android.webkit.WebView
 import androidx.core.net.MailTo
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
@@ -130,7 +129,6 @@ class ComposeMessageViewModel @Inject constructor(
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
-    private val _mergedContactsLiveData: MediatorLiveData<List<MessageRecipient>> = MediatorLiveData()
     private val _contactGroupsResult: MutableLiveData<List<MessageRecipient>> = MutableLiveData()
     private val _pmMessageRecipientsResult: MutableLiveData<List<MessageRecipient>> = MutableLiveData()
     private val _androidMessageRecipientsResult: MutableLiveData<List<MessageRecipient>> = MutableLiveData()
@@ -187,8 +185,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     // endregion
     // region events observables
-    val mergedContactsLiveData: MediatorLiveData<List<MessageRecipient>>
-        get() = _mergedContactsLiveData
     val contactGroupsResult: LiveData<List<MessageRecipient>>
         get() = _contactGroupsResult
     val pmMessageRecipientsResult: LiveData<List<MessageRecipient>>
@@ -340,17 +336,13 @@ class ComposeMessageViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     fun fetchContactGroups(userId: UserId) {
-        if (!isPaidUser()) {
-            return
-        }
-        if (::_data.isInitialized) {
-            handleContactGroupsResult()
+        if (isPaidUser().not()) {
             return
         }
         composeMessageRepository.getContactGroupsFromDB(userId)
             .onEach { models ->
                 for (group in models) {
-                    val emails = composeMessageRepository.getContactGroupEmailsSync(group.id.id)
+                    val emails = composeMessageRepository.getContactGroupEmailsSync(userId, group.id.id)
                     val recipients = ArrayList<MessageRecipient>()
                     for (email in emails) {
                         val recipient = MessageRecipient(email.name, email.email)
@@ -363,7 +355,7 @@ class ComposeMessageViewModel @Inject constructor(
                     _groupsRecipientsMap[group] = recipients
                 }
 
-                _data = models
+                _data = (_data + models).distinctBy { it.id }
                 handleContactGroupsResult()
                 _setupCompleteValue = true
                 sendingInProcess = false
@@ -925,10 +917,6 @@ class ComposeMessageViewModel @Inject constructor(
                         val groupedContactsAndGroups = ArrayList<MessageRecipient>(_protonMailContacts)
                         groupedContactsAndGroups.addAll(0, _protonMailGroups)
                         _pmMessageRecipientsResult.postValue(groupedContactsAndGroups)
-                        _mergedContactsLiveData.removeSource(pmMessageRecipientsResult)
-                        _mergedContactsLiveData.addSource(pmMessageRecipientsResult) { value ->
-                            _mergedContactsLiveData.postValue(value)
-                        }
                     }
                 }
             compositeDisposable.add(disposable)
@@ -955,8 +943,6 @@ class ComposeMessageViewModel @Inject constructor(
         val groupedContactsAndGroups = ArrayList<MessageRecipient>(_protonMailContacts)
         groupedContactsAndGroups.addAll(0, _protonMailGroups)
         _contactGroupsResult.postValue(groupedContactsAndGroups)
-        _mergedContactsLiveData.removeSource(contactGroupsResult)
-        _mergedContactsLiveData.addSource(contactGroupsResult) { value -> _mergedContactsLiveData.postValue(value) }
     }
 
     fun getContent(content: String): String {
@@ -1052,10 +1038,6 @@ class ComposeMessageViewModel @Inject constructor(
         if (_androidContacts.size > 0) {
             _protonMailContacts.addAll(_androidContacts)
             _androidMessageRecipientsResult.postValue(_protonMailContacts.toList())
-            _mergedContactsLiveData.removeSource(contactGroupsResult)
-            _mergedContactsLiveData.addSource(androidMessageRecipientsResult) { value ->
-                _mergedContactsLiveData.postValue(value)
-            }
         }
     }
 

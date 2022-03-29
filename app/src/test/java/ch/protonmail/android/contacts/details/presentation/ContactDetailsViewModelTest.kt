@@ -31,9 +31,11 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsRe
 import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.utils.FileHelper
 import io.mockk.coEvery
 import io.mockk.every
@@ -58,6 +60,9 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val mapper = ContactDetailsMapper()
     private val workManager: WorkManager = mockk()
     private val fileHelper: FileHelper = mockk()
+    private val userManager: UserManager = mockk {
+        every { currentUserId } returns UserIdTestData.userId
+    }
 
     private val contactId1 = "contactUid1"
     private val contactName1 = "testContactName"
@@ -89,11 +94,12 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
     )
 
     private val viewModel = ContactDetailsViewModel(
-        fetchContactDetails,
-        fetchContactGroups,
-        mapper,
-        workManager,
-        fileHelper
+        fetchContactDetails = fetchContactDetails,
+        fetchContactGroups = fetchContactGroups,
+        mapper = mapper,
+        workManager = workManager,
+        fileHelper = fileHelper,
+        userManager = userManager
     )
 
     private val testColorInt = 321
@@ -132,7 +138,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         val fetchContactGroupResult = FetchContactGroupsResult(
             listOf(contactLabel)
         )
-        every { fetchContactGroups(contactId) } returns flowOf(fetchContactGroupResult)
+        every { fetchContactGroups(any(), contactId) } returns flowOf(fetchContactGroupResult)
         val expected = ContactDetailsViewState.Data(
             contactId1,
             contactName1,
@@ -187,7 +193,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         val fetchContactGroupResult = FetchContactGroupsResult(
             listOf(contactLabel)
         )
-        every { fetchContactGroups(contactId) } returns flowOf(fetchContactGroupResult)
+        every { fetchContactGroups(any(), contactId) } returns flowOf(fetchContactGroupResult)
         val expected = ContactDetailsViewState.Error(
             exception
         )

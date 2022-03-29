@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -33,6 +33,7 @@ import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
@@ -233,10 +234,11 @@ class ContactGroupEditCreateRepositoryTest {
             labelIds = listOf(testLabel1Id, testLabel2Id, testLabel3Id)
         )
         val inputContactEmails = listOf(inputContactEmail)
-        coEvery { contactsRepository.findAllContactEmailsByContactGroupId(testGroupId) } returns inputContactEmails
+        coEvery { contactsRepository.findAllContactEmailsByContactGroupId(userId, testGroupId) } returns inputContactEmails
 
         // when
         repository.removeMembersFromContactGroup(
+            userId,
             testGroupId,
             testGroupName,
             membersToRemove
@@ -246,6 +248,7 @@ class ContactGroupEditCreateRepositoryTest {
         coVerify { apiManager.unlabelContactEmails(any()) }
         coVerify {
             contactsRepository.saveContactEmail(
+                userId,
                 inputContactEmail.copy(labelIds = listOf(testLabel2Id, testLabel3Id))
             )
         }
@@ -267,10 +270,11 @@ class ContactGroupEditCreateRepositoryTest {
             name = "firstContactName",
             labelIds = listOf(testLabel1Id, testLabel2Id)
         )
-        coEvery { contactsRepository.findAllContactEmailsById(testMember1) } returns existingContactEmail
+        coEvery { contactsRepository.findAllContactEmailsById(userId, testMember1) } returns existingContactEmail
 
         // when
         repository.setMembersForContactGroup(
+            userId,
             testGroupId,
             testGroupName,
             membersToAdd
@@ -280,6 +284,7 @@ class ContactGroupEditCreateRepositoryTest {
         coVerify { apiManager.labelContacts(any()) }
         coVerify {
             contactsRepository.saveContactEmail(
+                userId,
                 existingContactEmail.copy(labelIds = listOf(testLabel1Id, testLabel2Id, testLabel3Id))
             )
         }

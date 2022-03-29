@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -82,7 +82,7 @@ class GroupRecipientsViewModel @Inject constructor(
         val contactGroup = labelRepository.findLabelByName(groupName, userId)
         if (contactGroup != null) {
             _groupDetails = contactGroup
-            val emails = composeMessageRepository.getContactGroupEmailsSync(contactGroup.id.id)
+            val emails = composeMessageRepository.getContactGroupEmailsSync(userId, contactGroup.id.id)
             _groupAllEmails = emails
             _groupAllEmails.forEach { email ->
                 email.selected = _recipients.find { selected ->

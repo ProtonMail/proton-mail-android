@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -26,7 +26,6 @@ import butterknife.OnClick
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MAX_ATTACHMENT_STORAGE_IN_MB
 import ch.protonmail.android.core.Constants.UNLIMITED_ATTACHMENT_STORAGE
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.utils.extensions.showToast

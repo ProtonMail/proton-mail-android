@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -25,6 +25,7 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -70,14 +71,14 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
                 labelId2, "name2", "color2", 0, LabelType.MESSAGE_LABEL, "a/b", "parentId"
             )
         every { repository.observeContactEmails(contactId) } returns flowOf(list1)
-        coEvery { repository.getContactGroupsLabelForId(contactEmailId1) } returns listOf(contactLabel1)
-        coEvery { repository.getContactGroupsLabelForId(contactEmailId2) } returns listOf(contactLabel2)
+        coEvery { repository.getContactGroupsLabelForId(userId, contactEmailId1) } returns listOf(contactLabel1)
+        coEvery { repository.getContactGroupsLabelForId(userId, contactEmailId2) } returns listOf(contactLabel2)
         val expected = FetchContactGroupsResult(
             listOf(contactLabel1, contactLabel2)
         )
 
         // when
-        val result = useCase.invoke(contactId).take(1).toList()
+        val result = useCase.invoke(userId, contactId).take(1).toList()
 
         // then
         assertEquals(expected, result[0])
@@ -119,9 +120,9 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
             emit(list1)
             emit(list2)
         }
-        coEvery { repository.getContactGroupsLabelForId(contactEmailId1) } returns listOf(contactLabel1)
-        coEvery { repository.getContactGroupsLabelForId(contactEmailId2) } returns listOf(contactLabel2)
-        coEvery { repository.getContactGroupsLabelForId(contactEmailId3) } returns listOf(contactLabel3)
+        coEvery { repository.getContactGroupsLabelForId(userId, contactEmailId1) } returns listOf(contactLabel1)
+        coEvery { repository.getContactGroupsLabelForId(userId, contactEmailId2) } returns listOf(contactLabel2)
+        coEvery { repository.getContactGroupsLabelForId(userId, contactEmailId3) } returns listOf(contactLabel3)
         val expected1 = FetchContactGroupsResult(
             listOf(contactLabel1, contactLabel2)
         )
@@ -130,7 +131,7 @@ class FetchContactGroupsTest : ArchTest, CoroutinesTest {
         )
 
         // when
-        val result = useCase.invoke(contactId).take(2).toList()
+        val result = useCase.invoke(userId, contactId).take(2).toList()
 
         // then
         assertEquals(expected1, result[0])

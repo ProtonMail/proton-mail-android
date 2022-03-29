@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -68,11 +68,13 @@ class ContactGroupsViewModel @Inject constructor(
         get() = _contactGroupEmailsError
 
     fun observeContactGroups() {
+        val userId = userManager.currentUserId
+            ?: return
         // observe db changes
         searchPhraseFlow
             .onEach { Timber.v("Search term: $it") }
             .flatMapLatest { searchPhrase ->
-                contactGroupsRepository.observeContactGroups(searchPhrase)
+                contactGroupsRepository.observeContactGroups(userId, searchPhrase)
             }
             .catch { _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name) }
             .onEach { labels ->
@@ -97,8 +99,10 @@ class ContactGroupsViewModel @Inject constructor(
     }
 
     fun getContactGroupEmails(contactLabel: ContactGroupListItem) {
+        val userId = userManager.currentUserId
+            ?: return
         viewModelScope.launch {
-            runCatching { contactGroupsRepository.getContactGroupEmails(contactLabel.contactId) }
+            runCatching { contactGroupsRepository.getContactGroupEmails(userId, contactLabel.contactId) }
                 .fold(
                     onSuccess = { list ->
                         Timber.v("Contacts groups emails list received size: ${list.size}")

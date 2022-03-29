@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -48,8 +48,8 @@ open class ContactDetailsRepository @Inject constructor(
     private val contactRepository: ContactsRepository
 ) {
 
-    suspend fun getContactGroupsLabelForId(emailId: String): List<Label> =
-        contactRepository.getAllContactGroupsByContactEmail(emailId)
+    suspend fun getContactGroupsLabelForId(userId: UserId, emailId: String): List<Label> =
+        contactRepository.getAllContactGroupsByContactEmail(userId, emailId)
 
     fun getContactEmails(id: String): Observable<List<ContactEmail>> {
         return contactDao.findContactEmailsByContactIdObservable(id)
@@ -59,8 +59,8 @@ open class ContactDetailsRepository @Inject constructor(
     fun observeContactEmails(contactId: String): Flow<List<ContactEmail>> =
         contactDao.observeContactEmailsByContactId(contactId)
 
-    suspend fun getContactEmailsCount(contactGroupId: LabelId) =
-        contactRepository.countContactEmailsByLabelId(contactGroupId)
+    suspend fun getContactEmailsCount(userId: UserId, contactGroupId: LabelId) =
+        contactRepository.countContactEmailsByLabelId(userId, contactGroupId)
 
     suspend fun getContactGroups(userId: UserId): List<Label> =
         labelRepository.findContactGroups(userId)

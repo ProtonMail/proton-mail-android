@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -27,6 +27,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.contacts.details.domain.FetchContactGroups
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.DeleteContactWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,7 +48,8 @@ class ContactDetailsViewModel @Inject constructor(
     private val fetchContactGroups: FetchContactGroups,
     private val mapper: ContactDetailsMapper,
     private val workManager: WorkManager,
-    private val fileHelper: FileHelper
+    private val fileHelper: FileHelper,
+    private val userManager: UserManager
 ) : ViewModel() {
 
     private val mutableContactsResultFlow = MutableStateFlow<ContactDetailsViewState>(ContactDetailsViewState.Loading)
@@ -59,9 +61,11 @@ class ContactDetailsViewModel @Inject constructor(
         get() = mutableFlowVcard
 
     fun getContactDetails(contactId: String) {
+        val userId = userManager.currentUserId
+            ?: return
         viewModelScope.launch {
             fetchContactDetails(contactId)
-                .combine(fetchContactGroups(contactId)) { contacts, groups ->
+                .combine(fetchContactGroups(userId, contactId)) { contacts, groups ->
                     Timber.v("Details $contactId, emails: ${contacts.emails.size}, groups: ${groups.groupsList.size}")
                     mapper.mapToContactViewData(contacts, groups)
                 }

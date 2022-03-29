@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -26,14 +26,14 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
+import ch.protonmail.android.testdata.UserIdTestData.userId
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
 import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
@@ -50,21 +50,16 @@ class ContactGroupsRepositoryTest {
     @get:Rule
     val testSchedulerRule = TestSchedulerRule()
 
-    @MockK
-    private lateinit var labelRepository: LabelRepository
+    private val labelRepository: LabelRepository = mockk()
+    private val accountManager: AccountManager = mockk()
+    private val contactRepository: ContactsRepository = mockk()
 
-    @MockK
-    private lateinit var accountManager: AccountManager
-
-    @MockK
-    private lateinit var contactRepository: ContactsRepository
-
-    private val dispatcherProvider = TestDispatcherProvider
-
-    @InjectMockKs
-    private lateinit var contactGroupsRepository: ContactGroupsRepository
-
-    private val testUserId = UserId("testUserId")
+    private val contactGroupsRepository = ContactGroupsRepository(
+        labelRepository = labelRepository,
+        accountsManager = accountManager,
+        contactRepository = contactRepository,
+        dispatchers = TestDispatcherProvider
+    )
 
     private val label1 = Label(
         id = LabelId("a"),
@@ -89,7 +84,7 @@ class ContactGroupsRepositoryTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { accountManager.getPrimaryUserId() } returns flowOf(testUserId)
+        every { accountManager.getPrimaryUserId() } returns flowOf(userId)
     }
 
     @Test
@@ -98,13 +93,13 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { labelRepository.observeSearchContactGroups(searchTerm, testUserId) } returns flowOf(
+            coEvery { labelRepository.observeSearchContactGroups(searchTerm, userId) } returns flowOf(
                 dbContactsList
             )
-            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactRepository.countContactEmailsByLabelId(userId, any()) } returns 1
 
             // when
-            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
+            val result = contactGroupsRepository.observeContactGroups(userId, searchTerm).first()
 
             // then
             assertEquals(listOf(label1UiModel), result)
@@ -117,13 +112,13 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { labelRepository.observeSearchContactGroups(searchTerm, testUserId) } returns flowOf(
+            coEvery { labelRepository.observeSearchContactGroups(searchTerm, userId) } returns flowOf(
                 dbContactsList
             )
-            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactRepository.countContactEmailsByLabelId(userId, any()) } returns 1
 
             // when
-            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
+            val result = contactGroupsRepository.observeContactGroups(userId, searchTerm).first()
 
             // then
             assertEquals(listOf(label1UiModel), result)
@@ -136,13 +131,13 @@ class ContactGroupsRepositoryTest {
             // given
             val searchTerm = "search"
             val dbContactsList = listOf(label1)
-            coEvery { labelRepository.observeSearchContactGroups(searchTerm, testUserId) } returns flowOf(
+            coEvery { labelRepository.observeSearchContactGroups(searchTerm, userId) } returns flowOf(
                 dbContactsList
             )
-            coEvery { contactRepository.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactRepository.countContactEmailsByLabelId(userId, any()) } returns 1
 
             // when
-            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
+            val result = contactGroupsRepository.observeContactGroups(userId, searchTerm).first()
 
             // then
             assertEquals(listOf(label1UiModel), result)
