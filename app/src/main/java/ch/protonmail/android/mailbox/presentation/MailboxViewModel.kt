@@ -99,7 +99,7 @@ import javax.inject.Inject
 const val FLOW_START_ACTIVITY = 1
 const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
-private const val SWIPE_VIBRATION_DURATION = 20L
+private const val SWIPE_VIBRATION_DURATION = 10L
 
 @Suppress("LongParameterList") // Every new parameter adds a new issue and breaks the build
 @HiltViewModel
