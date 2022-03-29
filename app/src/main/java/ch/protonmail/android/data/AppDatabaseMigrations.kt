@@ -28,6 +28,7 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
 import me.proton.core.account.data.entity.SessionDetailsEntity
 import me.proton.core.account.data.entity.SessionEntity
+import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.featureflag.data.db.FeatureFlagDatabase
 import me.proton.core.humanverification.data.entity.HumanVerificationEntity
@@ -126,6 +127,12 @@ object AppDatabaseMigrations {
             FeatureFlagDatabase.MIGRATION_1.migrate(database)
             OrganizationDatabase.MIGRATION_1.migrate(database)
             NotificationDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            ChallengeDatabase.MIGRATION_0.migrate(database)
         }
     }
 }

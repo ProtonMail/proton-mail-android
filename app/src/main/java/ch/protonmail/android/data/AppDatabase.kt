@@ -36,6 +36,9 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
 import me.proton.core.account.data.entity.SessionDetailsEntity
 import me.proton.core.account.data.entity.SessionEntity
+import me.proton.core.challenge.data.db.ChallengeConverters
+import me.proton.core.challenge.data.db.ChallengeDatabase
+import me.proton.core.challenge.data.entity.ChallengeFrameEntity
 import me.proton.core.contact.data.local.db.ContactConverters
 import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.contact.data.local.db.entity.ContactCardEntity
@@ -96,6 +99,7 @@ import timber.log.Timber
         ContactEmailEntity::class,
         ContactEmailLabelEntity::class,
         FeatureFlagEntity::class,
+        ChallengeFrameEntity::class,
         // Mail
         LabelEntity::class,
         NotificationEntity::class
@@ -112,6 +116,7 @@ import timber.log.Timber
     HumanVerificationConverters::class,
     UserSettingsConverters::class,
     ContactConverters::class,
+    ChallengeConverters::class,
     // Mail
     ProtonMailConverters::class
 )
@@ -127,14 +132,15 @@ internal abstract class AppDatabase :
     PublicAddressDatabase,
     UserDatabase,
     UserSettingsDatabase,
-    FeatureFlagDatabase {
+    FeatureFlagDatabase,
+    ChallengeDatabase {
 
     abstract fun labelDao(): LabelDao
     abstract fun notificationDao(): NotificationDao
 
     companion object {
 
-        const val version = 4
+        const val version = 5
         private const val name = "proton-mail.db"
 
         private fun getDbCreationCallback(context: Context): Callback = object : Callback() {
@@ -157,6 +163,7 @@ internal abstract class AppDatabase :
                 AppDatabaseMigrations.MIGRATION_1_2,
                 AppDatabaseMigrations.MIGRATION_2_3,
                 AppDatabaseMigrations.MIGRATION_3_4,
+                AppDatabaseMigrations.MIGRATION_4_5
             )
             Timber.v("Db migrations list size ${migrations.size}")
             return migrations
