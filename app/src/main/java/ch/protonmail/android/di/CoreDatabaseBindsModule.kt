@@ -24,6 +24,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.account.data.db.AccountDatabase
+import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.featureflag.data.db.FeatureFlagDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
@@ -71,4 +72,7 @@ internal abstract class CoreDatabaseBindsModule {
 
     @Binds
     abstract fun provideFeatureFlagDatabase(appDatabase: AppDatabase): FeatureFlagDatabase
+
+    @Binds
+    abstract fun provideChallengeDatabase(appDatabase: AppDatabase): ChallengeDatabase
 }

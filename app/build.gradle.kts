@@ -291,6 +291,7 @@ dependencies {
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
         `Proton-work-manager`,
+        `Proton-challenge`,
         `Proton-crypto`,
         `Proton-crypto-validator`,
         `Proton-auth`,
