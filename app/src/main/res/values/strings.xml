@@ -56,6 +56,7 @@
     <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
     <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
     <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <string name="mailbox_unread_count">%d unread</string>
     <!-- endregion -->
 
     <!-- region Details -->
