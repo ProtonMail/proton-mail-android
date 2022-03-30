@@ -288,6 +288,7 @@ dependencies {
         `Proton-domain`,
         `Proton-presentation`,
         `Proton-network`,
+        `Proton-network-dagger`,
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
         `Proton-work-manager`,
