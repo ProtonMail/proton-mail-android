@@ -344,7 +344,10 @@ internal class MailboxActivity :
                 .launchIn(lifecycleScope)
 
             mailboxLocation
-                .onEach { mailboxAdapter.setNewLocation(it) }
+                .onEach {
+                    mailboxAdapter.setNewLocation(it)
+                    updatedStatusTextView.isVisible = false
+                }
                 .launchIn(lifecycleScope)
 
             drawerLabels
@@ -354,7 +357,9 @@ internal class MailboxActivity :
             unreadCounters
                 .onEach { list ->
                     val currentLocationUnreadCount = list.find {
-                        it.labelId == currentLabelId?.takeIfNotBlank() ?: currentMailboxLocation.asLabelIdString()
+                        val currentLabelId = currentLabelId?.takeIfNotBlank()
+                            ?: currentMailboxLocation.asLabelIdString()
+                        it.labelId == currentLabelId
                     }?.unreadCount ?: 0
                     unreadMessagesStatusChip.bind(
                         UnreadChipUiModel(
@@ -550,6 +555,7 @@ internal class MailboxActivity :
                 setRefreshing(false)
                 include_mailbox_no_messages.isVisible =
                     state.lastFetchedItemsIds.isEmpty() && mailboxAdapter.itemCount == 0
+                updatedStatusTextView.isVisible = true
             }
             is MailboxState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
