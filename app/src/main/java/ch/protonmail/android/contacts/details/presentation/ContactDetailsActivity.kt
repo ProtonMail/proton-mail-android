@@ -38,8 +38,10 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -286,9 +288,23 @@ class ContactDetailsActivity : AppCompatActivity() {
                 dismissOnButtonClick = true,
                 cancelable = false,
                 cancelOnTouchOutside = false,
+                onNegativeButtonClicked = { setPlaceholderThumbnailImage() },
                 onPositiveButtonClicked = { loadThumbnailImage(photoUrl) }
             )
         }
+    }
+
+    private fun setPlaceholderThumbnailImage() {
+        thumbnailImage.apply {
+            setImageResource(R.drawable.ic_file_image)
+            background = ContextCompat.getDrawable(
+                this@ContactDetailsActivity,
+                R.drawable.circle_background_interaction_weak
+            )
+            setPadding(resources.getDimensionPixelSize(R.dimen.padding_4xl))
+            isVisible = true
+        }
+        thumbnail.isVisible = false
     }
 
     private fun setThumbnailImage(photoBytes: List<Byte>) {
