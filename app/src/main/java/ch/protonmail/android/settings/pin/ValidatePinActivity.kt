@@ -27,17 +27,24 @@ import androidx.biometric.BiometricPrompt
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.pinlock.presentation.PinLockManager
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.ISecurePINListener
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ValidatePinActivity :
     BaseActivity(),
     PinFragmentViewModel.IPinCreationListener,
     ISecurePINListener,
     PinFragmentViewModel.ReopenFingerprintDialogListener {
+
+    @Inject
+    lateinit var pinLockManager: PinLockManager
 
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
@@ -94,7 +101,7 @@ class ValidatePinActivity :
     }
 
     override fun onPinSuccess() {
-        mUserManager.requireCurrentLegacyUser().setManuallyLocked(false)
+        pinLockManager.unlock()
         setResult(Activity.RESULT_OK)
         finish()
     }

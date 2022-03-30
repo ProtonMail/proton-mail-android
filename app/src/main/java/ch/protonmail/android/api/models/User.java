@@ -31,7 +31,6 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_NAME;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_SIGNATURE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_GCM_DOWNLOAD_MESSAGE_DETAILS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_KEYS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_MANUALLY_LOCKED;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_ATTACHMENT_STORAGE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_SPACE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_UPLOAD_FILE_SIZE;
@@ -129,7 +128,6 @@ public class User {
     private boolean UseFingerprint; // this can remain here, local only setting
     private Uri ringtone; // this can remain here, local only setting
     private int MaxAttachmentStorage; // this can remain here, local only setting
-    private boolean ManuallyLocked; // this can remain here, local only setting
     private String username; // this can remain here, local only setting
     private boolean CombinedContacts; // this can remain here, local only setting
     // endregion
@@ -242,7 +240,6 @@ public class User {
             securePrefs.edit().putInt(PREF_MAX_ATTACHMENT_STORAGE, Constants.DEFAULT_ATTACHMENT_STORAGE_IN_MB).apply();
         }
         user.MaxAttachmentStorage = maxAttachmentStorage;
-        user.ManuallyLocked = securePrefs.getBoolean(PREF_MANUALLY_LOCKED, false);
 
         user.NotificationVisibilityLockScreen = user.loadNotificationVisibilityLockScreenSettingsFromBackup();
         user.AutoLockPINPeriod = user.loadAutoLockPINPeriodFromBackup();
@@ -284,10 +281,6 @@ public class User {
 
     public void saveMaxAttachmentStorageSetting() {
         getPreferences().edit().putInt(PREF_MAX_ATTACHMENT_STORAGE, MaxAttachmentStorage).apply();
-    }
-
-    public void saveManuallyLockedSetting() {
-        getPreferences().edit().putBoolean(PREF_MANUALLY_LOCKED, ManuallyLocked).apply();
     }
 
     public void setAllowSecureConnectionsViaThirdParties(boolean allowSecureConnectionsViaThirdParties) {
@@ -730,11 +723,6 @@ public class User {
     public void setRingtone(Uri ringtone) {
         this.ringtone = ringtone;
         saveRingtoneBackup();
-    }
-
-    public void setManuallyLocked(boolean manuallyLocked) {
-        ManuallyLocked = manuallyLocked;
-        saveManuallyLockedSetting();
     }
 
     public String getUsername() {

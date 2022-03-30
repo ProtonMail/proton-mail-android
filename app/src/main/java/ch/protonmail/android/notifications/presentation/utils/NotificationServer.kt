@@ -301,7 +301,7 @@ class NotificationServer @Inject constructor(
             locationType = message?.location?.let(MessageLocationType::fromInt) ?: MessageLocationType.INVALID,
             messageSubject = message?.subject
         ).toIntent(context)
-            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
         val summaryContentIntent = getMailboxActivityIntent(userId)
 

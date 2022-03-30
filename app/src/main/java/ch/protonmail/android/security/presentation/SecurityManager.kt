@@ -89,7 +89,6 @@ internal class SecurityManager @Inject constructor(
             super.onActivityCreated(activity, savedInstanceState)
             Timber.v("Activity created: ${activity::class.simpleName}")
 
-            pinLockManager.onActivityCreated(activity)
             if (activity is ComponentActivity) {
                 logoutHandler.register(activity)
             }
@@ -103,12 +102,6 @@ internal class SecurityManager @Inject constructor(
 
             activity.toggleSecureScreen(shouldUseSecureScreen.value)
             activity.lockIfNeeded()
-        }
-
-        override fun onActivityDestroyed(activity: Activity) {
-            super.onActivityDestroyed(activity)
-
-            pinLockManager.onActivityDestroyed(activity)
         }
     }
 
