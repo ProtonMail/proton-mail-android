@@ -53,6 +53,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DELETE_MESSAGE
 import ch.protonmail.android.utils.buildArchiveIntent
+import ch.protonmail.android.utils.buildReadIntent
 import ch.protonmail.android.utils.buildReplyIntent
 import ch.protonmail.android.utils.buildTrashIntent
 import ch.protonmail.android.utils.extensions.getColorCompat
@@ -396,6 +397,7 @@ class NotificationServer @Inject constructor(
         // Create Action Intent's
         val archiveIntent = context.buildArchiveIntent(messageId)
         val trashIntent = context.buildTrashIntent(messageId)
+        val readIntent = context.buildReadIntent(messageId)
         val replyIntent = if (primaryUser) message?.let { context.buildReplyIntent(message, user, userManager) } else null
 
         // Create Notification Style
@@ -423,6 +425,11 @@ class NotificationServer @Inject constructor(
                 R.drawable.action_notification_trash,
                 context.getString(R.string.trash),
                 trashIntent
+            )
+            addAction(
+                R.drawable._unknown,
+                context.getString(R.string.mark_read),
+                readIntent
             )
             if (replyIntent != null)
                 addAction(

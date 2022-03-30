@@ -24,6 +24,7 @@ import android.content.Intent
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.jobs.PostArchiveJob
+import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Job
@@ -39,6 +40,7 @@ import javax.inject.Inject
 const val EXTRA_NOTIFICATION_ARCHIVE_MESSAGE = "notification_archive_message"
 const val EXTRA_NOTIFICATION_DELETE_MESSAGE = "notification_delete_message"
 const val EXTRA_NOTIFICATION_TRASH_MESSAGE = "notification_trash_message"
+const val EXTRA_NOTIFICATION_READ_MESSAGE = "notification_read_message"
 // endregion
 
 /*
@@ -69,6 +71,11 @@ class NotificationReceiver : BroadcastReceiver() {
                 }
                 AppUtil.clearNotifications(context)
             }
+        } else if (extras != null && extras.containsKey(EXTRA_NOTIFICATION_READ_MESSAGE)) {
+            val messageId = extras.getString(EXTRA_NOTIFICATION_READ_MESSAGE)
+            val job: Job = PostReadJob(listOf(messageId))
+            jobManager.addJobInBackground(job)
+            AppUtil.clearNotifications(context)
         } else if (extras != null && extras.containsKey(EXTRA_NOTIFICATION_DELETE_MESSAGE)) {
             AppUtil.clearNotifications(context)
         }
