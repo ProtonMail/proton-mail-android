@@ -94,6 +94,7 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
@@ -211,6 +212,7 @@ internal class MailboxActivity :
     private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private val handler = Handler(Looper.getMainLooper())
+    private var unreadCountersCache: List<UnreadCounter> = emptyList()
 
     private val startMessageDetailsLauncher = registerForActivityResult(MessageDetailsActivity.Launcher()) {}
     private val startComposeLauncher = registerForActivityResult(StartCompose()) {}
@@ -346,6 +348,7 @@ internal class MailboxActivity :
             mailboxLocation
                 .onEach {
                     mailboxAdapter.setNewLocation(it)
+                    updateUnreadCounters()
                     updatedStatusTextView.isVisible = false
                 }
                 .launchIn(lifecycleScope)
@@ -355,22 +358,7 @@ internal class MailboxActivity :
                 .launchIn(lifecycleScope)
 
             unreadCounters
-                .onEach { list ->
-                    val currentLocationUnreadCount = list.find {
-                        val currentLabelId = currentLabelId?.takeIfNotBlank()
-                            ?: currentMailboxLocation.asLabelIdString()
-                        it.labelId == currentLabelId
-                    }?.unreadCount ?: 0
-                    unreadMessagesStatusChip.bind(
-                        UnreadChipUiModel(
-                            unreadCount = currentLocationUnreadCount,
-                            isFilterEnabled = false
-                        ),
-                        onEnabledFilter = {},
-                        onDisableFilter = {}
-                    )
-                    sideDrawer.setUnreadCounters(list)
-                }
+                .onEach(::updateUnreadCounters)
                 .launchIn(lifecycleScope)
 
             exitSelectionModeSharedFlow
@@ -1259,6 +1247,26 @@ internal class MailboxActivity :
 
     private fun setNewLabel(labelId: String) {
         mailboxViewModel.setNewMailboxLabel(labelId)
+    }
+
+    private fun updateUnreadCounters(counters: List<UnreadCounter>? = null) {
+        if (counters != null) {
+            unreadCountersCache = counters
+        }
+        sideDrawer.setUnreadCounters(unreadCountersCache)
+
+        val currentLabelId = currentLabelId?.takeIfNotBlank() ?: currentMailboxLocation.asLabelIdString()
+        val currentLocationUnreadCount = unreadCountersCache.find { it.labelId == currentLabelId }
+            ?.unreadCount
+            ?: 0
+        unreadMessagesStatusChip.bind(
+            UnreadChipUiModel(
+                unreadCount = currentLocationUnreadCount,
+                isFilterEnabled = false
+            ),
+            onEnabledFilter = {},
+            onDisableFilter = {}
+        )
     }
 
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
