@@ -91,6 +91,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="compose">Compose</string>
     <string name="compose_message">Compose message</string>
     <string name="empty_folder">Empty Folder</string>
+    <string name="mark_all_read">Mark all as read</string>
     <string name="view_headers">View Headers</string>
     <string name="message_headers">Message Header</string>
     <string name="delete_message">Delete message</string>
@@ -1111,6 +1112,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <!-- region Proton Calendar -->
     <string name="button_open_in_proton_calendar">Open in Proton Calendar</string>
-    <string name="mark_all_read">Mark all as read</string>
     <!-- endregion -->
 </resources>
