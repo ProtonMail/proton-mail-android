@@ -73,7 +73,7 @@ import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.usecase.IsAppInDarkMode

@@ -44,7 +44,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.ui.SwitchUserAndOpenMessageDetailsActivity
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
-import ch.protonmail.android.mailbox.presentation.MailboxActivity
+import ch.protonmail.android.mailbox.presentation.ui.MailboxActivity
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.buildArchiveIntent
 import ch.protonmail.android.utils.buildDismissGroupIntent

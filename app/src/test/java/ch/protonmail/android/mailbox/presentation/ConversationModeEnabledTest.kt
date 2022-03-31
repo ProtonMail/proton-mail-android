@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -23,6 +23,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

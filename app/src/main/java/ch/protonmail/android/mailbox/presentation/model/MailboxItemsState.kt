@@ -17,9 +17,8 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.presentation
+package ch.protonmail.android.mailbox.presentation.model
 
-import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 sealed class MailboxItemsState {

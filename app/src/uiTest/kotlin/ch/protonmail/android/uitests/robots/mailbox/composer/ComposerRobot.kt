@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -18,35 +18,17 @@
  */
 package ch.protonmail.android.uitests.robots.mailbox.composer
 
-import android.util.Log
-import android.widget.EditText
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.RootMatchers
-import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
-import androidx.test.espresso.matcher.RootMatchers.withDecorView
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.rule.ActivityTestRule
 import ch.protonmail.android.R
-import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
-import ch.protonmail.android.mailbox.presentation.MailboxActivity
+import ch.protonmail.android.mailbox.presentation.ui.MailboxActivity
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_15S
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_30S
-import me.proton.core.test.android.instrumented.ProtonTest
 import me.proton.core.test.android.instrumented.Robot
-import me.proton.core.test.android.instrumented.utils.ActivityProvider.currentActivity
-import me.proton.core.test.android.instrumented.utils.FileUtils
-import org.hamcrest.core.IsNot.not
-import java.util.concurrent.TimeoutException
 
 /**
  * [ComposerRobot] class contains actions and verifications for email composer functionality.

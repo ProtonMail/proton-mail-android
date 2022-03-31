@@ -44,10 +44,10 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveAllUnreadCounters
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
-import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
-import ch.protonmail.android.mailbox.presentation.MailboxViewModel
-import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
+import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.VerifyConnection

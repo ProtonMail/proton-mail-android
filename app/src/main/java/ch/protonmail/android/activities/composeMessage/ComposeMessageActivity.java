@@ -554,12 +554,18 @@ public class ComposeMessageActivity
 
                 composeMessageViewModel.setSender(senderName != null ? senderName : "", senderAddress != null ? senderAddress : "");
 
-                setMessageBodyInContainers(composeMessageViewModel.setMessageBody(composerContent, content, true,
+                setMessageBodyInContainers(
+                    composeMessageViewModel.setMessageBody(
+                        composerContent,
+                        content,
+                        true,
                         composeMessageViewModel.getMessageDataResult().isPGPMime(),
                         getString(R.string.sender_name_address),
                         getString(R.string.original_message_divider),
                         getString(R.string.reply_prefix_on),
-                        DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+                        DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())
+                    )
+                );
             } catch (Exception exc) {
                 Timber.tag("588").e(exc, "Exception on initialise message body");
             }

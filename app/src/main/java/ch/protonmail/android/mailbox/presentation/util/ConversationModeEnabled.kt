@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.presentation
+package ch.protonmail.android.mailbox.presentation.util
 
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.UserManager

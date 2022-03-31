@@ -42,7 +42,7 @@ import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtons
 import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
-import ch.protonmail.android.mailbox.presentation.MailboxViewModel
+import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog

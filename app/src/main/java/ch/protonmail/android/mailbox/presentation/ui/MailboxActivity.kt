@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.mailbox.presentation
+package ch.protonmail.android.mailbox.presentation.ui
 
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
@@ -95,10 +95,16 @@ import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
-import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
+import ch.protonmail.android.mailbox.presentation.model.MailboxItemsState
 import ch.protonmail.android.mailbox.presentation.model.UnreadChipUiModel
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_START_ACTIVITY
+import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_TRY_COMPOSE
+import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_USED_SPACE_CHANGED
+import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
+import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.navigation.presentation.NavigationActivity
 import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenManager
