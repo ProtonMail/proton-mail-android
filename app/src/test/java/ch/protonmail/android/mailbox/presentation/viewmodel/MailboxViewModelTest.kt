@@ -56,6 +56,7 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxListState
+import ch.protonmail.android.mailbox.presentation.model.MailboxState
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.pendingaction.data.model.PendingSend
@@ -157,7 +158,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private lateinit var viewModel: MailboxViewModel
 
-    private val loadingState = MailboxListState.Loading
+    private val loadingState = MailboxState.Loading
     private val messagesResponseChannel = Channel<GetMessagesResult>()
     private val conversationsResponseFlow = Channel<GetConversationsResult>()
 
@@ -254,7 +255,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // Then
             assertEquals(loadingState, awaitItem())
             messagesResponseChannel.send(GetMessagesResult.Success(messages))
-            assertEquals(expected, awaitItem())
+            assertEquals(expected, awaitItem().list)
         }
     }
 
@@ -289,7 +290,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 // Then
                 assertEquals(loadingState, awaitItem())
                 messagesResponseChannel.send(GetMessagesResult.Success(messages))
-                assertEquals(expectedState, awaitItem())
+                assertEquals(expectedState, awaitItem().list)
             }
         }
 
@@ -312,7 +313,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 // Then
                 assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, awaitItem())
+                assertEquals(expected, awaitItem().list)
             }
         }
 
@@ -331,7 +332,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 // Then
                 assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(GetConversationsResult.Error())
-                assertEquals(expected, awaitItem())
+                assertEquals(expected, awaitItem().list)
             }
         }
 
@@ -349,7 +350,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
             // first emission from database
             messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
-            assertEquals(firstExpected, awaitItem())
+            assertEquals(firstExpected, awaitItem().list)
 
             // emission api refresh
             messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
@@ -357,7 +358,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
             // emission from database after api refresh
             messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
-            assertEquals(secondExpected, awaitItem())
+            assertEquals(secondExpected, awaitItem().list)
         }
     }
 
