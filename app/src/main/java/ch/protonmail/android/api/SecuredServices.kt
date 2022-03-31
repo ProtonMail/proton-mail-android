@@ -25,7 +25,6 @@ import ch.protonmail.android.api.segments.event.EventService
 import ch.protonmail.android.api.segments.key.KeyService
 import ch.protonmail.android.api.segments.message.MessageService
 import ch.protonmail.android.api.segments.organization.OrganizationService
-import ch.protonmail.android.api.segments.payment.PaymentService
 import ch.protonmail.android.api.segments.report.ReportService
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsService
 import ch.protonmail.android.labels.data.remote.LabelService
@@ -49,8 +48,6 @@ class SecuredServices(private val retrofit: Retrofit) {
     val key: KeyService by createService(KeyService::class.java)
 
     val label: LabelService by createService(LabelService::class.java)
-
-    val payment: PaymentService by createService(PaymentService::class.java)
 
     val attachment: AttachmentService by createService(AttachmentService::class.java)
 

@@ -38,9 +38,6 @@ import ch.protonmail.android.api.segments.message.MessageApi
 import ch.protonmail.android.api.segments.message.MessageApiSpec
 import ch.protonmail.android.api.segments.organization.OrganizationApi
 import ch.protonmail.android.api.segments.organization.OrganizationApiSpec
-import ch.protonmail.android.api.segments.payment.PaymentApi
-import ch.protonmail.android.api.segments.payment.PaymentApiSpec
-import ch.protonmail.android.api.segments.payment.PaymentPubService
 import ch.protonmail.android.api.segments.report.ReportApi
 import ch.protonmail.android.api.segments.report.ReportApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApi
@@ -63,7 +60,6 @@ class ProtonMailApi private constructor(
     private val conversationApi: ConversationApiSpec,
     private val labelApi: LabelApiSpec,
     private val organizationApi: OrganizationApiSpec,
-    private val paymentApi: PaymentApiSpec,
     private val reportApi: ReportApiSpec,
     private val mailSettingsApi: MailSettingsApiSpec,
     var securedServices: SecuredServices
@@ -78,7 +74,6 @@ class ProtonMailApi private constructor(
     MessageApiSpec by messageApi,
     ConversationApiSpec by conversationApi,
     OrganizationApiSpec by organizationApi,
-    PaymentApiSpec by paymentApi,
     ReportApiSpec by reportApi,
     MailSettingsApiSpec by mailSettingsApi {
 
@@ -101,10 +96,9 @@ class ProtonMailApi private constructor(
         params[6] as ConversationApi,
         params[7] as LabelApiSpec,
         params[8] as OrganizationApiSpec,
-        params[9] as PaymentApiSpec,
-        params[10] as ReportApiSpec,
-        params[11] as MailSettingsApiSpec,
-        params[12] as SecuredServices
+        params[9] as ReportApiSpec,
+        params[10] as MailSettingsApiSpec,
+        params[11] as SecuredServices
         // endregion
     )
 
@@ -122,8 +116,6 @@ class ProtonMailApi private constructor(
 
             // region config
             val services = SecuredServices(protonRetrofitBuilder.provideRetrofit(RetrofitType.SECURE))
-            val paymentPubService =
-                protonRetrofitBuilder.provideRetrofit(RetrofitType.PUBLIC).create(PaymentPubService::class.java)
             val servicePing = protonRetrofitBuilder.provideRetrofit(RetrofitType.PING).create(PingService::class.java)
             val mUploadService = protonRetrofitBuilder.provideRetrofit(RetrofitType.EXTENDED_TIMEOUT)
                 .create(AttachmentUploadService::class.java)
@@ -139,7 +131,6 @@ class ProtonMailApi private constructor(
             val conversationApi = ConversationApi(services.conversation)
             val labelApi = LabelApi(apiProvider)
             val organizationApi = OrganizationApi(apiProvider)
-            val paymentApi = PaymentApi(services.payment, paymentPubService)
             val reportApi = ReportApi(apiProvider)
             val mailSettingsApi = MailSettingsApi(services.mailSettings)
             // endregion
@@ -153,7 +144,6 @@ class ProtonMailApi private constructor(
                 conversationApi,
                 labelApi,
                 organizationApi,
-                paymentApi,
                 reportApi,
                 mailSettingsApi,
                 services

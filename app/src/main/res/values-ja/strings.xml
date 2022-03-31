@@ -344,10 +344,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d 埋め込み画像</string>
     <string name="warning">警告</string>
-    <string name="card_details_title">%1$s (* * * %2$s)</string>
-    <string name="card_details_subtitle">有効期限 %s</string>
-    <string name="no_payment_methods">支払い方法が登録されていません。</string>
-    <string name="edit_payment_methods">protonmail.comにログインし、支払い方法を編集してください。</string>
     <string name="available_addresses">使用可能なアドレス</string>
     <string name="inactive_addresses">無効になっているアドレス</string>
     <string name="not_set">未設定</string>
@@ -621,9 +617,7 @@
     <string name="account_settings">アカウントの設定</string>
     <!-- region Acc Settings -->
     <string name="account">アカウント</string>
-    <string name="subscription">サブスクリプション</string>
-    <string name="plan_and_user">プラン</string>
-    <string name="payment_method">支払い方法</string>
+    <string name="drawer_subscription">サブスクリプション</string>
     <string name="password_manager">パスワード管理</string>
     <string name="password_changed">パスワードが変更されました。</string>
     <string name="recovery_email">回復用メールアドレス</string>
@@ -814,7 +808,6 @@
     <string name="inbox_could_not_retrieve_messages">メッセージの取得に失敗しました。</string>
     <string name="inbox_pull_down_to_retry">引っ張って再試行</string>
     <string name="edit_draft">下書きを編集</string>
-    <string name="primary_user_error">何らかの問題が発生したため、アップグレードに失敗しました。</string>
     <string name="details_show_history">履歴を表示</string>
     <string name="could_not_complete_action">アクションを完了できませんでした</string>
     <string name="decryption_of_message_failed">メッセージの復号化に失敗しました。</string>

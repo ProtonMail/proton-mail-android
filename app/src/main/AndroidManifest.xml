@@ -312,12 +312,6 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".settings.presentation.AccountTypeActivity"
-            android:exported="false"
-            android:label="@string/subscription"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
             android:name=".activities.DefaultAddressActivity"
             android:exported="false"
             android:screenOrientation="portrait"

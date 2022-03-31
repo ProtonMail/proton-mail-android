@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d images incorporées</string>
     <string name="warning">Attention</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Date d\'expiration %s</string>
-    <string name="no_payment_methods">Vous n\'avez actuellement aucun mode de paiement enregistré.</string>
-    <string name="edit_payment_methods">Connectez-vous via protonmail.com pour modifier vos informations de facturation.</string>
     <string name="available_addresses">Adresses disponibles</string>
     <string name="inactive_addresses">Adresses inactives</string>
     <string name="not_set">Non défini</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Paramètres du compte</string>
     <!-- region Acc Settings -->
     <string name="account">Compte</string>
-    <string name="subscription">Abonnement</string>
-    <string name="plan_and_user">Offre</string>
-    <string name="payment_method">Mode de paiement</string>
+    <string name="drawer_subscription">Abonnement</string>
     <string name="password_manager">Gestion des mots de passe</string>
     <string name="password_changed">Mot de passe changé.</string>
     <string name="recovery_email">Adresse électronique de récupération</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Impossible de récupérer vos messages</string>
     <string name="inbox_pull_down_to_retry">Veuillez tirer vers le bas pour réessayer</string>
     <string name="edit_draft">Modifier le brouillon</string>
-    <string name="primary_user_error">Impossible d’améliorer, une erreur s\'est produite.</string>
     <string name="details_show_history">Afficher l\'historique</string>
     <string name="could_not_complete_action">Impossible de terminer l\'action</string>
     <string name="decryption_of_message_failed">Erreur de déchiffrement : le déchiffrement du contenu chiffré de ce message a échoué.</string>

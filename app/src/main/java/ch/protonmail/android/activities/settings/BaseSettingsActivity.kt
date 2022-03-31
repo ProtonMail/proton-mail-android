@@ -66,7 +66,6 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.notifications.presentation.utils.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AccountSettingsActivity
-import ch.protonmail.android.settings.presentation.AccountTypeActivity
 import ch.protonmail.android.settings.presentation.AttachmentStorageActivity
 import ch.protonmail.android.settings.presentation.DisplayNameAndSignatureFragment
 import ch.protonmail.android.settings.presentation.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE
@@ -294,11 +293,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 val accountSettingsIntent =
                     AppUtil.decorInAppIntent(Intent(this, AccountSettingsActivity::class.java))
                 startActivity(accountSettingsIntent)
-            }
-            SUBSCRIPTION -> {
-                val accountTypeIntent =
-                    AppUtil.decorInAppIntent(Intent(this, AccountTypeActivity::class.java))
-                startActivity(accountTypeIntent)
             }
             PASSWORD_MANAGEMENT -> {
                 lifecycleScope.launch {

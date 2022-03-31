@@ -354,10 +354,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d ugrađenih slika</string>
     <string name="warning">Upozorenje</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Datum isteka %s</string>
-    <string name="no_payment_methods">Nemate spremljenih načina plaćanja.</string>
-    <string name="edit_payment_methods">Prijavite se putem protonmail.com stranice, za uređivanje podataka o naplati.</string>
     <string name="available_addresses">Dostupne adrese</string>
     <string name="inactive_addresses">Neaktivne adrese</string>
     <string name="not_set">Nije postavljeno</string>
@@ -647,9 +643,7 @@
     <string name="account_settings">Postavke računa</string>
     <!-- region Acc Settings -->
     <string name="account">Korisnički račun</string>
-    <string name="subscription">Pretplata</string>
-    <string name="plan_and_user">Plan</string>
-    <string name="payment_method">Način plaćanja</string>
+    <string name="drawer_subscription">Pretplata</string>
     <string name="password_manager">Promijenite lozinku</string>
     <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Adresa e-pošte za oporavak</string>
@@ -848,7 +842,6 @@
     <string name="inbox_could_not_retrieve_messages">Neuspješno dohvaćanje vaših poruka</string>
     <string name="inbox_pull_down_to_retry">Povucite prema dolje za ponovni pokušaj</string>
     <string name="edit_draft">Uredi skicu</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
     <string name="details_show_history">Prikaži povijest</string>
     <string name="could_not_complete_action">Dovršavanje radnje nije uspjelo</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>

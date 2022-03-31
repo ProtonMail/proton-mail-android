@@ -359,10 +359,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d вбудованих зображень</string>
     <string name="warning">Попередження</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Термін дії %s</string>
-    <string name="no_payment_methods">У вас немає збережених способів оплати.</string>
-    <string name="edit_payment_methods">Увійдіть через protonmail.com для редагування платіжної інформації.</string>
     <string name="available_addresses">Доступні адреси</string>
     <string name="inactive_addresses">Неактивні адреси</string>
     <string name="not_set">Не встановлено</string>
@@ -656,9 +652,7 @@
     <string name="account_settings">Налаштування облікового запису</string>
     <!-- region Acc Settings -->
     <string name="account">Обліковий запис</string>
-    <string name="subscription">Передплата</string>
-    <string name="plan_and_user">Тарифний план</string>
-    <string name="payment_method">Спосіб оплати</string>
+    <string name="drawer_subscription">Передплата</string>
     <string name="password_manager">Керування паролями</string>
     <string name="password_changed">Пароль змінено.</string>
     <string name="recovery_email">Пошта для відновлення доступу</string>
@@ -861,7 +855,6 @@
     <string name="inbox_could_not_retrieve_messages">Не вдалося отримати ваші повідомлення</string>
     <string name="inbox_pull_down_to_retry">Потягніть вниз, щоб повторити спробу</string>
     <string name="edit_draft">Редагувати чернетку</string>
-    <string name="primary_user_error">Не вдалося оновити. Щось пішло не так.</string>
     <string name="details_show_history">Показати історію</string>
     <string name="could_not_complete_action">Неможливо завершити цю дію</string>
     <string name="decryption_of_message_failed">Помилка розшифрування: не вдалося розшифрувати вміст цього повідомлення.</string>

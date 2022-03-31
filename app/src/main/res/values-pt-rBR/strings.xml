@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Incorporado]</string>
     <string name="inline_header">%d Imagens incorporadas</string>
     <string name="warning">Alerta</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Data de validade %s</string>
-    <string name="no_payment_methods">Você não tem uma opção de pagamento salva.</string>
-    <string name="edit_payment_methods">Por favor, efetue o login através de protonmail.com para editar suas informações de cobrança.</string>
     <string name="available_addresses">Endereços disponíveis</string>
     <string name="inactive_addresses">Endereços inativos</string>
     <string name="not_set">Não definido</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Configurações da conta</string>
     <!-- region Acc Settings -->
     <string name="account">Conta</string>
-    <string name="subscription">Assinatura</string>
-    <string name="plan_and_user">Plano</string>
-    <string name="payment_method">Método de pagamento</string>
+    <string name="drawer_subscription">Assinatura</string>
     <string name="password_manager">Gerenciamento de senhas</string>
     <string name="password_changed">Senha alterada.</string>
     <string name="recovery_email">E-mail de recuperação</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Não foi possível recuperar suas mensagens</string>
     <string name="inbox_pull_down_to_retry">Por favor, puxe para baixo para tentar novamente</string>
     <string name="edit_draft">Editar rascunho</string>
-    <string name="primary_user_error">Não foi possível atualizar, algo deu errado.</string>
     <string name="details_show_history">Exibir histórico</string>
     <string name="could_not_complete_action">Não foi possível completar a ação</string>
     <string name="decryption_of_message_failed">Erro ao descriptografar: a decodificação do conteúdo criptografado desta mensagem falhou.</string>

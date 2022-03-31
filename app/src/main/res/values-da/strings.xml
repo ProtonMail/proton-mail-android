@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d indlejrede billeder</string>
     <string name="warning">Advarsel</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Udløbsdato %s</string>
-    <string name="no_payment_methods">Du har ingen gemte betalingsmetoder.</string>
-    <string name="edit_payment_methods">Log venligst ind gennem protonmail.com at redigere faktureringsoplysninger.</string>
     <string name="available_addresses">Tilgængelige adresser</string>
     <string name="inactive_addresses">Inaktive adresser</string>
     <string name="not_set">Ikke indstillet</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Kontoindstillinger</string>
     <!-- region Acc Settings -->
     <string name="account">Konto</string>
-    <string name="subscription">Abonnement</string>
-    <string name="plan_and_user">Abonnementstype</string>
-    <string name="payment_method">Betalingsmetode</string>
+    <string name="drawer_subscription">Abonnement</string>
     <string name="password_manager">Adgangskodehåndtering</string>
     <string name="password_changed">Adgangskode ændret.</string>
     <string name="recovery_email">Gendannelses e-mail</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Kunne ikke hente dine beskeder</string>
     <string name="inbox_pull_down_to_retry">Træk venligst ned for at prøve igen</string>
     <string name="edit_draft">Redigér kladde</string>
-    <string name="primary_user_error">Kunne ikke opgradere, noget gik galt.</string>
     <string name="details_show_history">Vis historik</string>
     <string name="could_not_complete_action">Kunne ikke fuldføre handlingen</string>
     <string name="decryption_of_message_failed">Dekrypteringsfejl: Dekryptering af denne beskeds krypterede indhold mislykkedes.</string>

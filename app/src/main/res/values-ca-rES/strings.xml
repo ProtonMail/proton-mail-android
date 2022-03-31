@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Imatges incrustades</string>
     <string name="warning">Advertència</string>
-    <string name="card_details_title">%1$s(***%2$s)</string>
-    <string name="card_details_subtitle">Caducitat %s</string>
-    <string name="no_payment_methods">No té mètodes de pagament guardats.</string>
-    <string name="edit_payment_methods">Inicieu la sessió a través de protonmail.com per editar la informació de facturació.</string>
     <string name="available_addresses">Adreces disponibles</string>
     <string name="inactive_addresses">Adreces inactives</string>
     <string name="not_set">Sense definir</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Configuració del compte</string>
     <!-- region Acc Settings -->
     <string name="account">Compte</string>
-    <string name="subscription">Subscripció</string>
-    <string name="plan_and_user">Pla</string>
-    <string name="payment_method">Mètode de pagament</string>
+    <string name="drawer_subscription">Subscripció</string>
     <string name="password_manager">Administrador de contrasenyes</string>
     <string name="password_changed">S\'ha canviat la contrasenya.</string>
     <string name="recovery_email">Correu electrònic de recuperació</string>
@@ -834,7 +828,6 @@
     <string name="inbox_could_not_retrieve_messages">No s\'ha pogut accedir als vostres missatges</string>
     <string name="inbox_pull_down_to_retry">Estireu cap avall per tornar-ho a provar</string>
     <string name="edit_draft">Editar esborrany</string>
-    <string name="primary_user_error">No s\'ha pogut actualitzar, sembla que alguna cosa no ha funcionat.</string>
     <string name="details_show_history">Mostrar historial</string>
     <string name="could_not_complete_action">No s\'ha pogut completar l\'acció</string>
     <string name="decryption_of_message_failed">Error de desxifrat: ha fallat el desxifrat del contingut xifrat d\'aquest missatge.</string>

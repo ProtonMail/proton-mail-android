@@ -33,11 +33,6 @@ enum class SettingsEnum {
         override fun getHint(context: Context) = EMPTY_STRING
         override fun getHeader(context: Context) = context.getString(R.string.settings_theme_title)
     },
-    SUBSCRIPTION {
-
-        override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.subscription)
-    },
     PASSWORD_MANAGEMENT {
 
         override fun getHint(context: Context): String = ""
