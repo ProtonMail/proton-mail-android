@@ -438,7 +438,7 @@ class MessageRepositoryTest {
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
-        every { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns
+        every { messageDao.observeMessages(mailboxLocation.asLabelIdString()) } returns
             databaseMessages
         coEvery { messageDao.saveMessages(apiMessages) } answers {
             databaseMessages.tryEmit(databaseMessages.value + firstArg<List<Message>>())
@@ -470,7 +470,7 @@ class MessageRepositoryTest {
         val dbMessages = allMessages.take(2)
         val netMessages = allMessages
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-        coEvery { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns dbFlow
+        coEvery { messageDao.observeMessages(mailboxLocation.asLabelIdString()) } returns dbFlow
         val exceptionMessage = "NetworkError!"
         val testException = IOException(exceptionMessage)
         val params = GetAllMessagesParameters(
@@ -503,7 +503,7 @@ class MessageRepositoryTest {
             every { code } returns Constants.RESPONSE_CODE_OK
         }
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-        coEvery { messageDao.observeMessagesByLabelId(label1) } returns dbFlow
+        coEvery { messageDao.observeMessages(label1) } returns dbFlow
         val params = GetAllMessagesParameters(testUserId, labelId = label1)
         coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
@@ -527,7 +527,7 @@ class MessageRepositoryTest {
         val dbMessages = listOf(message1, message2)
         val netMessages = listOf(message1, message2, message3, message4)
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-        coEvery { messageDao.observeMessagesByLabelId(label1) } returns dbFlow
+        coEvery { messageDao.observeMessages(label1) } returns dbFlow
         val testExceptionMessage = "NetworkError!"
         val testException = IOException(testExceptionMessage)
         val params = GetAllMessagesParameters(testUserId, labelId = label1)
@@ -556,7 +556,7 @@ class MessageRepositoryTest {
             every { messages } returns netMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        coEvery { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns databaseMessagesFlow
+        coEvery { messageDao.observeMessages(mailboxLocation.asLabelIdString()) } returns databaseMessagesFlow
         val params = GetAllMessagesParameters(
             testUserId,
             labelId = mailboxLocation.asLabelIdString()
@@ -589,7 +589,7 @@ class MessageRepositoryTest {
             every { messages } returns netMessages
             every { code } returns Constants.RESPONSE_CODE_OK
         }
-        coEvery { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns flowOf(dbMessages)
+        coEvery { messageDao.observeMessages(mailboxLocation.asLabelIdString()) } returns flowOf(dbMessages)
         val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelIdString())
         coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
@@ -620,7 +620,7 @@ class MessageRepositoryTest {
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
-        every { messageDao.observeMessagesByLabelId(mailboxLocation.asLabelIdString()) } returns databaseMessages
+        every { messageDao.observeMessages(mailboxLocation.asLabelIdString()) } returns databaseMessages
         coEvery { messageDao.saveMessages(apiMessages) } answers {
             databaseMessages.tryEmit(databaseMessages.value + firstArg<List<Message>>())
         }

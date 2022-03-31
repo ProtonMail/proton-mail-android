@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -38,7 +38,8 @@ data class GetAllMessagesParameters(
     val end: Long? = null,
     val beginId: String? = null,
     val endId: String? = null,
-    val keyword: String? = null
+    val keyword: String? = null,
+    val unreadStatus: UnreadStatus = UnreadStatus.ALL
 ) {
 
     enum class SortBy(val stringValue: String) {
@@ -48,6 +49,12 @@ data class GetAllMessagesParameters(
     enum class SortDirection(val intValue: Int) {
         ASCENDANT(0),
         DESCENDANT(1)
+    }
+
+    enum class UnreadStatus(val intValue: Int?) {
+        UNREAD_ONLY(1),
+        READ_ONLY(0),
+        ALL(null)
     }
 }
 
