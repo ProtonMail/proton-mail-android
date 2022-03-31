@@ -19,7 +19,11 @@
 
 package ch.protonmail.android.mailbox.presentation.model
 
+/**
+ * @property isUpdatedFromRemote `true` when the data we received is up to date with remote source
+ */
 data class MailboxState(
+    val isUpdatedFromRemote: Boolean,
     val unreadChip: UnreadChipState,
     val list: MailboxListState
 ) {
@@ -27,6 +31,7 @@ data class MailboxState(
     companion object {
 
         val Loading = MailboxState(
+            isUpdatedFromRemote = false,
             unreadChip = UnreadChipState.Loading,
             list = MailboxListState.Loading
         )
