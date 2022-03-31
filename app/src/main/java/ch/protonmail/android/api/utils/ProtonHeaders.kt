@@ -21,7 +21,7 @@ package ch.protonmail.android.api.utils
 
 import ch.protonmail.android.BuildConfig
 
-object Header {
+object ProtonHeaders {
     val appVersion: String
         get() {
             val name = "android-mail@" + BuildConfig.VERSION_NAME

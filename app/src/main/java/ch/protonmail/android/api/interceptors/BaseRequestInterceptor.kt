@@ -39,7 +39,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_SERVICE_UNAVAILABLE
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.api.segments.RESPONSE_CODE_UNAUTHORIZED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_UNPROCESSABLE_ENTITY
-import ch.protonmail.android.api.utils.Header
+import ch.protonmail.android.api.utils.ProtonHeaders
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -211,7 +211,7 @@ abstract class BaseRequestInterceptor(
     }
 
     private fun Request.Builder.setClientHeaders() {
-        header(HEADER_APP_VERSION, Header.appVersion)
+        header(HEADER_APP_VERSION, ProtonHeaders.appVersion)
         header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
         header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
     }
