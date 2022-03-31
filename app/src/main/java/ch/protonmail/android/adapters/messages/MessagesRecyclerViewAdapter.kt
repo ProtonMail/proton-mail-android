@@ -44,7 +44,6 @@ class MessagesRecyclerViewAdapter(
     private val typeface: Typeface = Typeface.createFromAsset(context.assets, "protonmail-mobile-icons.ttf")
 
     private var labels = mapOf<String, Label>()
-    private val messages = mutableListOf<Message>()
     private val selectedMessageIds: MutableSet<String> = mutableSetOf()
 
     private var pendingUploadList: List<PendingUpload>? = null
@@ -53,6 +52,7 @@ class MessagesRecyclerViewAdapter(
 
     private var onItemClick: ((Message) -> Unit)? = null
 
+    val messages = mutableListOf<Message>()
     var includeFooter: Boolean = false
         set(value) {
             if (field == value) {

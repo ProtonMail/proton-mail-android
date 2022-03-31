@@ -36,6 +36,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:id="@+id/empty"
         android:title="@string/empty_folder"
         app:showAsAction="never" />
+    <item android:id="@+id/mark_all_as_read" android:title="@string/mark_all_read" app:showAsAction="never"/>
 
 
 </menu>

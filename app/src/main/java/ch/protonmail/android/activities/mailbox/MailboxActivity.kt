@@ -893,6 +893,10 @@ class MailboxActivity :
             MessageLocationType.LABEL,
             MessageLocationType.LABEL_FOLDER
         )
+        menu.findItem(R.id.mark_all_as_read).isVisible = mailboxLocation !in listOf(
+            MessageLocationType.SENT,
+            MessageLocationType.DRAFT
+        )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -930,6 +934,11 @@ class MailboxActivity :
                         .create()
                         .show()
                 }
+                true
+            }
+            R.id.mark_all_as_read -> {
+                val messageIds = messagesAdapter.messages.filterNot { it.isRead }.map { it.messageId }
+                mJobManager.addJobInBackground(PostReadJob(messageIds))
                 true
             }
             else -> super.onOptionsItemSelected(menuItem)

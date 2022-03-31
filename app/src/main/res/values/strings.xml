@@ -1111,5 +1111,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <!-- region Proton Calendar -->
     <string name="button_open_in_proton_calendar">Open in Proton Calendar</string>
+    <string name="mark_all_read">Mark all as read</string>
     <!-- endregion -->
 </resources>
