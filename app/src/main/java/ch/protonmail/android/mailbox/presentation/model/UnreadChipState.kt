@@ -19,16 +19,9 @@
 
 package ch.protonmail.android.mailbox.presentation.model
 
-data class MailboxState(
-    val unreadChip: UnreadChipState,
-    val list: MailboxListState
-) {
+sealed interface UnreadChipState {
 
-    companion object {
+    object Loading : UnreadChipState
 
-        val Loading = MailboxState(
-            unreadChip = UnreadChipState.Loading,
-            list = MailboxListState.Loading
-        )
-    }
+    data class Data(val model: UnreadChipUiModel) : UnreadChipState
 }

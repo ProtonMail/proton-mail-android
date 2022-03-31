@@ -271,7 +271,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // Then
             assertEquals(loadingState, awaitItem())
             messagesResponseChannel.close(exception)
-            assertEquals(expected.throwable?.message, (awaitItem() as MailboxListState.Error).throwable?.message)
+            val listState = awaitItem().list
+            assertEquals(expected.throwable?.message, (listState as MailboxListState.Error).throwable?.message)
         }
     }
 
