@@ -40,9 +40,6 @@ class MessageDaoTest {
     fun setup() {
         database = MessageDatabase.buildInMemoryDatabase(ApplicationProvider.getApplicationContext())
         dao = database.getMessageDao()
-        runBlockingWithTimeout {
-            dao.saveMessages(allMessages)
-        }
     }
 
     @AfterTest
@@ -51,8 +48,65 @@ class MessageDaoTest {
     }
 
     @Test
+    fun observe_messages_find_messages_with_only_one_label() = runBlockingWithTimeout {
+        // given
+        val message = buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(INBOX_LABEL))
+        dao.insertOrUpdate(message)
+        val expected = listOf(message)
+
+        // when
+        dao.observeMessages(INBOX_LABEL, unread = null).test {
+            // then
+            assertEquals(expected.ids(), awaitItem().ids())
+        }
+    }
+
+    @Test
+    fun observe_messages_find_messages_with_label_at_the_start_of_the_list() = runBlockingWithTimeout {
+        // given
+        val message = buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(INBOX_LABEL, ARCHIVE_LABEL))
+        dao.insertOrUpdate(message)
+        val expected = listOf(message)
+
+        // when
+        dao.observeMessages(INBOX_LABEL, unread = null).test {
+            // then
+            assertEquals(expected.ids(), awaitItem().ids())
+        }
+    }
+
+    @Test
+    fun observe_messages_find_messages_with_label_at_the_end_of_the_list() = runBlockingWithTimeout {
+        // given
+        val message = buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(ARCHIVE_LABEL, INBOX_LABEL))
+        dao.insertOrUpdate(message)
+        val expected = listOf(message)
+
+        // when
+        dao.observeMessages(INBOX_LABEL, unread = null).test {
+            // then
+            assertEquals(expected.ids(), awaitItem().ids())
+        }
+    }
+
+    @Test
+    fun observe_messages_find_messages_with_label_in_the_middle_of_the_list() = runBlockingWithTimeout {
+        // given
+        val message = buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(ARCHIVE_LABEL, INBOX_LABEL, SENT_LABEL))
+        dao.insertOrUpdate(message)
+        val expected = listOf(message)
+
+        // when
+        dao.observeMessages(INBOX_LABEL, unread = null).test {
+            // then
+            assertEquals(expected.ids(), awaitItem().ids())
+        }
+    }
+
+    @Test
     fun observe_messages_ignores_unread_if_null() = runBlockingWithTimeout {
         // given
+        dao.saveMessages(allMessages)
         val expected = allMessages
 
         // when
@@ -65,7 +119,9 @@ class MessageDaoTest {
     @Test
     fun observe_messages_filter_unread_only() = runBlockingWithTimeout {
         // given
+        dao.saveMessages(allMessages)
         val expected = allMessages.filter { it.Unread }
+
         // when
         dao.observeMessages(INBOX_LABEL, unread = true).test {
             // then
@@ -76,7 +132,9 @@ class MessageDaoTest {
     @Test
     fun observe_messages_filter_read_only() = runBlockingWithTimeout {
         // given
+        dao.saveMessages(allMessages)
         val expected = allMessages.filterNot { it.Unread }
+
         // when
         dao.observeMessages(INBOX_LABEL, unread = false).test {
             // then
@@ -86,11 +144,15 @@ class MessageDaoTest {
 
     companion object TestData {
 
+        const val FIRST_MESSAGE_ID = "first"
+        const val SECOND_MESSAGE_ID = "second"
         const val INBOX_LABEL = "inbox"
+        const val ARCHIVE_LABEL = "archive"
+        const val SENT_LABEL = "sent"
 
         val allMessages = listOf(
-            buildMessage("first", labelsIds = listOf(INBOX_LABEL, "ab"), unread = true),
-            buildMessage("second", labelsIds = listOf(INBOX_LABEL, "ab"), unread = false)
+            buildMessage(FIRST_MESSAGE_ID, labelsIds = listOf(INBOX_LABEL), unread = true),
+            buildMessage(SECOND_MESSAGE_ID, labelsIds = listOf(INBOX_LABEL), unread = false)
         )
 
         private fun buildMessage(

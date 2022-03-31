@@ -108,7 +108,8 @@ abstract class MessageDao : BaseDao<Message>() {
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE 
-          ($COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+          ($COLUMN_MESSAGE_LABELS LIKE :label
+          OR $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
         ORDER BY $COLUMN_MESSAGE_TIME DESC
@@ -128,7 +129,8 @@ abstract class MessageDao : BaseDao<Message>() {
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE 
-          ($COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+          ($COLUMN_MESSAGE_LABELS LIKE :label
+          OR $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
           OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
         AND
