@@ -532,20 +532,20 @@ internal class MailboxActivity :
         setElevationOnToolbarAndStatusView(false)
     }
 
-    private fun renderState(state: MailboxState) {
+    private fun renderState(state: MailboxItemsState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
         setLoadingMore(false)
 
         when (state) {
-            is MailboxState.Loading -> setRefreshing(true)
-            is MailboxState.DataRefresh -> {
+            is MailboxItemsState.Loading -> setRefreshing(true)
+            is MailboxItemsState.DataRefresh -> {
                 lastFetchedMailboxItemsIds = state.lastFetchedItemsIds
                 setRefreshing(false)
                 include_mailbox_no_messages.isVisible =
                     state.lastFetchedItemsIds.isEmpty() && mailboxAdapter.itemCount == 0
                 updatedStatusTextView.isVisible = true
             }
-            is MailboxState.Data -> {
+            is MailboxItemsState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
                 include_mailbox_error.isVisible = false
                 include_mailbox_no_messages.isVisible = state.isFreshData && state.items.isEmpty()
@@ -555,7 +555,7 @@ internal class MailboxActivity :
                     if (state.shouldResetPosition) mailboxRecyclerView.scrollToPosition(0)
                 }
             }
-            is MailboxState.Error -> {
+            is MailboxItemsState.Error -> {
                 setRefreshing(false)
                 Timber.e(state.throwable, "Mailbox error ${state.error}")
                 include_mailbox_no_messages.isVisible = false
@@ -1265,7 +1265,7 @@ internal class MailboxActivity :
                 unreadCount = currentLocationUnreadCount,
                 isFilterEnabled = false
             ),
-            onEnabledFilter = {},
+            onEnableFilter = {},
             onDisableFilter = {}
         )
     }

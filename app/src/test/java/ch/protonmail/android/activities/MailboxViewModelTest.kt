@@ -54,7 +54,7 @@ import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
-import ch.protonmail.android.mailbox.presentation.MailboxState
+import ch.protonmail.android.mailbox.presentation.MailboxItemsState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
@@ -158,7 +158,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     private lateinit var viewModel: MailboxViewModel
 
-    private val loadingState = MailboxState.Loading
+    private val loadingState = MailboxItemsState.Loading
     private val messagesResponseChannel = Channel<GetMessagesResult>()
     private val conversationsResponseFlow = Channel<GetConversationsResult>()
 
@@ -264,14 +264,14 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         // given
         val errorMessage = "An error!"
         val exception = Exception(errorMessage)
-        val expected = MailboxState.Error("Failed getting messages", exception)
+        val expected = MailboxItemsState.Error("Failed getting messages", exception)
 
         // When
         viewModel.mailboxState.test {
             // Then
             assertEquals(loadingState, awaitItem())
             messagesResponseChannel.close(exception)
-            assertEquals(expected.throwable?.message, (awaitItem() as MailboxState.Error).throwable?.message)
+            assertEquals(expected.throwable?.message, (awaitItem() as MailboxItemsState.Error).throwable?.message)
         }
     }
 
@@ -322,7 +322,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // Given
             val location = LABEL
-            val expected = MailboxState.Error("Failed getting conversations", null)
+            val expected = MailboxItemsState.Error("Failed getting conversations", null)
 
             // When
             viewModel.setNewMailboxLocation(location)
@@ -339,8 +339,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun isFreshDataIsFalseBeforeDataRefreshAndTrueAfter() = runBlockingTest {
         // given
-        val firstExpected = MailboxState.Data(emptyList(), isFreshData = false, shouldResetPosition = true)
-        val secondExpected = MailboxState.Data(emptyList(), isFreshData = true, shouldResetPosition = true)
+        val firstExpected = MailboxItemsState.Data(emptyList(), isFreshData = false, shouldResetPosition = true)
+        val secondExpected = MailboxItemsState.Data(emptyList(), isFreshData = true, shouldResetPosition = true)
 
         // when
         viewModel.mailboxState.test {
@@ -541,8 +541,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             }
         }
 
-    private fun List<MailboxItemUiModel>.toMailboxState(): MailboxState.Data =
-        MailboxState.Data(this, isFreshData = false, shouldResetPosition = true)
+    private fun List<MailboxItemUiModel>.toMailboxState(): MailboxItemsState.Data =
+        MailboxItemsState.Data(this, isFreshData = false, shouldResetPosition = true)
 
     companion object TestData {
 

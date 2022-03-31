@@ -139,7 +139,7 @@ internal class MailboxViewModel @Inject constructor(
     private val _manageLimitReachedWarningOnTryCompose = MutableLiveData<Event<Boolean>>()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
-    private val mutableMailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
+    private val mutableMailboxState = MutableStateFlow<MailboxItemsState>(MailboxItemsState.Loading)
     private val mutableMailboxLocation = MutableStateFlow(INBOX)
     private val mutableMailboxLabelId = MutableStateFlow<String?>(null)
     private val mutableUserId = userManager.primaryUserId
@@ -218,7 +218,7 @@ internal class MailboxViewModel @Inject constructor(
             }
         }
 
-    private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxState>
+    private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxItemsState>
 
     init {
         combine(
@@ -231,7 +231,7 @@ internal class MailboxViewModel @Inject constructor(
             Triple(location, label, userId)
         }
             .onEach {
-                mutableMailboxState.value = MailboxState.Loading
+                mutableMailboxState.value = MailboxItemsState.Loading
             }
             .flatMapLatest { (location, labelId, userId) ->
                 mailboxStateFlow = if (conversationModeEnabled(location)) {
@@ -245,7 +245,7 @@ internal class MailboxViewModel @Inject constructor(
             }
             .catch {
                 emit(
-                    MailboxState.Error(
+                    MailboxItemsState.Error(
                         "Failed getting messages, catch",
                         it
                     )
@@ -259,7 +259,7 @@ internal class MailboxViewModel @Inject constructor(
         val observePullToRefreshEvents = mutableRefreshFlow.filter { it }
 
         fun Flow<Boolean>.waitForRefreshedDataToArrive() = flatMapLatest {
-            mutableMailboxState.filter { it is MailboxState.DataRefresh }.take(1)
+            mutableMailboxState.filter { it is MailboxItemsState.DataRefresh }.take(1)
         }
 
         observePullToRefreshEvents
@@ -323,7 +323,7 @@ internal class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         labelId: String?,
         userId: UserId
-    ): LoadMoreFlow<MailboxState> {
+    ): LoadMoreFlow<MailboxItemsState> {
         val locationId = labelId?.takeIfNotBlank() ?: location.messageLocationTypeValue.toString()
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
         var isFirstData = true
@@ -342,7 +342,7 @@ internal class MailboxViewModel @Inject constructor(
                         val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
                         isFirstData = false
 
-                        MailboxState.Data(
+                        MailboxItemsState.Data(
                             conversationsToMailboxItems(userId, result.conversations, locationId, labels),
                             isFreshData = hasReceivedFirstApiRefresh != null,
                             shouldResetPosition = shouldResetPosition
@@ -352,21 +352,21 @@ internal class MailboxViewModel @Inject constructor(
                         if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
                         else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
-                        MailboxState.DataRefresh(
+                        MailboxItemsState.DataRefresh(
                             lastFetchedItemsIds = result.lastFetchedConversations.map { it.id }
                         )
                     }
                     is GetConversationsResult.Error -> {
                         hasReceivedFirstApiRefresh = false
 
-                        MailboxState.Error(
+                        MailboxItemsState.Error(
                             error = "Failed getting conversations",
                             throwable = result.throwable,
                             isOffline = result.isOffline
                         )
                     }
                     is GetConversationsResult.Loading ->
-                        MailboxState.Loading
+                        MailboxItemsState.Loading
                 }
             }
     }
@@ -375,7 +375,7 @@ internal class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         labelId: String?,
         userId: UserId
-    ): LoadMoreFlow<MailboxState> {
+    ): LoadMoreFlow<MailboxItemsState> {
         Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
@@ -395,7 +395,7 @@ internal class MailboxViewModel @Inject constructor(
                         val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
                         isFirstData = false
 
-                        MailboxState.Data(
+                        MailboxItemsState.Data(
                             items = messagesToMailboxItems(
                                 userId = userId,
                                 messages = result.messages,
@@ -410,21 +410,21 @@ internal class MailboxViewModel @Inject constructor(
                         if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
                         else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
-                        MailboxState.DataRefresh(
+                        MailboxItemsState.DataRefresh(
                             lastFetchedItemsIds = result.lastFetchedMessages.mapNotNull { it.messageId }
                         )
                     }
                     is GetMessagesResult.Error -> {
                         hasReceivedFirstApiRefresh = false
 
-                        MailboxState.Error(
+                        MailboxItemsState.Error(
                             error = "GetMessagesResult Error",
                             throwable = result.throwable,
                             isOffline = result.isOffline
                         )
                     }
                     is GetMessagesResult.Loading ->
-                        MailboxState.Loading
+                        MailboxItemsState.Loading
                 }
             }
     }
