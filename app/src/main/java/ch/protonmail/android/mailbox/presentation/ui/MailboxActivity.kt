@@ -97,7 +97,7 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
-import ch.protonmail.android.mailbox.presentation.model.MailboxItemsState
+import ch.protonmail.android.mailbox.presentation.model.MailboxListState
 import ch.protonmail.android.mailbox.presentation.model.MailboxState
 import ch.protonmail.android.mailbox.presentation.model.UnreadChipUiModel
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
@@ -541,23 +541,23 @@ internal class MailboxActivity :
 
     private fun renderState(state: MailboxState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
-        renderItemsState(state.items)
+        renderListState(state.list)
     }
 
-    private fun renderItemsState(state: MailboxItemsState) {
+    private fun renderListState(state: MailboxListState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
         setLoadingMore(false)
 
         when (state) {
-            is MailboxItemsState.Loading -> setRefreshing(true)
-            is MailboxItemsState.DataRefresh -> {
+            is MailboxListState.Loading -> setRefreshing(true)
+            is MailboxListState.DataRefresh -> {
                 lastFetchedMailboxItemsIds = state.lastFetchedItemsIds
                 setRefreshing(false)
                 include_mailbox_no_messages.isVisible =
                     state.lastFetchedItemsIds.isEmpty() && mailboxAdapter.itemCount == 0
                 updatedStatusTextView.isVisible = true
             }
-            is MailboxItemsState.Data -> {
+            is MailboxListState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
                 include_mailbox_error.isVisible = false
                 include_mailbox_no_messages.isVisible = state.isFreshData && state.items.isEmpty()
@@ -567,7 +567,7 @@ internal class MailboxActivity :
                     if (state.shouldResetPosition) mailboxRecyclerView.scrollToPosition(0)
                 }
             }
-            is MailboxItemsState.Error -> {
+            is MailboxListState.Error -> {
                 setRefreshing(false)
                 Timber.e(state.throwable, "Mailbox error ${state.error}")
                 include_mailbox_no_messages.isVisible = false

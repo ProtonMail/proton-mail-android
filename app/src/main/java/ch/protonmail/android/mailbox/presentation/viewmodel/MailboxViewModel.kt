@@ -60,7 +60,7 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocati
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
-import ch.protonmail.android.mailbox.presentation.model.MailboxItemsState
+import ch.protonmail.android.mailbox.presentation.model.MailboxListState
 import ch.protonmail.android.mailbox.presentation.model.MailboxState
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
@@ -221,7 +221,7 @@ internal class MailboxViewModel @Inject constructor(
             }
         }
 
-    private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxItemsState>
+    private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxListState>
 
     init {
         combine(
@@ -234,7 +234,7 @@ internal class MailboxViewModel @Inject constructor(
             Triple(location, label, userId)
         }
             .onEach {
-                val newState = mailboxState.value.copy(items = MailboxItemsState.Loading)
+                val newState = mailboxState.value.copy(list = MailboxListState.Loading)
                 mutableMailboxState.value = newState
             }
             .flatMapLatest { (location, labelId, userId) ->
@@ -249,14 +249,14 @@ internal class MailboxViewModel @Inject constructor(
             }
             .catch {
                 emit(
-                    MailboxItemsState.Error(
+                    MailboxListState.Error(
                         "Failed getting messages, catch",
                         it
                     )
                 )
             }
             .onEach {
-                val newState = mailboxState.value.copy(items = it)
+                val newState = mailboxState.value.copy(list = it)
                 mutableMailboxState.value = newState
             }
             .launchIn(viewModelScope)
@@ -264,7 +264,7 @@ internal class MailboxViewModel @Inject constructor(
         val observePullToRefreshEvents = mutableRefreshFlow.filter { it }
 
         fun Flow<Boolean>.waitForRefreshedDataToArrive() = flatMapLatest {
-            mutableMailboxState.filter { it.items is MailboxItemsState.DataRefresh }.take(1)
+            mutableMailboxState.filter { it.list is MailboxListState.DataRefresh }.take(1)
         }
 
         observePullToRefreshEvents
@@ -328,7 +328,7 @@ internal class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         labelId: String?,
         userId: UserId
-    ): LoadMoreFlow<MailboxItemsState> {
+    ): LoadMoreFlow<MailboxListState> {
         val locationId = labelId?.takeIfNotBlank() ?: location.messageLocationTypeValue.toString()
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
         var isFirstData = true
@@ -347,7 +347,7 @@ internal class MailboxViewModel @Inject constructor(
                         val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
                         isFirstData = false
 
-                        MailboxItemsState.Data(
+                        MailboxListState.Data(
                             conversationsToMailboxItems(userId, result.conversations, locationId, labels),
                             isFreshData = hasReceivedFirstApiRefresh != null,
                             shouldResetPosition = shouldResetPosition
@@ -357,21 +357,21 @@ internal class MailboxViewModel @Inject constructor(
                         if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
                         else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
-                        MailboxItemsState.DataRefresh(
+                        MailboxListState.DataRefresh(
                             lastFetchedItemsIds = result.lastFetchedConversations.map { it.id }
                         )
                     }
                     is GetConversationsResult.Error -> {
                         hasReceivedFirstApiRefresh = false
 
-                        MailboxItemsState.Error(
+                        MailboxListState.Error(
                             error = "Failed getting conversations",
                             throwable = result.throwable,
                             isOffline = result.isOffline
                         )
                     }
                     is GetConversationsResult.Loading ->
-                        MailboxItemsState.Loading
+                        MailboxListState.Loading
                 }
             }
     }
@@ -380,7 +380,7 @@ internal class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         labelId: String?,
         userId: UserId
-    ): LoadMoreFlow<MailboxItemsState> {
+    ): LoadMoreFlow<MailboxListState> {
         Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
@@ -400,7 +400,7 @@ internal class MailboxViewModel @Inject constructor(
                         val shouldResetPosition = isFirstData || hasReceivedFirstApiRefresh == true
                         isFirstData = false
 
-                        MailboxItemsState.Data(
+                        MailboxListState.Data(
                             items = messagesToMailboxItems(
                                 userId = userId,
                                 messages = result.messages,
@@ -415,21 +415,21 @@ internal class MailboxViewModel @Inject constructor(
                         if (hasReceivedFirstApiRefresh == null) hasReceivedFirstApiRefresh = true
                         else if (hasReceivedFirstApiRefresh == true) hasReceivedFirstApiRefresh = false
 
-                        MailboxItemsState.DataRefresh(
+                        MailboxListState.DataRefresh(
                             lastFetchedItemsIds = result.lastFetchedMessages.mapNotNull { it.messageId }
                         )
                     }
                     is GetMessagesResult.Error -> {
                         hasReceivedFirstApiRefresh = false
 
-                        MailboxItemsState.Error(
+                        MailboxListState.Error(
                             error = "GetMessagesResult Error",
                             throwable = result.throwable,
                             isOffline = result.isOffline
                         )
                     }
                     is GetMessagesResult.Loading ->
-                        MailboxItemsState.Loading
+                        MailboxListState.Loading
                 }
             }
     }

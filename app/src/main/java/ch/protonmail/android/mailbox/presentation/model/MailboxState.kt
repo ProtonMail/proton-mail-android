@@ -20,12 +20,12 @@
 package ch.protonmail.android.mailbox.presentation.model
 
 data class MailboxState(
-    val items: MailboxItemsState
+    val list: MailboxListState
 ) {
      companion object {
 
          val Loading = MailboxState(
-             items = MailboxItemsState.Loading
+             list = MailboxListState.Loading
          )
      }
 }

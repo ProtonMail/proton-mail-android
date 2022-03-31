@@ -21,15 +21,15 @@ package ch.protonmail.android.mailbox.presentation.model
 
 import me.proton.core.util.kotlin.EMPTY_STRING
 
-sealed class MailboxItemsState {
+sealed class MailboxListState {
 
-    object Loading : MailboxItemsState()
+    object Loading : MailboxListState()
 
     data class Error(
         val error: String = EMPTY_STRING,
         val throwable: Throwable? = null,
         val isOffline: Boolean = false
-    ) : MailboxItemsState()
+    ) : MailboxListState()
 
     /**
      * @property shouldResetPosition if `true` the list should be scrolled to its top, for example if the location has
@@ -41,7 +41,7 @@ sealed class MailboxItemsState {
         val items: List<MailboxItemUiModel>,
         val isFreshData: Boolean,
         val shouldResetPosition: Boolean = false
-    ) : MailboxItemsState()
+    ) : MailboxListState()
 
-    data class DataRefresh(val lastFetchedItemsIds: List<String>) : MailboxItemsState()
+    data class DataRefresh(val lastFetchedItemsIds: List<String>) : MailboxListState()
 }
