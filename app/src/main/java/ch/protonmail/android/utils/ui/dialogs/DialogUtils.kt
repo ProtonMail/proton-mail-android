@@ -31,8 +31,8 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.annotation.StringRes
 import ch.protonmail.android.R
-import ch.protonmail.android.views.CustomFontButton
 import com.google.android.material.snackbar.Snackbar
+import me.proton.core.presentation.ui.view.ProtonButton
 
 class DialogUtils {
 
@@ -307,8 +307,8 @@ class DialogUtils {
             dialog.setCancelable(false)
             val body = dialog.findViewById(R.id.subtitle) as TextView
             body.text = description
-            val yesBtn = dialog.findViewById(R.id.ok) as CustomFontButton
-            val noBtn = dialog.findViewById(R.id.cancel) as CustomFontButton
+            val yesBtn = dialog.findViewById(R.id.ok) as ProtonButton
+            val noBtn = dialog.findViewById(R.id.cancel) as ProtonButton
 
             yesBtn.text = okButtonText
             noBtn.text = cancelButtonText
