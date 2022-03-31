@@ -30,7 +30,6 @@ import ch.protonmail.android.labels.data.mapper.LabelEntityApiMapper
 import ch.protonmail.android.labels.data.mapper.LabelEntityDomainMapper
 import ch.protonmail.android.labels.data.mapper.LabelOrFolderWithChildrenMapper
 import ch.protonmail.android.labels.data.remote.model.LabelApiModel
-import ch.protonmail.android.labels.data.remote.model.LabelResponse
 import ch.protonmail.android.labels.data.remote.model.LabelsResponse
 import ch.protonmail.android.labels.data.remote.worker.ApplyMessageLabelWorker
 import ch.protonmail.android.labels.data.remote.worker.DeleteLabelsWorker

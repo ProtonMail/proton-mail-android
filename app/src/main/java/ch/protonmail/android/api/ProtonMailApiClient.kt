@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.api
 
+import ch.protonmail.android.api.utils.ProtonHeaders
 import ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES
 import ch.protonmail.android.events.ForceUpgradeEvent
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -32,7 +33,7 @@ class ProtonMailApiClient @Inject constructor(
     private val secureSharedPreferencesFactory: SecureSharedPreferences.Factory
 ) : ApiClient {
 
-    override val appVersionHeader: String = "Android_${buildInfo.versionName}"
+    override val appVersionHeader: String = ProtonHeaders.appVersion
     override val enableDebugLogging: Boolean = buildInfo.isDebugVersion
     override val userAgent = "ProtonMail/${buildInfo.versionName} (Android ${buildInfo.releaseVersion};" +
         " ${buildInfo.brand} ${buildInfo.model})"

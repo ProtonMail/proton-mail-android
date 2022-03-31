@@ -62,7 +62,7 @@ fun initVersions() {
 }
 
 // Proton Core
-const val `Proton-core version` = "7.1.6"
+const val `Proton-core version` = "7.1.8"
 
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013

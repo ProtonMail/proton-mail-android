@@ -45,6 +45,7 @@ import me.proton.core.network.domain.ApiClient
 import me.proton.core.network.domain.NetworkManager
 import me.proton.core.network.domain.NetworkPrefs
 import me.proton.core.network.domain.client.ClientIdProvider
+import me.proton.core.network.domain.client.ClientVersionValidator
 import me.proton.core.network.domain.client.ExtraHeaderProvider
 import me.proton.core.network.domain.humanverification.HumanVerificationListener
 import me.proton.core.network.domain.humanverification.HumanVerificationProvider
@@ -87,9 +88,10 @@ object NetworkModule {
         humanVerificationProvider: HumanVerificationProvider,
         humanVerificationListener: HumanVerificationListener,
         missingScopeListener: MissingScopeListener,
+        clientVersionValidator: ClientVersionValidator,
         @DefaultApiPins defaultApiPins: Array<String>,
         @AlternativeApiPins alternativeApiPins: List<String>,
-        @BaseUrl baseUrl: String
+        @BaseUrl baseUrl: String,
     ): ApiManagerFactory = ApiManagerFactory(
         baseUrl,
         apiClient,
@@ -106,18 +108,14 @@ object NetworkModule {
         CoroutineScope(Job() + Dispatchers.Default),
         defaultApiPins,
         alternativeApiPins,
-        apiConnectionListener = null
+        clientVersionValidator = clientVersionValidator,
+        dohAlternativesListener = null
     )
 
     @Provides
     @Singleton
     fun provideApiProvider(apiManagerFactory: ApiManagerFactory, sessionProvider: SessionProvider): ApiProvider =
         ApiProvider(apiManagerFactory, sessionProvider)
-
-    @Provides
-    @Singleton
-    fun provideProtonCookieStore(@ApplicationContext context: Context): ProtonCookieStore =
-        ProtonCookieStore(context)
 
     @Provides
     @Singleton

@@ -19,7 +19,6 @@
 package ch.protonmail.android.api.interceptors
 
 import androidx.preference.PreferenceManager
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.Proxies
@@ -40,6 +39,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_SERVICE_UNAVAILABLE
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.api.segments.RESPONSE_CODE_UNAUTHORIZED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_UNPROCESSABLE_ENTITY
+import ch.protonmail.android.api.utils.ProtonHeaders
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -71,15 +71,6 @@ abstract class BaseRequestInterceptor(
     protected val userNotifier: UserNotifier,
     protected val sessionManager: SessionManager
 ) : Interceptor {
-
-    private val appVersionName by lazy {
-        val name = "android-mail@" + BuildConfig.VERSION_NAME
-        if (name[name.length - 1] == '.') {
-            name.substring(0, name.length - 1)
-        } else {
-            name
-        }
-    }
 
     private fun check24hExpired(): Boolean {
         val user = userManager.currentLegacyUser
@@ -220,7 +211,7 @@ abstract class BaseRequestInterceptor(
     }
 
     private fun Request.Builder.setClientHeaders() {
-        header(HEADER_APP_VERSION, appVersionName)
+        header(HEADER_APP_VERSION, ProtonHeaders.appVersion)
         header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
         header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
     }
