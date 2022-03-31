@@ -98,6 +98,7 @@ import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemsState
+import ch.protonmail.android.mailbox.presentation.model.MailboxState
 import ch.protonmail.android.mailbox.presentation.model.UnreadChipUiModel
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_START_ACTIVITY
@@ -348,7 +349,7 @@ internal class MailboxActivity :
         with(mailboxViewModel) {
 
             mailboxState
-                .onEach { renderState(it) }
+                .onEach(::renderState)
                 .launchIn(lifecycleScope)
 
             mailboxLocation
@@ -538,7 +539,12 @@ internal class MailboxActivity :
         setElevationOnToolbarAndStatusView(false)
     }
 
-    private fun renderState(state: MailboxItemsState) {
+    private fun renderState(state: MailboxState) {
+        Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
+        renderItemsState(state.items)
+    }
+
+    private fun renderItemsState(state: MailboxItemsState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
         setLoadingMore(false)
 

@@ -61,6 +61,7 @@ import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemsState
+import ch.protonmail.android.mailbox.presentation.model.MailboxState
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -141,7 +142,7 @@ internal class MailboxViewModel @Inject constructor(
     private val _manageLimitReachedWarningOnTryCompose = MutableLiveData<Event<Boolean>>()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
-    private val mutableMailboxState = MutableStateFlow<MailboxItemsState>(MailboxItemsState.Loading)
+    private val mutableMailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
     private val mutableMailboxLocation = MutableStateFlow(INBOX)
     private val mutableMailboxLabelId = MutableStateFlow<String?>(null)
     private val mutableUserId = userManager.primaryUserId
@@ -233,7 +234,8 @@ internal class MailboxViewModel @Inject constructor(
             Triple(location, label, userId)
         }
             .onEach {
-                mutableMailboxState.value = MailboxItemsState.Loading
+                val newState = mailboxState.value.copy(items = MailboxItemsState.Loading)
+                mutableMailboxState.value = newState
             }
             .flatMapLatest { (location, labelId, userId) ->
                 mailboxStateFlow = if (conversationModeEnabled(location)) {
@@ -254,14 +256,15 @@ internal class MailboxViewModel @Inject constructor(
                 )
             }
             .onEach {
-                mutableMailboxState.value = it
+                val newState = mailboxState.value.copy(items = it)
+                mutableMailboxState.value = newState
             }
             .launchIn(viewModelScope)
 
         val observePullToRefreshEvents = mutableRefreshFlow.filter { it }
 
         fun Flow<Boolean>.waitForRefreshedDataToArrive() = flatMapLatest {
-            mutableMailboxState.filter { it is MailboxItemsState.DataRefresh }.take(1)
+            mutableMailboxState.filter { it.items is MailboxItemsState.DataRefresh }.take(1)
         }
 
         observePullToRefreshEvents
