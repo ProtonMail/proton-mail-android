@@ -28,14 +28,17 @@ println("Modules: ${modules.sorted().joinToString()}")
 for (p in projects) includeBuild(p)
 for (m in modules) include(m)
 
-// Use core libs from maven artifacts or submodules (see gradle.properties).
-val useCoreGitSubmoduleAsBoolean: Boolean = extensions.extraProperties
-    .properties["useCoreGitSubmodule"].toString().toBoolean()
-if (useCoreGitSubmoduleAsBoolean) {
-    println("Use core libs from git submodule \'./proton-libs\'")
+// Use core libs from maven artifacts or from git submodule using Gradle's included build:
+// - to enable/disable locally: gradle.properties > useCoreGitSubmodule
+// - to enable/disable on CI: .gitlab-ci.yml > ORG_GRADLE_PROJECT_useCoreGitSubmodule
+val coreSubmoduleDir = rootDir.resolve("proton-libs")
+extra.set("coreSubmoduleDir", coreSubmoduleDir)
+val includeCoreLibsHelper = File(coreSubmoduleDir, "gradle/include-core-libs.gradle.kts")
+if (includeCoreLibsHelper.exists()) {
+    apply(from = "${coreSubmoduleDir.path}/gradle/include-core-libs.gradle.kts")
+} else if (extensions.extraProperties["useCoreGitSubmodule"].toString().toBoolean()) {
     includeBuild("proton-libs")
-} else {
-    println("Use core libs from Maven artifacts")
+    println("Core libs from git submodule `$coreSubmoduleDir`")
 }
 
 pluginManagement {
