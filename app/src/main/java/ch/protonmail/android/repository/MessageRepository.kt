@@ -49,6 +49,9 @@ import ch.protonmail.android.mailbox.data.mapper.DatabaseToDomainUnreadCounterMa
 import ch.protonmail.android.mailbox.data.mapper.MessagesResponseToMessagesMapper
 import ch.protonmail.android.mailbox.data.remote.worker.MoveMessageToLocationWorker
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters.UnreadStatus.ALL
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters.UnreadStatus.READ_ONLY
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters.UnreadStatus.UNREAD_ONLY
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.domain.model.createBookmarkParametersOr
 import ch.protonmail.android.utils.MessageBodyFileManager
@@ -339,10 +342,15 @@ class MessageRepository @Inject constructor(
             dao.searchMessages(params.keyword)
         } else {
             requireNotNull(params.labelId) { "Label Id is required" }
-            dao.observeMessages(params.labelId)
+            val unreadFilter = when (params.unreadStatus) {
+                UNREAD_ONLY -> true
+                READ_ONLY -> false
+                ALL -> null
+            }
+            dao.observeMessages(params.labelId.id, unread = unreadFilter)
         }.combineTransform(contactDao.findAllContactsEmails()) { messages, contactEmails ->
             // Makes sure that the correct name of the contact is displayed when showing the messages, because
-            // the sender/recipient name in the message can be outdated if the name of the contact has been changed
+            //  the sender/recipient name in the message can be outdated if the name of the contact has been changed
             messages.map { message ->
                 val sender = requireNotNull(message.sender)
                 message.sender = updateSenderWithContactName(sender, contactEmails)

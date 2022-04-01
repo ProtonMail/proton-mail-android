@@ -50,6 +50,9 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
+import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters.UnreadStatus
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.UnreadCounter
@@ -157,6 +160,8 @@ internal class MailboxViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository
         get() = messageDetailsRepositoryFactory.create(userManager.requireCurrentUserId())
 
+    private val isUnreadFilterEnabled = MutableStateFlow(false)
+
     var pendingSendsLiveData = mutableUserId.filterNotNull().asLiveData().switchMap {
         messageDetailsRepository.findAllPendingSendsAsync()
     }
@@ -207,7 +212,7 @@ internal class MailboxViewModel @Inject constructor(
             if (userId == null) return@flatMapLatest flowOf(emptyList())
             combineTransform(
                 observeAllUnreadCounters(userId),
-                observeConversationModeEnabled(userId)
+                observeConversationModeEnabled(userId, labelId = null)
             ) { allCountersResult, isConversationsModeEnabled ->
 
                 if (allCountersResult is DataResult.Error) {
@@ -230,7 +235,7 @@ internal class MailboxViewModel @Inject constructor(
                 ?: 0
             val newUnreadChipState = UnreadChipState.Data(
                 UnreadChipUiModel(
-                    isFilterEnabled = false,
+                    isFilterEnabled = isUnreadFilterEnabled.value,
                     unreadCount = currentLocationUnreadCounter
                 )
             )
@@ -245,22 +250,30 @@ internal class MailboxViewModel @Inject constructor(
             mutableMailboxLocation,
             mutableMailboxLabelId,
             mutableUserId.filterNotNull(),
+            isUnreadFilterEnabled,
             mutableRefreshFlow.onStart { emit(false) }
-        ) { location, label, userId, isRefresh ->
+        ) { location, label, userId, isUnreadFilterEnabled, isRefresh ->
             Timber.v("New location: $location, label: $label, user: $userId, isRefresh: $isRefresh")
-            Triple(location, label, userId)
+            GetMailboxItemsParameters(
+                userId = userId,
+                labelId = getLabelId(location, label),
+                isUnreadFilterEnabled = isUnreadFilterEnabled
+            )
         }
             .onEach {
                 val newState = mailboxState.value.copy(list = MailboxListState.Loading)
                 mutableMailboxState.value = newState
             }
-            .flatMapLatest { (location, labelId, userId) ->
-                mailboxStateFlow = if (conversationModeEnabled(location)) {
-                    Timber.v("Getting conversations for $location, label: $labelId, user: $userId")
-                    conversationsAsMailboxItems(location, labelId, userId)
+            .flatMapLatest { params ->
+                val userId = params.userId
+                val labelId = requireNotNull(params.labelId) { "labelId is null" }
+
+                mailboxStateFlow = if (conversationModeEnabled(userId, labelId)) {
+                    Timber.v("Getting conversations for label: $labelId, user: $userId")
+                    conversationsAsMailboxItems(params.toGetAllConversationsParameters())
                 } else {
-                    Timber.v("Getting messages for $location, label: $labelId, user: $userId")
-                    messagesAsMailboxItems(location, labelId, userId)
+                    Timber.v("Getting messages for label: $labelId, user: $userId")
+                    messagesAsMailboxItems(params.toGetAllMessagesParameters())
                 }
                 mailboxStateFlow
             }
@@ -345,21 +358,16 @@ internal class MailboxViewModel @Inject constructor(
         return@runBlocking messagesToMailboxItems(userId, messages, currentLabelId, null)
     }
 
-    private fun conversationsAsMailboxItems(
-        location: Constants.MessageLocationType,
-        labelId: String?,
-        userId: UserId
-    ): LoadMoreFlow<MailboxListState> {
-        val locationId = labelId?.takeIfNotBlank() ?: location.messageLocationTypeValue.toString()
-        Timber.v("conversationsAsMailboxItems locationId: $locationId")
+    private fun conversationsAsMailboxItems(params: GetAllConversationsParameters): LoadMoreFlow<MailboxListState> {
+        val userId = params.userId
+        val labelId = requireNotNull(params.labelId) { "labelId is null" }
+
+        Timber.v("conversationsAsMailboxItems labelId: $labelId")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
         return loadMoreCombine(
             observeLabels(userId),
-            observeConversationsByLocation(
-                userId,
-                locationId
-            )
+            observeConversationsByLocation(params)
         ) { labels, conversations -> labels to conversations }
             .loadMoreBuffer()
             .loadMoreMap { (labels, result) ->
@@ -369,7 +377,7 @@ internal class MailboxViewModel @Inject constructor(
                         isFirstData = false
 
                         MailboxListState.Data(
-                            conversationsToMailboxItems(userId, result.conversations, locationId, labels),
+                            conversationsToMailboxItems(userId, result.conversations, labelId, labels),
                             isFreshData = hasReceivedFirstApiRefresh != null,
                             shouldResetPosition = shouldResetPosition
                         )
@@ -397,21 +405,15 @@ internal class MailboxViewModel @Inject constructor(
             }
     }
 
-    private fun messagesAsMailboxItems(
-        location: Constants.MessageLocationType,
-        labelId: String?,
-        userId: UserId
-    ): LoadMoreFlow<MailboxListState> {
-        Timber.v("messagesAsMailboxItems location: $location, labelId: $labelId")
+    private fun messagesAsMailboxItems(params: GetAllMessagesParameters): LoadMoreFlow<MailboxListState> {
+        val labelId = requireNotNull(params.labelId) { "labelId is null" }
+
+        Timber.v("messagesAsMailboxItems labelId: ${params.labelId}")
         var isFirstData = true
         var hasReceivedFirstApiRefresh: Boolean? = null
         return loadMoreCombine(
-            observeLabels(userId),
-            observeMessagesByLocation(
-                userId = userId,
-                mailboxLocation = location,
-                labelId = labelId
-            )
+            observeLabels(params.userId),
+            observeMessagesByLocation(params)
         ) { labels, messages -> labels to messages }
             .loadMoreBuffer()
             .loadMoreMap { pair ->
@@ -423,9 +425,9 @@ internal class MailboxViewModel @Inject constructor(
 
                         MailboxListState.Data(
                             items = messagesToMailboxItems(
-                                userId = userId,
+                                userId = params.userId,
                                 messages = result.messages,
-                                currentLabelId = getLabelId(location, labelId),
+                                currentLabelId = labelId,
                                 labelsList = labels
                             ),
                             isFreshData = hasReceivedFirstApiRefresh != null,
@@ -461,13 +463,13 @@ internal class MailboxViewModel @Inject constructor(
     private suspend fun conversationsToMailboxItems(
         userId: UserId,
         conversations: List<Conversation>,
-        locationId: String,
+        labelId: LabelId,
         labels: List<Label>
     ): List<MailboxItemUiModel> =
         mailboxItemUiModelMapper.toUiModels(
             userId = userId,
             conversations = conversations,
-            currentLabelId = LabelId(locationId),
+            currentLabelId = labelId,
             allLabels = labels
         )
 
@@ -486,6 +488,30 @@ internal class MailboxViewModel @Inject constructor(
             .flatMap { idsChunk -> labelRepository.findLabels(idsChunk) }
 
         return mailboxItemUiModelMapper.toUiModels(messages, currentLabelId, allLabels)
+    }
+
+    fun enableUnreadFilter() {
+        viewModelScope.launch {
+            toggleUnreadFilter(isFilterEnabled = true)
+        }
+    }
+
+    fun disableUnreadFilter() {
+        viewModelScope.launch {
+            toggleUnreadFilter(isFilterEnabled = false)
+        }
+    }
+
+    private suspend fun toggleUnreadFilter(isFilterEnabled: Boolean) {
+        val prevMailboxState = mailboxState.value
+        val prevUnreadChipState = prevMailboxState.unreadChip
+        if (prevUnreadChipState is UnreadChipState.Data) {
+            val newChipUiModel = prevUnreadChipState.model.copy(isFilterEnabled = isFilterEnabled)
+            val newUnreadChipState = prevUnreadChipState.copy(model = newChipUiModel)
+            mutableMailboxState.emit(prevMailboxState.copy(unreadChip = newUnreadChipState))
+        }
+
+        isUnreadFilterEnabled.emit(isFilterEnabled)
     }
 
     fun deleteAction(
@@ -716,6 +742,24 @@ internal class MailboxViewModel @Inject constructor(
     }
 
     suspend fun getMailSettingsState() = getMailSettings()
+
+    data class GetMailboxItemsParameters(
+        val userId: UserId,
+        val labelId: LabelId,
+        val isUnreadFilterEnabled: Boolean
+    ) {
+
+        fun toGetAllConversationsParameters() = GetAllConversationsParameters(
+            userId = userId,
+            labelId = labelId
+        )
+
+        fun toGetAllMessagesParameters() = GetAllMessagesParameters(
+            userId = userId,
+            labelId = labelId,
+            unreadStatus = if (isUnreadFilterEnabled) UnreadStatus.UNREAD_ONLY else UnreadStatus.ALL
+        )
+    }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }

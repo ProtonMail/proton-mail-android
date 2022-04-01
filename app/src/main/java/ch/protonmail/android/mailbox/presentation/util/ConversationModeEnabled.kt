@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.presentation.util
 
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationModeEnabled
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
@@ -39,8 +40,17 @@ class ConversationModeEnabled @Inject constructor(
     operator fun invoke(location: MessageLocationType?, userId: UserId? = null): Boolean {
         val currentUserId = userId ?: userManager.currentUserId ?: return false
         // TODO: Remove runBlocking and convert invoke function into a suspend.
+        return invoke(currentUserId, location?.asLabelId())
+    }
+
+    /**
+     * @param labelId used for know whether the Conversation Mode is enabled for a given location.
+     *  Use `null` if you're interested in the global value, instead of a specific location
+     */
+    operator fun invoke(userId: UserId, labelId: LabelId? = null): Boolean {
+        // TODO: Remove runBlocking and convert invoke function into a suspend.
         return runBlocking {
-            observeConversationModeEnabled(currentUserId, location).firstOrNull() ?: false
+            observeConversationModeEnabled(userId, labelId).firstOrNull() ?: false
         }
     }
 }

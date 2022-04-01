@@ -28,17 +28,19 @@ import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.labels.domain.LabelRepository
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
+import ch.protonmail.android.pendingaction.data.PendingActionDatabase
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -119,7 +121,7 @@ internal class MessagesService : JobIntentService() {
     ) {
         try {
             val messages = runBlocking {
-                mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = location.asLabelIdString()))
+                mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = location.asLabelId()))
             }
             if (messages.code == Constants.RESPONSE_CODE_OK)
                 handleResult(messages, location, refreshDetails, uuid, currentUserId, refreshMessages)
@@ -146,6 +148,7 @@ internal class MessagesService : JobIntentService() {
     ) {
         try {
             val messagesResponse = runBlocking {
+                val labelId = labelId.takeIfNotBlank()?.let(::LabelId)
                 mApi.getMessages(GetAllMessagesParameters(currentUserId, labelId = labelId))
             }
             handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)

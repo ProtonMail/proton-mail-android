@@ -545,8 +545,8 @@ internal class MailboxActivity :
             is UnreadChipState.Data -> {
                 unreadMessagesStatusChip.bind(
                     model = state.model,
-                    onEnableFilter = {},
-                    onDisableFilter = {}
+                    onEnableFilter = mailboxViewModel::enableUnreadFilter,
+                    onDisableFilter = mailboxViewModel::disableUnreadFilter
                 )
             }
         }
@@ -1261,10 +1261,12 @@ internal class MailboxActivity :
     }
 
     private fun setMailboxLocation(locationToSet: MessageLocationType) {
+        mailboxViewModel.disableUnreadFilter()
         mailboxViewModel.setNewMailboxLocation(locationToSet)
     }
 
     private fun setNewLabel(labelId: String) {
+        mailboxViewModel.disableUnreadFilter()
         mailboxViewModel.setNewMailboxLabel(labelId)
     }
 
@@ -1272,11 +1274,11 @@ internal class MailboxActivity :
 
     private class OnMessageClickTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
-        private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
+        messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
         private val messageId: String,
         private val messageSubject: String,
         private val currentMailboxLocationType: MessageLocationType,
-        private val userId: UserId
+        userId: UserId
     ) : AsyncTask<Unit, Unit, Message>() {
 
         private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)

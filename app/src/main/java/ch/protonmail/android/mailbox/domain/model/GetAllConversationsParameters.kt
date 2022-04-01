@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import me.proton.core.domain.entity.UserId
@@ -31,7 +32,7 @@ data class GetAllConversationsParameters(
     val userId: UserId,
     val page: Int? = null,
     val pageSize: Int = 50,
-    val labelId: String? = null,
+    val labelId: LabelId? = null,
     val sortBy: SortBy = SortBy.TIME,
     val sortDirection: SortDirection = SortDirection.DESCENDANT,
     val begin: Long? = null,

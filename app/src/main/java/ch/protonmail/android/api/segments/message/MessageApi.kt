@@ -48,7 +48,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
             userIdTag = UserIdTag(params.userId),
             page = params.page,
             pageSize = params.pageSize,
-            labelId = params.labelId,
+            labelId = params.labelId?.id,
             sort = params.sortBy.stringValue,
             desc = params.sortDirection.intValue,
             begin = params.begin,

@@ -169,14 +169,19 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @BeforeTest
     fun setUp() {
         every { conversationModeEnabled(INBOX) } returns false // INBOX type to use with messages
+        every { conversationModeEnabled(any(), INBOX.asLabelId()) } returns false // INBOX type to use with messages
         every { conversationModeEnabled(ARCHIVE) } returns true // ARCHIVE type to use with conversations
+        every { conversationModeEnabled(any(), ARCHIVE.asLabelId()) } returns true // ARCHIVE type to use with conversations
         every { conversationModeEnabled(LABEL) } returns true // LABEL type to use with conversations
+        every { conversationModeEnabled(any(), LABEL.asLabelId()) } returns true // LABEL type to use with conversations
         every { conversationModeEnabled(LABEL_FOLDER) } returns true // LABEL_FOLDER type to use with conversations
+        every { conversationModeEnabled(any(), LABEL_FOLDER.asLabelId()) } returns true // LABEL_FOLDER type to use with conversations
         every { conversationModeEnabled(ALL_MAIL) } returns true // ALL_MAIL type to use with conversations
+        every { conversationModeEnabled(any(), ALL_MAIL.asLabelId()) } returns true // ALL_MAIL type to use with conversations
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
-        coEvery { observeMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
+        coEvery { observeMessagesByLocation(any()) } returns messagesResponseChannel.receiveAsFlow()
             .withLoadMore(loadMoreFlowOf<GetMessagesResult>()) {}
-        every { observeConversationsByLocation(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
+        every { observeConversationsByLocation(any()) } returns conversationsResponseFlow.receiveAsFlow()
             .withLoadMore(loadMoreFlowOf<GetConversationsResult>()) {}
 
         val jobEntryPoint = mockk<JobEntryPoint>()

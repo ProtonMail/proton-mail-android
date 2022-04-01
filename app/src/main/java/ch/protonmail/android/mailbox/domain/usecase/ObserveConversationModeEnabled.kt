@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.featureflags.FeatureFlagsManager
+import ch.protonmail.android.labels.domain.model.LabelId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -52,10 +53,17 @@ class ObserveConversationModeEnabled @Inject constructor(
      *  Use `null` if you're interested in the global value, instead of a specific location
      */
     operator fun invoke(userId: UserId, locationType: MessageLocationType? = null): Flow<Boolean> =
+        invoke(userId, locationType?.asLabelId())
+
+    /**
+     * @param labelId used for know whether the Conversation Mode is enabled for a given location.
+     *  Use `null` if you're interested in the global value, instead of a specific location
+     */
+    operator fun invoke(userId: UserId, labelId: LabelId? = null): Flow<Boolean> =
         mailSettingsRepository.getMailSettingsFlow(userId).mapSuccessValueOrNull().map { settings ->
             val isFeatureEnabled = featureFlagsManager.isChangeViewModeFeatureEnabled()
             val isEnabledInSettings = settings?.viewMode?.enum == ViewMode.ConversationGrouping
-            val isAvailableForLocation = locationType !in forceMessagesViewModeLocations
+            val isAvailableForLocation = labelId !in forceMessagesViewModeLocations.map { it.asLabelId() }
             isFeatureEnabled && isEnabledInSettings && isAvailableForLocation
         }.distinctUntilChanged()
 }

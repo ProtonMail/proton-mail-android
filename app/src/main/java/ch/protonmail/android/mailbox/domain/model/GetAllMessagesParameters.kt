@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.domain.model
 
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.labels.domain.model.LabelId
 import me.proton.core.domain.entity.UserId
 
 /**
@@ -31,7 +32,7 @@ data class GetAllMessagesParameters(
     val userId: UserId,
     val page: Int? = null,
     val pageSize: Int = 50,
-    val labelId: String? = null,
+    val labelId: LabelId? = null,
     val sortBy: SortBy = SortBy.TIME,
     val sortDirection: SortDirection = SortDirection.DESCENDANT,
     val begin: Long? = null,

@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.mailbox.domain.usecase
 
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.remote.OfflineDataResult
 import ch.protonmail.android.domain.LoadMoreFlow
@@ -33,8 +32,6 @@ import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Processing
 import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
-import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -45,25 +42,13 @@ internal class ObserveMessagesByLocation @Inject constructor(
     private val messageRepository: MessageRepository
 ) {
 
-    operator fun invoke(
-        userId: UserId,
-        mailboxLocation: Constants.MessageLocationType,
-        labelId: String?
-    ): LoadMoreFlow<GetMessagesResult> =
-        messageRepository.observeMessages(buildGetParams(userId, mailboxLocation, labelId))
+    operator fun invoke(params: GetAllMessagesParameters): LoadMoreFlow<GetMessagesResult> {
+        return messageRepository.observeMessages(params)
             .mapToResult()
             .loadMoreCatch {
                 emit(GetMessagesResult.Error(it))
             }
-
-    private fun buildGetParams(
-        userId: UserId,
-        mailboxLocation: Constants.MessageLocationType,
-        labelId: String?
-    ) = GetAllMessagesParameters(
-        userId = userId,
-        labelId = labelId?.takeIfNotBlank() ?: mailboxLocation.asLabelIdString()
-    )
+    }
 
     private fun LoadMoreFlow<DataResult<List<Message>>>.mapToResult(): LoadMoreFlow<GetMessagesResult> {
 
