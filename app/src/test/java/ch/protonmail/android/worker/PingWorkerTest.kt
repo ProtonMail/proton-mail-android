@@ -27,7 +27,6 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
-import ch.protonmail.android.testdata.UserIdTestData
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -38,9 +37,7 @@ import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import java.io.IOException
 import kotlin.test.BeforeTest
@@ -61,21 +58,12 @@ class PingWorkerTest {
     @MockK
     private lateinit var api: ProtonMailApiManager
 
-    private val accountManagerMock = mockk<AccountManager> {
-        every { getPrimaryUserId() } returns flowOf(UserIdTestData.userId)
-        every { getAccount(any()) } returns flowOf(
-            mockk() {
-                every { userId } returns UserIdTestData.userId
-            }
-        )
-    }
-
     private lateinit var worker: PingWorker
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = PingWorker(context, parameters, api, queueNetworkUtil, TestDispatcherProvider, accountManagerMock)
+        worker = PingWorker(context, parameters, api, queueNetworkUtil, TestDispatcherProvider)
     }
 
     @Test
@@ -121,11 +109,9 @@ class PingWorkerTest {
         runBlockingTest {
             // given
             val unknownResponseCode = 12313
-            val unknownResponseError = "unknown"
             val expected = ListenableWorker.Result.failure()
             val pingResponse = mockk<ResponseBody> {
                 every { code } returns unknownResponseCode
-                every { error } returns unknownResponseError
             }
             coEvery { api.ping() } returns pingResponse
 
