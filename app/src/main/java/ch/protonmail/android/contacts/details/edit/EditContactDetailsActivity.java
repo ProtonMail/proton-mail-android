@@ -94,6 +94,7 @@ import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.VCardUtil;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.views.ContactAddressView;
 import ch.protonmail.android.views.ContactBirthdayClickListener;
 import ch.protonmail.android.views.ContactOptionTypeClickListener;
@@ -1009,7 +1010,25 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 contactPhoto.setVisibility(View.GONE);
                 contactInitials.setVisibility(View.VISIBLE);
                 if (mNetworkUtil.isConnected()) {
-                    viewModel.getBitmapFromURL(vCardPhotos.get(0).getUrl());
+                    DialogUtils.Companion.showInfoDialogWithTwoButtons(
+                            this,
+                            getString(R.string.contact_details_remote_content_dialog_title),
+                            getString(R.string.contact_details_remote_content_dialog_message),
+                            getString(R.string.cancel),
+                            getString(R.string.contact_details_remote_content_dialog_positive_button),
+                            Unit -> {
+                                contactInitials.setIconResource(R.drawable.ic_file_image);
+                                contactInitials.invalidate();
+                                return Unit;
+                            },
+                            Unit -> {
+                                viewModel.getBitmapFromURL(vCardPhotos.get(0).getUrl());
+                                return Unit;
+                            },
+                            false,
+                            false,
+                            false
+                    );
                 }
             }
         }
