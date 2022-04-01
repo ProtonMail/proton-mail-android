@@ -146,24 +146,13 @@ class NetworkConfigurator @Inject constructor(
                     val result = try {
                         networkSwitcher.tryRequest()
                     } catch (e: Exception) {
-                        Timber.w(
-                            e,
-                            """
-                            Exception while pinging API before using alternative routing.
-                            UserId = ${userManager.currentUserId}
-                            """.trimIndent()
-                        )
+                        Timber.w(e, "Exception while pinging API before using alternative routing.")
                         null
                     }
                     result != null
                 }
                 if (success == null) {
-                    Timber.w(
-                        """
-                        Timeout while pinging API before using alternative routing.
-                        UserId = ${userManager.currentUserId}
-                        """.trimIndent()
-                    )
+                    Timber.w("Timeout while pinging API before using alternative routing.")
                 }
                 if (success == true) {
                     callback?.stopAutoRetry()
