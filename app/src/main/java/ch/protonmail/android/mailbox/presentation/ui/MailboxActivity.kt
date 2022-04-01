@@ -94,12 +94,11 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
-import ch.protonmail.android.mailbox.domain.model.UnreadCounter
 import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxListState
 import ch.protonmail.android.mailbox.presentation.model.MailboxState
-import ch.protonmail.android.mailbox.presentation.model.UnreadChipUiModel
+import ch.protonmail.android.mailbox.presentation.model.UnreadChipState
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_START_ACTIVITY
 import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_TRY_COMPOSE
@@ -152,7 +151,6 @@ import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.exhaustive
-import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -219,7 +217,6 @@ internal class MailboxActivity :
     private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private val handler = Handler(Looper.getMainLooper())
-    private var unreadCountersCache: List<UnreadCounter> = emptyList()
 
     private val startMessageDetailsLauncher = registerForActivityResult(MessageDetailsActivity.Launcher()) {}
     private val startComposeLauncher = registerForActivityResult(StartCompose()) {}
@@ -353,11 +350,7 @@ internal class MailboxActivity :
                 .launchIn(lifecycleScope)
 
             mailboxLocation
-                .onEach {
-                    mailboxAdapter.setNewLocation(it)
-                    updateUnreadCounters()
-                    updatedStatusTextView.isVisible = false
-                }
+                .onEach(mailboxAdapter::setNewLocation)
                 .launchIn(lifecycleScope)
 
             drawerLabels
@@ -365,7 +358,7 @@ internal class MailboxActivity :
                 .launchIn(lifecycleScope)
 
             unreadCounters
-                .onEach(::updateUnreadCounters)
+                .onEach(sideDrawer::setUnreadCounters)
                 .launchIn(lifecycleScope)
 
             exitSelectionModeSharedFlow
@@ -541,11 +534,25 @@ internal class MailboxActivity :
 
     private fun renderState(state: MailboxState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
+        updatedStatusTextView.isVisible = state.isUpdatedFromRemote
+        renderUnreadChipState(state.unreadChip)
         renderListState(state.list)
     }
 
+    private fun renderUnreadChipState(state: UnreadChipState) {
+        when (state) {
+            UnreadChipState.Loading -> {}
+            is UnreadChipState.Data -> {
+                unreadMessagesStatusChip.bind(
+                    model = state.model,
+                    onEnableFilter = {},
+                    onDisableFilter = {}
+                )
+            }
+        }
+    }
+
     private fun renderListState(state: MailboxListState) {
-        Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
         setLoadingMore(false)
 
         when (state) {
@@ -555,7 +562,6 @@ internal class MailboxActivity :
                 setRefreshing(false)
                 include_mailbox_no_messages.isVisible =
                     state.lastFetchedItemsIds.isEmpty() && mailboxAdapter.itemCount == 0
-                updatedStatusTextView.isVisible = true
             }
             is MailboxListState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
@@ -1260,26 +1266,6 @@ internal class MailboxActivity :
 
     private fun setNewLabel(labelId: String) {
         mailboxViewModel.setNewMailboxLabel(labelId)
-    }
-
-    private fun updateUnreadCounters(counters: List<UnreadCounter>? = null) {
-        if (counters != null) {
-            unreadCountersCache = counters
-        }
-        sideDrawer.setUnreadCounters(unreadCountersCache)
-
-        val currentLabelId = currentLabelId?.takeIfNotBlank() ?: currentMailboxLocation.asLabelIdString()
-        val currentLocationUnreadCount = unreadCountersCache.find { it.labelId == currentLabelId }
-            ?.unreadCount
-            ?: 0
-        unreadMessagesStatusChip.bind(
-            UnreadChipUiModel(
-                unreadCount = currentLocationUnreadCount,
-                isFilterEnabled = false
-            ),
-            onEnableFilter = {},
-            onDisableFilter = {}
-        )
     }
 
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()

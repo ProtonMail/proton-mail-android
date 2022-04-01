@@ -62,6 +62,8 @@ import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMappe
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxListState
 import ch.protonmail.android.mailbox.presentation.model.MailboxState
+import ch.protonmail.android.mailbox.presentation.model.UnreadChipState
+import ch.protonmail.android.mailbox.presentation.model.UnreadChipUiModel
 import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -197,8 +199,10 @@ internal class MailboxViewModel @Inject constructor(
 
     val unreadCounters: Flow<List<UnreadCounter>> = combine(
         mutableUserId,
+        mailboxLocation,
+        mutableMailboxLabelId,
         mutableRefreshFlow.onStart { emit(false) }
-    ) { userId, _ -> userId }
+    ) { userId, _, _, _ -> userId }
         .flatMapLatest { userId ->
             if (userId == null) return@flatMapLatest flowOf(emptyList())
             combineTransform(
@@ -219,6 +223,19 @@ internal class MailboxViewModel @Inject constructor(
                     emit(value)
                 }
             }
+        }.onEach { list ->
+            val currentLabelId = getLabelId(mailboxLocation.value, mutableMailboxLabelId.value).id
+            val currentLocationUnreadCounter = list.find { it.labelId == currentLabelId }
+                ?.unreadCount
+                ?: 0
+            val newUnreadChipState = UnreadChipState.Data(
+                UnreadChipUiModel(
+                    isFilterEnabled = false,
+                    unreadCount = currentLocationUnreadCounter
+                )
+            )
+            val newMailboxState = mailboxState.value.copy(unreadChip = newUnreadChipState, isUpdatedFromRemote = false)
+            mutableMailboxState.emit(newMailboxState)
         }
 
     private lateinit var mailboxStateFlow: LoadMoreFlow<MailboxListState>
@@ -255,8 +272,12 @@ internal class MailboxViewModel @Inject constructor(
                     )
                 )
             }
-            .onEach {
-                val newState = mailboxState.value.copy(list = it)
+            .onEach { mailboxListState ->
+                val newState = if (mailboxListState is MailboxListState.DataRefresh) {
+                    mailboxState.value.copy(list = mailboxListState, isUpdatedFromRemote = true)
+                } else {
+                    mailboxState.value.copy(list = mailboxListState)
+                }
                 mutableMailboxState.value = newState
             }
             .launchIn(viewModelScope)
@@ -453,7 +474,7 @@ internal class MailboxViewModel @Inject constructor(
     private suspend fun messagesToMailboxItems(
         userId: UserId,
         messages: List<Message>,
-       currentLabelId: LabelId,
+        currentLabelId: LabelId,
         labelsList: List<Label>?
     ): List<MailboxItemUiModel> {
         Timber.v("messagesToMailboxItems size: ${messages.size}")
@@ -682,6 +703,7 @@ internal class MailboxViewModel @Inject constructor(
             )
             vibrator.vibrate(vibrationEffect)
         } else {
+            @Suppress("DEPRECATION")
             vibrator.vibrate(SWIPE_VIBRATION_DURATION)
         }
 
