@@ -455,7 +455,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="details_copied">Rincian disalin ke clipboard</string>
     <string name="saving">Menyimpan...</string>
     <string name="update_folder">Perbarui Folder</string>
-    <string name="spam_score_100">Email ini tampaknya berasal dari alamat ProtonMail tetapi berasal dari luar sistem kami dan gagal memenuhi persyaratan autentikasi kami. Ini mungkin palsu atau diteruskan dengan tidak benar!</string>
+    <string name="spam_score_100">Walaupun email ini sekilas terlihat seperti dikirim dari alamat ProtonMail, email ini sepertinya berasal dari luar sistem kami dan tidak memenuhi persyaratan otentikasi yang kami miliki. Email ini mungkin palsu atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_101">Email ini tidak memenuhi syarat otentikasi domainnya. Email ini mungkin telah dipalsukan atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_102">Pesan ini mungkin merupakan sebuah upaya phishing. Mohon periksa nama pengirim dan konten yang tertera secara seksama untuk memastikan keabsahan email ini. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>

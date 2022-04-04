@@ -124,9 +124,9 @@
     <string name="notification_summary_text_new_messages">Nouveaux messages</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Les groupes de contacts ne seront pas importés. Veuillez passer à une offre payante pour bénécifier des fonctionnalités premium.</string>
     <string name="contact_details_remote_content_dialog_title">Contenu distant</string>
-    <string name="contact_details_remote_content_dialog_message">Ce contact comporte du contenu distant.</string>
+    <string name="contact_details_remote_content_dialog_message">Ce contact contient du contenu distant.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Charger le contenu</string>
     <!-- endregion -->
     <!-- region Onboarding -->

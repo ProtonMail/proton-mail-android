@@ -51,7 +51,7 @@
     <string name="mailbox_empty_folder_subtitle">Esta carpeta está vacía</string>
     <string name="mailbox_empty_inbox_subtitle">Estás al día</string>
     <string name="mailbox_empty_spam_subtitle">Tu carpeta de spam está vacía</string>
-    <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <string name="mailbox_empty_trash_subtitle">La papelera está vacía</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Abrir en Proton Calendar</string>
@@ -125,9 +125,9 @@
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
-    <string name="contact_details_remote_content_dialog_title">Remote content</string>
-    <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
-    <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <string name="contact_details_remote_content_dialog_title">Elija una dirección de remitente diferente</string>
+    <string name="contact_details_remote_content_dialog_message">Este contacto contiene contenido remoto.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Cargar contenido</string>
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="onboarding_privacy_for_all_headline">Privacidad para todos</string>
@@ -188,7 +188,7 @@
     <string name="no_search_results">Búsqueda sin resultados</string>
     <string name="compose">Redactar</string>
     <string name="compose_message">Redactar mensaje</string>
-    <string name="empty_folder">Vaciar carpeta</string>
+    <string name="empty_folder">Carpeta vacía</string>
     <string name="view_headers">Ver encabezados</string>
     <string name="message_headers">Encabezado del mensaje</string>
     <string name="delete_messages">Borrar mensajes</string>
