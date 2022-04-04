@@ -28,5 +28,4 @@ sealed class ManageLabelActionResult {
     ) : ManageLabelActionResult()
     object ErrorUpdatingLabels : ManageLabelActionResult()
     object ErrorMovingToFolder : ManageLabelActionResult()
-    data class ErrorLabelsThresholdReached(val maxAllowedCount: Int) : ManageLabelActionResult()
 }

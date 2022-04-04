@@ -236,7 +236,6 @@
     <string name="days">Days</string>
     <string name="hours">Hours</string>
     <string name="max_labels_exceeded">The message %1$s cannot have more than %2$d labels.</string>
-    <string name="max_labels_selected">%d labels is the maximum allowed</string>
     <string name="max_attachments_reached">Maximum attachments per message has been reached</string>
     <string name="max_attachments_size_reached">Maximum attachments size per message has been reached</string>
     <string name="expiration_days">%dD</string>
@@ -936,6 +935,4 @@
     <string name="could_not_complete_action">Could not complete the action</string>
 
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
-
-    <string name="labels_selected_limit_reached">Limit reached</string>
 </resources>

@@ -60,7 +60,8 @@ import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
-private const val MAX_NUMBER_OF_SELECTED_LABELS = 100
+private const val MAX_NUMBER_OF_SELECTED_LABELS = 50
+private const val MAX_NUMBER_OF_MAILBOX_IDS = 50
 
 @HiltViewModel
 internal class LabelsActionSheetViewModel @Inject constructor(
@@ -184,16 +185,8 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                     }
                 }
 
-            val selectedLabelsCount = updatedLabels.filter { it.isChecked == true }
-            if (selectedLabelsCount.isNotEmpty() &&
-                selectedLabelsCount.size > MAX_NUMBER_OF_SELECTED_LABELS
-            ) {
-                actionsResultMutableFlow.value =
-                    ManageLabelActionResult.ErrorLabelsThresholdReached(MAX_NUMBER_OF_SELECTED_LABELS)
-            } else {
-                labelsMutableFlow.value = updatedLabels
-                actionsResultMutableFlow.value = ManageLabelActionResult.Default
-            }
+            labelsMutableFlow.value = updatedLabels
+            actionsResultMutableFlow.value = ManageLabelActionResult.Default
         }
     }
 
@@ -213,11 +206,18 @@ internal class LabelsActionSheetViewModel @Inject constructor(
                     .map { it.labelId }
                 Timber.v("Selected labels: $selectedLabels messageId: $ids")
                 if (isActionAppliedToConversation(currentMessageFolder)) {
-                    updateConversationsLabels.enqueue(
-                        ids,
-                        userManager.requireCurrentUserId(),
-                        selectedLabels.map { it.id }
-                    )
+                    selectedLabels
+                        .chunked(MAX_NUMBER_OF_SELECTED_LABELS)
+                        .forEach { chunkedSelectedLabels ->
+                            ids.chunked(MAX_NUMBER_OF_MAILBOX_IDS)
+                                .forEach { chunkedIds ->
+                                    updateConversationsLabels.enqueue(
+                                        chunkedIds,
+                                        userManager.requireCurrentUserId(),
+                                        chunkedSelectedLabels.map { it.id }
+                                    )
+                                }
+                        }
                 } else {
                     ids.forEach { id ->
                         updateMessageLabels(

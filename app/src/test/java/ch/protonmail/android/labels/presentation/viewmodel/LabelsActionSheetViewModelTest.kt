@@ -277,29 +277,6 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyThatWhenOnLabelClickedIsCalledForLabelTypeAndNumberOfSelectedLabelsIsGreaterThanThresholdErrorLabelsThresholdReachedIsEmitted() {
-        runBlockingTest {
-            // given
-            val maximumLabelsSelectedThreshold = 100
-            val testMessage = mockk<Message> {
-                every { messageId } returns messageId1
-                every { labelIDsNotIncludingLocations } returns (0..maximumLabelsSelectedThreshold).map { "$it" }
-            }
-            coEvery { messageRepository.findMessageById(any()) } returns testMessage
-            val expectedResult = ManageLabelActionResult.ErrorLabelsThresholdReached(maximumLabelsSelectedThreshold)
-            coEvery { observeLabelsOrFoldersWithChildrenByType(any(), any()) } returns
-                flowOf(buildAListOfMoreThanOneHundredSelectedLabels())
-            val labelsActionSheetViewModel = buildViewModel()
-
-            // when
-            labelsActionSheetViewModel.onLabelClicked(model1UiLabel)
-
-            // then
-            assertEquals(expectedResult, labelsActionSheetViewModel.actionsResult.value)
-        }
-    }
-
-    @Test
     fun verifyThatAfterOnLabelIsClickedForFolderTypeMessagesAreMoved() = runBlockingTest {
 
         // given
