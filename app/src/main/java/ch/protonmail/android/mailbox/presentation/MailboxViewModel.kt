@@ -459,7 +459,7 @@ internal class MailboxViewModel @Inject constructor(
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { idsChunk -> labelRepository.findLabels(idsChunk) }
 
-        return mailboxItemUiModelMapper.toUiModels(userId, messages, currentLabelId, allLabels)
+        return mailboxItemUiModelMapper.toUiModels(messages, currentLabelId, allLabels)
     }
 
     fun deleteAction(
