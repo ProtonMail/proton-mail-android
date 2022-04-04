@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d imagens incorporadas</string>
     <string name="warning">Aviso</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Data de validade %s</string>
-    <string name="no_payment_methods">Não tem métodos de pagamento gravados.</string>
-    <string name="edit_payment_methods">Por favor, inicie sessão em protonmail.com para editar a informação de facturação.</string>
     <string name="available_addresses">Endereços disponíveis</string>
     <string name="inactive_addresses">Endereços inactivos</string>
     <string name="not_set">Não definido</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Definições de conta</string>
     <!-- region Acc Settings -->
     <string name="account">Conta</string>
-    <string name="subscription">Subscrição</string>
-    <string name="plan_and_user">Plano</string>
-    <string name="payment_method">Método de pagamento</string>
+    <string name="drawer_subscription">Subscrição</string>
     <string name="password_manager">Gestão de senhas</string>
     <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Email de recuperação</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Impossível obter as mensagens</string>
     <string name="inbox_pull_down_to_retry">Por favor, puxe para tentar novamente</string>
     <string name="edit_draft">Editar rascunho</string>
-    <string name="primary_user_error">Impossível actualizar, algo correu mal.</string>
     <string name="details_show_history">Mostrar histórico</string>
     <string name="could_not_complete_action">Could not complete the action</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>

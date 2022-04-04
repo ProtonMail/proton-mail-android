@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d ívafnar myndir</string>
     <string name="warning">Aðvörun</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Rennur út %s</string>
-    <string name="no_payment_methods">Þú ert ekki með neina vistaða greiðslumáta.</string>
-    <string name="edit_payment_methods">Skráðu þig inn í gegnum protonmail.com til að breyta greiðsluupplýsingum.</string>
     <string name="available_addresses">Tiltæk tölvupóstföng</string>
     <string name="inactive_addresses">Óvirk tölvupóstföng</string>
     <string name="not_set">Ekki skilgreint</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Stillingar notandaaðgangs</string>
     <!-- region Acc Settings -->
     <string name="account">Notandaaðgangur</string>
-    <string name="subscription">Áskrift</string>
-    <string name="plan_and_user">Áskriftarleið</string>
-    <string name="payment_method">Greiðslumáti</string>
+    <string name="drawer_subscription">Áskrift</string>
     <string name="password_manager">Sýsl með lykilorð</string>
     <string name="password_changed">Lykilorði breytt.</string>
     <string name="recovery_email">Endurheimtupóstur</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Tókst ekki að sækja skilaboðin þín</string>
     <string name="inbox_pull_down_to_retry">Dragðu niður til að reyna aftur</string>
     <string name="edit_draft">Breyta drögum</string>
-    <string name="primary_user_error">Tókst ekki að uppfæra, eitthvað fór úrskeiðis.</string>
     <string name="details_show_history">Birta feril</string>
     <string name="could_not_complete_action">Gat ekki lokið aðgerðinni</string>
     <string name="decryption_of_message_failed">Afkóðunarvilla: afkóðun dulritaðs efnis þessara skilaboða mistókst.</string>

@@ -350,10 +350,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d eingebettete Grafiken</string>
     <string name="warning">Warnhinweis</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Gültig bis %s</string>
-    <string name="no_payment_methods">Sie haben keine Zahlungsmethoden gespeichert.</string>
-    <string name="edit_payment_methods">Bitte melden Sie sich bei protonmail.com an, um Rechnungsinformationen zu bearbeiten.</string>
     <string name="available_addresses">Verfügbare E-Mail-Adressen</string>
     <string name="inactive_addresses">Deaktivierte E-Mail-Adressen</string>
     <string name="not_set">Nicht festgelegt</string>
@@ -630,9 +626,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="account_settings">Konten-Einstellungen</string>
     <!-- region Acc Settings -->
     <string name="account">Konto</string>
-    <string name="subscription">Abonnement</string>
-    <string name="plan_and_user">Tarif</string>
-    <string name="payment_method">Zahlungsmethode</string>
+    <string name="drawer_subscription">Abonnement</string>
     <string name="password_manager">Passwörter verwalten</string>
     <string name="password_changed">Passwort wurde geändert.</string>
     <string name="recovery_email">Wiederherstellungs-E-Mail-Adresse</string>
@@ -826,7 +820,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="inbox_could_not_retrieve_messages">Ihre Nachrichten konnten nicht abgerufen werden</string>
     <string name="inbox_pull_down_to_retry">Bitte nach unten ziehen, um es erneut zu versuchen</string>
     <string name="edit_draft">Entwurf bearbeiten</string>
-    <string name="primary_user_error">Ein Problem ist aufgetreten - Umstieg konnte nicht ausgeführt werden.</string>
     <string name="details_show_history">Verlauf anzeigen</string>
     <string name="could_not_complete_action">Die Aktion konnte nicht abgeschlossen werden</string>
     <string name="decryption_of_message_failed">Entschlüsselungsfehler: Das Entschlüsseln des verschlüsselten Inhalts dieser Nachricht ist fehlgeschlagen.</string>

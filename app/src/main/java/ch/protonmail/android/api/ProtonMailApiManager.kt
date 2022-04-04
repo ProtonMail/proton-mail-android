@@ -20,9 +20,6 @@ package ch.protonmail.android.api
 
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.AttachmentUploadResponse
-import ch.protonmail.android.api.models.AvailablePlansResponse
-import ch.protonmail.android.api.models.CheckSubscriptionBody
-import ch.protonmail.android.api.models.CheckSubscriptionResponse
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.ContactsDataResponse
@@ -30,14 +27,11 @@ import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
 import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DraftBody
-import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.OrganizationKeysResponse
 import ch.protonmail.android.api.models.OrganizationResponse
-import ch.protonmail.android.api.models.PaymentMethodsResponse
-import ch.protonmail.android.api.models.PaymentsStatusResponse
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
@@ -57,7 +51,6 @@ import ch.protonmail.android.api.segments.device.DeviceApiSpec
 import ch.protonmail.android.api.segments.key.KeyApiSpec
 import ch.protonmail.android.api.segments.message.MessageApiSpec
 import ch.protonmail.android.api.segments.organization.OrganizationApiSpec
-import ch.protonmail.android.api.segments.payment.PaymentApiSpec
 import ch.protonmail.android.api.segments.report.ReportApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.data.local.model.Attachment
@@ -101,7 +94,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     MessageApiSpec,
     ConversationApiSpec,
     OrganizationApiSpec,
-    PaymentApiSpec,
     ReportApiSpec,
     MailSettingsApiSpec {
 
@@ -291,21 +283,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchOrganizationKeys(userId: UserId): ApiResult<OrganizationKeysResponse> =
         api.fetchOrganizationKeys(userId)
-
-    override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
-
-    override suspend fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
-
-    override suspend fun fetchPaymentsStatus(): PaymentsStatusResponse = api.fetchPaymentsStatus()
-
-    override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
-        api.checkSubscription(body)
-
-    override fun fetchAvailablePlans(
-        currency: String,
-        cycle: Int
-    ): AvailablePlansResponse =
-        api.fetchAvailablePlans(currency, cycle)
 
     override suspend fun postPhishingReport(
         messageId: String,

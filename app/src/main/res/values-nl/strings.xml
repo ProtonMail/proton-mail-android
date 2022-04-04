@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d ingesloten afbeeldingen</string>
     <string name="warning">Waarschuwing</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Vervaldatum %s</string>
-    <string name="no_payment_methods">U heeft geen opgeslagen betalingsmethoden.</string>
-    <string name="edit_payment_methods">Log in via protonmail.com om uw betalingsgegevens bij te werken.</string>
     <string name="available_addresses">Beschikbare adressen</string>
     <string name="inactive_addresses">Inactieve adressen</string>
     <string name="not_set">Niet ingesteld</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Accountinstellingen</string>
     <!-- region Acc Settings -->
     <string name="account">Account</string>
-    <string name="subscription">Abonnement</string>
-    <string name="plan_and_user">Abonnement</string>
-    <string name="payment_method">Betaalmethode</string>
+    <string name="drawer_subscription">Abonnement</string>
     <string name="password_manager">Wachtwoordbeheer</string>
     <string name="password_changed">Wachtwoord veranderd.</string>
     <string name="recovery_email">Herstel e-mailadres</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Kon uw berichten niet ophalen</string>
     <string name="inbox_pull_down_to_retry">Trek omlaag om opnieuw te proberen</string>
     <string name="edit_draft">Concept bewerken</string>
-    <string name="primary_user_error">Kon niet upgraden, er ging iets mis.</string>
     <string name="details_show_history">Toon geschiedenis</string>
     <string name="could_not_complete_action">Kon de actie niet voltooien</string>
     <string name="decryption_of_message_failed">Ontsleutelingsfout: decodering van de gecodeerde inhoud van dit bericht is mislukt.</string>

@@ -70,6 +70,7 @@ import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
 import me.proton.core.domain.entity.UserId
+import me.proton.core.plan.presentation.PlansOrchestrator
 import me.proton.core.presentation.utils.setDarkStatusBar
 import me.proton.core.presentation.utils.setLightStatusBar
 import me.proton.core.presentation.utils.showToast
@@ -121,6 +122,9 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     @Inject
     lateinit var pinLockManager: PinLockManager
+
+    @Inject
+    lateinit var plansOrchestrator: PlansOrchestrator
 
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
     private val navigationViewModel by viewModels<NavigationViewModel>()
@@ -283,6 +287,7 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         setUpDrawer()
         setUpBugReporting()
+        setUpSubscriptions()
         observeViewState()
     }
 
@@ -321,6 +326,7 @@ internal abstract class NavigationActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         reportOrchestrator.unregister()
+        plansOrchestrator.unregister()
     }
 
     private fun checkUserId() {
@@ -407,6 +413,7 @@ internal abstract class NavigationActivity : BaseActivity() {
             R.string.x_more,
             listOfNotNull(
                 Primary.Static(Type.SETTINGS, R.string.drawer_settings, R.drawable.ic_sliders_two),
+                Primary.Static(Type.SUBSCRIPTION, R.string.drawer_subscription, R.drawable.ic_pencil),
                 Primary.Static(Type.CONTACTS, R.string.drawer_contacts, R.drawable.ic_book_contacts),
                 Primary.Static(Type.REPORT_BUGS, R.string.drawer_report_bug, R.drawable.ic_bug),
                 if (hasPin) Primary.Static(Type.LOCK, R.string.drawer_lock_the_app, R.drawable.ic_lock)
@@ -462,6 +469,7 @@ internal abstract class NavigationActivity : BaseActivity() {
             Type.SETTINGS -> startSettingsLauncher.launch(
                 StartSettings.Input(currentMailboxLocation, currentLabelId)
             )
+            Type.SUBSCRIPTION -> plansOrchestrator.showCurrentPlanWorkflow(userManager.requireCurrentUserId())
             Type.INBOX -> onInbox(type.drawerOptionType)
             Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
                 onOtherMailBox(type.drawerOptionType)
@@ -483,6 +491,10 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     private fun setUpBugReporting() {
         reportOrchestrator.register(this, navigationViewModel::onBugReportSent)
+    }
+
+    private fun setUpSubscriptions() {
+        plansOrchestrator.register(this)
     }
 
     private fun observeViewState() {

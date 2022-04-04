@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d immagini allegate</string>
     <string name="warning">Attenzione</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Scade il %s</string>
-    <string name="no_payment_methods">Non hai salvato alcun metodo di pagamento.</string>
-    <string name="edit_payment_methods">Per favore, effettui il login su protonmail.com per modificare le informazioni di fatturazione.</string>
     <string name="available_addresses">Indirizzi disponibili</string>
     <string name="inactive_addresses">Indirizzi inattivi</string>
     <string name="not_set">Non impostato</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Impostazioni account</string>
     <!-- region Acc Settings -->
     <string name="account">Account</string>
-    <string name="subscription">Abbonamento</string>
-    <string name="plan_and_user">Piano</string>
-    <string name="payment_method">Metodo di pagamento</string>
+    <string name="drawer_subscription">Abbonamento</string>
     <string name="password_manager">Gestione password</string>
     <string name="password_changed">Password cambiata.</string>
     <string name="recovery_email">Email di recupero</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Impossibile recuperare i tuoi messaggi</string>
     <string name="inbox_pull_down_to_retry">Sei pregato di tirare in giù e riprovare</string>
     <string name="edit_draft">Modifica la bozza</string>
-    <string name="primary_user_error">Impossibile aggiornare, qualcosa è andato storto.</string>
     <string name="details_show_history">Mostra cronologia</string>
     <string name="could_not_complete_action">Impossibile completare l\'azione</string>
     <string name="decryption_of_message_failed">Errore di decriptazione: decriptazione del contenuto crittografato di questo messaggio fallita.</string>

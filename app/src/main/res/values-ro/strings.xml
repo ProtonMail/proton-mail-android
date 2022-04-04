@@ -354,10 +354,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d imagini incluse</string>
     <string name="warning">Avertizare</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Expirare %s</string>
-    <string name="no_payment_methods">Nu aveți modalități de plată salvate.</string>
-    <string name="edit_payment_methods">Autentificați-vă pe protonmail.com pentru a edita informațiile de facturare.</string>
     <string name="available_addresses">Adrese disponibile</string>
     <string name="inactive_addresses">Adrese inactive</string>
     <string name="not_set">Nesetat</string>
@@ -647,9 +643,7 @@
     <string name="account_settings">Setări cont</string>
     <!-- region Acc Settings -->
     <string name="account">Cont</string>
-    <string name="subscription">Abonament</string>
-    <string name="plan_and_user">Plan</string>
-    <string name="payment_method">Metodă de plată</string>
+    <string name="drawer_subscription">Abonament</string>
     <string name="password_manager">Gestionare parole</string>
     <string name="password_changed">Parolă a fost schimbată.</string>
     <string name="recovery_email">E-mail de recuperare</string>
@@ -848,7 +842,6 @@
     <string name="inbox_could_not_retrieve_messages">Nu s-a putut prelua mesajul</string>
     <string name="inbox_pull_down_to_retry">Trageți în jos pentru reîncercare</string>
     <string name="edit_draft">Editare schiță</string>
-    <string name="primary_user_error">Nu s-a putut trece la alt plan, ceva nu a mers bine.</string>
     <string name="details_show_history">Afişare istoric</string>
     <string name="could_not_complete_action">Nu s-a putut finaliza acțiunea</string>
     <string name="decryption_of_message_failed">Eroare decriptare: decriptarea conținutului criptat al acestui mesaj a eșuat.</string>

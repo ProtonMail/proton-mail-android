@@ -44,14 +44,6 @@ class AccountSettingsTests : BaseTest() {
             .openUserAccountSettings(onePassUser)
     }
 
-    @TestId("30811")
-    @Test
-    fun navigateToSubscription() {
-        accountSettingsRobot
-            .subscription()
-            .verify { subscriptionViewShown() }
-    }
-
     @TestId("1657")
     @Test
     fun changeRecoveryEmail() {

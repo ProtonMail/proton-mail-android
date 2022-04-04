@@ -4,13 +4,6 @@
     "is_section": true
   },
   {
-    "setting_id": "subscription",
-    "is_section": false,
-    "setting_value": "",
-    "setting_hasValue": true,
-    "setting_type": "drill"
-  },
-  {
     "setting_id": "password_management",
     "is_section": false,
     "setting_value": "",

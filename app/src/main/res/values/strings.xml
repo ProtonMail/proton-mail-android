@@ -386,11 +386,6 @@
     <string name="inline_header">%d Embedded Images</string>
     <string name="warning">Warning</string>
 
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Expiration %s</string>
-    <string name="no_payment_methods">You have no saved payment methods.</string>
-    <string name="edit_payment_methods">Please log in through protonmail.com to edit billing information.</string>
-
     <string name="available_addresses">Available Addresses</string>
     <string name="inactive_addresses">Inactive Addresses</string>
     <string name="not_set">Not Set</string>
@@ -710,9 +705,7 @@
     <!-- region Acc Settings -->
     <string name="account">Account</string>
 
-    <string name="subscription">Subscription</string>
-    <string name="plan_and_user">Plan</string>
-    <string name="payment_method">Payment Method</string>
+    <string name="drawer_subscription">Subscription</string>
 
     <string name="password_manager">Password management</string>
     <string name="password_changed">Password changed.</string>
@@ -937,7 +930,6 @@
     <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
     <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
     <string name="edit_draft">Edit draft</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
 
     <string name="details_show_history">Show history</string>
 

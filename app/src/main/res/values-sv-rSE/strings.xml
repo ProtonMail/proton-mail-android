@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d inbäddade bilder</string>
     <string name="warning">Varning</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Löper ut %s</string>
-    <string name="no_payment_methods">Du har inga sparade betalningsmetoder.</string>
-    <string name="edit_payment_methods">Logga in via protonmail.com för att redigera faktureringsinformation.</string>
     <string name="available_addresses">Tillgängliga adresser</string>
     <string name="inactive_addresses">Inaktiva adresser</string>
     <string name="not_set">Inte inställt</string>
@@ -634,9 +630,7 @@
     <string name="account_settings">Kontoinställningar</string>
     <!-- region Acc Settings -->
     <string name="account">Konto</string>
-    <string name="subscription">Prenumeration</string>
-    <string name="plan_and_user">Plan</string>
-    <string name="payment_method">Betalningsmetod</string>
+    <string name="drawer_subscription">Prenumeration</string>
     <string name="password_manager">Lösenordshantering</string>
     <string name="password_changed">Lösenord ändrades.</string>
     <string name="recovery_email">E-postadress för återställning</string>
@@ -831,7 +825,6 @@
     <string name="inbox_could_not_retrieve_messages">Kunde inte hämta dina meddelanden</string>
     <string name="inbox_pull_down_to_retry">Dra ner för att försöka igen</string>
     <string name="edit_draft">Redigera utkast</string>
-    <string name="primary_user_error">Kunde inte uppgradera, något gick fel.</string>
     <string name="details_show_history">Visa historik</string>
     <string name="could_not_complete_action">Det gick inte att slutföra åtgärden</string>
     <string name="decryption_of_message_failed">Dekrypteringsfel: dekrypteringen av det här meddelandets krypterade innehåll misslyckades.</string>

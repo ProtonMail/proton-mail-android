@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Ενσωματωμένες Εικόνες</string>
     <string name="warning">Προειδοποίηση</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Λήξη %s</string>
-    <string name="no_payment_methods">Δεν έχετε αποθηκευμένους τρόπους πληρωμής.</string>
-    <string name="edit_payment_methods">Παρακαλώ συνδεθείτε μέσω του protonmail.com για να επεξεργαστείτε τα στοιχεία χρέωσης.</string>
     <string name="available_addresses">Διαθέσιμες διευθύνσεις</string>
     <string name="inactive_addresses">Ανενεργές διευθύνσεις</string>
     <string name="not_set">Δεν έχει οριστεί</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Ρυθμίσεις λογαριασμού</string>
     <!-- region Acc Settings -->
     <string name="account">Λογαριασμός</string>
-    <string name="subscription">Συνδρομή</string>
-    <string name="plan_and_user">Πλάνο</string>
-    <string name="payment_method">Τρόπος Πληρωμής</string>
+    <string name="drawer_subscription">Συνδρομή</string>
     <string name="password_manager">Διαχειριστής κωδικών πρόσβασης</string>
     <string name="password_changed">Ο κωδικός πρόσβασης άλλαξε.</string>
     <string name="recovery_email">Email ανάκτησης</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Αδυναμία ανάκτησης των μηνυμάτων σας</string>
     <string name="inbox_pull_down_to_retry">Παρακαλώ τραβήξτε προς τα κάτω για να ξαναδοκιμάσετε</string>
     <string name="edit_draft">Τροποποίηση πρόχειρου</string>
-    <string name="primary_user_error">Αδυναμία αναβάθμισης, κάτι πήγε στραβά.</string>
     <string name="details_show_history">Εμφάνιση ιστορικού</string>
     <string name="could_not_complete_action">Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας</string>
     <string name="decryption_of_message_failed">Σφάλμα αποκρυπτογράφησης: η αποκρυπτογράφηση του κρυπτογραφημένου περιεχομένου αυτού του μηνύματος απέτυχε.</string>

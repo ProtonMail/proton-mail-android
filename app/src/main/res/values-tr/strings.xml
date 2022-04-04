@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d gömülü görsel</string>
     <string name="warning">Uyarı</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Son geçerlilik tarihi %s</string>
-    <string name="no_payment_methods">Kaydedilmiş bir ödeme yönteminiz yok.</string>
-    <string name="edit_payment_methods">Lütfen fatura bilgilerini düzenlemek için protonmail.com adresinden oturum açın.</string>
     <string name="available_addresses">Kullanılabilecek adresler</string>
     <string name="inactive_addresses">Etkin olmayan adresler</string>
     <string name="not_set">Ayarlanmamış</string>
@@ -636,9 +632,7 @@
     <string name="account_settings">Hesap ayarları</string>
     <!-- region Acc Settings -->
     <string name="account">Hesap</string>
-    <string name="subscription">Abonelik</string>
-    <string name="plan_and_user">Tarife</string>
-    <string name="payment_method">Ödeme yöntemi</string>
+    <string name="drawer_subscription">Abonelik</string>
     <string name="password_manager">Parola yönetimi</string>
     <string name="password_changed">Parola değiştirildi.</string>
     <string name="recovery_email">Kurtarma e-posta adresi</string>
@@ -833,7 +827,6 @@
     <string name="inbox_could_not_retrieve_messages">İletileriniz alınamadı</string>
     <string name="inbox_pull_down_to_retry">Lütfen yeniden denemek için aşağıya çekin</string>
     <string name="edit_draft">Taslağı düzenle</string>
-    <string name="primary_user_error">Yükseltilemedi. Bir şeyler ters gitti.</string>
     <string name="details_show_history">Geçmişi göster</string>
     <string name="could_not_complete_action">İşlem tamamlanamadı</string>
     <string name="decryption_of_message_failed">Şifre çözme hatası: Bu iletinin şifrelenmiş içeriğinin şifresi çözülemedi.</string>

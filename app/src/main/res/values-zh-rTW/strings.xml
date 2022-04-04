@@ -344,10 +344,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d 嵌入圖片</string>
     <string name="warning">警告</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">有效期 %s</string>
-    <string name="no_payment_methods">沒有已儲存的付款方式。</string>
-    <string name="edit_payment_methods">請透過登入 protonmail.com 來編輯付費資訊。</string>
     <string name="available_addresses">可用地址</string>
     <string name="inactive_addresses">未啟用的地址</string>
     <string name="not_set">未設定</string>
@@ -627,9 +623,7 @@
     <string name="account_settings">帳號設定</string>
     <!-- region Acc Settings -->
     <string name="account">帳號</string>
-    <string name="subscription">訂閲</string>
-    <string name="plan_and_user">方案</string>
-    <string name="payment_method">付款方式</string>
+    <string name="drawer_subscription">訂閲</string>
     <string name="password_manager">密碼管理</string>
     <string name="password_changed">密碼已變更。</string>
     <string name="recovery_email">備援電子郵件</string>
@@ -820,7 +814,6 @@
     <string name="inbox_could_not_retrieve_messages">無法擷取您的郵件</string>
     <string name="inbox_pull_down_to_retry">請往下拉來重試</string>
     <string name="edit_draft">編輯草稿</string>
-    <string name="primary_user_error">無法升級，出了點問題。</string>
     <string name="details_show_history">顯示紀錄</string>
     <string name="could_not_complete_action">無法完成此動作</string>
     <string name="decryption_of_message_failed">解密錯誤：此郵件的加密內容解密失敗。</string>

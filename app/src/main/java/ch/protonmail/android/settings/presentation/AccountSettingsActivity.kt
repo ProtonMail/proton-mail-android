@@ -29,13 +29,11 @@ import ch.protonmail.android.core.Constants.UNLIMITED_ATTACHMENT_STORAGE
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.extensions.app
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -87,17 +85,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
                 settingsUiList.filterNot { it.settingId equalsNoCase SettingsEnum.CONVERSATION_MODE.name }
             }
         )
-
-        val plan = app.organization?.planName
-        val planType = Constants.PlanType.fromString(plan ?: "")
-        val planName = when {
-            plan.isNullOrEmpty() -> resources.getStringArray(R.array.account_type_names)[0]
-            planType == Constants.PlanType.PLUS -> resources.getStringArray(R.array.account_type_names)[1]
-            planType == Constants.PlanType.VISIONARY -> resources.getStringArray(R.array.account_type_names)[2]
-            planType == Constants.PlanType.PROFESSIONAL -> resources.getStringArray(R.array.account_type_names)[3]
-            else -> ""
-        }
-        setValue(SettingsEnum.SUBSCRIPTION, getString(R.string.protonmail) + " " + planName)
 
         val (used, total) = with(user.dedicatedSpace) { used.l to total.l }
         val usedSpace = UiUtil.readableFileSize(used.toLong())

@@ -349,10 +349,6 @@
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d beágyazott kép</string>
     <string name="warning">Figyelem</string>
-    <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Lejárat %s</string>
-    <string name="no_payment_methods">Nincs elmentve fizetési mód.</string>
-    <string name="edit_payment_methods">Kérjük, a számlázási adatok szerkesztéséhez, lépjen be a protonmail.com weblapon.</string>
     <string name="available_addresses">Elérhető címek</string>
     <string name="inactive_addresses">Kikapcsolt címek</string>
     <string name="not_set">Nincs megadva</string>
@@ -638,9 +634,7 @@
     <string name="account_settings">Fiók beállítások</string>
     <!-- region Acc Settings -->
     <string name="account">Fiók</string>
-    <string name="subscription">Előfizetés</string>
-    <string name="plan_and_user">Csomag</string>
-    <string name="payment_method">Fizetési mód</string>
+    <string name="drawer_subscription">Előfizetés</string>
     <string name="password_manager">Jelszókezelő</string>
     <string name="password_changed">Password changed.</string>
     <string name="recovery_email">Helyreállítási e-mail</string>
@@ -835,7 +829,6 @@
     <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
     <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
     <string name="edit_draft">Edit draft</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
     <string name="details_show_history">Show history</string>
     <string name="could_not_complete_action">Could not complete the action</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>

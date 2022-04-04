@@ -222,6 +222,7 @@ object Constants {
         REPORT_BUGS(101),
         SIGN_OUT(111),
         LOCK(112),
+        SUBSCRIPTION(113),
     }
 
     enum class MessageActionType(val messageActionTypeValue: Int) {

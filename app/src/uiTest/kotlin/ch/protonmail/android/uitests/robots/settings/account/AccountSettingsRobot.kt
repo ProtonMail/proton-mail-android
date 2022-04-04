@@ -38,11 +38,6 @@ import me.proton.core.test.android.instrumented.Robot
  */
 class AccountSettingsRobot {
 
-    fun subscription(): SubscriptionRobot {
-        clickOnSettingsItemWithHeader(R.string.subscription)
-        return SubscriptionRobot()
-    }
-
     fun privacy(): PrivacySettingsRobot {
         clickOnSettingsItemWithHeader(R.string.privacy)
         return PrivacySettingsRobot()
