@@ -121,13 +121,13 @@
     <string name="parent_picker_header">Αν δεν επιλέξετε γονικό φάκελο, αυτός ο καινούριος φάκελος θα δημιουργηθεί ως ανώτατου επιπέδου.</string>
     <!-- endregion -->
     <!-- region Notifications -->
-    <string name="notification_summary_text_new_messages">New messages</string>
+    <string name="notification_summary_text_new_messages">Νέα μηνύματα</string>
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
-    <string name="contact_details_remote_content_dialog_title">Remote content</string>
-    <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
-    <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <string name="contact_details_remote_content_dialog_title">Απομακρυσμένο περιεχόμενο</string>
+    <string name="contact_details_remote_content_dialog_message">Αυτή η επαφή περιέχει απομακρυσμένο περιεχόμενο.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Φόρτωση περιεχομένου</string>
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="onboarding_privacy_for_all_headline">Ιδιωτικότητα για όλους</string>

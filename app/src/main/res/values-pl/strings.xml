@@ -124,10 +124,10 @@
     <string name="notification_summary_text_new_messages">Nowe wiadomości</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
-    <string name="contact_details_remote_content_dialog_title">Remote content</string>
-    <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
-    <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Grupy kontaktów nie zostaną zaimportowane. Ulepsz do płatnego planu, aby cieszyć się funkcjami premium.</string>
+    <string name="contact_details_remote_content_dialog_title">Zawartość zdalna</string>
+    <string name="contact_details_remote_content_dialog_message">Ten kontakt zawiera zawartość zdalną.</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Załaduj zawartość</string>
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="onboarding_privacy_for_all_headline">Prywatność dla wszystkich</string>
