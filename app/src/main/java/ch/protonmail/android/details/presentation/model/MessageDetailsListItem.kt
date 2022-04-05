@@ -24,34 +24,56 @@ import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER
 import ch.protonmail.android.utils.ui.TYPE_ITEM
 
-class MessageDetailsListItem : ExpandableRecyclerAdapter.ListItem {
+open class MessageDetailsListItem(
+    val type: Int,
+    var message: Message,
+    val showOpenInProtonCalendar: Boolean = false
+) : ExpandableRecyclerAdapter.ListItem(type) {
 
-    var message: Message
     var messageFormattedHtmlWithQuotedHistory: String? = null
     var messageFormattedHtml: String? = null
     var showLoadEmbeddedImagesButton: Boolean = false
-    val showOpenInProtonCalendar: Boolean
     var showDecryptionError: Boolean = false
     var embeddedImageIds: List<String> = emptyList()
 
-    constructor(message: Message) : super(TYPE_HEADER) {
-        this.message = message
-        this.showOpenInProtonCalendar = false
-    }
+    @Deprecated("Use Header subclass", ReplaceWith("MessageDetailsListItem.Header(message)"))
+    constructor(message: Message) : this(TYPE_HEADER, message)
 
-    /**
-     * @param messageContent the content of this message, in formatted HTML and without the "QUOTED" message
-     * @param originalMessageContent the original full content of this message (with QUOTE), formatted in HTML
-     */
+    @Deprecated(
+        "Use Body subclass",
+        ReplaceWith(
+            """MessageDetailsListItem.Body(
+                |   message = message, 
+                |   messageFormattedHtml = messageContent, 
+                |   messageFormattedHtmlWithQuotedHistory = originalMessageContent, 
+                |   showOpenInProtonCalendar = showOpenInProtonCalendar
+                |)"""
+        )
+    )
     constructor(
         message: Message,
         messageContent: String?,
         originalMessageContent: String?,
         showOpenInProtonCalendar: Boolean
-    ) : super(TYPE_ITEM) {
-        this.message = message
+    ) : this(TYPE_ITEM, message, showOpenInProtonCalendar) {
         this.messageFormattedHtml = messageContent
         this.messageFormattedHtmlWithQuotedHistory = originalMessageContent
-        this.showOpenInProtonCalendar = showOpenInProtonCalendar
+    }
+
+    class Header(
+        message: Message
+    ) : MessageDetailsListItem(TYPE_HEADER, message)
+
+    class Body(
+        message: Message,
+        messageFormattedHtml: String?,
+        messageFormattedHtmlWithQuotedHistory: String?,
+        showOpenInProtonCalendar: Boolean
+    ) : MessageDetailsListItem(TYPE_ITEM, message, showOpenInProtonCalendar) {
+
+        init {
+            this.messageFormattedHtml = messageFormattedHtml
+            this.messageFormattedHtmlWithQuotedHistory = messageFormattedHtmlWithQuotedHistory
+        }
     }
 }
