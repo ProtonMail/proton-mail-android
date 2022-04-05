@@ -50,9 +50,13 @@ import ch.protonmail.android.core.messageId
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.pendingaction.data.worker.CleanUpPendingSendWorker
+import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
+import ch.protonmail.android.testdata.WorkerTestData
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
+import ch.protonmail.android.worker.repository.WorkerRepository
 import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -111,6 +115,18 @@ class SendMessageWorkerTest : CoroutinesTest {
 
     private val pendingActionDao: PendingActionDao = mockk(relaxed = true)
 
+    private val provideUniqueName: SendMessageWorker.ProvideUniqueName = mockk {
+        every { this@mockk.invoke(any()) } returns WorkerTestData.UNIQUE_WORK_NAME
+    }
+
+    private val workerRepository: WorkerRepository = mockk {
+        every { cancelUniqueWork(any()) } returns mockk()
+    }
+
+    private val provideUniqueCleanUpName: CleanUpPendingSendWorker.ProvideUniqueName = mockk {
+        every { this@mockk.invoke(any()) } returns WorkerTestData.UNIQUE_WORK_NAME
+    }
+
     private val worker = SendMessageWorker(
         context,
         parameters,
@@ -121,7 +137,9 @@ class SendMessageWorkerTest : CoroutinesTest {
         packageFactory,
         userManager,
         userNotifier,
-        pendingActionDao
+        pendingActionDao,
+        workerRepository,
+        provideUniqueCleanUpName
     )
 
     @Test
@@ -143,7 +161,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             every { userManager.requireCurrentUserId() } returns testUserId
 
             // When
-            SendMessageWorker.Enqueuer(workManager, userManager).enqueue(
+            SendMessageWorker.Enqueuer(workManager, userManager, provideUniqueName).enqueue(
                 message,
                 attachmentIds,
                 messageParentId,
@@ -156,7 +174,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             val requestSlot = slot<OneTimeWorkRequest>()
             verify {
                 workManager.enqueueUniqueWork(
-                    "sendMessageUniqueWorkName-$messageId",
+                    WorkerTestData.UNIQUE_WORK_NAME,
                     ExistingWorkPolicy.REPLACE,
                     capture(requestSlot)
                 )
@@ -179,7 +197,9 @@ class SendMessageWorkerTest : CoroutinesTest {
             assertEquals(testUserId, actualUserId)
             assertEquals(messageActionType.messageActionTypeValue, actualMessageActionType)
             assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
-            assertEquals(securityOptions, actualMessageSecurityOptions?.deserialize(MessageSecurityOptions.serializer()))
+            assertEquals(
+                securityOptions, actualMessageSecurityOptions?.deserialize(MessageSecurityOptions.serializer())
+            )
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
             assertEquals(BackoffPolicy.LINEAR, workSpec.backoffPolicy)
             assertEquals(10_000, workSpec.backoffDelayDuration)
@@ -374,55 +394,57 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerRetriesWhenTheUpdatedMessageThatWasSavedAsDraftIsNotFoundInTheDbAndMaxRetriesWasNotReached() = runBlockingTest {
-        val messageDbId = 38_472L
-        val messageId = "29837462"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
+    fun workerRetriesWhenTheUpdatedMessageThatWasSavedAsDraftIsNotFoundInTheDbAndMaxRetriesWasNotReached() =
+        runBlockingTest {
+            val messageDbId = 38_472L
+            val messageId = "29837462"
+            val message = Message().apply {
+                dbId = messageDbId
+                this.messageId = messageId
+            }
+            val savedDraftId = "2836462"
+            givenFullValidInput(messageDbId, messageId)
+            coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns flowOf(null)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftId)
+            every { parameters.runAttemptCount } returns 1
+
+            val result = worker.doWork()
+
+            assertEquals(ListenableWorker.Result.Retry(), result)
+            verify(exactly = 0) { pendingActionDao.deletePendingSendByMessageId(any()) }
+            verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         }
-        val savedDraftId = "2836462"
-        givenFullValidInput(messageDbId, messageId)
-        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
-        coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns flowOf(null)
-        coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftId)
-        every { parameters.runAttemptCount } returns 1
-
-        val result = worker.doWork()
-
-        assertEquals(ListenableWorker.Result.Retry(), result)
-        verify(exactly = 0) { pendingActionDao.deletePendingSendByMessageId(any()) }
-        verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
-    }
 
     @Test
-    fun workerFailsWhenTheUpdatedMessageThatWasSavedAsDraftIsNotFoundInTheDbAndMaxRetriesWasReached() = runBlockingTest {
-        val messageDbId = 82_384L
-        val messageId = "82384823"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
-            this.subject = "Subject 002"
+    fun workerFailsWhenTheUpdatedMessageThatWasSavedAsDraftIsNotFoundInTheDbAndMaxRetriesWasReached() =
+        runBlockingTest {
+            val messageDbId = 82_384L
+            val messageId = "82384823"
+            val message = Message().apply {
+                dbId = messageDbId
+                this.messageId = messageId
+                this.subject = "Subject 002"
+            }
+            val savedDraftId = "2836463"
+            givenFullValidInput(messageDbId, messageId)
+            coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns flowOf(null)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftId)
+            every { parameters.runAttemptCount } returns 4
+            every { context.getString(R.string.message_drafted) } returns "error message 9213"
+
+            val result = worker.doWork()
+
+            assertEquals(
+                ListenableWorker.Result.failure(
+                    workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "SavedDraftMessageNotFound")
+                ),
+                result
+            )
+            verify { pendingActionDao.deletePendingSendByMessageId("82384823") }
+            verify { userNotifier.showSendMessageError("error message 9213", "Subject 002") }
         }
-        val savedDraftId = "2836463"
-        givenFullValidInput(messageDbId, messageId)
-        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
-        coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns flowOf(null)
-        coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftId)
-        every { parameters.runAttemptCount } returns 4
-        every { context.getString(R.string.message_drafted) } returns "error message 9213"
-
-        val result = worker.doWork()
-
-        assertEquals(
-            ListenableWorker.Result.failure(
-                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "SavedDraftMessageNotFound")
-            ),
-            result
-        )
-        verify { pendingActionDao.deletePendingSendByMessageId("82384823") }
-        verify { userNotifier.showSendMessageError("error message 9213", "Subject 002") }
-    }
 
     @Test
     fun workerFetchesSendPreferencesForEachUniqueRecipientWhenSavingDraftSucceeds() = runBlockingTest {
@@ -767,7 +789,9 @@ class SendMessageWorkerTest : CoroutinesTest {
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
         coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
-        every { packageFactory.generatePackages(any(), any(), any(), any()) } throws Exception("TEST - Failure creating packages")
+        every { packageFactory.generatePackages(any(), any(), any(), any()) } throws Exception(
+            "TEST - Failure creating packages"
+        )
         every { parameters.runAttemptCount } returns 4
         every { context.getString(R.string.message_drafted) } returns "Error sending message"
 
@@ -809,96 +833,101 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerFailsRemovingPendingForSendMessageAndShowingErrorWhenSendMessageRequestFailsAndMaxRetriesWereReached() = runBlockingTest {
-        val messageDbId = 823_742L
-        val messageId = "122349"
-        val subject = "message subject"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
-            this.subject = subject
-        }
-        val savedDraftMessageId = "283472"
-        val savedDraft = mockk<Message>(relaxed = true) {
-            every { this@mockk.dbId } returns messageDbId
-            every { this@mockk.messageId } returns savedDraftMessageId
-            every { this@mockk.subject } returns subject
-        }
-        val errorMessage = "Sending Message Failed. Message is saved to drafts."
-        givenFullValidInput(messageDbId, messageId)
-        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
-        coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
-        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
-        every { parameters.runAttemptCount } returns 4
-        coEvery { apiManager.sendMessage(any(), any(), any()) } throws SocketTimeoutException("test - call timed out")
-        every { context.getString(R.string.message_drafted) } returns errorMessage
-
-        val result = worker.doWork()
-
-        assertEquals(
-            ListenableWorker.Result.failure(
-                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "ErrorPerformingApiRequest")
-            ),
-            result
-        )
-        verify { userNotifier.showSendMessageError(errorMessage, subject) }
-        verify { pendingActionDao.deletePendingSendByMessageId(savedDraftMessageId) }
-    }
-
-    @Test
-    fun workerRemovesPendingForSendAndMovesMessageToSentFolderWhenSendingSucceeds() = runBlockingTest {
-        val messageDbId = 234_827L
-        val messageId = "9282384"
-        val subject = "message subject"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
-            this.subject = subject
-        }
-        val savedDraftMessageId = "283472"
-        val savedDraft = mockk<Message>(relaxed = true) {
-            every { this@mockk.dbId } returns messageDbId
-            every { this@mockk.messageId } returns savedDraftMessageId
-            every { this@mockk.subject } returns subject
-        }
-        givenFullValidInput(messageDbId, messageId)
-        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
-        coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
-        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
-        val apiResponseMessage = mockk<Message> {
-            every { this@mockk.messageBody } returns "this is the body of the message that was sent"
-            every { this@mockk.replyTos } returns listOf(MessageRecipient("recipient", "address@pm.me"))
-            every { this@mockk.numAttachments } returns 3
-            justRun { this@mockk.writeTo(savedDraft) }
-        }
-        coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
-            every { code } returns 1_000
-            every { sent } returns apiResponseMessage
-        }
-
-        val result = worker.doWork()
-
-        assertEquals(ListenableWorker.Result.success(), result)
-        verify { apiResponseMessage.writeTo(savedDraft) }
-        verify { savedDraft.location = Constants.MessageLocationType.SENT.messageLocationTypeValue }
-        verify {
-            savedDraft.setLabelIDs(
-                listOf(
-                    Constants.MessageLocationType.ALL_SENT.messageLocationTypeValue.toString(),
-                    Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(),
-                    Constants.MessageLocationType.SENT.messageLocationTypeValue.toString()
-                )
+    fun workerFailsRemovingPendingForSendMessageAndShowingErrorWhenSendMessageRequestFailsAndMaxRetriesWereReached() =
+        runBlockingTest {
+            val messageDbId = 823_742L
+            val messageId = "122349"
+            val subject = "message subject"
+            val message = Message().apply {
+                dbId = messageDbId
+                this.messageId = messageId
+                this.subject = subject
+            }
+            val savedDraftMessageId = "283472"
+            val savedDraft = mockk<Message>(relaxed = true) {
+                every { this@mockk.dbId } returns messageDbId
+                every { this@mockk.messageId } returns savedDraftMessageId
+                every { this@mockk.subject } returns subject
+            }
+            val errorMessage = "Sending Message Failed. Message is saved to drafts."
+            givenFullValidInput(messageDbId, messageId)
+            coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
+            every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+            every { parameters.runAttemptCount } returns 4
+            coEvery { apiManager.sendMessage(any(), any(), any()) } throws SocketTimeoutException(
+                "test - call timed out"
             )
+            every { context.getString(R.string.message_drafted) } returns errorMessage
+
+            val result = worker.doWork()
+
+            assertEquals(
+                ListenableWorker.Result.failure(
+                    workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "ErrorPerformingApiRequest")
+                ),
+                result
+            )
+            verify { userNotifier.showSendMessageError(errorMessage, subject) }
+            verify { pendingActionDao.deletePendingSendByMessageId(savedDraftMessageId) }
         }
 
-        coVerify { messageDetailsRepository.saveMessage(savedDraft) }
-        verify(exactly = 1) { pendingActionDao.deletePendingSendByMessageId(savedDraftMessageId) }
-    }
+    @Test
+    fun `remove pending send, move message to sent folder, and cancel cleanup worker when sending succeeds`() =
+        runBlockingTest {
+            val messageDbId = 234_827L
+            val messageId = "9282384"
+            val subject = "message subject"
+            val message = Message().apply {
+                dbId = messageDbId
+                this.messageId = messageId
+                this.subject = subject
+            }
+            val savedDraftMessageId = "283472"
+            val savedDraft = mockk<Message>(relaxed = true) {
+                every { this@mockk.dbId } returns messageDbId
+                every { this@mockk.messageId } returns savedDraftMessageId
+                every { this@mockk.subject } returns subject
+            }
+            givenFullValidInput(messageDbId, messageId)
+            coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
+            every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+            val apiResponseMessage = mockk<Message> {
+                every { this@mockk.messageBody } returns "this is the body of the message that was sent"
+                every { this@mockk.replyTos } returns listOf(MessageRecipient("recipient", "address@pm.me"))
+                every { this@mockk.numAttachments } returns 3
+                justRun { this@mockk.writeTo(savedDraft) }
+            }
+            coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
+                every { code } returns 1_000
+                every { sent } returns apiResponseMessage
+            }
+
+            val result = worker.doWork()
+
+            assertEquals(ListenableWorker.Result.success(), result)
+            verify { apiResponseMessage.writeTo(savedDraft) }
+            verify { savedDraft.location = Constants.MessageLocationType.SENT.messageLocationTypeValue }
+            verify {
+                savedDraft.setLabelIDs(
+                    listOf(
+                        Constants.MessageLocationType.ALL_SENT.messageLocationTypeValue.toString(),
+                        Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(),
+                        Constants.MessageLocationType.SENT.messageLocationTypeValue.toString()
+                    )
+                )
+            }
+
+            coVerify { messageDetailsRepository.saveMessage(savedDraft) }
+            verify(exactly = 1) { pendingActionDao.deletePendingSendByMessageId(savedDraftMessageId) }
+            verify { workerRepository.cancelUniqueWork(WorkerTestData.UNIQUE_WORK_NAME) }
+        }
 
     @Test
-    fun workerNotifiesUserWhenSendingSucceeds() = runBlockingTest {
+    fun `notify user and cancel clean up worker when send succeeds`() = runBlockingTest {
         val messageDbId = 9_282_384L
         val messageId = "982349"
         val subject = "message subject"
@@ -927,92 +956,95 @@ class SendMessageWorkerTest : CoroutinesTest {
 
         assertEquals(ListenableWorker.Result.success(), result)
         coVerify { userNotifier.showMessageSent() }
+        verify { workerRepository.cancelUniqueWork(WorkerTestData.UNIQUE_WORK_NAME) }
     }
 
     @Test
-    fun workerNotifiesUserOfTheSendingFailureAndRemovesPendingForSendWhenAPICallsReturnsFailureBodyCode() = runBlockingTest {
-        val messageDbId = 2_132_372L
-        val messageId = "8232832"
-        val subject = "message subject 2"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
-            this.subject = subject
-        }
-        val savedDraftMessageId = "923842"
-        val savedDraft = mockk<Message>(relaxed = true) {
-            every { this@mockk.dbId } returns messageDbId
-            every { this@mockk.messageId } returns savedDraftMessageId
-            every { this@mockk.subject } returns subject
-        }
-        val apiError = "Detailed API error explanation"
-        val userErrorMessage = "Sending Message Failed! Message is saved to drafts."
-        givenFullValidInput(messageDbId, messageId)
-        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
-        coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
-        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
-        coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
-            every { code } returns 8_237
-            every { sent } returns null
-            every { error } returns apiError
-        }
-        every { context.getString(R.string.message_drafted) } returns userErrorMessage
-        mockkStatic(Timber::class)
+    fun workerNotifiesUserOfTheSendingFailureAndRemovesPendingForSendWhenAPICallsReturnsFailureBodyCode() =
+        runBlockingTest {
+            val messageDbId = 2_132_372L
+            val messageId = "8232832"
+            val subject = "message subject 2"
+            val message = Message().apply {
+                dbId = messageDbId
+                this.messageId = messageId
+                this.subject = subject
+            }
+            val savedDraftMessageId = "923842"
+            val savedDraft = mockk<Message>(relaxed = true) {
+                every { this@mockk.dbId } returns messageDbId
+                every { this@mockk.messageId } returns savedDraftMessageId
+                every { this@mockk.subject } returns subject
+            }
+            val apiError = "Detailed API error explanation"
+            val userErrorMessage = "Sending Message Failed! Message is saved to drafts."
+            givenFullValidInput(messageDbId, messageId)
+            coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
+            every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+            coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
+                every { code } returns 8_237
+                every { sent } returns null
+                every { error } returns apiError
+            }
+            every { context.getString(R.string.message_drafted) } returns userErrorMessage
+            mockkStatic(Timber::class)
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        assertEquals(
-            ListenableWorker.Result.failure(
-                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "ApiRequestReturnedBadBodyCode")
-            ),
-            result
-        )
-        verify { userNotifier.showSendMessageError(userErrorMessage, subject) }
-        verify { pendingActionDao.deletePendingSendByMessageId(savedDraftMessageId) }
-        verify {
-            Timber.e(
-                DetailedException()
-                    .apiError(8237, "Detailed API error explanation")
-                    .messageId("923842"),
-                "Send Message API call failed for messageId $savedDraftMessageId with error $apiError"
+            assertEquals(
+                ListenableWorker.Result.failure(
+                    workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "ApiRequestReturnedBadBodyCode")
+                ),
+                result
             )
+            verify { userNotifier.showSendMessageError(userErrorMessage, subject) }
+            verify { pendingActionDao.deletePendingSendByMessageId(savedDraftMessageId) }
+            verify {
+                Timber.e(
+                    DetailedException()
+                        .apiError(8237, "Detailed API error explanation")
+                        .messageId("923842"),
+                    "Send Message API call failed for messageId $savedDraftMessageId with error $apiError"
+                )
+            }
+            unmockkStatic(Timber::class)
         }
-        unmockkStatic(Timber::class)
-    }
 
     @Test(expected = CancellationException::class)
-    fun workerFailsWithoutRetryingShowsErrorAndRethrowsExceptionWhenApiCallFailsWithExceptionDifferentThanIOException() = runBlockingTest {
-        val messageDbId = 82_374L
-        val messageId = "823482"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
-            this.subject = "Subject 008"
-        }
-        val savedDraftMessageId = "82383"
-        val savedDraft = mockk<Message>(relaxed = true) {
-            every { this@mockk.dbId } returns messageDbId
-            every { this@mockk.messageId } returns savedDraftMessageId
-            every { this@mockk.subject } returns "Subject 000"
-        }
-        givenFullValidInput(messageDbId, messageId)
-        coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
-        coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
-        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
-        coEvery { apiManager.sendMessage(any(), any(), any()) } throws CancellationException("test - cancelled")
-        every { context.getString(R.string.message_drafted) } returns "error message 8234"
-        every { parameters.runAttemptCount } returns 1
+    fun workerFailsWithoutRetryingShowsErrorAndRethrowsExceptionWhenApiCallFailsWithExceptionDifferentThanIOException() =
+        runBlockingTest {
+            val messageDbId = 82_374L
+            val messageId = "823482"
+            val message = Message().apply {
+                dbId = messageDbId
+                this.messageId = messageId
+                this.subject = "Subject 008"
+            }
+            val savedDraftMessageId = "82383"
+            val savedDraft = mockk<Message>(relaxed = true) {
+                every { this@mockk.dbId } returns messageDbId
+                every { this@mockk.messageId } returns savedDraftMessageId
+                every { this@mockk.subject } returns "Subject 000"
+            }
+            givenFullValidInput(messageDbId, messageId)
+            coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
+            every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+            coEvery { apiManager.sendMessage(any(), any(), any()) } throws CancellationException("test - cancelled")
+            every { context.getString(R.string.message_drafted) } returns "error message 8234"
+            every { parameters.runAttemptCount } returns 1
 
-        try {
-            worker.doWork()
-        } catch (exception: CancellationException) {
-            verify { pendingActionDao.deletePendingSendByMessageId("82383") }
-            verify { userNotifier.showSendMessageError("error message 8234", "Subject 008") }
-            throw exception
+            try {
+                worker.doWork()
+            } catch (exception: CancellationException) {
+                verify { pendingActionDao.deletePendingSendByMessageId("82383") }
+                verify { userNotifier.showSendMessageError("error message 8234", "Subject 008") }
+                throw exception
+            }
         }
-    }
 
     private fun givenFullValidInput(
         messageDbId: Long,

@@ -27,6 +27,8 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.pendingaction.data.model.PendingSend
+import ch.protonmail.android.pendingaction.domain.repository.PendingSendRepository
+import ch.protonmail.android.testdata.MessageTestData
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.UuidProvider
 import io.mockk.coEvery
@@ -61,11 +63,13 @@ class SendMessageTest : CoroutinesTest {
     private val uuidProvider = mockk<UuidProvider> {
         every { randomUuid() } returns RANDOM_UUID
     }
+    private val pendingSendRepository = mockk<PendingSendRepository>(relaxUnitFun = true)
     private val sendMessage = SendMessage(
         messageDetailsRepository,
         TestDispatcherProvider,
         pendingActionDao,
         sendMessageScheduler,
+        pendingSendRepository,
         addressCryptoFactory,
         testUserId,
         uuidProvider
@@ -142,12 +146,13 @@ class SendMessageTest : CoroutinesTest {
     }
 
     @Test
-    fun sendMessageSchedulesSendMessageWorkerToPerformOperationInBackground() = runBlockingTest {
+    fun `should schedule a send and a pending send cleanup when message sent`() = runBlockingTest {
         // Given
         val decryptedMessageBody = "Message body in plain text"
         val message = Message().apply {
-            dbId = 992_376L
-            this.messageId = "823742"
+            dbId = MessageTestData.MESSAGE_DATABASE_ID
+            messageId = MessageTestData.MESSAGE_ID_RAW
+            subject = MessageTestData.MESSAGE_SUBJECT
             addressID = "addressId"
             decryptedBody = decryptedMessageBody
         }
@@ -174,6 +179,13 @@ class SendMessageTest : CoroutinesTest {
                 NONE,
                 "previousSenderId8372",
                 securityOptions
+            )
+        }
+        verify {
+            pendingSendRepository.schedulePendingSendCleanupByMessageId(
+                MessageTestData.MESSAGE_ID_RAW,
+                MessageTestData.MESSAGE_SUBJECT,
+                MessageTestData.MESSAGE_DATABASE_ID
             )
         }
     }

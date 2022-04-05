@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -19,24 +19,18 @@
 
 package ch.protonmail.android.testdata
 
-import ch.protonmail.android.data.local.model.Message
+import androidx.work.WorkInfo
 import io.mockk.every
-import io.mockk.just
-import io.mockk.runs
-import io.mockk.spyk
+import io.mockk.mockk
 
-object MessageTestData {
-    const val MESSAGE_ID_RAW = "message_id"
-    const val MESSAGE_SUBJECT = "A fancy subject"
-    const val MESSAGE_BODY = "<span>I just call, to say, hello world.</span>"
-    const val MESSAGE_BODY_FORMATTED = "<span>I just call, to say, hello world. But now I am formatted.</span>"
-    const val MESSAGE_DATABASE_ID = 42L
+object WorkerTestData {
 
-    fun messageSpy(messageId: String? = MESSAGE_ID_RAW) = Message(messageId).toSpy()
+    const val UNIQUE_WORK_NAME = "Work U. Name"
 
-    fun Message.toSpy(): Message {
-        return spyk(this).apply {
-            every { decrypt(any(), any(), any()) } just runs
-        }
+    val RUNNING_WORK_INFO = mockk<WorkInfo> {
+        every { state } returns WorkInfo.State.RUNNING
+    }
+    val ENQUEUED_WORK_INFO = mockk<WorkInfo> {
+        every { state } returns WorkInfo.State.ENQUEUED
     }
 }
