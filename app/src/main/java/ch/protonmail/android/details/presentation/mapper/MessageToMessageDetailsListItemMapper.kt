@@ -36,10 +36,10 @@ class MessageToMessageDetailsListItemMapper @Inject constructor(
         messageBody: String,
         shouldShowDecryptionError: Boolean,
         shouldShowLoadEmbeddedImagesButton: Boolean
-    ) = MessageDetailsListItem(
+    ) = MessageDetailsListItem.Body(
         message = message,
-        messageContent = messageBody,
-        originalMessageContent = messageBody,
+        messageFormattedHtml = messageBody,
+        messageFormattedHtmlWithQuotedHistory = messageBody,
         showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message)
     ).apply {
         val messageBodyParts = messageBodyParser.splitBody(messageBody)

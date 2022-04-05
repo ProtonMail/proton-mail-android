@@ -36,30 +36,6 @@ open class MessageDetailsListItem(
     var showDecryptionError: Boolean = false
     var embeddedImageIds: List<String> = emptyList()
 
-    @Deprecated("Use Header subclass", ReplaceWith("MessageDetailsListItem.Header(message)"))
-    constructor(message: Message) : this(TYPE_HEADER, message)
-
-    @Deprecated(
-        "Use Body subclass",
-        ReplaceWith(
-            """MessageDetailsListItem.Body(
-                |   message = message, 
-                |   messageFormattedHtml = messageContent, 
-                |   messageFormattedHtmlWithQuotedHistory = originalMessageContent, 
-                |   showOpenInProtonCalendar = showOpenInProtonCalendar
-                |)"""
-        )
-    )
-    constructor(
-        message: Message,
-        messageContent: String?,
-        originalMessageContent: String?,
-        showOpenInProtonCalendar: Boolean
-    ) : this(TYPE_ITEM, message, showOpenInProtonCalendar) {
-        this.messageFormattedHtml = messageContent
-        this.messageFormattedHtmlWithQuotedHistory = originalMessageContent
-    }
-
     class Header(
         message: Message
     ) : MessageDetailsListItem(TYPE_HEADER, message)

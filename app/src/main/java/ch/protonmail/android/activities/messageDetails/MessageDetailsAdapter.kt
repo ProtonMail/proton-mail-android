@@ -554,11 +554,11 @@ internal class MessageDetailsAdapter(
         nonExclusiveLabelsPerMessage = conversation.nonExclusiveLabels
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
-            val header = MessageDetailsListItem(message)
-            val body = MessageDetailsListItem(
+            val header = MessageDetailsListItem.Header(message)
+            val body = MessageDetailsListItem.Body(
                 message = message,
-                messageContent = message.decryptedHTML,
-                originalMessageContent = message.decryptedHTML,
+                messageFormattedHtml = message.decryptedHTML,
+                messageFormattedHtmlWithQuotedHistory = message.decryptedHTML,
                 showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message)
             )
             items.add(header)
