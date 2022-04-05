@@ -17,16 +17,17 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.onboarding.presentation
+package ch.protonmail.android.onboarding.base.presentation
 
-import androidx.recyclerview.widget.DiffUtil
-import ch.protonmail.android.onboarding.presentation.model.OnboardingItemUiModel
+import androidx.lifecycle.ViewModel
+import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
+import kotlinx.coroutines.flow.Flow
 
-class OnboardingItemUiModelDiffCallback : DiffUtil.ItemCallback<OnboardingItemUiModel>() {
+abstract class OnboardingViewModel : ViewModel() {
 
-    override fun areItemsTheSame(oldItem: OnboardingItemUiModel, newItem: OnboardingItemUiModel): Boolean =
-        oldItem == newItem
+    abstract val onboardingState: Flow<OnboardingState>
 
-    override fun areContentsTheSame(oldItem: OnboardingItemUiModel, newItem: OnboardingItemUiModel): Boolean =
-        oldItem == newItem
+    abstract fun saveOnboardingShown()
+
+    data class OnboardingState(val onboardingItemsList: List<OnboardingItemUiModel>)
 }

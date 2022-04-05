@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Załaduj zawartość</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">Prywatność dla wszystkich</string>
-    <string name="onboarding_privacy_for_all_description">Zaproś kontakty do poczty Proton Mail, aby cieszyć się bezproblemowym szyfrowaniem end-to-end lub dodaj hasło do wysłanych wiadomości.</string>
-    <string name="onboarding_neat_and_tidy_headline">Schludna i uporządkowana</string>
-    <string name="onboarding_neat_and_tidy_description">Utwórz perfekcyjną, niestandardową skrzynkę. Pliki, etykiety i wiadomości są oznaczone kolorami.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Prywatność dla wszystkich</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Zaproś kontakty do poczty Proton Mail, aby cieszyć się bezproblemowym szyfrowaniem end-to-end lub dodaj hasło do wysłanych wiadomości.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Schludna i uporządkowana</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Utwórz perfekcyjną, niestandardową skrzynkę. Pliki, etykiety i wiadomości są oznaczone kolorami.</string>
     <string name="onboarding_next">Dalej</string>
     <string name="onboarding_get_started">Rozpocznij</string>
     <string name="onboarding_image_view_content_description">Ilustracja Proton Mail</string>

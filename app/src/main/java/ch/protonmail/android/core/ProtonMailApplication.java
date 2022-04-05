@@ -20,7 +20,7 @@ package ch.protonmail.android.core;
 
 import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
 import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_ONBOARDING_SHOWN;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
@@ -438,8 +438,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
                         defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
                     }
                 }
-                if (userManager.getCurrentUserId() != null && !defaultSharedPreferences.contains(PREF_ONBOARDING_SHOWN)) {
-                    defaultSharedPreferences.edit().putBoolean(PREF_ONBOARDING_SHOWN, true).apply();
+                if (userManager.getCurrentUserId() != null && !defaultSharedPreferences.contains(PREF_NEW_USER_ONBOARDING_SHOWN)) {
+                    defaultSharedPreferences.edit().putBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, true).apply();
                 }
             }
         } else {

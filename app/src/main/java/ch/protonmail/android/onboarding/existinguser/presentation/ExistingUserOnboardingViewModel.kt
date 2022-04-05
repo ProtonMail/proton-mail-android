@@ -17,45 +17,52 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.onboarding.presentation
+package ch.protonmail.android.onboarding.existinguser.presentation
 
 import android.content.SharedPreferences
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.di.DefaultSharedPreferences
-import ch.protonmail.android.onboarding.presentation.model.OnboardingItemUiModel
+import ch.protonmail.android.onboarding.base.presentation.OnboardingViewModel
+import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor(
-    @DefaultSharedPreferences private val defaultSharedPreferences: SharedPreferences
-) : ViewModel() {
+class ExistingUserOnboardingViewModel @Inject constructor(
+    @DefaultSharedPreferences private val defaultSharedPreferences: SharedPreferences,
+    private val dispatchers: DispatcherProvider
+) : OnboardingViewModel() {
 
-    val onboardingState = flowOf(
+    override val onboardingState: Flow<OnboardingState> = flowOf(
         OnboardingState(
             listOf(
                 OnboardingItemUiModel(
                     R.drawable.img_onboarding_encryption,
-                    R.string.onboarding_privacy_for_all_headline,
-                    R.string.onboarding_privacy_for_all_description
+                    R.string.existing_user_onboarding_new_look_headline,
+                    R.string.existing_user_onboarding_new_look_description
                 ),
                 OnboardingItemUiModel(
-                    R.drawable.img_onboarding_labels_folders,
-                    R.string.onboarding_neat_and_tidy_headline,
-                    R.string.onboarding_neat_and_tidy_description
+                    R.drawable.img_onboarding_new_features,
+                    R.string.existing_user_onboarding_new_features_headline,
+                    R.string.existing_user_onboarding_new_features_description
                 )
             )
         )
     ).stateIn(viewModelScope, SharingStarted.Lazily, OnboardingState(emptyList()))
 
-    fun saveOnboardingShown() =
-        defaultSharedPreferences.edit().putBoolean(Constants.Prefs.PREF_ONBOARDING_SHOWN, true).apply()
-
-    data class OnboardingState(val onboardingItemsList: List<OnboardingItemUiModel>)
+    override fun saveOnboardingShown() {
+        viewModelScope.launch(dispatchers.Io) {
+            defaultSharedPreferences.edit()
+                .putBoolean(Constants.Prefs.PREF_EXISTING_USER_ONBOARDING_SHOWN, true)
+                .apply()
+        }
+    }
 }

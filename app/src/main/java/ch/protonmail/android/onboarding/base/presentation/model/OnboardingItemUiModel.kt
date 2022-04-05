@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.onboarding.presentation.model
+package ch.protonmail.android.onboarding.base.presentation.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

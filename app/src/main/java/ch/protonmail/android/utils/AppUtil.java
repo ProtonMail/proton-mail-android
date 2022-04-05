@@ -20,7 +20,8 @@ package ch.protonmail.android.utils;
 
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_ONBOARDING_SHOWN;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_EXISTING_USER_ONBOARDING_SHOWN;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN;
 import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
 import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
 import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
@@ -338,11 +339,15 @@ public class AppUtil {
         SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(ProtonMailApplication.getApplication());
 
         String sekrit = defaultSharedPrefs.getString(PREF_SYMMETRIC_KEY, null);
-        boolean isOnboardingShown = defaultSharedPrefs.getBoolean(PREF_ONBOARDING_SHOWN, false);
+        boolean isNewUserOnboardingShown = defaultSharedPrefs
+                .getBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, false);
+        boolean isExistingUserOnboardingShown = defaultSharedPrefs
+                .getBoolean(PREF_EXISTING_USER_ONBOARDING_SHOWN, false);
         defaultSharedPrefs.edit().clear().apply();
         defaultSharedPrefs.edit()
                 .putString(PREF_SYMMETRIC_KEY, sekrit)
-                .putBoolean(PREF_ONBOARDING_SHOWN, isOnboardingShown)
+                .putBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, isNewUserOnboardingShown)
+                .putBoolean(PREF_EXISTING_USER_ONBOARDING_SHOWN, isExistingUserOnboardingShown)
                 .apply();
     }
 

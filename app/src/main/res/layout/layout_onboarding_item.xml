@@ -50,7 +50,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.5" />
 
-    <ch.protonmail.android.onboarding.presentation.OnboardingIndicatorsView
+    <ch.protonmail.android.onboarding.base.presentation.OnboardingIndicatorsView
         android:id="@+id/onboarding_indicators_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/onboarding_indicators_view"
-        tools:text="@string/onboarding_privacy_for_all_headline" />
+        tools:text="@string/new_user_onboarding_privacy_for_all_headline" />
 
     <TextView
         android:id="@+id/onboarding_description_text_view"
@@ -86,6 +86,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/onboarding_headline_text_view"
         app:layout_constraintVertical_bias="0.0"
-        tools:text="@string/onboarding_privacy_for_all_description" />
+        tools:text="@string/new_user_onboarding_privacy_for_all_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

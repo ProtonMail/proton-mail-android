@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">确定加载</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">共同保护隐私</string>
-    <string name="onboarding_privacy_for_all_description">邀请亲朋好友一起使用 Proton Mail，体验便捷的端到端加密技术，或者向他们发送经过密码保护的邮件。</string>
-    <string name="onboarding_neat_and_tidy_headline">整洁清爽</string>
-    <string name="onboarding_neat_and_tidy_description">使用文件夹、标签和颜色打造与您一拍即合的完美邮箱。</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">共同保护隐私</string>
+    <string name="new_user_onboarding_privacy_for_all_description">邀请亲朋好友一起使用 Proton Mail，体验便捷的端到端加密技术，或者向他们发送经过密码保护的邮件。</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">整洁清爽</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">使用文件夹、标签和颜色打造与您一拍即合的完美邮箱。</string>
     <string name="onboarding_next">继续</string>
     <string name="onboarding_get_started">立即体验</string>
     <string name="onboarding_image_view_content_description">Proton Mail 图示</string>
