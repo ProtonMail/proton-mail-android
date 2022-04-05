@@ -22,6 +22,7 @@ package ch.protonmail.android.repository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.core.Constants.MAX_MESSAGE_ID_WORKER_ARGUMENTS
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.NetworkConnectivityManager
@@ -30,8 +31,10 @@ import ch.protonmail.android.data.NoProtonStoreMapper
 import ch.protonmail.android.data.ProtonStore
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagePreferenceEntity
+import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostStarJob
@@ -55,6 +58,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -329,13 +333,55 @@ class MessageRepository @Inject constructor(
 
     private fun observeAllMessagesFromDatabase(params: GetAllMessagesParameters): Flow<List<Message>> {
         val dao = databaseProvider.provideMessageDao(params.userId)
+        val contactDao = databaseProvider.provideContactDao(params.userId)
 
         return if (params.keyword != null) {
             dao.searchMessages(params.keyword)
         } else {
             requireNotNull(params.labelId) { "Label Id is required" }
             dao.observeMessages(params.labelId)
+        }.combineTransform(contactDao.findAllContactsEmails()) { messages, contactEmails ->
+            // Makes sure that the correct name of the contact is displayed when showing the messages, because
+            // the sender/recipient name in the message can be outdated if the name of the contact has been changed
+            messages.map { message ->
+                val sender = requireNotNull(message.sender)
+                message.sender = updateSenderWithContactName(sender, contactEmails)
+
+                message.toList = message.toList.map { recipient ->
+                    updateRecipientWithContactName(recipient, contactEmails)
+                }
+                message.ccList = message.ccList.map { recipient ->
+                    updateRecipientWithContactName(recipient, contactEmails)
+                }
+                message.bccList = message.bccList.map { recipient ->
+                    updateRecipientWithContactName(recipient, contactEmails)
+                }
+            }
+            emit(messages)
         }
+    }
+
+    private fun updateSenderWithContactName(
+        sender: MessageSender,
+        contactEmails: List<ContactEmail>
+    ): MessageSender {
+        val senderContactName = contactEmails.find { it.email == sender.emailAddress }?.name
+        return MessageSender(
+            if (!senderContactName.isNullOrEmpty()) senderContactName else sender.name,
+            sender.emailAddress
+        )
+    }
+
+    private fun updateRecipientWithContactName(
+        recipient: MessageRecipient,
+        contactEmails: List<ContactEmail>
+    ): MessageRecipient {
+        val recipientContactName = contactEmails.find { it.email == recipient.emailAddress }?.name
+        return MessageRecipient(
+            if (!recipientContactName.isNullOrEmpty()) recipientContactName else recipient.name,
+            recipient.emailAddress,
+            recipient.group
+        )
     }
 
     private suspend fun saveMessages(userId: UserId, messages: List<Message>) {

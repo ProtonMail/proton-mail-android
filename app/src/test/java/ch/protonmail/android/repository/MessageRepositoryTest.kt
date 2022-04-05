@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessagePreferenceDao
@@ -91,6 +92,10 @@ class MessageRepositoryTest {
         coEvery { insertOrUpdate(any<Collection<UnreadCounterEntity>>()) } just Runs
     }
 
+    private val contactDao: ContactDao = mockk {
+        every { findAllContactsEmails() } returns flowOf(emptyList())
+    }
+
     private val counterDao: CounterDao = mockk {
         coEvery { insertUnreadLocation(any()) } just runs
     }
@@ -100,6 +105,7 @@ class MessageRepositoryTest {
     }
 
     private val databaseProvider: DatabaseProvider = mockk {
+        every { provideContactDao(any()) } returns contactDao
         every { provideCounterDao(any()) } returns counterDao
         every { provideMessageDao(any()) } returns messageDao
         every { provideMessagePreferenceDao(any()) } returns messagePreferenceDao

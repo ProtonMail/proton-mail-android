@@ -29,7 +29,6 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelChipUiModelMapper
-import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
@@ -44,18 +43,16 @@ import javax.inject.Inject
 
 class MailboxItemUiModelMapper @Inject constructor(
     private val contactsRepository: ContactsRepository,
-    private val messageRecipientToCorrespondentMapper: MessageRecipientToCorrespondentMapper,
     private val labelChipUiModelMapper: LabelChipUiModelMapper
 ) : Mapper<Either<Message, Conversation>, MailboxItemUiModel> {
 
-    suspend fun toUiModel(
-        userId: UserId,
+    fun toUiModel(
         message: Message,
         currentLabelId: LabelId,
         allLabels: Collection<Label>
     ): MailboxItemUiModel = MailboxItemUiModel(
         itemId = checkNotNull(message.messageId) { "Message id is null" },
-        correspondentsNames = getCorrespondentsNames(userId, message, currentLabelId),
+        correspondentsNames = getCorrespondentsNames(message, currentLabelId),
         subject = checkNotNull(message.subject) { "Message subject is null" },
         lastMessageTimeMs = message.timeMs,
         hasAttachments = message.numAttachments > 0,
@@ -70,13 +67,12 @@ class MailboxItemUiModelMapper @Inject constructor(
     )
 
     @JvmName("messagesToUiModels")
-    suspend fun toUiModels(
-        userId: UserId,
+    fun toUiModels(
         messages: Collection<Message>,
         currentLabelId: LabelId,
         allLabels: Collection<Label>
     ): List<MailboxItemUiModel> =
-        messages.map { toUiModel(userId, it, currentLabelId, allLabels) }
+        messages.map { toUiModel(it, currentLabelId, allLabels) }
 
     suspend fun toUiModel(
         userId: UserId,
@@ -115,15 +111,13 @@ class MailboxItemUiModelMapper @Inject constructor(
         if (isDraftOrSentLabel(currentLabelId)) conversation.receivers.joinToString { it.name }
         else toDisplayNamesFromContacts(userId, conversation.senders).joinToString()
 
-    private suspend fun getCorrespondentsNames(userId: UserId, message: Message, currentLabelId: LabelId): String =
+    private fun getCorrespondentsNames(message: Message, currentLabelId: LabelId): String =
         if (isDraftOrSentLabel(currentLabelId)) {
             toDisplayNamesFromContacts(
-                userId = userId,
                 allRecipients = message.toList + message.ccList + message.bccList
             ).joinToString()
         } else {
             toDisplayNameFromContacts(
-                userId = userId,
                 sender = message.sender,
                 senderDisplayName = message.senderDisplayName
             )
@@ -140,26 +134,22 @@ class MailboxItemUiModelMapper @Inject constructor(
         return currentLabelId in sentAndDraftLabels
     }
 
-    private suspend fun toDisplayNameFromContacts(
-        userId: UserId,
+    private fun toDisplayNameFromContacts(
         sender: MessageSender?,
         senderDisplayName: String?
     ): String {
         checkNotNull(sender) { "Message has null sender" }
-        val emailAddress = requireNotNull(sender.emailAddress) { "MessageSender has null emailAddress" }
-        val contactEmail = contactsRepository.findContactEmailByEmail(userId, emailAddress)
-        return contactEmail?.name?.takeIfNotBlank()
+        return sender.name?.takeIfNotBlank()
             ?: senderDisplayName?.takeIfNotBlank()
-            ?: sender.name?.takeIfNotBlank()
-            ?: sender.emailAddress ?: EMPTY_STRING
+            ?: sender.emailAddress?.takeIfNotBlank()
+            ?: EMPTY_STRING
     }
 
     @JvmName("toDisplayNamesFromContacts_MessageRecipient")
-    private suspend fun toDisplayNamesFromContacts(
-        userId: UserId,
+    private fun toDisplayNamesFromContacts(
         allRecipients: Collection<MessageRecipient>
     ): List<String> =
-        toDisplayNamesFromContacts(userId, messageRecipientToCorrespondentMapper.toDomainModels(allRecipients))
+        allRecipients.map { it.name.takeIfNotBlank() ?: it.emailAddress }
 
     private suspend fun toDisplayNamesFromContacts(
         userId: UserId,

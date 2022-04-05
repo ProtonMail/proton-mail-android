@@ -35,7 +35,6 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.mapper.LabelChipUiModelMapper
-import ch.protonmail.android.mailbox.data.mapper.MessageRecipientToCorrespondentMapper
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
@@ -65,7 +64,6 @@ class MailboxItemUiModelMapperTest {
     }
     private val mapper = MailboxItemUiModelMapper(
         contactsRepository = contactsRepository,
-        messageRecipientToCorrespondentMapper = MessageRecipientToCorrespondentMapper(),
         labelChipUiModelMapper = labelChipUiModelMapper
     )
 
@@ -112,7 +110,7 @@ class MailboxItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(message, INBOX.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -125,7 +123,7 @@ class MailboxItemUiModelMapperTest {
         val expected = buildMailboxItemUiModel(messageData = buildMessageData())
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(message, INBOX.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -141,7 +139,7 @@ class MailboxItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(message, INBOX.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -155,25 +153,7 @@ class MailboxItemUiModelMapperTest {
         val expected = buildMailboxItemUiModel(correspondentsNames = sender.name!!, messageData = buildMessageData())
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), allLabels = emptyList())
-
-        // then
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun `message sender has name from contact name`() = runBlockingTest {
-        // given
-        val sender = MessageSender(TEST_CORRESPONDENT_NAME, TEST_EMAIL_ADDRESS)
-        coEvery { contactsRepository.findContactEmailByEmail(any(), any()) } returns
-            ContactEmail(EMPTY_STRING, TEST_EMAIL_ADDRESS, TEST_CONTACT_NAME)
-        val message = buildMessage(sender)
-        val expected = buildMailboxItemUiModel(
-            correspondentsNames = TEST_CONTACT_NAME, messageData = buildMessageData()
-        )
-
-        // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(message, INBOX.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -189,7 +169,7 @@ class MailboxItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(message, INBOX.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -205,7 +185,7 @@ class MailboxItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, SENT.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(message, SENT.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -221,7 +201,7 @@ class MailboxItemUiModelMapperTest {
         )
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, DRAFT.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(message, DRAFT.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result)
@@ -244,7 +224,7 @@ class MailboxItemUiModelMapperTest {
         val expected = messageLabelsIds.map(::buildLabelChipUiModel)
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), TestLabels.allLabelsAndFolders())
+        val result = mapper.toUiModel(message, INBOX.asLabelId(), TestLabels.allLabelsAndFolders())
 
         // then
         assertEquals(expected, result.messageLabels)
@@ -263,7 +243,7 @@ class MailboxItemUiModelMapperTest {
         val expected = messageLabelsAndFoldersIds
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, INBOX.asLabelId(), TestLabels.allLabelsAndFolders())
+        val result = mapper.toUiModel(message, INBOX.asLabelId(), TestLabels.allLabelsAndFolders())
 
         // then
         assertEquals(expected, result.allLabelsIds)
@@ -283,7 +263,7 @@ class MailboxItemUiModelMapperTest {
         val expected = "first, second, third, fourth, fifth, sixth"
 
         // when
-        val result = mapper.toUiModel(TEST_USER_ID, message, SENT.asLabelId(), allLabels = emptyList())
+        val result = mapper.toUiModel(message, SENT.asLabelId(), allLabels = emptyList())
 
         // then
         assertEquals(expected, result.correspondentsNames)
