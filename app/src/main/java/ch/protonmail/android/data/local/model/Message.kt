@@ -579,6 +579,8 @@ data class Message @JvmOverloads constructor(
         )
     }
 
+    fun isPhishing() = false
+
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT
     }

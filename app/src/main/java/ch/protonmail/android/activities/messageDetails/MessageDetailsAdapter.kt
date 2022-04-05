@@ -472,6 +472,8 @@ internal class MessageDetailsAdapter(
         private val isAutoShowRemoteImages: Boolean
     ) : PmWebViewClient(userManager, activity, isAutoShowRemoteImages) {
 
+        private var isPhishingMessage = false
+
         override fun onPageFinished(view: WebView, url: String) {
             if (amountOfRemoteResourcesBlocked() > 0) {
                 itemView.displayRemoteContentButton.isVisible = true
@@ -480,6 +482,10 @@ internal class MessageDetailsAdapter(
             this.blockRemoteResources(!isAutoShowRemoteImages)
 
             super.onPageFinished(view, url)
+        }
+
+        fun setPhishingCheck(isPhishingMessage: Boolean) {
+            this.isPhishingMessage = isPhishingMessage
         }
     }
 
@@ -629,8 +635,8 @@ internal class MessageDetailsAdapter(
                 openInProtonCalenderView = openInProtonCalendarView,
                 editDraftButton = editDraftButton
             )
-
             setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
+            setHyperlinkCheck(webView, message)
         }
 
         private fun setupMessageActionsView(
@@ -770,6 +776,11 @@ internal class MessageDetailsAdapter(
                     setMessageContentFixedLoadingHeight(itemView.messageWebViewContainer)
                 }
             }
+        }
+
+        private fun setHyperlinkCheck(webView: WebView, message: Message) {
+            val client = webView.webViewClient as MessageDetailsPmWebViewClient
+            client.setPhishingCheck(message.isPhishing())
         }
     }
 }
