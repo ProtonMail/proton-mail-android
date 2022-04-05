@@ -89,6 +89,7 @@ import ch.protonmail.android.feature.account.AccountStateHandlerInitializer;
 import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.notifications.presentation.utils.NotificationServer;
+import ch.protonmail.android.onboarding.base.presentation.AddStartOnboardingObserverIfNeeded;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.security.presentation.SecurityManagerInitializer;
 import ch.protonmail.android.settings.domain.usecase.ApplyAppThemeFromSettings;
@@ -147,6 +148,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Inject
     @DefaultSharedPreferences
     SharedPreferences defaultSharedPreferences;
+
+    @Inject
+    AddStartOnboardingObserverIfNeeded addStartOnboardingObserverIfNeeded;
 
     private Bus mBus;
     private boolean appInBackground;
@@ -405,6 +409,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
                         ).apply();
                         defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
                     }
+
+                    addStartOnboardingObserverIfNeeded
+                            .invoke(AppInitializer.getInstance(this), currentUserId);
                 }
 
                 Set<UserId> loggedInUsers = AccountManagerKt.allLoggedInBlocking(accountManager);
