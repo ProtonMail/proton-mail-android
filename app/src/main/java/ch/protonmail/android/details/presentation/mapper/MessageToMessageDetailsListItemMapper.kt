@@ -36,16 +36,15 @@ class MessageToMessageDetailsListItemMapper @Inject constructor(
         messageBody: String,
         shouldShowDecryptionError: Boolean,
         shouldShowLoadEmbeddedImagesButton: Boolean
-    ) = MessageDetailsListItem.Body(
-        message = message,
-        messageFormattedHtml = messageBody,
-        messageFormattedHtmlWithQuotedHistory = messageBody,
-        showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message)
-    ).apply {
+    ): MessageDetailsListItem.Body {
         val messageBodyParts = messageBodyParser.splitBody(messageBody)
-        messageFormattedHtml = messageBodyParts.messageBody
-        messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
-        showLoadEmbeddedImagesButton = shouldShowLoadEmbeddedImagesButton
-        showDecryptionError = shouldShowDecryptionError
+        return MessageDetailsListItem.Body(
+            message = message,
+            messageFormattedHtml = messageBodyParts.messageBody,
+            messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote,
+            showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message),
+            showLoadEmbeddedImagesButton = shouldShowLoadEmbeddedImagesButton,
+            showDecryptionError = shouldShowDecryptionError
+        )
     }
 }

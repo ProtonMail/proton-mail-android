@@ -28,13 +28,17 @@ object MessageDetailsListItemTestData {
         message = message,
         messageFormattedHtml = null,
         messageFormattedHtmlWithQuotedHistory = null,
-        showOpenInProtonCalendar = false
+        showOpenInProtonCalendar = false,
+        showLoadEmbeddedImagesButton = false,
+        showDecryptionError = false
     )
 
     fun withLoadedBodyFrom(message: Message) = MessageDetailsListItem.Body(
         message = message,
         messageFormattedHtml = MessageTestData.MESSAGE_BODY_FORMATTED,
         messageFormattedHtmlWithQuotedHistory = MessageTestData.MESSAGE_BODY_FORMATTED,
-        showOpenInProtonCalendar = false
+        showOpenInProtonCalendar = false,
+        showLoadEmbeddedImagesButton = false,
+        showDecryptionError = false
     )
 }

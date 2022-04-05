@@ -120,7 +120,7 @@ internal class MessageDetailsAdapter(
             val isLastNonDraftItemInTheList = position == visibleItems.indexOfLast { !it.message.isDraft() }
             (holder as ItemViewHolder).bind(
                 position,
-                visibleItems[position],
+                visibleItems[position] as MessageDetailsListItem.Body,
                 isLastNonDraftItemInTheList
             )
         }
@@ -224,75 +224,6 @@ internal class MessageDetailsAdapter(
         return webView
     }
 
-    inner class HeaderViewHolder(
-        view: View
-    ) : ExpandableRecyclerAdapter<MessageDetailsListItem>.HeaderViewHolder(view) {
-
-        fun bind(message: Message) {
-            val messageDetailsHeaderView = itemView.headerView
-            val signatureVerification = when {
-                message.hasValidSignature -> SignatureVerification.SUCCESSFUL
-                message.hasInvalidSignature -> SignatureVerification.FAILED
-                else -> SignatureVerification.UNKNOWN
-            }
-            val messageEncryptionStatus = messageEncryptionUiModelMapper.messageEncryptionToUiModel(
-                message.messageEncryption,
-                signatureVerification,
-                message.isSent
-            )
-            messageDetailsHeaderView.bind(
-                message,
-                messageEncryptionStatus,
-                exclusiveLabelsPerMessage[message.messageId] ?: listOf(),
-                nonExclusiveLabelsPerMessage[message.messageId] ?: listOf(),
-                ::onHeaderCollapsed
-            )
-
-            messageDetailsHeaderView.setOnClickListener { view ->
-                // For single message we don't want to allow collapsing the message
-                if (!showingMoreThanOneMessage()) return@setOnClickListener
-                val headerView = view as MessageDetailsHeaderView
-
-                if (isMessageBodyExpanded()) {
-                    // Message Body is expended - will collapse
-                    headerView.collapseHeader()
-                }
-                toggleExpandedItems(layoutPosition, false)
-                notifyItemChanged(layoutPosition)
-            }
-
-            if (isMessageBodyExpanded()) {
-                messageDetailsHeaderView.allowExpandingHeaderView()
-                messageDetailsHeaderView.showRecipientsCollapsedView()
-                messageDetailsHeaderView.hideCollapsedMessageViews()
-            } else {
-                messageDetailsHeaderView.hideRecipientsCollapsedView()
-                messageDetailsHeaderView.showCollapsedMessageViews()
-            }
-
-            if (message.isRead) {
-                messageDetailsHeaderView.showMessageAsRead()
-            } else {
-                messageDetailsHeaderView.showMessageAsUnread()
-            }
-
-            if (isLastItemHeader()) {
-                itemView.lastConversationMessageCollapsedDivider.isVisible = !isMessageBodyExpanded()
-            }
-        }
-
-        private fun onHeaderCollapsed() {
-            notifyItemChanged(layoutPosition)
-        }
-
-        private fun isMessageBodyExpanded() = isExpanded(layoutPosition)
-
-        private fun isLastItemHeader(): Boolean {
-            val lastHeaderItem = visibleItems.last { it.itemType == TYPE_HEADER }
-            return layoutPosition == visibleItems.indexOf(lastHeaderItem)
-        }
-    }
-
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
         holder.itemView.messageWebViewContainer?.let {
@@ -304,207 +235,6 @@ internal class MessageDetailsAdapter(
         holder.itemView.headerView?.hideRecipientsCollapsedView()
     }
 
-    inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
-
-        fun bind(position: Int, listItem: MessageDetailsListItem, isLastNonDraftItemInTheList: Boolean) {
-            val message = listItem.message
-            Timber.v("Bind item: ${message.messageId}, isDownloaded: ${message.isDownloaded}")
-            val attachmentsView = itemView.attachmentsView
-            attachmentsView.visibility = View.GONE
-
-            val expirationInfoView = itemView.expirationInfoView
-            val decryptionErrorView = itemView.decryptionErrorView
-            val displayRemoteContentButton = itemView.displayRemoteContentButton
-            val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
-            val openInProtonCalendarView = itemView.include_open_in_proton_calendar
-            val editDraftButton = itemView.editDraftButton
-            val webView = itemView.messageWebViewContainer
-                .findViewById<WebView>(R.id.item_message_body_web_view_id) ?: return
-            val messageBodyProgress = itemView.messageWebViewContainer
-                .findViewById<ProgressBar>(R.id.item_message_body_progress_view_id) ?: return
-
-            message.messageId?.let {
-                setUpWebViewDarkModeBlocking(webView, it)
-            }
-
-            messageBodyProgress.isVisible = listItem.messageFormattedHtml.isNullOrEmpty()
-            displayRemoteContentButton.isVisible = false
-            loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
-            openInProtonCalendarView.isVisible = listItem.showOpenInProtonCalendar
-            editDraftButton.isVisible = message.isDraft()
-            decryptionErrorView.bind(listItem.showDecryptionError)
-            expirationInfoView.bind(message.expirationTime)
-            setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
-
-            if (listItem.messageFormattedHtml == null) {
-                Timber.v("Load body for message: ${message.messageId} at position $position, loc: ${message.location}")
-                onLoadMessageBody(message)
-            }
-
-            listItem.messageFormattedHtml?.let {
-                loadHtmlDataIntoWebView(webView, it)
-            }
-
-            displayAttachmentInfo(listItem.message.attachments, attachmentsView)
-            setUpViewDividers()
-
-            val hideMoreActionsButton = listItem.messageFormattedHtml.isNullOrEmpty() ||
-                message.isDraft() ||
-                !showingMoreThanOneMessage()
-            setupMessageActionsView(
-                message,
-                listItem.messageFormattedHtmlWithQuotedHistory,
-                webView,
-                hideMoreActionsButton
-            )
-            // TODO: To be decided whether we will need these actions moving forward or they can be removed completely
-            setupReplyActionsView(message, true)
-            setupMessageContentActions(
-                position = position,
-                loadEmbeddedImagesContainer = loadEmbeddedImagesButton,
-                displayRemoteContentButton = displayRemoteContentButton,
-                openInProtonCalenderView = openInProtonCalendarView,
-                editDraftButton = editDraftButton
-            )
-
-            setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
-        }
-
-        private fun setupMessageActionsView(
-            message: Message,
-            messageHtmlWithQuotedHistory: String?,
-            webView: WebView,
-            shouldHideMoreActionsButton: Boolean
-        ) {
-            val messageActionsView: MessageDetailsActionsView =
-                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_actions_layout_id) ?: return
-
-            val uiModel = MessageDetailsActionsView.UiModel(
-                hideShowHistory = messageHtmlWithQuotedHistory.isNullOrEmpty(),
-                hideMoreActions = shouldHideMoreActionsButton
-            )
-            messageActionsView.bind(uiModel)
-
-            messageActionsView.onShowHistoryClicked { showHistoryButton ->
-                loadHtmlDataIntoWebView(webView, messageHtmlWithQuotedHistory.orEmpty())
-                showHistoryButton.isVisible = false
-            }
-            messageActionsView.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
-        }
-
-        private fun setupReplyActionsView(
-            message: Message,
-            shouldHideAllActions: Boolean
-        ) {
-            val replyActionsView: ReplyActionsView =
-                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id) ?: return
-
-            replyActionsView.bind(
-                shouldShowReplyAllAction = message.toList.size + message.ccList.size > 1,
-                shouldHideAllActions = shouldHideAllActions
-            )
-
-            replyActionsView.onReplyActionClicked {
-                onReplyMessageClicked(Constants.MessageActionType.REPLY, message)
-            }
-            replyActionsView.onReplyAllActionClicked {
-                onReplyMessageClicked(Constants.MessageActionType.REPLY_ALL, message)
-            }
-            replyActionsView.onForwardActionClicked {
-                onReplyMessageClicked(Constants.MessageActionType.FORWARD, message)
-            }
-        }
-
-        private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String) {
-            webView.loadDataWithBaseURL(
-                Constants.DUMMY_URL_PREFIX,
-                htmlContent,
-                "text/html",
-                HTTP.UTF_8,
-                ""
-            )
-        }
-
-        private fun setupMessageContentActions(
-            position: Int,
-            loadEmbeddedImagesContainer: Button,
-            displayRemoteContentButton: Button,
-            openInProtonCalenderView: View,
-            editDraftButton: Button
-        ) {
-            loadEmbeddedImagesContainer.setOnClickListener { view ->
-                view.visibility = View.GONE
-                // Once images were loaded for one message, we automatically load them for all the others, so:
-                // the 'load embedded images' button will be hidden for all messages
-                // the 'formatted html' gets reset so that messages which were already rendered without images
-                // go through the rendering again (through `onLoadMessageBody` callback) and load them
-                allItems.map {
-                    it.showLoadEmbeddedImagesButton = false
-                    it.showDecryptionError = false
-                    it.messageFormattedHtml = null
-                }
-                val item = visibleItems[position]
-                onLoadEmbeddedImagesClicked(item.message, item.embeddedImageIds)
-            }
-
-            displayRemoteContentButton.setOnClickListener {
-                val item = visibleItems[position]
-                val webView = itemView.messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id)
-
-                if (webView != null && webView.contentHeight > 0) {
-                    itemView.displayRemoteContentButton.isVisible = false
-                    (webView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
-                    webView.reload()
-                    webView.invalidate()
-                    onDisplayRemoteContentClicked(item.message)
-                }
-            }
-
-            openInProtonCalenderView.setOnClickListener {
-                val item = visibleItems[position]
-                onOpenInProtonCalendarClicked(item.message)
-            }
-
-            editDraftButton.setOnClickListener {
-                val item = visibleItems[position]
-                onEditDraftClicked(item.message)
-            }
-        }
-
-        private fun setUpViewDividers() {
-            val hideHeaderDivider = itemView.attachmentsView.visibility == View.GONE &&
-                itemView.expirationInfoView.visibility == View.VISIBLE
-            itemView.headerDividerView.isVisible = !hideHeaderDivider
-
-            val showAttachmentsDivider = itemView.attachmentsView.visibility == View.VISIBLE &&
-                itemView.expirationInfoView.visibility != View.VISIBLE
-            itemView.attachmentsDividerView.isVisible = showAttachmentsDivider
-        }
-
-        private fun setMessageContentHeight(
-            listItem: MessageDetailsListItem,
-            isLastNonDraftItemInTheList: Boolean
-        ) {
-            when {
-                !listItem.messageFormattedHtml.isNullOrEmpty() -> {
-                    // We want to wrap the message content of the last non-draft item in the list only when the content
-                    // has been loaded, to make the message header stay attached to the top of the list
-                    // (if we wrap too quickly, the list will scroll down)
-                    if (isLastNonDraftItemInTheList) {
-                        wrapMessageContentHeightWhenContentLoaded(itemView.messageWebViewContainer)
-                    } else {
-                        wrapMessageContentHeight(itemView.messageWebViewContainer)
-                    }
-                }
-                // For messages in the middle of a conversation, that are not initially expanded when opening
-                // a conversation, we use a fixed height while loading
-                !isLastNonDraftItemInTheList -> {
-                    setMessageContentFixedLoadingHeight(itemView.messageWebViewContainer)
-                }
-            }
-        }
-    }
-
     fun showMessageDetails(
         parsedBody: String?,
         messageId: String,
@@ -513,7 +243,7 @@ internal class MessageDetailsAdapter(
         attachments: List<Attachment>,
         embeddedImageIds: List<String>,
         hasValidSignature: Boolean,
-        hasInvalidSignature: Boolean,
+        hasInvalidSignature: Boolean
     ) {
         val item: MessageDetailsListItem? = visibleItems.firstOrNull {
             it.itemType == TYPE_ITEM && it.message.messageId == messageId
@@ -525,20 +255,20 @@ internal class MessageDetailsAdapter(
 
         Timber.d("Show message details: $messageId")
         val validParsedBody = parsedBody ?: return
-        val newItem = messageToMessageDetailsListItemMapper.toMessageDetailsListItem(
-            item.message,
-            validParsedBody,
-            showDecryptionError,
-            showLoadEmbeddedImagesButton
-        ).apply {
-            this.message.setAttachmentList(attachments)
-            this.embeddedImageIds = embeddedImageIds
+        val message = item.message.apply {
+            setAttachmentList(attachments)
             // Mark the message as read optimistically to reflect the change on the UI right away.
             // Note that this message is being referenced to from both the header and the item.
-            this.message.Unread = false
-            this.message.hasInvalidSignature = hasInvalidSignature
-            this.message.hasValidSignature = hasValidSignature
+            this.Unread = false
+            this.hasInvalidSignature = hasInvalidSignature
+            this.hasValidSignature = hasValidSignature
         }
+        val newItem = messageToMessageDetailsListItemMapper.toMessageDetailsListItem(
+            message,
+            validParsedBody,
+            showDecryptionError,
+            showLoadEmbeddedImagesButton,
+        ).copy(embeddedImageIds = embeddedImageIds)
 
         visibleItems.indexOf(item).let { changedItemIndex ->
             visibleItems[changedItemIndex] = newItem
@@ -559,7 +289,9 @@ internal class MessageDetailsAdapter(
                 message = message,
                 messageFormattedHtml = message.decryptedHTML,
                 messageFormattedHtmlWithQuotedHistory = message.decryptedHTML,
-                showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message)
+                showOpenInProtonCalendar = protonCalendarUtil.hasCalendarAttachment(message),
+                showLoadEmbeddedImagesButton = false,
+                showDecryptionError = false
             )
             items.add(header)
             items.add(body)
@@ -570,15 +302,17 @@ internal class MessageDetailsAdapter(
     }
 
     fun reloadMessage(messageId: String) {
-        val item = visibleItems.find { it.message.messageId == messageId && it.itemType == TYPE_ITEM }
-        val itemIndex = visibleItems.indexOf(item)
+        val item = visibleItems
+            .filterIsInstance<MessageDetailsListItem.Body>()
+            .find { it.message.messageId == messageId }
+            ?: return
+
+        val itemIndex = visibleItems.indexOf(item as MessageDetailsListItem)
         // Set message formatted html to null, in order to trigger loading
-        // and switch to light/dark mode in the web view
-        val newItem = item?.apply { messageFormattedHtml = null }
-        newItem?.let {
-            visibleItems[itemIndex] = newItem
-            notifyItemChanged(itemIndex)
-        }
+        //  and switch to light/dark mode in the web view
+        val newItem = item.copy(messageFormattedHtml = null)
+        visibleItems[itemIndex] = newItem
+        notifyItemChanged(itemIndex)
     }
 
     private fun expandLastNonDraftItem() {
@@ -762,5 +496,280 @@ internal class MessageDetailsAdapter(
 
     private fun setUpWebViewDarkModeBlocking(webView: WebView, messageId: String) = runBlocking {
         setUpWebViewDarkModeHandlingIfSupported(context, userManager.requireCurrentUserId(), webView, messageId)
+    }
+
+    inner class HeaderViewHolder(
+        view: View
+    ) : ExpandableRecyclerAdapter<MessageDetailsListItem>.HeaderViewHolder(view) {
+
+        fun bind(message: Message) {
+            val messageDetailsHeaderView = itemView.headerView
+            val signatureVerification = when {
+                message.hasValidSignature -> SignatureVerification.SUCCESSFUL
+                message.hasInvalidSignature -> SignatureVerification.FAILED
+                else -> SignatureVerification.UNKNOWN
+            }
+            val messageEncryptionStatus = messageEncryptionUiModelMapper.messageEncryptionToUiModel(
+                message.messageEncryption,
+                signatureVerification,
+                message.isSent
+            )
+            messageDetailsHeaderView.bind(
+                message,
+                messageEncryptionStatus,
+                exclusiveLabelsPerMessage[message.messageId] ?: listOf(),
+                nonExclusiveLabelsPerMessage[message.messageId] ?: listOf(),
+                ::onHeaderCollapsed
+            )
+
+            messageDetailsHeaderView.setOnClickListener { view ->
+                // For single message we don't want to allow collapsing the message
+                if (!showingMoreThanOneMessage()) return@setOnClickListener
+                val headerView = view as MessageDetailsHeaderView
+
+                if (isMessageBodyExpanded()) {
+                    // Message Body is expended - will collapse
+                    headerView.collapseHeader()
+                }
+                toggleExpandedItems(layoutPosition, false)
+                notifyItemChanged(layoutPosition)
+            }
+
+            if (isMessageBodyExpanded()) {
+                messageDetailsHeaderView.allowExpandingHeaderView()
+                messageDetailsHeaderView.showRecipientsCollapsedView()
+                messageDetailsHeaderView.hideCollapsedMessageViews()
+            } else {
+                messageDetailsHeaderView.hideRecipientsCollapsedView()
+                messageDetailsHeaderView.showCollapsedMessageViews()
+            }
+
+            if (message.isRead) {
+                messageDetailsHeaderView.showMessageAsRead()
+            } else {
+                messageDetailsHeaderView.showMessageAsUnread()
+            }
+
+            if (isLastItemHeader()) {
+                itemView.lastConversationMessageCollapsedDivider.isVisible = !isMessageBodyExpanded()
+            }
+        }
+
+        private fun onHeaderCollapsed() {
+            notifyItemChanged(layoutPosition)
+        }
+
+        private fun isMessageBodyExpanded() = isExpanded(layoutPosition)
+
+        private fun isLastItemHeader(): Boolean {
+            val lastHeaderItem = visibleItems.last { it.itemType == TYPE_HEADER }
+            return layoutPosition == visibleItems.indexOf(lastHeaderItem)
+        }
+    }
+
+    inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
+
+        fun bind(position: Int, listItem: MessageDetailsListItem.Body, isLastNonDraftItemInTheList: Boolean) {
+            val message = listItem.message
+            Timber.v("Bind item: ${message.messageId}, isDownloaded: ${message.isDownloaded}")
+            val attachmentsView = itemView.attachmentsView
+            attachmentsView.visibility = View.GONE
+
+            val expirationInfoView = itemView.expirationInfoView
+            val decryptionErrorView = itemView.decryptionErrorView
+            val displayRemoteContentButton = itemView.displayRemoteContentButton
+            val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
+            val openInProtonCalendarView = itemView.include_open_in_proton_calendar
+            val editDraftButton = itemView.editDraftButton
+            val webView = itemView.messageWebViewContainer
+                .findViewById<WebView>(R.id.item_message_body_web_view_id) ?: return
+            val messageBodyProgress = itemView.messageWebViewContainer
+                .findViewById<ProgressBar>(R.id.item_message_body_progress_view_id) ?: return
+
+            message.messageId?.let {
+                setUpWebViewDarkModeBlocking(webView, it)
+            }
+
+            messageBodyProgress.isVisible = listItem.messageFormattedHtml.isNullOrEmpty()
+            displayRemoteContentButton.isVisible = false
+            loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
+            openInProtonCalendarView.isVisible = listItem.showOpenInProtonCalendar
+            editDraftButton.isVisible = message.isDraft()
+            decryptionErrorView.bind(listItem.showDecryptionError)
+            expirationInfoView.bind(message.expirationTime)
+            setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
+
+            if (listItem.messageFormattedHtml == null) {
+                Timber.v("Load body for message: ${message.messageId} at position $position, loc: ${message.location}")
+                onLoadMessageBody(message)
+            }
+
+            listItem.messageFormattedHtml?.let {
+                loadHtmlDataIntoWebView(webView, it)
+            }
+
+            displayAttachmentInfo(listItem.message.attachments, attachmentsView)
+            setUpViewDividers()
+
+            val hideMoreActionsButton = listItem.messageFormattedHtml.isNullOrEmpty() ||
+                message.isDraft() ||
+                !showingMoreThanOneMessage()
+            setupMessageActionsView(
+                message,
+                listItem.messageFormattedHtmlWithQuotedHistory,
+                webView,
+                hideMoreActionsButton
+            )
+            // TODO: To be decided whether we will need these actions moving forward or they can be removed completely
+            setupReplyActionsView(message, true)
+            setupMessageContentActions(
+                position = position,
+                loadEmbeddedImagesContainer = loadEmbeddedImagesButton,
+                displayRemoteContentButton = displayRemoteContentButton,
+                openInProtonCalenderView = openInProtonCalendarView,
+                editDraftButton = editDraftButton
+            )
+
+            setMessageContentHeight(listItem, isLastNonDraftItemInTheList)
+        }
+
+        private fun setupMessageActionsView(
+            message: Message,
+            messageHtmlWithQuotedHistory: String?,
+            webView: WebView,
+            shouldHideMoreActionsButton: Boolean
+        ) {
+            val messageActionsView: MessageDetailsActionsView =
+                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_actions_layout_id) ?: return
+
+            val uiModel = MessageDetailsActionsView.UiModel(
+                hideShowHistory = messageHtmlWithQuotedHistory.isNullOrEmpty(),
+                hideMoreActions = shouldHideMoreActionsButton
+            )
+            messageActionsView.bind(uiModel)
+
+            messageActionsView.onShowHistoryClicked { showHistoryButton ->
+                loadHtmlDataIntoWebView(webView, messageHtmlWithQuotedHistory.orEmpty())
+                showHistoryButton.isVisible = false
+            }
+            messageActionsView.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
+        }
+
+        private fun setupReplyActionsView(
+            message: Message,
+            shouldHideAllActions: Boolean
+        ) {
+            val replyActionsView: ReplyActionsView =
+                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_reply_actions_layout_id) ?: return
+
+            replyActionsView.bind(
+                shouldShowReplyAllAction = message.toList.size + message.ccList.size > 1,
+                shouldHideAllActions = shouldHideAllActions
+            )
+
+            replyActionsView.onReplyActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.REPLY, message)
+            }
+            replyActionsView.onReplyAllActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.REPLY_ALL, message)
+            }
+            replyActionsView.onForwardActionClicked {
+                onReplyMessageClicked(Constants.MessageActionType.FORWARD, message)
+            }
+        }
+
+        private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String) {
+            webView.loadDataWithBaseURL(
+                Constants.DUMMY_URL_PREFIX,
+                htmlContent,
+                "text/html",
+                HTTP.UTF_8,
+                ""
+            )
+        }
+
+        private fun setupMessageContentActions(
+            position: Int,
+            loadEmbeddedImagesContainer: Button,
+            displayRemoteContentButton: Button,
+            openInProtonCalenderView: View,
+            editDraftButton: Button
+        ) {
+            loadEmbeddedImagesContainer.setOnClickListener { view ->
+                view.visibility = View.GONE
+                // Once images were loaded for one message, we automatically load them for all the others, so:
+                //  the 'load embedded images' button will be hidden for all messages
+                //  the 'formatted html' gets reset so that messages which were already rendered without images
+                //  go through the rendering again (through `onLoadMessageBody` callback) and load them
+                allItems.map { item ->
+                    when (item) {
+                        is MessageDetailsListItem.Header -> item
+                        is MessageDetailsListItem.Body -> item.copy(
+                            showLoadEmbeddedImagesButton = false,
+                            showDecryptionError = false,
+                            messageFormattedHtml = null
+                        )
+                    }
+                }
+                val item = visibleItems[position] as MessageDetailsListItem.Body
+                onLoadEmbeddedImagesClicked(item.message, item.embeddedImageIds)
+            }
+
+            displayRemoteContentButton.setOnClickListener {
+                val item = visibleItems[position]
+                val webView = itemView.messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id)
+
+                if (webView != null && webView.contentHeight > 0) {
+                    itemView.displayRemoteContentButton.isVisible = false
+                    (webView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
+                    webView.reload()
+                    webView.invalidate()
+                    onDisplayRemoteContentClicked(item.message)
+                }
+            }
+
+            openInProtonCalenderView.setOnClickListener {
+                val item = visibleItems[position]
+                onOpenInProtonCalendarClicked(item.message)
+            }
+
+            editDraftButton.setOnClickListener {
+                val item = visibleItems[position]
+                onEditDraftClicked(item.message)
+            }
+        }
+
+        private fun setUpViewDividers() {
+            val hideHeaderDivider = itemView.attachmentsView.visibility == View.GONE &&
+                itemView.expirationInfoView.visibility == View.VISIBLE
+            itemView.headerDividerView.isVisible = !hideHeaderDivider
+
+            val showAttachmentsDivider = itemView.attachmentsView.visibility == View.VISIBLE &&
+                itemView.expirationInfoView.visibility != View.VISIBLE
+            itemView.attachmentsDividerView.isVisible = showAttachmentsDivider
+        }
+
+        private fun setMessageContentHeight(
+            listItem: MessageDetailsListItem.Body,
+            isLastNonDraftItemInTheList: Boolean
+        ) {
+            when {
+                !listItem.messageFormattedHtml.isNullOrEmpty() -> {
+                    // We want to wrap the message content of the last non-draft item in the list only when the content
+                    // has been loaded, to make the message header stay attached to the top of the list
+                    // (if we wrap too quickly, the list will scroll down)
+                    if (isLastNonDraftItemInTheList) {
+                        wrapMessageContentHeightWhenContentLoaded(itemView.messageWebViewContainer)
+                    } else {
+                        wrapMessageContentHeight(itemView.messageWebViewContainer)
+                    }
+                }
+                // For messages in the middle of a conversation, that are not initially expanded when opening
+                // a conversation, we use a fixed height while loading
+                !isLastNonDraftItemInTheList -> {
+                    setMessageContentFixedLoadingHeight(itemView.messageWebViewContainer)
+                }
+            }
+        }
     }
 }

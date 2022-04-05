@@ -24,32 +24,23 @@ import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER
 import ch.protonmail.android.utils.ui.TYPE_ITEM
 
-open class MessageDetailsListItem(
+sealed class MessageDetailsListItem(
     val type: Int,
-    var message: Message,
-    val showOpenInProtonCalendar: Boolean = false
 ) : ExpandableRecyclerAdapter.ListItem(type) {
 
-    var messageFormattedHtmlWithQuotedHistory: String? = null
-    var messageFormattedHtml: String? = null
-    var showLoadEmbeddedImagesButton: Boolean = false
-    var showDecryptionError: Boolean = false
-    var embeddedImageIds: List<String> = emptyList()
+    abstract val message: Message
 
-    class Header(
-        message: Message
-    ) : MessageDetailsListItem(TYPE_HEADER, message)
+    data class Header(
+        override val message: Message
+    ) : MessageDetailsListItem(TYPE_HEADER)
 
-    class Body(
-        message: Message,
-        messageFormattedHtml: String?,
-        messageFormattedHtmlWithQuotedHistory: String?,
-        showOpenInProtonCalendar: Boolean
-    ) : MessageDetailsListItem(TYPE_ITEM, message, showOpenInProtonCalendar) {
-
-        init {
-            this.messageFormattedHtml = messageFormattedHtml
-            this.messageFormattedHtmlWithQuotedHistory = messageFormattedHtmlWithQuotedHistory
-        }
-    }
+    data class Body(
+        override val message: Message,
+        val messageFormattedHtml: String?,
+        val messageFormattedHtmlWithQuotedHistory: String?,
+        val showOpenInProtonCalendar: Boolean,
+        val showLoadEmbeddedImagesButton: Boolean,
+        val showDecryptionError: Boolean,
+        val embeddedImageIds: List<String> = emptyList()
+    ) : MessageDetailsListItem(TYPE_ITEM)
 }

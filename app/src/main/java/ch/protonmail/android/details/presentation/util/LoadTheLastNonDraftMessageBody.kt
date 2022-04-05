@@ -97,7 +97,9 @@ class LoadTheLastNonDraftMessageBody @Inject constructor(
                 message = it,
                 messageFormattedHtml = null,
                 messageFormattedHtmlWithQuotedHistory = null,
-                showOpenInProtonCalendar = false
+                showOpenInProtonCalendar = false,
+                showLoadEmbeddedImagesButton = false,
+                showDecryptionError = false
             ) as MessageDetailsListItem
         }
             .toMutableList()
