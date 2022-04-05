@@ -134,10 +134,6 @@ class SwipeChooserActivity : BaseActivity() {
             SwipeChooserViewModel.State.Idle -> { /* noop */ }
             SwipeChooserViewModel.State.Saving -> showToast(R.string.settings_swipe_saving)
             SwipeChooserViewModel.State.Success -> saveAndFinish()
-            SwipeChooserViewModel.State.OfflineError -> {
-                showToast(R.string.settings_swipe_offline_error)
-                saveAndFinish()
-            }
             SwipeChooserViewModel.State.GenericError -> {
                 showToast(R.string.settings_swipe_generic_error)
                 saveAndFinish()
