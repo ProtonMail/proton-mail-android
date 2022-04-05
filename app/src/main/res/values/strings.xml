@@ -51,11 +51,13 @@
     <!-- endregion -->
 
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">No messages</string>
     <string name="mailbox_empty_folder_subtitle">This folder is empty</string>
     <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
     <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
     <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <string name="mailbox_no_messages">No messages</string>
+    <string name="mailbox_unread_count">%d unread</string>
+    <string name="mailbox_updated_just_now">Updated just now</string>
     <!-- endregion -->
 
     <!-- region Details -->

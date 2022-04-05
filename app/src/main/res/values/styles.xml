@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2022 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
   ~
@@ -94,6 +94,8 @@
         <item name="android:textColor">@drawable/selector_unread_messages_status_text_color</item>
         <item name="chipBackgroundColor">@drawable/selector_unread_messages_status_background</item>
         <item name="chipCornerRadius">25dp</item>
+        <item name="closeIcon">@drawable/ic_proton_cross</item>
+        <item name="closeIconTint">@color/icon_inverted</item>
     </style>
     <!-- endregion -->
 
