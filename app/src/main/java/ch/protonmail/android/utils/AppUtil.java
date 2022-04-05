@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -64,11 +64,11 @@ import ch.protonmail.android.data.local.ContactDao;
 import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.pendingaction.data.PendingActionDao;
-import ch.protonmail.android.pendingaction.data.PendingActionDatabase;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.mailbox.data.local.ConversationDao;
+import ch.protonmail.android.pendingaction.data.PendingActionDao;
+import ch.protonmail.android.pendingaction.data.PendingActionDatabase;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
 import me.proton.core.domain.entity.UserId;
@@ -240,6 +240,7 @@ public class AppUtil {
         return byteArrayOutputStream.toString();
     }
 
+    @Deprecated // Use plain Intent without this method
     public static Intent decorInAppIntent(Intent intent) {
         intent.putExtra(BaseActivity.EXTRA_IN_APP, true);
         return intent;
