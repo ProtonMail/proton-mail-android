@@ -41,7 +41,6 @@ import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetView
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -147,8 +146,6 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
                 mailboxViewModel.exitSelectionMode(result.areMailboxItemsMovedFromLocation)
                 handleDismissBehavior(result.shouldDismissBackingActivity)
             }
-            is ManageLabelActionResult.ErrorLabelsThresholdReached ->
-                showApplicableLabelsThresholdError(result.maxAllowedCount)
             is ManageLabelActionResult.ErrorUpdatingLabels ->
                 showCouldNotCompleteActionError()
             is ManageLabelActionResult.ErrorMovingToFolder ->
@@ -161,15 +158,6 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
 
     private fun onLabelClicked(model: LabelActonItemUiModel) {
         viewModel.onLabelClicked(model)
-    }
-
-    private fun showApplicableLabelsThresholdError(maxLabelsAllowed: Int) {
-        DialogUtils.showInfoDialog(
-            context = requireNotNull(context),
-            title = requireNotNull(context?.getString(R.string.labels_selected_limit_reached)),
-            message = requireNotNull(context?.getString(R.string.max_labels_selected, maxLabelsAllowed)),
-            okListener = { }
-        )
     }
 
     private fun showCouldNotCompleteActionError() {
