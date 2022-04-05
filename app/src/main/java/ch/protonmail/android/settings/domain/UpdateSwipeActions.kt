@@ -23,8 +23,6 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
-import me.proton.core.network.domain.ApiException
-import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
@@ -51,27 +49,12 @@ class UpdateSwipeActions @Inject constructor(
         }
     }.fold(
         onSuccess = { Result.Success },
-        onFailure = ::parseError
+        onFailure = { Result.Error }
     )
-
-    private fun parseError(throwable: Throwable): Result =
-        if (throwable is ApiException) parseApiException(throwable)
-        else Result.Error
-
-    private fun parseApiException(exception: ApiException): Result =
-        when (exception.error) {
-            is ApiResult.Error.Connection, is ApiResult.Error.NoInternet -> Result.Offline
-            else -> Result.Error
-        }
 
     sealed class Result {
 
         object Success : Result()
-
-        /**
-         * Currently Core doesn't allow to change MailSettings while offline
-         */
-        object Offline : Result()
 
         /**
          * Unknown error occurred

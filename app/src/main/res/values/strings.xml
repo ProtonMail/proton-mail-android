@@ -114,7 +114,6 @@
     <string name="settings_swipe_right_to_left">Right to left</string>
     <string name="settings_swipe_saving">Saving Swipe action…</string>
     <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
 
     <!-- region App Theme -->

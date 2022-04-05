@@ -70,7 +70,6 @@ class SwipeChooserViewModel @Inject constructor(
                 }
                 val newState = when (result) {
                     UpdateSwipeActions.Result.Success -> State.Success
-                    UpdateSwipeActions.Result.Offline -> State.OfflineError
                     UpdateSwipeActions.Result.Error -> State.GenericError
                 }
                 mutableState.emit(newState)
@@ -91,11 +90,6 @@ class SwipeChooserViewModel @Inject constructor(
          * New value has been saved, we close the Activity
          */
         object Success : State()
-
-        /**
-         * New value cannot be saved because offline, we show an offline message and close the Activity
-         */
-        object OfflineError : State()
 
         /**
          * New value cannot be saved because generic error, we show a message and close the Activity
