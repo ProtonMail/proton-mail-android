@@ -63,7 +63,7 @@ import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER
 import ch.protonmail.android.utils.ui.TYPE_ITEM
 import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
-import ch.protonmail.android.views.PMWebViewClient
+import ch.protonmail.android.views.PmWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import ch.protonmail.android.views.messageDetails.ReplyActionsView
@@ -632,7 +632,7 @@ internal class MessageDetailsAdapter(
         attachmentsView.isVisible = attachmentsCount > 0
     }
 
-    private fun configureWebView(webView: WebView, pmWebViewClient: PMWebViewClient) {
+    private fun configureWebView(webView: WebView, pmWebViewClient: PmWebViewClient) {
         webView.isScrollbarFadingEnabled = false
         webView.isVerticalScrollBarEnabled = false
         webView.isHorizontalScrollBarEnabled = false
@@ -736,7 +736,7 @@ internal class MessageDetailsAdapter(
         activity: Activity,
         private val itemView: View,
         private val isAutoShowRemoteImages: Boolean
-    ) : PMWebViewClient(userManager, activity, isAutoShowRemoteImages) {
+    ) : PmWebViewClient(userManager, activity, isAutoShowRemoteImages) {
 
         override fun onPageFinished(view: WebView, url: String) {
             if (amountOfRemoteResourcesBlocked() > 0) {

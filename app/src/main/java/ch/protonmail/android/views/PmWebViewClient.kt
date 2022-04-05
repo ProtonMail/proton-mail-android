@@ -42,7 +42,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.Arrays
 
-open class PMWebViewClient(
+open class PmWebViewClient(
     private val mUserManager: UserManager,
     private val mActivity: Activity,
     private var mLoadRemote: Boolean

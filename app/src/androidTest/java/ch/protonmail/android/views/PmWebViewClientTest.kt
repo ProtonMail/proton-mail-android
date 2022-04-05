@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -44,7 +44,7 @@ private const val EXTRA_MESSAGE_BODY = "message_body"
 
 
 @SmallTest
-class PMWebViewClientTest {
+class PmWebViewClientTest {
 
     private val userManager: UserManager = mockk(relaxed = true)
 
@@ -56,7 +56,7 @@ class PMWebViewClientTest {
 
     private val loadRemote = false
 
-    private val webViewClient = PMWebViewClient(
+    private val webViewClient = PmWebViewClient(
         userManager, activity, loadRemote
     )
 
