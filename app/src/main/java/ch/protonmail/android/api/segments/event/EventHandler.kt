@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -34,7 +34,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
@@ -54,6 +53,7 @@ import ch.protonmail.android.mailbox.data.local.model.UnreadCounterEntity.Type
 import ch.protonmail.android.mailbox.data.mapper.ApiToDatabaseUnreadCounterMapper
 import ch.protonmail.android.mailbox.data.remote.model.CountsApiModel
 import ch.protonmail.android.mailbox.domain.HandleChangeToConversations
+import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.MessageUtils
@@ -406,14 +406,14 @@ class EventHandler @AssistedInject constructor(
                     expired = true
                 }
             }
-            if (newMessage.Flags > 0) {
-                message.isReplied = newMessage.Flags and MessageFlag.REPLIED.value == MessageFlag.REPLIED.value
+            if (newMessage.flags > 0) {
+                message.isReplied = newMessage.flags and MessageFlag.REPLIED.flagValue == MessageFlag.REPLIED.flagValue
                 message.isRepliedAll =
-                    newMessage.Flags and MessageFlag.REPLIED_ALL.value == MessageFlag.REPLIED_ALL.value
-                message.isForwarded = newMessage.Flags and MessageFlag.FORWARDED.value == MessageFlag.FORWARDED.value
+                    newMessage.flags and MessageFlag.REPLIED_ALL.flagValue == MessageFlag.REPLIED_ALL.flagValue
+                message.isForwarded = newMessage.flags and MessageFlag.FORWARDED.flagValue == MessageFlag.FORWARDED.flagValue
 
-                message.Type = MessageUtils.calculateType(newMessage.Flags)
-                message.messageEncryption = messageFlagsToEncryptionMapper.flagsToMessageEncryption(newMessage.Flags)
+                message.Type = MessageUtils.calculateType(newMessage.flags)
+                message.messageEncryption = messageFlagsToEncryptionMapper.flagsToMessageEncryption(newMessage.flags)
             }
             if (newMessage.AddressID != null) {
                 message.addressID = newMessage.AddressID

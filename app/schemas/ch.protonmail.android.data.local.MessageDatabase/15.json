@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 15,
-    "identityHash": "62f56b04811fed2faf791d36b634e176",
+    "identityHash": "129e6d8c1a51ba4e86fbbecb7be4622d",
     "entities": [
       {
         "tableName": "attachmentv3",
@@ -208,7 +208,7 @@
       },
       {
         "tableName": "messagev3",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT, `ConversationID` TEXT, `Subject` TEXT, `Unread` INTEGER NOT NULL, `Type` INTEGER NOT NULL, `Time` INTEGER NOT NULL, `Size` INTEGER NOT NULL, `Location` INTEGER NOT NULL, `FolderLocation` TEXT, `Starred` INTEGER, `NumAttachments` INTEGER NOT NULL, `IsEncrypted` INTEGER NOT NULL, `ExpirationTime` INTEGER NOT NULL, `IsReplied` INTEGER, `IsRepliedAll` INTEGER, `IsForwarded` INTEGER, `Body` TEXT, `IsDownloaded` INTEGER NOT NULL, `AddressID` TEXT, `InlineResponse` INTEGER NOT NULL, `NewServerId` TEXT, `MIMEType` TEXT, `SpamScore` INTEGER NOT NULL, `AccessTime` INTEGER NOT NULL, `Header` TEXT, `ParsedHeaders` TEXT, `LabelIDs` TEXT NOT NULL, `ToList` TEXT NOT NULL, `ReplyTos` TEXT NOT NULL, `CCList` TEXT NOT NULL, `BCCList` TEXT NOT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT, `Sender_SenderName` TEXT, `Sender_SenderSerialized` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT, `ConversationID` TEXT, `Subject` TEXT, `Unread` INTEGER NOT NULL, `Type` INTEGER NOT NULL, `Time` INTEGER NOT NULL, `Size` INTEGER NOT NULL, `Location` INTEGER NOT NULL, `FolderLocation` TEXT, `Starred` INTEGER, `NumAttachments` INTEGER NOT NULL, `IsEncrypted` INTEGER NOT NULL, `ExpirationTime` INTEGER NOT NULL, `IsReplied` INTEGER, `IsRepliedAll` INTEGER, `IsForwarded` INTEGER, `Body` TEXT, `IsDownloaded` INTEGER NOT NULL, `AddressID` TEXT, `InlineResponse` INTEGER NOT NULL, `NewServerId` TEXT, `MIMEType` TEXT, `SpamScore` INTEGER NOT NULL, `AccessTime` INTEGER NOT NULL, `Header` TEXT, `ParsedHeaders` TEXT, `LabelIDs` TEXT NOT NULL, `ToList` TEXT NOT NULL, `ReplyTos` TEXT NOT NULL, `CCList` TEXT NOT NULL, `BCCList` TEXT NOT NULL, `Flags` INTEGER NOT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT, `Sender_SenderName` TEXT, `Sender_SenderSerialized` TEXT)",
         "fields": [
           {
             "fieldPath": "messageId",
@@ -397,6 +397,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "flags",
+            "columnName": "Flags",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "dbId",
             "columnName": "_id",
             "affinity": "INTEGER",
@@ -525,7 +531,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '62f56b04811fed2faf791d36b634e176')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '129e6d8c1a51ba4e86fbbecb7be4622d')"
     ]
   }
 }

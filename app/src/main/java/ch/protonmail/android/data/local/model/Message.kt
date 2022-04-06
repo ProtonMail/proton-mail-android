@@ -33,6 +33,8 @@ import ch.protonmail.android.api.models.MessagePayload
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
+import ch.protonmail.android.api.models.enumerations.MessageFlag
+import ch.protonmail.android.api.models.enumerations.contains
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.api.models.messages.receive.MessageLocationResolver
 import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
@@ -72,6 +74,7 @@ const val COLUMN_MESSAGE_BCC_LIST = "BCCList"
 const val COLUMN_MESSAGE_BODY = "Body"
 const val COLUMN_MESSAGE_CC_LIST = "CCList"
 const val COLUMN_MESSAGE_EXPIRATION_TIME = "ExpirationTime"
+const val COLUMN_MESSAGE_FLAGS = "Flags"
 const val COLUMN_MESSAGE_FOLDER_LOCATION = "FolderLocation"
 const val COLUMN_MESSAGE_HEADER = "Header"
 const val COLUMN_MESSAGE_ID = "ID"
@@ -205,7 +208,10 @@ data class Message @JvmOverloads constructor(
     var bccList: List<MessageRecipient> = emptyList(),
 
     @Embedded(prefix = COLUMN_MESSAGE_PREFIX_SENDER)
-    var sender: MessageSender? = MessageSender(null, null)
+    var sender: MessageSender? = MessageSender(null, null),
+
+    @ColumnInfo(name = COLUMN_MESSAGE_FLAGS)
+    val flags: Long = 0
 
 ) : Serializable {
 
@@ -578,7 +584,8 @@ data class Message @JvmOverloads constructor(
         )
     }
 
-    fun isPhishing() = false
+    fun isPhishing(): Boolean =
+        MessageFlag.PHISHING_AUTO in flags || MessageFlag.PHISHING_MANUAL in flags
 
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT

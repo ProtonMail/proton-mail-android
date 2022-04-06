@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -44,11 +44,11 @@ import javax.inject.Inject
 class MessageFlagsToEncryptionMapper @Inject constructor() : Mapper<Long, MessageEncryption> {
 
     fun flagsToMessageEncryption(messageFlags: Long): MessageEncryption {
-        val internal = messageFlags and MessageFlag.INTERNAL.value == MessageFlag.INTERNAL.value
-        val e2e = messageFlags and MessageFlag.E2E.value == MessageFlag.E2E.value
-        val received = messageFlags and MessageFlag.RECEIVED.value == MessageFlag.RECEIVED.value
-        val sent = messageFlags and MessageFlag.SENT.value == MessageFlag.SENT.value
-        val auto = messageFlags and MessageFlag.AUTO.value == MessageFlag.AUTO.value
+        val internal = messageFlags and MessageFlag.INTERNAL.flagValue == MessageFlag.INTERNAL.flagValue
+        val e2e = messageFlags and MessageFlag.E2E.flagValue == MessageFlag.E2E.flagValue
+        val received = messageFlags and MessageFlag.RECEIVED.flagValue == MessageFlag.RECEIVED.flagValue
+        val sent = messageFlags and MessageFlag.SENT.flagValue == MessageFlag.SENT.flagValue
+        val auto = messageFlags and MessageFlag.AUTO.flagValue == MessageFlag.AUTO.flagValue
 
         return when {
             internal -> handleInternalMessage(e2e, received, sent, auto)
