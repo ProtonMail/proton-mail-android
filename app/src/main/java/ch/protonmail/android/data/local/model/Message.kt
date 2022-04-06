@@ -210,7 +210,7 @@ data class Message @JvmOverloads constructor(
     @Embedded(prefix = COLUMN_MESSAGE_PREFIX_SENDER)
     var sender: MessageSender? = MessageSender(null, null),
 
-    @ColumnInfo(name = COLUMN_MESSAGE_FLAGS)
+    @ColumnInfo(name = COLUMN_MESSAGE_FLAGS, defaultValue = "0")
     val flags: Long = 0
 
 ) : Serializable {

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 15,
-    "identityHash": "62f56b04811fed2faf791d36b634e176",
+    "version": 16,
+    "identityHash": "913ea9559cd96b96a19268a453870e77",
     "entities": [
       {
         "tableName": "attachmentv3",
@@ -106,6 +106,7 @@
             "columnNames": [
               "attachment_id"
             ],
+            "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_attachmentv3_attachment_id` ON `${TABLE_NAME}` (`attachment_id`)"
           }
         ],
@@ -201,6 +202,7 @@
             "columnNames": [
               "ID"
             ],
+            "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_conversations_ID` ON `${TABLE_NAME}` (`ID`)"
           }
         ],
@@ -208,7 +210,7 @@
       },
       {
         "tableName": "messagev3",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT, `ConversationID` TEXT, `Subject` TEXT, `Unread` INTEGER NOT NULL, `Type` INTEGER NOT NULL, `Time` INTEGER NOT NULL, `Size` INTEGER NOT NULL, `Location` INTEGER NOT NULL, `FolderLocation` TEXT, `Starred` INTEGER, `NumAttachments` INTEGER NOT NULL, `IsEncrypted` INTEGER NOT NULL, `ExpirationTime` INTEGER NOT NULL, `IsReplied` INTEGER, `IsRepliedAll` INTEGER, `IsForwarded` INTEGER, `Body` TEXT, `IsDownloaded` INTEGER NOT NULL, `AddressID` TEXT, `InlineResponse` INTEGER NOT NULL, `NewServerId` TEXT, `MIMEType` TEXT, `SpamScore` INTEGER NOT NULL, `AccessTime` INTEGER NOT NULL, `Header` TEXT, `ParsedHeaders` TEXT, `LabelIDs` TEXT NOT NULL, `ToList` TEXT NOT NULL, `ReplyTos` TEXT NOT NULL, `CCList` TEXT NOT NULL, `BCCList` TEXT NOT NULL, `_id` INTEGER PRIMARY KEY AUTOINCREMENT, `Sender_SenderName` TEXT, `Sender_SenderSerialized` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` TEXT, `ConversationID` TEXT, `Subject` TEXT, `Unread` INTEGER NOT NULL, `Type` INTEGER NOT NULL, `Time` INTEGER NOT NULL, `Size` INTEGER NOT NULL, `Location` INTEGER NOT NULL, `FolderLocation` TEXT, `Starred` INTEGER, `NumAttachments` INTEGER NOT NULL, `IsEncrypted` INTEGER NOT NULL, `ExpirationTime` INTEGER NOT NULL, `IsReplied` INTEGER, `IsRepliedAll` INTEGER, `IsForwarded` INTEGER, `Body` TEXT, `IsDownloaded` INTEGER NOT NULL, `AddressID` TEXT, `InlineResponse` INTEGER NOT NULL, `NewServerId` TEXT, `MIMEType` TEXT, `SpamScore` INTEGER NOT NULL, `AccessTime` INTEGER NOT NULL, `Header` TEXT, `ParsedHeaders` TEXT, `LabelIDs` TEXT NOT NULL, `ToList` TEXT NOT NULL, `ReplyTos` TEXT NOT NULL, `CCList` TEXT NOT NULL, `BCCList` TEXT NOT NULL, `Flags` INTEGER NOT NULL DEFAULT 0, `_id` INTEGER PRIMARY KEY AUTOINCREMENT, `Sender_SenderName` TEXT, `Sender_SenderSerialized` TEXT)",
         "fields": [
           {
             "fieldPath": "messageId",
@@ -397,6 +399,13 @@
             "notNull": true
           },
           {
+            "fieldPath": "flags",
+            "columnName": "Flags",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
             "fieldPath": "dbId",
             "columnName": "_id",
             "affinity": "INTEGER",
@@ -428,6 +437,7 @@
             "columnNames": [
               "ID"
             ],
+            "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_messagev3_ID` ON `${TABLE_NAME}` (`ID`)"
           },
           {
@@ -436,6 +446,7 @@
             "columnNames": [
               "Location"
             ],
+            "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_messagev3_Location` ON `${TABLE_NAME}` (`Location`)"
           },
           {
@@ -444,6 +455,7 @@
             "columnNames": [
               "ConversationID"
             ],
+            "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_messagev3_ConversationID` ON `${TABLE_NAME}` (`ConversationID`)"
           }
         ],
@@ -525,7 +537,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '62f56b04811fed2faf791d36b634e176')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '913ea9559cd96b96a19268a453870e77')"
     ]
   }
 }
