@@ -31,13 +31,10 @@ class AddStartOnboardingObserverIfNeeded @Inject constructor(
 ) {
 
     operator fun invoke(appInitializer: AppInitializer, currentUserId: UserId?) {
-        if (updatingFromV3() && userAlreadyLoggedIn(currentUserId) && existingUserOnboardingNotShownYet()) {
+        if (userAlreadyLoggedIn(currentUserId) && existingUserOnboardingNotShownYet()) {
             appInitializer.addOnboardingObserver()
         }
     }
-
-    private fun updatingFromV3() = defaultSharedPreferences
-        .getInt(Constants.Prefs.PREF_PREVIOUS_APP_VERSION, Int.MAX_VALUE) < FIRST_PUBLIC_V4_RELEASE_VERSION
 
     private fun userAlreadyLoggedIn(userId: UserId?) = userId != null
 
@@ -47,5 +44,3 @@ class AddStartOnboardingObserverIfNeeded @Inject constructor(
     private fun AppInitializer.addOnboardingObserver() =
         initializeComponent(StartOnboardingObserverInitializer::class.java)
 }
-
-private const val FIRST_PUBLIC_V4_RELEASE_VERSION = 823

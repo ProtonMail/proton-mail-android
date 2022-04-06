@@ -22,7 +22,6 @@ package ch.protonmail.android.onboarding.base.presentation
 import android.content.SharedPreferences
 import androidx.startup.AppInitializer
 import ch.protonmail.android.core.Constants.Prefs.PREF_EXISTING_USER_ONBOARDING_SHOWN
-import ch.protonmail.android.core.Constants.Prefs.PREF_PREVIOUS_APP_VERSION
 import ch.protonmail.android.testdata.UserIdTestData
 import io.mockk.called
 import io.mockk.every
@@ -35,7 +34,6 @@ import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
 internal class AddStartOnboardingObserverIfNeededTest(
-    private val previousAppVersion: PreviousAppVersion,
     private val userId: UserId?,
     private val onboardingAlreadyShown: OnboardingAlreadyShown,
     private val shouldAddObserver: ShouldAddObserver
@@ -43,7 +41,6 @@ internal class AddStartOnboardingObserverIfNeededTest(
 
     private val sharedPrefsMock = mockk<SharedPreferences> {
         every { getBoolean(PREF_EXISTING_USER_ONBOARDING_SHOWN, false) } returns onboardingAlreadyShown.value
-        every { getInt(PREF_PREVIOUS_APP_VERSION, Int.MAX_VALUE) } returns previousAppVersion.value
     }
     private val appInitializerMock = mockk<AppInitializer> {
         every { initializeComponent(StartOnboardingObserverInitializer::class.java) } returns mockk()
@@ -69,19 +66,14 @@ internal class AddStartOnboardingObserverIfNeededTest(
         @Parameterized.Parameters
         fun data(): Collection<Array<Any?>> {
             return listOf(
-                arrayOf(PreviousAppVersion(823), null,                  OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
-                arrayOf(PreviousAppVersion(823), null,                  OnboardingAlreadyShown(false),  ShouldAddObserver(false)),
-                arrayOf(PreviousAppVersion(823), UserIdTestData.userId, OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
-                arrayOf(PreviousAppVersion(823), UserIdTestData.userId, OnboardingAlreadyShown(false),  ShouldAddObserver(false)),
-                arrayOf(PreviousAppVersion(822), null,                  OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
-                arrayOf(PreviousAppVersion(822), null,                  OnboardingAlreadyShown(false),  ShouldAddObserver(false)),
-                arrayOf(PreviousAppVersion(822), UserIdTestData.userId, OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
-                arrayOf(PreviousAppVersion(822), UserIdTestData.userId, OnboardingAlreadyShown(false),  ShouldAddObserver(true)),
+                arrayOf(null,                  OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
+                arrayOf(null,                  OnboardingAlreadyShown(false),  ShouldAddObserver(false)),
+                arrayOf(UserIdTestData.userId, OnboardingAlreadyShown(true),   ShouldAddObserver(false)),
+                arrayOf(UserIdTestData.userId, OnboardingAlreadyShown(false),  ShouldAddObserver(true)),
             )
         }
     }
 
-    data class PreviousAppVersion(val value: Int)
     data class OnboardingAlreadyShown(val value: Boolean)
     data class ShouldAddObserver(val value: Boolean)
 }
