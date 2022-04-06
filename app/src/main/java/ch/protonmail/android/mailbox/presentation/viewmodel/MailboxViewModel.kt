@@ -492,12 +492,14 @@ internal class MailboxViewModel @Inject constructor(
 
     fun enableUnreadFilter() {
         viewModelScope.launch {
+            exitSelectionMode(areMailboxItemsMovedFromLocation = true)
             toggleUnreadFilter(isFilterEnabled = true)
         }
     }
 
     fun disableUnreadFilter() {
         viewModelScope.launch {
+            exitSelectionMode(areMailboxItemsMovedFromLocation = true)
             toggleUnreadFilter(isFilterEnabled = false)
         }
     }
