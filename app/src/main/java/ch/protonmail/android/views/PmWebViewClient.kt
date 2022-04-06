@@ -24,10 +24,10 @@ import android.content.Intent
 import android.net.MailTo
 import android.net.Uri
 import android.preference.PreferenceManager
-import android.text.Html
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.text.HtmlCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.core.Constants
@@ -49,6 +49,7 @@ open class PmWebViewClient(
 ) : WebViewClient() {
 
     private var blockedImages = 0
+    private var isPhishingMessage = false
     private val hyperlinkConfirmationWhitelistedHosts = listOf(
         "protonmail.com",
         "protonmail.ch",
@@ -91,6 +92,10 @@ open class PmWebViewClient(
             }
         }
         return true
+    }
+
+    fun setPhishingCheck(isPhishingMessage: Boolean) {
+        this.isPhishingMessage = isPhishingMessage
     }
 
     private fun composeMessageWithMailToData(url: String, context: Context) {
@@ -139,39 +144,84 @@ open class PmWebViewClient(
         }
         val doesRequireHyperlinkConfirmation = PreferenceManager.getDefaultSharedPreferences(activity)
             .getBoolean(Constants.Prefs.PREF_HYPERLINK_CONFIRM, true)
-        return if (doesRequireHyperlinkConfirmation) {
-            var hyperlink = url // truncate if too long
-            if (hyperlink.length > 100) {
-                hyperlink = hyperlink.substring(0, 60) + "..." + hyperlink.substring(hyperlink.length - 40)
+
+        return when {
+            isPhishingMessage -> {
+                showPhishingHyperlinkConfirmation(url)
+                true
             }
-            val message = Html.fromHtml(
-                String.format(activity.getString(R.string.hyperlink_confirmation_dialog_text_html), hyperlink)
-            )
-            showInfoDialogWithTwoButtonsAndCheckbox(
-                context = activity,
-                title = "",
-                message = message,
-                negativeBtnText = activity.getString(R.string.cancel),
-                positiveBtnText = activity.getString(
-                    R.string.cont
-                ),
-                checkBoxText = activity.getString(R.string.dont_ask_again),
-                okListener = {
+            doesRequireHyperlinkConfirmation -> {
+                showRegularHyperlinkConfirmation(url)
+                true
+            }
+            else -> {
+                false
+            }
+        }
+    }
+
+    private fun showRegularHyperlinkConfirmation(url: String) {
+        val message = HtmlCompat.fromHtml(
+            activity.getString(R.string.hyperlink_confirmation_dialog_text_html, ellipsesUrlIfTooLong(url)),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+        showInfoDialogWithTwoButtonsAndCheckbox(
+            context = activity,
+            title = "",
+            message = message,
+            negativeBtnText = activity.getString(R.string.cancel),
+            positiveBtnText = activity.getString(
+                R.string.cont
+            ),
+            checkBoxText = activity.getString(R.string.dont_ask_again),
+            okListener = {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(url)
+                activity.startActivity(intent)
+            },
+            checkedListener = { isChecked ->
+                PreferenceManager.getDefaultSharedPreferences(activity).edit()
+                    .putBoolean(Constants.Prefs.PREF_HYPERLINK_CONFIRM, isChecked.not()).apply()
+            },
+            cancelable = true
+        )
+    }
+
+    private fun showPhishingHyperlinkConfirmation(url: String) {
+        val message = HtmlCompat.fromHtml(
+            activity.getString(R.string.details_hyperlink_phishing_dialog_content, ellipsesUrlIfTooLong(url)),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+        var isCheckboxActionChecked = false
+        showInfoDialogWithTwoButtonsAndCheckbox(
+            context = activity,
+            title = activity.getString(R.string.details_hyperlink_phishing_dialog_title),
+            message = message,
+            negativeBtnText = activity.getString(R.string.details_hyperlink_phishing_dialog_cancel_action),
+            positiveBtnText = activity.getString(R.string.details_hyperlink_phishing_dialog_confirm_action),
+            checkBoxText = activity.getString(R.string.details_hyperlink_phishing_dialog_checkbox_action),
+            okListener = {
+                if (isCheckboxActionChecked) {
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse(url)
                     activity.startActivity(intent)
-                },
-                checkedListener = { isChecked: Boolean ->
-                    PreferenceManager.getDefaultSharedPreferences(activity).edit()
-                        .putBoolean(Constants.Prefs.PREF_HYPERLINK_CONFIRM, isChecked.not()).apply()
-                },
-                cancelable = true
-            )
-            true
-        } else {
-            false
-        }
+                } else {
+                    activity.showToast(R.string.details_hyperlink_phishing_dialog_checkbox_not_checked)
+                }
+            },
+            checkedListener = { isChecked ->
+                isCheckboxActionChecked = isChecked
+            },
+            cancelable = true
+        )
     }
+
+    private fun ellipsesUrlIfTooLong(url: String) =
+        if (url.length > 100) {
+            url.substring(0, 60) + "..." + url.substring(url.length - 40)
+        } else {
+            url
+        }
 
     protected fun amountOfRemoteResourcesBlocked(): Int =
         blockedImages

@@ -65,6 +65,13 @@
     <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
     <string name="details_play_store_error">Can\'t open Play Store</string>
+    
+    <string name="details_hyperlink_phishing_dialog_title">Potentially fake website</string>
+    <string name="details_hyperlink_phishing_dialog_content">The website you are about to visit might be trying to steal your information:&lt;br/>&lt;br/>&lt;u>%s&lt;/u></string>
+    <string name="details_hyperlink_phishing_dialog_checkbox_action">I understand the risk</string>
+    <string name="details_hyperlink_phishing_dialog_checkbox_not_checked">You should confirm to understand the risk before continue</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Cancel</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Confirm</string>
     <!-- endregion -->
 
     <!-- region Composer -->

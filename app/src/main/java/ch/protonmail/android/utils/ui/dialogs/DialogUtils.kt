@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -21,6 +21,7 @@ package ch.protonmail.android.utils.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -265,7 +266,7 @@ class DialogUtils {
             negativeBtnText: String,
             positiveBtnText: String,
             checkBoxText: String,
-            okListener: (Unit) -> Unit,
+            okListener: (DialogInterface) -> Unit,
             checkedListener: (Boolean) -> Unit,
             cancelable: Boolean
         ) {
@@ -284,10 +285,8 @@ class DialogUtils {
                 .setMessage(message)
                 .setNegativeButton(negativeBtnText) { dialog, _ -> dialog.dismiss() }
                 .setPositiveButton(positiveBtnText) { dialog, _ ->
-                    run {
-                        okListener.invoke(Unit)
-                        dialog.dismiss()
-                    }
+                    okListener.invoke(dialog)
+                    dialog.dismiss()
                 }
                 .setCancelable(cancelable)
                 .create()
