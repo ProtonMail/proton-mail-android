@@ -111,9 +111,9 @@ import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenMana
 import ch.protonmail.android.notifications.data.remote.fcm.RegisterDeviceWorker
 import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_MAILBOX_LOCATION
+import ch.protonmail.android.onboarding.newuser.presentation.NewUserOnboardingActivity
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.PendingActionDatabase
-import ch.protonmail.android.onboarding.newuser.presentation.NewUserOnboardingActivity
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
@@ -432,11 +432,8 @@ internal class MailboxActivity :
                 showTwoButtonInfoDialog(
                     titleStringId = R.string.storage_limit_warning_title,
                     messageStringId = R.string.storage_limit_reached_text,
-                    rightStringId = R.string.okay,
-                    leftStringId = R.string.learn_more,
-                    onPositiveButtonClicked = {
-                        userManager.setShowStorageLimitReached(false)
-                    },
+                    positiveStringId = R.string.okay,
+                    negativeStringId = R.string.learn_more,
                     onNegativeButtonClicked = {
                         val browserIntent = Intent(
                             Intent.ACTION_VIEW,
@@ -445,7 +442,9 @@ internal class MailboxActivity :
                         startActivity(browserIntent)
                         userManager.setShowStorageLimitReached(false)
                     }
-                )
+                ) {
+                    userManager.setShowStorageLimitReached(false)
+                }
             }
             userManager.setShowStorageLimitWarning(true)
             storageLimitAlert.apply {
@@ -460,13 +459,12 @@ internal class MailboxActivity :
         storageLimitApproachingAlertDialog = showTwoButtonInfoDialog(
             titleStringId = R.string.storage_limit_warning_title,
             messageStringId = R.string.storage_limit_approaching_text,
-            leftStringId = R.string.dont_remind_again,
-            onPositiveButtonClicked = { storageLimitApproachingAlertDialog = null },
+            negativeStringId = R.string.dont_remind_again,
             onNegativeButtonClicked = {
                 userManager.setShowStorageLimitWarning(false)
                 storageLimitApproachingAlertDialog = null
             }
-        )
+        ) { storageLimitApproachingAlertDialog = null }
     }
 
     private val setupUpLimitApproachingObserver = { limitApproaching: Event<Boolean> ->
@@ -499,7 +497,7 @@ internal class MailboxActivity :
             showTwoButtonInfoDialog(
                 titleStringId = R.string.storage_limit_warning_title,
                 messageStringId = R.string.storage_limit_reached_text,
-                leftStringId = R.string.learn_more,
+                negativeStringId = R.string.learn_more,
                 onNegativeButtonClicked = {
                     val browserIntent = Intent(
                         Intent.ACTION_VIEW,
@@ -729,7 +727,7 @@ internal class MailboxActivity :
         showTwoButtonInfoDialog(
             titleStringId = R.string.swipe_gestures_changed,
             messageStringId = R.string.swipe_gestures_changed_message,
-            leftStringId = R.string.go_to_settings,
+            negativeStringId = R.string.go_to_settings,
             onNegativeButtonClicked = {
                 val swipeGestureIntent = Intent(
                     this,
@@ -828,7 +826,7 @@ internal class MailboxActivity :
             R.id.empty -> showTwoButtonInfoDialog(
                 titleStringId = R.string.empty_folder,
                 messageStringId = R.string.are_you_sure_empty,
-                leftStringId = R.string.no
+                negativeStringId = R.string.no
             ) {
                 mailboxViewModel.emptyFolderAction(
                     userManager.requireCurrentUserId(),
@@ -1239,7 +1237,7 @@ internal class MailboxActivity :
                         showTwoButtonInfoDialog(
                             titleStringId = R.string.push_notifications_alert_title,
                             messageStringId = R.string.push_notifications_alert_subtitle,
-                            leftStringId = R.string.dont_remind_again,
+                            negativeStringId = R.string.dont_remind_again,
                             onNegativeButtonClicked = { defaultSharedPreferences[PREF_DONT_SHOW_PLAY_SERVICES] = true }
                         )
                     }

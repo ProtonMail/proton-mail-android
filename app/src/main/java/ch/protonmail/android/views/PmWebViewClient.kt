@@ -35,6 +35,7 @@ import ch.protonmail.android.core.Constants.DUMMY_URL_PREFIX
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.MessageUtils.addRecipientsToIntent
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtonsAndCheckbox
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import me.proton.core.presentation.utils.showToast
 import me.proton.core.util.kotlin.startsWith
 import java.io.ByteArrayInputStream
@@ -192,28 +193,16 @@ open class PmWebViewClient(
             activity.getString(R.string.details_hyperlink_phishing_dialog_content, ellipsesUrlIfTooLong(url)),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        var isCheckboxActionChecked = false
-        showInfoDialogWithTwoButtonsAndCheckbox(
-            context = activity,
-            title = activity.getString(R.string.details_hyperlink_phishing_dialog_title),
+        activity.showTwoButtonInfoDialog(
+            titleStringId = R.string.details_hyperlink_phishing_dialog_title,
             message = message,
-            negativeBtnText = activity.getString(R.string.details_hyperlink_phishing_dialog_cancel_action),
-            positiveBtnText = activity.getString(R.string.details_hyperlink_phishing_dialog_confirm_action),
-            checkBoxText = activity.getString(R.string.details_hyperlink_phishing_dialog_checkbox_action),
-            okListener = {
-                if (isCheckboxActionChecked) {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(url)
-                    activity.startActivity(intent)
-                } else {
-                    activity.showToast(R.string.details_hyperlink_phishing_dialog_checkbox_not_checked)
-                }
-            },
-            checkedListener = { isChecked ->
-                isCheckboxActionChecked = isChecked
-            },
-            cancelable = true
-        )
+            positiveStringId = R.string.details_hyperlink_phishing_dialog_confirm_action,
+            negativeStringId = R.string.details_hyperlink_phishing_dialog_cancel_action
+        ) {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            activity.startActivity(intent)
+        }
     }
 
     private fun ellipsesUrlIfTooLong(url: String) =

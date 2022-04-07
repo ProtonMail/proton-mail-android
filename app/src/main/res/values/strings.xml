@@ -66,12 +66,10 @@
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
     <string name="details_play_store_error">Can\'t open Play Store</string>
     
-    <string name="details_hyperlink_phishing_dialog_title">Potentially fake website</string>
-    <string name="details_hyperlink_phishing_dialog_content">The website you are about to visit might be trying to steal your information:&lt;br/>&lt;br/>&lt;u>%s&lt;/u></string>
-    <string name="details_hyperlink_phishing_dialog_checkbox_action">I understand the risk</string>
-    <string name="details_hyperlink_phishing_dialog_checkbox_not_checked">You should confirm to understand the risk before continue</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">Cancel</string>
-    <string name="details_hyperlink_phishing_dialog_confirm_action">Confirm</string>
+    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/>&lt;br/>&lt;u>%s&lt;/u>&lt;br/>&lt;br/>For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
     <!-- endregion -->
 
     <!-- region Composer -->

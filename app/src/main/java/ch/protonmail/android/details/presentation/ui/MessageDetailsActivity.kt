@@ -747,8 +747,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 this@MessageDetailsActivity.showTwoButtonInfoDialog(
                     title = getString(R.string.storage_limit_warning_title),
                     message = getString(R.string.storage_limit_reached_text),
-                    rightStringId = R.string.okay,
-                    leftStringId = R.string.learn_more,
+                    positiveStringId = R.string.okay,
+                    negativeStringId = R.string.learn_more,
                     onNegativeButtonClicked = {
                         val browserIntent = Intent(
                             Intent.ACTION_VIEW,
