@@ -40,6 +40,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleListener
@@ -489,10 +491,10 @@ internal class MessageDetailsAdapter(
 
         // When android API < 26 we automatically show remote images because the `getWebViewClient` method
         // that we use to access the webView and load them later on was only introduced with API 26
-        return isAutoShowRemoteImages || isAndroidAPILevelLowerThan26()
+        return isAutoShowRemoteImages || isAndroidApiLevelLowerThan26()
     }
 
-    private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+    private fun isAndroidApiLevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
 
     private fun setUpWebViewDarkModeBlocking(webView: WebView, messageId: String) = runBlocking {
         setUpWebViewDarkModeHandlingIfSupported(context, userManager.requireCurrentUserId(), webView, messageId)
@@ -721,7 +723,7 @@ internal class MessageDetailsAdapter(
 
                 if (webView != null && webView.contentHeight > 0) {
                     itemView.displayRemoteContentButton.isVisible = false
-                    (webView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
+                    webView.getWebViewClientOrNull()?.allowLoadingRemoteResources()
                     webView.reload()
                     webView.invalidate()
                     onDisplayRemoteContentClicked(item.message)
@@ -773,8 +775,15 @@ internal class MessageDetailsAdapter(
         }
 
         private fun setHyperlinkCheck(webView: WebView, message: Message) {
-            val client = webView.webViewClient as MessageDetailsPmWebViewClient
-            client.setPhishingCheck(message.isPhishing())
+            webView.getWebViewClientOrNull()?.setPhishingCheck(message.isPhishing())
+        }
+
+        private fun WebView.getWebViewClientOrNull(): MessageDetailsPmWebViewClient? {
+            return if (WebViewFeature.isFeatureSupported(WebViewFeature.GET_WEB_VIEW_CLIENT)) {
+                WebViewCompat.getWebViewClient(this) as MessageDetailsPmWebViewClient
+            } else {
+                null
+            }
         }
     }
 }
