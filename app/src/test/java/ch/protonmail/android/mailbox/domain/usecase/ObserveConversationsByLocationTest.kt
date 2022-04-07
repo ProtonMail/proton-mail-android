@@ -51,17 +51,16 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryMappingInputToGetConversationParameters() = runBlockingTest {
         // given
-        val location = MessageLocationType.ARCHIVE.asLabelIdString()
+        val params = params(
+            userId = userId,
+            locationType = MessageLocationType.ARCHIVE
+        )
         coEvery { conversationRepository.observeConversations(any()) } returns loadMoreFlowOf()
 
         // when
-        observeConversationsByLocation(userId, location)
+        observeConversationsByLocation(params)
 
         // then
-        val params = GetAllConversationsParameters(
-            userId = userId,
-            labelId = location
-        )
         coVerify { conversationRepository.observeConversations(params,) }
     }
 
@@ -75,7 +74,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
         val expected = GetConversationsResult.DataRefresh(conversations)
 
         // when
-        observeConversationsByLocation(userId, MessageLocationType.INBOX.asLabelIdString()).test {
+        observeConversationsByLocation(params(userId, MessageLocationType.INBOX)).test {
 
             // then
             assertEquals(expected, awaitItem())
@@ -90,7 +89,7 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
             loadMoreFlowOf(DataResult.Error.Local(null, null))
 
         // when
-        val actual = observeConversationsByLocation.invoke(userId, MessageLocationType.INBOX.asLabelIdString())
+        val actual = observeConversationsByLocation(params(userId, MessageLocationType.INBOX))
 
         // then
         val error = GetConversationsResult.Error()
@@ -100,39 +99,47 @@ class ObserveConversationsByLocationTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryPassingNullAsLastMessageTimeWhenInputWasNull() = runBlockingTest {
         // given
-        val location = MessageLocationType.ARCHIVE.asLabelIdString()
+        val labelId = MessageLocationType.ARCHIVE.asLabelId()
+        val params = GetAllConversationsParameters(
+            userId = userId,
+            labelId = labelId
+        )
         coEvery { conversationRepository.observeConversations(any(),) } returns loadMoreFlowOf()
 
         // when
-        observeConversationsByLocation.invoke(userId, location)
+        observeConversationsByLocation(params)
 
         // then
-        val params = GetAllConversationsParameters(
-            userId = userId,
-            labelId = location
-        )
         coVerify { conversationRepository.observeConversations(params,) }
     }
 
-    private fun inboxLabelContext() = LabelContext(
-        id = MessageLocationType.INBOX.asLabelIdString(),
-        contextNumUnread = 0,
-        contextNumMessages = 0,
-        contextTime = 0L,
-        contextSize = 0,
-        contextNumAttachments = 0
-    )
+    companion object TestData {
 
-    private fun buildConversation() = Conversation(
-        id = UUID.randomUUID().toString(),
-        subject = "Conversation subject",
-        senders = listOf(),
-        receivers = listOf(),
-        messagesCount = 5,
-        unreadCount = 2,
-        attachmentsCount = 1,
-        expirationTime = 0,
-        labels = listOf(inboxLabelContext()),
-        messages = listOf()
-    )
+        fun params(userId: UserId, locationType: MessageLocationType) = GetAllConversationsParameters(
+            userId = userId,
+            labelId = locationType.asLabelId()
+        )
+
+        private fun inboxLabelContext() = LabelContext(
+            id = MessageLocationType.INBOX.asLabelIdString(),
+            contextNumUnread = 0,
+            contextNumMessages = 0,
+            contextTime = 0L,
+            contextSize = 0,
+            contextNumAttachments = 0
+        )
+
+        private fun buildConversation() = Conversation(
+            id = UUID.randomUUID().toString(),
+            subject = "Conversation subject",
+            senders = listOf(),
+            receivers = listOf(),
+            messagesCount = 5,
+            unreadCount = 2,
+            attachmentsCount = 1,
+            expirationTime = 0,
+            labels = listOf(inboxLabelContext()),
+            messages = listOf()
+        )
+    }
 }

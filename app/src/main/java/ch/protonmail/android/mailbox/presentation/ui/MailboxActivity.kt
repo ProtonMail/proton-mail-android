@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.mailbox.presentation
+package ch.protonmail.android.mailbox.presentation.ui
 
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
@@ -94,11 +94,17 @@ import ch.protonmail.android.labels.domain.model.Label
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
-import ch.protonmail.android.mailbox.domain.model.UnreadCounter
-import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.EmptyMailboxUiModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
-import ch.protonmail.android.mailbox.presentation.model.UnreadChipUiModel
+import ch.protonmail.android.mailbox.presentation.model.MailboxListState
+import ch.protonmail.android.mailbox.presentation.model.MailboxState
+import ch.protonmail.android.mailbox.presentation.model.UnreadChipState
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_START_ACTIVITY
+import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_TRY_COMPOSE
+import ch.protonmail.android.mailbox.presentation.viewmodel.FLOW_USED_SPACE_CHANGED
+import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
+import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.navigation.presentation.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.navigation.presentation.NavigationActivity
 import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenManager
@@ -145,7 +151,6 @@ import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.exhaustive
-import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -212,7 +217,6 @@ internal class MailboxActivity :
     private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private val handler = Handler(Looper.getMainLooper())
-    private var unreadCountersCache: List<UnreadCounter> = emptyList()
 
     private val startMessageDetailsLauncher = registerForActivityResult(MessageDetailsActivity.Launcher()) {}
     private val startComposeLauncher = registerForActivityResult(StartCompose()) {}
@@ -342,15 +346,11 @@ internal class MailboxActivity :
         with(mailboxViewModel) {
 
             mailboxState
-                .onEach { renderState(it) }
+                .onEach(::renderState)
                 .launchIn(lifecycleScope)
 
             mailboxLocation
-                .onEach {
-                    mailboxAdapter.setNewLocation(it)
-                    updateUnreadCounters()
-                    updatedStatusTextView.isVisible = false
-                }
+                .onEach(mailboxAdapter::setNewLocation)
                 .launchIn(lifecycleScope)
 
             drawerLabels
@@ -358,7 +358,7 @@ internal class MailboxActivity :
                 .launchIn(lifecycleScope)
 
             unreadCounters
-                .onEach(::updateUnreadCounters)
+                .onEach(sideDrawer::setUnreadCounters)
                 .launchIn(lifecycleScope)
 
             exitSelectionModeSharedFlow
@@ -534,18 +534,36 @@ internal class MailboxActivity :
 
     private fun renderState(state: MailboxState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
+        updatedStatusTextView.isVisible = state.isUpdatedFromRemote
+        renderUnreadChipState(state.unreadChip)
+        renderListState(state.list)
+    }
+
+    private fun renderUnreadChipState(state: UnreadChipState) {
+        when (state) {
+            UnreadChipState.Loading -> {}
+            is UnreadChipState.Data -> {
+                unreadMessagesStatusChip.bind(
+                    model = state.model,
+                    onEnableFilter = mailboxViewModel::enableUnreadFilter,
+                    onDisableFilter = mailboxViewModel::disableUnreadFilter
+                )
+            }
+        }
+    }
+
+    private fun renderListState(state: MailboxListState) {
         setLoadingMore(false)
 
         when (state) {
-            is MailboxState.Loading -> setRefreshing(true)
-            is MailboxState.DataRefresh -> {
+            is MailboxListState.Loading -> setRefreshing(true)
+            is MailboxListState.DataRefresh -> {
                 lastFetchedMailboxItemsIds = state.lastFetchedItemsIds
                 setRefreshing(false)
                 include_mailbox_no_messages.isVisible =
                     state.lastFetchedItemsIds.isEmpty() && mailboxAdapter.itemCount == 0
-                updatedStatusTextView.isVisible = true
             }
-            is MailboxState.Data -> {
+            is MailboxListState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
                 include_mailbox_error.isVisible = false
                 include_mailbox_no_messages.isVisible = state.isFreshData && state.items.isEmpty()
@@ -555,7 +573,7 @@ internal class MailboxActivity :
                     if (state.shouldResetPosition) mailboxRecyclerView.scrollToPosition(0)
                 }
             }
-            is MailboxState.Error -> {
+            is MailboxListState.Error -> {
                 setRefreshing(false)
                 Timber.e(state.throwable, "Mailbox error ${state.error}")
                 include_mailbox_no_messages.isVisible = false
@@ -1243,42 +1261,24 @@ internal class MailboxActivity :
     }
 
     private fun setMailboxLocation(locationToSet: MessageLocationType) {
+        mailboxViewModel.disableUnreadFilter()
         mailboxViewModel.setNewMailboxLocation(locationToSet)
     }
 
     private fun setNewLabel(labelId: String) {
+        mailboxViewModel.disableUnreadFilter()
         mailboxViewModel.setNewMailboxLabel(labelId)
-    }
-
-    private fun updateUnreadCounters(counters: List<UnreadCounter>? = null) {
-        if (counters != null) {
-            unreadCountersCache = counters
-        }
-        sideDrawer.setUnreadCounters(unreadCountersCache)
-
-        val currentLabelId = currentLabelId?.takeIfNotBlank() ?: currentMailboxLocation.asLabelIdString()
-        val currentLocationUnreadCount = unreadCountersCache.find { it.labelId == currentLabelId }
-            ?.unreadCount
-            ?: 0
-        unreadMessagesStatusChip.bind(
-            UnreadChipUiModel(
-                unreadCount = currentLocationUnreadCount,
-                isFilterEnabled = false
-            ),
-            onEnabledFilter = {},
-            onDisableFilter = {}
-        )
     }
 
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
 
     private class OnMessageClickTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
-        private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
+        messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
         private val messageId: String,
         private val messageSubject: String,
         private val currentMailboxLocationType: MessageLocationType,
-        private val userId: UserId
+        userId: UserId
     ) : AsyncTask<Unit, Unit, Message>() {
 
         private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)

@@ -32,7 +32,7 @@ import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.metrics.domain.SendMetricsForViewInDarkModePreference
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet.Companion.EXTRA_ARG_IS_STARRED
@@ -248,7 +248,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             shallDismissBackingActivity = false,
             areMailboxItemsMovedFromLocation = true
         )
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
@@ -273,7 +273,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             shallDismissBackingActivity = true,
             areMailboxItemsMovedFromLocation = true
         )
-        every { conversationModeEnabled(any()) } returns false
+        every { conversationModeEnabled(location = any(), userId = any()) } returns false
         coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
@@ -295,7 +295,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         val conversationId = "conversationId"
         val expectedResult = MessageActionSheetAction.CouldNotCompleteActionError
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         coEvery { moveConversationsToFolder.invoke(any(), any(), any()) } returns ConversationsActionResult.Error
 
         // when
@@ -316,7 +316,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         )
         val userId = UserId("userId")
         val unstarAction = ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
@@ -350,7 +350,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         )
         val userId = UserId("userId")
         val unstarAction = ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         coEvery {
             changeConversationsStarredStatus.invoke(listOf(conversationId), userId, unstarAction)
         } returns ConversationsActionResult.Error
@@ -376,7 +376,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val userId = UserId("userId02")
         val markReadAction = ChangeConversationsReadStatus.Action.ACTION_MARK_READ
         val location = Constants.MessageLocationType.ALL_MAIL
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
@@ -418,7 +418,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val userId = UserId("userId02")
         val markReadAction = ChangeConversationsReadStatus.Action.ACTION_MARK_READ
         val location = Constants.MessageLocationType.ALL_MAIL
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         coEvery {
             changeConversationsReadStatus.invoke(
                 listOf(conversationId),
@@ -449,7 +449,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             areMailboxItemsMovedFromLocation = false
         )
         val userId = UserId("userId")
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         coEvery {
             changeMessagesStarredStatus(
                 userId,
@@ -489,7 +489,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             isSuccessful = false,
             areMailboxItemsMovedFromLocation = false
         )
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         coEvery { changeConversationsStarredStatus(any(), any(), any()) } returns ConversationsActionResult.Error
 
         // when
@@ -510,7 +510,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             shallDismissBackingActivity = false,
             areMailboxItemsMovedFromLocation = false
         )
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         coEvery {
             changeMessagesReadStatus.invoke(
                 listOf(messageId),
@@ -545,7 +545,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         val conversationId = "conversationId"
         val expectedResult = MessageActionSheetAction.CouldNotCompleteActionError
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         coEvery {
             changeConversationsReadStatus.invoke(any(), any(), any(), any())
         } returns ConversationsActionResult.Error
@@ -567,7 +567,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.TRASH
         val userId = UserId("userId")
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
@@ -589,7 +589,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val currentFolder = Constants.MessageLocationType.SPAM
         val userId = UserId("userId6")
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
@@ -614,7 +614,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         val conversationIds = listOf("conversationId")
         val currentFolder = Constants.MessageLocationType.SPAM
-        every { conversationModeEnabled(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN

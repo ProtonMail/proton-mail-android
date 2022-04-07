@@ -171,9 +171,9 @@
         <!-- Begin - Root Activities -->
         <activity-alias
             android:name=".activities.SplashActivity"
-            android:targetActivity=".mailbox.presentation.MailboxActivity"/>
+            android:targetActivity=".mailbox.presentation.ui.MailboxActivity"/>
         <activity
-            android:name=".mailbox.presentation.MailboxActivity"
+            android:name=".mailbox.presentation.ui.MailboxActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:launchMode="standard"
@@ -198,10 +198,10 @@
             android:name=".details.presentation.ui.MessageDetailsActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".mailbox.presentation.MailboxActivity">
+            android:parentActivityName=".mailbox.presentation.ui.MailboxActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".mailbox.presentation.MailboxActivity" />
+                android:value=".mailbox.presentation.ui.MailboxActivity" />
         </activity>
         <activity
             android:name=".activities.messageDetails.MessageViewHeadersActivity"
@@ -215,12 +215,12 @@
         <activity
             android:name=".activities.composeMessage.ComposeMessageActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".mailbox.presentation.MailboxActivity"
+            android:parentActivityName=".mailbox.presentation.ui.MailboxActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".mailbox.presentation.MailboxActivity" />
+                android:value=".mailbox.presentation.ui.MailboxActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

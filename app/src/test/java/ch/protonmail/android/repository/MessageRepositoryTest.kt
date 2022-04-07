@@ -153,11 +153,11 @@ class MessageRepositoryTest {
     private val serverMessage3 = ServerMessage(id = "3", ConversationID = EMPTY_STRING)
     private val serverMessage4 = ServerMessage(id = "4", ConversationID = EMPTY_STRING)
     private val allServerMessages = listOf(serverMessage1, serverMessage2, serverMessage3, serverMessage4)
-    private val inboxLabelId = "0"
-    private val trashLabelId = "3"
-    private val allMailLabelId = "5"
-    private val customLabelId = "customLabelId"
-    private val customFolderId = "customFolderId"
+    private val inboxLabelId = LabelId("0")
+    private val trashLabelId = LabelId("3")
+    private val allMailLabelId = LabelId("5")
+    private val customLabelId = LabelId("customLabelId")
+    private val customFolderId = LabelId("customFolderId")
 
     private val messageRepository = MessageRepository(
         dispatcherProvider = TestDispatcherProvider,
@@ -440,7 +440,7 @@ class MessageRepositoryTest {
         val apiResponse = buildMockMessageResponse(
             messages = apiMessages
         )
-        val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelIdString())
+        val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelId())
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 
         val databaseMessages = MutableStateFlow(initialDatabaseMessages)
@@ -481,7 +481,7 @@ class MessageRepositoryTest {
         val testException = IOException(exceptionMessage)
         val params = GetAllMessagesParameters(
             testUserId,
-            labelId = mailboxLocation.asLabelIdString()
+            labelId = mailboxLocation.asLabelId()
         )
         coEvery { protonMailApiManager.getMessages(params) } throws testException
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
@@ -500,7 +500,6 @@ class MessageRepositoryTest {
     @Test
     fun verifyThatLabeledMessagesFromDbAndNetAreFetched() = runBlockingTest {
         // given
-        val label1 = "label1"
         val dbMessages = listOf(message1, message2)
         val netMessages = listOf(message1, message2, message3, message4)
         val netResponse = mockk<MessagesResponse> {
@@ -509,8 +508,8 @@ class MessageRepositoryTest {
             every { code } returns Constants.RESPONSE_CODE_OK
         }
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-        coEvery { messageDao.observeMessages(label1) } returns dbFlow
-        val params = GetAllMessagesParameters(testUserId, labelId = label1)
+        coEvery { messageDao.observeMessages(customLabelId.id) } returns dbFlow
+        val params = GetAllMessagesParameters(testUserId, labelId = customLabelId)
         coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
@@ -529,14 +528,13 @@ class MessageRepositoryTest {
     @Test
     fun verifyThatLabeledMessagesGetFromNetFailsAndOnlyDbDataIsReturned() = runBlockingTest {
         // given
-        val label1 = "label1"
         val dbMessages = listOf(message1, message2)
         val netMessages = listOf(message1, message2, message3, message4)
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
-        coEvery { messageDao.observeMessages(label1) } returns dbFlow
+        coEvery { messageDao.observeMessages(customLabelId.id) } returns dbFlow
         val testExceptionMessage = "NetworkError!"
         val testException = IOException(testExceptionMessage)
-        val params = GetAllMessagesParameters(testUserId, labelId = label1)
+        val params = GetAllMessagesParameters(testUserId, labelId = customLabelId)
         coEvery { protonMailApiManager.getMessages(params) } throws testException
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
@@ -565,7 +563,7 @@ class MessageRepositoryTest {
         coEvery { messageDao.observeMessages(mailboxLocation.asLabelIdString()) } returns databaseMessagesFlow
         val params = GetAllMessagesParameters(
             testUserId,
-            labelId = mailboxLocation.asLabelIdString()
+            labelId = mailboxLocation.asLabelId()
         )
         coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } answers {
@@ -596,7 +594,7 @@ class MessageRepositoryTest {
             every { code } returns Constants.RESPONSE_CODE_OK
         }
         coEvery { messageDao.observeMessages(mailboxLocation.asLabelIdString()) } returns flowOf(dbMessages)
-        val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelIdString())
+        val params = GetAllMessagesParameters(testUserId, labelId = mailboxLocation.asLabelId())
         coEvery { protonMailApiManager.getMessages(params) } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
         coEvery { networkConnectivityManager.isInternetConnectionPossible() } returns false
@@ -621,7 +619,7 @@ class MessageRepositoryTest {
         )
         val params = GetAllMessagesParameters(
             testUserId,
-            labelId = mailboxLocation.asLabelIdString()
+            labelId = mailboxLocation.asLabelId()
         )
         coEvery { protonMailApiManager.getMessages(params) } returns apiResponse
 
@@ -798,18 +796,18 @@ class MessageRepositoryTest {
         // given
         val messageIds = listOf(messageId)
         val labelIds = listOf(inboxLabelId, allMailLabelId, customLabelId)
-        val expectedLabelIds = listOf(allMailLabelId, customFolderId, customLabelId)
+        val expectedLabelIds = listOf(allMailLabelId, customFolderId, customLabelId).ids()
         val message = Message(
             messageId = messageId,
-            allLabelIDs = labelIds
+            allLabelIDs = labelIds.ids()
         )
-        val customLabel = buildLabel(id = LabelId(customLabelId))
+        val customLabel = buildLabel(id = customLabelId)
         coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
         coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
-        coEvery { labelRepository.findLabel(LabelId(customLabelId)) } returns customLabel
+        coEvery { labelRepository.findLabel(customLabelId) } returns customLabel
 
         // when
-        messageRepository.moveToCustomFolderLocation(messageIds, customFolderId, testUserId)
+        messageRepository.moveToCustomFolderLocation(messageIds, customFolderId.id, testUserId)
 
         // then
         val savedMessageCaptor = slot<Message>()
@@ -822,15 +820,15 @@ class MessageRepositoryTest {
         // given
         val messageIds = listOf(messageId)
         val labelIds = listOf(inboxLabelId, allMailLabelId, customLabelId)
-        val expectedLabelIds = listOf(trashLabelId, allMailLabelId)
+        val expectedLabelIds = listOf(trashLabelId, allMailLabelId).ids()
         val message = Message(
             messageId = messageId,
-            allLabelIDs = labelIds
+            allLabelIDs = labelIds.ids()
         )
-        val customLabel = buildLabel(id = LabelId(customLabelId))
+        val customLabel = buildLabel(id = customLabelId)
         coEvery { messageDao.findMessageByIdOnce(messageId) } returns message
         coEvery { counterDao.findUnreadLocationById(any()) } returns mockk(relaxed = true)
-        coEvery { labelRepository.findLabel(LabelId(customLabelId)) } returns customLabel
+        coEvery { labelRepository.findLabel(customLabelId) } returns customLabel
 
         // when
         messageRepository.moveToTrash(messageIds, testUserId)
@@ -884,6 +882,7 @@ class MessageRepositoryTest {
 
     private fun <T> List<T>.local() = DataResult.Success(ResponseSource.Local, this)
     private fun <T> List<T>.remote() = DataResult.Success(ResponseSource.Remote, this)
+    private fun List<LabelId>.ids() = map { it.id }
 
     private fun buildMockMessageResponse(
         messages: List<Message> = allMessages,

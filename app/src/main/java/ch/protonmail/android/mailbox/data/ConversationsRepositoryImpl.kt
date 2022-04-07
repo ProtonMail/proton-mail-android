@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -635,11 +635,11 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     ): Flow<List<ConversationDatabaseModel>> {
 
         val labelIdFilter = { conversation: ConversationDatabaseModel ->
-            params.labelId != null && params.labelId in conversation.labels.map { it.id }
+            params.labelId != null && params.labelId.id in conversation.labels.map { it.id }
         }
 
         val contextTimeComparator = compareByDescending { conversation: ConversationDatabaseModel ->
-            conversation.labels.find { label -> label.id == params.labelId }?.contextTime
+            conversation.labels.find { label -> label.id == params.labelId?.id }?.contextTime
         }
 
         return conversationDao.observeConversations(params.userId.id).map { list ->

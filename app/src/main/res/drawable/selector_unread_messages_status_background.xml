@@ -26,7 +26,7 @@
         android:state_checked="false" />
 
     <item
-        android:color="?attr/brand_norm"
+        android:color="?attr/proton_interaction_norm"
         android:state_checked="true" />
 
 </selector>

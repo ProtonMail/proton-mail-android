@@ -25,6 +25,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.asLoadMoreFlow
 import ch.protonmail.android.domain.loadMoreFlowOf
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.mailbox.domain.model.GetAllMessagesParameters
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
@@ -58,11 +59,10 @@ class ObserveMessagesByLocationTest {
     fun verifyThatInboxDataModelIsReturnedNormally() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.INBOX
-        val labelId = ""
         val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        useCase(userId, mailboxLocation, labelId).test {
+        useCase(params(userId, mailboxLocation.asLabelId())).test {
 
             // then
             assertEquals(expected, awaitItem())
@@ -74,11 +74,10 @@ class ObserveMessagesByLocationTest {
     fun verifyThatLabelDataModelIsReturnedNormally() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.LABEL
-        val labelId = "label1"
         val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        useCase(userId, mailboxLocation, labelId).test {
+        useCase(params(userId, mailboxLocation.asLabelId())).test {
 
             // then
             assertEquals(expected, awaitItem())
@@ -90,11 +89,10 @@ class ObserveMessagesByLocationTest {
     fun verifyThatStarsDataModelIsReturnedNormally() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.STARRED
-        val labelId = "label1"
         val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        useCase(userId, mailboxLocation, labelId).test {
+        useCase(params(userId, mailboxLocation.asLabelId())).test {
 
             // then
             assertEquals(expected, awaitItem())
@@ -106,11 +104,10 @@ class ObserveMessagesByLocationTest {
     fun verifyThatAllMailDataModelIsReturnedNormally() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.ALL_MAIL
-        val labelId = "label1"
         val expected = GetMessagesResult.Success(allMessages)
 
         // when
-        useCase(userId, mailboxLocation, labelId).test {
+        useCase(params(userId, mailboxLocation.asLabelId())).test {
 
             // then
             assertEquals(expected, awaitItem())
@@ -122,11 +119,10 @@ class ObserveMessagesByLocationTest {
     fun verifyThatInboxDataExceptionCausesAnErrorResponseBeingReturned() = runBlockingTest {
         // given
         val mailboxLocation = Constants.MessageLocationType.INBOX
-        val labelId = ""
         val messagesResponseChannel = Channel<DataResult<List<Message>>>()
         val params = GetAllMessagesParameters(
             userId,
-            labelId = mailboxLocation.asLabelIdString()
+            labelId = mailboxLocation.asLabelId()
         )
         coEvery { mailboxRepository.observeMessages(params) } returns
             messagesResponseChannel.receiveAsFlow().asLoadMoreFlow()
@@ -136,7 +132,7 @@ class ObserveMessagesByLocationTest {
         val expectedExceptionType = IllegalStateException::class
 
         // when
-        useCase(userId, mailboxLocation, labelId).test {
+        useCase(params).test {
 
             // then
             messagesResponseChannel.close(testException)
@@ -146,6 +142,14 @@ class ObserveMessagesByLocationTest {
             assertEquals(expectedExceptionType, actualException::class)
             awaitComplete()
         }
+    }
+
+    companion object TestData {
+
+        fun params(userId: UserId, labelId: LabelId) = GetAllMessagesParameters(
+            userId = userId,
+            labelId = labelId
+        )
     }
 
 }

@@ -36,6 +36,7 @@ import ch.protonmail.android.labels.data.remote.worker.LabelConversationsRemoteW
 import ch.protonmail.android.labels.data.remote.worker.UnlabelConversationsRemoteWorker
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.UnreadCounterDao
@@ -379,12 +380,12 @@ class ConversationsRepositoryImplTest : ArchTest {
     @Test
     fun verifyGetConversationsReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
         // given
-        val labelId = MessageLocationType.INBOX.asLabelIdString()
+        val labelId = MessageLocationType.INBOX.asLabelId()
         val parameters = buildGetConversationsParameters(labelId = labelId)
         val errorMessage = "Api call failed"
 
         val labelContextDatabaseModel = LabelContextDatabaseModel(
-            id = labelId,
+            id = labelId.id,
             contextNumUnread = 0,
             contextNumMessages = 0,
             contextTime = 0,
@@ -1462,7 +1463,7 @@ class ConversationsRepositoryImplTest : ArchTest {
             .local()
 
         // when
-        val params = GetAllConversationsParameters(testUserId, labelId = MessageLocationType.ARCHIVE.asLabelIdString())
+        val params = GetAllConversationsParameters(testUserId, labelId = MessageLocationType.ARCHIVE.asLabelId())
         conversationsRepository.observeConversations(params).test {
 
             // then
@@ -1478,10 +1479,10 @@ class ConversationsRepositoryImplTest : ArchTest {
             id = "conversation 1",
             labels = listOf(inboxLabelContextDatabaseModel(), archiveLabelContextDatabaseModel())
         )
-        val customLabelId = "custom label id"
+        val customLabelId = LabelId("custom label id")
         val customLabelConversation = buildConversationDatabaseModel(
             id = "conversation 2",
-            labels = listOf(customContextDatabaseModel(customLabelId))
+            labels = listOf(customContextDatabaseModel(customLabelId.id))
         )
         val conversations = listOf(customLabelConversation, archivedConversation)
         coEvery { conversationDao.observeConversations(any()) } returns flowOf(conversations)
@@ -1727,7 +1728,7 @@ class ConversationsRepositoryImplTest : ArchTest {
     )
 
     private fun buildGetConversationsParameters(
-        labelId: String = MessageLocationType.INBOX.asLabelIdString(),
+        labelId: LabelId = MessageLocationType.INBOX.asLabelId(),
         end: Long? = 1_616_496_670,
         pageSize: Int? = 50
     ) = GetAllConversationsParameters(

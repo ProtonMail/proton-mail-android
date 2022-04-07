@@ -58,7 +58,7 @@ import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.ui.model.LabelChipUiModel
@@ -171,7 +171,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer = mockk(relaxed = true)
 
     private val conversationModeEnabled: ConversationModeEnabled = mockk {
-        every { this@mockk.invoke(any()) } returns false
+        every { this@mockk(location = any(), userId = any()) } returns false
     }
 
     private val deleteConversations: DeleteConversations = mockk()
@@ -311,7 +311,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val conversationId = UUID.randomUUID().toString()
         val conversationMessage = buildMessage().toSpy()
 
-        every { conversationModeEnabled.invoke(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every { userManager.requireCurrentUserId() } returns testId2
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation(conversationId))
         coEvery { messageRepository.findMessage(any(), MESSAGE_ID_ONE) } returns conversationMessage
@@ -426,7 +426,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun shouldNotEmitConversationIfItIsIncomplete() = runBlockingTest {
-        every { conversationModeEnabled.invoke(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every { userManager.requireCurrentUserId() } returns testId2
         val conversation = buildConversation(CONVERSATION_ID).copy(messagesCount = 99)
         val message1 = buildMessage()
@@ -444,7 +444,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserIdForConversations() = runBlockingTest {
         // Given
-        every { conversationModeEnabled.invoke(any()) } returns true
+        every { conversationModeEnabled(location = any(), userId = any()) } returns true
         every { userManager.requireCurrentUserId() } returns testId2
         val testConversation = buildConversation(CONVERSATION_ID)
         val testConversationResult = DataResult.Success(ResponseSource.Local, testConversation)
@@ -563,7 +563,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 time = conversationMessage.time - 1000
             )
             every { userManager.requireCurrentUserId() } returns testId2
-            coEvery { conversationModeEnabled(any()) } returns true
+            coEvery { conversationModeEnabled(location = any(), userId = any()) } returns true
             val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation(conversationId))
             coEvery { messageRepository.findMessage(testId2, MESSAGE_ID_ONE) } returns conversationMessage
             coEvery { messageRepository.findMessage(testId2, MESSAGE_ID_TWO) } returns olderConversationMessage

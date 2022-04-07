@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -40,7 +40,7 @@ import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import io.mockk.Called
@@ -177,7 +177,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
         every { userManager.requireCurrentUserId() } returns TEST_USER_ID
-        coEvery { conversationModeEnabled(any()) } returns false
+        coEvery { conversationModeEnabled(location = any(), userId = any()) } returns false
 
         viewModel = buildViewModel()
     }
@@ -282,7 +282,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
         coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
-        coEvery { conversationModeEnabled(any()) } returns false
+        coEvery { conversationModeEnabled(location = any(), userId = any()) } returns false
         every {
             savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
         } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
@@ -308,7 +308,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             // given
             coEvery { userManager.currentUserId } returns TEST_USER_ID
             coEvery { moveMessagesToFolder.invoke(any(), any(), any(), any()) } just Runs
-            coEvery { conversationModeEnabled(any()) } returns true
+            coEvery { conversationModeEnabled(location = any(), userId = any()) } returns true
             every {
                 savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
             } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
@@ -334,7 +334,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // given
             coEvery { userManager.currentUserId } returns TEST_USER_ID
-            coEvery { conversationModeEnabled(any()) } returns true
+            coEvery { conversationModeEnabled(location = any(), userId = any()) } returns true
             coEvery {
                 moveConversationsToFolder.invoke(any(), any(), any())
             } returns ConversationsActionResult.Error
@@ -354,7 +354,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
             coEvery { userManager.currentUserId } returns TEST_USER_ID
             coEvery { moveMessagesToFolder.invoke(any(), any(), any(), TEST_USER_ID) } just Runs
-            coEvery { conversationModeEnabled(any()) } returns true
+            coEvery { conversationModeEnabled(location = any(), userId = any()) } returns true
             every {
                 savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
             } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -32,7 +32,6 @@ import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Processing
 import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
-import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -40,23 +39,12 @@ class ObserveConversationsByLocation @Inject constructor(
     private val conversationRepository: ConversationsRepository
 ) {
 
-    operator fun invoke(
-        userId: UserId,
-        labelId: String
-    ): LoadMoreFlow<GetConversationsResult> =
-        conversationRepository.observeConversations(buildGetParams(userId, labelId))
+    operator fun invoke(params: GetAllConversationsParameters): LoadMoreFlow<GetConversationsResult> =
+        conversationRepository.observeConversations(params)
             .mapToResult()
             .loadMoreCatch {
                 emit(GetConversationsResult.Error(it))
             }
-
-    private fun buildGetParams(
-        userId: UserId,
-        labelId: String?
-    ) = GetAllConversationsParameters(
-        userId = userId,
-        labelId = labelId
-    )
 
     private fun LoadMoreFlow<DataResult<List<Conversation>>>.mapToResult(): LoadMoreFlow<GetConversationsResult> {
 

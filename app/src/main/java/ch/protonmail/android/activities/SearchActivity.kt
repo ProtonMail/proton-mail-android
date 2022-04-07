@@ -42,8 +42,8 @@ import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.events.NoResultsEvent
 import ch.protonmail.android.events.SearchResultEvent
 import ch.protonmail.android.jobs.SearchMessagesJob
-import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
+import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
 import ch.protonmail.android.utils.AppUtil
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint

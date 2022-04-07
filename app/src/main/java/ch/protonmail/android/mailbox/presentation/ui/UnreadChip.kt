@@ -45,19 +45,19 @@ class UnreadChip @JvmOverloads constructor(
                     unreadCount = 0,
                     isFilterEnabled = true
                 ),
-                onEnabledFilter = {},
+                onEnableFilter = {},
                 onDisableFilter = {}
             )
         }
     }
 
-    fun bind(model: UnreadChipUiModel, onEnabledFilter: () -> Unit, onDisableFilter: () -> Unit) {
+    fun bind(model: UnreadChipUiModel, onEnableFilter: () -> Unit, onDisableFilter: () -> Unit) {
         text = context.getString(R.string.mailbox_unread_count, model.unreadCount)
         isCloseIconVisible = model.isFilterEnabled
         isChecked = model.isFilterEnabled
         onClick {
             if (model.isFilterEnabled) onDisableFilter()
-            else onEnabledFilter()
+            else onEnableFilter()
         }
         setOnCloseIconClickListener { onDisableFilter() }
     }

@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
- * 
+ * Copyright (c) 2022 Proton Technologies AG
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,19 +24,17 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Context
 import android.widget.Toast
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
-import ch.protonmail.android.mailbox.presentation.MailboxActivity
+import ch.protonmail.android.mailbox.presentation.ui.MailboxActivity
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.TestUser.populateUsers
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import me.proton.core.test.android.instrumented.ProtonTest.Companion.testName
 import me.proton.core.test.android.instrumented.utils.FileUtils
 import me.proton.core.test.android.instrumented.utils.FileUtils.prepareArtifactsDir
-import me.proton.core.test.android.instrumented.utils.Shell
 import me.proton.core.test.android.instrumented.utils.Shell.deleteDownloadArtifactsFolder
 import me.proton.core.test.android.plugins.data.User
 import org.junit.After

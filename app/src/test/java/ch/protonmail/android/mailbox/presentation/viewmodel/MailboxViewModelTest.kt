@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities
+package ch.protonmail.android.mailbox.presentation.viewmodel
 
 import android.graphics.Color
 import androidx.lifecycle.liveData
@@ -53,11 +53,11 @@ import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
-import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
-import ch.protonmail.android.mailbox.presentation.MailboxState
-import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.mapper.MailboxItemUiModelMapper
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
+import ch.protonmail.android.mailbox.presentation.model.MailboxListState
+import ch.protonmail.android.mailbox.presentation.model.MailboxState
+import ch.protonmail.android.mailbox.presentation.util.ConversationModeEnabled
 import ch.protonmail.android.notifications.presentation.usecase.ClearNotificationsForUser
 import ch.protonmail.android.pendingaction.data.model.PendingSend
 import ch.protonmail.android.pendingaction.data.model.PendingUpload
@@ -169,14 +169,19 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @BeforeTest
     fun setUp() {
         every { conversationModeEnabled(INBOX) } returns false // INBOX type to use with messages
+        every { conversationModeEnabled(any(), INBOX.asLabelId()) } returns false // INBOX type to use with messages
         every { conversationModeEnabled(ARCHIVE) } returns true // ARCHIVE type to use with conversations
+        every { conversationModeEnabled(any(), ARCHIVE.asLabelId()) } returns true // ARCHIVE type to use with conversations
         every { conversationModeEnabled(LABEL) } returns true // LABEL type to use with conversations
+        every { conversationModeEnabled(any(), LABEL.asLabelId()) } returns true // LABEL type to use with conversations
         every { conversationModeEnabled(LABEL_FOLDER) } returns true // LABEL_FOLDER type to use with conversations
+        every { conversationModeEnabled(any(), LABEL_FOLDER.asLabelId()) } returns true // LABEL_FOLDER type to use with conversations
         every { conversationModeEnabled(ALL_MAIL) } returns true // ALL_MAIL type to use with conversations
+        every { conversationModeEnabled(any(), ALL_MAIL.asLabelId()) } returns true // ALL_MAIL type to use with conversations
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
-        coEvery { observeMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
+        coEvery { observeMessagesByLocation(any()) } returns messagesResponseChannel.receiveAsFlow()
             .withLoadMore(loadMoreFlowOf<GetMessagesResult>()) {}
-        every { observeConversationsByLocation(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
+        every { observeConversationsByLocation(any()) } returns conversationsResponseFlow.receiveAsFlow()
             .withLoadMore(loadMoreFlowOf<GetConversationsResult>()) {}
 
         val jobEntryPoint = mockk<JobEntryPoint>()
@@ -255,7 +260,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             // Then
             assertEquals(loadingState, awaitItem())
             messagesResponseChannel.send(GetMessagesResult.Success(messages))
-            assertEquals(expected, awaitItem())
+            assertEquals(expected, awaitItem().list)
         }
     }
 
@@ -264,14 +269,15 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         // given
         val errorMessage = "An error!"
         val exception = Exception(errorMessage)
-        val expected = MailboxState.Error("Failed getting messages", exception)
+        val expected = MailboxListState.Error("Failed getting messages", exception)
 
         // When
         viewModel.mailboxState.test {
             // Then
             assertEquals(loadingState, awaitItem())
             messagesResponseChannel.close(exception)
-            assertEquals(expected.throwable?.message, (awaitItem() as MailboxState.Error).throwable?.message)
+            val listState = awaitItem().list
+            assertEquals(expected.throwable?.message, (listState as MailboxListState.Error).throwable?.message)
         }
     }
 
@@ -290,7 +296,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 // Then
                 assertEquals(loadingState, awaitItem())
                 messagesResponseChannel.send(GetMessagesResult.Success(messages))
-                assertEquals(expectedState, awaitItem())
+                assertEquals(expectedState, awaitItem().list)
             }
         }
 
@@ -313,7 +319,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 // Then
                 assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(successResult)
-                assertEquals(expected, awaitItem())
+                assertEquals(expected, awaitItem().list)
             }
         }
 
@@ -322,7 +328,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         runBlockingTest {
             // Given
             val location = LABEL
-            val expected = MailboxState.Error("Failed getting conversations", null)
+            val expected = MailboxListState.Error("Failed getting conversations", null)
 
             // When
             viewModel.setNewMailboxLocation(location)
@@ -332,15 +338,15 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                 // Then
                 assertEquals(loadingState, awaitItem())
                 conversationsResponseFlow.send(GetConversationsResult.Error())
-                assertEquals(expected, awaitItem())
+                assertEquals(expected, awaitItem().list)
             }
         }
 
     @Test
     fun isFreshDataIsFalseBeforeDataRefreshAndTrueAfter() = runBlockingTest {
         // given
-        val firstExpected = MailboxState.Data(emptyList(), isFreshData = false, shouldResetPosition = true)
-        val secondExpected = MailboxState.Data(emptyList(), isFreshData = true, shouldResetPosition = true)
+        val firstExpected = MailboxListState.Data(emptyList(), isFreshData = false, shouldResetPosition = true)
+        val secondExpected = MailboxListState.Data(emptyList(), isFreshData = true, shouldResetPosition = true)
 
         // when
         viewModel.mailboxState.test {
@@ -350,7 +356,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
             // first emission from database
             messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
-            assertEquals(firstExpected, awaitItem())
+            assertEquals(firstExpected, awaitItem().list)
 
             // emission api refresh
             messagesResponseChannel.send(GetMessagesResult.DataRefresh(emptyList()))
@@ -358,7 +364,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
             // emission from database after api refresh
             messagesResponseChannel.send(GetMessagesResult.Success(emptyList()))
-            assertEquals(secondExpected, awaitItem())
+            assertEquals(secondExpected, awaitItem().list)
         }
     }
 
@@ -541,8 +547,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             }
         }
 
-    private fun List<MailboxItemUiModel>.toMailboxState(): MailboxState.Data =
-        MailboxState.Data(this, isFreshData = false, shouldResetPosition = true)
+    private fun List<MailboxItemUiModel>.toMailboxState(): MailboxListState.Data =
+        MailboxListState.Data(this, isFreshData = false, shouldResetPosition = true)
 
     companion object TestData {
 

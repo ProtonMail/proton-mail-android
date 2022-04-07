@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -20,12 +20,12 @@ package ch.protonmail.android.mailbox.data.remote
 
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.segments.BaseApi
-import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.CountsResponse
 import ch.protonmail.android.mailbox.domain.model.GetAllConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetOneConversationParameters
+import me.proton.core.domain.entity.UserId
 
 class ConversationApi(private val service: ConversationService) : BaseApi(), ConversationApiSpec {
 
@@ -34,7 +34,7 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
             userIdTag = UserIdTag(params.userId),
             page = params.page,
             pageSize = params.pageSize,
-            labelId = params.labelId,
+            labelId = params.labelId?.id,
             sort = params.sortBy.stringValue,
             desc = params.sortDirection.intValue,
             begin = params.begin,
