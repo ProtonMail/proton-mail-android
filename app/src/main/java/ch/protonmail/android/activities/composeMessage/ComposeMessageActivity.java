@@ -965,7 +965,12 @@ public class ComposeMessageActivity
 
     @Override
     public void onBackPressed() {
-        showDraftDialog();
+        if (composeMessageViewModel.isDraftEmpty(this)) {
+            composeMessageViewModel.deleteDraft();
+            finishActivity();
+        } else {
+            showDraftDialog();
+        }
     }
 
     private void showDraftDialog() {
