@@ -20,7 +20,7 @@ package ch.protonmail.android.core;
 
 import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
 import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_ONBOARDING_SHOWN;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
@@ -89,6 +89,7 @@ import ch.protonmail.android.feature.account.AccountStateHandlerInitializer;
 import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.notifications.presentation.utils.NotificationServer;
+import ch.protonmail.android.onboarding.base.presentation.AddStartOnboardingObserverIfNeeded;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.security.presentation.SecurityManagerInitializer;
 import ch.protonmail.android.settings.domain.usecase.ApplyAppThemeFromSettings;
@@ -147,6 +148,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Inject
     @DefaultSharedPreferences
     SharedPreferences defaultSharedPreferences;
+
+    @Inject
+    AddStartOnboardingObserverIfNeeded addStartOnboardingObserverIfNeeded;
 
     private Bus mBus;
     private boolean appInBackground;
@@ -405,6 +409,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
                         ).apply();
                         defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
                     }
+
+                    addStartOnboardingObserverIfNeeded
+                            .invoke(AppInitializer.getInstance(this), currentUserId);
                 }
 
                 Set<UserId> loggedInUsers = AccountManagerKt.allLoggedInBlocking(accountManager);
@@ -438,8 +445,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
                         defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
                     }
                 }
-                if (userManager.getCurrentUserId() != null && !defaultSharedPreferences.contains(PREF_ONBOARDING_SHOWN)) {
-                    defaultSharedPreferences.edit().putBoolean(PREF_ONBOARDING_SHOWN, true).apply();
+                if (userManager.getCurrentUserId() != null && !defaultSharedPreferences.contains(PREF_NEW_USER_ONBOARDING_SHOWN)) {
+                    defaultSharedPreferences.edit().putBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, true).apply();
                 }
             }
         } else {

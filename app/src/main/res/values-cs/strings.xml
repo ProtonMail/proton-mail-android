@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Načíst obsah</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">Soukromí pro všechny</string>
-    <string name="onboarding_privacy_for_all_description">Pozvěte své kontakty do služby Proton Mail, abyste mohli využívat bezproblémové end-to-end šifrování, nebo přidejte ochranu heslem do zpráv, které jim posíláte.</string>
-    <string name="onboarding_neat_and_tidy_headline">Upravený a organizovaný</string>
-    <string name="onboarding_neat_and_tidy_description">Pomocí souboru, štítku a barevného kódu zpráv, si můžete vytvořit perfektní schránku s vlastním nastavením.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Soukromí pro všechny</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Pozvěte své kontakty do služby Proton Mail, abyste mohli využívat bezproblémové end-to-end šifrování, nebo přidejte ochranu heslem do zpráv, které jim posíláte.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Upravený a organizovaný</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Pomocí souboru, štítku a barevného kódu zpráv, si můžete vytvořit perfektní schránku s vlastním nastavením.</string>
     <string name="onboarding_next">Další</string>
     <string name="onboarding_get_started">Začínáme</string>
     <string name="onboarding_image_view_content_description">Ilustrace Proton Mail</string>

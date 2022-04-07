@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Φόρτωση περιεχομένου</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">Ιδιωτικότητα για όλους</string>
-    <string name="onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
-    <string name="onboarding_neat_and_tidy_headline">Τακτοποιημένα</string>
-    <string name="onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Ιδιωτικότητα για όλους</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Τακτοποιημένα</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
     <string name="onboarding_next">Επόμενο</string>
     <string name="onboarding_get_started">Ξεκινήστε</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>

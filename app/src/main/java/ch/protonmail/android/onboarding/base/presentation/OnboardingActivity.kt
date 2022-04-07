@@ -17,27 +17,27 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.onboarding.presentation
+package ch.protonmail.android.onboarding.base.presentation
 
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ActivityOnboardingBinding
-import ch.protonmail.android.onboarding.presentation.model.OnboardingItemUiModel
+import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class OnboardingActivity : AppCompatActivity() {
+abstract class OnboardingActivity : AppCompatActivity() {
 
-    private val viewModel: OnboardingViewModel by viewModels()
+    abstract val viewModel: OnboardingViewModel
+
     private val binding by lazy {
         ActivityOnboardingBinding.inflate(layoutInflater)
     }

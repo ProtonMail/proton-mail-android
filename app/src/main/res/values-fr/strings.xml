@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Charger le contenu</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">La vie privée pour tous</string>
-    <string name="onboarding_privacy_for_all_description">Invitez vos contacts sur Proton Mail pour profiter d\'un chiffrement transparent de bout en bout ou ajoutez une protection par mot de passe aux messages que vous leur envoyez.</string>
-    <string name="onboarding_neat_and_tidy_headline">Soignée et ordonnée</string>
-    <string name="onboarding_neat_and_tidy_description">Classez, labellisez et appliquez un code couleur aux messages pour créer votre boîte de réception parfaite et personnalisée.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">La vie privée pour tous</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Invitez vos contacts sur Proton Mail pour profiter d\'un chiffrement transparent de bout en bout ou ajoutez une protection par mot de passe aux messages que vous leur envoyez.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Soignée et ordonnée</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Classez, labellisez et appliquez un code couleur aux messages pour créer votre boîte de réception parfaite et personnalisée.</string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_get_started">Commencer</string>
     <string name="onboarding_image_view_content_description">Illustration Proton Mail</string>

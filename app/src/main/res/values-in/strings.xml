@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Muat konten</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">Privasi untuk semua</string>
-    <string name="onboarding_privacy_for_all_description">Undang teman-teman Anda ke Proton Mail agar mereka dapat turut terlindung oleh enkripsi end-to-end yang menyeluruh, atau tambahkan kata sandi pada pesan-pesan yang akan Anda kirimkan kepada mereka.</string>
-    <string name="onboarding_neat_and_tidy_headline">Rapi dan teratur</string>
-    <string name="onboarding_neat_and_tidy_description">Arsipkan, labeli, dan warnai pesan-pesan yang Anda miliki agar kotak masuk Anda dapat terlihat sempurna sebagaimana yang Anda kehendaki.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Privasi untuk semua</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Undang teman-teman Anda ke Proton Mail agar mereka dapat turut terlindung oleh enkripsi end-to-end yang menyeluruh, atau tambahkan kata sandi pada pesan-pesan yang akan Anda kirimkan kepada mereka.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Rapi dan teratur</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Arsipkan, labeli, dan warnai pesan-pesan yang Anda miliki agar kotak masuk Anda dapat terlihat sempurna sebagaimana yang Anda kehendaki.</string>
     <string name="onboarding_next">Berikutnya</string>
     <string name="onboarding_get_started">Mulai</string>
     <string name="onboarding_image_view_content_description">Ilustrasi Proton Mail</string>

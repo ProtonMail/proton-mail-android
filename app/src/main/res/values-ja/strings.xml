@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">コンテンツを読み込む</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">すべての人にプライバシーを</string>
-    <string name="onboarding_privacy_for_all_description">連絡先を Proton Mail に招待するとエンドツーエンド暗号化をシームレスに利用でき、メッセージを送信する際にパスワード保護を追加できます。</string>
-    <string name="onboarding_neat_and_tidy_headline">自分だけの外観</string>
-    <string name="onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">すべての人にプライバシーを</string>
+    <string name="new_user_onboarding_privacy_for_all_description">連絡先を Proton Mail に招待するとエンドツーエンド暗号化をシームレスに利用でき、メッセージを送信する際にパスワード保護を追加できます。</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">自分だけの外観</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_get_started">はじめましょう</string>
     <string name="onboarding_image_view_content_description">Proton Mail イラストレーション</string>

@@ -78,7 +78,7 @@ import ch.protonmail.android.core.Constants.DrawerOptionType
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES
-import ch.protonmail.android.core.Constants.Prefs.PREF_ONBOARDING_SHOWN
+import ch.protonmail.android.core.Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
@@ -105,9 +105,9 @@ import ch.protonmail.android.notifications.data.remote.fcm.MultiUserFcmTokenMana
 import ch.protonmail.android.notifications.data.remote.fcm.RegisterDeviceWorker
 import ch.protonmail.android.notifications.data.remote.fcm.model.FirebaseToken
 import ch.protonmail.android.notifications.presentation.utils.EXTRA_MAILBOX_LOCATION
-import ch.protonmail.android.onboarding.presentation.OnboardingActivity
 import ch.protonmail.android.pendingaction.data.PendingActionDao
 import ch.protonmail.android.pendingaction.data.PendingActionDatabase
+import ch.protonmail.android.onboarding.newuser.presentation.NewUserOnboardingActivity
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
@@ -729,8 +729,9 @@ internal class MailboxActivity :
 
     override fun onResume() {
         super.onResume()
-        if (userManager.currentUserId != null && !defaultSharedPreferences.getBoolean(PREF_ONBOARDING_SHOWN, false)) {
-            startActivity(Intent(this, OnboardingActivity::class.java))
+        if (userManager.currentUserId != null &&
+            !defaultSharedPreferences.getBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, false)) {
+            startActivity(Intent(this, NewUserOnboardingActivity::class.java))
         }
 
         registerFcmReceiver()

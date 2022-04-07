@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.onboarding.presentation
+package ch.protonmail.android.onboarding.base.presentation
 
 import android.content.Context
 import android.util.AttributeSet

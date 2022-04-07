@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Tartalom betöltése</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">Adatbiztonság mindenkinek</string>
-    <string name="onboarding_privacy_for_all_description">Hívja meg ismerőseit a Proton Mailbe, hogy élvezzék a zökkenőmentes végpontok közti titkosítást, vagy lássa el jelszóvédelemmel az elküldött üzeneteit.</string>
-    <string name="onboarding_neat_and_tidy_headline">Takaros</string>
-    <string name="onboarding_neat_and_tidy_description">Rendezze el, címkézze fel és lássa el színkóddal üzeneteit, hogy létrehozza a saját tökéletes fiókját.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Adatbiztonság mindenkinek</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Hívja meg ismerőseit a Proton Mailbe, hogy élvezzék a zökkenőmentes végpontok közti titkosítást, vagy lássa el jelszóvédelemmel az elküldött üzeneteit.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Takaros</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Rendezze el, címkézze fel és lássa el színkóddal üzeneteit, hogy létrehozza a saját tökéletes fiókját.</string>
     <string name="onboarding_next">Következő</string>
     <string name="onboarding_get_started">Kezdés</string>
     <string name="onboarding_image_view_content_description">Proton Mail illusztráció</string>

@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">İçeriği yükle</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">Herkes için kişisel gizlilik</string>
-    <string name="onboarding_privacy_for_all_description">Sorunsuz uçtan uca şifrelemenin tadını çıkarmak için tanıdıklarınızı Proton Mail kullanmaya çağırın ya da gönderdiğiniz iletilere parola koruması ekleyin.</string>
-    <string name="onboarding_neat_and_tidy_headline">Temiz ve düzenli</string>
-    <string name="onboarding_neat_and_tidy_description">Gelen kutunuzu mükemmelleştirmek için iletileri dosyalayın, etiketleyin ve renklendirin.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Herkes için kişisel gizlilik</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Sorunsuz uçtan uca şifrelemenin tadını çıkarmak için tanıdıklarınızı Proton Mail kullanmaya çağırın ya da gönderdiğiniz iletilere parola koruması ekleyin.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Temiz ve düzenli</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Gelen kutunuzu mükemmelleştirmek için iletileri dosyalayın, etiketleyin ve renklendirin.</string>
     <string name="onboarding_next">Sonraki</string>
     <string name="onboarding_get_started">Başlayalım</string>
     <string name="onboarding_image_view_content_description">Proton Mail çizimi</string>

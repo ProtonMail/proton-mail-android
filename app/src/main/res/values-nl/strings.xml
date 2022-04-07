@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Inhoud laden</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">Privacy voor iedereen</string>
-    <string name="onboarding_privacy_for_all_description">Nodig uw contacten voor Proton Mail om naadloos te genieten van end-to-end versleuteling of wachtwoordbeveiliging toe te voegen aan berichten die u ze verzendt.</string>
-    <string name="onboarding_neat_and_tidy_headline">Netjes en opgeruimd</string>
-    <string name="onboarding_neat_and_tidy_description">Bestand, label en kleurcode berichten om uw perfecte, aangepaste inbox te creëren.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Privacy voor iedereen</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Nodig uw contacten voor Proton Mail om naadloos te genieten van end-to-end versleuteling of wachtwoordbeveiliging toe te voegen aan berichten die u ze verzendt.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Netjes en opgeruimd</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Bestand, label en kleurcode berichten om uw perfecte, aangepaste inbox te creëren.</string>
     <string name="onboarding_next">Volgende</string>
     <string name="onboarding_get_started">Aan de slag</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustratie</string>

@@ -17,13 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.onboarding.presentation
+package ch.protonmail.android.onboarding.base.presentation
 
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import ch.protonmail.android.databinding.LayoutOnboardingItemBinding
-import ch.protonmail.android.onboarding.presentation.model.OnboardingItemUiModel
+import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
 import me.proton.core.presentation.ui.adapter.ClickableAdapter
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
 

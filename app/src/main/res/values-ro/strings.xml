@@ -130,10 +130,10 @@
     <string name="contact_details_remote_content_dialog_positive_button">Încărcare conținut</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="onboarding_privacy_for_all_headline">Confidențialitate pentru toți</string>
-    <string name="onboarding_privacy_for_all_description">Invitați-vă contactele la Proton Mail pentru a se bucura de o criptare perfectă de la un capăt la altul sau adăugați protecție prin parolă la mesajele pe care le trimiteți.</string>
-    <string name="onboarding_neat_and_tidy_headline">Curată și ordonată</string>
-    <string name="onboarding_neat_and_tidy_description">Clasificați, etichetați și codificați prin culori mesajele pentru a vă crea o experiență personală de utilizare.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Confidențialitate pentru toți</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Invitați-vă contactele la Proton Mail pentru a se bucura de o criptare perfectă de la un capăt la altul sau adăugați protecție prin parolă la mesajele pe care le trimiteți.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Curată și ordonată</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Clasificați, etichetați și codificați prin culori mesajele pentru a vă crea o experiență personală de utilizare.</string>
     <string name="onboarding_next">Înainte</string>
     <string name="onboarding_get_started">Începeți</string>
     <string name="onboarding_image_view_content_description">Ilustrație Proton Mail</string>
