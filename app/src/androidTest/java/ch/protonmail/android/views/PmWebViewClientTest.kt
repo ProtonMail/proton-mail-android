@@ -34,14 +34,11 @@ import java.util.Arrays
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
-private const val EXTRA_IN_APP = "extra_in_app"
 private const val EXTRA_TO_RECIPIENTS = "to_recipients"
 private const val EXTRA_CC_RECIPIENTS = "cc_recipients"
 private const val EXTRA_MAIL_TO = "mail_to"
 private const val EXTRA_MESSAGE_TITLE = "message_title"
 private const val EXTRA_MESSAGE_BODY = "message_body"
-
 
 @SmallTest
 class PmWebViewClientTest {
@@ -62,14 +59,16 @@ class PmWebViewClientTest {
 
     @Test
     fun shouldOverrideUrlLoadingStartsComposeMessageActivityWhenAMailToLinkWithoutCcRecipientsIsLoaded() {
+        // given
         val url = "mailto:marino-test@protonmail.com"
+        val expected = Intent(mockContext, ComposeMessageActivity::class.java)
+            .putExtra(EXTRA_TO_RECIPIENTS, arrayOf("marino-test@protonmail.com"))
+            .putExtra(EXTRA_MAIL_TO, true)
 
+        // when
         webViewClient.shouldOverrideUrlLoading(mockWebView, url)
 
-        val expected = Intent(mockContext, ComposeMessageActivity::class.java)
-        expected.putExtra(EXTRA_IN_APP, true)
-        expected.putExtra(EXTRA_TO_RECIPIENTS, arrayOf("marino-test@protonmail.com"))
-        expected.putExtra(EXTRA_MAIL_TO, true)
+        // then
         val actual = slot<Intent>()
         verify { activity.startActivity(capture(actual)) }
         assertIntentsEquals(expected, actual.captured)
@@ -77,17 +76,19 @@ class PmWebViewClientTest {
 
     @Test
     fun shouldOverrideUrlLoadingStartsComposeMessageActivityWhenAMailToLinkWithAllDetailsIsLoaded() {
+        // given
         val url = """mailto:marino-test@protonmail.com?cc=marino-test-1@protonmail.com&bcc=test12345@gmail.com&subject=The%20subject%20of%20the%20email&body=The%20body%20of%20the%20email"""
+        val expected = Intent(mockContext, ComposeMessageActivity::class.java)
+            .putExtra(EXTRA_TO_RECIPIENTS, arrayOf("marino-test@protonmail.com"))
+            .putExtra(EXTRA_CC_RECIPIENTS, arrayOf("marino-test-1@protonmail.com"))
+            .putExtra(EXTRA_MESSAGE_TITLE, "The subject of the email")
+            .putExtra(EXTRA_MESSAGE_BODY, "The body of the email")
+            .putExtra(EXTRA_MAIL_TO, true)
 
+        // when
         webViewClient.shouldOverrideUrlLoading(mockWebView, url)
 
-        val expected = Intent(mockContext, ComposeMessageActivity::class.java)
-        expected.putExtra(EXTRA_IN_APP, true)
-        expected.putExtra(EXTRA_TO_RECIPIENTS, arrayOf("marino-test@protonmail.com"))
-        expected.putExtra(EXTRA_CC_RECIPIENTS, arrayOf("marino-test-1@protonmail.com"))
-        expected.putExtra(EXTRA_MESSAGE_TITLE, "The subject of the email")
-        expected.putExtra(EXTRA_MESSAGE_BODY, "The body of the email")
-        expected.putExtra(EXTRA_MAIL_TO, true)
+        // then
         val actual = slot<Intent>()
         verify { activity.startActivity(capture(actual)) }
         assertIntentsEquals(expected, actual.captured)
@@ -100,11 +101,6 @@ class PmWebViewClientTest {
 
         assertEquals(expected.action, actual.action)
 
-        assertEquals(
-            expectedExtras.getBoolean(EXTRA_IN_APP),
-            actualExtras.getBoolean(EXTRA_IN_APP),
-            "Intents EXTRA_IN_APP not equal!"
-        )
         assertTrue(
             "Intents EXTRA_TO_RECIPIENTS not equal!",
             Arrays.equals(
