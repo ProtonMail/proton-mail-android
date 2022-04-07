@@ -219,7 +219,29 @@ internal class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     private val startMessageDetailsLauncher = registerForActivityResult(MessageDetailsActivity.Launcher()) {}
-    private val startComposeLauncher = registerForActivityResult(StartCompose()) {}
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
+        messageId?.let {
+            val snack = Snackbar.make(
+                findViewById(R.id.drawer_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                mailboxViewModel.moveToFolder(
+                    listOf(messageId),
+                    userManager.requireCurrentUserId(),
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.TRASH.asLabelIdString()
+                )
+                Snackbar.make(
+                    findViewById(R.id.drawer_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
+    }
     private val startSearchLauncher = registerForActivityResult(StartSearch()) {}
 
     override val currentLabelId get() = mailboxLabelId

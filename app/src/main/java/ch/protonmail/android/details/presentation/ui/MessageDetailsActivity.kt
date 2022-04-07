@@ -80,6 +80,7 @@ import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider
 import ch.protonmail.android.utils.webview.SetUpWebViewDarkModeHandlingIfSupported
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
@@ -346,6 +347,29 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun onPermissionDenied(type: Constants.PermissionType) {
         super.onPermissionDenied(type)
         viewModel.storagePermissionDenied()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != RESULT_OK) {
+            return super.onActivityResult(requestCode, resultCode, data)
+        }
+
+        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
+            val snack = Snackbar.make(
+                findViewById(R.id.messageDetailsView),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                viewModel.moveDraftToTrash(messageId)
+                Snackbar.make(
+                    findViewById(R.id.messageDetailsView),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
     }
 
     fun showReportPhishingDialog(messageId: String) {

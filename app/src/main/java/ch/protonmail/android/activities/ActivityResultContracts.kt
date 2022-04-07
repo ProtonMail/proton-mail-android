@@ -60,7 +60,7 @@ class StartContacts : ActivityResultContract<Unit, Unit?>() {
     }
 }
 
-class StartCompose : ActivityResultContract<StartCompose.Input, Unit?>() {
+class StartCompose : ActivityResultContract<StartCompose.Input, String?>() {
 
     override fun createIntent(context: Context, input: Input): Intent =
         AppUtil.decorInAppIntent(Intent(context, ComposeMessageActivity::class.java)).apply {
@@ -69,9 +69,12 @@ class StartCompose : ActivityResultContract<StartCompose.Input, Unit?>() {
             input.addressId?.let { putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, it) }
         }
 
-    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
-        if (resultCode != Activity.RESULT_OK) return null
-        return Unit
+    override fun parseResult(resultCode: Int, result: Intent?): String? {
+        return if (resultCode == Activity.RESULT_OK) {
+            result?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)
+        } else {
+            null
+        }
     }
 
     data class Input(

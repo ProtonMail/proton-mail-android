@@ -165,6 +165,12 @@
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
     <!-- endregion -->
 
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Draft saved</string>
+    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
+    <string name="snackbar_action_discard">Discard</string>
+    <!-- endregion -->
+
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="sign_out">Sign Out</string>
@@ -277,7 +283,6 @@
     <string name="email">Email</string>
     <string name="phone">Phone number</string>
     <string name="save">Save</string>
-    <string name="save_message_as_draft">Save message as draft?</string>
     <string name="no_subject">Send message without subject?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

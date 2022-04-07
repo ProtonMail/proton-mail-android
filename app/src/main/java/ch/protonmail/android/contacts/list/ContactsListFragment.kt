@@ -441,7 +441,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             val intent = Intent(context, ComposeMessageActivity::class.java)
             intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
             intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailAddress))
-            startActivity(intent)
+            startActivityForResult(intent, 0)
         } else {
             context?.showToast(R.string.email_empty, Toast.LENGTH_SHORT)
         }

@@ -29,11 +29,13 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.usecase.DeleteLabels
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -58,6 +60,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
     private val deleteLabels: DeleteLabels,
     private val contactsMapper: ContactsListMapper,
     private val contactRepository: ContactsRepository,
+    private val moveMessagesToFolder: MoveMessagesToFolder,
     private val userManager: UserManager
 ) : ViewModel() {
 
@@ -187,6 +190,17 @@ class ContactGroupDetailsViewModel @Inject constructor(
 
     fun delete() {
         _deleteLabelIds.value = listOf(_contactLabel.contactId)
+    }
+
+    fun moveDraftToTrash(messageId: String) {
+        viewModelScope.launch {
+            moveMessagesToFolder(
+                listOf(messageId),
+                Constants.MessageLocationType.TRASH.asLabelIdString(),
+                Constants.MessageLocationType.DRAFT.asLabelIdString(),
+                userManager.requireCurrentUserId()
+            )
+        }
     }
 
     enum class Status(var message: String?) {

@@ -269,7 +269,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
                         MessageRecipient(email.name, email.email, contactGroup.name)
                     }.toList() as Serializable
                 )
-                startActivity(AppUtil.decorInAppIntent(composeIntent))
+                startActivityForResult(AppUtil.decorInAppIntent(composeIntent), 0)
                 contactGroupsViewModel.contactGroupEmailsResult.removeObservers(this)
             }
         }

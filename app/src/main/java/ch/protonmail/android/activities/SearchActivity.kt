@@ -45,6 +45,7 @@ import ch.protonmail.android.jobs.SearchMessagesJob
 import ch.protonmail.android.mailbox.presentation.model.MailboxItemUiModel
 import ch.protonmail.android.mailbox.presentation.viewmodel.MailboxViewModel
 import ch.protonmail.android.utils.AppUtil
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -110,7 +111,7 @@ internal class SearchActivity : BaseActivity() {
                 intent.putExtra(
                     ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, mailboxUiItem.messageData?.isInline
                 )
-                startActivity(intent)
+                startActivityForResult(intent, 0)
             } else {
                 val intent = AppUtil.decorInAppIntent(
                     Intent(this@SearchActivity, MessageDetailsActivity::class.java)
@@ -193,6 +194,34 @@ internal class SearchActivity : BaseActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != RESULT_OK) {
+            return super.onActivityResult(requestCode, resultCode, data)
+        }
+
+        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
+            val snack = Snackbar.make(
+                findViewById(R.id.search_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                mailboxViewModel.moveToFolder(
+                    listOf(messageId),
+                    mUserManager.requireCurrentUserId(),
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.TRASH.asLabelIdString()
+                )
+                Snackbar.make(
+                    findViewById(R.id.search_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
     }
 
     private fun isDraft(item: MailboxItemUiModel): Boolean {

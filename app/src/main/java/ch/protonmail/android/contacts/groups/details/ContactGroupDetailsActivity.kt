@@ -28,6 +28,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
@@ -41,6 +42,7 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.RecyclerViewEmptyViewSupport
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
@@ -97,6 +99,29 @@ class ContactGroupDetailsActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != AppCompatActivity.RESULT_OK) {
+            return super.onActivityResult(requestCode, resultCode, data)
+        }
+
+        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
+            val snack = Snackbar.make(
+                findViewById(R.id.contact_group_details_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                contactGroupDetailsViewModel.moveDraftToTrash(messageId)
+                Snackbar.make(
+                    findViewById(R.id.contact_group_details_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
+    }
+
     private fun onWriteToContacts() {
         if (groups.isNotEmpty()) {
             val intent = Intent(this, ComposeMessageActivity::class.java)
@@ -106,7 +131,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
                     MessageRecipient(email.name, email.email, groupName)
                 }.toList() as Serializable
             )
-            startActivity(intent)
+            startActivityForResult(intent, 0)
         } else {
             showToast(R.string.email_empty, Toast.LENGTH_SHORT)
         }

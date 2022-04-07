@@ -61,6 +61,7 @@ import ch.protonmail.android.views.ListItemThumbnail
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -177,6 +178,29 @@ class ContactDetailsActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != RESULT_OK) {
+            return super.onActivityResult(requestCode, resultCode, data)
+        }
+
+        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
+            val snack = Snackbar.make(
+                findViewById(R.id.contact_details_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                viewModel.moveDraftToTrash(messageId)
+                Snackbar.make(
+                    findViewById(R.id.contact_details_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
     }
 
     private fun onEditContacts() {
@@ -359,7 +383,7 @@ class ContactDetailsActivity : AppCompatActivity() {
             val intent = Intent(this, ComposeMessageActivity::class.java)
             intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
             intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailAddress))
-            startActivity(intent)
+            startActivityForResult(intent, 0)
         } else {
             showToast(R.string.email_empty, Toast.LENGTH_SHORT)
         }

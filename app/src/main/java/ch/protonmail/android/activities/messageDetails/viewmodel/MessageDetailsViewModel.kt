@@ -804,6 +804,17 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
+    fun moveDraftToTrash(messageId: String) {
+        viewModelScope.launch {
+            moveMessagesToFolder(
+                listOf(messageId),
+                Constants.MessageLocationType.TRASH.asLabelIdString(),
+                Constants.MessageLocationType.DRAFT.asLabelIdString(),
+                userManager.requireCurrentUserId()
+            )
+        }
+    }
+
     fun delete() {
         viewModelScope.launch {
             val primaryUserId = userManager.requireCurrentUserId()

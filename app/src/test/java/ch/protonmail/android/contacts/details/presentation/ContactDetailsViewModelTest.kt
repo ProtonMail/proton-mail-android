@@ -97,6 +97,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         fetchContactDetails = fetchContactDetails,
         fetchContactGroups = fetchContactGroups,
         mapper = mapper,
+        moveMessagesToFolder = mockk(),
         workManager = workManager,
         fileHelper = fileHelper,
         userManager = userManager
