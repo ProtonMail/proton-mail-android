@@ -28,10 +28,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateActivity
@@ -47,7 +46,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import timber.log.Timber
-import java.io.Serializable
 import javax.inject.Inject
 
 const val EXTRA_CONTACT_GROUP = "extra_contact_group"
@@ -63,6 +61,25 @@ class ContactGroupDetailsActivity : BaseActivity() {
 
     private lateinit var contactGroupEmailsAdapter: ContactGroupEmailsAdapter
     private val contactGroupDetailsViewModel: ContactGroupDetailsViewModel by viewModels()
+
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
+        messageId?.let {
+            val snack = Snackbar.make(
+                findViewById(R.id.contact_group_details_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                contactGroupDetailsViewModel.moveDraftToTrash(messageId)
+                Snackbar.make(
+                    findViewById(R.id.contact_group_details_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
+    }
 
     override fun getLayoutId() = R.layout.activity_contact_group_details
 
@@ -99,39 +116,12 @@ class ContactGroupDetailsActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != AppCompatActivity.RESULT_OK) {
-            return super.onActivityResult(requestCode, resultCode, data)
-        }
-
-        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
-            val snack = Snackbar.make(
-                findViewById(R.id.contact_group_details_layout),
-                R.string.snackbar_message_draft_saved,
-                Snackbar.LENGTH_LONG
-            )
-            snack.setAction(R.string.move_to_trash) {
-                contactGroupDetailsViewModel.moveDraftToTrash(messageId)
-                Snackbar.make(
-                    findViewById(R.id.contact_group_details_layout),
-                    R.string.snackbar_message_draft_moved_to_trash,
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-            snack.show()
-        }
-    }
-
     private fun onWriteToContacts() {
         if (groups.isNotEmpty()) {
-            val intent = Intent(this, ComposeMessageActivity::class.java)
-            intent.putExtra(
-                ComposeMessageActivity.EXTRA_TO_RECIPIENT_GROUPS,
-                groups.asSequence().map { email ->
-                    MessageRecipient(email.name, email.email, groupName)
-                }.toList() as Serializable
-            )
-            startActivityForResult(intent, 0)
+            val recipientGroup = groups.asSequence().map { email ->
+                MessageRecipient(email.name, email.email, groupName)
+            }.toList()
+            startComposeLauncher.launch(StartCompose.Input(toRecipientGroups = recipientGroup))
         } else {
             showToast(R.string.email_empty, Toast.LENGTH_SHORT)
         }

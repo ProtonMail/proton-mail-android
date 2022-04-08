@@ -31,7 +31,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob
@@ -69,6 +68,30 @@ internal class SearchActivity : BaseActivity() {
     @Inject
     lateinit var mailboxViewModelProvider: Provider<MailboxViewModel>
 
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
+        messageId?.let {
+            val snack = Snackbar.make(
+                findViewById(R.id.search_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                mailboxViewModel.moveToFolder(
+                    listOf(messageId),
+                    mUserManager.requireCurrentUserId(),
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.TRASH.asLabelIdString()
+                )
+                Snackbar.make(
+                    findViewById(R.id.search_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
+    }
+
     override fun getLayoutId(): Int = R.layout.activity_search
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,13 +128,12 @@ internal class SearchActivity : BaseActivity() {
         })
         adapter.setItemClick { mailboxUiItem: MailboxItemUiModel ->
             if (isDraft(mailboxUiItem)) {
-                val intent =
-                    AppUtil.decorInAppIntent(Intent(this@SearchActivity, ComposeMessageActivity::class.java))
-                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, mailboxUiItem.itemId)
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, mailboxUiItem.messageData?.isInline
+                startComposeLauncher.launch(
+                    StartCompose.Input(
+                        messageId = mailboxUiItem.itemId,
+                        isInline = mailboxUiItem.messageData?.isInline
+                    )
                 )
-                startActivityForResult(intent, 0)
             } else {
                 val intent = AppUtil.decorInAppIntent(
                     Intent(this@SearchActivity, MessageDetailsActivity::class.java)
@@ -194,34 +216,6 @@ internal class SearchActivity : BaseActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != RESULT_OK) {
-            return super.onActivityResult(requestCode, resultCode, data)
-        }
-
-        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
-            val snack = Snackbar.make(
-                findViewById(R.id.search_layout),
-                R.string.snackbar_message_draft_saved,
-                Snackbar.LENGTH_LONG
-            )
-            snack.setAction(R.string.move_to_trash) {
-                mailboxViewModel.moveToFolder(
-                    listOf(messageId),
-                    mUserManager.requireCurrentUserId(),
-                    MessageLocationType.DRAFT,
-                    MessageLocationType.TRASH.asLabelIdString()
-                )
-                Snackbar.make(
-                    findViewById(R.id.search_layout),
-                    R.string.snackbar_message_draft_moved_to_trash,
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-            snack.show()
-        }
     }
 
     private fun isDraft(item: MailboxItemUiModel): Boolean {

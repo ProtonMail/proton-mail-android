@@ -29,7 +29,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.children
@@ -38,7 +37,6 @@ import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseConnectivityActivity
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateActivity
 import ch.protonmail.android.contacts.groups.list.ContactGroupsFragment
@@ -55,7 +53,6 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -185,29 +182,6 @@ class ContactsActivity :
 
     override fun requestContactsPermission() {
         contactsPermissionHelper.checkPermission()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != AppCompatActivity.RESULT_OK) {
-            return super.onActivityResult(requestCode, resultCode, data)
-        }
-
-        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
-            val snack = Snackbar.make(
-                findViewById(R.id.layout_contacts_main_content),
-                R.string.snackbar_message_draft_saved,
-                Snackbar.LENGTH_LONG
-            )
-            snack.setAction(R.string.move_to_trash) {
-                contactsViewModel.moveDraftToTrash(messageId)
-                Snackbar.make(
-                    findViewById(R.id.layout_contacts_main_content),
-                    R.string.snackbar_message_draft_moved_to_trash,
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-            snack.show()
-        }
     }
 
     private fun onConnectivityCheckRetry() {

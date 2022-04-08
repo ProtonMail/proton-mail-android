@@ -46,6 +46,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
+import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
@@ -137,6 +138,25 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
 
     private val recyclerViewLinearLayoutManager = LinearLayoutManager(this)
+
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
+        messageId?.let {
+            val snack = Snackbar.make(
+                findViewById(R.id.messageDetailsView),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                viewModel.moveDraftToTrash(messageId)
+                Snackbar.make(
+                    findViewById(R.id.messageDetailsView),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
+    }
 
     override fun getLayoutId(): Int = R.layout.activity_message_details
 
@@ -347,29 +367,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun onPermissionDenied(type: Constants.PermissionType) {
         super.onPermissionDenied(type)
         viewModel.storagePermissionDenied()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != RESULT_OK) {
-            return super.onActivityResult(requestCode, resultCode, data)
-        }
-
-        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
-            val snack = Snackbar.make(
-                findViewById(R.id.messageDetailsView),
-                R.string.snackbar_message_draft_saved,
-                Snackbar.LENGTH_LONG
-            )
-            snack.setAction(R.string.move_to_trash) {
-                viewModel.moveDraftToTrash(messageId)
-                Snackbar.make(
-                    findViewById(R.id.messageDetailsView),
-                    R.string.snackbar_message_draft_moved_to_trash,
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-            snack.show()
-        }
     }
 
     fun showReportPhishingDialog(messageId: String) {
@@ -806,98 +803,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             Observer { editIntentExtrasEvent: Event<IntentExtrasData?> ->
                 val editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled()
                     ?: return@Observer
-                val intent = AppUtil.decorInAppIntent(
-                    Intent(
-                        this@MessageDetailsActivity,
-                        ComposeMessageActivity::class.java
-                    )
-                )
-                MessageUtils.addRecipientsToIntent(
-                    intent,
-                    ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
-                    editIntentExtras.toRecipientListString,
-                    editIntentExtras.messageAction,
-                    editIntentExtras.userAddresses
-                )
-                if (editIntentExtras.includeCCList) {
-                    MessageUtils.addRecipientsToIntent(
-                        intent,
-                        ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
-                        editIntentExtras.messageCcList,
-                        editIntentExtras.messageAction,
-                        editIntentExtras.userAddresses
-                    )
-                }
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_LOAD_IMAGES,
-                    editIntentExtras.imagesDisplayed
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
-                    editIntentExtras.remoteContentDisplayed
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_SENDER_NAME,
-                    editIntentExtras.messageSenderName
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
-                    editIntentExtras.senderEmailAddress
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_PGP_MIME,
-                    editIntentExtras.isPGPMime
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
-                    editIntentExtras.newMessageTitle
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
-                    editIntentExtras.largeMessageBody
-                )
                 mBigContentHolder.content = editIntentExtras.mBigContentHolder.content
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_BODY,
-                    editIntentExtras.body
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
-                    editIntentExtras.timeMs
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_PARENT_ID,
-                    editIntentExtras.messageId
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_ACTION_ID,
-                    editIntentExtras.messageAction
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID,
-                    editIntentExtras.addressID
-                )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS,
-                    editIntentExtras.addressEmailAlias
-                )
-                if (editIntentExtras.embeddedImagesAttachmentsExist) {
-                    intent.putParcelableArrayListExtra(
-                        ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
-                        editIntentExtras.attachments
-                    )
-                }
-                val attachments = editIntentExtras.attachments
-                if (attachments.size > 0) {
-                    if (!editIntentExtras.isPGPMime) {
-                        attachments.map { it.doSaveInDB = false }
-                    }
-                    intent.putParcelableArrayListExtra(
-                        ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
-                        attachments
-                    )
-                }
-                startActivityForResult(intent, 0)
+                startComposeLauncher.launch(StartCompose.Input(intentExtrasData = editIntentExtras))
             }
         )
     }

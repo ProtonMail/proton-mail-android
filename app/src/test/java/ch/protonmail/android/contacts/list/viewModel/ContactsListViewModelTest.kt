@@ -51,7 +51,8 @@ class ContactsListViewModelTest : ArchTest {
         workManagerMock,
         androidContactsRepositoryMock,
         androidContactsDetailsRepositoryMock,
-        contactsListMapperMock
+        contactsListMapperMock,
+        moveMessagesToFolder = mockk()
     )
 
     @Test

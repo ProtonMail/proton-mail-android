@@ -47,8 +47,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
@@ -88,6 +87,25 @@ class ContactDetailsActivity : AppCompatActivity() {
     private var decryptedCardType2: String? = null
     private var decryptedCardType3: String? = null
     private val viewModel: ContactDetailsViewModel by viewModels()
+
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
+        messageId?.let {
+            val snack = Snackbar.make(
+                findViewById(R.id.contact_details_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                viewModel.moveDraftToTrash(messageId)
+                Snackbar.make(
+                    findViewById(R.id.contact_details_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
+    }
 
     @Inject
     lateinit var fileHelper: FileHelper
@@ -178,29 +196,6 @@ class ContactDetailsActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != RESULT_OK) {
-            return super.onActivityResult(requestCode, resultCode, data)
-        }
-
-        data?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)?.let { messageId ->
-            val snack = Snackbar.make(
-                findViewById(R.id.contact_details_layout),
-                R.string.snackbar_message_draft_saved,
-                Snackbar.LENGTH_LONG
-            )
-            snack.setAction(R.string.move_to_trash) {
-                viewModel.moveDraftToTrash(messageId)
-                Snackbar.make(
-                    findViewById(R.id.contact_details_layout),
-                    R.string.snackbar_message_draft_moved_to_trash,
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-            snack.show()
-        }
     }
 
     private fun onEditContacts() {
@@ -380,10 +375,7 @@ class ContactDetailsActivity : AppCompatActivity() {
 
     private fun onWriteToContact(emailAddress: String) {
         if (emailAddress.isNotEmpty()) {
-            val intent = Intent(this, ComposeMessageActivity::class.java)
-            intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
-            intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailAddress))
-            startActivityForResult(intent, 0)
+            startComposeLauncher.launch(StartCompose.Input(toRecipients = listOf(emailAddress)))
         } else {
             showToast(R.string.email_empty, Toast.LENGTH_SHORT)
         }

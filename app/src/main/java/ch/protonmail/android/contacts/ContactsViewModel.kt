@@ -21,16 +21,12 @@ package ch.protonmail.android.contacts
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchContactsData
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -38,7 +34,6 @@ import javax.inject.Inject
 internal class ContactsViewModel @Inject constructor(
     private val userManager: UserManager,
     private val fetchContactsData: FetchContactsData,
-    private val moveMessagesToFolder: MoveMessagesToFolder,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -53,16 +48,5 @@ internal class ContactsViewModel @Inject constructor(
     fun fetchContacts() {
         Timber.v("fetchContacts")
         fetchContactsTrigger.value = Unit
-    }
-
-    fun moveDraftToTrash(messageId: String) {
-        viewModelScope.launch {
-            moveMessagesToFolder(
-                listOf(messageId),
-                Constants.MessageLocationType.TRASH.asLabelIdString(),
-                Constants.MessageLocationType.DRAFT.asLabelIdString(),
-                userManager.requireCurrentUserId()
-            )
-        }
     }
 }
