@@ -93,12 +93,14 @@ class LoadTheLastNonDraftMessageBody @Inject constructor(
         messageWithLoadedBody: MessageDetailsListItem
     ): List<MessageDetailsListItem> =
         map {
-            MessageDetailsListItem(
+            MessageDetailsListItem.Body(
                 message = it,
-                messageContent = null,
-                originalMessageContent = null,
-                showOpenInProtonCalendar = false
-            )
+                messageFormattedHtml = null,
+                messageFormattedHtmlWithQuotedHistory = null,
+                showOpenInProtonCalendar = false,
+                showLoadEmbeddedImagesButton = false,
+                showDecryptionError = false
+            ) as MessageDetailsListItem
         }
             .toMutableList()
             .apply {

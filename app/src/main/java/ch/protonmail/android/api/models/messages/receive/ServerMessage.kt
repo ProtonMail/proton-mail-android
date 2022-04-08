@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -22,9 +22,10 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import com.google.gson.annotations.SerializedName
 
+private const val FIELD_FLAGS = "Flags"
 private const val FIELD_ID = "ID"
-private const val FIELD_LABEL_IDS_REMOVED = "LabelIDsRemoved"
 private const val FIELD_LABEL_IDS_ADDED = "LabelIDsAdded"
+private const val FIELD_LABEL_IDS_REMOVED = "LabelIDsRemoved"
 private const val FIELD_PARSED_HEADERS = "ParsedHeaders"
 private const val FIELD_TIME = "Time"
 
@@ -37,7 +38,8 @@ data class ServerMessage(
     val Unread: Int = -1,
     val Type: Int = -1, // 0 = INBOX, 1 = DRAFT, 2 = SENT, 3 = INBOX_AND_SENT
     val Sender: ServerMessageSender? = null,
-    val Flags: Long = 0,
+    @SerializedName(FIELD_FLAGS)
+    val flags: Long = 0,
     @SerializedName(FIELD_TIME)
     val time: Long = -1,
     val Size: Long = -1,

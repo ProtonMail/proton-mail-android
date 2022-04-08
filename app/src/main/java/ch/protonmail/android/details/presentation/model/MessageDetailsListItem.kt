@@ -24,34 +24,23 @@ import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.utils.ui.TYPE_HEADER
 import ch.protonmail.android.utils.ui.TYPE_ITEM
 
-class MessageDetailsListItem : ExpandableRecyclerAdapter.ListItem {
+sealed class MessageDetailsListItem(
+    val type: Int,
+) : ExpandableRecyclerAdapter.ListItem(type) {
 
-    var message: Message
-    var messageFormattedHtmlWithQuotedHistory: String? = null
-    var messageFormattedHtml: String? = null
-    var showLoadEmbeddedImagesButton: Boolean = false
-    val showOpenInProtonCalendar: Boolean
-    var showDecryptionError: Boolean = false
-    var embeddedImageIds: List<String> = emptyList()
+    abstract val message: Message
 
-    constructor(message: Message) : super(TYPE_HEADER) {
-        this.message = message
-        this.showOpenInProtonCalendar = false
-    }
+    data class Header(
+        override val message: Message
+    ) : MessageDetailsListItem(TYPE_HEADER)
 
-    /**
-     * @param messageContent the content of this message, in formatted HTML and without the "QUOTED" message
-     * @param originalMessageContent the original full content of this message (with QUOTE), formatted in HTML
-     */
-    constructor(
-        message: Message,
-        messageContent: String?,
-        originalMessageContent: String?,
-        showOpenInProtonCalendar: Boolean
-    ) : super(TYPE_ITEM) {
-        this.message = message
-        this.messageFormattedHtml = messageContent
-        this.messageFormattedHtmlWithQuotedHistory = originalMessageContent
-        this.showOpenInProtonCalendar = showOpenInProtonCalendar
-    }
+    data class Body(
+        override val message: Message,
+        val messageFormattedHtml: String?,
+        val messageFormattedHtmlWithQuotedHistory: String?,
+        val showOpenInProtonCalendar: Boolean,
+        val showLoadEmbeddedImagesButton: Boolean,
+        val showDecryptionError: Boolean,
+        val embeddedImageIds: List<String> = emptyList()
+    ) : MessageDetailsListItem(TYPE_ITEM)
 }

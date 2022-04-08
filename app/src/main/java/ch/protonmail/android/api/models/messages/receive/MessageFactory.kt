@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -44,7 +44,7 @@ class MessageFactory @Inject constructor(
             conversationId = serverMessage.ConversationID,
             subject = serverMessage.Subject,
             Unread = serverMessage.Unread.parseBoolean("Unread"),
-            Type = MessageUtils.calculateType(serverMessage.Flags),
+            Type = MessageUtils.calculateType(serverMessage.flags),
 
             sender = messageSenderFactory.createMessageSender(requireNotNull(serverMessage.Sender)),
             time = serverMessage.time.checkIfSet("Time"),
@@ -60,11 +60,11 @@ class MessageFactory @Inject constructor(
                 .contains(Constants.MessageLocationType.STARRED),
             folderLocation = serverMessage.FolderLocation,
             numAttachments = serverMessage.NumAttachments,
-            messageEncryption = messageFlagsToEncryptionMapper.flagsToMessageEncryption(serverMessage.Flags),
+            messageEncryption = messageFlagsToEncryptionMapper.flagsToMessageEncryption(serverMessage.flags),
             expirationTime = serverMessage.ExpirationTime,
-            isReplied = serverMessage.Flags and MessageFlag.REPLIED.value == MessageFlag.REPLIED.value,
-            isRepliedAll = serverMessage.Flags and MessageFlag.REPLIED_ALL.value == MessageFlag.REPLIED_ALL.value,
-            isForwarded = serverMessage.Flags and MessageFlag.FORWARDED.value == MessageFlag.FORWARDED.value,
+            isReplied = serverMessage.flags and MessageFlag.REPLIED.flagValue == MessageFlag.REPLIED.flagValue,
+            isRepliedAll = serverMessage.flags and MessageFlag.REPLIED_ALL.flagValue == MessageFlag.REPLIED_ALL.flagValue,
+            isForwarded = serverMessage.flags and MessageFlag.FORWARDED.flagValue == MessageFlag.FORWARDED.flagValue,
             isDownloaded = serverMessage.Body != null,
             spamScore = serverMessage.SpamScore,
             addressID = serverMessage.AddressID,
@@ -76,7 +76,8 @@ class MessageFactory @Inject constructor(
             bccList = serverMessage.BCCList?.toList() ?: listOf(),
             replyTos = serverMessage.ReplyTos?.toList() ?: listOf(),
             header = serverMessage.Header,
-            parsedHeaders = serverMessage.parsedHeaders
+            parsedHeaders = serverMessage.parsedHeaders,
+            flags = serverMessage.flags
         ).apply {
             attachments = serverMessage.Attachments?.map(attachmentFactory::createAttachment) ?: emptyList()
             embeddedImageIds = serverMessage.embeddedImagesArray?.toList() ?: emptyList()

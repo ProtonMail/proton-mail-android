@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -212,8 +212,8 @@ object MessageUtils {
     }
 
     fun calculateType(flags: Long): Message.MessageType {
-        val received = flags and MessageFlag.RECEIVED.value == MessageFlag.RECEIVED.value
-        val sent = flags and MessageFlag.SENT.value == MessageFlag.SENT.value
+        val received = flags and MessageFlag.RECEIVED.flagValue == MessageFlag.RECEIVED.flagValue
+        val sent = flags and MessageFlag.SENT.flagValue == MessageFlag.SENT.flagValue
         return if (received && sent) {
             Message.MessageType.INBOX_AND_SENT
         } else if (received) {

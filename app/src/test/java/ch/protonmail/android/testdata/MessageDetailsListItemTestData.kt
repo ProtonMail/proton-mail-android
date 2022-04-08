@@ -23,17 +23,22 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.model.MessageDetailsListItem
 
 object MessageDetailsListItemTestData {
-    fun withoutLoadedBodyFrom(message: Message) = MessageDetailsListItem(
+
+    fun withoutLoadedBodyFrom(message: Message) = MessageDetailsListItem.Body(
         message = message,
-        messageContent = null,
-        originalMessageContent = null,
-        showOpenInProtonCalendar = false
+        messageFormattedHtml = null,
+        messageFormattedHtmlWithQuotedHistory = null,
+        showOpenInProtonCalendar = false,
+        showLoadEmbeddedImagesButton = false,
+        showDecryptionError = false
     )
 
-    fun withLoadedBodyFrom(message: Message) = MessageDetailsListItem(
+    fun withLoadedBodyFrom(message: Message) = MessageDetailsListItem.Body(
         message = message,
-        messageContent = MessageTestData.MESSAGE_BODY_FORMATTED,
-        originalMessageContent = MessageTestData.MESSAGE_BODY_FORMATTED,
-        showOpenInProtonCalendar = false
+        messageFormattedHtml = MessageTestData.MESSAGE_BODY_FORMATTED,
+        messageFormattedHtmlWithQuotedHistory = MessageTestData.MESSAGE_BODY_FORMATTED,
+        showOpenInProtonCalendar = false,
+        showLoadEmbeddedImagesButton = false,
+        showDecryptionError = false
     )
 }

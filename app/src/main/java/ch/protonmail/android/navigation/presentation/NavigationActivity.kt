@@ -449,8 +449,8 @@ internal abstract class NavigationActivity : BaseActivity() {
                 showTwoButtonInfoDialog(
                     title = title,
                     message = message,
-                    rightStringId = R.string.yes,
-                    leftStringId = R.string.no
+                    positiveStringId = R.string.yes,
+                    negativeStringId = R.string.no
                 ) {
                     onLogoutConfirmed(checkNotNull(userManager.currentUserId))
                 }

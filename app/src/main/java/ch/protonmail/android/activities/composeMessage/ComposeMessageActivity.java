@@ -165,7 +165,7 @@ import ch.protonmail.android.utils.ui.screen.RenderDimensionsProvider;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
-import ch.protonmail.android.views.PMWebViewClient;
+import ch.protonmail.android.views.PmWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.collections.CollectionsKt;
 import me.proton.core.accountmanager.domain.AccountManager;
@@ -227,7 +227,7 @@ public class ComposeMessageActivity
     //endregion
 
     private WebView quotedMessageWebView;
-    private PMWebViewClient pmWebViewClient;
+    private PmWebViewClient pmWebViewClient;
     final String newline = "<br>";
     private MessageRecipientArrayAdapter recipientAdapter;
     private boolean mAreAdditionalRowsVisible;
@@ -388,7 +388,7 @@ public class ComposeMessageActivity
 
     private void setUpQuotedMessageWebView() {
         quotedMessageWebView = new WebView(this);
-        pmWebViewClient = new PMWebViewClient(mUserManager, this, true);
+        pmWebViewClient = new PmWebViewClient(mUserManager, this, true);
         quotedMessageWebView.setWebViewClient(pmWebViewClient);
         quotedMessageWebView.requestDisallowInterceptTouchEvent(true);
 

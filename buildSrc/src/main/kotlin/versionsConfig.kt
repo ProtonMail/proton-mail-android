@@ -42,7 +42,7 @@ fun initVersions() {
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.4.0"         // Released: Jul 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
-    `android-room version` =                    "2.3.0"         // Released: Apr 21, 2021
+    `android-room version` =                    "2.4.2"         // Released: Feb 23, 2022
     `android-work version` =                    "2.7.1"         // Released: Nov 17, 2021
 
     `android-test version` =                    "1.4.0-beta01"  // Released: May 15, 2021

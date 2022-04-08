@@ -33,6 +33,8 @@ import ch.protonmail.android.api.models.MessagePayload
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
+import ch.protonmail.android.api.models.enumerations.MessageFlag
+import ch.protonmail.android.api.models.enumerations.contains
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.api.models.messages.receive.MessageLocationResolver
 import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
@@ -65,41 +67,41 @@ import java.util.regex.Pattern
 import javax.mail.internet.InternetHeaders
 
 const val TABLE_MESSAGES = "messagev3"
-const val COLUMN_MESSAGE_ID = "ID"
 const val COLUMN_CONVERSATION_ID = "ConversationID"
-const val COLUMN_MESSAGE_SUBJECT = "Subject"
-const val COLUMN_MESSAGE_TIME = "Time"
-const val COLUMN_MESSAGE_LOCATION = "Location"
-const val COLUMN_MESSAGE_FOLDER_LOCATION = "FolderLocation"
-const val COLUMN_MESSAGE_TO_LIST = "ToList"
-const val COLUMN_MESSAGE_CC_LIST = "CCList"
+const val COLUMN_MESSAGE_ACCESS_TIME = "AccessTime"
+const val COLUMN_MESSAGE_ADDRESS_ID = "AddressID"
 const val COLUMN_MESSAGE_BCC_LIST = "BCCList"
+const val COLUMN_MESSAGE_BODY = "Body"
+const val COLUMN_MESSAGE_CC_LIST = "CCList"
+const val COLUMN_MESSAGE_EXPIRATION_TIME = "ExpirationTime"
+const val COLUMN_MESSAGE_FLAGS = "Flags"
+const val COLUMN_MESSAGE_FOLDER_LOCATION = "FolderLocation"
+const val COLUMN_MESSAGE_HEADER = "Header"
+const val COLUMN_MESSAGE_ID = "ID"
+const val COLUMN_MESSAGE_INLINE_RESPONSE = "InlineResponse"
+const val COLUMN_MESSAGE_IS_DOWNLOADED = "IsDownloaded"
 const val COLUMN_MESSAGE_IS_ENCRYPTED = "IsEncrypted"
-const val COLUMN_MESSAGE_IS_STARRED = "Starred"
-const val COLUMN_MESSAGE_SIZE = "Size"
+const val COLUMN_MESSAGE_IS_FORWARDED = "IsForwarded"
 const val COLUMN_MESSAGE_IS_REPLIED = "IsReplied"
 const val COLUMN_MESSAGE_IS_REPLIED_ALL = "IsRepliedAll"
-const val COLUMN_MESSAGE_IS_FORWARDED = "IsForwarded"
-const val COLUMN_MESSAGE_BODY = "Body"
-const val COLUMN_MESSAGE_INLINE_RESPONSE = "InlineResponse"
+const val COLUMN_MESSAGE_IS_STARRED = "Starred"
 const val COLUMN_MESSAGE_LABELS = "LabelIDs"
 const val COLUMN_MESSAGE_LOCAL_ID = "NewServerId"
+const val COLUMN_MESSAGE_LOCATION = "Location"
 const val COLUMN_MESSAGE_MIME_TYPE = "MIMEType"
-const val COLUMN_MESSAGE_SPAM_SCORE = "SpamScore"
-const val COLUMN_MESSAGE_ADDRESS_ID = "AddressID"
-const val COLUMN_MESSAGE_IS_DOWNLOADED = "IsDownloaded"
-const val COLUMN_MESSAGE_EXPIRATION_TIME = "ExpirationTime"
-const val COLUMN_MESSAGE_HEADER = "Header"
-const val COLUMN_MESSAGE_PARSED_HEADERS = "ParsedHeaders"
 const val COLUMN_MESSAGE_NUM_ATTACHMENTS = "NumAttachments"
-const val COLUMN_MESSAGE_UNREAD = "Unread"
-const val COLUMN_MESSAGE_TYPE = "Type"
-const val COLUMN_MESSAGE_SENDER_EMAIL = "SenderSerialized"
-const val COLUMN_MESSAGE_SENDER_NAME = "SenderName"
+const val COLUMN_MESSAGE_PARSED_HEADERS = "ParsedHeaders"
 const val COLUMN_MESSAGE_PREFIX_SENDER = "Sender_"
 const val COLUMN_MESSAGE_REPLY_TOS = "ReplyTos"
-const val COLUMN_MESSAGE_ACCESS_TIME = "AccessTime"
-const val COLUMN_MESSAGE_DELETED = "Deleted"
+const val COLUMN_MESSAGE_SENDER_EMAIL = "SenderSerialized"
+const val COLUMN_MESSAGE_SENDER_NAME = "SenderName"
+const val COLUMN_MESSAGE_SIZE = "Size"
+const val COLUMN_MESSAGE_SPAM_SCORE = "SpamScore"
+const val COLUMN_MESSAGE_SUBJECT = "Subject"
+const val COLUMN_MESSAGE_TIME = "Time"
+const val COLUMN_MESSAGE_TO_LIST = "ToList"
+const val COLUMN_MESSAGE_TYPE = "Type"
+const val COLUMN_MESSAGE_UNREAD = "Unread"
 
 @Entity(
     tableName = TABLE_MESSAGES,
@@ -206,7 +208,10 @@ data class Message @JvmOverloads constructor(
     var bccList: List<MessageRecipient> = emptyList(),
 
     @Embedded(prefix = COLUMN_MESSAGE_PREFIX_SENDER)
-    var sender: MessageSender? = MessageSender(null, null)
+    var sender: MessageSender? = MessageSender(null, null),
+
+    @ColumnInfo(name = COLUMN_MESSAGE_FLAGS, defaultValue = "0")
+    val flags: Long = 0
 
 ) : Serializable {
 
@@ -578,6 +583,9 @@ data class Message @JvmOverloads constructor(
             MessageLocationType.ALL_DRAFT.asLabelIdString()
         )
     }
+
+    fun isPhishing(): Boolean =
+        MessageFlag.PHISHING_AUTO in flags || MessageFlag.PHISHING_MANUAL in flags
 
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT

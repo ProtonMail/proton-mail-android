@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.data.local
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -42,7 +43,10 @@ import me.proton.core.data.room.db.CommonConverters
         MessagePreferenceEntity::class,
         UnreadCounterEntity::class
     ],
-    version = 15
+    autoMigrations = [
+        AutoMigration(from = 15, to = 16)
+    ],
+    version = 16
 )
 @TypeConverters(
     value = [

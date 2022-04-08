@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -284,13 +284,11 @@ class ContactDetailsActivity : AppCompatActivity() {
             showTwoButtonInfoDialog(
                 titleStringId = R.string.contact_details_remote_content_dialog_title,
                 messageStringId = R.string.contact_details_remote_content_dialog_message,
-                rightStringId = R.string.contact_details_remote_content_dialog_positive_button,
-                dismissOnButtonClick = true,
+                positiveStringId = R.string.contact_details_remote_content_dialog_positive_button,
                 cancelable = false,
                 cancelOnTouchOutside = false,
-                onNegativeButtonClicked = { setPlaceholderThumbnailImage() },
-                onPositiveButtonClicked = { loadThumbnailImage(photoUrl) }
-            )
+                onNegativeButtonClicked = { setPlaceholderThumbnailImage() }
+            ) { loadThumbnailImage(photoUrl) }
         }
     }
 

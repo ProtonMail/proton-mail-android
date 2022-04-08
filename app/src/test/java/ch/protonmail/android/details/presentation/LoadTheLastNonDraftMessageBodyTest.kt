@@ -136,6 +136,7 @@ class LoadTheLastNonDraftMessageBodyTest {
         conversation.messageListItems.forEachIndexed { index, message ->
             if (index != loadedMessageIndex) {
                 assertEquals(TYPE_ITEM, message.itemType)
+                message as MessageDetailsListItem.Body
                 assertNull(message.messageFormattedHtml)
                 assertNull(message.messageFormattedHtmlWithQuotedHistory)
             }

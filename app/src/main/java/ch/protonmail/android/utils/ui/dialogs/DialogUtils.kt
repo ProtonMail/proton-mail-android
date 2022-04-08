@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -21,6 +21,7 @@ package ch.protonmail.android.utils.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -166,14 +167,11 @@ class DialogUtils {
          * @param messageStringId [StringRes] for the message of the Dialog
          *  optional
          *
-         * @param rightStringId [StringRes] for text of the right button
+         * @param positiveStringId [StringRes] for text of the right button
          *  default is [R.string.okay]
          *
-         * @param leftStringId [StringRes] for text of the left button
+         * @param negativeStringId [StringRes] for text of the left button
          *  default is [R.string.cancel]
-         *
-         * @param dismissOnButtonClick whether the [Dialog] should be dismissed when a button is clicked
-         *  default is `true`
          *
          * @param cancelable whether the [Dialog] is cancelable
          *  default is `true`
@@ -193,9 +191,8 @@ class DialogUtils {
             title: CharSequence? = titleStringId?.let(::getText),
             @StringRes messageStringId: Int? = null,
             message: CharSequence? = messageStringId?.let(::getText),
-            @StringRes rightStringId: Int = R.string.okay,
-            @StringRes leftStringId: Int = R.string.cancel,
-            dismissOnButtonClick: Boolean = true,
+            @StringRes positiveStringId: Int = R.string.okay,
+            @StringRes negativeStringId: Int = R.string.cancel,
             cancelable: Boolean = true,
             cancelOnTouchOutside: Boolean = true,
             crossinline onNegativeButtonClicked: () -> Unit = {},
@@ -207,13 +204,11 @@ class DialogUtils {
             return AlertDialog.Builder(this)
                 .setTitle(title)
                 .apply { message?.let(::setMessage) }
-                .setNegativeButton(leftStringId) { dialog, _ ->
+                .setNegativeButton(negativeStringId) { dialog, _ ->
                     onNegativeButtonClicked()
-                    if (dismissOnButtonClick) dialog.dismiss()
                 }
-                .setPositiveButton(rightStringId) { dialog, _ ->
+                .setPositiveButton(positiveStringId) { dialog, _ ->
                     onPositiveButtonClicked()
-                    if (dismissOnButtonClick) dialog.dismiss()
                 }
                 .setCancelable(cancelable)
                 .create()
@@ -265,7 +260,7 @@ class DialogUtils {
             negativeBtnText: String,
             positiveBtnText: String,
             checkBoxText: String,
-            okListener: (Unit) -> Unit,
+            okListener: (DialogInterface) -> Unit,
             checkedListener: (Boolean) -> Unit,
             cancelable: Boolean
         ) {
@@ -284,10 +279,8 @@ class DialogUtils {
                 .setMessage(message)
                 .setNegativeButton(negativeBtnText) { dialog, _ -> dialog.dismiss() }
                 .setPositiveButton(positiveBtnText) { dialog, _ ->
-                    run {
-                        okListener.invoke(Unit)
-                        dialog.dismiss()
-                    }
+                    okListener.invoke(dialog)
+                    dialog.dismiss()
                 }
                 .setCancelable(cancelable)
                 .create()
