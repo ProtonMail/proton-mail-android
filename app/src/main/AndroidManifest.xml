@@ -107,12 +107,17 @@
             <meta-data
                 android:name="ch.protonmail.android.security.presentation.SecurityManagerInitializer"
                 android:value="androidx.startup"
-                tools:node="remove"/>
+                tools:node="remove" />
 
             <meta-data
                 android:name="ch.protonmail.android.core.SentryInitializer"
                 android:value="androidx.startup"
-                tools:node="remove"/>
+                tools:node="remove" />
+
+            <meta-data
+                android:name="ch.protonmail.android.onboarding.base.presentation.StartOnboardingObserverInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
         <provider
             android:name="androidx.core.content.FileProvider"
