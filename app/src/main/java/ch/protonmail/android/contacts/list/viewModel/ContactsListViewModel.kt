@@ -32,13 +32,17 @@ import ch.protonmail.android.contacts.list.progress.ProgressLiveData
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.worker.DeleteContactWorker
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.containsNoCase
 import timber.log.Timber
@@ -49,7 +53,8 @@ class ContactsListViewModel(
     private val workManager: WorkManager,
     private val androidContactsRepository: AndroidContactsRepository,
     private val androidContactsDetailsRepository: AndroidContactDetailsRepository,
-    private val contactsListMapper: ContactsListMapper
+    private val contactsListMapper: ContactsListMapper,
+    private val moveMessagesToFolder: MoveMessagesToFolder
 ) : ViewModel(), IContactsListViewModel, ISearchListenerViewModel {
 
     private val progressMax = MutableLiveData<Int?>()
@@ -127,12 +132,24 @@ class ContactsListViewModel(
     fun deleteSelected(contacts: List<String>): LiveData<Operation.State> =
         DeleteContactWorker.Enqueuer(workManager).enqueue(contacts).state
 
+    fun moveDraftToTrash(userId: UserId, messageId: String) {
+        viewModelScope.launch {
+            moveMessagesToFolder(
+                listOf(messageId),
+                Constants.MessageLocationType.TRASH.asLabelIdString(),
+                Constants.MessageLocationType.DRAFT.asLabelIdString(),
+                userId
+            )
+        }
+    }
+
     class Factory @Inject constructor(
         private val contactDao: ContactDao,
         private val workManager: WorkManager,
         private val androidContactsRepositoryFactory: AndroidContactsRepository.AssistedFactory,
         private val androidContactsDetailsRepositoryFactory: AndroidContactDetailsRepository.AssistedFactory,
-        private val contactsListMapper: ContactsListMapper
+        private val contactsListMapper: ContactsListMapper,
+        private val moveMessagesToFolder: MoveMessagesToFolder
     ) : ViewModelProvider.Factory {
 
         lateinit var loaderManager: LoaderManager
@@ -146,7 +163,8 @@ class ContactsListViewModel(
                 workManager,
                 androidContactsRepository,
                 androidContactsDetailsRepository,
-                contactsListMapper
+                contactsListMapper,
+                moveMessagesToFolder
             ) as T
         }
     }

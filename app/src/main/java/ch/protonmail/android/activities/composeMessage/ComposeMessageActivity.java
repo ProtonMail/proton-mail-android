@@ -133,7 +133,6 @@ import ch.protonmail.android.di.DefaultSharedPreferences;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
-import ch.protonmail.android.events.MessageSavedEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.events.Status;
@@ -422,7 +421,7 @@ public class ComposeMessageActivity
         });
 
         composeMessageViewModel.getCloseComposer().observe(this, booleanEvent -> {
-            finishActivity();
+            finishActivity(false);
         });
 
         composeMessageViewModel.getDeleteResult().observe(ComposeMessageActivity.this, new CheckLocalMessageObserver());
@@ -965,29 +964,12 @@ public class ComposeMessageActivity
 
     @Override
     public void onBackPressed() {
-        showDraftDialog();
-    }
-
-    private void showDraftDialog() {
-        if (!isFinishing()) {
-            DialogUtils.Companion.showInfoDialogWithThreeButtons(
-                    ComposeMessageActivity.this,
-                    getString(R.string.compose),
-                    getString(R.string.save_message_as_draft),
-                    getString(R.string.no),
-                    getString(R.string.yes),
-                    getString(R.string.cancel),
-                    unit -> {
-                        composeMessageViewModel.deleteDraft();
-                        finishActivity();
-                        return unit;
-                    },
-                    unit -> {
-                        UiUtil.hideKeyboard(ComposeMessageActivity.this);
-                        composeMessageViewModel.setBeforeSaveDraft(true, messageBodyEditText.getText().toString(), UserAction.SAVE_DRAFT_EXIT);
-                        return unit;
-                    },
-                    false);
+        if (composeMessageViewModel.isDraftEmpty(this)) {
+            composeMessageViewModel.deleteDraft();
+            finishActivity(false);
+        } else {
+            UiUtil.hideKeyboard(ComposeMessageActivity.this);
+            composeMessageViewModel.setBeforeSaveDraft(true, messageBodyEditText.getText().toString(), UserAction.SAVE_DRAFT_EXIT);
         }
     }
 
@@ -1402,16 +1384,12 @@ public class ComposeMessageActivity
         );
     }
 
-    @Subscribe
-    public void onMessageSavedEvent(MessageSavedEvent event) {
-        if (event.status == Status.NO_NETWORK) {
-            TextExtensions.showToast(this, R.string.no_network_queued);
+    private void finishActivity(boolean isSaveDraftAndExit) {
+        if (isSaveDraftAndExit) {
+            setResult(RESULT_OK, new Intent().putExtra(EXTRA_MESSAGE_ID, composeMessageViewModel.getDraftId()));
+        } else {
+            setResult(RESULT_OK);
         }
-        finishActivity();
-    }
-
-    private void finishActivity() {
-        setResult(RESULT_OK);
         if (isTaskRoot()) {
             ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
             if (activityManager != null) {
@@ -1435,7 +1413,7 @@ public class ComposeMessageActivity
             if (!isFinishing()) {
                 DialogUtils.Companion.showInfoDialog(ComposeMessageActivity.this, getString(R.string.app_name), getString(R.string.messages_load_failure),
                         unit -> {
-                            finishActivity();
+                            finishActivity(false);
                             return unit;
                         });
             }
@@ -1946,7 +1924,7 @@ public class ComposeMessageActivity
                 TextExtensions.showToast(ComposeMessageActivity.this, R.string.error_saving_try_again);
             } else {
                 TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
-                new Handler(Looper.getMainLooper()).postDelayed(ComposeMessageActivity.this::finishActivity, 500);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> finishActivity(false), 500);
             }
         }
     }
@@ -2049,7 +2027,7 @@ public class ComposeMessageActivity
                 composeMessageViewModel.saveDraft(localMessage);
                 new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false), 500);
                 if (userAction == UserAction.SAVE_DRAFT_EXIT) {
-                    finishActivity();
+                    finishActivity(true);
                 }
             } else if (composeMessageViewModel.getActionType() == UserAction.FINISH_EDIT) {
                 mSendingInProgress = true;

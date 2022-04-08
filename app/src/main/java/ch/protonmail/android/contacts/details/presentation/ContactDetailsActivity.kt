@@ -47,8 +47,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
@@ -61,6 +60,7 @@ import ch.protonmail.android.views.ListItemThumbnail
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -87,6 +87,25 @@ class ContactDetailsActivity : AppCompatActivity() {
     private var decryptedCardType2: String? = null
     private var decryptedCardType3: String? = null
     private val viewModel: ContactDetailsViewModel by viewModels()
+
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
+        messageId?.let {
+            val snack = Snackbar.make(
+                findViewById(R.id.contact_details_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                viewModel.moveDraftToTrash(messageId)
+                Snackbar.make(
+                    findViewById(R.id.contact_details_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
+    }
 
     @Inject
     lateinit var fileHelper: FileHelper
@@ -356,10 +375,7 @@ class ContactDetailsActivity : AppCompatActivity() {
 
     private fun onWriteToContact(emailAddress: String) {
         if (emailAddress.isNotEmpty()) {
-            val intent = Intent(this, ComposeMessageActivity::class.java)
-            intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
-            intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailAddress))
-            startActivity(intent)
+            startComposeLauncher.launch(StartCompose.Input(toRecipients = listOf(emailAddress)))
         } else {
             showToast(R.string.email_empty, Toast.LENGTH_SHORT)
         }

@@ -41,8 +41,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Operation
 import androidx.work.WorkManager
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
@@ -64,6 +63,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.birbit.android.jobqueue.JobManager
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts.*
@@ -112,6 +112,25 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             ContactEvent.SAVED -> R.string.contact_saved
             else -> R.string.contact_saved_offline
         }
+
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
+        messageId?.let {
+            val snack = Snackbar.make(
+                requireActivity().findViewById(R.id.contacts_list_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                viewModel.moveDraftToTrash(userManager.requireCurrentUserId(), messageId)
+                Snackbar.make(
+                    requireActivity().findViewById(R.id.contacts_list_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
+    }
 
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
         val selectedItems = getSelectedItems()
@@ -438,10 +457,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private fun onWriteToContact(emailAddress: String) {
         if (emailAddress.isNotEmpty()) {
-            val intent = Intent(context, ComposeMessageActivity::class.java)
-            intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
-            intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailAddress))
-            startActivity(intent)
+            startComposeLauncher.launch(StartCompose.Input(toRecipients = listOf(emailAddress)))
         } else {
             context?.showToast(R.string.email_empty, Toast.LENGTH_SHORT)
         }

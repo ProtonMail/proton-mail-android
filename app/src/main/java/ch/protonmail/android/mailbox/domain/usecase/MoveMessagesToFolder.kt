@@ -27,7 +27,7 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import javax.inject.Inject
 
-internal class MoveMessagesToFolder @Inject constructor(
+class MoveMessagesToFolder @Inject constructor(
     private val messagesRepository: MessageRepository,
     private val conversationsRepository: ConversationsRepository
 ) {

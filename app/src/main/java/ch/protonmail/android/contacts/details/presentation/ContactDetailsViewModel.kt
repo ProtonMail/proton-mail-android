@@ -27,7 +27,9 @@ import androidx.work.WorkManager
 import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.contacts.details.domain.FetchContactGroups
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.mailbox.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.DeleteContactWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +49,7 @@ class ContactDetailsViewModel @Inject constructor(
     private val fetchContactDetails: FetchContactDetails,
     private val fetchContactGroups: FetchContactGroups,
     private val mapper: ContactDetailsMapper,
+    private val moveMessagesToFolder: MoveMessagesToFolder,
     private val workManager: WorkManager,
     private val fileHelper: FileHelper,
     private val userManager: UserManager
@@ -89,6 +92,17 @@ class ContactDetailsViewModel @Inject constructor(
             val vCardFileName = "$contactName.vcf"
             val uri = fileHelper.saveStringToFileProvider(vCardFileName, vCardToShare, context)
             mutableFlowVcard.emit(uri)
+        }
+    }
+
+    fun moveDraftToTrash(messageId: String) {
+        viewModelScope.launch {
+            moveMessagesToFolder(
+                listOf(messageId),
+                Constants.MessageLocationType.TRASH.asLabelIdString(),
+                Constants.MessageLocationType.DRAFT.asLabelIdString(),
+                userManager.requireCurrentUserId()
+            )
         }
     }
 }

@@ -1319,4 +1319,9 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     fun isAppInDarkMode(context: Context) = isAppInDarkMode.invoke(context)
+
+    fun isDraftEmpty(context: Context) = _messageDataResult.sendPreferences.isEmpty() &&
+        _messageDataResult.message.subject == context.getString(R.string.empty_subject) &&
+        _messageDataResult.content.isEmpty() &&
+        _messageDataResult.attachmentList.isEmpty()
 }

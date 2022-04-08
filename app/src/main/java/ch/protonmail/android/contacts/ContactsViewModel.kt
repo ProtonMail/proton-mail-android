@@ -49,5 +49,4 @@ internal class ContactsViewModel @Inject constructor(
         Timber.v("fetchContacts")
         fetchContactsTrigger.value = Unit
     }
-
 }

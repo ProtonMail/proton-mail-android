@@ -24,11 +24,15 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
+import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.MessageUtils
+import java.io.Serializable
 
 class StartSettings : ActivityResultContract<StartSettings.Input, Unit?>() {
 
@@ -60,24 +64,81 @@ class StartContacts : ActivityResultContract<Unit, Unit?>() {
     }
 }
 
-class StartCompose : ActivityResultContract<StartCompose.Input, Unit?>() {
+class StartCompose : ActivityResultContract<StartCompose.Input, String?>() {
 
     override fun createIntent(context: Context, input: Input): Intent =
         AppUtil.decorInAppIntent(Intent(context, ComposeMessageActivity::class.java)).apply {
             input.messageId?.let { putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, it) }
             input.isInline?.let { putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, it) }
             input.addressId?.let { putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, it) }
+            input.toRecipients?.let { putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, it.toTypedArray()) }
+            input.toRecipientGroups?.let {
+                putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENT_GROUPS, it as Serializable)
+            }
+            input.intentExtrasData?.let { intentExtrasData ->
+                MessageUtils.addRecipientsToIntent(
+                    this,
+                    ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
+                    intentExtrasData.toRecipientListString,
+                    intentExtrasData.messageAction,
+                    intentExtrasData.userAddresses
+                )
+                if (intentExtrasData.includeCCList) {
+                    MessageUtils.addRecipientsToIntent(
+                        this,
+                        ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
+                        intentExtrasData.messageCcList,
+                        intentExtrasData.messageAction,
+                        intentExtrasData.userAddresses
+                    )
+                }
+                putExtra(ComposeMessageActivity.EXTRA_LOAD_IMAGES, intentExtrasData.imagesDisplayed)
+                putExtra(ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT, intentExtrasData.remoteContentDisplayed)
+                putExtra(ComposeMessageActivity.EXTRA_SENDER_NAME, intentExtrasData.messageSenderName)
+                putExtra(ComposeMessageActivity.EXTRA_SENDER_ADDRESS, intentExtrasData.senderEmailAddress)
+                putExtra(ComposeMessageActivity.EXTRA_PGP_MIME, intentExtrasData.isPGPMime)
+                putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TITLE, intentExtrasData.newMessageTitle)
+                putExtra(ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE, intentExtrasData.largeMessageBody)
+                putExtra(ComposeMessageActivity.EXTRA_MESSAGE_BODY, intentExtrasData.body)
+                putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP, intentExtrasData.timeMs)
+                putExtra(ComposeMessageActivity.EXTRA_PARENT_ID, intentExtrasData.messageId)
+                putExtra(ComposeMessageActivity.EXTRA_ACTION_ID, intentExtrasData.messageAction)
+                putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, intentExtrasData.addressID)
+                putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS, intentExtrasData.addressEmailAlias)
+                if (intentExtrasData.embeddedImagesAttachmentsExist) {
+                    putParcelableArrayListExtra(
+                        ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
+                        intentExtrasData.attachments
+                    )
+                }
+                val attachments = intentExtrasData.attachments
+                if (attachments.size > 0) {
+                    if (!intentExtrasData.isPGPMime) {
+                        attachments.map { it.doSaveInDB = false }
+                    }
+                    putParcelableArrayListExtra(
+                        ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
+                        attachments
+                    )
+                }
+            }
         }
 
-    override fun parseResult(resultCode: Int, result: Intent?): Unit? {
-        if (resultCode != Activity.RESULT_OK) return null
-        return Unit
+    override fun parseResult(resultCode: Int, result: Intent?): String? {
+        return if (resultCode == Activity.RESULT_OK) {
+            result?.getStringExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID)
+        } else {
+            null
+        }
     }
 
     data class Input(
         val messageId: String? = null,
         val isInline: Boolean? = null,
         val addressId: String? = null,
+        val toRecipients: List<String>? = null,
+        val toRecipientGroups: List<MessageRecipient>? = null,
+        val intentExtrasData: IntentExtrasData? = null
     )
 }
 

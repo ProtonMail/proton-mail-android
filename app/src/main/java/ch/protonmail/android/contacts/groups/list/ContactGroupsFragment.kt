@@ -33,7 +33,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.StartCompose
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.IContactsFragment
@@ -44,10 +44,10 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts_groups.*
 import timber.log.Timber
-import java.io.Serializable
 
 // region constants
 private const val TAG_CONTACT_GROUPS_FRAGMENT = "ProtonMail.ContactGroupsFragment"
@@ -63,6 +63,25 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     private val listener: IContactsListFragmentListener by lazy {
         requireActivity() as IContactsListFragmentListener
+    }
+
+    private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
+        messageId?.let {
+            val snack = Snackbar.make(
+                requireActivity().findViewById(R.id.contact_groups_list_layout),
+                R.string.snackbar_message_draft_saved,
+                Snackbar.LENGTH_LONG
+            )
+            snack.setAction(R.string.move_to_trash) {
+                contactGroupsViewModel.moveDraftToTrash(messageId)
+                Snackbar.make(
+                    requireActivity().findViewById(R.id.contact_groups_list_layout),
+                    R.string.snackbar_message_draft_moved_to_trash,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            snack.show()
+        }
     }
 
     override fun onItemCheckedStateChanged(
@@ -255,7 +274,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun onWriteToContactGroup(contactGroup: ContactGroupListItem) {
-        val composeIntent = Intent(context, ComposeMessageActivity::class.java)
         if (!contactGroupsViewModel.isPaidUser()) {
             context?.showToast(R.string.paid_plan_needed)
             return
@@ -263,13 +281,10 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         contactGroupsViewModel.contactGroupEmailsResult.observe(this) { event ->
             event?.getContentIfNotHandled()?.let { list ->
                 Timber.v("Contact email list received $list")
-                composeIntent.putExtra(
-                    ComposeMessageActivity.EXTRA_TO_RECIPIENT_GROUPS,
-                    list.asSequence().map { email ->
-                        MessageRecipient(email.name, email.email, contactGroup.name)
-                    }.toList() as Serializable
-                )
-                startActivity(AppUtil.decorInAppIntent(composeIntent))
+                val recipientGroup = list.asSequence().map { email ->
+                    MessageRecipient(email.name, email.email, contactGroup.name)
+                }.toList()
+                startComposeLauncher.launch(StartCompose.Input(toRecipientGroups = recipientGroup))
                 contactGroupsViewModel.contactGroupEmailsResult.removeObservers(this)
             }
         }

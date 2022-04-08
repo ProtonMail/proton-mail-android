@@ -62,7 +62,8 @@ class ContactGroupsViewModelTest : CoroutinesTest {
         contactGroupsRepository = contactGroupsRepository,
         contactsListMapper = contactsListMapper,
         deleteLabels = deleteLabels,
-        userManager = userManager
+        userManager = userManager,
+        moveMessagesToFolder = mockk()
     )
 
     private val testPath = "test/path1234"
