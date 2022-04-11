@@ -139,6 +139,7 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
 import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
+import ch.protonmail.android.settings.data.AccountSettingsRepository;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
 import ch.protonmail.android.ui.view.ComposerBottomAppBar;
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
@@ -257,6 +258,9 @@ public class ComposeMessageActivity
 
     @Inject
     RenderDimensionsProvider renderDimensionsProvider;
+
+    @Inject
+    AccountSettingsRepository accountSettingsRepository;
 
     String composerInstanceId;
 
@@ -387,7 +391,7 @@ public class ComposeMessageActivity
 
     private void setUpQuotedMessageWebView() {
         quotedMessageWebView = new WebView(this);
-        pmWebViewClient = new PmWebViewClient(mUserManager, this, true);
+        pmWebViewClient = new PmWebViewClient(mUserManager, accountSettingsRepository, this, true);
         quotedMessageWebView.setWebViewClient(pmWebViewClient);
         quotedMessageWebView.requestDisallowInterceptTouchEvent(true);
 

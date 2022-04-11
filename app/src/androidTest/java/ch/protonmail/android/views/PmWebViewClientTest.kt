@@ -26,6 +26,7 @@ import android.webkit.WebView
 import androidx.test.filters.SmallTest
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.settings.data.AccountSettingsRepository
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -51,10 +52,12 @@ class PmWebViewClientTest {
 
     private val mockContext: Context = mockk(relaxed = true)
 
+    private val accountSettingsRepository: AccountSettingsRepository = mockk()
+
     private val loadRemote = false
 
     private val webViewClient = PmWebViewClient(
-        userManager, activity, loadRemote
+        userManager, accountSettingsRepository, activity, loadRemote
     )
 
     @Test
@@ -77,7 +80,8 @@ class PmWebViewClientTest {
     @Test
     fun shouldOverrideUrlLoadingStartsComposeMessageActivityWhenAMailToLinkWithAllDetailsIsLoaded() {
         // given
-        val url = """mailto:marino-test@protonmail.com?cc=marino-test-1@protonmail.com&bcc=test12345@gmail.com&subject=The%20subject%20of%20the%20email&body=The%20body%20of%20the%20email"""
+        val url =
+            """mailto:marino-test@protonmail.com?cc=marino-test-1@protonmail.com&bcc=test12345@gmail.com&subject=The%20subject%20of%20the%20email&body=The%20body%20of%20the%20email"""
         val expected = Intent(mockContext, ComposeMessageActivity::class.java)
             .putExtra(EXTRA_TO_RECIPIENTS, arrayOf("marino-test@protonmail.com"))
             .putExtra(EXTRA_CC_RECIPIENTS, arrayOf("marino-test-1@protonmail.com"))

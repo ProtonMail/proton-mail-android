@@ -58,6 +58,7 @@ import ch.protonmail.android.details.presentation.model.MessageDetailsListItem
 import ch.protonmail.android.details.presentation.ui.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.view.MessageDetailsActionsView
 import ch.protonmail.android.labels.domain.model.Label
+import ch.protonmail.android.settings.data.AccountSettingsRepository
 import ch.protonmail.android.ui.model.LabelChipUiModel
 import ch.protonmail.android.util.ProtonCalendarUtil
 import ch.protonmail.android.utils.redirectToChrome
@@ -89,6 +90,7 @@ internal class MessageDetailsAdapter(
     private val messageDetailsRecyclerView: RecyclerView,
     private val messageToMessageDetailsListItemMapper: MessageToMessageDetailsListItemMapper,
     private val userManager: UserManager,
+    private val accountSettingsRepository: AccountSettingsRepository,
     private val messageEncryptionUiModelMapper: MessageEncryptionUiModelMapper,
     private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
     private val protonCalendarUtil: ProtonCalendarUtil,
@@ -216,7 +218,9 @@ internal class MessageDetailsAdapter(
         }
         webView.id = R.id.item_message_body_web_view_id
 
-        val webViewClient = MessageDetailsPmWebViewClient(userManager, context, itemView, shouldShowRemoteImages())
+        val webViewClient = MessageDetailsPmWebViewClient(
+            userManager, accountSettingsRepository, context, itemView, shouldShowRemoteImages()
+        )
         configureWebView(webView, webViewClient)
         setUpScrollListener(webView, itemView.messageWebViewContainer)
 
@@ -469,10 +473,11 @@ internal class MessageDetailsAdapter(
 
     private class MessageDetailsPmWebViewClient(
         userManager: UserManager,
+        accountSettingsRepository: AccountSettingsRepository,
         activity: Activity,
         private val itemView: View,
         private val isAutoShowRemoteImages: Boolean
-    ) : PmWebViewClient(userManager, activity, isAutoShowRemoteImages) {
+    ) : PmWebViewClient(userManager, accountSettingsRepository, activity, isAutoShowRemoteImages) {
 
         override fun onPageFinished(view: WebView, url: String) {
             if (amountOfRemoteResourcesBlocked() > 0) {

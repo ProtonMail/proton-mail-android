@@ -31,6 +31,8 @@ import ch.protonmail.android.mailbox.data.ConversationsRepositoryImpl
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.notifications.data.NotificationRepositoryImpl
 import ch.protonmail.android.notifications.domain.NotificationRepository
+import ch.protonmail.android.settings.data.AccountSettingsRepository
+import ch.protonmail.android.settings.data.SharedPreferencesAccountSettingsRepository
 import ch.protonmail.android.settings.data.SharedPreferencesDeviceSettingsRepository
 import ch.protonmail.android.settings.domain.DeviceSettingsRepository
 import dagger.Binds
@@ -50,6 +52,9 @@ internal interface ApplicationBindsModule {
 
     @Binds
     fun SharedPreferencesDeviceSettingsRepository.deviceSettingsRepository(): DeviceSettingsRepository
+
+    @Binds
+    fun SharedPreferencesAccountSettingsRepository.accountSettingsRepository(): AccountSettingsRepository
 
     @Binds
     fun provideLabelRepository(repo: LabelRepositoryImpl): LabelRepository
