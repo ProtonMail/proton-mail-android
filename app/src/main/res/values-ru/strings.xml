@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Создать новый ярлык</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Нет сообщений</string>
     <string name="mailbox_empty_folder_subtitle">Эта папка пуста</string>
     <string name="mailbox_empty_inbox_subtitle">Вы в курсе всех событий</string>
     <string name="mailbox_empty_spam_subtitle">Папка Спам пуста</string>
     <string name="mailbox_empty_trash_subtitle">Корзина пуста</string>
+    <string name="mailbox_no_messages">Нет сообщений</string>
+    <string name="mailbox_unread_count">%d непрочитанных</string>
+    <string name="mailbox_updated_just_now">Только что обновлено</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Открыть в Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Защищенный зашифрованный календарь</string>
     <string name="details_open_in_proton_calendar_icon_desc">Значок Proton Calendar</string>
     <string name="details_play_store_error">Невозможно открыть Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Предупреждение: предположительно поддельный сайт</string>
+    <string name="details_hyperlink_phishing_dialog_content">Эта ссылка ведет на сайт, который может пытаться украсть вашу информацию, например, пароли и данные кредитной карты.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; В целях безопасности не продолжайте.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Вернуться (рекомендуется)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Проигнорировать предупреждение и продолжить</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cкрытая копия:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Справа налево</string>
     <string name="settings_swipe_saving">Действие при пролистывании сохраняется…</string>
     <string name="settings_swipe_generic_error">Не удалось сохранить действие при пролистывании</string>
-    <string name="settings_swipe_offline_error">Не удалось сохранить действие при пролистывании, будучи не в сети</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Тема приложения</string>
@@ -133,10 +138,19 @@
     <string name="new_user_onboarding_privacy_for_all_headline">Конфиденциальность для всех</string>
     <string name="new_user_onboarding_privacy_for_all_description">Пригласите ваши контакты в Proton Mail, чтобы пользоваться бесшовным конечным шифрованием, или добавьте защиту паролем в отправляемые им сообщения.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Чистый и опрятный</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Перемещайте, размечайте ярлыками и отмечайте цветом сообщения, чтобы создать себе идеальный почтовый ящик.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Файлы, ярлыки и цветовая маркировка сообщений помогают создать ваш идеальный индивидуальный почтовый ящик.</string>
+    <string name="existing_user_onboarding_new_look_headline">Новый внешний вид, та же защита</string>
+    <string name="existing_user_onboarding_new_look_description">Ваша зашифрованная электронная почта была полностью переработана для удобства использования.</string>
+    <string name="existing_user_onboarding_new_features_headline">Показать функции</string>
+    <string name="existing_user_onboarding_new_features_description">Воспользуйтесь такими новыми функциями, как темный режим, улучшенные уведомления, фильтр непрочитанных сообщений и вложенные папки.</string>
     <string name="onboarding_next">Далее</string>
     <string name="onboarding_get_started">Приступить к работе</string>
     <string name="onboarding_image_view_content_description">иллюстрация Proton Mail</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Черновик сохранен</string>
+    <string name="snackbar_message_draft_moved_to_trash">Черновик перемещен в корзину</string>
+    <string name="snackbar_action_discard">Сбросить</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Дней</string>
     <string name="hours">Часов</string>
     <string name="max_labels_exceeded">У сообщения %1$s не может быть больше %2$d ярлыков.</string>
-    <string name="max_labels_selected">Разрешено иметь максимум %d ярлыков</string>
     <string name="max_attachments_reached">Достигнуто максимальное количество вложений на одно сообщение</string>
     <string name="max_attachments_size_reached">Достигнут максимальный размер вложений в сообщении</string>
     <string name="expiration_days">%dД</string>
@@ -256,7 +269,6 @@
     <string name="email">Эл. почта</string>
     <string name="phone">Hомер телефона</string>
     <string name="save">Сохранить</string>
-    <string name="save_message_as_draft">Сохранить сообщение как черновик?</string>
     <string name="no_subject">Отправить сообщение без указания темы?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
@@ -858,5 +870,4 @@
     <string name="details_show_history">Показать историю</string>
     <string name="could_not_complete_action">Невозможно закончить действие</string>
     <string name="decryption_of_message_failed">Ошибка расшифровки: при расшифровке зашифрованного содержимого этого сообщения произошёл сбой.</string>
-    <string name="labels_selected_limit_reached">Достигнут предел</string>
 </resources>

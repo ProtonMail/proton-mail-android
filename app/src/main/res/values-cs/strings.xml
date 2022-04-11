@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Vytvořit nový štítek</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Žádné zprávy</string>
     <string name="mailbox_empty_folder_subtitle">Tato složka je prázdná</string>
     <string name="mailbox_empty_inbox_subtitle">Všechno máte aktuální</string>
     <string name="mailbox_empty_spam_subtitle">Vaše složka spamu je prázdná</string>
     <string name="mailbox_empty_trash_subtitle">Koš je prázdný</string>
+    <string name="mailbox_no_messages">Žádné zprávy</string>
+    <string name="mailbox_unread_count">%d unread</string>
+    <string name="mailbox_updated_just_now">Právě aktualizováno</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Otevřít v Proton kalendáři</string>
     <string name="details_open_in_proton_calendar_subtitle">Zabezpečený šifrovaný e-mail</string>
     <string name="details_open_in_proton_calendar_icon_desc">Ikona Proton kalendáře</string>
     <string name="details_play_store_error">Nelze otevřít obchod Google Play</string>
+    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Skrytá kopie:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Zprava doleva</string>
     <string name="settings_swipe_saving">Ukládám akci gesta…</string>
     <string name="settings_swipe_generic_error">Nelze uložit akci gesta</string>
-    <string name="settings_swipe_offline_error">Nelze uložit akci gesta, pokud jste offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Použit motiv</string>
@@ -130,13 +135,22 @@
     <string name="contact_details_remote_content_dialog_positive_button">Načíst obsah</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Soukromí pro všechny</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Pozvěte své kontakty do služby Proton Mail, abyste mohli využívat bezproblémové end-to-end šifrování, nebo přidejte ochranu heslem do zpráv, které jim posíláte.</string>
-    <string name="new_user_onboarding_neat_and_tidy_headline">Upravený a organizovaný</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Pomocí souboru, štítku a barevného kódu zpráv, si můžete vytvořit perfektní schránku s vlastním nastavením.</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Privacy for all</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
+    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
+    <string name="existing_user_onboarding_new_features_headline">New features</string>
+    <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="onboarding_next">Další</string>
     <string name="onboarding_get_started">Začínáme</string>
     <string name="onboarding_image_view_content_description">Ilustrace Proton Mail</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Draft saved</string>
+    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
+    <string name="snackbar_action_discard">Discard</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Dny</string>
     <string name="hours">Hodiny</string>
     <string name="max_labels_exceeded">Zpráva %1$s nemůže mít více než %2$d štítků.</string>
-    <string name="max_labels_selected">Maximální počet štítků je: %d</string>
     <string name="max_attachments_reached">Byl dosažen maximální limit pro přílohy v jedné zprávě.</string>
     <string name="max_attachments_size_reached">Bylo dosaženo maximální velikosti pro přílohy v jedné zprávě</string>
     <string name="expiration_days">%dD</string>
@@ -256,7 +269,6 @@
     <string name="email">E-mail</string>
     <string name="phone">Telefonní číslo</string>
     <string name="save">Uložit</string>
-    <string name="save_message_as_draft">Uložit zprávu jako koncept?</string>
     <string name="no_subject">Odeslat zprávu bez předmětu?</string>
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
@@ -652,7 +664,7 @@
     <string name="account_settings">Nastavení účtu</string>
     <!-- region Acc Settings -->
     <string name="account">Účet</string>
-    <string name="drawer_subscription">Předplatné</string>
+    <string name="drawer_subscription">Subscription</string>
     <string name="password_manager">Správa hesel</string>
     <string name="password_changed">Heslo bylo změněno.</string>
     <string name="recovery_email">Sekundární e-mail</string>
@@ -858,5 +870,4 @@
     <string name="details_show_history">Zobrazit historii</string>
     <string name="could_not_complete_action">Nebylo možné dokončit akci</string>
     <string name="decryption_of_message_failed">Chyba dešifrování: dešifrování zašifrovaného obsahu této zprávy se nezdařilo.</string>
-    <string name="labels_selected_limit_reached">Limit dosažen</string>
 </resources>

@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Búa til nýja merkingu</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">No messages</string>
     <string name="mailbox_empty_folder_subtitle">This folder is empty</string>
     <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
     <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
     <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <string name="mailbox_no_messages">No messages</string>
+    <string name="mailbox_unread_count">%d unread</string>
+    <string name="mailbox_updated_just_now">Updated just now</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
     <string name="details_play_store_error">Can\'t open Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Falið afrit:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Hægri til vinstri</string>
     <string name="settings_swipe_saving">Saving Swipe action…</string>
     <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Þema forrits</string>
@@ -134,9 +139,18 @@
     <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
     <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
+    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
+    <string name="existing_user_onboarding_new_features_headline">New features</string>
+    <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_get_started">Get started</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Draft saved</string>
+    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
+    <string name="snackbar_action_discard">Discard</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Dagar</string>
     <string name="hours">Klukkustundir</string>
     <string name="max_labels_exceeded">Skilaboðin %1$s geta ekki verið með fleiri en %2$d merki.</string>
-    <string name="max_labels_selected">%d merki eru leyfileg að hámarki</string>
     <string name="max_attachments_reached">Hámarksfjölda viðhengja á hver skilaboð hefur verið náð.</string>
     <string name="max_attachments_size_reached">Hámarksstærð viðhengja á hver skilaboð hefur verið náð</string>
     <string name="expiration_days">%dD</string>
@@ -250,7 +263,6 @@
     <string name="email">Tölvupóstur</string>
     <string name="phone">Símanúmer</string>
     <string name="save">Vista</string>
-    <string name="save_message_as_draft">Vista skilaboðin sem drög?</string>
     <string name="no_subject">Senda skilaboðin án efnislínu?</string>
     <string name="yes">Já</string>
     <string name="no">Nei</string>
@@ -634,7 +646,7 @@
     <string name="account_settings">Stillingar notandaaðgangs</string>
     <!-- region Acc Settings -->
     <string name="account">Notandaaðgangur</string>
-    <string name="drawer_subscription">Áskrift</string>
+    <string name="drawer_subscription">Subscription</string>
     <string name="password_manager">Sýsl með lykilorð</string>
     <string name="password_changed">Lykilorði breytt.</string>
     <string name="recovery_email">Endurheimtupóstur</string>
@@ -832,5 +844,4 @@
     <string name="details_show_history">Birta feril</string>
     <string name="could_not_complete_action">Gat ekki lokið aðgerðinni</string>
     <string name="decryption_of_message_failed">Afkóðunarvilla: afkóðun dulritaðs efnis þessara skilaboða mistókst.</string>
-    <string name="labels_selected_limit_reached">Takmörkum náð</string>
 </resources>

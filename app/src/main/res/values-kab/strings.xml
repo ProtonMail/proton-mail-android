@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Rnu tabzimt tamaynut</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Ulac iznan</string>
     <string name="mailbox_empty_folder_subtitle">Akaram-ayi d ilem</string>
     <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
-    <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
-    <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
+    <string name="mailbox_empty_spam_subtitle">Akaram i yispamen d ilem</string>
+    <string name="mailbox_empty_trash_subtitle">Iḍuman d ilmawen</string>
+    <string name="mailbox_no_messages">Ulac iznan</string>
+    <string name="mailbox_unread_count">%d unread</string>
+    <string name="mailbox_updated_just_now">Yettwaleqqem tura kan</string>
     <!-- endregion -->
     <!-- region Details -->
-    <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
-    <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
-    <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
-    <string name="details_play_store_error">Can\'t open Play Store</string>
+    <string name="details_open_in_proton_calendar_title">Ldi di Proton Calendar</string>
+    <string name="details_open_in_proton_calendar_subtitle">Awitay awgelhan aɣelsan</string>
+    <string name="details_open_in_proton_calendar_icon_desc">Tignit n Proton Calendar</string>
+    <string name="details_play_store_error">Ulamek alday n Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Uɣal ɣer deffir (yettwasemter)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -104,17 +110,16 @@
     <string name="settings_swipe_right_to_left">Seg uyeffus s azelmaḍ</string>
     <string name="settings_swipe_saving">Saving Swipe action…</string>
     <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Asentel n usnas</string>
-    <string name="app_theme_light">Light</string>
+    <string name="app_theme_light">Afaw</string>
     <string name="app_theme_dark">Imsulles</string>
     <string name="app_theme_system">Anagraw amezwar</string>
     <!-- endregion -->
     <!-- region Labels Manger -->
-    <string name="labels_manager_select_parent_folder">Select parent folder (optional)</string>
-    <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>
+    <string name="labels_manager_select_parent_folder">Fren akaram amarraw (anefrunan)</string>
+    <string name="labels_manager_parent_folder_selected"><b>Akaram amarraw yettwafren.</b> Ssit akken ad tbedeleḍ</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Akaram amaraw</string>
@@ -127,16 +132,25 @@
     <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
     <string name="contact_details_remote_content_dialog_title">Remote content</string>
     <string name="contact_details_remote_content_dialog_message">This contact contains remote content.</string>
-    <string name="contact_details_remote_content_dialog_positive_button">Load content</string>
+    <string name="contact_details_remote_content_dialog_positive_button">Sali-d agbur</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Privacy for all</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Tabaḍnit i yal yiwen</string>
     <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
     <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
+    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
+    <string name="existing_user_onboarding_new_features_headline">Timahilin timaynutin</string>
+    <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="onboarding_next">Γer zdat</string>
     <string name="onboarding_get_started">Bdu</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Tamerkast tattwasekles</string>
+    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
+    <string name="snackbar_action_discard">Discard</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Ussan</string>
     <string name="hours">Isragen</string>
     <string name="max_labels_exceeded">Izen %1$s ur yezmir ara ad yawi ugar n %2$d n tibzimin.</string>
-    <string name="max_labels_selected">%d n tibzimin d mḍan afellay yettwasirgen</string>
     <string name="max_attachments_reached">Amḍan afellay n ifuyla yeddan yewweḍ.</string>
     <string name="max_attachments_size_reached">Amḍan afellay n teɣzi n ifuyla yeddan yewweḍ</string>
     <string name="expiration_days">%dD</string>
@@ -250,7 +263,6 @@
     <string name="email">Imayl</string>
     <string name="phone">Uṭṭun n tiliɣri</string>
     <string name="save">Sekles</string>
-    <string name="save_message_as_draft">Sekles izen d arewway?</string>
     <string name="no_subject">Azen izen s war asentel?</string>
     <string name="yes">Ih</string>
     <string name="no">Ala</string>
@@ -634,7 +646,7 @@
     <string name="account_settings">Iɣewwaren n umiḍan</string>
     <!-- region Acc Settings -->
     <string name="account">Amiḍan</string>
-    <string name="drawer_subscription">Ajerred</string>
+    <string name="drawer_subscription">Subscription</string>
     <string name="password_manager">Asefrek n wawal uffir</string>
     <string name="password_changed">Awal uffir ibeddem.</string>
     <string name="recovery_email">Imayl n tririt</string>
@@ -832,5 +844,4 @@
     <string name="details_show_history">Sken amazray</string>
     <string name="could_not_complete_action">D awezd awezɣi ad temmed tigawt</string>
     <string name="decryption_of_message_failed">Tuccḍa di tukksa n uwgelhen: tukksa n uwgelhen n yizen-a tecceḍ.</string>
-    <string name="labels_selected_limit_reached">Tewwḍeḍ tilist</string>
 </resources>

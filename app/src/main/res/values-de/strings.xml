@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Neue Kategorie erstellen</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Keine Nachrichten</string>
     <string name="mailbox_empty_folder_subtitle">Dieser Ordner ist leer</string>
     <string name="mailbox_empty_inbox_subtitle">Du bist auf dem aktuellsten Stand</string>
     <string name="mailbox_empty_spam_subtitle">Dein Spam-Ordner ist leer</string>
     <string name="mailbox_empty_trash_subtitle">Papierkorb ist leer</string>
+    <string name="mailbox_no_messages">Keine Nachrichten</string>
+    <string name="mailbox_unread_count">%d ungelesen</string>
+    <string name="mailbox_updated_just_now">Soeben aktualisiert</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">In Proton Calendar öffnen</string>
     <string name="details_open_in_proton_calendar_subtitle">Sicherer und verschlüsselter Kalender</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar Symbol</string>
     <string name="details_play_store_error">Play Store kann nicht geöffnet werden</string>
+    <string name="details_hyperlink_phishing_dialog_title">Warnung: Verdacht auf gefälschte Website</string>
+    <string name="details_hyperlink_phishing_dialog_content">Dieser Link führt zu einer Website, die möglicherweise versucht, deine Informationen wie Passwörter und Kreditkartendaten zu stehlen.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Zu deiner Sicherheit solltest du nicht fortfahren.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Zurück (empfohlen)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Warnung ignorieren und fortfahren</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Von rechts nach links</string>
     <string name="settings_swipe_saving">Wischgeste wird gespeichert…</string>
     <string name="settings_swipe_generic_error">Speichern der Wischgeste fehlgeschlagen</string>
-    <string name="settings_swipe_offline_error">Speichern der Wischgeste im Offline-Modus nicht möglich</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App-Farbschema</string>
@@ -134,9 +139,18 @@
     <string name="new_user_onboarding_privacy_for_all_description">Lade deine Kontakte zu Proton Mail ein, um von einer nahtlosen Ende-zu-Ende-Verschlüsselung zu profitieren, oder füge den Nachrichten, die du ihnen sendest, einen Passwortschutz hinzu.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Ordentlich und aufgeräumt</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Du kannst Nachrichten ablegen, kategorisieren und farblich kennzeichnen, um deinen perfekten, individuellen Posteingang zu erstellen.</string>
+    <string name="existing_user_onboarding_new_look_headline">Neues Aussehen, gleicher Schutz</string>
+    <string name="existing_user_onboarding_new_look_description">Deine verschlüsselten E-Mails wurden im Hinblick auf Benutzerfreundlichkeit völlig neu gestaltet.</string>
+    <string name="existing_user_onboarding_new_features_headline">Neue Funktionen</string>
+    <string name="existing_user_onboarding_new_features_description">Genieße neue Funktionen wie den dunklen Modus, verbesserte Benachrichtigungen, einen Filter für ungelesene Nachrichten und Unterordner.</string>
     <string name="onboarding_next">Weiter</string>
     <string name="onboarding_get_started">Los geht\'s</string>
     <string name="onboarding_image_view_content_description">Proton Mail Illustration</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Entwurf gespeichert</string>
+    <string name="snackbar_message_draft_moved_to_trash">Entwurf wurde in den Papierkorb verschoben</string>
+    <string name="snackbar_action_discard">Verwerfen</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Tage</string>
     <string name="hours">Stunden</string>
     <string name="max_labels_exceeded">Die Nachricht %1$s darf höchstens %2$d Kategorien enthalten.</string>
-    <string name="max_labels_selected">Maximal %d Kategorien erlaubt</string>
     <string name="max_attachments_reached">Die maximale Anzahl von Anhängen pro Nachricht wurde erreicht</string>
     <string name="max_attachments_size_reached">Die maximale Größe der Anhänge pro Nachricht wurde erreicht</string>
     <string name="expiration_days">%dT</string>
@@ -250,7 +263,6 @@
     <string name="email">E-Mail</string>
     <string name="phone">Telefonnummer</string>
     <string name="save">Speichern</string>
-    <string name="save_message_as_draft">Nachricht als Entwurf speichern?</string>
     <string name="no_subject">Nachricht ohne Betreff senden?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
@@ -823,5 +835,4 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="details_show_history">Verlauf anzeigen</string>
     <string name="could_not_complete_action">Die Aktion konnte nicht abgeschlossen werden</string>
     <string name="decryption_of_message_failed">Entschlüsselungsfehler: Das Entschlüsseln des verschlüsselten Inhalts dieser Nachricht ist fehlgeschlagen.</string>
-    <string name="labels_selected_limit_reached">Höchstgrenze erreicht</string>
 </resources>

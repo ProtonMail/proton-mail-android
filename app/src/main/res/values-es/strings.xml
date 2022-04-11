@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Crear una nueva etiqueta</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">No hay mensajes</string>
     <string name="mailbox_empty_folder_subtitle">Esta carpeta está vacía</string>
     <string name="mailbox_empty_inbox_subtitle">Estás al día</string>
     <string name="mailbox_empty_spam_subtitle">Tu carpeta de spam está vacía</string>
     <string name="mailbox_empty_trash_subtitle">La papelera está vacía</string>
+    <string name="mailbox_no_messages">No hay mensajes</string>
+    <string name="mailbox_unread_count">%d no leído</string>
+    <string name="mailbox_updated_just_now">Actualizado justo ahora</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Abrir en Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Calendario seguro y cifrado</string>
     <string name="details_open_in_proton_calendar_icon_desc">Icono de Proton Calendar</string>
     <string name="details_play_store_error">No se puede abrir la Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Advertencia: presunto sitio web falso</string>
+    <string name="details_hyperlink_phishing_dialog_content">Este enlace conduce a un sitio web que podría estar intentando robar su información, como contraseñas y datos de la tarjeta de crédito.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Por su seguridad, no continúe.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Volver (recomendado)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorar la advertencia y continuar</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -66,10 +72,10 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Asunto:</string>
     <string name="composer_to">Para:</string>
-    <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
-    <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
+    <string name="composer_removing_address_generic_error">No se puede verificar la dirección: %s1. El envío podría fallar.</string>
+    <string name="composer_removing_address_server_error">Eliminando la dirección: %s1. %s2</string>
     <string name="set_msg_password_title">Establecer contraseña</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
+    <string name="set_msg_password_info">Establece una contraseña para cifrar este mensaje para los usuarios que no son de ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Más información</a></string>
     <string name="set_msg_password_info_icon_description">Información</string>
     <string name="set_msg_password_msg_password_title">Contraseña del mensaje</string>
     <string name="set_msg_password_msg_password_hint">Longitud de 4 a 21 caracteres</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
     <string name="settings_swipe_saving">Guardando gesto de deslizamiento…</string>
     <string name="settings_swipe_generic_error">No se puede guardar el gesto de deslizamiento</string>
-    <string name="settings_swipe_offline_error">No se puede guardar el gesto de deslizamiento sin conexión</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema de la aplicación</string>
@@ -114,7 +119,7 @@
     <!-- endregion -->
     <!-- region Labels Manger -->
     <string name="labels_manager_select_parent_folder">Seleccionar carpeta principal (opcional)</string>
-    <string name="labels_manager_parent_folder_selected"><b>Parent folder selected.</b> Tap to change</string>
+    <string name="labels_manager_parent_folder_selected"><b>Carpeta principal seleccionada.</b> Toca para cambiar</string>
     <!-- endregion -->
     <!-- region Parent Folder Picker -->
     <string name="parent_picker_title">Carpeta principal</string>
@@ -124,19 +129,28 @@
     <string name="notification_summary_text_new_messages">Nuevos mensajes</string>
     <!-- endregion -->
     <!-- region Dialogs -->
-    <string name="contact_list_cannot_upload_groups_dialog_message">Contact groups will not be imported. Please upgrade to a paid plan to enjoy premium features.</string>
+    <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Por favor actualice a un plan de pago para disfrutar de las funciones premium.</string>
     <string name="contact_details_remote_content_dialog_title">Elija una dirección de remitente diferente</string>
     <string name="contact_details_remote_content_dialog_message">Este contacto contiene contenido remoto.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Cargar contenido</string>
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Privacidad para todos</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
-    <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Invita a tus contactos a Proton Mail para que disfruten de un cifrado perfecto de extremo a extremo, o añade una protección con contraseña a los mensajes que les envíes.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Limpio y ordenado</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Archiva, etiqueta y codifica por colores los mensajes para crear tu bandeja de entrada perfecta y personalizada.</string>
+    <string name="existing_user_onboarding_new_look_headline">Nuevo aspecto, misma protección</string>
+    <string name="existing_user_onboarding_new_look_description">Su correo electrónico cifrado ha sido completamente remodelado para facilitar su uso.</string>
+    <string name="existing_user_onboarding_new_features_headline">Nuevas características</string>
+    <string name="existing_user_onboarding_new_features_description">Disfruta de nuevas funciones como el modo oscuro, notificaciones mejoradas, un filtro de mensajes no leídos y subcarpetas.</string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_get_started">Comenzar</string>
     <string name="onboarding_image_view_content_description">Ilustración de Proton Mail</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Borrador guardado</string>
+    <string name="snackbar_message_draft_moved_to_trash">Borrador movido a la papelera</string>
+    <string name="snackbar_action_discard">Descartar</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Días</string>
     <string name="hours">Horas</string>
     <string name="max_labels_exceeded">El mensaje %1$s no puede tener más de %2$d etiquetas.</string>
-    <string name="max_labels_selected">%d etiquetas es el máximo permitido</string>
     <string name="max_attachments_reached">Se alcanzó el límite máximo de archivos adjuntos por mensaje.</string>
     <string name="max_attachments_size_reached">Se ha alcanzado el límite máximo de archivos adjuntos por mensaje</string>
     <string name="expiration_days">%dd</string>
@@ -250,7 +263,6 @@
     <string name="email">Correo</string>
     <string name="phone">Número de teléfono</string>
     <string name="save">Guardar</string>
-    <string name="save_message_as_draft">¿Guardar mensaje como borrador?</string>
     <string name="no_subject">¿Enviar mensaje sin asunto?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
@@ -291,7 +303,7 @@
     <string name="label_deleted_error">Error al eliminar la etiqueta</string>
     <string name="message_deleted_error">Error al eliminar algunos mensajes. ¡¿Algunos de los mensajes seleccionados están en proceso de envío?!</string>
     <string name="respond_inline">Responder en línea</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor no accesible... (<u>Solución de problemas</u>)</string>
     <string name="connectivity_checking">Comprobando la conexión...</string>
     <string name="draft_label_attachments_uploading">cargando adjuntos…</string>
     <string name="draft_label_message_uploading">enviando mensaje…</string>
@@ -316,7 +328,7 @@
     </string-array>
     <string name="delete_label_confirmation_title">¿Eliminar etiquetas seleccionadas?</string>
     <string name="delete_folder_confirmation_title">¿Eliminar carpetas seleccionadas?</string>
-    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b></string>
+    <string name="delete_label_confirmation_message">Los correos contenidos aquí se encontrarán en <b>Todos los correos</b></string>
     <string name="pin_invalid">PIN inválido, ingrese el PIN de 4 dígitos correcto</string>
     <string name="pin_not_match">El PIN no coincide</string>
     <string name="new_pin_saved">Nuevo PIN guardado</string>
@@ -397,7 +409,7 @@
     <string name="contacts_import_contact">Importar contacto</string>
     <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Cargar contactos</string>
-    <string name="uploading_contacts">Uploading contacts…</string>
+    <string name="uploading_contacts">Cargando contactos…</string>
     <string-array name="vcard_option_phone">
         <item>Teléfono</item>
         <item>Móvil</item>
@@ -455,11 +467,11 @@
     <string name="update_folder">Actualizar carpeta</string>
     <string name="spam_score_100">Este correo parece venir de una dirección de ProtonMail, pero vino desde fuera de nuestro sistema y ha fallado los requisitos de autenticación. ¡Pudo haber sido falsificado o reenviado incorrectamente!</string>
     <string name="spam_score_101">Este correo ha fallado sus requisitos de autenticación de dominio. ¡Pudo haber sido falsificado o reenviado incorrectamente!</string>
-    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
+    <string name="spam_score_102">Este mensaje puede ser un intento de estafa. Compruebe que el remitente y el contenido sean legítimos. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">MÁS INFORMACIÓN</a></string>
     <string name="print_from_template">De: %s</string>
-    <string name="print_to_template">To: %s;  </string>
+    <string name="print_to_template">Para: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
-    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="print_bcc_template">CCO: %s;  </string>
     <string name="address">Dirección: </string>
     <string name="address_street">Calle</string>
     <string name="address_extended_street">Nombre de calle extendido</string>
@@ -485,7 +497,7 @@
     <string name="protonmail_contacts">Contactos de ProtonMail</string>
     <string name="device_contacts">Contactos del dispositivo</string>
     <string name="print_date_template">Fecha: %s</string>
-    <string name="print_attachment_template">Attachment: %s;  </string>
+    <string name="print_attachment_template">Adjunto: %s;</string>
     <string name="pm_me_changed">El envío de mensajes desde la dirección @pm.me es una característica de pago. Su mensaje será enviado desde su dirección predeterminada %s</string>
     <string name="pm_me_can_not_be_default">Actualice a un plan de pago para poder establecer %s como dirección principal</string>
     <string name="dont_remind_again">No volver a recordarme</string>
@@ -494,7 +506,7 @@
     <string name="remove_password_question">¿Quitar contraseña?</string>
     <string name="attachment_storage_value_current">Seleccionado actualmente: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Seleccionado actualmente: ilimitado</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Configure el almacenamiento máximo que ProtonMail puede utilizar en tu teléfono.</string>
     <string name="load_embedded_images_failed_no_network">Falló la carga de imágenes incrustadas. Compruebe su conexión de red.</string>
     <string name="load_embedded_images_failed">Falló la carga de imágenes incrustadas.</string>
     <string name="unlimited">Ilimitado</string>
@@ -531,7 +543,7 @@
     <string name="expiration_error_add_msg_password">Por favor, añade una contraseña al mensaje para los siguientes destinatarios:</string>
     <string name="expiration_error_disable_pgp_sending">Deshabilite el envío PGP para habilitar la expiración para los siguientes destinatarios:</string>
     <string name="expiration_error_proceed">Pulse enviar para enviar sin expiración para estos destinatarios.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a></string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">MÁS INFORMACIÓN</a></string>
     <string name="channel_name_attachments">Adjuntos</string>
     <string name="channel_description_attachments">Informa acerca del estado de descarga de los adjuntos</string>
     <string name="channel_name_emails">Correos</string>
@@ -600,7 +612,7 @@
     <string name="fab_add_contact_group">Añadir grupo de contactos nuevo</string>
     <string name="contacts_add_photo_title">Añadir imagen</string>
     <string name="contacts_add_photo_select_gallery">Seleccionar de la galería</string>
-    <string name="contacts_add_photo_select_camera">Capture from Camera</string>
+    <string name="contacts_add_photo_select_camera">Capturar desde la cámara</string>
     <string name="save_group_validation_error">Proporciona un nombre de grupo</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Se alcanzó el límite de almacenamiento. No se pueden enviar y recibir mensajes.
@@ -783,7 +795,7 @@ compre más
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>
-    <string name="error_image_bad_url">Malformed image URL</string>
+    <string name="error_image_bad_url">URL de imagen malformada</string>
     <string name="error_saving_try_again">Se ha producido un error al guardar el mensaje. Inténtalo de nuevo.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
@@ -813,8 +825,8 @@ compre más
     <string name="manage">Administrar</string>
     <string name="message_from">Mensaje de %s</string>
     <string name="not_spam_move_to_inbox">No es spam (mover a la bandeja de entrada)</string>
-    <string name="action_sheet_view_in_light_mode">View in Light mode</string>
-    <string name="action_sheet_view_in_dark_mode">View in Dark mode</string>
+    <string name="action_sheet_view_in_light_mode">Ver en modo claro</string>
+    <string name="action_sheet_view_in_dark_mode">Ver en modo oscuro</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d mensaje</item>
         <item quantity="other">%d mensajes</item>
@@ -832,5 +844,4 @@ compre más
     <string name="details_show_history">Mostrar historial</string>
     <string name="could_not_complete_action">No se pudo completar la acción</string>
     <string name="decryption_of_message_failed">Error de descifrado: ha fallado el descifrado del contenido cifrado de este mensaje.</string>
-    <string name="labels_selected_limit_reached">Límite alcanzado</string>
 </resources>
