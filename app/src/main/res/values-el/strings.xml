@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Δημιουργία νέας ετικέτας</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Κανένα μήνυμα</string>
     <string name="mailbox_empty_folder_subtitle">Αυτός ο φάκελος είναι κενός</string>
     <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
     <string name="mailbox_empty_spam_subtitle">Ο φάκελος ενοχλητικών είναι κενός</string>
     <string name="mailbox_empty_trash_subtitle">Ο φάκελος διαγραμμένων είναι κενός</string>
+    <string name="mailbox_no_messages">Κανένα μήνυμα</string>
+    <string name="mailbox_unread_count">%d unread</string>
+    <string name="mailbox_updated_just_now">Ενημερώθηκε μόλις τώρα</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Άνοιγμα στο Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Διασφαλισμένο κρυπτογραφημένο ημερολόγιο</string>
     <string name="details_open_in_proton_calendar_icon_desc">Εικονίδιο Proton Calendar</string>
     <string name="details_play_store_error">Αδυναμία ανοίγματος Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Κρυφή κοιν: </string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Δεξιά προς αριστερά</string>
     <string name="settings_swipe_saving">Γίνεται αποθήκευση ενέργειας Ολίσθησης…</string>
     <string name="settings_swipe_generic_error">Αδυναμία αποθήκευσης ενέργειας Ολίσθησης</string>
-    <string name="settings_swipe_offline_error">Η ενέργεια Ολίσθησης δεν γίνεται να αποθηκευτεί εκτός σύνδεσης</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Θέμα εφαρμογής</string>
@@ -130,13 +135,22 @@
     <string name="contact_details_remote_content_dialog_positive_button">Φόρτωση περιεχομένου</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Ιδιωτικότητα για όλους</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Privacy for all</string>
     <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
-    <string name="new_user_onboarding_neat_and_tidy_headline">Τακτοποιημένα</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
     <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
+    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
+    <string name="existing_user_onboarding_new_features_headline">New features</string>
+    <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="onboarding_next">Επόμενο</string>
     <string name="onboarding_get_started">Ξεκινήστε</string>
     <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Draft saved</string>
+    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
+    <string name="snackbar_action_discard">Discard</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Ημέρες</string>
     <string name="hours">Ώρες</string>
     <string name="max_labels_exceeded">Το μήνυμα %1$s δεν μπορεί να έχει παραπάνω απο %2$d ετικέτες.</string>
-    <string name="max_labels_selected">Επιτρέπονται έως %d ετικέτες</string>
     <string name="max_attachments_reached">Έχει συμπληρωθεί ο μέγιστος αριθμός συνημμένων ανά μήνυμα</string>
     <string name="max_attachments_size_reached">Εξάντληση μέγιστου μεγέθους συνημμένων ανά μήνυμα</string>
     <string name="expiration_days">%dD</string>
@@ -250,7 +263,6 @@
     <string name="email">Email</string>
     <string name="phone">Αριθμός τηλεφώνου</string>
     <string name="save">Αποθήκευση</string>
-    <string name="save_message_as_draft">Αποθήκευση μηνύματος ως πρόχειρο;</string>
     <string name="no_subject">Αποστολή μηνύματος χωρίς θέμα;</string>
     <string name="yes">Ναι</string>
     <string name="no">Όχι</string>
@@ -832,5 +844,4 @@
     <string name="details_show_history">Εμφάνιση ιστορικού</string>
     <string name="could_not_complete_action">Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας</string>
     <string name="decryption_of_message_failed">Σφάλμα αποκρυπτογράφησης: η αποκρυπτογράφηση του κρυπτογραφημένου περιεχομένου αυτού του μηνύματος απέτυχε.</string>
-    <string name="labels_selected_limit_reached">Εξάντληση ορίου</string>
 </resources>

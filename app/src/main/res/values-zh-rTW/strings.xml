@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">建立新標籤</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">沒有郵件</string>
     <string name="mailbox_empty_folder_subtitle">此資料夾是空的</string>
     <string name="mailbox_empty_inbox_subtitle">已是最新狀態</string>
     <string name="mailbox_empty_spam_subtitle">您的垃圾郵件資料夾是空的</string>
     <string name="mailbox_empty_trash_subtitle">垃圾桶是空的</string>
+    <string name="mailbox_no_messages">沒有郵件</string>
+    <string name="mailbox_unread_count">%d 未讀</string>
+    <string name="mailbox_updated_just_now">剛剛更新</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">於Proton 行事曆中打開</string>
     <string name="details_open_in_proton_calendar_subtitle">安全加密行事曆</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton 行事曆圖示</string>
     <string name="details_play_store_error">無法打開 Play 商店</string>
+    <string name="details_hyperlink_phishing_dialog_title">警告：疑似假冒網站</string>
+    <string name="details_hyperlink_phishing_dialog_content">此連結指向的網站可能試圖竊取您的資訊，如密碼與信用卡詳細資訊等。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;為了您的安全，請不要繼續。</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">返回（推薦）</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">忽略警告並繼續</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密件副本：</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">從右到左</string>
     <string name="settings_swipe_saving">滑動操作儲存中…</string>
     <string name="settings_swipe_generic_error">滑動操作儲存失敗</string>
-    <string name="settings_swipe_offline_error">離線時無法儲存滑動操作</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App 主題</string>
@@ -133,10 +138,19 @@
     <string name="new_user_onboarding_privacy_for_all_headline">人人皆有隱私</string>
     <string name="new_user_onboarding_privacy_for_all_description">邀請您的聯絡人使用 Proton Mail 享受毫無破綻的端對端加密，也可以使用密碼加密寄給他們的郵件。</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">整齊俐落</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">歸檔、標籤與顏色等模式，可創建您完美、專屬於您的收件匣</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">歸檔、標籤與為郵件上色，讓您建立完美且專屬於您的收件匣。</string>
+    <string name="existing_user_onboarding_new_look_headline">煥然一新、保護如恆</string>
+    <string name="existing_user_onboarding_new_look_description">為了進一步提升易用性，您的加密電子郵件已重新設計，煥然一新。</string>
+    <string name="existing_user_onboarding_new_features_headline">新功能</string>
+    <string name="existing_user_onboarding_new_features_description">享受深色模式、改善後的通知、未讀郵件過濾器與子資料夾等新功能。</string>
     <string name="onboarding_next">下一步</string>
     <string name="onboarding_get_started">入門指南</string>
     <string name="onboarding_image_view_content_description">Proton 電子郵件插圖</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">草稿已儲存</string>
+    <string name="snackbar_message_draft_moved_to_trash">草稿已移至「垃圾桶」</string>
+    <string name="snackbar_action_discard">捨棄</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">天</string>
     <string name="hours">小時</string>
     <string name="max_labels_exceeded">郵件 %1$s 不能有超過 %2$d 個標籤。</string>
-    <string name="max_labels_selected">%d 個標籤是允許的最大值</string>
     <string name="max_attachments_reached">已達到每封郵件的最大附件數</string>
     <string name="max_attachments_size_reached">已達到每封郵件的最大附件容量</string>
     <string name="expiration_days">%d 日</string>
@@ -247,7 +260,6 @@
     <string name="email">電子郵件</string>
     <string name="phone">電話號碼</string>
     <string name="save">儲存</string>
-    <string name="save_message_as_draft">是否將郵件儲存為草稿？</string>
     <string name="no_subject">是否傳送無主旨的郵件？</string>
     <string name="yes">是</string>
     <string name="no">否</string>
@@ -817,5 +829,4 @@
     <string name="details_show_history">顯示紀錄</string>
     <string name="could_not_complete_action">無法完成此動作</string>
     <string name="decryption_of_message_failed">解密錯誤：此郵件的加密內容解密失敗。</string>
-    <string name="labels_selected_limit_reached">已達上限</string>
 </resources>

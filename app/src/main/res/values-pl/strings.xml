@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Utwórz nową etykietę</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Brak wiadomości</string>
     <string name="mailbox_empty_folder_subtitle">Folder jest pusty</string>
     <string name="mailbox_empty_inbox_subtitle">Jesteś na bieżąco</string>
     <string name="mailbox_empty_spam_subtitle">Folder Spam jest pusty</string>
     <string name="mailbox_empty_trash_subtitle">Kosz jest pusty</string>
+    <string name="mailbox_no_messages">Brak wiadomości</string>
+    <string name="mailbox_unread_count">%d unread</string>
+    <string name="mailbox_updated_just_now">Zaktualizowano teraz</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Otwórz w aplikacji Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Bezpieczny szyfrowany kalendarz</string>
     <string name="details_open_in_proton_calendar_icon_desc">Ikona Proton Calendar</string>
     <string name="details_play_store_error">Nie można otworzyć sklepu Google Play</string>
+    <string name="details_hyperlink_phishing_dialog_title">Ostrzeżenie: podejrzana strona internetowa</string>
+    <string name="details_hyperlink_phishing_dialog_content">Link prowadzi do strony internetowej, która może próbować wykraść informacje, takie jak hasła i dane karty płatniczej.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Ze względów bezpieczeństwa nie otwieraj linku.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Wróć (zalecane)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignoruj ostrzeżenie i kontynuuj</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Udw:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Od prawej do lewej</string>
     <string name="settings_swipe_saving">Zapisywanie gestu przesunięcia…</string>
     <string name="settings_swipe_generic_error">Nie można zapisać gestu przesunięcia</string>
-    <string name="settings_swipe_offline_error">Nie można zapisać gestu przesunięcia w trybie offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Motyw aplikacji</string>
@@ -134,9 +139,18 @@
     <string name="new_user_onboarding_privacy_for_all_description">Zaproś kontakty do poczty Proton Mail, aby cieszyć się bezproblemowym szyfrowaniem end-to-end lub dodaj hasło do wysłanych wiadomości.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Schludna i uporządkowana</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Utwórz perfekcyjną, niestandardową skrzynkę. Pliki, etykiety i wiadomości są oznaczone kolorami.</string>
+    <string name="existing_user_onboarding_new_look_headline">Nowy wygląd, ta sama ochrona</string>
+    <string name="existing_user_onboarding_new_look_description">Twoja szyfrowana poczta e-mail została przeprojektowana.</string>
+    <string name="existing_user_onboarding_new_features_headline">Nowe funkcje</string>
+    <string name="existing_user_onboarding_new_features_description">Ciesz się nowymi funkcjami, takimi jak ciemny motyw, ulepszone powiadomienia, filtr nieprzeczytanych wiadomości i podfolderami.</string>
     <string name="onboarding_next">Dalej</string>
     <string name="onboarding_get_started">Rozpocznij</string>
     <string name="onboarding_image_view_content_description">Ilustracja Proton Mail</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Szkic został zapisany</string>
+    <string name="snackbar_message_draft_moved_to_trash">Szkic został przeniesiony do Kosza</string>
+    <string name="snackbar_action_discard">Odrzuć</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">dni</string>
     <string name="hours">godzin</string>
     <string name="max_labels_exceeded">Wiadomość %1$s nie może posiadać więcej niż %2$d etykiet.</string>
-    <string name="max_labels_selected">Maksymalna liczba etykiet wynosi %d</string>
     <string name="max_attachments_reached">Limit załączników w jednej wiadomości został osiągnięty</string>
     <string name="max_attachments_size_reached">Limit rozmiaru załączników w jednej wiadomości został osiągnięty</string>
     <string name="expiration_days">%dd</string>
@@ -256,7 +269,6 @@
     <string name="email">E-mail</string>
     <string name="phone">Numer telefonu</string>
     <string name="save">Zapisz</string>
-    <string name="save_message_as_draft">Zapisać wiadomość jako szkic?</string>
     <string name="no_subject">Wysłać wiadomość bez tematu?</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
@@ -856,5 +868,4 @@
     <string name="details_show_history">Pokaż historię</string>
     <string name="could_not_complete_action">Nie można zakończyć akcji</string>
     <string name="decryption_of_message_failed">Błąd odszyfrowywania: odszyfrowanie tej wiadomości nie powiodło się.</string>
-    <string name="labels_selected_limit_reached">Limit został osiągnięty</string>
 </resources>

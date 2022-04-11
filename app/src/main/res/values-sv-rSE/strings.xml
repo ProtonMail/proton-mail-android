@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Skapa ny etikett</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Inga meddelanden</string>
     <string name="mailbox_empty_folder_subtitle">Denna mapp är tom</string>
     <string name="mailbox_empty_inbox_subtitle">Du är uppdaterad</string>
     <string name="mailbox_empty_spam_subtitle">Din skräppostmapp är tom</string>
     <string name="mailbox_empty_trash_subtitle">Papperskorg är tom</string>
+    <string name="mailbox_no_messages">Inga meddelanden</string>
+    <string name="mailbox_unread_count">%d oläst</string>
+    <string name="mailbox_updated_just_now">Uppdaterad just nu</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Öppna i Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Säker krypterad kalender</string>
     <string name="details_open_in_proton_calendar_icon_desc">Ikon för Proton Calendar</string>
     <string name="details_play_store_error">Kan inte öppna Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Varning: misstänkt falsk webbplats</string>
+    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Gå tillbaka (rekommenderas)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorera varning och fortsätt</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Höger till vänster</string>
     <string name="settings_swipe_saving">Sparar svepåtgärd…</string>
     <string name="settings_swipe_generic_error">Kan inte spara svepåtgärd</string>
-    <string name="settings_swipe_offline_error">Kan inte spara svepåtgärd när man är offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App-tema</string>
@@ -132,11 +137,20 @@
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Integritet för alla</string>
     <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
-    <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Rent och snyggt</string>
     <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
+    <string name="existing_user_onboarding_new_look_headline">Nytt utseende, samma skydd</string>
+    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
+    <string name="existing_user_onboarding_new_features_headline">Nya funktioner</string>
+    <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="onboarding_next">Nästa</string>
     <string name="onboarding_get_started">Kom igång</string>
     <string name="onboarding_image_view_content_description">Proton Mail-illustration</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Utkast sparat</string>
+    <string name="snackbar_message_draft_moved_to_trash">Utkast flyttat till papperskorg</string>
+    <string name="snackbar_action_discard">Discard</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Dagar</string>
     <string name="hours">Timmar</string>
     <string name="max_labels_exceeded">Meddelandet %1$s kan inte ha mer än %2$d etiketter.</string>
-    <string name="max_labels_selected">%d är max tillåtna etiketter</string>
     <string name="max_attachments_reached">Maxantalet för bilagor har uppnåtts</string>
     <string name="max_attachments_size_reached">Maximal storlek på bilagor per meddelande har uppnåtts</string>
     <string name="expiration_days">%dD</string>
@@ -250,7 +263,6 @@
     <string name="email">E-post</string>
     <string name="phone">Telefonnummer</string>
     <string name="save">Spara</string>
-    <string name="save_message_as_draft">Spara meddelande som utkast?</string>
     <string name="no_subject">Skicka meddelande utan ämne?</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
@@ -828,5 +840,4 @@
     <string name="details_show_history">Visa historik</string>
     <string name="could_not_complete_action">Det gick inte att slutföra åtgärden</string>
     <string name="decryption_of_message_failed">Dekrypteringsfel: dekrypteringen av det här meddelandets krypterade innehåll misslyckades.</string>
-    <string name="labels_selected_limit_reached">Gräns uppnådd</string>
 </resources>

@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Buat label baru</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Tidak ada pesan</string>
     <string name="mailbox_empty_folder_subtitle">Folder ini kosong</string>
     <string name="mailbox_empty_inbox_subtitle">Anda sudah menggunakan pembaruan terakhir</string>
     <string name="mailbox_empty_spam_subtitle">Folder spam Anda kosong</string>
     <string name="mailbox_empty_trash_subtitle">Sampah kosong</string>
+    <string name="mailbox_no_messages">Tidak ada pesan</string>
+    <string name="mailbox_unread_count">%d belum dibaca</string>
+    <string name="mailbox_updated_just_now">Baru saja diperbarui</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Buka di Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Kalender terenkripsi yang aman</string>
     <string name="details_open_in_proton_calendar_icon_desc">Ikon Proton Calendar</string>
     <string name="details_play_store_error">Tidak dapat membuka Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_content">Tautan ini tertuju pada situs web yang dapat mencuri informasi pribadi Anda, seperti kata sandi dan rincian kartu kredit yang Anda miliki.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Demi keamanan Anda, jangan buka tautan ini.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Kembali (disarankan)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Abaikan peringatan dan lanjut</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Kanan ke kiri</string>
     <string name="settings_swipe_saving">Menyimpan hasil Swipe…</string>
     <string name="settings_swipe_generic_error">Tidak dapat menyimpan hasil Swipe</string>
-    <string name="settings_swipe_offline_error">Tidak dapat menyimpan hasil Swipe pada saat offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema aplikasi</string>
@@ -131,12 +136,21 @@
     <!-- endregion -->
     <!-- region Onboarding -->
     <string name="new_user_onboarding_privacy_for_all_headline">Privasi untuk semua</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Undang teman-teman Anda ke Proton Mail agar mereka dapat turut terlindung oleh enkripsi end-to-end yang menyeluruh, atau tambahkan kata sandi pada pesan-pesan yang akan Anda kirimkan kepada mereka.</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Undang rekan-rekan Anda ke Proton Mail agar mereka dapat turut terlindung oleh enkripsi end-to-end yang menyeluruh, atau bubuhkan kata sandi pada pesan yang Anda kirimkan kepada mereka.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Rapi dan teratur</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">Arsipkan, labeli, dan warnai pesan-pesan yang Anda miliki agar kotak masuk Anda dapat terlihat sempurna sebagaimana yang Anda kehendaki.</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Arsipkan, labeli, dan warnai pesan-pesan Anda agar kotak masuk Anda dapat terlihat sempurna sebagaimana yang Anda kehendaki.</string>
+    <string name="existing_user_onboarding_new_look_headline">Tampilan baru, perlindungan yang sama</string>
+    <string name="existing_user_onboarding_new_look_description">Email terenkripsi Anda telah sepenuhnya dirancang ulang agar dapat digunakan dengan mudah.</string>
+    <string name="existing_user_onboarding_new_features_headline">Fitur baru</string>
+    <string name="existing_user_onboarding_new_features_description">Nikmati berbagai fitur baru seperti mode gelap, sistem notifikasi yang telah disempurnakan, filter untuk pesan-pesan yang belum dibaca, dan subfolder.</string>
     <string name="onboarding_next">Berikutnya</string>
     <string name="onboarding_get_started">Mulai</string>
     <string name="onboarding_image_view_content_description">Ilustrasi Proton Mail</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Draf disimpan</string>
+    <string name="snackbar_message_draft_moved_to_trash">Draf dipindah ke sampah</string>
+    <string name="snackbar_action_discard">Hapus</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Hari</string>
     <string name="hours">Jam</string>
     <string name="max_labels_exceeded">Pesan %1$s tidak boleh memiliki lebih dari %2$d label.</string>
-    <string name="max_labels_selected">Jumlah label maksimum yang diizinkan adalah %d</string>
     <string name="max_attachments_reached">Lampiran maksimum per pesan telah tercapai</string>
     <string name="max_attachments_size_reached">Ukuran maksimum lampiran per pesan telah tercapai</string>
     <string name="expiration_days">%dH</string>
@@ -249,7 +262,6 @@
     <string name="email">Email</string>
     <string name="phone">Nomor telepon</string>
     <string name="save">Simpan</string>
-    <string name="save_message_as_draft">Simpan pesan sebagai draf?</string>
     <string name="no_subject">Kirim pesan tanpa subjek?</string>
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
@@ -822,5 +834,4 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="details_show_history">Tampilkan riwayat</string>
     <string name="could_not_complete_action">Tidak dapat menyelesaikan tindakan</string>
     <string name="decryption_of_message_failed">Dekripsi gagal: dekripsi konten di pesan ini gagal.</string>
-    <string name="labels_selected_limit_reached">Batas tercapai</string>
 </resources>

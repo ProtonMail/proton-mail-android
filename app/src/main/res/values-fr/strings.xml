@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Créer un nouveau label</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Aucun message</string>
     <string name="mailbox_empty_folder_subtitle">Ce dossier est vide</string>
     <string name="mailbox_empty_inbox_subtitle">Vous êtes à jour</string>
     <string name="mailbox_empty_spam_subtitle">Votre dossier courrier indésirable est vide</string>
     <string name="mailbox_empty_trash_subtitle">La corbeille est vide</string>
+    <string name="mailbox_no_messages">Aucun message</string>
+    <string name="mailbox_unread_count">%d non lu(s)</string>
+    <string name="mailbox_updated_just_now">Mis à jour à l\'instant</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Ouvrir dans Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Calendrier chiffré sécurisé</string>
     <string name="details_open_in_proton_calendar_icon_desc">icône Proton Calendar</string>
     <string name="details_play_store_error">Impossible d\'ouvrir le Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Attention : site Web potentiellement faux</string>
+    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Revenir en arrière (recommandé)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorer l\'avertissement et continuer</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cci :</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">De droite à gauche</string>
     <string name="settings_swipe_saving">Enregistrement de l\'action de balayage…</string>
     <string name="settings_swipe_generic_error">Impossible d\'enregistrer l\'action de balayage</string>
-    <string name="settings_swipe_offline_error">Impossible d\'enregistrer l\'action de balayage en étant hors-ligne</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Thème de l\'application</string>
@@ -134,9 +139,18 @@
     <string name="new_user_onboarding_privacy_for_all_description">Invitez vos contacts sur Proton Mail pour profiter d\'un chiffrement transparent de bout en bout ou ajoutez une protection par mot de passe aux messages que vous leur envoyez.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Soignée et ordonnée</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Classez, labellisez et appliquez un code couleur aux messages pour créer votre boîte de réception parfaite et personnalisée.</string>
+    <string name="existing_user_onboarding_new_look_headline">Nouveau look, même protection</string>
+    <string name="existing_user_onboarding_new_look_description">Votre messagerie chiffrée a été entièrement repensée pour en faciliter l\'utilisation.</string>
+    <string name="existing_user_onboarding_new_features_headline">Nouvelles fonctionnalités</string>
+    <string name="existing_user_onboarding_new_features_description">Profitez de nouvelles fonctionnalités telles que le mode sombre, des notifications améliorées, un filtre de messages non lus et des sous-dossiers.</string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_get_started">Commencer</string>
     <string name="onboarding_image_view_content_description">Illustration Proton Mail</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Brouillon enregistré</string>
+    <string name="snackbar_message_draft_moved_to_trash">Brouillon déplacé vers la corbeille</string>
+    <string name="snackbar_action_discard">Ignorer</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Jours</string>
     <string name="hours">Heures</string>
     <string name="max_labels_exceeded">Le message %1$s ne peut pas avoir plus de %2$d labels.</string>
-    <string name="max_labels_selected">%d labels est le maximum autorisé</string>
     <string name="max_attachments_reached">Le nombre maximum de pièce jointes a été atteint</string>
     <string name="max_attachments_size_reached">La taille maximale des pièces jointes par message a été atteinte</string>
     <string name="expiration_days">%dj</string>
@@ -250,7 +263,6 @@
     <string name="email">Adresse électronique</string>
     <string name="phone">Numéro de téléphone</string>
     <string name="save">Enregister</string>
-    <string name="save_message_as_draft">Enregistrer le message comme brouillon?</string>
     <string name="no_subject">Envoyer le message sans objet ?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
@@ -832,5 +844,4 @@
     <string name="details_show_history">Afficher l\'historique</string>
     <string name="could_not_complete_action">Impossible de terminer l\'action</string>
     <string name="decryption_of_message_failed">Erreur de déchiffrement : le déchiffrement du contenu chiffré de ce message a échoué.</string>
-    <string name="labels_selected_limit_reached">Limite atteinte</string>
 </resources>

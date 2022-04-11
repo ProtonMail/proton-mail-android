@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Create new label</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Nincsenek üzenetek</string>
     <string name="mailbox_empty_folder_subtitle">Ez a mappa üres</string>
     <string name="mailbox_empty_inbox_subtitle">Ön naprakész</string>
     <string name="mailbox_empty_spam_subtitle">A kéretlen üzenetek mappája üres</string>
     <string name="mailbox_empty_trash_subtitle">A lomtár üres</string>
+    <string name="mailbox_no_messages">Nincsenek üzenetek</string>
+    <string name="mailbox_unread_count">%d olvasatlan</string>
+    <string name="mailbox_updated_just_now">Most frissítve</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Open in Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
     <string name="details_play_store_error">Can\'t open Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Titkos másolat:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Right to left</string>
     <string name="settings_swipe_saving">Saving Swipe action…</string>
     <string name="settings_swipe_generic_error">Cannot save Swipe action</string>
-    <string name="settings_swipe_offline_error">Cannot save Swipe action while offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">App theme</string>
@@ -134,9 +139,18 @@
     <string name="new_user_onboarding_privacy_for_all_description">Hívja meg ismerőseit a Proton Mailbe, hogy élvezzék a zökkenőmentes végpontok közti titkosítást, vagy lássa el jelszóvédelemmel az elküldött üzeneteit.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Takaros</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Rendezze el, címkézze fel és lássa el színkóddal üzeneteit, hogy létrehozza a saját tökéletes fiókját.</string>
+    <string name="existing_user_onboarding_new_look_headline">Új kinézet, ugyanaz a védelem</string>
+    <string name="existing_user_onboarding_new_look_description">A titkosított emailje teljesen újra lett tervezve a könnyebb kezelhetőségért.</string>
+    <string name="existing_user_onboarding_new_features_headline">Új funkciók</string>
+    <string name="existing_user_onboarding_new_features_description">Élvezze az új funkciókat, mint például a sötét mód, javított értesítések, egy olvasatlan üzenet szűrő és almappák.</string>
     <string name="onboarding_next">Következő</string>
     <string name="onboarding_get_started">Kezdés</string>
     <string name="onboarding_image_view_content_description">Proton Mail illusztráció</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Draft saved</string>
+    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
+    <string name="snackbar_action_discard">Discard</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Nap</string>
     <string name="hours">Óra</string>
     <string name="max_labels_exceeded">Az üzenetnek (%1$s) nem lehet több, mint %2$d címkéje.</string>
-    <string name="max_labels_selected">Maximálisan %d címke választható</string>
     <string name="max_attachments_reached">Az üzenethez csatolható mellékletek száma elérte a maximumot.</string>
     <string name="max_attachments_size_reached">Az üzenethez csatolható mellékletek mérete elérte a maximumot</string>
     <string name="expiration_days">%dnap</string>
@@ -250,7 +263,6 @@
     <string name="email">E-mail</string>
     <string name="phone">Telefonszám</string>
     <string name="save">Mentés</string>
-    <string name="save_message_as_draft">Menti az üzenetet piszkozatként?</string>
     <string name="no_subject">Elküldi az üzenetet tárgy nélkül?</string>
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
@@ -832,5 +844,4 @@
     <string name="details_show_history">Show history</string>
     <string name="could_not_complete_action">Could not complete the action</string>
     <string name="decryption_of_message_failed">Decryption error: decryption of this message\'s encrypted content failed.</string>
-    <string name="labels_selected_limit_reached">Limit reached</string>
 </resources>

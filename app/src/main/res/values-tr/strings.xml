@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Yeni etiket ekle</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Herhangi bir ileti yok</string>
     <string name="mailbox_empty_folder_subtitle">Bu klasör boş</string>
     <string name="mailbox_empty_inbox_subtitle">Posta kutunuz güncel</string>
     <string name="mailbox_empty_spam_subtitle">İstenmeyen klasörünüz boş</string>
     <string name="mailbox_empty_trash_subtitle">Çöp kutusu boş</string>
+    <string name="mailbox_no_messages">Herhangi bir ileti yok</string>
+    <string name="mailbox_unread_count">%d okunmamış</string>
+    <string name="mailbox_updated_just_now">Az önce güncellendi</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Proton Calendar ile açın</string>
     <string name="details_open_in_proton_calendar_subtitle">Güvenli şifrelenmiş takvim</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar simgesi</string>
     <string name="details_play_store_error">Play Store açılamadı</string>
+    <string name="details_hyperlink_phishing_dialog_title">Uyarı: Şüpheli sahte web sitesi</string>
+    <string name="details_hyperlink_phishing_dialog_content">Bu bağlantı, parola ve kredi kartı gibi bilgilerinizi çalmayı deneyen bir web sitesine gidiyor olabilir.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Güvenliğiniz için daha ileri gitmeyin.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Geri dön (önerilir)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Uyarıyı yok sayıp ilerle</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Gizli kopya:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Sağdan sola</string>
     <string name="settings_swipe_saving">Kaydırma hareketi kaydediliyor…</string>
     <string name="settings_swipe_generic_error">Kaydırma hareketi kaydedilemedi</string>
-    <string name="settings_swipe_offline_error">Çevrimdışıyken kaydırma hareketi kaydedilemez</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Uygulama teması</string>
@@ -134,9 +139,18 @@
     <string name="new_user_onboarding_privacy_for_all_description">Sorunsuz uçtan uca şifrelemenin tadını çıkarmak için tanıdıklarınızı Proton Mail kullanmaya çağırın ya da gönderdiğiniz iletilere parola koruması ekleyin.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Temiz ve düzenli</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Gelen kutunuzu mükemmelleştirmek için iletileri dosyalayın, etiketleyin ve renklendirin.</string>
+    <string name="existing_user_onboarding_new_look_headline">Yeni görünüm, aynı koruma</string>
+    <string name="existing_user_onboarding_new_look_description">Şifrelenmiş e-postanız daha kolay kullanım için yeniden tasarlandı.</string>
+    <string name="existing_user_onboarding_new_features_headline">Yeni özellikler</string>
+    <string name="existing_user_onboarding_new_features_description">Karanlık kip, geliştirilmiş bildirimler, okunmamış iletiler süzgeci ve alt klasörler gibi yeni özelliklerin tadını çıkarın.</string>
     <string name="onboarding_next">Sonraki</string>
     <string name="onboarding_get_started">Başlayalım</string>
     <string name="onboarding_image_view_content_description">Proton Mail çizimi</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Taslak kaydedildi</string>
+    <string name="snackbar_message_draft_moved_to_trash">Taslak çöpe atıldı</string>
+    <string name="snackbar_action_discard">Yok say</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Gün</string>
     <string name="hours">Saat</string>
     <string name="max_labels_exceeded">%1$s iletisinde %2$d taneden fazla etiket bulunamaz.</string>
-    <string name="max_labels_selected">En fazla %d etiket atanabilir</string>
     <string name="max_attachments_reached">Bir iletiye eklenebilecek en fazla dosya sayısı sınırına ulaşıldı</string>
     <string name="max_attachments_size_reached">Bir iletiye eklenebilecek en fazla dosya boyutu sınırına ulaşıldı</string>
     <string name="expiration_days">%dG</string>
@@ -250,7 +263,6 @@
     <string name="email">E-posta</string>
     <string name="phone">Telefon numarası</string>
     <string name="save">Kaydet</string>
-    <string name="save_message_as_draft">İleti, taslak olarak kaydedilsin mi?</string>
     <string name="no_subject">İleti, konu olmadan gönderilsin mi?</string>
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
@@ -830,5 +842,4 @@
     <string name="details_show_history">Geçmişi göster</string>
     <string name="could_not_complete_action">İşlem tamamlanamadı</string>
     <string name="decryption_of_message_failed">Şifre çözme hatası: Bu iletinin şifrelenmiş içeriğinin şifresi çözülemedi.</string>
-    <string name="labels_selected_limit_reached">Sınıra ulaşıldı</string>
 </resources>

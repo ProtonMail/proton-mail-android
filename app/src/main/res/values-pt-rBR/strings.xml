@@ -33,7 +33,7 @@
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Content descriptions: accessibility description for icons -->
-    <string name="x_label_icon_description">Ícone de etiqueta</string>
+    <string name="x_label_icon_description">Ícone de marcador</string>
     <string name="x_folder_icon_description">Ícone da pasta</string>
     <string name="x_parent_folder_icon_description">Ícone de pasta com subpastas</string>
     <!-- endregion -->
@@ -47,17 +47,23 @@
     <string name="drawer_create_label_description">Criar um novo marcador</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_no_messages">Nenhuma mensagem</string>
     <string name="mailbox_empty_folder_subtitle">Esta pasta está vazia</string>
     <string name="mailbox_empty_inbox_subtitle">Você está atualizado</string>
     <string name="mailbox_empty_spam_subtitle">Sua pasta de spam está vazia</string>
     <string name="mailbox_empty_trash_subtitle">A lixeira está vazia</string>
+    <string name="mailbox_no_messages">Nenhuma mensagem</string>
+    <string name="mailbox_unread_count">%d não lido(s)</string>
+    <string name="mailbox_updated_just_now">Atualizado agora</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Abrir no Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Calendário criptografado seguro</string>
     <string name="details_open_in_proton_calendar_icon_desc">Ícone do Proton Calendar</string>
     <string name="details_play_store_error">Não consigo abrir a Play Store</string>
+    <string name="details_hyperlink_phishing_dialog_title">Aviso: Site suspeito de ser falso</string>
+    <string name="details_hyperlink_phishing_dialog_content">Esse link leva a um site que pode estar tentando roubar suas informações, como senhas e detalhes de cartão de crédito.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Para sua segurança, não prossiga.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Voltar (recomendado)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorar aviso e continuar</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -104,7 +110,6 @@
     <string name="settings_swipe_right_to_left">Da direita para a esquerda</string>
     <string name="settings_swipe_saving">Salvanda a ação de deslizar…</string>
     <string name="settings_swipe_generic_error">Não foi possível salvar a ação de deslizar</string>
-    <string name="settings_swipe_offline_error">Não é possível salvar a ação de deslizar enquanto estiver offline</string>
     <!-- endregion -->
     <!-- region App Theme -->
     <string name="app_theme_title">Tema do aplicativo</string>
@@ -130,13 +135,22 @@
     <string name="contact_details_remote_content_dialog_positive_button">Carregar conteúdo</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Privacidae para todos</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Privacidade para todos</string>
     <string name="new_user_onboarding_privacy_for_all_description">Convide seus contatos para o Proton Mail para desfrutar de criptografia de ponta a ponta perfeita ou adicione proteção por senha às mensagens que você enviar.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Limpo e arrumado</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Mensagens de arquivos, etiquetas e códigos de cores para criar sua caixa de entrada personalizada e perfeita.</string>
+    <string name="existing_user_onboarding_new_look_headline">Nova aparência, mesma proteção</string>
+    <string name="existing_user_onboarding_new_look_description">Seu e-mail criptografado foi inteiramente redesenhado para facilidade de uso.</string>
+    <string name="existing_user_onboarding_new_features_headline">Novos recursos</string>
+    <string name="existing_user_onboarding_new_features_description">Aproveite novos recursos como modo escuro, notificações aprimoradas, um filtro de mensagens não lidas e subpastas.</string>
     <string name="onboarding_next">Próximo</string>
     <string name="onboarding_get_started">Começar</string>
     <string name="onboarding_image_view_content_description">Ilustração do Proton Mail</string>
+    <!-- endregion -->
+    <!-- region Snackbars -->
+    <string name="snackbar_message_draft_saved">Rascunho salvo</string>
+    <string name="snackbar_message_draft_moved_to_trash">Rascunho movido para lixeira</string>
+    <string name="snackbar_action_discard">Descartar</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -218,7 +232,6 @@
     <string name="days">Dias</string>
     <string name="hours">Horas</string>
     <string name="max_labels_exceeded">A mensagem %1$s não pode conter mais de %2$d marcadores.</string>
-    <string name="max_labels_selected">%d marcadores é o máximo permitido</string>
     <string name="max_attachments_reached">O limite máximo de anexos por mensagem foi atingido.</string>
     <string name="max_attachments_size_reached">O limite máximo de anexos por mensagem foi atingido</string>
     <string name="expiration_days">%dD</string>
@@ -250,7 +263,6 @@
     <string name="email">E-mail</string>
     <string name="phone">Número de telefone</string>
     <string name="save">Salvar</string>
-    <string name="save_message_as_draft">Salvar mensagem como rascunho?</string>
     <string name="no_subject">Enviar mensagem sem assunto?</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
@@ -394,7 +406,7 @@
     <string name="vcard_other_option_gender">Gênero</string>
     <string name="vcard_other_option_role">Função</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="contacts_import_contact">Importar Contato</string>
+    <string name="contacts_import_contact">Importar contato</string>
     <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Enviar contatos</string>
     <string name="uploading_contacts">Enviando contatos…</string>
@@ -553,17 +565,17 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Adicionar foto</string>
-    <string name="contact_display_name">Nome de Exibição</string>
-    <string name="add_new_email">Adicionar Endereço de Email</string>
+    <string name="contact_display_name">Nome de exibição</string>
+    <string name="add_new_email">Adicionar endereço de e-mail</string>
     <string name="no_groups">Sem grupos</string>
     <string name="contact_vcard_note">Nota</string>
     <string name="edit_contact">Editar contato</string>
     <string name="create_contact_group">Criar grupo de contato</string>
     <string name="edit_contact_group">Editar grupo de contato</string>
-    <string name="contact_groups_manage_members">Gerenciar Membros</string>
+    <string name="contact_groups_manage_members">Gerenciar membros</string>
     <string name="contact_group_display_name">Exibir nome</string>
     <string name="contact_group_groups_icon">\ue91a </string>
-    <string name="title_activity_address_chooser">Gerenciar Membros</string>
+    <string name="title_activity_address_chooser">Gerenciar membros</string>
     <string name="default_error_message">Ocorreu um erro</string>
     <string name="no_contact_groups">Nenhum grupo de contato</string>
     <string name="search_contacts_inside_group">Procurar por contatos</string>
@@ -718,7 +730,7 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Escolha a ação de deslizar</string>
     <string name="swipe_action_trash">Mensagem movida para a lixeira</string>
-    <string name="swipe_action_trash_short">Mover para a Lixeira</string>
+    <string name="swipe_action_trash_short">Mover para lixeira</string>
     <string name="swipe_action_star">Estrela da mensagem atualizada</string>
     <string name="swipe_action_star_short">Atualizar estrela</string>
     <string name="swipe_action_spam">Mensagem marcada como spam</string>
@@ -832,5 +844,4 @@
     <string name="details_show_history">Exibir histórico</string>
     <string name="could_not_complete_action">Não foi possível completar a ação</string>
     <string name="decryption_of_message_failed">Erro ao descriptografar: a decodificação do conteúdo criptografado desta mensagem falhou.</string>
-    <string name="labels_selected_limit_reached">Limite alcançado</string>
 </resources>
