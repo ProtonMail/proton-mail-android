@@ -777,7 +777,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;防毒軟體干擾&lt;/i&gt; - 暫時停用或移除您的防毒軟體。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/防火牆干擾&lt;/i&gt; - 停用任何 Proxy 或防火牆，又或者聯絡您的網路系統管理員。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 服務中斷&lt;/i&gt; - 請到 &lt;a href=\"http://protonstatus.com/\"&gt;Proton 狀態&lt;/a&gt;查看我們的系統狀態。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;仍然束手無策&lt;/i&gt; - 請透過&lt;a href=\"https://protonmail.com/support-form\"&gt;支援表單&lt;/a&gt;、&lt;a href=\"mailto:support@protonmail.com\"&gt;電子郵件&lt;/a&gt; (support@protonmail.com) 或 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; 直接聯絡我們。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;仍然束手無策&lt;/i&gt; - 請透過&lt;a href=\"https://protonmail.com/support-form\"&gt;支援表單&lt;/a&gt;、&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;電子郵件&lt;/a&gt; (support@protonmail.zendesk.com) 或 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; 直接聯絡我們。
     </string>
     <!-- endregion -->
     <!-- region errors -->

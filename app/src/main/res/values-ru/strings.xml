@@ -812,7 +812,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблемы из-за антивируса&lt;/i&gt; - Попробуйте временно отключить или удалить антивирус.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблемы из-за прокси/брандмауэра&lt;/i&gt; - Попробуйте отключить все прокси или брандмауэры или обратитесь к вашему сетевому администратору.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Сервисы Proton не работают&lt;/i&gt; - Проверьте сайт&lt;a href=\"http://protonstatus.com/\"&gt;Состояние сервисов Proton,&lt;/a&gt; чтобы проверить текущее состояние наших сервисов.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;По-прежнему не найти решение?&lt;/i&gt; - Напишите нам напрямую, воспользовавшись &lt;a href=\"https://protonmail.com/support-form\"&gt;формой обращения к поддержке&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;по электронной почте&lt;/a&gt; (support@protonmail.com) или &lt;a href=\"https://twitter.com/ProtonMail\"&gt;в Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;По-прежнему не найти решение?&lt;/i&gt; - Напишите нам напрямую, воспользовавшись &lt;a href=\"https://protonmail.com/support-form\"&gt;формой обращения к поддержке&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;по электронной почте&lt;/a&gt; (support@protonmail.zendesk.com) или &lt;a href=\"https://twitter.com/ProtonMail\"&gt;в Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

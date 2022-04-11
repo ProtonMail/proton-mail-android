@@ -788,7 +788,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirüs etkileşimi &lt;/i&gt; - Antivirüs uygulamanızı geçici olarak kapatın ya da aygıtınızdan kaldırın.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vekil sunucu/güvenlik duvarı etkileşimi&lt;/i&gt; - Tüm vekil sunucuları/güvenlik duvarlarını kapatın ya da ağ yöneticinizle görüşün.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton çalışmıyor&lt;/i&gt; - &lt;a href=\"http://protonstatus.com/\"&gt;Proton durumunu&lt;/a&gt; denetleyin.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Çözüm bulamadınız mı?&lt;/i&gt; - &lt;a href=\"https://protonmail.com/support-form\"&gt;Destek formu&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-posta&lt;/a&gt; (support@protonmail.com) ya da &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; aracılığıyla bizimle doğrudan görüşün.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Çözüm bulamadınız mı?&lt;/i&gt; - &lt;a href=\"https://protonmail.com/support-form\"&gt;Destek formu&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-posta&lt;/a&gt; (support@protonmail.zendesk.com) ya da &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; aracılığıyla bizimle doğrudan görüşün.
     </string>
     <!-- endregion -->
     <!-- region errors -->
