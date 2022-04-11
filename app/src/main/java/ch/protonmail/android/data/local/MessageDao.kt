@@ -92,6 +92,50 @@ abstract class MessageDao : BaseDao<Message>() {
     )
     abstract suspend fun getMessageIdsByLabelId(label: String): List<String>
 
+    fun observeNonTrashedMessages(label: String, unread: Boolean? = null): Flow<List<Message>> =
+        if (unread == null) observeNonTrashedMessages(label)
+        else observeNonTrashedMessagesWithUnreadStatus(label, unread)
+
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE 
+          ($COLUMN_MESSAGE_LABELS LIKE :label
+          OR $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
+        AND
+          ($COLUMN_MESSAGE_LABELS NOT LIKE "3"
+          AND $COLUMN_MESSAGE_LABELS NOT LIKE "3" || ';%'
+          AND $COLUMN_MESSAGE_LABELS NOT LIKE '%;' || "3"
+          AND $COLUMN_MESSAGE_LABELS NOT LIKE '%;' || "3" || ';%')
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """
+    )
+    abstract fun observeNonTrashedMessages(label: String): Flow<List<Message>>
+
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE 
+          ($COLUMN_MESSAGE_LABELS LIKE :label
+          OR $COLUMN_MESSAGE_LABELS LIKE :label || ';%'
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label
+          OR $COLUMN_MESSAGE_LABELS LIKE '%;' || :label || ';%')
+        AND
+          ($COLUMN_MESSAGE_LABELS NOT LIKE "3"
+          AND $COLUMN_MESSAGE_LABELS NOT LIKE "3" || ';%'
+          AND $COLUMN_MESSAGE_LABELS NOT LIKE '%;' || "3"
+          AND $COLUMN_MESSAGE_LABELS NOT LIKE '%;' || "3" || ';%')
+        AND
+          $COLUMN_MESSAGE_UNREAD = :unread
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """
+    )
+    abstract fun observeNonTrashedMessagesWithUnreadStatus(label: String, unread: Boolean): Flow<List<Message>>
+
     fun observeMessages(label: String, unread: Boolean? = null): Flow<List<Message>> =
         if (unread == null) observeMessages(label)
         else observeMessagesWithUnreadStatus(label, unread)
