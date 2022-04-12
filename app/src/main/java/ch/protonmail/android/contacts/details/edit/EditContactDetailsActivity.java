@@ -379,7 +379,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 Timber.e("Cannot get bitmap from 'contactPhoto'. 'contactPhoto' is " + contactPhoto.getClass().getName());
             } else {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
                 byte[] bytemapdata = stream.toByteArray();
                 Photo photo = new Photo(bytemapdata, ImageType.JPEG);
                 vCardEncrypted.addPhoto(photo);
