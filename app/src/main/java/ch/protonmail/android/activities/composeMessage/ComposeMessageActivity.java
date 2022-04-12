@@ -558,16 +558,14 @@ public class ComposeMessageActivity
                 composeMessageViewModel.setSender(senderName != null ? senderName : "", senderAddress != null ? senderAddress : "");
 
                 setMessageBodyInContainers(
-                    composeMessageViewModel.setMessageBody(
-                        composerContent,
-                        content,
-                        true,
-                        composeMessageViewModel.getMessageDataResult().isPGPMime(),
-                        getString(R.string.sender_name_address),
-                        getString(R.string.original_message_divider),
-                        getString(R.string.reply_prefix_on),
-                        DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())
-                    )
+                        composeMessageViewModel.setMessageBody(
+                                composerContent,
+                                content,
+                                true,
+                                composeMessageViewModel.getMessageDataResult().isPGPMime(),
+                                getString(R.string.original_message_divider),
+                                getQuoteHeader()
+                        )
                 );
             } catch (Exception exc) {
                 Timber.tag("588").e(exc, "Exception on initialise message body");
@@ -601,14 +599,23 @@ public class ComposeMessageActivity
     private void setMessageBody(String composerBody) {
         setMessageBodyInContainers(
                 composeMessageViewModel.setMessageBody(
+                        null,
                         composerBody,
                         true,
                         false,
-                        getString(R.string.sender_name_address),
                         getString(R.string.original_message_divider),
-                        getString(R.string.reply_prefix_on),
-                        DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())
+                        getQuoteHeader()
                 )
+        );
+    }
+
+    private String getQuoteHeader() {
+        String timestamp = DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp());
+        return getString(
+                R.string.composer_quote_sender_header,
+                timestamp,
+                composeMessageViewModel.getMessageDataResult().getSenderName(),
+                composeMessageViewModel.getMessageDataResult().getSenderEmailAddress()
         );
     }
 

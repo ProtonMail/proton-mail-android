@@ -945,20 +945,16 @@ class ComposeMessageViewModel @Inject constructor(
         _contactGroupsResult.postValue(groupedContactsAndGroups)
     }
 
-    fun getContent(content: String): String {
-        return content.replace("<", LESS_THAN).replace(">", GREATER_THAN).replace("\n", NEW_LINE)
-    }
+    fun getContent(content: String): String =
+        content.replace("<", LESS_THAN).replace(">", GREATER_THAN).replace("\n", NEW_LINE)
 
-    @JvmOverloads
     fun setMessageBody(
-        composerBody: String? = null,
+        composerBody: String?,
         messageBody: String,
         setComposerContent: Boolean,
         isPlainText: Boolean,
-        senderNameAddressFormat: String,
         originalMessageDividerString: String,
-        replyPrefixOnString: String,
-        formattedDateTimeString: String
+        quoteSenderHeader: String
     ): MessageBodySetup {
         val messageBodySetup = MessageBodySetup()
         val builder = StringBuilder()
@@ -966,9 +962,9 @@ class ComposeMessageViewModel @Inject constructor(
             var signatureBuilder = StringBuilder()
             if (composerBody == null) {
                 signatureBuilder = initSignatures()
-                if (!TextUtils.isEmpty(messageDataResult.signature) && MessageUtils.containsRealContent(
-                        messageDataResult.signature
-                    ) && legacyUser.isShowSignature
+                if (messageDataResult.signature.isNotBlank() &&
+                    MessageUtils.containsRealContent(messageDataResult.signature) &&
+                    legacyUser.isShowSignature
                 ) {
                     signatureBuilder.append(messageDataResult.signature)
                     signatureBuilder.append(NEW_LINE)
@@ -986,13 +982,12 @@ class ComposeMessageViewModel @Inject constructor(
             }
             messageBodySetup.composeBody = htmlToSpanned(signatureBuilder.toString())
         }
-        if (!TextUtils.isEmpty(messageBody)) {
+        if (messageBody.isNotBlank()) {
             messageBodySetup.webViewVisibility = true
-            val sender =
-                String.format(
-                    senderNameAddressFormat, _messageDataResult.senderName, _messageDataResult.senderEmailAddress
-                )
-            setQuotationHeader(sender, originalMessageDividerString, replyPrefixOnString, formattedDateTimeString)
+            setQuotationHeader(
+                originalMessageDividerString = originalMessageDividerString,
+                quoteSenderHeader = quoteSenderHeader
+            )
             builder.append("<blockquote class=\"protonmail_quote\">")
             builder.append(NEW_LINE)
             builder.append(messageBody)
@@ -1008,6 +1003,21 @@ class ComposeMessageViewModel @Inject constructor(
         messageBodySetup.isPlainText = isPlainText
 
         return messageBodySetup
+    }
+
+    private fun setQuotationHeader(
+        originalMessageDividerString: String,
+        quoteSenderHeader: String
+    ) {
+        val quoteHeader = buildString {
+            append(NEW_LINE)
+            append(originalMessageDividerString)
+            if (_messageDataResult.messageTimestamp != 0L) {
+                append(NEW_LINE)
+                append(quoteSenderHeader)
+            }
+        }
+        setQuotedHeader(htmlToSpanned(quoteHeader))
     }
 
     private fun setQuotationHeader(
