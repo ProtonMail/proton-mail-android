@@ -25,22 +25,23 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
-import ch.protonmail.android.core.Constants.Prefs.PREF_HYPERLINK_CONFIRM
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.security.domain.usecase.GetIsPreventTakingScreenshots
 import ch.protonmail.android.security.domain.usecase.SavePreventTakingScreenshots
+import ch.protonmail.android.settings.data.AccountSettingsRepository
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.utils.extensions.showToast
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
-import me.proton.core.util.android.sharedpreferences.set
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 // region constants
@@ -66,6 +67,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
     @Inject
     lateinit var getIsPreventTakingScreenshots: GetIsPreventTakingScreenshots
+
+    @Inject
+    lateinit var accountSettingsRepository: AccountSettingsRepository
 
     private val mailSettings by lazy {
         checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
@@ -138,15 +142,19 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     SettingsEnum.BACKGROUND_REFRESH,
                     if (mBackgroundSyncValue) getString(R.string.enabled) else getString(R.string.disabled)
                 )
-                setEnabled(
-                    SettingsEnum.LINK_CONFIRMATION,
-                    preferences!!.getBoolean(PREF_HYPERLINK_CONFIRM, true)
-                )
 
+                lifecycleScope.launch {
+                    setEnabled(
+                        SettingsEnum.LINK_CONFIRMATION,
+                        accountSettingsRepository.getShouldShowLinkConfirmationSetting(user.id)
+
+                    )
+                }
                 setToggleListener(SettingsEnum.LINK_CONFIRMATION) { view: View, isChecked: Boolean ->
-                    val prefs = checkNotNull(preferences)
-                    if (view.isPressed && isChecked != prefs.getBoolean(PREF_HYPERLINK_CONFIRM, true)) {
-                        prefs[PREF_HYPERLINK_CONFIRM] = isChecked
+                    lifecycleScope.launch {
+                        if (view.isPressed && isChecked != accountSettingsRepository.getShouldShowLinkConfirmationSetting(user.id)) {
+                            accountSettingsRepository.saveShouldShowLinkConfirmationSetting(isChecked, user.id)
+                        }
                     }
                 }
 

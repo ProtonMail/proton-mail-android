@@ -23,7 +23,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.MailTo
 import android.net.Uri
-import android.preference.PreferenceManager
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -33,9 +32,11 @@ import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.DUMMY_URL_PREFIX
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.settings.data.AccountSettingsRepository
 import ch.protonmail.android.utils.MessageUtils.addRecipientsToIntent
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtonsAndCheckbox
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
+import kotlinx.coroutines.runBlocking
 import me.proton.core.presentation.utils.showToast
 import me.proton.core.util.kotlin.startsWith
 import java.io.ByteArrayInputStream
@@ -45,6 +46,7 @@ import java.util.Locale
 
 open class PmWebViewClient(
     private val userManager: UserManager,
+    private val accountSettingsRepository: AccountSettingsRepository,
     private val activity: Activity,
     private var shouldLoadRemoteContent: Boolean
 ) : WebViewClient() {
@@ -143,8 +145,10 @@ open class PmWebViewClient(
         } catch (e: MalformedURLException) {
             e.printStackTrace()
         }
-        val doesRequireHyperlinkConfirmation = PreferenceManager.getDefaultSharedPreferences(activity)
-            .getBoolean(Constants.Prefs.PREF_HYPERLINK_CONFIRM, true)
+        val doesRequireHyperlinkConfirmation = runBlocking {
+            accountSettingsRepository
+                .getShouldShowLinkConfirmationSetting(userManager.requireCurrentUserId())
+        }
 
         return when {
             isPhishingMessage -> {
@@ -181,8 +185,12 @@ open class PmWebViewClient(
                 activity.startActivity(intent)
             },
             checkedListener = { isChecked ->
-                PreferenceManager.getDefaultSharedPreferences(activity).edit()
-                    .putBoolean(Constants.Prefs.PREF_HYPERLINK_CONFIRM, isChecked.not()).apply()
+                runBlocking {
+                    accountSettingsRepository.saveShouldShowLinkConfirmationSetting(
+                        shouldShowHyperlinkConfirmation = isChecked.not(),
+                        userId = userManager.requireCurrentUserId()
+                    )
+                }
             },
             cancelable = true
         )

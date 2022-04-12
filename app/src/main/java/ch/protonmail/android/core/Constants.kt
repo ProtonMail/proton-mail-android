@@ -105,7 +105,6 @@ object Constants {
         const val PREF_PREVIOUS_APP_VERSION = "previousAppVersion"
 
         const val PREF_PM_ADDRESS_CHANGED = "pmAddressChanged"
-        const val PREF_HYPERLINK_CONFIRM = "confirmHyperlinks"
 
         const val PREF_NEW_USER_ONBOARDING_SHOWN = "new_user_onboarding_shown"
         const val PREF_EXISTING_USER_ONBOARDING_SHOWN = "existing_user_onboarding_shown"

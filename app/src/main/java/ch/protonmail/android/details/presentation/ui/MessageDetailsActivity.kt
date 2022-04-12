@@ -66,6 +66,7 @@ import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.labels.domain.model.LabelId
 import ch.protonmail.android.labels.domain.model.LabelType
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.settings.data.AccountSettingsRepository
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.util.ProtonCalendarUtil
@@ -115,9 +116,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     @Inject
     lateinit var setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported
 
-
     @Inject
     lateinit var protonCalendarUtil: ProtonCalendarUtil
+
+    @Inject
+    lateinit var accountSettingsRepository: AccountSettingsRepository
 
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
@@ -256,6 +259,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageDetailsRecyclerView = messageDetailsRecyclerView,
             messageToMessageDetailsListItemMapper = messageToMessageDetailsListItemMapper,
             userManager = mUserManager,
+            accountSettingsRepository = accountSettingsRepository,
             messageEncryptionUiModelMapper = messageEncryptionUiModelMapper,
             setUpWebViewDarkModeHandlingIfSupported = setUpWebViewDarkModeHandlingIfSupported,
             onLoadEmbeddedImagesClicked = ::onLoadEmbeddedImagesClicked,
