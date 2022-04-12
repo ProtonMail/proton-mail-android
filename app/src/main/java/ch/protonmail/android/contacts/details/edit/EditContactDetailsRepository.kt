@@ -28,6 +28,7 @@ import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.labels.domain.LabelRepository
 import ch.protonmail.android.labels.domain.model.LabelId
 import com.birbit.android.jobqueue.JobManager
@@ -75,7 +76,6 @@ class EditContactDetailsRepository @Inject constructor(
         updateContactWorker.enqueue(
             contactName,
             contactId,
-            vCardEncrypted.write(),
             vCardSigned.write()
         )
     }
@@ -180,4 +180,10 @@ class EditContactDetailsRepository @Inject constructor(
         }
     }
 
+    suspend fun getFullContactDetails(contactId: String): FullContactDetails? = try {
+        contactDao.observeFullContactDetailsById(contactId).first()
+    } catch (tooBigException: SQLiteBlobTooBigException) {
+        Timber.i(tooBigException, "Data too big to be fetched")
+        null
+    }
 }

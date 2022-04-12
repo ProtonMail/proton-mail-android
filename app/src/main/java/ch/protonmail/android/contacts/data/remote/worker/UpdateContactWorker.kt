@@ -34,6 +34,7 @@ import ch.protonmail.android.api.models.CreateContactV2BodyItem
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
+import ch.protonmail.android.contacts.details.edit.EditContactDetailsRepository
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.util.requireNotEmpty
 import ch.protonmail.android.events.ContactEvent
@@ -45,29 +46,30 @@ import javax.inject.Inject
 
 private const val KEY_LABEL_WORKER_CONTACT_NAME = "ContactName"
 private const val KEY_LABEL_WORKER_CONTACT_ID = "ContactId"
-private const val KEY_LABEL_WORKER_ENCRYPTED_DATA = "EncryptedData"
 private const val KEY_LABEL_WORKER_SIGNED_DATA = "SignedData"
+private const val ENCRYPTED_AND_SIGNED = 3
 
 @HiltWorker
 class UpdateContactWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted val workerParams: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
-    private val userCrypto: UserCrypto
+    private val userCrypto: UserCrypto,
+    private val contactsRepository: EditContactDetailsRepository
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
         val contactId = requireNotEmpty(inputData.getString(KEY_LABEL_WORKER_CONTACT_ID))
-        val encryptedData = requireNotEmpty(inputData.getString(KEY_LABEL_WORKER_ENCRYPTED_DATA))
+
+        val contact = contactsRepository.getFullContactDetails(contactId)
+        val encryptedData = requireNotNull(contact?.encryptedData?.first { it.type == ENCRYPTED_AND_SIGNED })
+
         val signedData = requireNotEmpty(inputData.getString(KEY_LABEL_WORKER_SIGNED_DATA))
 
-
-        val tct = userCrypto.encrypt(encryptedData, false)
-        val encryptedDataSignature = userCrypto.sign(encryptedData)
         val signedDataSignature = userCrypto.sign(signedData)
         val body = CreateContactV2BodyItem(
             signedData, signedDataSignature,
-            tct.armored, encryptedDataSignature
+            encryptedData.data, encryptedData.signature
         )
         val response = apiManager.updateContact(contactId, body)
         return if (response != null) {
@@ -101,7 +103,6 @@ class UpdateContactWorker @AssistedInject constructor(
         fun enqueue(
             contactName: String,
             contactId: String,
-            encryptedData: String,
             signedData: String,
         ): Operation {
             val constraints = Constraints.Builder()
@@ -111,7 +112,6 @@ class UpdateContactWorker @AssistedInject constructor(
             val data = workDataOf(
                 KEY_LABEL_WORKER_CONTACT_NAME to contactName,
                 KEY_LABEL_WORKER_CONTACT_ID to contactId,
-                KEY_LABEL_WORKER_ENCRYPTED_DATA to encryptedData,
                 KEY_LABEL_WORKER_SIGNED_DATA to signedData
             )
 
