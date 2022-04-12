@@ -26,6 +26,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.crypto.common.context.CryptoContext
+import me.proton.core.domain.entity.Product
 import me.proton.core.key.data.db.KeySaltDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.key.data.repository.KeySaltRepositoryImpl
@@ -63,8 +64,9 @@ object UserManagerModule {
         db: UserDatabase,
         provider: ApiProvider,
         @ApplicationContext context: Context,
-        cryptoContext: CryptoContext
-    ): UserRepositoryImpl = UserRepositoryImpl(db, provider, context, cryptoContext)
+        cryptoContext: CryptoContext,
+        product: Product
+    ): UserRepositoryImpl = UserRepositoryImpl(db, provider, context, cryptoContext, product)
 
     @Provides
     @Singleton
