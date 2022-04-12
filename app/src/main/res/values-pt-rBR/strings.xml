@@ -790,7 +790,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferência do antivírus&lt;/i&gt; - desactive temporariamente o seu antivírus, ou remova-o.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferência de proxy/firewall&lt;/i&gt; - desactive os proxies ou firewalls, ou contacte o seu administrador de rede.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está em baixo&lt;/i&gt; - veja &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para conhecer o nosso estado.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ainda sem solução&lt;/i&gt; - contacte-nos directamente através do nosso &lt;a href=\"https://protonmail.com/support-form\"&gt;formulário de suporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), ou &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ainda sem solução&lt;/i&gt; - contacte-nos directamente através do nosso &lt;a href=\"https://protonmail.com/support-form\"&gt;formulário de suporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), ou &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

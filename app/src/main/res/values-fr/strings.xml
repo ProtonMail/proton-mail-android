@@ -790,7 +790,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences antivirus&lt;/i&gt; : désactivez ou supprimez temporairement votre logiciel antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences proxy/pare-feu&lt;/i&gt; : désactivez tout proxy ou pare-feu, ou contactez votre administrateur réseau.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton est en panne&lt;/i&gt; : vérifiez le &lt;a href=\"http://protonstatus.com/\"&gt;Statut Proton&lt;/a&gt; pour connaître l\'état de notre système.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;par courriel&lt;/a&gt; (support@protonmail. ), ou via &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;par courriel&lt;/a&gt; (support@protonmail. ), ou via &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

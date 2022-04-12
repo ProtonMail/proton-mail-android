@@ -801,7 +801,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Smetnje s antivirusom&lt;/i&gt; - Privremeno onemogućite ili uklonite svoj antivirusni softver.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Smetnje s Proxy-em/Vatrozidom&lt;/i&gt; - Onemogućite proxy ili vatrozid ili se obratite mrežnom administratoru.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je nedostupan&lt;/i&gt; - Provjerite &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; za uvid u status našeg sustava.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Još uvijek ne mogu pronaći rješenje&lt;/i&gt; - Kontaktirajte nas putem &lt;a href=\"https://protonmail.com/support-form\"&gt;obrasca za podršku&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-pošte&lt;/a&gt; (support@protonmail.com), ili &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twittera&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Još uvijek ne mogu pronaći rješenje&lt;/i&gt; - Kontaktirajte nas putem &lt;a href=\"https://protonmail.com/support-form\"&gt;obrasca za podršku&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-pošte&lt;/a&gt; (support@protonmail.zendesk.com), ili &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twittera&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

@@ -782,7 +782,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus-Problem&lt;/i&gt; - Deaktivieren oder entfernen Sie vorübergehend Ihre Antiviren-Anwendung.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall-Profil&lt;/i&gt; - Deaktivieren Sie alle Proxys oder Firewalls, oder wenden Sie sich an Ihren Netzwerkadministrator.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton ist ausgefallen&lt;/i&gt; - Überprüfen Sie den &lt;a href=\"http://protonstatus.com/\"&gt;Status von Proton&lt;/a&gt; für unseren Systemstatus.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Noch immer keine Lösung gefunden&lt;/i&gt; - Kontaktieren Sie uns direkt über unser &lt;a href=\"https://protonmail.com/support-form\"&gt;Support-Formular&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), oder &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.</string>
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Noch immer keine Lösung gefunden&lt;/i&gt; - Kontaktieren Sie uns direkt über unser &lt;a href=\"https://protonmail.com/support-form\"&gt;Support-Formular&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), oder &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.</string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Grafik nicht gefunden</string>

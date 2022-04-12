@@ -771,7 +771,7 @@
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;杀毒软件干扰&lt;/i&gt;：暂时关闭或卸载杀毒软件。
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理服务器或防火墙干扰&lt;/i&gt;：关闭所有代理服务器和防火墙，或联系系统管理员。
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 运行故障&lt;/i&gt;：查看 &lt;a href=\"http://protonstatus.com/\"&gt;Proton 运行状态&lt;/a&gt;。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;问题仍未解决&lt;/i&gt;：通过&lt;a href=\"https://protonmail.com/support-form\"&gt;客服表单&lt;/a&gt;、&lt;a href=\"mailto:support@protonmail.com\"&gt;邮箱&lt;/a&gt;（support@protonmail.com）或 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; 直接联系我们。</string>
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;问题仍未解决&lt;/i&gt;：通过&lt;a href=\"https://protonmail.com/support-form\"&gt;客服表单&lt;/a&gt;、&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;邮箱&lt;/a&gt;（support@protonmail.zendesk.com）或 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; 直接联系我们。</string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">图片未找到</string>
