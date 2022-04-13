@@ -23,8 +23,8 @@
  */
 object ProtonMail {
 
-    const val versionName = "1.15.4"
-    const val versionCode = 833
+    const val versionName = "3.0.0"
+    const val versionCode = 834
 
     const val targetSdk = 31
     const val minSdk = 23
