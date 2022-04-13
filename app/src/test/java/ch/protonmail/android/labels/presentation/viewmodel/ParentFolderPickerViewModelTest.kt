@@ -134,7 +134,7 @@ class ParentFolderPickerViewModelTest : CoroutinesTest {
         viewModel.state.test {
 
             assertEquals(expectedState, awaitItem())
-            verify { mockTimberTree.w("Previous state is 'SavingAndClose', ignoring the current change") }
+            verify { mockTimberTree.d("Previous state is 'SavingAndClose', ignoring the current change") }
         }
     }
 

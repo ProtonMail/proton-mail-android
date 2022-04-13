@@ -747,7 +747,7 @@ public class ComposeMessageActivity
                 ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
                 addStringRecipientsToView(emails, toRecipientView);
             } catch (Exception e) {
-                Timber.e(e, "Extract mail to getting extra email");
+                Timber.d(e, "Failed extracting recipients from the intent");
             }
         }
     }
@@ -783,7 +783,7 @@ public class ComposeMessageActivity
                 ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
                 addStringRecipientsToView(emails, toRecipientView);
             } catch (Exception e) {
-                Timber.w(e, "Extract mail to getting extra email");
+                Timber.d(e, "Failed extracting recipients from the intent");
             }
         }
     }
@@ -815,7 +815,7 @@ public class ComposeMessageActivity
         try {
             extractMailTo(intent);
         } catch (Exception e) {
-            Timber.w(e, "Handle set text: extracting email");
+            Timber.d(e, "Handle set text: extracting email");
         }
         handleSendFileUri(uri);
     }
@@ -1282,7 +1282,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.setAttachmentList(listToSet);
             afterAttachmentsAdded();
         } else {
-            Timber.w("ComposeMessageAct.onActivityResult Received result not handled. \n" +
+            Timber.d("ComposeMessageAct.onActivityResult Received result not handled. \n" +
                     "Request code = %s\n" +
                     "Result code = %s", requestCode, resultCode);
             super.onActivityResult(requestCode, resultCode, data);
@@ -1931,7 +1931,7 @@ public class ComposeMessageActivity
                 sendingToast = R.string.sending_message_offline;
             }
             if(dbId == null){
-                Timber.w("Error while saving message. DbId is null.");
+                Timber.d("Error while saving message. DbId is null.");
                 TextExtensions.showToast(ComposeMessageActivity.this, R.string.error_saving_try_again);
             } else {
                 TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);

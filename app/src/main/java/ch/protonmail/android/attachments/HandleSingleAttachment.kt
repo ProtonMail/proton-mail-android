@@ -101,7 +101,6 @@ class HandleSingleAttachment @Inject constructor(
                 )
             )
         } else {
-            Timber.w("handleSingleAttachment failure")
             AppUtil.postEventOnUi(
                 DownloadedAttachmentEvent(
                     Status.FAILED, filenameInCache, null, attachment.attachmentId, messageId, false
@@ -136,7 +135,7 @@ class HandleSingleAttachment @Inject constructor(
                 }
             } catch (exception: IOException) {
                 if (runAttemptCount >= MAX_RETRY_ATTEMPTS) {
-                    Timber.w(exception, "Unable to download attachment file $filename retry has failed")
+                    Timber.d(exception, "Unable to download attachment file $filename retry has failed")
                     runAttemptCount = 0
                     return null
                 } else {
@@ -224,7 +223,7 @@ class HandleSingleAttachment @Inject constructor(
             arrayOf(mimeType),
             callback
         )
-        continuation.invokeOnCancellation { Timber.w("Attachment Uri resolution cancelled") }
+        continuation.invokeOnCancellation { Timber.d("Attachment Uri resolution cancelled") }
     }
 
 }

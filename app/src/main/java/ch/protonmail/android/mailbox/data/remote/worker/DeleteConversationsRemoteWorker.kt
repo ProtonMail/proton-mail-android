@@ -79,7 +79,7 @@ class DeleteConversationsRemoteWorker @AssistedInject constructor(
                     throw throwable
                 }
                 if (runAttemptCount > MAX_RUN_ATTEMPTS) {
-                    Timber.e(throwable)
+                    Timber.e(throwable, "Permanently failing DeleteConversationsRemoteWorker")
                     Result.failure(
                         workDataOf(KEY_LABEL_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")
                     )

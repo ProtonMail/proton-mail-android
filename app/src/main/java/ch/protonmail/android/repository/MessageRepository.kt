@@ -152,7 +152,7 @@ class MessageRepository @Inject constructor(
         return if (currentUser != null) {
             findMessage(currentUser, messageId)
         } else {
-            Timber.w("Cannot find message for null user id")
+            Timber.d("Cannot find message for null user id")
             null
         }
     }

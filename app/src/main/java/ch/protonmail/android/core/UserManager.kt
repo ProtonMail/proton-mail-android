@@ -208,7 +208,7 @@ class UserManager @Inject constructor(
         get() = currentUserId?.let(::preferencesFor)
 
     private inline fun <T> withCurrentUserPreferences(block: (SharedPreferences) -> T): T? {
-        currentUserPreferences ?: Timber.e("No current user set")
+        currentUserPreferences ?: Timber.d("No current user set")
         return currentUserPreferences?.let(block)
     }
 

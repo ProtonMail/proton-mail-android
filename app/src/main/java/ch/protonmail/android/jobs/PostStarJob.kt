@@ -46,7 +46,7 @@ class PostStarJob(private val messageIds: List<String>) : ProtonMailEndlessJob(
         runBlocking {
             val message = getMessageDetailsRepository().findMessageById(messageId).firstOrNull()
             if (message == null) {
-                Timber.w("Trying to star message which was not found in the DB. messageId = $messageId")
+                Timber.d("Trying to star message which was not found in the DB. messageId = $messageId")
                 return@runBlocking
             }
 

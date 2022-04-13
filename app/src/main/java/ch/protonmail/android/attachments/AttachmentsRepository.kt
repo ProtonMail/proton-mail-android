@@ -122,10 +122,10 @@ class AttachmentsRepository @Inject constructor(
                     )
                 }
             } catch (exception: IOException) {
-                Timber.e("Upload attachment failed: $exception")
+                Timber.d("Upload attachment failed: $exception")
                 return@withContext Result.Failure("Upload attachment request failed")
             } catch (cancellationException: CancellationException) {
-                Timber.w("Upload attachment was cancelled. $cancellationException. Rethrowing")
+                Timber.d("Upload attachment was cancelled. $cancellationException. Rethrowing")
                 throw cancellationException
             } catch (exception: Exception) {
                 Timber.w("Upload attachment failed throwing generic exception: $exception")

@@ -397,7 +397,7 @@ internal class MailboxActivity :
                         showToast(it.message.toString(), Toast.LENGTH_LONG)
                     }
                     is GetMailSettings.MailSettingsState.Error.NoPrimaryAccount -> {
-                        Timber.w("No Primary Account")
+                        Timber.d("No Primary Account")
                     }
                     is GetMailSettings.MailSettingsState.Success -> {
                         it.mailSettings?.let { mailSettings ->
@@ -697,12 +697,12 @@ internal class MailboxActivity :
                                 multiUserFcmTokenManager.saveTokenBlocking(FirebaseToken(task.result!!.token))
                                 registerDeviceWorkerEnqueuer()
                             } else {
-                                Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
+                                Timber.d(task.exception, "Could not retrieve FirebaseInstanceId")
                             }
                         }
                     }.onFailure {
                         showToast(R.string.invalid_firebase_api_key_message)
-                        Timber.e(it, getString(R.string.invalid_firebase_api_key_message))
+                        Timber.d(it, "Invalid Firebase API key. Push notifications will not work.")
                     }
                 }
             }

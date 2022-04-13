@@ -57,7 +57,7 @@ public class HTMLToMDConverter {
         try {
             return remark.convert(html).replaceAll(" *\n", "\n");
         } catch (StackOverflowError exception) {
-            Timber.w(exception);
+            Timber.d(exception);
         }
         try {
             // the workaround below is for slow performance devices which Remark throws stack overflow exception
@@ -65,7 +65,7 @@ public class HTMLToMDConverter {
             TextContentRenderer renderer = TextContentRenderer.builder().build();
             return renderer.render(parser.parse(html));
         } catch (Exception exception) {
-            Timber.w(exception);
+            Timber.d(exception);
         }
         return "";
     }

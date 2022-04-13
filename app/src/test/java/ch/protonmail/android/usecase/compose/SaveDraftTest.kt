@@ -244,7 +244,7 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             val messageCaptor = slot<Message>()
             verify {
-                Timber.w("Save Draft for messageId 456 - Decrypted Body was null, proceeding...")
+                Timber.d("Save Draft for messageId 456 - Decrypted Body was null, proceeding...")
             }
             coVerify { messageDetailsRepository.saveMessage(capture(messageCaptor)) }
             assertEquals("encrypted empty message body", messageCaptor.captured.messageBody)
