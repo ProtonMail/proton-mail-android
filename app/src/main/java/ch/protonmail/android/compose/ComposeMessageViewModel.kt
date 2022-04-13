@@ -559,7 +559,8 @@ class ComposeMessageViewModel @Inject constructor(
         _senderAddresses = senderAddresses
     }
 
-    fun getPositionByAddressId(): Int = legacyUser.getPositionByAddressId(_messageDataResult.addressId)
+    fun getPositionByAddressId(): Int =
+        user.addresses.addresses.filter { it.value.id.id == _messageDataResult.addressId }.keys.first() - 1
 
     fun isPaidUser(): Boolean = legacyUser.isPaidUser
 
