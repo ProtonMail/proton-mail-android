@@ -219,10 +219,7 @@ class UploadAttachmentsWorker @AssistedInject constructor(
         exception: Throwable? = null,
         messageId: String?
     ): ListenableWorker.Result {
-        Timber.e(
-            "UploadAttachments Worker failed permanently for " +
-                "$messageId. error = $error, exception = $exception. FAILING"
-        )
+        Timber.e(exception, "UploadAttachments Worker failed permanently for $messageId. error = $error. FAILING")
         val errorData = workDataOf(
             KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to error,
         )

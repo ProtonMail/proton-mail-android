@@ -72,7 +72,7 @@ class SaveDraft @Inject constructor(
             val addressCrypto = addressCryptoFactory.create(userId, AddressId(addressId))
             val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
             if (message.decryptedBody == null) {
-                Timber.w("Save Draft for messageId $messageId - Decrypted Body was null, proceeding...")
+                Timber.d("Save Draft for messageId $messageId - Decrypted Body was null, proceeding...")
             }
 
             message.messageBody = encryptedBody
@@ -113,7 +113,7 @@ class SaveDraft @Inject constructor(
 
                     return@map uploadAttachments(params, createdDraftId, localDraft)
                 } else {
-                    Timber.e("Save Draft to API for messageId $localDraftId FAILED.")
+                    Timber.d("Save Draft to API for messageId $localDraftId FAILED.")
 
                     val saveDraftError = workInfo?.outputData?.getString(KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM)
                     saveDraftError?.let { errorName ->

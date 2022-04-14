@@ -99,7 +99,7 @@ class ParentFolderPickerViewModel @Inject constructor(
             is ParentFolderPickerState.Loading -> prevState.copy(selectedItemId = folderId)
             is ParentFolderPickerState.Editing -> prevState.updateSelectedItem(folderId)
             is ParentFolderPickerState.SavingAndClose -> {
-                Timber.w("Previous state is 'SavingAndClose', ignoring the current change")
+                Timber.d("Previous state is 'SavingAndClose', ignoring the current change")
                 prevState
             }
         }

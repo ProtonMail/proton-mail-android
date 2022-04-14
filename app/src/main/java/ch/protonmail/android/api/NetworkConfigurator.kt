@@ -96,7 +96,7 @@ class NetworkConfigurator @Inject constructor(
                 val result: List<String>? = try {
                     provider.getAlternativeBaseUrls()
                 } catch (ioException: IOException) {
-                    Timber.w(ioException, "DoH getAlternativeBaseUrls error!")
+                    Timber.d(ioException, "DoH getAlternativeBaseUrls error!")
                     null
                 }
                 if (result != null) {

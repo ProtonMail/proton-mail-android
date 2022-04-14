@@ -40,7 +40,7 @@ class FetchByLocationJob(
 
         val userId = userId
             ?: run {
-                Timber.w("Can't fetch messages without any logged in user")
+                Timber.d("Can't fetch messages without any logged in user")
                 return
             }
 

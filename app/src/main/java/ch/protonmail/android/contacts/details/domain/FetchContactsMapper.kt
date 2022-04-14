@@ -291,7 +291,7 @@ class FetchContactsMapper @Inject constructor(
                 try {
                     crypto.verify(decryptedVCardType2, vCardType2Signature).isSignatureValid
                 } catch (exception: GeneralSecurityException) {
-                    Timber.w(exception, "VCard type2 verification error")
+                    Timber.d(exception, "VCard type2 verification error")
                     false
                 }
             } else {
@@ -303,7 +303,7 @@ class FetchContactsMapper @Inject constructor(
                 try {
                     crypto.verify(decryptedVCardType3, vCardType3Signature).isSignatureValid
                 } catch (exception: GeneralSecurityException) {
-                    Timber.w(exception, "VCard type3 verification error")
+                    Timber.d(exception, "VCard type3 verification error")
                     false
                 }
             } else {

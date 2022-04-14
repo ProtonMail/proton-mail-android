@@ -47,11 +47,10 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     override fun getItemCount() = visibleItems.size
 
     fun getItem(i: Int): T? {
-        return try {
-            visibleItems[i]
-        } catch (e: Exception) {
-            Timber.w(e, e.localizedMessage)
+        return if (i < 0 || i >= visibleItems.size) {
             null
+        } else {
+            visibleItems[i]
         }
     }
 

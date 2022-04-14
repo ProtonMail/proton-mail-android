@@ -69,7 +69,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
                 enqueueCreateContactGroupWorker(contactLabel, true)
             }
             else -> {
-                Timber.w("updateLabel failure $updateLabelResult")
+                Timber.d("updateLabel failure $updateLabelResult")
             }
         }
         return updateLabelResult
@@ -176,7 +176,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
                 enqueueCreateContactGroupWorker(contactLabel, false)
             }
             else -> {
-                Timber.w("createContactGroup failure $createLabelResult")
+                Timber.d("createContactGroup failure $createLabelResult")
             }
         }
 

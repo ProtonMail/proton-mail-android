@@ -216,7 +216,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
                     )
                 }
             } else {
-                Timber.e("Primary user id is null. Cannot star message/conversation")
+                Timber.d("Primary user id is null. Cannot star message/conversation")
             }
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
@@ -256,7 +256,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
                     )
                 }
             } else {
-                Timber.e("Primary user id is null. Cannot unstar message/conversation")
+                Timber.d("Primary user id is null. Cannot unstar message/conversation")
             }
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
@@ -300,7 +300,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
                     )
                 }
             } else {
-                Timber.e("Primary user id is null. Cannot mark message/conversation unread")
+                Timber.d("Primary user id is null. Cannot mark message/conversation unread")
             }
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
@@ -342,7 +342,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
                     )
                 }
             } else {
-                Timber.e("Primary user id is null. Cannot mark message/conversation read")
+                Timber.d("Primary user id is null. Cannot mark message/conversation read")
             }
         }.invokeOnCompletion { cancellationException ->
             if (cancellationException != null) {
@@ -409,7 +409,7 @@ internal class MessageActionSheetViewModel @Inject constructor(
                         cancel("Could not complete the action")
                     }
                 } else {
-                    Timber.e("Primary user id is null. Cannot move message/conversation to folder")
+                    Timber.d("Primary user id is null. Cannot move message/conversation to folder")
                 }
             } else {
                 Timber.v("Move message to folder: $newFolderLocationId")

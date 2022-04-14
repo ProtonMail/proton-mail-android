@@ -248,7 +248,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach forEachConversation@{ conversationId ->
             val conversation = conversationDao.findConversation(userId.id, conversationId)
             if (conversation == null) {
-                Timber.e("Conversation with id $conversationId could not be found in DB")
+                Timber.d("Conversation with id $conversationId could not be found in DB")
                 return ConversationsActionResult.Error
             }
             conversationDao.updateNumUnreadMessages(conversationId, conversation.numUnread + 1)
@@ -402,7 +402,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
 
             val conversation = conversationDao.findConversation(userId.id, conversationId)
             if (conversation == null) {
-                Timber.e("Conversation with id $conversationId could not be found in DB")
+                Timber.d("Conversation with id $conversationId could not be found in DB")
                 return ConversationsActionResult.Error
             }
             val labelsToRemoveFromConversation = getLabelIdsForRemovingWhenMovingToFolder(
@@ -716,7 +716,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     ): ConversationsActionResult {
         val conversation = conversationDao.findConversation(userId.id, conversationId)
         if (conversation == null) {
-            Timber.e("Conversation with id $conversationId could not be found in DB")
+            Timber.d("Conversation with id $conversationId could not be found in DB")
             return ConversationsActionResult.Error
         }
         val newLabels = mutableListOf<LabelContextDatabaseModel>()
@@ -747,7 +747,7 @@ internal class ConversationsRepositoryImpl @Inject constructor(
     ): ConversationsActionResult {
         val conversation = conversationDao.findConversation(userId.id, conversationId)
         if (conversation == null) {
-            Timber.e("Conversation with id $conversationId could not be found in DB")
+            Timber.d("Conversation with id $conversationId could not be found in DB")
             return ConversationsActionResult.Error
         }
         val labels = conversation.labels.toMutableList()

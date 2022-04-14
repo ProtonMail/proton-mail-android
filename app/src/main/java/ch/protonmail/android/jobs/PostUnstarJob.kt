@@ -39,7 +39,7 @@ class PostUnstarJob(private val messageIds: List<String>) : ProtonMailEndlessJob
         messageIds.forEach { messageId ->
             val message = runBlocking { getMessageDetailsRepository().findMessageById(messageId).firstOrNull() }
             if (message == null) {
-                Timber.w("Trying to unstar a message which was not found in the DB. messageId = $messageId")
+                Timber.d("Trying to unstar a message which was not found in the DB. messageId = $messageId")
                 return
             }
 

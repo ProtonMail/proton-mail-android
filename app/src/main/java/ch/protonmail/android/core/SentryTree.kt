@@ -20,6 +20,7 @@ package ch.protonmail.android.core
 
 import android.os.Build
 import android.util.Log
+import ch.protonmail.android.data.remote.OfflineException
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.obfuscateEmail
@@ -27,6 +28,12 @@ import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.protocol.Message
 import timber.log.Timber
+import java.net.ConnectException
+import java.net.SocketException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import javax.net.ssl.SSLException
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Production variant of [Timber.Tree]
@@ -39,11 +46,13 @@ internal class SentryTree : Timber.Tree() {
 
     override fun isLoggable(tag: String?, priority: Int): Boolean = priority >= Log.WARN
 
-    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, throwable: Throwable?) {
+        if (throwable.shouldBeIgnored()) return
+
         val event = SentryEvent().apply {
             tag?.let { setTag(TAG_LOG, it) }
-            if (t is DetailedException) {
-                setExtras(t.extras)
+            if (throwable is DetailedException) {
+                setExtras(throwable.extras)
             }
             setMessage(obfuscatedMessage(message))
             setTag(TAG_APP_VERSION, AppUtil.getAppVersion())
@@ -62,7 +71,20 @@ internal class SentryTree : Timber.Tree() {
             it.value.obfuscateEmail()
         }
 
+
+    private fun Throwable?.shouldBeIgnored() = when (this) {
+        is CancellationException,
+        is UnknownHostException,
+        is SocketTimeoutException,
+        is SSLException,
+        is ConnectException,
+        is SocketException,
+        is OfflineException -> true
+        else -> false
+    }
+
     private companion object {
+
         private const val TAG_LOG = "LOG_TAG"
         private const val TAG_APP_VERSION = "APP_VERSION"
         private const val TAG_SDK_VERSION = "SDK_VERSION"

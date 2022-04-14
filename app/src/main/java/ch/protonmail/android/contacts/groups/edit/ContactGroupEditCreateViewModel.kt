@@ -195,7 +195,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
                 )
             }
             else -> {
-                Timber.w("editContactGroup failure $editContactResult")
+                Timber.d("editContactGroup failure $editContactResult")
             }
         }
     }
@@ -239,7 +239,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
                 )
             }
             else -> {
-                Timber.w("createGroup failure $createGroupResponse")
+                Timber.d("createGroup failure $createGroupResponse")
             }
         }
     }

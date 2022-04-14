@@ -93,7 +93,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
         else
             userId = userManager.getCurrentUserId();
         if (userId == null) {
-            Timber.w("No user id provided and no user currently logged in");
+            Timber.d("No user id provided and no user currently logged in");
             return;
         }
 
