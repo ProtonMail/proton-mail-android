@@ -120,7 +120,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 every { this@mockk.mimeType } returns mimeType
                 every { this@mockk.getFileContent() } returns fileContent
             }
-            every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
+            every { crypto.encryptWithPrimary(fileContent, fileName) } returns mockCipherText
             every { crypto.sign(fileContent) } returns signedFileContent
             every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
 
@@ -170,7 +170,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 every { this@mockk.mimeType } returns mimeType
                 every { this@mockk.getFileContent() } returns fileContent
             }
-            every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
+            every { crypto.encryptWithPrimary(fileContent, fileName) } returns mockCipherText
             every { crypto.sign(fileContent) } returns signedFileContent
             every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
 
@@ -206,7 +206,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 every { this@mockk.mimeType } returns mimeType
                 every { this@mockk.getFileContent() } returns fileContent
             }
-            every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
+            every { crypto.encryptWithPrimary(fileContent, fileName) } returns mockCipherText
             every { crypto.sign(fileContent) } returns signedFileContent
             every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
 

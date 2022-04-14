@@ -167,8 +167,8 @@ class AddressCrypto @AssistedInject constructor(
     /**
      * Encrypt for Attachment
      */
-    fun encrypt(data: ByteArray, filename: String): CipherText {
-        val keyRing = createAndUnlockKeyRing()
+    fun encryptWithPrimary(data: ByteArray, filename: String): CipherText {
+        val keyRing = createAndUnlockPrimaryKeyRing().getOrThrow()
         val pgpSplitMessage = keyRing.encryptAttachment(PlainMessage(data), filename)
         keyRing.clearPrivateParams()
         return CipherText(pgpSplitMessage.keyPacket, pgpSplitMessage.dataPacket)
@@ -294,5 +294,15 @@ class AddressCrypto @AssistedInject constructor(
             1 -> IllegalStateException(errorMessage, errors.first())
             else -> IllegalStateException("$errorMessage. Caused by ${errors.joinToString { it.message!! }}")
         }
+    }
+
+    private fun createAndUnlockPrimaryKeyRing(): Result<KeyRing> = runCatching {
+        val primaryAddressKey = currentKeys.first()
+        val addressKeyPassphrase = checkNotNull(
+            passphraseFor(primaryAddressKey)
+        ) { "Could not get the address key passphrase" }
+        val lockedAddressKey = GoOpenPgpCrypto.newKeyFromArmored(primaryAddressKey.privateKey.string)
+        val unlockedAddressKey = lockedAddressKey.unlock(addressKeyPassphrase)
+        GoOpenPgpCrypto.newKeyRing(unlockedAddressKey)
     }
 }
