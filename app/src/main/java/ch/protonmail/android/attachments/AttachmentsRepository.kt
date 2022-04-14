@@ -92,7 +92,7 @@ class AttachmentsRepository @Inject constructor(
                 return@withContext Result.Failure("This attachment name / type is invalid. Please retry")
             }
 
-            val encryptedAttachment = crypto.encrypt(fileContent, filename)
+            val encryptedAttachment = crypto.encryptWithPrimary(fileContent, filename)
             val signedFileContent = armorer.unarmor(crypto.sign(fileContent))
 
             val attachmentMimeType = mimeType.toMediaType()
