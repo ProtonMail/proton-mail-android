@@ -48,10 +48,10 @@ class HandleSingleAttachmentTest : ArchTest {
     private val context: Context = mockk()
     private val userManager: UserManager = mockk()
     private val databaseProvider: DatabaseProvider = mockk()
-    private val attachmentsRepository: AttachmentsRepository = mockk()
     private val clearingServiceHelper: AttachmentClearingServiceHelper = mockk()
     private val attachmentsHelper: AttachmentsHelper = mockk()
     private val testMimeType = "image/jpeg"
+    private val extractAttachmentByteArray: ExtractAttachmentByteArray = mockk()
 
     val useCase = HandleSingleAttachment(
         context,
@@ -59,7 +59,7 @@ class HandleSingleAttachmentTest : ArchTest {
         databaseProvider,
         attachmentsHelper,
         clearingServiceHelper,
-        attachmentsRepository
+        extractAttachmentByteArray
     )
 
     @BeforeTest
@@ -101,9 +101,7 @@ class HandleSingleAttachmentTest : ArchTest {
             every { keyPackets } returns testKeyPackets
         }
         coEvery {
-            attachmentsRepository.getAttachmentDataOrNull(
-                crypto, testAttachmentId, testKeyPackets
-            )
+            extractAttachmentByteArray(attachment, crypto)
         } returns testBytePackets
         val expected = ListenableWorker.Result.failure()
 
@@ -112,9 +110,7 @@ class HandleSingleAttachmentTest : ArchTest {
 
         // then
         coVerify(exactly = 3) {
-            attachmentsRepository.getAttachmentDataOrNull(
-                crypto, testAttachmentId, testKeyPackets
-            )
+            extractAttachmentByteArray(attachment, crypto)
         }
         assertEquals(expected, result)
     }
