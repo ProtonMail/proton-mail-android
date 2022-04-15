@@ -57,7 +57,7 @@ class HandleSingleAttachment @Inject constructor(
     private val databaseProvider: DatabaseProvider,
     private val attachmentsHelper: AttachmentsHelper,
     private val clearingServiceHelper: AttachmentClearingServiceHelper,
-    private val attachmentsRepository: AttachmentsRepository
+    private val extractAttachmentByteArray: ExtractAttachmentByteArray
 ) {
 
     private val attachmentMetadataDao: AttachmentMetadataDao
@@ -153,17 +153,13 @@ class HandleSingleAttachment @Inject constructor(
         crypto: AddressCrypto,
         mimeType: String?
     ): Uri? {
-        val decryptedByteArray = attachmentsRepository.getAttachmentDataOrNull(
-            crypto,
-            requireNotNull(attachment.attachmentId),
-            requireNotNull(attachment.keyPackets)
-        )
-
-        return decryptedByteArray?.inputStream()?.let {
-            attachmentsHelper.saveAttachmentInMediaStore(
-                context.contentResolver, filename, mimeType, it
-            )
-        }
+        return extractAttachmentByteArray(attachment, crypto)
+            ?.inputStream()
+            ?.let {
+                attachmentsHelper.saveAttachmentInMediaStore(
+                    context.contentResolver, filename, mimeType, it
+                )
+            }
     }
 
     private suspend fun downloadAttachmentBeforeQ(
@@ -172,24 +168,18 @@ class HandleSingleAttachment @Inject constructor(
         crypto: AddressCrypto,
         mimeType: String?
     ): Uri? {
-
-        val decryptedByteArray = attachmentsRepository.getAttachmentDataOrNull(
-            crypto,
-            requireNotNull(attachment.attachmentId),
-            requireNotNull(attachment.keyPackets)
-        )
-
-        return decryptedByteArray?.let { bytes ->
-            val file = saveBytesToFile(filename, bytes)
-            val result = awaitUriFromMediaScanned(
-                context,
-                file,
-                mimeType
-            )
-            val uri = result.second
-            Timber.v("Stored file: $filename path: ${result.first} uri: $uri")
-            uri
-        }
+        return extractAttachmentByteArray(attachment, crypto)
+            ?.let { bytes ->
+                val file = saveBytesToFile(filename, bytes)
+                val result = awaitUriFromMediaScanned(
+                    context,
+                    file,
+                    mimeType
+                )
+                val uri = result.second
+                Timber.v("Stored file: $filename path: ${result.first} uri: $uri")
+                uri
+            }
     }
 
     private fun saveBytesToFile(filename: String, bytes: ByteArray): File {
