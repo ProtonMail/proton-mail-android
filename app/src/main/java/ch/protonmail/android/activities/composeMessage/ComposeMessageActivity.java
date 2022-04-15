@@ -1699,7 +1699,12 @@ public class ComposeMessageActivity
         composeMessageViewModel.getPmMessageRecipientsResult().observe(this, messageRecipients -> {
             recipientAdapter.setData(messageRecipients);
         });
-        composeMessageViewModel.loadPMContacts();
+        composeMessageViewModel.getSetupComplete().observe(this, event -> {
+            Boolean setUpComplete = event.getContentIfNotHandled();
+            if (setUpComplete != null && setUpComplete) {
+                composeMessageViewModel.loadPMContactsIfNeeded();
+            }
+        });
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             getSupportLoaderManager().initLoader(LOADER_ID_ANDROID_CONTACTS, null, this);
         }
