@@ -134,7 +134,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val _androidMessageRecipientsResult: MutableLiveData<List<MessageRecipient>> = MutableLiveData()
     private val _setupComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _closeComposer: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    private var _setupCompleteValue = false
     private val _savingDraftComplete: MutableLiveData<Message> = MutableLiveData()
     private val _savingDraftError: MutableLiveData<String> = MutableLiveData()
     private val _deleteResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
@@ -171,7 +170,7 @@ class ComposeMessageViewModel @Inject constructor(
     var _actionId = Constants.MessageActionType.NONE
     private var _parentId: String? = null
     private val _draftId = AtomicReference<String>()
-    private lateinit var _data: List<ContactLabelUiModel>
+    private var contactGroups: List<ContactLabelUiModel> = emptyList()
     private lateinit var _senderAddresses: List<String>
     private val _groupsRecipientsMap = HashMap<ContactLabelUiModel, List<MessageRecipient>>()
     private var _oldSenderAddressId: String = ""
@@ -196,7 +195,7 @@ class ComposeMessageViewModel @Inject constructor(
     val closeComposer: LiveData<Event<Boolean>>
         get() = _closeComposer
     val setupCompleteValue: Boolean
-        get() = _setupCompleteValue
+        get() = setupComplete.value?.peekContent() ?: false
     val savingDraftComplete: LiveData<Message>
         get() = _savingDraftComplete
     val savingDraftError: LiveData<String>
@@ -275,12 +274,9 @@ class ComposeMessageViewModel @Inject constructor(
         getSenderEmailAddresses()
         // if the user is free user, then we do not fetch contact groups and announce the setup is complete
         if (!legacyUser.isPaidUser) {
-            _setupCompleteValue = true
             sendingInProcess = false
             _setupComplete.postValue(Event(true))
-            if (!_protonMailContactsLoaded) {
-                loadPMContacts()
-            }
+            loadPMContactsIfNeeded()
         } else {
             for (userId in loggedInUserIds) {
                 userId?.let {
@@ -355,23 +351,16 @@ class ComposeMessageViewModel @Inject constructor(
                     _groupsRecipientsMap[group] = recipients
                 }
 
-                _data = (_data + models).distinctBy { it.id }
+                contactGroups = contactGroups.plus(models).distinctBy { it.id }
                 handleContactGroupsResult()
-                _setupCompleteValue = true
-                sendingInProcess = false
                 _setupComplete.postValue(Event(true))
-                if (!_protonMailContactsLoaded) {
-                    loadPMContacts()
-                }
+                sendingInProcess = false
+                loadPMContactsIfNeeded()
             }
-            .catch {
-                _data = ArrayList()
-                _setupCompleteValue = false
+            .catch { error ->
+                Timber.d(error)
                 sendingInProcess = false
                 _setupComplete.postValue(Event(false))
-                if (!_protonMailContactsLoaded) {
-                    loadPMContacts()
-                }
             }
             .launchIn(viewModelScope)
     }
@@ -380,7 +369,7 @@ class ComposeMessageViewModel @Inject constructor(
         _groupsRecipientsMap[group] ?: ArrayList()
 
     fun getContactGroupByName(groupName: String): ContactLabelUiModel? {
-        return _data.find {
+        return contactGroups.find {
             it.name == groupName
         }
     }
@@ -899,11 +888,8 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     @SuppressLint("CheckResult")
-    fun loadPMContacts() {
+    fun loadPMContactsIfNeeded() {
         if (_protonMailContactsLoaded) {
-            return
-        }
-        if (!setupCompleteValue) {
             return
         }
         _protonMailContactsLoaded = true
@@ -926,7 +912,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     private fun handleContactGroupsResult() {
         val messageRecipientList = java.util.ArrayList<MessageRecipient>()
-        for (contactLabel in _data) {
+        for (contactLabel in contactGroups) {
             val recipient = MessageRecipient(
                 String.format(
                     _composerGroupCountOf, contactLabel.name, contactLabel.contactEmailsCount,
