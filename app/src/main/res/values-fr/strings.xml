@@ -61,7 +61,7 @@
     <string name="details_open_in_proton_calendar_icon_desc">icône Proton Calendar</string>
     <string name="details_play_store_error">Impossible d\'ouvrir le Play Store</string>
     <string name="details_hyperlink_phishing_dialog_title">Attention : site Web potentiellement faux</string>
-    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
+    <string name="details_hyperlink_phishing_dialog_content">Ce lien mène à un site Web qui pourrait essayer de voler vos informations, telles que les mots de passe et les détails de votre carte de crédit.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pour votre sécurité, ne continuez pas.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Revenir en arrière (recommandé)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorer l\'avertissement et continuer</string>
     <!-- endregion -->
@@ -74,6 +74,8 @@
     <string name="composer_to">À :</string>
     <string name="composer_removing_address_generic_error">Impossible de vérifier l\'adresse : %s1. L\'envoi pourrait échouer.</string>
     <string name="composer_removing_address_server_error">Suppression de l\'adresse : %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">Le %s, %s &lt; %s&gt; a écrit :</string>
     <string name="set_msg_password_title">Définir le mot de passe</string>
     <string name="set_msg_password_info">Définissez un mot de passe pour chiffrer ce message pour les utilisateurs non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">En savoir plus</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
@@ -790,7 +792,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences antivirus&lt;/i&gt; : désactivez ou supprimez temporairement votre logiciel antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interférences proxy/pare-feu&lt;/i&gt; : désactivez tout proxy ou pare-feu, ou contactez votre administrateur réseau.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton est en panne&lt;/i&gt; : vérifiez le &lt;a href=\"http://protonstatus.com/\"&gt;Statut Proton&lt;/a&gt; pour connaître l\'état de notre système.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;par courriel&lt;/a&gt; (support@protonmail. ), ou via &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vous ne trouvez pas de solution&lt;/i&gt; : contactez-nous directement via notre &lt;a href=\"https://protonmail.com/support-form\"&gt;formulaire d’assistance&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zen desk.com\"&gt;par e-mail&lt;/a&gt; (support@protonmail.zendesk.com) ou via &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

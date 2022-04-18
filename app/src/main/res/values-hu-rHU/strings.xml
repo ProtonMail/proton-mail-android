@@ -60,10 +60,10 @@
     <string name="details_open_in_proton_calendar_subtitle">Secure encrypted calendar</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton Calendar icon</string>
     <string name="details_play_store_error">Can\'t open Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
-    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
-    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
+    <string name="details_hyperlink_phishing_dialog_title">Figyelem: gyanítottan hamis weboldal</string>
+    <string name="details_hyperlink_phishing_dialog_content">Ez a link egy olyan weboldalhoz vezet, amely ellophatja személyes információit, mint például a jelszavait vagy a bankkártyája adatait.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Biztonsága érdekében ne folytassa.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Vissza (ajánlott)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Figyelmeztetés figyelmen kívül hagyása és folytatás</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Titkos másolat:</string>
@@ -74,6 +74,8 @@
     <string name="composer_to">Címzett:</string>
     <string name="composer_removing_address_generic_error">Cannot verify address: %s1. Sending might fail.</string>
     <string name="composer_removing_address_server_error">Removing address: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">%s, %s-kor, &lt; %s&gt; ezt írta:</string>
     <string name="set_msg_password_title">Jelszó beállítása</string>
     <string name="set_msg_password_info">Állítson be egy jelszót, hogy titkosítsa ezt az üzenetet a ProtonMailt nem használóknak. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">További információk</a></string>
     <string name="set_msg_password_info_icon_description">Infó</string>
@@ -148,9 +150,9 @@
     <string name="onboarding_image_view_content_description">Proton Mail illusztráció</string>
     <!-- endregion -->
     <!-- region Snackbars -->
-    <string name="snackbar_message_draft_saved">Draft saved</string>
-    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
-    <string name="snackbar_action_discard">Discard</string>
+    <string name="snackbar_message_draft_saved">Piszkozat mentve</string>
+    <string name="snackbar_message_draft_moved_to_trash">Piszkozat áthelyezve a lomtárba</string>
+    <string name="snackbar_action_discard">Elvetés</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -784,14 +786,25 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
-    </string>
+    <string name="troubleshoot_dialog_message">&lt;Bold&gt;Nincs internetkapcsolat&lt;/Bold&gt;- Ellenőrizd le, hogy működik-e internet&lt;LineBreak/&gt;&lt;LineBreak/&gt;
+
+&lt;Bold&gt;
+Internet szolgáltató (ISP) probléma&lt;/Bold&gt; - Próbálj meg egy másik hálózatból csatlakozni a Protonhoz (vagy használj &lt;Hyperlink Command=\"{Binding TorCommand}\"&gt;Tor-t&lt;/Hyperlink&gt;).&lt;LineBreak/&gt;&lt;LineBreak/&gt;
+
+
+&lt;Bold&gt;Government block&lt;/Bold&gt; - Lehet, hogy az országo korlátozza a Proton használatát. Próbáld ki a &lt;Hyperlink Command=\"{Binding TorCommand}\"&gt;Tor-t&lt;/Hyperlink&gt; a Proton eléréséhez.
+&lt;LineBreak/&gt;&lt;LineBreak/&gt;
+
+&lt;Bold&gt;Antivírus összeakadás&lt;/Bold&gt;- Ideiglenesen tiltsd le vagy távolítsd el a víruskereső szoftvert.
+&lt;LineBreak/&gt;&lt;LineBreak/&gt;
+
+&lt;Bold&gt;Proxy/tűzfal összeakadás&lt;/Bold&gt;- Kapcsold ki a proxykat vagy tűzfalakat, vagy vedd fel a kapcsolatot a hálózati rendszergazdával.
+&lt;LineBreak/&gt;&lt;LineBreak/&gt;
+
+&lt;Bold&gt;Proton is down&lt;/Bold&gt; - Check &lt;Hyperlink Command=\"{Binding ProtonStatusCommand}\"&gt;Proton státusz&lt;/Hyperlink&gt; for our system status.
+&lt;LineBreak/&gt;&lt;LineBreak/&gt;
+
+&lt;Bold&gt;Még mindig nem találsz megoldást&lt;/Bold&gt;- Vedd fel velünk a kapcsolatot közvetlenül a &lt;Hyperlink Command=\"{Binding SupportFormCommand}\"&gt;support form&lt;/Hyperlink&gt;, support@protonvpn.com email címen, vagy&lt;Hyperlink Command=\"{Binding ProtonTwitterCommand}\"&gt;Twitteren&lt;/Hyperlink&gt;.    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">A kép nem található</string>

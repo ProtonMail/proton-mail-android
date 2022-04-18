@@ -60,10 +60,10 @@
     <string name="details_open_in_proton_calendar_subtitle">安全加密日历</string>
     <string name="details_open_in_proton_calendar_icon_desc">Proton日历图标</string>
     <string name="details_play_store_error">无法打开应用商店</string>
-    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
-    <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
-    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
+    <string name="details_hyperlink_phishing_dialog_title">警告：疑似虚假网站</string>
+    <string name="details_hyperlink_phishing_dialog_content">此链接指向的网站可能会窃取您的密码、信用卡等信息。&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;出于安全考虑，请不要打开此链接。</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">返回（推荐）</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">忽视警告并继续</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">密送：</string>
@@ -74,6 +74,8 @@
     <string name="composer_to">收件人：</string>
     <string name="composer_removing_address_generic_error">无法验证地址：%s1。发送邮件可能会失败。</string>
     <string name="composer_removing_address_server_error">移除地址 %s1 失败：%s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">%s，%s &lt;%s&gt; 来信：</string>
     <string name="set_msg_password_title">设置密码</string>
     <string name="set_msg_password_info">请为非 ProtonMail 用户设置密码将邮件加密。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a></string>
     <string name="set_msg_password_info_icon_description">信息</string>
@@ -148,9 +150,9 @@
     <string name="onboarding_image_view_content_description">Proton Mail 图示</string>
     <!-- endregion -->
     <!-- region Snackbars -->
-    <string name="snackbar_message_draft_saved">Draft saved</string>
-    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
-    <string name="snackbar_action_discard">Discard</string>
+    <string name="snackbar_message_draft_saved">草稿已保存</string>
+    <string name="snackbar_message_draft_moved_to_trash">草稿已移至废件箱</string>
+    <string name="snackbar_action_discard">舍弃</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -771,7 +773,7 @@
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;杀毒软件干扰&lt;/i&gt;：暂时关闭或卸载杀毒软件。
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;代理服务器或防火墙干扰&lt;/i&gt;：关闭所有代理服务器和防火墙，或联系系统管理员。
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton 运行故障&lt;/i&gt;：查看 &lt;a href=\"http://protonstatus.com/\"&gt;Proton 运行状态&lt;/a&gt;。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;问题仍未解决&lt;/i&gt;：通过&lt;a href=\"https://protonmail.com/support-form\"&gt;客服表单&lt;/a&gt;、&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;邮箱&lt;/a&gt;（support@protonmail.zendesk.com）或 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; 直接联系我们。</string>
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;问题仍未解决&lt;/i&gt;：通过&lt;a href=\"https://protonmail.com/support-form\"&gt;客服表单&lt;/a&gt;、&lt;&lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;&gt;邮箱&lt;/a&gt;（support@protonmail.zendesk.com）或 &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt; 直接联系我们。</string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">图片未找到</string>

@@ -74,6 +74,8 @@
     <string name="composer_to">Komu:</string>
     <string name="composer_removing_address_generic_error">Nelze ověřit adresu: %s1. Odesílání se nemusí podařit.</string>
     <string name="composer_removing_address_server_error">Odebírání adresy: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
     <string name="set_msg_password_title">Nastavit heslo</string>
     <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy uživatelům, kteří nepoužívají ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Další informace</a></string>
     <string name="set_msg_password_info_icon_description">Informace</string>
@@ -135,22 +137,22 @@
     <string name="contact_details_remote_content_dialog_positive_button">Načíst obsah</string>
     <!-- endregion -->
     <!-- region Onboarding -->
-    <string name="new_user_onboarding_privacy_for_all_headline">Privacy for all</string>
-    <string name="new_user_onboarding_privacy_for_all_description">Invite your contacts to Proton Mail to enjoy seamless end-to-end encryption, or add password protection to messages you send them.</string>
-    <string name="new_user_onboarding_neat_and_tidy_headline">Neat and tidy</string>
-    <string name="new_user_onboarding_neat_and_tidy_description">File, label, and color code messages to create your perfect, custom inbox.</string>
-    <string name="existing_user_onboarding_new_look_headline">New look, same protection</string>
-    <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
-    <string name="existing_user_onboarding_new_features_headline">New features</string>
+    <string name="new_user_onboarding_privacy_for_all_headline">Soukromí pro všechny</string>
+    <string name="new_user_onboarding_privacy_for_all_description">Pozvěte své kontakty do služby Proton Mail, abyste mohli využívat bezproblémové end-to-end šifrování, nebo přidejte ochranu heslem do zpráv, které jim posíláte.</string>
+    <string name="new_user_onboarding_neat_and_tidy_headline">Upravený a organizovaný</string>
+    <string name="new_user_onboarding_neat_and_tidy_description">Pomocí souboru, štítku a barevného kódu zpráv, si můžete vytvořit perfektní schránku s vlastním nastavením.</string>
+    <string name="existing_user_onboarding_new_look_headline">Nový vzhled, stejná ochrana</string>
+    <string name="existing_user_onboarding_new_look_description">Váš šifrovaný e-mail byl zcela přepracován pro snadnější používání.</string>
+    <string name="existing_user_onboarding_new_features_headline">Nové funkce</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
     <string name="onboarding_next">Další</string>
     <string name="onboarding_get_started">Začínáme</string>
     <string name="onboarding_image_view_content_description">Ilustrace Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
-    <string name="snackbar_message_draft_saved">Draft saved</string>
-    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
-    <string name="snackbar_action_discard">Discard</string>
+    <string name="snackbar_message_draft_saved">Koncept uložen</string>
+    <string name="snackbar_message_draft_moved_to_trash">Koncept byl přesunut do koše</string>
+    <string name="snackbar_action_discard">Zahodit</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -664,7 +666,7 @@
     <string name="account_settings">Nastavení účtu</string>
     <!-- region Acc Settings -->
     <string name="account">Účet</string>
-    <string name="drawer_subscription">Subscription</string>
+    <string name="drawer_subscription">Předplatné</string>
     <string name="password_manager">Správa hesel</string>
     <string name="password_changed">Heslo bylo změněno.</string>
     <string name="recovery_email">Sekundární e-mail</string>
@@ -812,7 +814,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aktivita antiviru&lt;/i&gt; - Dočasně vypněte nebo odstraňte antivirový software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall rušení&lt;/i&gt; - Vypněte všechny proxy servery nebo brány firewall nebo se obraťte na správce sítě.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je vypnutý&lt;/i&gt; - Zkontrolujte &lt;a href=\"http://protonstatus.com/\"&gt;stav Protonu&lt;/a&gt; pro stav našeho systému.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pořád nelze najít řešení&lt;/i&gt; - Kontaktujte nás přímo pomocí našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), nebo &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Pořád nelze najít řešení&lt;/i&gt; - Kontaktujte nás přímo pomocí našeho &lt;a href=\"https://protonmail.com/support-form\"&gt;formuláře podpory&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk\"&gt;email&lt;/a&gt; (support@protonmail.zendesk), nebo &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

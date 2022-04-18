@@ -60,10 +60,10 @@
     <string name="details_open_in_proton_calendar_subtitle">Calendar securizat și criptat</string>
     <string name="details_open_in_proton_calendar_icon_desc">Pictograma Proton Calendar</string>
     <string name="details_play_store_error">Nu se poate deschide Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Avertisment: site suspect de fals</string>
-    <string name="details_hyperlink_phishing_dialog_content">Acest link duce la un site web care ar putea încerca să vă fure informațiile, cum ar fi parolele și detaliile cardului de credit..&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pentru siguranța dumneavoastră, nu continuați.</string>
-    <string name="details_hyperlink_phishing_dialog_cancel_action">Întoarceți-vă (recomandat)</string>
-    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorați avertismentul și continuați</string>
+    <string name="details_hyperlink_phishing_dialog_title">Avertisment: suspectare site fals</string>
+    <string name="details_hyperlink_phishing_dialog_content">Această legătură duce la un site web care ar putea încerca să vă fure informațiile, cum ar fi parolele și detaliile cardului de credit.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Pentru siguranță, nu continuați.</string>
+    <string name="details_hyperlink_phishing_dialog_cancel_action">Revenire (recomandat)</string>
+    <string name="details_hyperlink_phishing_dialog_confirm_action">Ignorare avertisment și continuare</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">CA:</string>
@@ -74,6 +74,8 @@
     <string name="composer_to">Către:</string>
     <string name="composer_removing_address_generic_error">Nu se poate verifica adresa: %s1. Trimiterea ar putea eșua.</string>
     <string name="composer_removing_address_server_error">Eliminare adresa: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">La %s, %s &lt; %s&gt; a scris:</string>
     <string name="set_msg_password_title">Setare parolă</string>
     <string name="set_msg_password_info">Setați o parolă pentru a cripta acest mesaj pentru cei care nu sunt utilizatori ai ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Detalii</a></string>
     <string name="set_msg_password_info_icon_description">Informaţii</string>
@@ -139,10 +141,10 @@
     <string name="new_user_onboarding_privacy_for_all_description">Invitați-vă contactele la Proton Mail pentru a beneficia de criptarea în ambele părți sau adăugați protecția cu parolă la mesajele pe care le trimiteți.</string>
     <string name="new_user_onboarding_neat_and_tidy_headline">Curată și ordonată</string>
     <string name="new_user_onboarding_neat_and_tidy_description">Clasificați, etichetați și codificați prin culori mesajele pentru a vă crea o experiență personală de utilizare.</string>
-    <string name="existing_user_onboarding_new_look_headline">Un aspect nou, aceeași protecție</string>
+    <string name="existing_user_onboarding_new_look_headline">Un aspect nou, aceeași protecție.</string>
     <string name="existing_user_onboarding_new_look_description">E-mailul criptat a fost reproiectat în întregime pentru a fi mai ușor de utilizat.</string>
     <string name="existing_user_onboarding_new_features_headline">Caracteristici noi</string>
-    <string name="existing_user_onboarding_new_features_description">Bucurați-vă de noi caracteristici, cum ar fi modul întunecat, notificări îmbunătățite, un filtru pentru mesajele necitite și subfoldere.</string>
+    <string name="existing_user_onboarding_new_features_description">Bucurați-vă de caracteristici noi, cum ar fi modul întunecat, notificări îmbunătățite, un filtru pentru mesajele necitite și subfoldere.</string>
     <string name="onboarding_next">Înainte</string>
     <string name="onboarding_get_started">Începeți</string>
     <string name="onboarding_image_view_content_description">Ilustrație Proton Mail</string>
@@ -150,7 +152,7 @@
     <!-- region Snackbars -->
     <string name="snackbar_message_draft_saved">Ciorna a fost salvată</string>
     <string name="snackbar_message_draft_moved_to_trash">Ciorna a fost mutată în «Gunoi»</string>
-    <string name="snackbar_action_discard">Renunțați</string>
+    <string name="snackbar_action_discard">Renunțare</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -795,13 +797,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Probleme comune conexiune și soluții</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Fără conexiune la internet&lt;/i&gt; - Asigurați-vă că aveți conexiune la internet.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Fără conexiune la internet&lt;/i&gt; - Asigurați-vă că funcționează conexiunea la internet.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problemă (ISP) Furnizor Servicii Internet&lt;/i&gt; - Încercați să vă conectați la Proton dintr-o altă rețea (sau folosiți &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocare guvernamentală&lt;/i&gt; - Țara dvs. s-ar putea să blocheze accesul către Proton. Încercați &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (sau oricare alt VPN) sau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; pentru a accesa Proton.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferență antivirus&lt;/i&gt; - Dezactivați temporar sau eliminați programul antivirus.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferențe Proxy/Paravan de protecție&lt;/i&gt; - Dezactivați orice paravan de protecție sau proxy sau contactați administratorul de rețea.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton este căzut&lt;/i&gt; - Accesați &lt;a href=\"http://protonstatus.com/\"&gt;Stare Proton&lt;/a&gt; pentru aflarea stării sistemului nostru.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Încă nu ați găsit soluția?&lt;/i&gt; - Contactați-ne direct prin &lt;a href=\"https://protonmail.com/support-form\"&gt;formularul de suport&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.zendesk.com) sau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Încă nu ați găsit soluția?&lt;/i&gt; - Contactați-ne direct prin &lt;a href=\"https://protonmail.com/support-form\"&gt;formularul de suport&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.com) sau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

@@ -74,6 +74,8 @@
     <string name="composer_to">Till:</string>
     <string name="composer_removing_address_generic_error">Kan inte verifiera adress: %s1. Sändningen kan misslyckas.</string>
     <string name="composer_removing_address_server_error">Tar bort adresser: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">Den %s, %s &lt; %s&gt; skrev:</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
     <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke ProtonMail-användare. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lär dig mer</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>

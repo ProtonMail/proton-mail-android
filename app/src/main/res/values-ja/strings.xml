@@ -74,6 +74,8 @@
     <string name="composer_to">宛先:</string>
     <string name="composer_removing_address_generic_error">アドレスを検証できません: %s1。おそらく送信に失敗します。</string>
     <string name="composer_removing_address_server_error">アドレスを削除中: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
     <string name="set_msg_password_title">パスワードを設定</string>
     <string name="set_msg_password_info">ProtonMail ユーザー以外への暗号化パスワードを設定してください。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a></string>
     <string name="set_msg_password_info_icon_description">情報</string>
@@ -771,7 +773,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;ウイルス対策ソフトウェアの干渉&lt;/i&gt; - ウイルス対策ソフトウェアを一時的に無効にするか、削除することで解決する可能性もあります。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;プロキシまたはファイアウォールの干渉&lt;/i&gt; - プロキシまたはファイアウォールを無効にするか、ネットワーク管理者に問い合わせてみてください。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton のサービスが一時的にダウンしている&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton ステータス&lt;/a&gt; から私たちのシステムの動作状況をご確認ください。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;電子メール&lt;/a&gt; (support@protonmail.zendesk.com), または &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.から直接私たちにお問い合わせください。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;メール&lt;/a&gt; (support@protonmail.zendesk.com)、または &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;から直接お問い合わせください。
     </string>
     <!-- endregion -->
     <!-- region errors -->
