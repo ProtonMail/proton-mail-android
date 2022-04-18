@@ -74,6 +74,8 @@
     <string name="composer_to">Προς:</string>
     <string name="composer_removing_address_generic_error">Αδυναμία επικύρωσης διεύθυνσης: %s1. Η αποστολή ίσως αποτύχει.</string>
     <string name="composer_removing_address_server_error">Αφαίρεση διεύθυνσης: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
     <string name="set_msg_password_title">Ορισμός κωδικού</string>
     <string name="set_msg_password_info">Ορισμός κωδικού κρυπτογράφησης μηνύματος για χρήστες εκτός ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Μάθετε περισσότερα</a></string>
     <string name="set_msg_password_info_icon_description">Πληροφορίες</string>
@@ -784,13 +786,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Κοινά προβλήματα σύνδεσης και λύσεις</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Χωρίς σύνδεση στο internet&lt;/i&gt; - Βεβαιωθείτε ότι η σύνδεσή σας στο διαδίκτυο λειτουργεί.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Πρόβλημα Παρόχου Internet (ISP)&lt;/i&gt; - Δοκιμάστε να συνδεθείτε στο Proton από διαφορετικό δίκτυο (ή χρησιμοποιήστε το &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; ή &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Η χώρα σας ενδέχεται να μπλοκάρει την πρόσβαση στο Proton. Δοκιμάστε το &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (ή οποιοδήποτε άλλο VPN) ή &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; για να αποκτήστε πρόσβαση στο Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Εμπλοκή Antivirus&lt;/i&gt; - Απενεργοποιήστε προσωρινά ή καταργήστε το λογισμικό προστασίας από ιούς.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Εμπλοκή Firewall&lt;/i&gt; - Απενεργοποιήστε τυχόν διακομιστές μεσολάβησης ή τείχη προστασίας ή επικοινωνήστε με τον διαχειριστή του δικτύου σας.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Το Proton έχει πέσει&lt;/i&gt; - Ελέγξτε &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; για την κατάσταση των συστημάτων μας.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still δεν μπορείτε να βρείτε λύση;&lt;/i&gt; - Επικοινωνήστε μαζί μας απευθείας μέσω της &lt;a href=\"https://protonmail.com/support-form\"&gt;φόρμας υποστήριξης&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), ή &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

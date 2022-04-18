@@ -48,12 +48,12 @@
     <!-- endregion -->
     <!-- region Mailbox -->
     <string name="mailbox_empty_folder_subtitle">Dieser Ordner ist leer</string>
-    <string name="mailbox_empty_inbox_subtitle">Du bist auf dem aktuellsten Stand</string>
+    <string name="mailbox_empty_inbox_subtitle">Du bist auf dem neusten Stand</string>
     <string name="mailbox_empty_spam_subtitle">Dein Spam-Ordner ist leer</string>
     <string name="mailbox_empty_trash_subtitle">Papierkorb ist leer</string>
     <string name="mailbox_no_messages">Keine Nachrichten</string>
     <string name="mailbox_unread_count">%d ungelesen</string>
-    <string name="mailbox_updated_just_now">Soeben aktualisiert</string>
+    <string name="mailbox_updated_just_now">Gerade aktualisiert</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">In Proton Calendar öffnen</string>
@@ -74,6 +74,8 @@
     <string name="composer_to">An:</string>
     <string name="composer_removing_address_generic_error">Die Adresse kann nicht verifiziert werden: %s1. Das Senden könnte fehlschlagen.</string>
     <string name="composer_removing_address_server_error">Entferne Adresse: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">Am %s, schrieb %s &lt; %s&gt;:</string>
     <string name="set_msg_password_title">Passwort festlegen</string>
     <string name="set_msg_password_info">Lege ein Passwort fest, um diese Nachricht für Nicht-ProtonMail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Mehr erfahren</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
@@ -776,13 +778,14 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Häufige Verbindungsprobleme und Lösungen</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Keine Internetverbindung&lt;/i&gt; - Bitte stellen Sie sicher, dass Ihre Internetverbindung funktioniert.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problem des Internet-Dienstanbieters (ISP)&lt;/i&gt; - Versuchen Sie, sich von einem anderen Netzwerk aus mit Proton zu verbinden (oder verwenden Sie &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; oder &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Regierungssperre&lt;/i&gt; - Ihr Land sperrt möglicherweise den Zugang zu Proton. Versuchen Sie &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (oder einen anderen VPN-Dienst) oder &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; um sich mit Proton zu verbinden.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus-Problem&lt;/i&gt; - Deaktivieren oder entfernen Sie vorübergehend Ihre Antiviren-Anwendung.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall-Profil&lt;/i&gt; - Deaktivieren Sie alle Proxys oder Firewalls, oder wenden Sie sich an Ihren Netzwerkadministrator.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton ist ausgefallen&lt;/i&gt; - Überprüfen Sie den &lt;a href=\"http://protonstatus.com/\"&gt;Status von Proton&lt;/a&gt; für unseren Systemstatus.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Noch immer keine Lösung gefunden&lt;/i&gt; - Kontaktieren Sie uns direkt über unser &lt;a href=\"https://protonmail.com/support-form\"&gt;Support-Formular&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), oder &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.</string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Keine Internetverbindung&lt;/i&gt; - Bitte stelle sicher, dass deine Internetverbindung funktioniert.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problem mit dem Internetdienstanbieter (ISP)&lt;/i&gt; - Versuche, dich von einem anderen Netzwerk aus mit Proton zu verbinden (oder verwende &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; oder &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Regierungssperre&lt;/i&gt; - Dein Land sperrt möglicherweise den Zugang zu Proton. Versuche &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (oder einen anderen VPN-Dienst) oder &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; um dich mit Proton zu verbinden.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus-Störungen&lt;/i&gt; - Deaktiviere oder entferne vorübergehend deine Antivirus-Software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall-Störungen&lt;/i&gt; - Deaktiviere alle Proxies oder Firewalls, oder wende dich an deinen Netzwerkadministrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton ist ausgefallen&lt;/i&gt; - Überprüfe den &lt;a href=\"http://protonstatus.com/\"&gt;Status von Proton&lt;/a&gt; für unseren Systemstatus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Noch immer keine Lösung gefunden&lt;/i&gt; - Kontaktiere uns direkt über unser &lt;a href=\"https://protonmail.com/support-form\"&gt;Support-Formular&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;E-Mail&lt;/a&gt; (support@protonmail.zendesk.com), oder &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Grafik nicht gefunden</string>

@@ -60,7 +60,7 @@
     <string name="details_open_in_proton_calendar_subtitle">Kalender terenkripsi yang aman</string>
     <string name="details_open_in_proton_calendar_icon_desc">Ikon Proton Calendar</string>
     <string name="details_play_store_error">Tidak dapat membuka Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_title">Peringatan: situs web ini terindikasi palsu</string>
     <string name="details_hyperlink_phishing_dialog_content">Tautan ini tertuju pada situs web yang dapat mencuri informasi pribadi Anda, seperti kata sandi dan rincian kartu kredit yang Anda miliki.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Demi keamanan Anda, jangan buka tautan ini.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Kembali (disarankan)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Abaikan peringatan dan lanjut</string>
@@ -74,6 +74,8 @@
     <string name="composer_to">Kepada:</string>
     <string name="composer_removing_address_generic_error">Tidak dapat memverifikasi alamat: %s1. Pengiriman berpotensi gagal.</string>
     <string name="composer_removing_address_server_error">Menghapus alamat: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">Pada %s, %s &lt; %s&gt; menulis:</string>
     <string name="set_msg_password_title">Setel kata sandi</string>
     <string name="set_msg_password_info">Tentukan kata sandi untuk dapat mengenkripsi pesan ini bagi para pengguna non-ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Pelajari lebih lanjut</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
@@ -776,13 +778,13 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Masalah umum koneksi dan solusi</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Tidak ada akses internet&lt;/i&gt; - Pastikan koneksi internet anda berfungsi.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;masalah Penyedia Layanan Internet (ISP)&lt;/i&gt; - Coba sambungkan ke Proton dengan koneksi yang berbeda (atau gunakan &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Dibokir Pemerintah&lt;/i&gt; - Negara anda mungkin memblokir akses ke Proton. Coba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (atau VPN yang lainnya) atau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; untuk mengakses ke Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;gangguan Antivirus&lt;/i&gt; - Nonaktifkan atau hapus sementara perangkat lunak antivirus anda.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;gangguan Proksi/Firewall&lt;/i&gt; - Nonaktifkan proksi atau firewall apa pun, atau hubungi pengelola jaringan anda.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton sedang offline/down&lt;/i&gt; - Cek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; untuk status sistem kami.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masih tidak dapat menemukan solusi&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://protonmail.com/support-form\"&gt;form dukukan kami&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), atau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

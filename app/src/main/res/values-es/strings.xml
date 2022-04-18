@@ -74,6 +74,8 @@
     <string name="composer_to">Para:</string>
     <string name="composer_removing_address_generic_error">No se puede verificar la dirección: %s1. El envío podría fallar.</string>
     <string name="composer_removing_address_server_error">Eliminando la dirección: %s1. %s2</string>
+    <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
+    <string name="composer_quote_sender_header">A %s, %s &lt; %s&gt; escribió:</string>
     <string name="set_msg_password_title">Establecer contraseña</string>
     <string name="set_msg_password_info">Establece una contraseña para cifrar este mensaje para los usuarios que no son de ProtonMail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Más información</a></string>
     <string name="set_msg_password_info_icon_description">Información</string>
@@ -130,7 +132,7 @@
     <!-- endregion -->
     <!-- region Dialogs -->
     <string name="contact_list_cannot_upload_groups_dialog_message">Los grupos de contactos no se importarán. Por favor actualice a un plan de pago para disfrutar de las funciones premium.</string>
-    <string name="contact_details_remote_content_dialog_title">Elija una dirección de remitente diferente</string>
+    <string name="contact_details_remote_content_dialog_title">Contenido remoto</string>
     <string name="contact_details_remote_content_dialog_message">Este contacto contiene contenido remoto.</string>
     <string name="contact_details_remote_content_dialog_positive_button">Cargar contenido</string>
     <!-- endregion -->
@@ -721,7 +723,7 @@ compre más
     <string name="settings_auto_show_embedded_images">Mostrar automáticamente las imágenes incrustadas</string>
     <string name="settings_prevent_taking_screenshots">Prevenir capturas de pantalla</string>
     <string name="hyperlink_confirmation">Solicitar confirmación de enlace</string>
-    <string name="labels_and_folders">Etiquetas &amp; carpetas </string>
+    <string name="labels_and_folders">Etiquetas y carpetas </string>
     <string name="folders">Carpetas</string>
     <string name="labels">Etiquetas</string>
     <string name="swipe_actions">Acciones al deslizar</string>
@@ -784,14 +786,13 @@ compre más
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas y soluciones habituales de conexión</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Por favor, asegúrate de que tu conexión a internet está funcionando.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema con tu proveedor de servicios de Internet (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o utiliza &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo del Gobierno&lt;/i&gt; - Tu país puede estar bloqueando el acceso a Proton. Prueba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia del antivirus&lt;/i&gt; - Deshabilita o elimina temporalmente tu software de antivirus.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia del proxy/firewall&lt;/i&gt; - Desactiva cualquier proxy o firewall, o ponte en contacto con tu administrador de red.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está caído&lt;/i&gt; - Comprueba &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para ver el estado de nuestro sistema.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Todavía no puedes encontrar una solución&lt;/i&gt; - Contáctanos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de soporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail. om), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
-    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Por favor, asegúrate de que tu conexión está funcionando.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema del proveedor de servicios de internet  (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o usa &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo gubernamental&lt;/i&gt; - Tu país puede estar bloqueando el acceso a Proton. Prueba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de antivirus&lt;/i&gt; - Deshabilita temporalmente o elimina tu software antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia de Proxy/Firewall&lt;/i&gt; - Deshabilita cualquier proxy o cortafuegos, o contacta a tu administrador de red.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton se ha caído&lt;/i&gt; - Accede a &lt;a href=\"http://protonstatus.com/\"&gt;Estatus Proton&lt;/a&gt; para comprobar el estatus de nuestro sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Aún no se pudo encontrar una solución&lt;/i&gt; - Contáctanos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de apoyo&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>
