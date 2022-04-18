@@ -21,16 +21,12 @@ package ch.protonmail.android.onboarding.existinguser.presentation
 
 import android.content.SharedPreferences
 import androidx.lifecycle.viewModelScope
-import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.onboarding.base.presentation.OnboardingViewModel
-import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -41,22 +37,7 @@ class ExistingUserOnboardingViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) : OnboardingViewModel() {
 
-    override val onboardingState: Flow<OnboardingState> = flowOf(
-        OnboardingState(
-            listOf(
-                OnboardingItemUiModel(
-                    R.drawable.img_onboarding_encryption,
-                    R.string.existing_user_onboarding_new_look_headline,
-                    R.string.existing_user_onboarding_new_look_description
-                ),
-                OnboardingItemUiModel(
-                    R.drawable.img_onboarding_new_features,
-                    R.string.existing_user_onboarding_new_features_headline,
-                    R.string.existing_user_onboarding_new_features_description
-                )
-            )
-        )
-    ).stateIn(viewModelScope, SharingStarted.Lazily, OnboardingState(emptyList()))
+    override val onboardingState: Flow<OnboardingState> = emptyFlow()
 
     override fun saveOnboardingShown() {
         viewModelScope.launch(dispatchers.Io) {

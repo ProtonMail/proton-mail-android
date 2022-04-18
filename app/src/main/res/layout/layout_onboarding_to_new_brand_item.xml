@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2022 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/background_secondary"
+        app:layout_constraintBottom_toTopOf="@id/onboarding_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/onboarding_image_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/onboarding_image_view_content_description"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@id/onboarding_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/welcome_header" />
+
+    <ImageView
+        android:id="@+id/onboarding_logo_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_logo_mail"
+        app:layout_constraintBottom_toBottomOf="@+id/onboarding_image_view"
+        app:layout_constraintEnd_toEndOf="@+id/onboarding_image_view"
+        app:layout_constraintStart_toStartOf="@+id/onboarding_image_view"
+        app:layout_constraintTop_toTopOf="@+id/onboarding_image_view" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/onboarding_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <ch.protonmail.android.onboarding.base.presentation.OnboardingIndicatorsView
+        android:id="@+id/onboarding_indicators_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_xl"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/onboarding_guideline" />
+
+    <TextView
+        android:id="@+id/onboarding_headline_text_view"
+        style="@style/Proton.Text.Headline"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_xxl"
+        android:layout_marginTop="@dimen/margin_xl"
+        android:textAlignment="textStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/onboarding_indicators_view"
+        android:text="@string/existing_user_onboarding_updated_proton_headline" />
+
+    <TextView
+        android:id="@+id/onboarding_description_text_view"
+        style="@style/Proton.Text.Default"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_xxl"
+        android:layout_marginTop="@dimen/margin_m"
+        android:scrollbars="vertical"
+        android:textAlignment="textStart"
+        app:layout_constraintBottom_toTopOf="@id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/onboarding_headline_text_view"
+        app:layout_constraintVertical_bias="0.0"
+        android:text="@string/existing_user_onboarding_updated_proton_description" />
+
+
+    <me.proton.core.presentation.ui.view.ProtonButton
+        android:id="@+id/button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_xl"
+        android:layout_marginVertical="@dimen/margin_xxl"
+        app:layout_constraintBottom_toTopOf="@id/logo_wrapper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/onboarding_got_it" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/logo_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_3xl"
+        android:layout_marginEnd="@dimen/margin_3xl"
+        android:layout_marginBottom="@dimen/margin_xxl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/mail_logo"
+            android:layout_width="@dimen/size_icon_l"
+            android:layout_height="@dimen/size_icon_l"
+            android:src="@drawable/ic_logo_mail"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/drive_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/drive_logo"
+            android:layout_width="@dimen/size_icon_l"
+            android:layout_height="@dimen/size_icon_l"
+            android:src="@drawable/ic_logo_drive"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/calendar_logo"
+            app:layout_constraintStart_toEndOf="@id/mail_logo"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/calendar_logo"
+            android:layout_width="@dimen/size_icon_l"
+            android:layout_height="@dimen/size_icon_l"
+            android:src="@drawable/ic_logo_calendar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/vpn_logo"
+            app:layout_constraintStart_toEndOf="@id/drive_logo"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:id="@+id/vpn_logo"
+            android:layout_width="@dimen/size_icon_l"
+            android:layout_height="@dimen/size_icon_l"
+            android:src="@drawable/ic_logo_vpn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/calendar_logo"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

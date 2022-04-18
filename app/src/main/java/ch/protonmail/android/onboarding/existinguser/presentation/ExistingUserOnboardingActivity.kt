@@ -19,13 +19,36 @@
 
 package ch.protonmail.android.onboarding.existinguser.presentation
 
+import android.os.Bundle
 import androidx.activity.viewModels
-import ch.protonmail.android.onboarding.base.presentation.OnboardingActivity
-import ch.protonmail.android.onboarding.base.presentation.OnboardingViewModel
+import androidx.appcompat.app.AppCompatActivity
+import ch.protonmail.android.databinding.LayoutOnboardingToNewBrandItemBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ExistingUserOnboardingActivity : OnboardingActivity() {
+class ExistingUserOnboardingActivity : AppCompatActivity() {
 
-    override val viewModel: OnboardingViewModel by viewModels<ExistingUserOnboardingViewModel>()
+    val viewModel by viewModels<ExistingUserOnboardingViewModel>()
+
+    private val binding by lazy {
+        LayoutOnboardingToNewBrandItemBinding.inflate(layoutInflater)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+
+        binding.button.setOnClickListener {
+            finishOnboardingActivity()
+        }
+    }
+
+    override fun onBackPressed() {
+        // back navigation is disabled
+    }
+
+    private fun finishOnboardingActivity() {
+        viewModel.saveOnboardingShown()
+        finish()
+    }
 }
