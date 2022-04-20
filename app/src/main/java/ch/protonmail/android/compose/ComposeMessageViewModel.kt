@@ -51,6 +51,8 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiM
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.CipherText
+import ch.protonmail.android.crypto.Crypto.Companion.forAddress
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
@@ -93,6 +95,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -984,7 +987,7 @@ class ComposeMessageViewModel @Inject constructor(
             messageBodySetup.webViewVisibility = false
             messageBodySetup.respondInlineVisibility = false
         }
-        setInitialMessageContent(builder.toString())
+        setInitialMessageContent()
         setContent(builder.toString())
         messageBodySetup.respondInline = false
         messageBodySetup.isPlainText = isPlainText
@@ -1071,6 +1074,35 @@ class ComposeMessageViewModel @Inject constructor(
             .fromOld(_messageDataResult)
             .initialMessageContent(initialMessageContent)
             .build()
+    }
+
+    private fun setInitialMessageContent() {
+        // Initial message content is the content that in the end is sent as the quoted text when replying/forwarding
+        // We need this to be the clean HTML message body, instead of the styled one that we show in the composer
+        viewModelScope.launch {
+            _parentId?.let { parentMessageId ->
+                val message = messageDetailsRepository.findMessageById(parentMessageId).first()
+                val decryptedMessageBody = message?.messageBody?.let { messageBody ->
+                    try {
+                        val crypto = forAddress(
+                            userManager, userManager.requireCurrentUserId(), AddressId(message.addressID!!)
+                        )
+                        crypto.decrypt(CipherText(messageBody)).decryptedData
+                    } catch (e: Exception) {
+                        Timber.w(e, "Decryption error")
+                        null
+                    }
+                }
+                decryptedMessageBody?.let {
+                    val builder = StringBuilder()
+                    builder.append("<blockquote class=\"protonmail_quote\">")
+                    builder.append(NEW_LINE)
+                    builder.append(it)
+                    builder.append("</div>")
+                    setInitialMessageContent(builder.toString())
+                }
+            }
+        }
     }
 
     fun addSendPreferences(sendPreference: SendPreference) {
