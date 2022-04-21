@@ -34,12 +34,12 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.storage.AttachmentClearingServiceHelper
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.TryWithRetry
 import me.proton.core.util.kotlin.forEachAsync
 import okio.buffer
 import okio.sink
 import timber.log.Timber
 import java.io.File
-import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -50,7 +50,8 @@ class HandleEmbeddedImageAttachments @Inject constructor(
     private val userManager: UserManager,
     private val databaseProvider: DatabaseProvider,
     private val clearingServiceHelper: AttachmentClearingServiceHelper,
-    private val attachmentsRepository: AttachmentsRepository
+    private val attachmentsRepository: AttachmentsRepository,
+    private val tryWithRetry: TryWithRetry
 ) {
 
     private val attachmentMetadataDao: AttachmentMetadataDao
@@ -101,8 +102,7 @@ class HandleEmbeddedImageAttachments @Inject constructor(
             val attachmentFile = File(attachmentsDirectoryFile, filename)
             Timber.v("Trying to download file: ${embeddedImage.fileNameFormatted} calculated file: $filename")
 
-            try {
-
+            tryWithRetry {
                 val decryptedByteArray = attachmentsRepository.getAttachmentDataOrNull(
                     crypto,
                     embeddedImage.attachmentId,
@@ -135,9 +135,11 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                     "Insert embd attachment id: ${embeddedImageWithFile.attachmentId} messageId: ${embeddedImageWithFile.messageId}"
                 )
                 attachmentMetadataDao.insertAttachmentMetadata(attachmentMetadata)
-
-            } catch (ioException: IOException) {
-                Timber.e(ioException, "handleEmbeddedImages exception")
+            }.mapLeft { errors ->
+                errors.distinctBy { it.message }
+                    .forEach { error ->
+                        Timber.e(error, "handleEmbeddedImages exception")
+                    }
                 hasFailed = true
             }
         }
