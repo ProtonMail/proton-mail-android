@@ -19,13 +19,94 @@
 
 package ch.protonmail.android.onboarding.newuser.presentation
 
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
-import ch.protonmail.android.onboarding.base.presentation.OnboardingActivity
-import ch.protonmail.android.onboarding.base.presentation.OnboardingViewModel
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
+import ch.protonmail.android.R
+import ch.protonmail.android.databinding.ActivityNewUserOnboardingBinding
+import ch.protonmail.android.onboarding.base.presentation.OnboardingAdapter
+import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class NewUserOnboardingActivity : OnboardingActivity() {
+class NewUserOnboardingActivity : AppCompatActivity() {
 
-    override val viewModel: OnboardingViewModel by viewModels<NewUserOnboardingViewModel>()
+    private val viewModel: NewUserOnboardingViewModel by viewModels()
+
+    private val binding by lazy {
+        ActivityNewUserOnboardingBinding.inflate(layoutInflater)
+    }
+    private val onboardingAdapter = OnboardingAdapter()
+    private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            if (position == onboardingAdapter.itemCount - 1) {
+                binding.onboardingButton.setText(R.string.onboarding_get_started)
+                binding.onboardingToolbar.menu.findItem(R.id.skip)?.isVisible = false
+            } else {
+                binding.onboardingButton.setText(R.string.onboarding_next)
+                binding.onboardingToolbar.menu.findItem(R.id.skip)?.isVisible = true
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+        setSupportActionBar(binding.onboardingToolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.background_secondary)
+
+        viewModel.onboardingState
+            .onEach {
+                setOnboardingAdapterItems(it.onboardingItemsList)
+            }
+            .launchIn(lifecycleScope)
+
+        binding.onboardingViewPager.adapter = onboardingAdapter
+        binding.onboardingViewPager.registerOnPageChangeCallback(onPageChangeCallback)
+        binding.onboardingButton.setOnClickListener {
+            if (binding.onboardingViewPager.currentItem == onboardingAdapter.itemCount - 1) {
+                finishOnboardingActivity()
+            } else {
+                binding.onboardingViewPager.currentItem = binding.onboardingViewPager.currentItem + 1
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_onboarding, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.skip) finishOnboardingActivity()
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        // The user shouldn't be able to exit the onboarding with the back button
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.onboardingViewPager.unregisterOnPageChangeCallback(onPageChangeCallback)
+    }
+
+    private fun setOnboardingAdapterItems(onboardingItemsList: List<OnboardingItemUiModel>) {
+        onboardingAdapter.submitList(onboardingItemsList)
+    }
+
+    private fun finishOnboardingActivity() {
+        viewModel.saveOnboardingShown()
+        finish()
+    }
 }
