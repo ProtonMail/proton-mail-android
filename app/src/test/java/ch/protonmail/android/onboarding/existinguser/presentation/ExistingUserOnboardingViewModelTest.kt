@@ -1,30 +1,26 @@
 /*
- * Copyright (c) 2022 Proton Technologies AG
+ * Copyright (c) 2022 Proton AG
  *
- * This file is part of ProtonMail.
+ * This file is part of Proton Mail.
  *
- * ProtonMail is free software: you can redistribute it and/or modify
+ * Proton Mail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ProtonMail is distributed in the hope that it will be useful,
+ * Proton Mail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
 package ch.protonmail.android.onboarding.existinguser.presentation
 
 import android.content.SharedPreferences
-import app.cash.turbine.test
-import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.onboarding.base.presentation.OnboardingViewModel
-import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -33,7 +29,6 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
-import kotlin.test.assertEquals
 
 internal class ExistingUserOnboardingViewModelTest : CoroutinesTest {
 
@@ -52,17 +47,6 @@ internal class ExistingUserOnboardingViewModelTest : CoroutinesTest {
         }
 
     @Test
-    fun `should emit the expected state`() = runBlockingTest {
-        // when
-        existingUserOnboardingViewModel.onboardingState.test {
-            val actualState = awaitItem()
-
-            // then
-            assertEquals(EXPECTED_STATE, actualState)
-        }
-    }
-
-    @Test
     fun `should save the onboarding shown in prefs`() = runBlockingTest {
         // when
         existingUserOnboardingViewModel.saveOnboardingShown()
@@ -70,23 +54,5 @@ internal class ExistingUserOnboardingViewModelTest : CoroutinesTest {
         // then
         verify { prefsEditorMock.putBoolean(Constants.Prefs.PREF_EXISTING_USER_ONBOARDING_SHOWN, true) }
         verify { prefsEditorMock.apply() }
-    }
-
-    private companion object TestData {
-
-        val EXPECTED_STATE = OnboardingViewModel.OnboardingState(
-            listOf(
-                OnboardingItemUiModel(
-                    R.drawable.img_onboarding_encryption,
-                    R.string.existing_user_onboarding_new_look_headline,
-                    R.string.existing_user_onboarding_new_look_description
-                ),
-                OnboardingItemUiModel(
-                    R.drawable.img_onboarding_new_features,
-                    R.string.existing_user_onboarding_new_features_headline,
-                    R.string.existing_user_onboarding_new_features_description
-                )
-            )
-        )
     }
 }

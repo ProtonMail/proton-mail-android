@@ -65,7 +65,7 @@ class NewUserOnboardingActivity : AppCompatActivity() {
 
         window.statusBarColor = ContextCompat.getColor(this, R.color.background_secondary)
 
-        viewModel.onboardingState
+        viewModel.state
             .onEach {
                 setOnboardingAdapterItems(it.onboardingItemsList)
             }
