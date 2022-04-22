@@ -149,6 +149,7 @@
     <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Próximo</string>
     <string name="onboarding_get_started">Começar</string>
+    <string name="onboarding_got_it">Entendido</string>
     <string name="onboarding_image_view_content_description">Ilustração do Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
