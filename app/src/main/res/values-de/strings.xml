@@ -144,7 +144,8 @@
     <string name="existing_user_onboarding_new_look_headline">Neues Aussehen, gleicher Schutz</string>
     <string name="existing_user_onboarding_new_look_description">Deine verschlüsselten E-Mails wurden im Hinblick auf Benutzerfreundlichkeit völlig neu gestaltet.</string>
     <string name="existing_user_onboarding_new_features_headline">Neue Funktionen</string>
-    <string name="existing_user_onboarding_new_features_description">Genieße neue Funktionen wie den dunklen Modus, verbesserte Benachrichtigungen, einen Filter für ungelesene Nachrichten und Unterordner.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Verbessertes Proton, einheitlicher Schutz</string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Weiter</string>
     <string name="onboarding_get_started">Los geht\'s</string>
     <string name="onboarding_image_view_content_description">Proton Mail Illustration</string>

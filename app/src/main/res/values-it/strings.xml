@@ -145,6 +145,8 @@
     <string name="existing_user_onboarding_new_look_description">La tua email crittografata è stata completamente riprogettata per un facile utilizzo.</string>
     <string name="existing_user_onboarding_new_features_headline">Nuove funzioni</string>
     <string name="existing_user_onboarding_new_features_description">Goditi le nuove funzionalità come la modalità oscura, le notifiche migliorate, un filtro per i messaggi non letti e le sottocartelle.</string>
+    <string name="existing_user_onboarding_updated_proton_headline">Proton aggiornato, protezione unificata</string>
+    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
     <string name="onboarding_next">Successiva</string>
     <string name="onboarding_get_started">Per iniziare</string>
     <string name="onboarding_image_view_content_description">Illustrazione di Proton Mail</string>
