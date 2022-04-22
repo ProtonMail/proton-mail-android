@@ -4,6 +4,10 @@ before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
+  - !reference [.checkout-core-submodule, before_script] # included from checkout-core.gitlab-ci.yml
+
+variables:
+  ORG_GRADLE_PROJECT_useCoreGitSubmodule: "false" # see included checkout-core.gitlab-ci.yml for usage context
 
 image: ${CI_REGISTRY}/android/shared/docker-android:v1.0.0
 
@@ -27,6 +31,7 @@ stages:
 
 detekt analysis:
   stage: analyze
+  extends: .checkout_core_submodule_job
   tags:
     - large
   except:
@@ -42,6 +47,7 @@ detekt analysis:
 
 build debug:
   stage: build
+  extends: .checkout_core_submodule_job
   tags:
     - xlarge-k8s
   script:
@@ -54,6 +60,7 @@ build debug:
 
 build uiAutomation:
   stage: build
+  extends: .checkout_core_submodule_job
   tags:
     - xlarge-k8s
   script:
@@ -66,6 +73,7 @@ build uiAutomation:
 
 build alpha:
   stage: build
+  extends: .checkout_core_submodule_job
   when: 'manual'
   only:
     - develop
@@ -81,6 +89,7 @@ build alpha:
 
 build release:
   stage: build
+  extends: .checkout_core_submodule_job
   except:
     - schedules
   only:
@@ -99,8 +108,9 @@ build release:
 
 unit tests:
   stage: test
+  extends: .checkout_core_submodule_job
   tags:
-    - large
+    - xlarge-k8s
   script:
     - ./gradlew -Pci --console=plain allTest
 
@@ -221,6 +231,10 @@ include:
   - project: 'ProtonVPN/android/android-app-new'
     ref: development
     file: '/appetize-integration.yml'
+
+  - project: 'proton/mobile/android/proton-libs'
+    ref: main
+    file: '/ci/templates/checkout-core.gitlab-ci.yml'
 
 
 startReview:
