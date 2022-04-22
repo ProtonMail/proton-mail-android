@@ -146,7 +146,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nieuwe functionaliteiten</string>
     <string name="existing_user_onboarding_new_features_description">Profiteer van nieuwe functionaliteiten zoals donkere modus, verbeterde meldingen, een filter voor ongelezen berichten, en submappen.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Vernieuwde Proton, uniforme beveiliging</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Ontdek de nieuwe look van Proton. Veel diensten, één missie. Welkom in een internetomgeving waar privacy de standaard is. <a href="https://proton.me/news/updated-proton">Meer informatie</a></string>
     <string name="onboarding_next">Volgende</string>
     <string name="onboarding_get_started">Aan de slag</string>
     <string name="onboarding_got_it">Begrepen</string>

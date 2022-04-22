@@ -146,7 +146,7 @@
     <string name="existing_user_onboarding_new_features_headline">Nuevas características</string>
     <string name="existing_user_onboarding_new_features_description">Disfrute de nuevas funciones como modo oscuro, notificaciones mejoradas, filtro de mensajes no leídos y subcarpetas.</string>
     <string name="existing_user_onboarding_updated_proton_headline">Proton actualizado, protección unificada</string>
-    <string name="existing_user_onboarding_updated_proton_description">Introducing Proton’s refreshed look. Many services, one mission. Welcome to an Internet where privacy is the default. <a href="https://proton.me/news/updated-proton">Learn more</a></string>
+    <string name="existing_user_onboarding_updated_proton_description">Presentamos la nueva imagen de Proton, con varios servicios, pero una misma misión. Has llegado al internet cimentado sobre la base de la privacidad. <a href="https://proton.me/news/updated-proton">Quiero saber más</a></string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_get_started">Comenzar</string>
     <string name="onboarding_got_it">Es suficiente</string>
