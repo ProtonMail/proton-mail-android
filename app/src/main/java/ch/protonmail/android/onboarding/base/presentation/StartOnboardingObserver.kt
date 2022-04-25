@@ -22,13 +22,16 @@ package ch.protonmail.android.onboarding.base.presentation
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
+import android.view.LayoutInflater
+import androidx.appcompat.app.AlertDialog
 import ch.protonmail.android.core.Constants.Prefs.PREF_EXISTING_USER_ONBOARDING_SHOWN
+import ch.protonmail.android.databinding.LayoutOnboardingToNewBrandItemBinding
 import ch.protonmail.android.di.DefaultSharedPreferences
-import ch.protonmail.android.onboarding.existinguser.presentation.ExistingUserOnboardingActivity
 import ch.protonmail.android.utils.EmptyActivityLifecycleCallbacks
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -51,7 +54,7 @@ class StartOnboardingObserver @Inject constructor(
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             super.onActivityCreated(activity, savedInstanceState)
 
-            activity.startActivity(Intent(context, ExistingUserOnboardingActivity::class.java))
+            showOnboardingDialog(activity)
             externalScope.launch(dispatchers.Io) {
                 defaultSharedPreferences.edit()
                     .putBoolean(PREF_EXISTING_USER_ONBOARDING_SHOWN, true)
@@ -63,5 +66,17 @@ class StartOnboardingObserver @Inject constructor(
 
     init {
         app.registerActivityLifecycleCallbacks(activityLifecycleObserver)
+    }
+
+    private fun showOnboardingDialog(context: Context) {
+        val binding = LayoutOnboardingToNewBrandItemBinding.inflate(LayoutInflater.from(context))
+        var dialog: AlertDialog? = null
+        binding.onboardingDescriptionTextView.movementMethod = LinkMovementMethod.getInstance()
+        binding.button.setOnClickListener { dialog?.dismiss() }
+
+        dialog = MaterialAlertDialogBuilder(context)
+            .setCancelable(false)
+            .setView(binding.root)
+            .show()
     }
 }

@@ -425,7 +425,6 @@
             android:name="me.proton.core.crypto.validator.presentation.ui.CryptoValidatorErrorDialogActivity"
             android:theme="@style/ProtonTheme.Transparent" />
         <activity android:name=".onboarding.newuser.presentation.NewUserOnboardingActivity" />
-        <activity android:name=".onboarding.existinguser.presentation.ExistingUserOnboardingActivity" />
     </application>
 
 </manifest>
