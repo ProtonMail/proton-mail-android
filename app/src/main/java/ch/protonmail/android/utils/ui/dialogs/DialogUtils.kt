@@ -313,40 +313,6 @@ class DialogUtils {
             dialog.show()
         }
 
-        fun showInfoDialogWithThreeButtons(
-            context: Context,
-            title: String,
-            message: String,
-            negativeBtnText: String,
-            positiveBtnText: String,
-            neultralBtnText: String,
-            dismissListener: (Unit) -> Unit,
-            okListener: (Unit) -> Unit,
-            cancelable: Boolean
-        ) {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle(title)
-                .setMessage(message)
-                .setNegativeButton(negativeBtnText) { dialog, _ ->
-                    run {
-                        dismissListener.invoke(Unit)
-                        dialog.dismiss()
-                    }
-                }
-                .setPositiveButton(positiveBtnText) { dialog, _ ->
-                    run {
-                        okListener.invoke(Unit)
-                        dialog.dismiss()
-                    }
-                }
-                .setNeutralButton(neultralBtnText) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setCancelable(cancelable)
-                .create()
-                .show()
-        }
-
         fun showUndoSnackbar(
             context: Context,
             parent: View,
