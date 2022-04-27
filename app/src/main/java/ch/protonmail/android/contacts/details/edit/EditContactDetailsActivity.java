@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -88,7 +88,6 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.events.ContactEvent;
-import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.VCardUtil;
@@ -165,27 +164,21 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private EditContactDetailsViewModel viewModel;
 
     public static Intent startNewContactActivity(@NonNull Context context) {
-        final Intent intent = AppUtil.decorInAppIntent(
-                new Intent(context, EditContactDetailsActivity.class));
-        intent.putExtra(EXTRA_FLOW, FLOW_NEW_CONTACT);
-        return intent;
+        return new Intent(context, EditContactDetailsActivity.class)
+                .putExtra(EXTRA_FLOW, FLOW_NEW_CONTACT);
     }
 
     public static Intent startNewContactActivity(@NonNull Context context, String name, String email) {
-        final Intent intent = AppUtil.decorInAppIntent(
-                new Intent(context, EditContactDetailsActivity.class));
-        intent.putExtra(EXTRA_FLOW, FLOW_NEW_CONTACT);
-        intent.putExtra(EXTRA_NAME, name);
-        intent.putExtra(EXTRA_EMAIL, email);
-        return intent;
+        return new Intent(context, EditContactDetailsActivity.class)
+                .putExtra(EXTRA_FLOW, FLOW_NEW_CONTACT)
+                .putExtra(EXTRA_NAME, name)
+                .putExtra(EXTRA_EMAIL, email);
     }
 
     public static Intent startConvertContactActivity(@NonNull Context context, LocalContact localContact) {
-        final Intent intent = AppUtil.decorInAppIntent(
-                new Intent(context, EditContactDetailsActivity.class));
-        intent.putExtra(EXTRA_FLOW, FLOW_CONVERT_CONTACT);
-        intent.putExtra(EXTRA_LOCAL_CONTACT, localContact);
-        return intent;
+        return new Intent(context, EditContactDetailsActivity.class)
+                .putExtra(EXTRA_FLOW, FLOW_CONVERT_CONTACT)
+                .putExtra(EXTRA_LOCAL_CONTACT, localContact);
     }
 
     public static void startEditContactActivity(
@@ -197,9 +190,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             String vCardType2,
             String vCardType3FilePath
     ) {
-        final Intent intent = AppUtil.decorInAppIntent(
-                new Intent(context, EditContactDetailsActivity.class));
-        intent.putExtra(EXTRA_FLOW, FLOW_EDIT_CONTACT)
+        final Intent intent = new Intent(context, EditContactDetailsActivity.class)
+                .putExtra(EXTRA_FLOW, FLOW_EDIT_CONTACT)
                 .putExtra(EXTRA_CONTACT, contactId)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE0, vCardType0)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE1_PATH, vCardType1FilePath)
