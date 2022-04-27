@@ -1071,7 +1071,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                         final ProtonInput birthdayValue = view.findViewById(R.id.option);
                         birthdayValue.setFocusable(false);
                         birthdayValue.setFocusableInTouchMode(false);
-                        birthdayValue.setOnClickListener(new ContactBirthdayClickListener(this, getSupportFragmentManager()));
+                        birthdayValue.setOnClickListener(new ContactBirthdayClickListener(getSupportFragmentManager()));
                     }
                 }
             }
