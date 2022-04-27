@@ -86,6 +86,7 @@
 
     <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/dialog_group_recipients_apply_button"
+        style="@style/ProtonButton.Borderless.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

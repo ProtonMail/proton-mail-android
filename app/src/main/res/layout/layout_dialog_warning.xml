@@ -57,6 +57,7 @@
 
         <me.proton.core.presentation.ui.view.ProtonButton
             android:id="@+id/cancel"
+            style="@style/ProtonButton.Borderless.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/padding_l"
@@ -71,6 +72,7 @@
 
         <me.proton.core.presentation.ui.view.ProtonButton
             android:id="@+id/ok"
+            style="@style/ProtonButton.Borderless.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/padding_l"

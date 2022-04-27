@@ -36,6 +36,7 @@
 
     <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/dialog_expiration_unsupported_send_anyway_button"
+        style="@style/ProtonButton.Borderless.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/padding_m"

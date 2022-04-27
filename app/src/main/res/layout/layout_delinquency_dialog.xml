@@ -42,6 +42,7 @@
 
     <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/close_app"
+        style="@style/ProtonButton.Borderless.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -53,6 +54,7 @@
 
     <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/recheck"
+        style="@style/ProtonButton.Borderless.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -64,6 +66,7 @@
 
     <me.proton.core.presentation.ui.view.ProtonButton
         android:id="@+id/logout"
+        style="@style/ProtonButton.Borderless.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
