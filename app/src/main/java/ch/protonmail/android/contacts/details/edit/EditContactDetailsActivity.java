@@ -741,7 +741,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         option.setHintText(editTextHint);
         option.addTextChangedListener(new DirtyWatcher());
         option.setInputType(inputType);
-        option.setLabelText(optionUITypeText);
         optionTitle.setText(optionUITypeText);
 
         btnAddNewRow.setVisibility(View.VISIBLE);
@@ -1234,10 +1233,20 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     private void initExistingOptionsRow() {
-        mEncryptedDataNote.addView(createExistingVCardOptionRow(getString(R.string.contact_vcard_note),
-                getString(R.string.contact_vcard_note), "",
-                getString(R.string.contact_vcard_hint_note), null, null,
-                mEncryptedDataNote, false, 4, InputType.TYPE_TEXT_FLAG_MULTI_LINE));
+        mEncryptedDataNote.addView(
+                createExistingVCardOptionRow(
+                        getString(R.string.contact_vcard_note),
+                        getString(R.string.contact_vcard_note),
+                        "",
+                        getString(R.string.contact_vcard_hint_note),
+                        null,
+                        null,
+                        mEncryptedDataNote,
+                        false,
+                        4,
+                        InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                )
+        );
     }
 
     private void initEmptyEmailView() {
