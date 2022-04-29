@@ -28,8 +28,7 @@ import javax.inject.Inject
 
 const val METRICS_ACTION = "action"
 const val METRICS_LOG_TAG = "dark_styles"
-const val APPLY_DARK_STYLES_METRICS_TITLE = "Apply dark styles"
-const val REMOVE_DARK_STYLES_METRICS_TITLE = "Remove dark styles"
+const val DARK_STYLES_METRICS_TITLE = "update_dark_styles"
 const val APPLY_DARK_STYLES_METRICS_ACTION = "apply_dark_styles"
 const val REMOVE_DARK_STYLES_METRICS_ACTION = "remove_dark_styles"
 
@@ -38,9 +37,12 @@ class SendMetricsForViewInDarkModePreference @Inject constructor(
 ) {
 
     operator fun invoke(userId: UserId, viewInDarkMode: Boolean) {
-        val title = if (viewInDarkMode) APPLY_DARK_STYLES_METRICS_TITLE else REMOVE_DARK_STYLES_METRICS_TITLE
         val action = if (viewInDarkMode) APPLY_DARK_STYLES_METRICS_ACTION else REMOVE_DARK_STYLES_METRICS_ACTION
-        val metrics = Metrics(METRICS_LOG_TAG, title, JsonObject(mapOf(METRICS_ACTION to JsonPrimitive(action))))
+        val metrics = Metrics(
+            METRICS_LOG_TAG,
+            DARK_STYLES_METRICS_TITLE,
+            JsonObject(mapOf(METRICS_ACTION to JsonPrimitive(action)))
+        )
         metricsManager.send(userId, metrics)
     }
 }

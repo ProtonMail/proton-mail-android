@@ -48,7 +48,7 @@ class SendMetricsForViewInDarkModePreferenceTest {
         // given
         val expectedResult = Metrics(
             METRICS_LOG_TAG,
-            APPLY_DARK_STYLES_METRICS_TITLE,
+            DARK_STYLES_METRICS_TITLE,
             JsonObject(mapOf(METRICS_ACTION to JsonPrimitive(APPLY_DARK_STYLES_METRICS_ACTION)))
         )
 
@@ -64,7 +64,7 @@ class SendMetricsForViewInDarkModePreferenceTest {
         // given
         val expectedResult = Metrics(
             METRICS_LOG_TAG,
-            REMOVE_DARK_STYLES_METRICS_TITLE,
+            DARK_STYLES_METRICS_TITLE,
             JsonObject(mapOf(METRICS_ACTION to JsonPrimitive(REMOVE_DARK_STYLES_METRICS_ACTION)))
         )
 
