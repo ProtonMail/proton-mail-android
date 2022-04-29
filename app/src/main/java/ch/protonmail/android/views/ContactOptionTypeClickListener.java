@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2022 Proton Technologies AG
  *
  * This file is part of ProtonMail.
  *
@@ -143,7 +143,7 @@ public class ContactOptionTypeClickListener implements View.OnClickListener {
             mEditTextValue.setText("");
             mEditTextValue.setFocusable(false);
             mEditTextValue.setFocusableInTouchMode(false);
-            mEditTextValue.setOnClickListener(new ContactBirthdayClickListener(mContext, mSupportFragmentManager));
+            mEditTextValue.setOnClickListener(new ContactBirthdayClickListener(mSupportFragmentManager));
         }
     }
 
