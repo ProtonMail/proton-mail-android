@@ -7,7 +7,7 @@ before_script:
   - !reference [.checkout-core-submodule, before_script] # included from checkout-core.gitlab-ci.yml
 
 variables:
-  ORG_GRADLE_PROJECT_useCoreGitSubmodule: "false" # see included checkout-core.gitlab-ci.yml for usage context
+  ORG_GRADLE_PROJECT_useCoreGitSubmodule: "true" # see included checkout-core.gitlab-ci.yml for usage context
 
 image: ${CI_REGISTRY}/android/shared/docker-android:v1.0.0
 
