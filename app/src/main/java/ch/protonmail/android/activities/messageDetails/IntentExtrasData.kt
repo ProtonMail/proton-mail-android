@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.activities.messageDetails
 
+import android.net.Uri
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.core.BigContentHolder
@@ -29,7 +30,6 @@ import ch.protonmail.android.data.local.model.Message
 class IntentExtrasData(
     val user: User,
     val userAddresses: List<Address>,
-    val message: Message,
     val toRecipientListString: String,
     val messageCcList: String,
     val includeCCList: Boolean,
@@ -176,6 +176,9 @@ class IntentExtrasData(
                     ArrayList(LocalAttachment.createLocalAttachmentList(embeddedImagesAttachments))
                 this.attachments = att
                 this.embeddedImagesAttachmentsExist = true
+            } else if (message.isPGPMime) {
+                attachments.forEach { it.uri = Uri.EMPTY }
+                this.attachments = attachments
             } else {
                 this.attachments = attachments
             }
@@ -184,7 +187,6 @@ class IntentExtrasData(
         fun build() = IntentExtrasData(
             user,
             userAddresses,
-            message,
             toRecipientListString,
             messageCcList,
             includeCCList,
