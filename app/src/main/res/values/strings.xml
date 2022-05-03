@@ -60,6 +60,8 @@
     <string name="mailbox_no_messages">No messages</string>
     <string name="mailbox_unread_count">%d unread</string>
     <string name="mailbox_updated_just_now">Updated just now</string>
+    <string name="mailbox_updated_recently">Updated recently</string>
+    <string name="mailbox_updating">Updating…</string>
     <!-- endregion -->
 
     <!-- region Details -->

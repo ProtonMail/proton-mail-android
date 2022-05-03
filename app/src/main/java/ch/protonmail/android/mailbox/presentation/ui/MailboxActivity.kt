@@ -556,7 +556,6 @@ internal class MailboxActivity :
 
     private fun renderState(state: MailboxState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
-        updatedStatusTextView.isVisible = state.isUpdatedFromRemote
         renderUnreadChipState(state.unreadChip)
         renderListState(state.list)
     }
@@ -869,6 +868,10 @@ internal class MailboxActivity :
 
     private fun setRefreshing(shouldRefresh: Boolean) {
         Timber.v("setRefreshing shouldRefresh: $shouldRefresh")
+        updatedStatusTextView.setText(
+            if (shouldRefresh) R.string.mailbox_updating
+            else R.string.mailbox_updated_recently
+        )
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
 
