@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">%s に %s &lt; %s&gt; が送信:</string>
     <string name="set_msg_password_title">パスワードを設定</string>
-    <string name="set_msg_password_info">ProtonMail ユーザー以外への暗号化パスワードを設定してください。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a></string>
+    <string name="set_msg_password_info">Proton Mail ユーザー以外への暗号化パスワードを設定してください。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a></string>
     <string name="set_msg_password_info_icon_description">情報</string>
     <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>
     <string name="set_msg_password_msg_password_hint">4〜21 文字</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">破棄</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">サインアウト</string>
     <string name="sign_out_question">サインアウトしてよろしいですか？</string>
     <string name="processing_request">リクエストは処理中です</string>
@@ -170,7 +170,7 @@
     <string name="update_app_title">アップデートが必要です。</string>
     <string name="update_app">アップデートされるまで、ProtonMail アプリはご利用いただけません</string>
     <string name="you_are_offline">オフラインです</string>
-    <string name="api_offline">ProtonMail は現在ご利用できません。https://protonstatus.com または Twitter (https://twitter.com/protonmail) で現在の状態を確認してください。</string>
+    <string name="api_offline">Proton Mail は現在ご利用できません。https://protonstatus.com または Twitter (https://twitter.com/protonmail) で現在の状態を確認してください。</string>
     <string name="contact_saved">連絡先が保存されました。</string>
     <string name="contact_saved_offline">連絡先が保存されました。ネットワーク接続が使用可能なときに同期します。</string>
     <string name="contact_exist">連絡先メールアドレスは既に存在しています</string>
@@ -271,7 +271,7 @@
     <string name="invalid_email_address">\'%s\' は無効です。</string>
     <string name="invalid_email_address_removed">%sは無効なため、削除されました。</string>
     <string name="no_recipients_specified">少なくとも 1 件の宛先を追加してください。</string>
-    <string name="no_password_specified">有効期限は完全に暗号化されたメッセージに対してのみ設定できます。ProtonMail利用者以外のためのパスワードを設定してください。</string>
+    <string name="no_password_specified">有効期限は完全に暗号化されたメッセージに対してのみ設定できます。Proton Mail利用者以外のためのパスワードを設定してください。</string>
     <string name="attachment_limit">添付ファイルは、%1$s に制限されています。添付ファイルの合計は、%2$s になります。</string>
     <string name="sending_message">メッセージを送信しています...</string>
     <string name="sending_message_offline">現在オフラインのため、後ほど送信されます。</string>
@@ -283,7 +283,7 @@
     <string name="cancel">キャンセル</string>
     <string name="close">閉じる</string>
     <string name="eo_password_title">パスワードの設定</string>
-    <string name="eo_password_subtitle">ProtonMail利用者以外へのメッセージの暗号化パスワードを設定して下さい。</string>
+    <string name="eo_password_subtitle">Proton Mail利用者以外へのメッセージの暗号化パスワードを設定して下さい。</string>
     <string name="eo_password_more_info">詳細情報を入手</string>
     <string name="no_attachments">添付ファイルはありません。</string>
     <string name="display_name_banned_chars">無効な表示名です。\' &gt;\'および、\' &lt;\'は利用できません。</string>
@@ -384,7 +384,7 @@
     <string name="contact_details">連絡先の詳細</string>
     <string name="email_type_home">自宅</string>
     <string name="type_title">種類を選択</string>
-    <string name="sync_local_contacts">ProtonMailにアップロード</string>
+    <string name="sync_local_contacts">Proton Mailにアップロード</string>
     <string name="please_select_only_phone_contacts">ローカルの電話連絡先だけを選択してください。</string>
     <string name="contact_vcard_hint_email">メールアドレスを入力してください</string>
     <string name="contact_vcard_hint_phone">電話番号を入力してください</string>
@@ -462,7 +462,7 @@
     <string name="details_copied">クリップボードへのコピーの詳細</string>
     <string name="saving">保存中...</string>
     <string name="update_folder">フォルダーを更新</string>
-    <string name="spam_score_100">このメールはProtonMailのアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
+    <string name="spam_score_100">このメールはProton Mailのアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
@@ -488,10 +488,10 @@
     <string name="email_empty">メールアドレスがありません。</string>
     <string name="encrypted_contact_details">暗号化された連絡先の詳細</string>
     <string name="convert_question">ローカルの連絡先をアップロード</string>
-    <string name="convert_question_subtitle">デバイスのローカル連絡先が ProtonMail 連絡先ディレクトリにアップロードされます。 ProtonMail を使用して、他のデバイスの連絡先にアクセスできます。</string>
+    <string name="convert_question_subtitle">デバイスのローカル連絡先が Proton Mail 連絡先ディレクトリにアップロードされます。 Proton Mail を使用して、他のデバイスの連絡先にアクセスできます。</string>
     <string name="refresh_contacts">再読み込み</string>
     <string name="invalid_email_some_contacts">一部の連絡先でメールアドレスが有効ではありません。</string>
-    <string name="protonmail_contacts">ProtonMailの連絡先</string>
+    <string name="protonmail_contacts">Proton Mailの連絡先</string>
     <string name="device_contacts">デバイスの連絡先</string>
     <string name="print_date_template">日付: %s</string>
     <string name="print_attachment_template">添付ファイル: %s; </string>
@@ -503,7 +503,7 @@
     <string name="remove_password_question">パスワードを削除しますか？</string>
     <string name="attachment_storage_value_current">現在の選択: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">現在の選択: 無制限</string>
-    <string name="attachment_offline_max_storage">モバイル端末で ProtonMail が使用できるストレージの最大容量を設定してください。</string>
+    <string name="attachment_offline_max_storage">モバイル端末で Proton Mail が使用できるストレージの最大容量を設定してください。</string>
     <string name="load_embedded_images_failed_no_network">埋め込み画像の読み込みに失敗しました。ネットワーク接続を確認してください。</string>
     <string name="load_embedded_images_failed">埋め込み画像の読み込みに失敗しました。</string>
     <string name="unlimited">無制限</string>
@@ -520,7 +520,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">あなたによって送信された、エンドツーエンド暗号化されたメッセージ</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">ProtonMail によって送信された、ゼロアクセス暗号化されたメッセージ</string>
+    <string name="sender_lock_sent_autoresponder">Proton Mail によって送信された、ゼロアクセス暗号化されたメッセージ</string>
     <string name="sender_lock_verification_failed">送信者の検証に失敗しました。</string>
     <string name="sender_lock_pgp_encrypted">PGPで暗号化されたメッセージ（署名なし）</string>
     <string name="sender_lock_pgp_encrypted_verified">検証済みアドレスからのPGP暗号化メッセージ</string>
@@ -616,7 +616,7 @@
     <string name="need_storage_permissions_download_attachment_text">添付ファイルをダウンロードするには、ストレージへのアクセスを許可する必要があります。</string>
     <string name="need_contacts_permissions_text">この連絡先をインポートするには、連絡先へのアクセスを許可する必要があります。</string>
     <string name="push_notifications_alert_title">プッシュ通知警告</string>
-    <string name="push_notifications_alert_subtitle">ProtonMailのプッシュ通知は、Google Playサービスを更新しないと機能しません。</string>
+    <string name="push_notifications_alert_subtitle">Proton Mailのプッシュ通知は、Google Playサービスを更新しないと機能しません。</string>
     <string name="app_locked">アプリはロックされています。</string>
     <string name="use_pin_instead">代わりにPINコードを使用する</string>
     <!-- strings used for biometric enrollment -->
@@ -647,7 +647,7 @@
     <string name="signature">署名</string>
     <string name="mobile_footer">モバイルフッター</string>
     <string name="edit_mobile_footer">モバイルフッターを有効にする</string>
-    <string name="default_mobile_footer">ProtonMail モバイルから送信</string>
+    <string name="default_mobile_footer">Proton Mail モバイルから送信</string>
     <string name="mobile_footer_is_premium">モバイルフッターの変更は有料ユーザーのみが可能です</string>
     <string name="mobile_footer_info">このフッターは署名の後に追加されます</string>
     <!-- region Snooze Settings -->
@@ -773,7 +773,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;ウイルス対策ソフトウェアの干渉&lt;/i&gt; - ウイルス対策ソフトウェアを一時的に無効にするか、削除することで解決する可能性もあります。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;プロキシまたはファイアウォールの干渉&lt;/i&gt; - プロキシまたはファイアウォールを無効にするか、ネットワーク管理者に問い合わせてみてください。
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton のサービスが一時的にダウンしている&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton ステータス&lt;/a&gt; から私たちのシステムの動作状況をご確認ください。
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;メール&lt;/a&gt; (support@protonmail.zendesk.com)、または &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;から直接お問い合わせください。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;メール&lt;/a&gt; (support@protonmail.zendesk.com)、または &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;から直接お問い合わせください。
     </string>
     <!-- endregion -->
     <!-- region errors -->

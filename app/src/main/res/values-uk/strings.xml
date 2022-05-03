@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Відхилити</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Вийти</string>
     <string name="sign_out_question">Ви дійсно хочете вийти?</string>
     <string name="processing_request">Ваш запит обробляється</string>
@@ -168,9 +168,9 @@
     <string name="no_more_messages">Більше повідомлень немає</string>
     <string name="no_network_queued">Немає мережі, повідомлення в очікуванні</string>
     <string name="update_app_title">Необхідне оновлення</string>
-    <string name="update_app">Програму ProtonMail не можна використовувати, доки її не оновити</string>
+    <string name="update_app">Програму Proton Mail не можна використовувати, доки її не оновити</string>
     <string name="you_are_offline">Ви не в мережі</string>
-    <string name="api_offline">Перепрошуємо, але ProtonMail зараз не в мережі. Перейдіть на https://protonstatus.com або у наш Twitter, щоб дізнатися про поточний стан: https://twitter.com/protonmail</string>
+    <string name="api_offline">Перепрошуємо, але Proton Mail зараз не в мережі. Перейдіть на https://protonstatus.com або у наш Twitter, щоб дізнатися про поточний стан: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт збережено</string>
     <string name="contact_saved_offline">Контакт збережений і синхронізується при відновленні з\'єднання з мережею</string>
     <string name="contact_exist">Адреса е-пошти контакту вже існує</string>
@@ -198,7 +198,7 @@
     <string name="all_mail">Уся пошта</string>
     <string name="contacts">Контакти</string>
     <string name="search_contacts">Пошук контактів</string>
-    <string name="fetching_contacts">Отримання контактів ProtonMail...</string>
+    <string name="fetching_contacts">Отримання контактів Proton Mail...</string>
     <string name="fetching_contacts_success">Контакти успішно оновлено</string>
     <string name="fetching_contacts_failure">Не вдається оновити контакти</string>
     <string name="no_search_results">Нічого не знайдено</string>
@@ -280,7 +280,7 @@
     <string name="invalid_email_address">Адреса %s недійсна</string>
     <string name="invalid_email_address_removed">Адреса %s недійсна, тому була вилучена</string>
     <string name="no_recipients_specified">Додайте принаймні одного отримувача</string>
-    <string name="no_password_specified">Термін дії можна встановити тільки на повністю зашифровані повідомлення. Будь ласка, вкажіть пароль для одержувачів поза ProtonMail.</string>
+    <string name="no_password_specified">Термін дії можна встановити тільки на повністю зашифровані повідомлення. Будь ласка, вкажіть пароль для одержувачів поза Proton Mail.</string>
     <string name="attachment_limit">Максимальний розмір вкладень %1$s. Загальний розмір вкладень %2$s.</string>
     <string name="sending_message">Повідомлення надсилається...</string>
     <string name="sending_message_offline">Не в мережі. Надсилання поставлено в чергу...</string>
@@ -292,7 +292,7 @@
     <string name="cancel">Скасувати</string>
     <string name="close">Закрити</string>
     <string name="eo_password_title">Встановити пароль</string>
-    <string name="eo_password_subtitle">Встановити пароль для шифрування цього повідомлення для Користувачів поза ProtonMail</string>
+    <string name="eo_password_subtitle">Встановити пароль для шифрування цього повідомлення для Користувачів поза Proton Mail</string>
     <string name="eo_password_more_info">Отримати більше інформації</string>
     <string name="no_attachments">0 вкладень</string>
     <string name="display_name_banned_chars">Неприпустиме ім\'я. \'&gt;\' і \'&lt;\' не дозволені</string>
@@ -399,7 +399,7 @@
     <string name="contact_details">Контактні дані</string>
     <string name="email_type_home">Домашня</string>
     <string name="type_title">Виберіть тип</string>
-    <string name="sync_local_contacts">Вивантажити до ProtonMail</string>
+    <string name="sync_local_contacts">Вивантажити до Proton Mail</string>
     <string name="please_select_only_phone_contacts">Будь ласка, оберіть лише контакти з телефона</string>
     <string name="contact_vcard_hint_email">Введіть е-пошту</string>
     <string name="contact_vcard_hint_phone">Введіть номер телефону</string>
@@ -477,7 +477,7 @@
     <string name="details_copied">Подробиці скопійовано до буфера обміну</string>
     <string name="saving">Збереження...</string>
     <string name="update_folder">Оновити теку</string>
-    <string name="spam_score_100">Схоже, цей лист надіслано з адреси ProtonMail, але він прийшов з-за меж нашої системи та не відповідає нашим вимогам перевірки. Він може бути підроблений або неправильно пересланий!</string>
+    <string name="spam_score_100">Схоже, цей лист надіслано з адреси Proton Mail, але він прийшов з-за меж нашої системи та не відповідає нашим вимогам перевірки. Він може бути підроблений або неправильно пересланий!</string>
     <string name="spam_score_101">Цей лист не пройшов вимоги перевірки свого домену. Він міг бути підроблений або неправильно пересланий!</string>
     <string name="spam_score_102">Це повідомлення може бути спробою шахрайства. Будь ласка, перевірте відправника і вміст, щоб упевнитися в його справжності. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ДОКЛАДНІШЕ</a></string>
     <string name="print_from_template">Від: %s</string>
@@ -503,10 +503,10 @@
     <string name="email_empty">Немає адреси е-пошти</string>
     <string name="encrypted_contact_details">Зашифровані подробиці контакту</string>
     <string name="convert_question">Вивантажити локальні контакти</string>
-    <string name="convert_question_subtitle">Це вивантажить контакти з вашого пристрою до каталогу контактів ProtonMail. Відтак ви зможете отримати доступ до цих контактів на своєму іншому пристрої через ProtonMail.</string>
+    <string name="convert_question_subtitle">Це вивантажить контакти з вашого пристрою до каталогу контактів Proton Mail. Відтак ви зможете отримати доступ до цих контактів на своєму іншому пристрої через Proton Mail.</string>
     <string name="refresh_contacts">Оновити</string>
     <string name="invalid_email_some_contacts">Недійсна адреса е-пошти для деяких ваших контактів</string>
-    <string name="protonmail_contacts">Контакти ProtonMail</string>
+    <string name="protonmail_contacts">Контакти Proton Mail</string>
     <string name="device_contacts">Контакти пристрою</string>
     <string name="print_date_template">Дата: %s</string>
     <string name="print_attachment_template">Вкладення: %s;  </string>
@@ -518,7 +518,7 @@
     <string name="remove_password_question">Вилучити пароль?</string>
     <string name="attachment_storage_value_current">Зараз вибрано: %dМБ</string>
     <string name="attachment_storage_value_current_unlimited">Зараз вибрано: необмежено</string>
-    <string name="attachment_offline_max_storage">Встановлює максимальний обсяг простору для зберігання, який ProtonMail може використовувати на вашому мобільному пристрої.</string>
+    <string name="attachment_offline_max_storage">Встановлює максимальний обсяг простору для зберігання, який Proton Mail може використовувати на вашому мобільному пристрої.</string>
     <string name="load_embedded_images_failed_no_network">Не вдалося завантажити вбудовані зображення. Будь ласка, перевірте з\'єднання з мережею.</string>
     <string name="load_embedded_images_failed">Не вдалося завантажити вбудовані зображення.</string>
     <string name="unlimited">Необмежено</string>
@@ -535,7 +535,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Надіслано вами з наскрізним шифруванням</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Надіслано з ProtonMail із шифруванням нульового доступу</string>
+    <string name="sender_lock_sent_autoresponder">Надіслано з Proton Mail із шифруванням нульового доступу</string>
     <string name="sender_lock_verification_failed">Не вдалося перевірити відправника</string>
     <string name="sender_lock_pgp_encrypted">PGP-зашифроване повідомлення</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-зашифроване повідомлення з надійної адреси</string>
@@ -651,7 +651,7 @@
         доступ до сховища.</string>
     <string name="need_contacts_permissions_text">Щоб імпортувати контакти, вам потрібно надати доступ до контактів.</string>
     <string name="push_notifications_alert_title">Push-сповіщення</string>
-    <string name="push_notifications_alert_subtitle">Push-сповіщення ProtonMail не працюють без оновлених сервісів Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Push-сповіщення Proton Mail не працюють без оновлених сервісів Google Play.</string>
     <string name="app_locked">Програму заблоковано</string>
     <string name="use_pin_instead">Використати PIN-код натомість</string>
     <!-- strings used for biometric enrollment -->
@@ -682,7 +682,7 @@
     <string name="signature">Підпис</string>
     <string name="mobile_footer">Підпис мобільного клієнта</string>
     <string name="edit_mobile_footer">Увімкнути підпис мобільного клієнта</string>
-    <string name="default_mobile_footer">Надіслано з ProtonMail mobile</string>
+    <string name="default_mobile_footer">Надіслано з Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">Змінити підпис мобільного клієнта можливо лише в платних тарифних планах</string>
     <string name="mobile_footer_info">Цей підпис мобільного клієнта додається під вашим підписом</string>
     <!-- region Snooze Settings -->
@@ -814,7 +814,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання антивіруса&lt;/i&gt; — Тимчасово вимкніть або вилучіть антивірусне програмне забезпечення.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання проксі/брандмауера&lt;/i&gt; — Вимкніть будь-які проксі-сервери чи брандмауери або зверніться до адміністратора мережі.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton недоступний&lt;/i&gt; — Перегляньте &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt;, щоб дізнатися поточний стан служби.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблему досі не усунено&lt;/i&gt; — Зв\'яжіться з нами безпосередньо через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму підтримки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;електронну пошту&lt;/a&gt; (support@protonmail.zendesk.com), або &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблему досі не усунено&lt;/i&gt; — Зв\'яжіться з нами безпосередньо через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму підтримки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;електронну пошту&lt;/a&gt; (support@protonmail.zendesk.com), або &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

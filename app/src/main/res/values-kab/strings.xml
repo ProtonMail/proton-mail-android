@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
     <string name="set_msg_password_title">Sbadu awal uffir</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-ProtonMail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-Proton Mail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Learn more</a></string>
     <string name="set_msg_password_info_icon_description">Talɣut</string>
     <string name="set_msg_password_msg_password_title">Awal n uffir n yizen</string>
     <string name="set_msg_password_msg_password_hint">8 ar 21 n yisekkilen</string>
@@ -170,7 +170,7 @@
     <string name="update_app_title">Ilaq uleqqem</string>
     <string name="update_app">Asnas-ik Protonmail ur izmir ara ad yettwaseqdec arama yettwalqem</string>
     <string name="you_are_offline">Ur teqqineḍ ara</string>
-    <string name="api_offline">ProtonMail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail is currently offline, check https://protonstatus.com or our twitter for the current status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Anermis yettwasekles</string>
     <string name="contact_saved_offline">Anermis yettwasekles, ad yemtawi ticki tella tuqqna.</string>
     <string name="contact_exist">Contact email already exists</string>
@@ -274,7 +274,7 @@
     <string name="invalid_email_address">ThTansa \'%s\' mačči d tameɣtut</string>
     <string name="invalid_email_address_removed">Tansa \'%s\' d tarmeɣtut yerna tettwakkes</string>
     <string name="no_recipients_specified">Ma ulac aɣilif, rnu xarsum yiwen n unermis</string>
-    <string name="no_password_specified">Akud n tagara yezmer kan ad yettwarnu ɣef yiznan iwgelhanen. Sbadu awal uffir i yinermisen ur nelli ara di ProtonMail.</string>
+    <string name="no_password_specified">Akud n tagara yezmer kan ad yettwarnu ɣef yiznan iwgelhanen. Sbadu awal uffir i yinermisen ur nelli ara di Proton Mail.</string>
     <string name="attachment_limit">Ifuyla yeddan ɣer-sen talast n %1$s. Amḍan amatu ahat %2$s.</string>
     <string name="sending_message">Tuzna n yizen...</string>
     <string name="sending_message_offline">Ur iqqin ara, yettwarna ar udras n uragu i tuzna d-iteddun...</string>
@@ -286,7 +286,7 @@
     <string name="cancel">Sesfex</string>
     <string name="close">Mdel</string>
     <string name="eo_password_title">Sbadu awal uffir</string>
-    <string name="eo_password_subtitle">Sbadu awal uffis i uwgelhen n yizen-agi i yiseqdacen ur yellin ara di ProtonMail</string>
+    <string name="eo_password_subtitle">Sbadu awal uffis i uwgelhen n yizen-agi i yiseqdacen ur yellin ara di Proton Mail</string>
     <string name="eo_password_more_info">Issin ugar</string>
     <string name="no_attachments">0 ifuyla yeddan</string>
     <string name="display_name_banned_chars">Yir isem n uskan. \'&gt;\' and \'&lt;\' ur ttwasirgen ara</string>
@@ -389,7 +389,7 @@
     <string name="contact_details">Talqayt unermis</string>
     <string name="email_type_home">Asebter agejdan</string>
     <string name="type_title">Fren anaw</string>
-    <string name="sync_local_contacts">Sali ɣer ProtonMail</string>
+    <string name="sync_local_contacts">Sali ɣer Proton Mail</string>
     <string name="please_select_only_phone_contacts">Ma ulac aɣilif, fren kan Inermisen n Tiliɣri idiganen</string>
     <string name="contact_vcard_hint_email">Sekcem imayl</string>
     <string name="contact_vcard_hint_phone">Sekcem uṭṭun n tiliɣri</string>
@@ -467,7 +467,7 @@
     <string name="details_copied">Tlqayt tettwanɣel ɣef afus</string>
     <string name="saving">Asekles...</string>
     <string name="update_folder">Leqqem akaram</string>
-    <string name="spam_score_100">Imayl-agi yettban d akken yekka-d si ProtonMail, acu kan yussa-d si beṛṛa n unagraw ihi ur iɛedda ara asekyed n usesteb. Ahat beddlen-t neɣ win-t s tuccḍa aniɣer nniḍen!</string>
+    <string name="spam_score_100">Imayl-agi yettban d akken yekka-d si Proton Mail, acu kan yussa-d si beṛṛa n unagraw ihi ur iɛedda ara asekyed n usesteb. Ahat beddlen-t neɣ win-t s tuccḍa aniɣer nniḍen!</string>
     <string name="spam_score_101">Imayl-agi yecceḍ deg usekyed n usesteb n taɣult-is. Ahat beddlen-t neɣ wwin-t s tuccḍa aniɣer nniḍen!</string>
     <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
     <string name="print_from_template">Si: %s</string>
@@ -493,10 +493,10 @@
     <string name="email_empty">Ulac tansa n imayl</string>
     <string name="encrypted_contact_details">Talqayt n inermisen iwgelhanen</string>
     <string name="convert_question">Sali inermisen idiganen</string>
-    <string name="convert_question_subtitle">Ayagi ad isali inermisen idiganen deg ibenk-ik ɣer ukaram ProtonMail. Ad tizmireḍ ihi ad tkecmeḍ ɣer inermisen agi deg ibenkan-nniḍen s ProtonMail.</string>
+    <string name="convert_question_subtitle">Ayagi ad isali inermisen idiganen deg ibenk-ik ɣer ukaram Proton Mail. Ad tizmireḍ ihi ad tkecmeḍ ɣer inermisen agi deg ibenkan-nniḍen s Proton Mail.</string>
     <string name="refresh_contacts">Smiren</string>
     <string name="invalid_email_some_contacts">Tansa n yimayl mačči d tameɣtut i kra n inermisen-ik</string>
-    <string name="protonmail_contacts">Inermisen ProtonMail</string>
+    <string name="protonmail_contacts">Inermisen Proton Mail</string>
     <string name="device_contacts">Inermisen n ibenk</string>
     <string name="print_date_template">Azemz:%s</string>
     <string name="print_attachment_template">Attachment: %s;  </string>
@@ -508,7 +508,7 @@
     <string name="remove_password_question">Kkes wawal n uffir?</string>
     <string name="attachment_storage_value_current">Ittawfernen tura: %dMAṬ</string>
     <string name="attachment_storage_value_current_unlimited">Ittawfernen tura: wat tilast</string>
-    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space ProtonMail can use on your mobile device.</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount of storage space Proton Mail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Tulya n tugniwin igebren ur teddi ara. Ttxil senqed tuqna-inek n uẓeṭṭa.</string>
     <string name="load_embedded_images_failed">Tulya n tugniwin igebren ur teddi ara.</string>
     <string name="unlimited">Wartilas</string>
@@ -525,7 +525,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Tuzneḍ-t s yiman-ik s uwgelhen si ṭerf ar ṭerf</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Yettwazen s ProtonMail s uwgelhen ilem n wadduf</string>
+    <string name="sender_lock_sent_autoresponder">Yettwazen s Proton Mail s uwgelhen ilem n wadduf</string>
     <string name="sender_lock_verification_failed">Tuzna n usenqed tecceḍ</string>
     <string name="sender_lock_pgp_encrypted">Izen awgelhan PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Izen ittuwegelhen s PGP yekka-d seg tansa yettusneqden</string>
@@ -633,7 +633,7 @@
         akeccum ar tkatut n uḥraz.</string>
     <string name="need_contacts_permissions_text">Akken ad tketreḍ inermisen tesriḍ ad teǧǧeḍ inermisen ad d-kecmen.</string>
     <string name="push_notifications_alert_title">Ilɣa Push</string>
-    <string name="push_notifications_alert_subtitle">Ilɣa Push i ProtonMail ur teddun ara wer alqem n imeẓla Google Play.</string>
+    <string name="push_notifications_alert_subtitle">Ilɣa Push i Proton Mail ur teddun ara wer alqem n imeẓla Google Play.</string>
     <string name="app_locked">Asnas yesekkeṛ</string>
     <string name="use_pin_instead">Seqdec PIN deg umḍiq</string>
     <!-- strings used for biometric enrollment -->
@@ -664,7 +664,7 @@
     <string name="signature">Azmul</string>
     <string name="mobile_footer">Aḍar n usebter n uziraz</string>
     <string name="edit_mobile_footer">Sermed aḍar n usebter n uziraz</string>
-    <string name="default_mobile_footer">Ittwazen sγur`ProtonMail Aziraz</string>
+    <string name="default_mobile_footer">Ittwazen sγur`Proton Mail Aziraz</string>
     <string name="mobile_footer_is_premium">Abeddel n uḍar n usebter n uziraz yureg anagar i yiseqdacen s lexlaṣ</string>
     <string name="mobile_footer_info">Aḍar-agi n usebter yettwarna seld azmul-inek•inem</string>
     <!-- region Snooze Settings -->
@@ -792,7 +792,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->

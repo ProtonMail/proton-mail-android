@@ -77,7 +77,7 @@
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
     <string name="composer_quote_sender_header">Den %s, %s &lt; %s&gt; skrev:</string>
     <string name="set_msg_password_title">Ställ in lösenord</string>
-    <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke ProtonMail-användare. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lär dig mer</a></string>
+    <string name="set_msg_password_info">Ställ in ett lösenord för att kryptera detta meddelande för icke Proton Mail-användare. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Lär dig mer</a></string>
     <string name="set_msg_password_info_icon_description">Info</string>
     <string name="set_msg_password_msg_password_title">Meddelandelösenord</string>
     <string name="set_msg_password_msg_password_hint">4 till 21 tecken långt</string>
@@ -155,7 +155,7 @@
     <string name="snackbar_action_discard">Discard</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
-    <string name="protonmail">ProtonMail</string>
+    <string name="protonmail">Proton Mail</string>
     <string name="sign_out">Logga ut</string>
     <string name="sign_out_question">Är du säker på att du vill logga ut?</string>
     <string name="processing_request">Din förfrågan bearbetas</string>
@@ -168,9 +168,9 @@
     <string name="no_more_messages">Inga fler meddelanden</string>
     <string name="no_network_queued">Inget nätverk, meddelandet köat</string>
     <string name="update_app_title">Uppdatering krävs</string>
-    <string name="update_app">Din ProtonMail-app kan inte användas innan den är uppdaterad</string>
+    <string name="update_app">Din Proton Mail-app kan inte användas innan den är uppdaterad</string>
     <string name="you_are_offline">Du är offline</string>
-    <string name="api_offline">ProtonMail är för närvarande offline, kontrollera https://protonstatus.com eller vår twitter för nuvarande status: https://twitter.com/protonmail</string>
+    <string name="api_offline">Proton Mail är för närvarande offline, kontrollera https://protonstatus.com eller vår twitter för nuvarande status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt sparad</string>
     <string name="contact_saved_offline">Kontakt sparad, synkroniseras när anslutning är tillgänglig</string>
     <string name="contact_exist">E-postkontakt finns redan</string>
@@ -198,7 +198,7 @@
     <string name="all_mail">All e-post</string>
     <string name="contacts">Kontakter</string>
     <string name="search_contacts">Sök kontakter</string>
-    <string name="fetching_contacts">Hämtar ProtonMail-kontakter...</string>
+    <string name="fetching_contacts">Hämtar Proton Mail-kontakter...</string>
     <string name="fetching_contacts_success">Kontakterna har uppdaterats</string>
     <string name="fetching_contacts_failure">Kan inte inte att uppdatera kontakter</string>
     <string name="no_search_results">Inga sökresultat</string>
@@ -274,7 +274,7 @@
     <string name="invalid_email_address">Adressen \'%s\' är ogiltig</string>
     <string name="invalid_email_address_removed">Adressen \'%s\' är ogiltig och har tagits bort</string>
     <string name="no_recipients_specified">Lägg till minst en mottagare</string>
-    <string name="no_password_specified">Utgångstid kan bara anges på fullständigt krypterade meddelanden. Vänligen ange ett lösenord för dina icke-ProtonMail-mottagare.</string>
+    <string name="no_password_specified">Utgångstid kan bara anges på fullständigt krypterade meddelanden. Vänligen ange ett lösenord för dina icke-Proton Mail-mottagare.</string>
     <string name="attachment_limit">Bilagor är begränsat till %1$s. Totalt antal bilagor skulle uppgå till %2$s.</string>
     <string name="sending_message">Skickar meddelande...</string>
     <string name="sending_message_offline">Offline, köas för att skickas senare...</string>
@@ -286,7 +286,7 @@
     <string name="cancel">Avbryt</string>
     <string name="close">Stäng</string>
     <string name="eo_password_title">Ställ in lösenord</string>
-    <string name="eo_password_subtitle">Ange ett lösenord för att kryptera detta meddelande för icke-ProtonMail-användare</string>
+    <string name="eo_password_subtitle">Ange ett lösenord för att kryptera detta meddelande för icke-Proton Mail-användare</string>
     <string name="eo_password_more_info">Få mer information</string>
     <string name="no_attachments">0 bilagor</string>
     <string name="display_name_banned_chars">Ogiltigt visningsnamn. \'&gt;\' och \'&lt;\' är inte tillåtna</string>
@@ -389,7 +389,7 @@
     <string name="contact_details">Kontaktdetaljer</string>
     <string name="email_type_home">Hem</string>
     <string name="type_title">Välj typ</string>
-    <string name="sync_local_contacts">Ladda upp till ProtonMail</string>
+    <string name="sync_local_contacts">Ladda upp till Proton Mail</string>
     <string name="please_select_only_phone_contacts">Välj endast lokala telefonkontakter</string>
     <string name="contact_vcard_hint_email">Ange e-post</string>
     <string name="contact_vcard_hint_phone">Ange telefonnummer</string>
@@ -467,7 +467,7 @@
     <string name="details_copied">Detaljer kopierades till urklipp</string>
     <string name="saving">Sparar...</string>
     <string name="update_folder">Uppdatera mapp</string>
-    <string name="spam_score_100">Detta e-post verkar vara från en ProtonMail-adress men kom från utanför vårt system och misslyckades våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefodrat!</string>
+    <string name="spam_score_100">Detta e-post verkar vara från en Proton Mail-adress men kom från utanför vårt system och misslyckades våra autentiseringskrav. Det kan vara förfalskat eller felaktigt vidarebefodrat!</string>
     <string name="spam_score_101">Detta mail har misslyckats med sin domäns autentiseringskrav. Det kan vara falskt eller felaktigt vidarebefordrat!</string>
     <string name="spam_score_102">Detta meddelande kan vara ett nätfiskeförsök. Kontrollera avsändaren och innehållet för att säkerställa att de är legitima. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LÄR DIG MER</a></string>
     <string name="print_from_template">Från: %s</string>
@@ -493,10 +493,10 @@
     <string name="email_empty">E-postadressen saknas</string>
     <string name="encrypted_contact_details">Krypterade kontaktdetaljer</string>
     <string name="convert_question">Ladda upp lokala kontakter</string>
-    <string name="convert_question_subtitle">Detta kommer att ladda upp lokala kontakter på din enhet till ProtonMails kontaktlista. Du kommer sedan kunna komma åt dessa kontakter på dina andra enheter via ProtonMail.</string>
+    <string name="convert_question_subtitle">Detta kommer att ladda upp lokala kontakter på din enhet till Proton Mails kontaktlista. Du kommer sedan kunna komma åt dessa kontakter på dina andra enheter via Proton Mail.</string>
     <string name="refresh_contacts">Uppdatera</string>
     <string name="invalid_email_some_contacts">E-postadressen är inte giltig för några av dina kontakter</string>
-    <string name="protonmail_contacts">ProtonMail-kontakter</string>
+    <string name="protonmail_contacts">Proton Mail-kontakter</string>
     <string name="device_contacts">Enhetens kontakter</string>
     <string name="print_date_template">Datum: %s</string>
     <string name="print_attachment_template">Bilaga: %s;  </string>
@@ -508,7 +508,7 @@
     <string name="remove_password_question">Ta bort lösenordet?</string>
     <string name="attachment_storage_value_current">Nuvarande val: %dMB</string>
     <string name="attachment_storage_value_current_unlimited">Nuvarande val: obegränsat</string>
-    <string name="attachment_offline_max_storage">Ställer in den maximala mängden lagringsutrymme som ProtonMail kan använda på din mobila enhet.</string>
+    <string name="attachment_offline_max_storage">Ställer in den maximala mängden lagringsutrymme som Proton Mail kan använda på din mobila enhet.</string>
     <string name="load_embedded_images_failed_no_network">Misslyckades att ladda inbäddade bilder. Kontrollera din nätverksanslutning.</string>
     <string name="load_embedded_images_failed">Misslyckades att ladda inbäddade bilder.</string>
     <string name="unlimited">Obegränsat</string>
@@ -525,7 +525,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Skickat av dig med end-to-end-kryptering</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Skickat av ProtonMail med nollåtkomst-kryptering</string>
+    <string name="sender_lock_sent_autoresponder">Skickat av Proton Mail med nollåtkomst-kryptering</string>
     <string name="sender_lock_verification_failed">Verifiering av avsändaren misslyckades</string>
     <string name="sender_lock_pgp_encrypted">PGP-krypterat meddelande</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-krypterat meddelande från verifierad adress</string>
@@ -629,7 +629,7 @@
         åtkomst till lagring.</string>
     <string name="need_contacts_permissions_text">För att importera kontakter måste du tillåta åtkomst till kontakter.</string>
     <string name="push_notifications_alert_title">Push-notifieringar</string>
-    <string name="push_notifications_alert_subtitle">Push-meddelanden för ProtonMail fungerar inte utan uppdaterade Google Play-tjänster.</string>
+    <string name="push_notifications_alert_subtitle">Push-meddelanden för Proton Mail fungerar inte utan uppdaterade Google Play-tjänster.</string>
     <string name="app_locked">Appen är låst</string>
     <string name="use_pin_instead">Använd PIN-kod istället</string>
     <!-- strings used for biometric enrollment -->
@@ -660,7 +660,7 @@
     <string name="signature">Signatur</string>
     <string name="mobile_footer">Mobil-sidfot</string>
     <string name="edit_mobile_footer">Aktivera mobil-sidfot</string>
-    <string name="default_mobile_footer">Skickat från ProtonMail mobile</string>
+    <string name="default_mobile_footer">Skickat från Proton Mail mobile</string>
     <string name="mobile_footer_is_premium">Endast betalande användare tillåts att ändra mobil-sidfoten</string>
     <string name="mobile_footer_info">Denna sidfot läggs till efter din signatur</string>
     <!-- region Snooze Settings -->
@@ -788,7 +788,7 @@
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/Proton Mail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
