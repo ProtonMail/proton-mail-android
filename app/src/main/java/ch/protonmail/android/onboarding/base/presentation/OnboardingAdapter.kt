@@ -19,9 +19,10 @@
 
 package ch.protonmail.android.onboarding.base.presentation
 
-import android.text.method.ScrollingMovementMethod
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import ch.protonmail.android.databinding.LayoutOnboardingItemBinding
 import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
 import me.proton.core.presentation.ui.adapter.ClickableAdapter
@@ -54,7 +55,12 @@ class OnboardingViewHolder(val binding: LayoutOnboardingItemBinding) :
         binding.onboardingImageView.setImageResource(onboardingItemUiModel.onboardingImage)
         binding.onboardingHeadlineTextView.setText(onboardingItemUiModel.onboardingHeadline)
         binding.onboardingDescriptionTextView.setText(onboardingItemUiModel.onboardingDescription)
-        binding.onboardingDescriptionTextView.movementMethod = ScrollingMovementMethod()
+        binding.onboardingDescriptionTextView.movementMethod = LinkMovementMethod()
         binding.onboardingIndicatorsView.bind(position, itemCount)
+        onboardingItemUiModel.onboardingImageBackground?.let {
+            binding.onboardingBackgroundView.setBackgroundResource(it)
+            binding.onboardingImageView.isVisible = false
+            binding.onboardingLogoImageView.isVisible = true
+        }
     }
 }

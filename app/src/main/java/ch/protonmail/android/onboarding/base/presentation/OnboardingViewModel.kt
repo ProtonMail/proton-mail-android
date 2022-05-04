@@ -17,14 +17,17 @@
  * along with Proton Mail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.onboarding.base.presentation.model
+package ch.protonmail.android.onboarding.base.presentation
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
+import androidx.lifecycle.ViewModel
+import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
+import kotlinx.coroutines.flow.Flow
 
-data class OnboardingItemUiModel(
-    @DrawableRes val onboardingImage: Int,
-    @StringRes val onboardingHeadline: Int,
-    @StringRes val onboardingDescription: Int,
-    @DrawableRes val onboardingImageBackground: Int? = null
-)
+abstract class OnboardingViewModel : ViewModel() {
+
+    abstract val onboardingState: Flow<OnboardingState>
+
+    abstract fun saveOnboardingShown()
+
+    data class OnboardingState(val onboardingItemsList: List<OnboardingItemUiModel>)
+}

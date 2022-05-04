@@ -60,4 +60,6 @@
     <color name="hyperlink_color">#0000EE</color>
     <!-- endregion -->
 
+    <color name="onboarding_image_background">#f2efff</color>
+
 </resources>

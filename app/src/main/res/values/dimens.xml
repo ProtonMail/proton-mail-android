@@ -67,7 +67,7 @@
     <dimen name="margin_l">16dp</dimen>
     <dimen name="margin_xl">24dp</dimen>
     <dimen name="margin_xxl">32dp</dimen>
-    <dimen name="margin_3xl">64dp</dimen>
+    <dimen name="margin_3xl">40dp</dimen>
 
     <!-- Toolbars -->
     <dimen name="toolbar_padding_start">0dp</dimen>

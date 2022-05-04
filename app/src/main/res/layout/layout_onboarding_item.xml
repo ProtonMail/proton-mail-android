@@ -24,9 +24,10 @@
     android:layout_height="match_parent">
 
     <View
+        android:id="@+id/onboarding_background_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/background_secondary"
+        android:background="@color/onboarding_image_background"
         app:layout_constraintBottom_toTopOf="@id/onboarding_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,12 +44,25 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/img_onboarding_encryption" />
 
+    <ImageView
+        android:id="@+id/onboarding_logo_image_view"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:background="@drawable/ic_logo_background_shape"
+        android:elevation="@dimen/elevation_s"
+        android:src="@drawable/ic_logo_mail"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/onboarding_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/onboarding_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.6" />
 
     <ch.protonmail.android.onboarding.base.presentation.OnboardingIndicatorsView
         android:id="@+id/onboarding_indicators_view"
@@ -79,7 +93,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_xxl"
         android:layout_marginTop="@dimen/margin_m"
-        android:scrollbars="vertical"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
