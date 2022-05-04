@@ -217,6 +217,7 @@ internal class MailboxActivity :
     private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private val handler = Handler(Looper.getMainLooper())
+    private var isOnline = true
 
     private val startMessageDetailsLauncher = registerForActivityResult(MessageDetailsActivity.Launcher()) {}
     private val startComposeLauncher = registerForActivityResult(StartCompose()) { messageId ->
@@ -683,7 +684,7 @@ internal class MailboxActivity :
 
     override fun onDohFailed() {
         super.onDohFailed()
-        showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
+        setAsOffline(Constants.ConnectionState.CANT_REACH_SERVER)
     }
 
     private fun checkRegistration() {
@@ -869,8 +870,11 @@ internal class MailboxActivity :
     private fun setRefreshing(shouldRefresh: Boolean) {
         Timber.v("setRefreshing shouldRefresh: $shouldRefresh")
         updatedStatusTextView.setText(
-            if (shouldRefresh) R.string.mailbox_updating
-            else R.string.mailbox_updated_recently
+            when {
+                isOnline.not() -> R.string.you_are_offline
+                shouldRefresh -> R.string.mailbox_updating
+                else -> R.string.mailbox_updated_recently
+            }
         )
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
@@ -914,9 +918,19 @@ internal class MailboxActivity :
         supportActionBar?.setTitle(titleRes)
     }
 
+    private fun setAsOffline(connectivity: Constants.ConnectionState) {
+        isOnline = false
+        showNoConnSnackAndScheduleRetry(connectivity)
+        updatedStatusTextView.setText(R.string.you_are_offline)
+    }
+
+    private fun setAsOnline() {
+        isOnline = true
+        hideNoConnSnack()
+    }
+
     private fun showNoConnSnackAndScheduleRetry(connectivity: Constants.ConnectionState) {
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
-
         mConnectivitySnackLayout?.let { snackBarLayout ->
             lifecycleScope.launchWhenCreated {
 
@@ -965,9 +979,9 @@ internal class MailboxActivity :
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
             if (connectivity != Constants.ConnectionState.CONNECTED) {
-                showNoConnSnackAndScheduleRetry(connectivity)
+                setAsOffline(connectivity)
             } else {
-                hideNoConnSnack()
+                setAsOnline()
             }
         } else {
             Timber.d("DoH ongoing, not showing UI")
@@ -986,18 +1000,10 @@ internal class MailboxActivity :
 
     private fun showToast(status: Status) {
         when (status) {
-            Status.UNAUTHORIZED -> {
-                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
-            }
-            Status.NO_NETWORK -> {
-                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.NO_INTERNET)
-            }
-            Status.SUCCESS -> {
-                hideNoConnSnack()
-            }
-            else -> {
-                return
-            }
+            Status.UNAUTHORIZED -> setAsOffline(Constants.ConnectionState.CANT_REACH_SERVER)
+            Status.NO_NETWORK -> setAsOffline(Constants.ConnectionState.NO_INTERNET)
+            Status.SUCCESS -> setAsOnline()
+            else -> return
         }
     }
 

@@ -239,7 +239,7 @@ internal class MailboxViewModel @Inject constructor(
                     unreadCount = currentLocationUnreadCounter
                 )
             )
-            val newMailboxState = mailboxState.value.copy(unreadChip = newUnreadChipState, isUpdatedFromRemote = false)
+            val newMailboxState = mailboxState.value.copy(unreadChip = newUnreadChipState)
             mutableMailboxState.emit(newMailboxState)
         }
 
@@ -287,7 +287,7 @@ internal class MailboxViewModel @Inject constructor(
             }
             .onEach { mailboxListState ->
                 val newState = if (mailboxListState is MailboxListState.DataRefresh) {
-                    mailboxState.value.copy(list = mailboxListState, isUpdatedFromRemote = true)
+                    mailboxState.value.copy(list = mailboxListState)
                 } else {
                     mailboxState.value.copy(list = mailboxListState)
                 }
