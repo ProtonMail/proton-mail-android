@@ -22,7 +22,8 @@ package ch.protonmail.android.onboarding.newuser.presentation
 import android.content.SharedPreferences
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.Prefs.PREF_EXISTING_USER_ONBOARDING_SHOWN
+import ch.protonmail.android.core.Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.onboarding.base.presentation.OnboardingViewModel
 import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
@@ -60,7 +61,9 @@ class NewUserOnboardingViewModel @Inject constructor(
 
     override fun saveOnboardingShown() {
         viewModelScope.launch(dispatchers.Io) {
-            defaultSharedPreferences.edit().putBoolean(Constants.Prefs.PREF_NEW_USER_ONBOARDING_SHOWN, true).apply()
+            defaultSharedPreferences.edit().putBoolean(PREF_NEW_USER_ONBOARDING_SHOWN, true).apply()
+            // After new user onboarding is shown, we need to make sure the onboarding for existing users isn't shown
+            defaultSharedPreferences.edit().putBoolean(PREF_EXISTING_USER_ONBOARDING_SHOWN, true).apply()
         }
     }
 }
