@@ -319,7 +319,7 @@ class ContactsActivity :
 
     private fun showFabMenu() {
         isFabOpen = true
-        val rotationLeft = -45f
+        val rotationLeft = -135f
         fabContactsAddMenu.animate().rotation(rotationLeft)
         fabContactsAddContact.animate().translationY(-resources.getDimension(R.dimen.animation_translation_55))
         fabContactsAddContactGroup.animate().translationY(-resources.getDimension(R.dimen.animation_translation_105))
@@ -327,7 +327,7 @@ class ContactsActivity :
 
     private fun closeFabMenu() {
         isFabOpen = false
-        val rotationRight = 45f
+        val rotationRight = 0f
         fabContactsAddMenu.animate().rotation(rotationRight)
         fabContactsAddContact.animate().translationY(0f)
         fabContactsAddContactGroup.animate().translationY(0f)
