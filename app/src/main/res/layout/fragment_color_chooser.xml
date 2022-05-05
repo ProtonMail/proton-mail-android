@@ -17,7 +17,6 @@
   ~ along with Proton Mail. If not, see https://www.gnu.org/licenses/.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -58,7 +57,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/cancel"
-            android:textColor="@color/btn_secondary_background_selector" />
+            android:textColor="@color/text_norm" />
 
         <Button
             android:id="@+id/apply"
