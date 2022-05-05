@@ -226,7 +226,7 @@ internal class DrawerAdapter(
             binding.drawerItemIconView.setImageResource(R.drawable.ic_proton_plus)
             binding.drawerItemLabelTextView.apply {
                 setText(item.textRes)
-                setTextColor(getColor(R.color.text_weak))
+                setTextColor(getColor(R.color.text_norm))
             }
         }
     }
