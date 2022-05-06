@@ -23,6 +23,7 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import ch.protonmail.android.R
 import ch.protonmail.android.databinding.LayoutOnboardingItemBinding
 import ch.protonmail.android.onboarding.base.presentation.model.OnboardingItemUiModel
 import me.proton.core.presentation.ui.adapter.ClickableAdapter
@@ -57,10 +58,14 @@ class OnboardingViewHolder(val binding: LayoutOnboardingItemBinding) :
         binding.onboardingDescriptionTextView.setText(onboardingItemUiModel.onboardingDescription)
         binding.onboardingDescriptionTextView.movementMethod = LinkMovementMethod()
         binding.onboardingIndicatorsView.bind(position, itemCount)
-        onboardingItemUiModel.onboardingImageBackground?.let {
-            binding.onboardingBackgroundView.setBackgroundResource(it)
+        if (onboardingItemUiModel.onboardingImageBackground != null) {
+            binding.onboardingBackgroundView.setBackgroundResource(onboardingItemUiModel.onboardingImageBackground)
             binding.onboardingImageView.isVisible = false
             binding.onboardingLogoImageView.isVisible = true
+        } else {
+            binding.onboardingBackgroundView.setBackgroundResource(R.color.onboarding_image_background)
+            binding.onboardingImageView.isVisible = true
+            binding.onboardingLogoImageView.isVisible = false
         }
     }
 }
