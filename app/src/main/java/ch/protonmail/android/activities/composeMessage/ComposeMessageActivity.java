@@ -50,7 +50,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.webkit.WebSettings;
@@ -204,7 +203,6 @@ public class ComposeMessageActivity
     public static final String EXTRA_LOAD_IMAGES = "load_images";
     public static final String EXTRA_LOAD_REMOTE_CONTENT = "load_remote_content";
     private static final int REQUEST_CODE_ADD_ATTACHMENTS = 1;
-    private static final String STATE_ATTACHMENT_LIST = "attachment_list";
     private static final String STATE_ADDITIONAL_ROWS_VISIBLE = "additional_rows_visible";
     private static final String STATE_DRAFT_ID = "draft_id";
     private static final String STATE_ADDED_CONTENT = "added_content";
@@ -948,7 +946,6 @@ public class ComposeMessageActivity
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(STATE_ATTACHMENT_LIST, new ArrayList<>(composeMessageViewModel.getMessageDataResult().getAttachmentList()));
         outState.putBoolean(STATE_ADDITIONAL_ROWS_VISIBLE, mAreAdditionalRowsVisible);
         outState.putString(STATE_DRAFT_ID, composeMessageViewModel.getDraftId());
         if (largeBody) {
@@ -966,7 +963,6 @@ public class ComposeMessageActivity
     @Override
     public void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        composeMessageViewModel.setAttachmentList(savedInstanceState.getParcelableArrayList(STATE_ATTACHMENT_LIST));
         mAreAdditionalRowsVisible = savedInstanceState.getBoolean(STATE_ADDITIONAL_ROWS_VISIBLE);
         String draftId = savedInstanceState.getString(STATE_DRAFT_ID);
         composeMessageViewModel.setDraftId(!TextUtils.isEmpty(draftId) ? draftId : "");
@@ -1781,16 +1777,6 @@ public class ComposeMessageActivity
     private class ComposeBodyChangeListener implements View.OnKeyListener {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            return false;
-        }
-    }
-
-    private class ParentViewScrollListener implements View.OnTouchListener {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-
-            messageBodyEditText.setFocusableInTouchMode(true);
-            messageBodyEditText.requestFocus();
             return false;
         }
     }

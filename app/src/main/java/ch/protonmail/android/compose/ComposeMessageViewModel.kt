@@ -21,6 +21,7 @@ package ch.protonmail.android.compose
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import android.text.Spanned
 import android.text.TextUtils
 import android.webkit.WebView
@@ -28,6 +29,7 @@ import androidx.core.net.MailTo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
@@ -51,8 +53,6 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactLabelUiM
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.crypto.CipherText
-import ch.protonmail.android.crypto.Crypto.Companion.forAddress
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
@@ -67,6 +67,7 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
+import ch.protonmail.android.usecase.message.GetDecryptedMessageById
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.utils.Event
@@ -82,6 +83,7 @@ import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -92,10 +94,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.entity.UserId
-import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -128,7 +130,8 @@ class ComposeMessageViewModel @Inject constructor(
     networkConfigurator: NetworkConfigurator,
     private val htmlToSpanned: HtmlToSpanned,
     private val addExpirationTimeToMessage: AddExpirationTimeToMessage,
-    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported
+    private val setUpWebViewDarkModeHandlingIfSupported: SetUpWebViewDarkModeHandlingIfSupported,
+    private val getDecryptedMessageById: GetDecryptedMessageById
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
@@ -210,7 +213,7 @@ class ComposeMessageViewModel @Inject constructor(
     val loadingDraftResult: LiveData<Message>
         get() = _loadingDraftResult
     val openAttachmentsScreenResult: LiveData<List<LocalAttachment>>
-        get() = _openAttachmentsScreenResult
+        get() = _openAttachmentsScreenResult.map { it.withoutPgpData() }
     val buildingMessageCompleted: LiveData<Event<Message>>
         get() = _buildingMessageCompleted
     val dbIdWatcher: LiveData<Long?>
@@ -325,12 +328,33 @@ class ComposeMessageViewModel @Inject constructor(
         getSenderEmailAddresses(addressEmailAlias)
     }
 
-    fun prepareMessageData(messageTitle: String, attachments: ArrayList<LocalAttachment>) {
-        _messageDataResult = composeMessageRepository.prepareMessageData(
-            _messageDataResult,
-            messageTitle,
-            attachments
-        )
+    fun prepareMessageData(
+        messageTitle: String,
+        attachments: ArrayList<LocalAttachment>
+    ) {
+        fun Message.restoredPgpMimeAttachments(): List<LocalAttachment> =
+            LocalAttachment.createLocalAttachmentList(this.attachments).onEach {
+                it.messageId = EMPTY_STRING
+                it.attachmentId = EMPTY_STRING
+            }
+
+        if (_messageDataResult.isPGPMime) {
+            runBlocking {
+                parentMessageAsync().await()?.let { parentMessage ->
+                    _messageDataResult = composeMessageRepository.prepareMessageData(
+                        _messageDataResult,
+                        messageTitle,
+                        ArrayList(parentMessage.restoredPgpMimeAttachments())
+                    )
+                }
+            }
+        } else {
+            _messageDataResult = composeMessageRepository.prepareMessageData(
+                _messageDataResult,
+                messageTitle,
+                attachments
+            )
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -692,7 +716,7 @@ class ComposeMessageViewModel @Inject constructor(
             if (_draftId.get().isNotEmpty()) {
                 deleteMessage(
                     listOf(_draftId.get()),
-                    Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString(),
+                    MessageLocationType.DRAFT.messageLocationTypeValue.toString(),
                     userId
                 )
             }
@@ -1080,27 +1104,13 @@ class ComposeMessageViewModel @Inject constructor(
         // Initial message content is the content that in the end is sent as the quoted text when replying/forwarding
         // We need this to be the clean HTML message body, instead of the styled one that we show in the composer
         viewModelScope.launch {
-            _parentId?.let { parentMessageId ->
-                val message = messageDetailsRepository.findMessageById(parentMessageId).first()
-                val decryptedMessageBody = message?.messageBody?.let { messageBody ->
-                    try {
-                        val crypto = forAddress(
-                            userManager, userManager.requireCurrentUserId(), AddressId(message.addressID!!)
-                        )
-                        crypto.decrypt(CipherText(messageBody)).decryptedData
-                    } catch (e: Exception) {
-                        Timber.w(e, "Decryption error")
-                        null
-                    }
-                }
-                decryptedMessageBody?.let {
-                    val builder = StringBuilder()
-                    builder.append("<blockquote class=\"protonmail_quote\">")
-                    builder.append(NEW_LINE)
-                    builder.append(it)
-                    builder.append("</div>")
-                    setInitialMessageContent(builder.toString())
-                }
+            parentMessageAsync().await()?.decryptedBody?.let {
+                val builder = StringBuilder()
+                builder.append("<blockquote class=\"protonmail_quote\">")
+                builder.append(NEW_LINE)
+                builder.append(it)
+                builder.append("</div>")
+                setInitialMessageContent(builder.toString())
             }
         }
     }
@@ -1353,4 +1363,17 @@ class ComposeMessageViewModel @Inject constructor(
         _messageDataResult.message.subject == context.getString(R.string.empty_subject) &&
         _messageDataResult.content.isEmpty() &&
         _messageDataResult.attachmentList.isEmpty()
+
+    private fun parentMessageAsync() = viewModelScope.async(dispatchers.Io) {
+        val parentId = _parentId
+        if (parentId != null) {
+            getDecryptedMessageById.orNull(parentId)
+        } else {
+            null
+        }
+    }
+
+    private fun List<LocalAttachment>.withoutPgpData() = map {
+        if (it.isPgpAttachment) it.apply { uri = Uri.EMPTY } else it
+    }
 }

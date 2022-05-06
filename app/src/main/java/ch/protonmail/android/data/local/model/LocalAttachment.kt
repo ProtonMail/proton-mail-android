@@ -36,7 +36,8 @@ class LocalAttachment @JvmOverloads constructor(
     val keyPackets: String? = null,
     val headers: AttachmentHeaders? = null,
     val isUploaded: Boolean = false,
-    var doSaveInDB: Boolean = true
+    var doSaveInDB: Boolean = true,
+    var isPgpAttachment: Boolean = false
 ) : Parcelable {
 
     override fun describeContents() = 0
@@ -54,6 +55,7 @@ class LocalAttachment @JvmOverloads constructor(
         dest.writeString(headers?.toString() ?: "")
         dest.writeInt(if (isUploaded) 1 else 0)
         dest.writeInt(if (doSaveInDB) 1 else 0)
+        dest.writeInt(if (isPgpAttachment) 1 else 0)
     }
 
     companion object {
@@ -80,7 +82,8 @@ class LocalAttachment @JvmOverloads constructor(
                 headers = attachment.headers,
                 keyPackets = attachment.keyPackets,
                 isUploading = attachment.isUploading,
-                isUploaded = attachment.isUploaded
+                isUploaded = attachment.isUploaded,
+                isPgpAttachment = attachment.isPGPAttachment
             )
         }
 
@@ -105,6 +108,7 @@ class LocalAttachment @JvmOverloads constructor(
                     else AttachmentHeaders.fromString(serializedHeaders)
                 val isUploaded = parcel.readInt() == 1
                 val doSaveInDB = parcel.readInt() == 1
+                val isPgpAttachment = parcel.readInt() == 1
 
                 return LocalAttachment(
                     uri,
@@ -118,7 +122,8 @@ class LocalAttachment @JvmOverloads constructor(
                     keyPackets,
                     headers,
                     isUploaded,
-                    doSaveInDB
+                    doSaveInDB,
+                    isPgpAttachment
                 )
             }
 
