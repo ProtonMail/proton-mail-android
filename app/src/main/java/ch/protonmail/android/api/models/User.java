@@ -77,6 +77,7 @@ import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.usecase.LoadUser;
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto;
+import me.proton.core.data.arch.StoreException;
 import me.proton.core.domain.entity.UserId;
 import me.proton.core.network.domain.ApiException;
 import me.proton.core.user.domain.UserManager;
@@ -142,7 +143,7 @@ public class User {
 
         try {
             user = loadFromCore(userId, securePrefs, userManager, keyStoreCrypto);
-        } catch (ApiException exception) {
+        } catch (ApiException | StoreException exception) {
             Timber.e(exception);
             user = loadFromPrefs(userId, securePrefs);
         }
@@ -150,7 +151,7 @@ public class User {
         return new Right(user);
     }
 
-    private static User loadFromCore(UserId userId, SharedPreferences securePrefs, UserManager userManager, KeyStoreCrypto keyStoreCrypto) throws ApiException {
+    private static User loadFromCore(UserId userId, SharedPreferences securePrefs, UserManager userManager, KeyStoreCrypto keyStoreCrypto) throws ApiException, StoreException {
         // Core UserManager (UserRepository & UserAddressRepository) have a memory cache.
         // Core UserManager will only do a network call if no data exist.
 

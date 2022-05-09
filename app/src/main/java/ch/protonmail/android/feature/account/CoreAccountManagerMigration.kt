@@ -32,6 +32,7 @@ import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.domain.util.requireNotBlank
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.usecase.LoadLegacyUser
 import kotlinx.coroutines.runBlocking
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountDetails
@@ -67,6 +68,7 @@ class CoreAccountManagerMigration @Inject constructor(
     private val userManager: UserManager,
     private val oldUserManager: ch.protonmail.android.core.UserManager,
     private val oldAccountManager: ch.protonmail.android.api.AccountManager,
+    private val loadLegacyUser: LoadLegacyUser,
     @DefaultSharedPreferences private val appPrefs: SharedPreferences
 ) {
 
@@ -123,7 +125,7 @@ class CoreAccountManagerMigration @Inject constructor(
                     runCatching {
                         // Migrate User/Addresses/Keys to Core.
                         val userId = migration.account.userId
-                        val user = User.load(userId, context, userManager, keyStoreCrypto).orThrow()
+                        val user = loadLegacyUser(userId).orThrow()
                         val addresses = user.addresses
                         userManager.addUser(
                             user = user.toCoreUser(encryptedPassphrase),
