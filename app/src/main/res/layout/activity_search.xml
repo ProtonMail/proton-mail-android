@@ -36,7 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        android:visibility="gone"
         tools:listitem="@layout/list_item_mailbox" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
