@@ -19,6 +19,7 @@
   -->
 <TextView android:id="@android:id/text1"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/Proton.Text.Default"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -29,7 +30,6 @@
     android:maxLines="1"
     android:paddingBottom="@dimen/fields_default_space_medium"
     android:paddingEnd="@dimen/fields_default_space_small"
-    android:paddingLeft="@dimen/fields_default_space_small"
-    android:paddingRight="@dimen/fields_default_space_small"
     android:paddingStart="@dimen/fields_default_space_small"
-    android:paddingTop="@dimen/fields_default_space_medium" />
+    android:paddingTop="@dimen/fields_default_space_medium"
+    tools:text="Hello"/>
