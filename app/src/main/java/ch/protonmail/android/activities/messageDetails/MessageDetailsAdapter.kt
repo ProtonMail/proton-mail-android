@@ -373,6 +373,9 @@ internal class MessageDetailsAdapter(
     }
 
     private fun configureWebView(webView: WebView, pmWebViewClient: PmWebViewClient) {
+        // The web view seems to cache images sometimes even though it shouldn't.
+        // That's why we clear the cache here when configuring it.
+        webView.clearCache(true)
         webView.isScrollbarFadingEnabled = false
         webView.isVerticalScrollBarEnabled = false
         webView.isHorizontalScrollBarEnabled = false
