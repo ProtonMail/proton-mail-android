@@ -420,7 +420,7 @@ public class SendPreferencesFactoryTest {
     // Extract base64 part of armored data to compare values generated across different libraries
     private fun cleanArmoredDataForEquality(armored: String): String {
         val noHeaders = armored.split("\n\n")[1]
-        // OpenPGP.js and gopenpgp armor to different line lengths, so we
+        // OpenPGP.js and gopenpgp armor to different line lengths, so we need to remove new line chars
         return noHeaders.filter { !it.isWhitespace() }
     }
 }

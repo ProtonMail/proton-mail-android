@@ -1337,7 +1337,6 @@ public class ComposeMessageActivity
                             unit -> unit);
                 }
                 if (sendPreference.hasPinnedKeys() && !arePinnedKeysTrusted) {
-                    // send
                     DialogUtils.Companion.showInfoDialogWithTwoButtons(
                             ComposeMessageActivity.this,
                             getString(R.string.resign_contact_title),
