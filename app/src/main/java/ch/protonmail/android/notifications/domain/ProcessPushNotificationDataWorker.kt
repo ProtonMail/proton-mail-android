@@ -58,6 +58,7 @@ import javax.inject.Inject
 const val KEY_PUSH_NOTIFICATION_UID = "UID"
 const val KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE = "encryptedMessage"
 const val KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR = "ProcessPushNotificationDataError"
+private const val PROCESS_PUSH_NOTIFICATION_DATA_WORKER_ID = "ProcessPushNotificationDataWorker"
 
 /**
  * A worker that is responsible for processing the data payload of the received FCM push notifications.
@@ -83,7 +84,7 @@ internal class ProcessPushNotificationDataWorker @AssistedInject constructor(
         // and are important to the user
         setForeground(
             ForegroundInfo(
-                id.hashCode(),
+                PROCESS_PUSH_NOTIFICATION_DATA_WORKER_ID.hashCode(),
                 notificationServer.createRetrievingNotificationsNotification()
             )
         )
