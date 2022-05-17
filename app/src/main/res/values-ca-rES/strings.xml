@@ -47,20 +47,20 @@
     <string name="drawer_create_label_description">Crear etiqueta nova</string>
     <!-- endregion -->
     <!-- region Mailbox -->
-    <string name="mailbox_empty_folder_subtitle">This folder is empty</string>
-    <string name="mailbox_empty_inbox_subtitle">You\'re up to date</string>
-    <string name="mailbox_empty_spam_subtitle">Your spam folder is empty</string>
-    <string name="mailbox_empty_trash_subtitle">Trash is empty</string>
-    <string name="mailbox_no_messages">No messages</string>
-    <string name="mailbox_unread_count">%d unread</string>
-    <string name="mailbox_updated_just_now">Updated just now</string>
+    <string name="mailbox_empty_folder_subtitle">Aquesta carpeta és buida</string>
+    <string name="mailbox_empty_inbox_subtitle">Esteu al dia</string>
+    <string name="mailbox_empty_spam_subtitle">La carpeta de correu brossa és buida</string>
+    <string name="mailbox_empty_trash_subtitle">La paperera és buida</string>
+    <string name="mailbox_no_messages">Cap missatge</string>
+    <string name="mailbox_unread_count">%d sense llegir</string>
+    <string name="mailbox_updated_just_now">Actualitzat ara mateix</string>
     <!-- endregion -->
     <!-- region Details -->
     <string name="details_open_in_proton_calendar_title">Obrir a Proton Calendar</string>
     <string name="details_open_in_proton_calendar_subtitle">Calendari segur xifrat</string>
     <string name="details_open_in_proton_calendar_icon_desc">Icona de Proton Calendar</string>
     <string name="details_play_store_error">No es pot obrir Play Store</string>
-    <string name="details_hyperlink_phishing_dialog_title">Warning: suspected fake website</string>
+    <string name="details_hyperlink_phishing_dialog_title">Avís: pressumpte lloc web fals</string>
     <string name="details_hyperlink_phishing_dialog_content">This link leads to a website that might be trying to steal your information, such as passwords and credit card details.&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;For your security, do not continue.</string>
     <string name="details_hyperlink_phishing_dialog_cancel_action">Go back (recommended)</string>
     <string name="details_hyperlink_phishing_dialog_confirm_action">Ignore warning and continue</string>
@@ -145,14 +145,14 @@
     <string name="existing_user_onboarding_new_look_description">Your encrypted email has been entirely redesigned for ease of use.</string>
     <string name="existing_user_onboarding_new_features_headline">New features</string>
     <string name="existing_user_onboarding_new_features_description">Enjoy new features like dark mode, improved notifications, an unread messages filter, and subfolders.</string>
-    <string name="onboarding_next">Next</string>
-    <string name="onboarding_get_started">Get started</string>
-    <string name="onboarding_image_view_content_description">Proton Mail illustration</string>
+    <string name="onboarding_next">Següent</string>
+    <string name="onboarding_get_started">Comença</string>
+    <string name="onboarding_image_view_content_description">Ilustració de Proton Mail</string>
     <!-- endregion -->
     <!-- region Snackbars -->
-    <string name="snackbar_message_draft_saved">Draft saved</string>
-    <string name="snackbar_message_draft_moved_to_trash">Draft moved to trash</string>
-    <string name="snackbar_action_discard">Discard</string>
+    <string name="snackbar_message_draft_saved">Esborrany desat</string>
+    <string name="snackbar_message_draft_moved_to_trash">Esborrany mogut a la paperera</string>
+    <string name="snackbar_action_discard">Descarta</string>
     <!-- endregion -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -648,7 +648,7 @@
     <string name="account_settings">Configuració del compte</string>
     <!-- region Acc Settings -->
     <string name="account">Compte</string>
-    <string name="drawer_subscription">Subscription</string>
+    <string name="drawer_subscription">Subscripció</string>
     <string name="password_manager">Administrador de contrasenyes</string>
     <string name="password_changed">S\'ha canviat la contrasenya.</string>
     <string name="recovery_email">Correu electrònic de recuperació</string>
@@ -786,14 +786,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemes de conexió comuns i solucions</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;email&lt;/a&gt; (support@protonmail.zendesk.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
-    </string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Sense conexió a Internet&lt;/i&gt; - Si us plau, revisi que la seva conexió funciona correctament.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema al seu Proveïdor de Servei d\'Internet (ISP)&lt;/i&gt; - Proveu de conectar-vos a Proton des d\'una altra xarxa (o utilitzi &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueig Guvernamental block&lt;/i&gt; - El seu país pot haber-hi bloquetjat d\'acces a Proton. Proveu &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o un altre servei VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedir a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia d\'Antivirus&lt;/i&gt; - Deshabiliti temporalment o esborri el seu software antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia Proxy/Firewall&lt;/i&gt; - Deshabiliti qualsevol proxy o firewall o contacti amb el seu administrador de xarxa. 
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton es caigut&lt;/i&gt; - Revisi &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; per saber el nostre estat del sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Encara no hem trobat una solució&lt;/i&gt; - Contacti\'ns directament al nostre &lt;a href=\"https://protonmail.com/support-form\"&gt;Formulari de suport form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.zendesk.com\"&gt;correu electrònic&lt;/a&gt; (support@protonmail.zendesk.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imatge no trobada</string>

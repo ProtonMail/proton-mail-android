@@ -75,7 +75,7 @@
     <string name="composer_removing_address_generic_error">アドレスを検証できません: %s1。おそらく送信に失敗します。</string>
     <string name="composer_removing_address_server_error">アドレスを削除中: %s1. %s2</string>
     <!-- arg1 = date and time, arg2 = sender name, arg3 = sender email -->
-    <string name="composer_quote_sender_header">On %s, %s &lt; %s&gt; wrote:</string>
+    <string name="composer_quote_sender_header">%s に %s &lt; %s&gt; が送信:</string>
     <string name="set_msg_password_title">パスワードを設定</string>
     <string name="set_msg_password_info">ProtonMail ユーザー以外への暗号化パスワードを設定してください。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">詳細</a></string>
     <string name="set_msg_password_info_icon_description">情報</string>
@@ -146,7 +146,7 @@
     <string name="existing_user_onboarding_new_features_headline">新しい機能</string>
     <string name="existing_user_onboarding_new_features_description">ダークモード、アップデートされた通知、未読メッセージフィルター、サブフォルダーなどの新たな機能をお楽しみください。</string>
     <string name="onboarding_next">次へ</string>
-    <string name="onboarding_get_started">はじめましょう</string>
+    <string name="onboarding_get_started">利用開始</string>
     <string name="onboarding_image_view_content_description">Proton Mail イラストレーション</string>
     <!-- endregion -->
     <!-- region Snackbars -->
@@ -180,10 +180,10 @@
     <string name="attachment_failed_message_drafted">\"%s\"を添付ファイルから削除し、再度添付して送信してください。メッセージは\"下書き\"フォルダに保存されています。</string>
     <string name="open_drawer">開く</string>
     <string name="close_drawer">閉じる</string>
-    <string name="inbox_option">受信箱</string>
+    <string name="inbox_option">受信トレイ</string>
     <string name="starred_option">星印付き</string>
     <string name="drafts_option">下書き</string>
-    <string name="sent_option">送信済</string>
+    <string name="sent_option">送信済み</string>
     <string name="archive_option">アーカイブ</string>
     <string name="trash_option">ごみ箱</string>
     <string name="spam_option">迷惑メール</string>
@@ -464,7 +464,7 @@
     <string name="update_folder">フォルダーを更新</string>
     <string name="spam_score_100">このメールはProtonMailのアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
     <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
-    <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。送信者と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">詳細</a></string>
+    <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。差出人と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">詳細</a></string>
     <string name="print_from_template">差出人: %s</string>
     <string name="print_to_template">宛先: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -652,14 +652,14 @@
     <string name="mobile_footer_info">このフッターは署名の後に追加されます</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">通知の停止</string>
-    <string name="notifications_snooze">通知のスヌーズ</string>
+    <string name="notifications_snooze">通知の休止</string>
     <string-array name="quick_snooze_values">
-        <item>30分</item>
-        <item>1時間</item>
-        <item>2時間</item>
-        <item>4時間</item>
-        <item>8時間</item>
-        <item>12時間</item>
+        <item>30 分</item>
+        <item>1 時間</item>
+        <item>2 時間</item>
+        <item>4 時間</item>
+        <item>8 時間</item>
+        <item>12 時間</item>
         <item>カスタム設定</item>
         <item>計画休止</item>
     </string-array>
@@ -696,7 +696,7 @@
     <string name="scheduled_snooze_on">計画休止（ON）</string>
     <string name="scheduled_snooze_off">計画休止（OFF）</string>
     <!-- endregion -->
-    <string name="mailbox">受信箱</string>
+    <string name="mailbox">受信トレイ</string>
     <string name="privacy">プライバシー</string>
     <string name="auto_download_messages_title">メッセージの自動ダウンロード</string>
     <string name="auto_download_messages_subtitle">このオプションが有効な場合、メールを受信するたびに、本文が自動的にダウンロードされます（より多くの通信量を消費します）。このオプションが無効な場合、メールを開いたときにのみ本文がダウンロードされます。（注: どちらのオプションでも、キャッシュをクリアするかログアウトすると、オフライン中にメッセージ本文を読むことができなくなります）</string>
@@ -807,7 +807,7 @@
     <string name="move_message">メールを移動</string>
     <string name="manage">管理</string>
     <string name="message_from">\"%s\"からのメッセージ</string>
-    <string name="not_spam_move_to_inbox">迷惑メールではない (受信箱に移動)</string>
+    <string name="not_spam_move_to_inbox">迷惑メールではありません (受信トレイに移動)</string>
     <string name="action_sheet_view_in_light_mode">ライトモードで表示</string>
     <string name="action_sheet_view_in_dark_mode">ダークモードで表示</string>
     <plurals name="x_messages_count">

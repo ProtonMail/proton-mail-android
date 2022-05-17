@@ -738,7 +738,7 @@
     <string name="swipe_action_spam">Besked er markeret som spam</string>
     <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Besked er arkiveret</string>
-    <string name="swipe_action_archive_short">Arkiv</string>
+    <string name="swipe_action_archive_short">Arkivér</string>
     <string name="swipe_action_mark_read">Besked er markeret som læst</string>
     <string name="swipe_action_mark_read_short">Læst</string>
     <plurals name="action_move_to_trash">
